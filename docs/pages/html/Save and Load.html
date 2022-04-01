@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Save and Load &mdash; pyd3 pyd3 documentation</title>
+  <title>Save and Load &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -28,10 +28,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> pyd3
+            <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -77,7 +77,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyd3.pyd3.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3blocks.d3blocks.html">API References</a></li>
 </ul>
 
     <a href= "genindex.html">Index</a>
@@ -88,7 +88,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">pyd3</a>
+          <a href="index.html">d3blocks</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -109,32 +109,32 @@
   <hr class="docutils" id="code-directive" />
 <section id="save-and-load">
 <h1>Save and Load<a class="headerlink" href="#save-and-load" title="Permalink to this headline"></a></h1>
-<p>Saving and loading models is desired as the learning proces of a model for <code class="docutils literal notranslate"><span class="pre">pyd3</span></code> can take up to hours.
-In order to accomplish this, we created two functions: function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyd3.save()</span></code> and function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyd3.load()</span></code>
+<p>Saving and loading models is desired as the learning proces of a model for <code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> can take up to hours.
+In order to accomplish this, we created two functions: function <code class="xref py py-func docutils literal notranslate"><span class="pre">d3blocks.save()</span></code> and function <code class="xref py py-func docutils literal notranslate"><span class="pre">d3blocks.load()</span></code>
 Below we illustrate how to save and load models.</p>
 <section id="saving">
 <h2>Saving<a class="headerlink" href="#saving" title="Permalink to this headline"></a></h2>
-<p>Saving a learned model can be done using the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyd3.save()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyd3</span>
+<p>Saving a learned model can be done using the function <code class="xref py py-func docutils literal notranslate"><span class="pre">d3blocks.save()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">d3blocks</span>
 
 <span class="c1"># Load example data</span>
-<span class="n">X</span><span class="p">,</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
 
 <span class="c1"># Learn model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">)</span>
 
 <span class="n">Save</span> <span class="n">model</span>
-<span class="n">status</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;learned_model_v1&#39;</span><span class="p">)</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;learned_model_v1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="loading">
 <h2>Loading<a class="headerlink" href="#loading" title="Permalink to this headline"></a></h2>
-<p>Loading a learned model can be done using the function <code class="xref py py-func docutils literal notranslate"><span class="pre">pyd3.load()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyd3</span>
+<p>Loading a learned model can be done using the function <code class="xref py py-func docutils literal notranslate"><span class="pre">d3blocks.load()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">d3blocks</span>
 
 <span class="c1"># Load model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;learned_model_v1&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;learned_model_v1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <hr>

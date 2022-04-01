@@ -21,7 +21,7 @@ The file structure of the generated package looks like:
 
 .. code-block:: bash
 
-    path/to/pyd3/
+    path/to/d3blocks/
     ├── .editorconfig
     ├── .gitignore
     ├── .pre-commit-config.yml
@@ -34,17 +34,17 @@ The file structure of the generated package looks like:
     ├── LICENSE
     ├── MANIFEST.in
     ├── NOTICE
-    ├── pyd3
+    ├── d3blocks
     │   ├── __init__.py
     │   ├── __version__.py
-    │   └── pyd3.py
+    │   └── d3blocks.py
     ├── README.md
     ├── requirements.txt
     ├── setup.cfg
     ├── setup.py
     └── tests
         ├── __init__.py
-        └── test_pyd3.py
+        └── test_d3blocks.py
 
 
 Style
@@ -59,7 +59,7 @@ Complexity
 ----------
 
 This library has been developed by using measures that help decreasing technical debt.
-Version 0.1.0 of the ``pyd3`` library scored, according the code analyzer: **VALUE**, for which values > 0 are good and 10 is a maximum score.
+Version 0.1.0 of the ``d3blocks`` library scored, according the code analyzer: **VALUE**, for which values > 0 are good and 10 is a maximum score.
 Developing software with low(er) technical dept may take extra development time, but has many advantages:
 
 * Higher quality code
@@ -72,7 +72,7 @@ Unit tests
 ----------
 
 The use of unit tests is essential to garantee a consistent output of developed functions.
-The following tests are secured using :func:`tests.test_pyd3`:
+The following tests are secured using :func:`tests.test_d3blocks`:
 
 * The input are checked.
 * The output values are checked and whether they are encoded properly.
@@ -81,16 +81,16 @@ The following tests are secured using :func:`tests.test_pyd3`:
 
 .. code-block:: bash
 
-    pytest tests\test_pyd3.py
+    pytest tests\test_d3blocks.py
 
     ====================================== test session starts ======================================
     platform win32 -- Python 3.6.10, pytest-5.4.0, py-1.8.1, pluggy-0.13.1
     collected 3 items
     
-    tests\test_pyd3.py ...                                                                [100%]
+    tests\test_d3blocks.py ...                                                                [100%]
     
     ======================================= warnings summary ========================================
-    tests/test_pyd3.py::test_plot
+    tests/test_d3blocks.py::test_plot
     
     =========================== 3 passed, 1 warning in 1254.97s (0:20:54) ===========================    
 

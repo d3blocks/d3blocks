@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; pyd3 pyd3 documentation</title>
+  <title>Installation &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -28,10 +28,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> pyd3
+            <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -82,7 +82,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyd3.pyd3.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3blocks.d3blocks.html">API References</a></li>
 </ul>
 
     <a href= "genindex.html">Index</a>
@@ -93,7 +93,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">pyd3</a>
+          <a href="index.html">d3blocks</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -115,26 +115,26 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
 <section id="create-environment">
 <h2>Create environment<a class="headerlink" href="#create-environment" title="Permalink to this headline"></a></h2>
-<p>If desired, install <code class="docutils literal notranslate"><span class="pre">pyd3</span></code> from an isolated Python environment using conda:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">env_pyd3</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.8</span>
-<span class="n">conda</span> <span class="n">activate</span> <span class="n">env_pyd3</span>
+<p>If desired, install <code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> from an isolated Python environment using conda:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">env_d3blocks</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.8</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">env_d3blocks</span>
 </pre></div>
 </div>
 </section>
 <section id="pypi">
 <h2>Pypi<a class="headerlink" href="#pypi" title="Permalink to this headline"></a></h2>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Install from Pypi:
-<span class="go">pip install pyd3</span>
+<span class="go">pip install d3blocks</span>
 
 <span class="gp"># </span>Force update to latest version
-<span class="go">pip install -U pyd3</span>
+<span class="go">pip install -U d3blocks</span>
 </pre></div>
 </div>
 </section>
 <section id="github-source">
 <h2>Github source<a class="headerlink" href="#github-source" title="Permalink to this headline"></a></h2>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Install directly from github
-<span class="go">pip install git+https://github.com/erdogant/pyd3</span>
+<span class="go">pip install git+https://github.com/erdogant/d3blocks</span>
 </pre></div>
 </div>
 </section>
@@ -143,22 +143,22 @@
 <h1>Uninstalling<a class="headerlink" href="#uninstalling" title="Permalink to this headline"></a></h1>
 <section id="remove-environment">
 <h2>Remove environment<a class="headerlink" href="#remove-environment" title="Permalink to this headline"></a></h2>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>List all the active environments. pyd3 should be listed.
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>List all the active environments. d3blocks should be listed.
 <span class="go">conda env list</span>
 
-<span class="gp"># </span>Remove the pyd3 environment
-<span class="go">conda env remove --name pyd3</span>
+<span class="gp"># </span>Remove the d3blocks environment
+<span class="go">conda env remove --name d3blocks</span>
 
-<span class="gp"># </span>List all the active environments. pyd3 should be absent.
+<span class="gp"># </span>List all the active environments. d3blocks should be absent.
 <span class="go">conda env list</span>
 </pre></div>
 </div>
 </section>
 <section id="remove-installation">
 <h2>Remove installation<a class="headerlink" href="#remove-installation" title="Permalink to this headline"></a></h2>
-<p>Note that the removal of the environment will also remove the <code class="docutils literal notranslate"><span class="pre">pyd3</span></code> installation.</p>
+<p>Note that the removal of the environment will also remove the <code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> installation.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Install from Pypi:
-<span class="go">pip uninstall pyd3</span>
+<span class="go">pip uninstall d3blocks</span>
 </pre></div>
 </div>
 <hr>

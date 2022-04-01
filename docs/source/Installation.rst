@@ -4,12 +4,12 @@ Installation
 Create environment
 **********************
 
-If desired, install ``pyd3`` from an isolated Python environment using conda:
+If desired, install ``d3blocks`` from an isolated Python environment using conda:
 
 .. code-block:: python
 
-    conda create -n env_pyd3 python=3.8
-    conda activate env_pyd3
+    conda create -n env_d3blocks python=3.8
+    conda activate env_d3blocks
 
 
 Pypi
@@ -18,10 +18,10 @@ Pypi
 .. code-block:: console
 
     # Install from Pypi:
-    pip install pyd3
+    pip install d3blocks
 
     # Force update to latest version
-    pip install -U pyd3
+    pip install -U d3blocks
 
 
 Github source
@@ -30,7 +30,7 @@ Github source
 .. code-block:: console
 
     # Install directly from github
-    pip install git+https://github.com/erdogant/pyd3
+    pip install git+https://github.com/erdogant/d3blocks
 
 
 Uninstalling
@@ -41,25 +41,25 @@ Remove environment
 
 .. code-block:: console
 
-   # List all the active environments. pyd3 should be listed.
+   # List all the active environments. d3blocks should be listed.
    conda env list
 
-   # Remove the pyd3 environment
-   conda env remove --name pyd3
+   # Remove the d3blocks environment
+   conda env remove --name d3blocks
 
-   # List all the active environments. pyd3 should be absent.
+   # List all the active environments. d3blocks should be absent.
    conda env list
 
 
 Remove installation
 **********************
 
-Note that the removal of the environment will also remove the ``pyd3`` installation.
+Note that the removal of the environment will also remove the ``d3blocks`` installation.
 
 .. code-block:: console
 
     # Install from Pypi:
-    pip uninstall pyd3
+    pip uninstall d3blocks
 
 
 

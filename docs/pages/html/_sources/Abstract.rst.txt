@@ -2,15 +2,15 @@
 Background
 #############
 
-The plot functionality can found in :func:`pyd3.pyd3.pyd3.plot`
+The plot functionality can found in :func:`d3blocks.d3blocks.d3blocks.plot`
 
 Aim
 *****
-pyd3
+d3blocks
 
 Results
 ********
-pyd3
+d3blocks
 
     
 Schematic overview

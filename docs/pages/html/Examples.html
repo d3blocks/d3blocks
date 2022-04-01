@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quickstart &mdash; pyd3 pyd3 documentation</title>
+  <title>Quickstart &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -28,10 +28,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> pyd3
+            <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -73,7 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyd3.pyd3.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3blocks.d3blocks.html">API References</a></li>
 </ul>
 
     <a href= "genindex.html">Index</a>
@@ -84,7 +84,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">pyd3</a>
+          <a href="index.html">d3blocks</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -106,16 +106,16 @@
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
 <p>A quick example how to learn a model on a given dataset.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import library</span>
-<span class="kn">import</span> <span class="nn">pyd3</span>
+<span class="kn">import</span> <span class="nn">d3blocks</span>
 
 <span class="c1"># Retrieve URLs of malicous and normal urls:</span>
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
 
 <span class="c1"># Learn model on the data</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">)</span>
 
 <span class="c1"># Plot the model performance</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -123,16 +123,16 @@
 <h1>Learn new model with gridsearch and train-test set<a class="headerlink" href="#learn-new-model-with-gridsearch-and-train-test-set" title="Permalink to this headline"></a></h1>
 <p>AAA</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import library</span>
-<span class="kn">import</span> <span class="nn">pyd3</span>
+<span class="kn">import</span> <span class="nn">d3blocks</span>
 
 <span class="c1"># Load example data set</span>
-<span class="n">X</span><span class="p">,</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
 
 <span class="c1"># Retrieve URLs of malicous and normal urls:</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span> <span class="n">train_test</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridsearch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span> <span class="n">train_test</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridsearch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># The test error will be shown</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -140,16 +140,16 @@
 <h1>Learn new model on the entire data set<a class="headerlink" href="#learn-new-model-on-the-entire-data-set" title="Permalink to this headline"></a></h1>
 <p>BBBB</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import library</span>
-<span class="kn">import</span> <span class="nn">pyd3</span>
+<span class="kn">import</span> <span class="nn">d3blocks</span>
 
 <span class="c1"># Load example data set</span>
-<span class="n">X</span><span class="p">,</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">load_example</span><span class="p">()</span>
 
 <span class="c1"># Retrieve URLs of malicous and normal urls:</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span> <span class="n">train_test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gridsearch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span> <span class="n">train_test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gridsearch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># The train error will be shown. Such results are heavily biased as the model also learned on this set of data</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">pyd3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">d3blocks</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
 <hr>

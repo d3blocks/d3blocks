@@ -1,7 +1,7 @@
-pyd3's documentation!
+d3blocks's documentation!
 ========================
 
-*pyd3* is Python package
+*d3blocks* is Python package
 
 .. |fig1| image:: ../figs/schematic_overview.png
 
@@ -57,7 +57,7 @@ Content
   
   Documentation
   Coding quality
-  pyd3.pyd3
+  d3blocks.d3blocks
 
 * :ref:`genindex`
 
@@ -67,7 +67,7 @@ Quick install
 
 .. code-block:: console
 
-   pip install pyd3
+   pip install d3blocks
 
 
 
@@ -76,13 +76,13 @@ Github
 ------------------------------
 
 Please report bugs, issues and feature extensions there.
-Github, `erdogant/pyd3 <https://github.com/erdogant/pyd3/>`_.
+Github, `erdogant/d3blocks <https://github.com/erdogant/d3blocks/>`_.
 
 
-Citing *pyd3*
+Citing *d3blocks*
 -----------------------
 
-The bibtex can be found in the right side menu at the `github page <https://github.com/erdogant/pyd3/>`_.
+The bibtex can be found in the right side menu at the `github page <https://github.com/erdogant/d3blocks/>`_.
 
 
 Become a Sponsor

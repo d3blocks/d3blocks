@@ -13,11 +13,11 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
-import pyd3
+import d3blocks
 
 # -- Project information -----------------------------------------------------
 
-project = 'pyd3'
+project = 'd3blocks'
 copyright = '2022, Erdogan Taskesen'
 author = 'Erdogan Taskesen'
 
@@ -25,8 +25,8 @@ author = 'Erdogan Taskesen'
 master_doc = 'index'
 
 # The full version, including alpha/beta/rc tags
-release = 'pyd3'
-version = str(pyd3.__version__)
+release = 'd3blocks'
+version = str(d3blocks.__version__)
 
 # -- General configuration ---------------------------------------------------
 
@@ -57,7 +57,7 @@ napoleon_numpy_docstring = True
 # autodoc_mock_imports = ['cv2','keras']
 
 
-pdf_documents = [('index', u'pyd3', u'pyd3', u'Erdogan Taskesen'),]
+pdf_documents = [('index', u'd3blocks', u'd3blocks', u'Erdogan Taskesen'),]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

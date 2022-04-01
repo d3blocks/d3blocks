@@ -11,16 +11,16 @@ Github
 ############
 
 .. note::
-	`Source code of pyd3 can be found at Github <https://github.com/erdogant/pyd3/>`_
+	`Source code of d3blocks can be found at Github <https://github.com/erdogant/d3blocks/>`_
 
 
 Colab Notebook
 ################
 
 .. note::
-	Experiment with ``pyd3`` library using the `Colab notebook`_.
+	Experiment with ``d3blocks`` library using the `Colab notebook`_.
 
-.. _Colab notebook: https://colab.research.google.com/github/erdogant/pca/blob/master/notebooks/pyd3_notebook.ipynb
+.. _Colab notebook: https://colab.research.google.com/github/erdogant/pca/blob/master/notebooks/d3blocks_notebook.ipynb
 
 
 

@@ -5,7 +5,7 @@
 Algorithm
 '''''''''
 
-The ``pyd3`` method consists of various parts, namely, AAA BBB and CCC
+The ``d3blocks`` method consists of various parts, namely, AAA BBB and CCC
 
 
 AAA

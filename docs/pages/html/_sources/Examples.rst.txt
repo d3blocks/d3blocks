@@ -7,16 +7,16 @@ A quick example how to learn a model on a given dataset.
 .. code:: python
 
     # Import library
-    import pyd3
+    import d3blocks
 
     # Retrieve URLs of malicous and normal urls:
-    X, y = pyd3.load_example()
+    X, y = d3blocks.load_example()
 
     # Learn model on the data
-    model = pyd3.fit_transform(X, y, pos_label='bad')
+    model = d3blocks.fit_transform(X, y, pos_label='bad')
 
     # Plot the model performance
-    results = pyd3.plot(model)
+    results = d3blocks.plot(model)
 
 
 
@@ -28,16 +28,16 @@ AAA
 .. code:: python
 
     # Import library
-    import pyd3
+    import d3blocks
 
     # Load example data set    
-    X,y_true = pyd3.load_example()
+    X,y_true = d3blocks.load_example()
 
     # Retrieve URLs of malicous and normal urls:
-    model = pyd3.fit_transform(X, y_true, pos_label='bad', train_test=True, gridsearch=True)
+    model = d3blocks.fit_transform(X, y_true, pos_label='bad', train_test=True, gridsearch=True)
 
     # The test error will be shown
-    results = pyd3.plot(model)
+    results = d3blocks.plot(model)
 
 
 Learn new model on the entire data set
@@ -49,16 +49,16 @@ BBBB
 .. code:: python
 
     # Import library
-    import pyd3
+    import d3blocks
 
     # Load example data set    
-    X,y_true = pyd3.load_example()
+    X,y_true = d3blocks.load_example()
 
     # Retrieve URLs of malicous and normal urls:
-    model = pyd3.fit_transform(X, y_true, pos_label='bad', train_test=False, gridsearch=True)
+    model = d3blocks.fit_transform(X, y_true, pos_label='bad', train_test=False, gridsearch=True)
 
     # The train error will be shown. Such results are heavily biased as the model also learned on this set of data
-    results = pyd3.plot(model)
+    results = d3blocks.plot(model)
 
 
 .. raw:: html

@@ -2,7 +2,7 @@ API References
 ------------------------------------------------
 
 
-.. automodule:: pyd3.pyd3
+.. automodule:: d3blocks.d3blocks
     :members:
     :undoc-members:
 

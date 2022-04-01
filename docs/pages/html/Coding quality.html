@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coding quality &mdash; pyd3 pyd3 documentation</title>
+  <title>Coding quality &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API References" href="pyd3.pyd3.html" />
+    <link rel="next" title="API References" href="d3blocks.d3blocks.html" />
     <link rel="prev" title="Sponsor" href="Documentation.html" /> 
 </head>
 
@@ -28,10 +28,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> pyd3
+            <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -79,7 +79,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#unit-tests">Unit tests</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pyd3.pyd3.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3blocks.d3blocks.html">API References</a></li>
 </ul>
 
     <a href= "genindex.html">Index</a>
@@ -90,7 +90,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">pyd3</a>
+          <a href="index.html">d3blocks</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -119,7 +119,7 @@ Such conventions are helpfull to improve the quality, make the code cleaner and 
 <section id="library">
 <h2>library<a class="headerlink" href="#library" title="Permalink to this headline"></a></h2>
 <p>The file structure of the generated package looks like:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>path/to/pyd3/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>path/to/d3blocks/
 ├── .editorconfig
 ├── .gitignore
 ├── .pre-commit-config.yml
@@ -132,17 +132,17 @@ Such conventions are helpfull to improve the quality, make the code cleaner and 
 ├── LICENSE
 ├── MANIFEST.in
 ├── NOTICE
-├── pyd3
+├── d3blocks
 │   ├── __init__.py
 │   ├── __version__.py
-│   └── pyd3.py
+│   └── d3blocks.py
 ├── README.md
 ├── requirements.txt
 ├── setup.cfg
 ├── setup.py
 └── tests
     ├── __init__.py
-    └── test_pyd3.py
+    └── test_d3blocks.py
 </pre></div>
 </div>
 </section>
@@ -155,7 +155,7 @@ Each public function contains a docstring that is based on numpy standards.</p>
 <section id="complexity">
 <h2>Complexity<a class="headerlink" href="#complexity" title="Permalink to this headline"></a></h2>
 <p>This library has been developed by using measures that help decreasing technical debt.
-Version 0.1.0 of the <code class="docutils literal notranslate"><span class="pre">pyd3</span></code> library scored, according the code analyzer: <strong>VALUE</strong>, for which values &gt; 0 are good and 10 is a maximum score.
+Version 0.1.0 of the <code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> library scored, according the code analyzer: <strong>VALUE</strong>, for which values &gt; 0 are good and 10 is a maximum score.
 Developing software with low(er) technical dept may take extra development time, but has many advantages:</p>
 <ul class="simple">
 <li><p>Higher quality code</p></li>
@@ -167,22 +167,22 @@ Developing software with low(er) technical dept may take extra development time,
 <section id="unit-tests">
 <h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline"></a></h2>
 <p>The use of unit tests is essential to garantee a consistent output of developed functions.
-The following tests are secured using <code class="xref py py-func docutils literal notranslate"><span class="pre">tests.test_pyd3()</span></code>:</p>
+The following tests are secured using <code class="xref py py-func docutils literal notranslate"><span class="pre">tests.test_d3blocks()</span></code>:</p>
 <ul class="simple">
 <li><p>The input are checked.</p></li>
 <li><p>The output values are checked and whether they are encoded properly.</p></li>
 <li><p>The check of whether parameters are handled correctly.</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest tests<span class="se">\t</span>est_pyd3.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest tests<span class="se">\t</span>est_d3blocks.py
 
 <span class="o">======================================</span> <span class="nb">test</span> session <span class="nv">starts</span> <span class="o">======================================</span>
 platform win32 -- Python <span class="m">3</span>.6.10, pytest-5.4.0, py-1.8.1, pluggy-0.13.1
 collected <span class="m">3</span> items
 
-tests<span class="se">\t</span>est_pyd3.py ...                                                                <span class="o">[</span><span class="m">100</span>%<span class="o">]</span>
+tests<span class="se">\t</span>est_d3blocks.py ...                                                                <span class="o">[</span><span class="m">100</span>%<span class="o">]</span>
 
 <span class="o">=======================================</span> warnings <span class="nv">summary</span> <span class="o">========================================</span>
-tests/test_pyd3.py::test_plot
+tests/test_d3blocks.py::test_plot
 
 <span class="o">===========================</span> <span class="m">3</span> passed, <span class="m">1</span> warning <span class="k">in</span> <span class="m">1254</span>.97s <span class="o">(</span><span class="m">0</span>:20:54<span class="o">)</span> <span class="o">===========================</span>
 </pre></div>
@@ -199,7 +199,7 @@ tests/test_pyd3.py::test_plot
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Documentation.html" class="btn btn-neutral float-left" title="Sponsor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyd3.pyd3.html" class="btn btn-neutral float-right" title="API References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="d3blocks.d3blocks.html" class="btn btn-neutral float-right" title="API References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
