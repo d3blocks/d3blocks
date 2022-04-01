@@ -1,6 +1,6 @@
-from pyd3.pyd3 import pyd3
+from d3blocks.d3blocks import d3blocks
 
-from pyd3.pyd3 import (
+from d3blocks.d3blocks import (
     import_example,
     load_example,
     )
@@ -12,21 +12,21 @@ __version__ = '0.1.0'
 
 # module level doc-string
 __doc__ = """
-pyd3
+d3blocks
 =====================================================================
 
 Description
 -----------
-pyd3 is for...
+d3blocks is for...
 
 Example
 -------
->>> import pyd3 as pyd3
->>> model = pyd3.fit_transform(X)
->>> fig,ax = pyd3.plot(model)
+>>> import d3blocks as d3blocks
+>>> model = d3blocks.fit_transform(X)
+>>> fig,ax = d3blocks.plot(model)
 
 References
 ----------
-https://github.com/erdogant/pyd3
+https://github.com/d3blocks/d3blocks
 
 """

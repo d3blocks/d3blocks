@@ -1,8 +1,8 @@
 # --------------------------------------------------
-# Name        : pyd3.py
+# Name        : d3blocks.py
 # Author      : E.Taskesen
 # Contact     : erdogant@gmail.com
-# github      : https://github.com/erdogant/pyd3
+# github      : https://github.com/erdogant/d3blocks
 # Licence     : See licences
 # --------------------------------------------------
 
@@ -19,18 +19,18 @@ logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
     logger.removeHandler(handler)
 console = logging.StreamHandler()
-# formatter = logging.Formatter('[%(asctime)s] [pyd3]> %(levelname)s> %(message)s', datefmt='%H:%M:%S')
-formatter = logging.Formatter('[pyd3] >%(levelname)s> %(message)s')
+# formatter = logging.Formatter('[%(asctime)s] [d3blocks]> %(levelname)s> %(message)s', datefmt='%H:%M:%S')
+formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
 console.setFormatter(formatter)
 logger.addHandler(console)
 logger = logging.getLogger()
 
 
-class pyd3():
-    """pyd3."""
+class d3blocks():
+    """d3blocks."""
 
     def __init__(self, method='xgboost', verbose=20):
-        """Initialize pyd3 with user-defined parameters."""
+        """Initialize d3blocks with user-defined parameters."""
         self.method=method
         # Set the logger
         set_logger(verbose=verbose)
@@ -252,7 +252,7 @@ def disable_tqdm():
 
 # %% Main
 if __name__ == "__main__":
-    import pyd3 as pyd3
-    df = pyd3.import_example()
-    out = pyd3.fit(df)
-    fig,ax = pyd3.plot(out)
+    import d3blocks as d3blocks
+    df = d3blocks.import_example()
+    out = d3blocks.fit(df)
+    fig,ax = d3blocks.plot(out)
