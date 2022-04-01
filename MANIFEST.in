@@ -1,0 +1,2 @@
+include pyd3/data/*.zip
+include pyd3/data/*.txt

@@ -1,0 +1,20 @@
+echo "Cleaning repo first.."
+rm -rf dist
+rm -rf build
+rm -rf pyd3.egg-info
+rm -rf __pycache__
+rm -rf .pytest_cache
+rm -rf pyd3/__pycache__
+rm -rf pyd3/.pylint.d
+rm -rf tests/__pycache__
+rm -rf pyd3/utils/__pycache__
+rm -rf .pylint.d
+rm -rf pyd3/data/*.zip
+rm -rf pyd3/data/*.csv
+rm -rf *.js
+rm -rf *.html
+rm -rf *.css
+rm -rf *.dot
+rm -rf *.png
+rm -rf .coverage*
+rm -rf .pkl

@@ -1,0 +1,24 @@
+Steps 1-4 are already done in the template! Start at step 5 :)
+
+1. <DONE> Create a folder docs
+2. <DONE> By default, Jekyll does not build any files or directories with underscore. Include an empty .nojekyll file in the docs folder to turn off Jekyll.
+3. <DONE> In the docs folder, create an index.html file and redirect to ./html/index.html for example like this: <meta http-equiv="refresh" content="0; url=./html/index.html" />
+4. <DONE> Change the Sphinx build directory to docs in your Makefile for example as follows: BUILDDIR = pages
+
+
+TODO for every project seperately:
+
+5. Go to your <repo_dir>/docs/ 
+6. Run <make clean>
+7. Run <make html>
+8. Repeat steps 6-7 until you are satisfied.
+
+9. add, commit and push the repo.
+10. Go to your github settings: https://github.com/erdogant/bnlearn/settings
+   a. Go to section: [GitHub Pages]
+   b. Go to set [Source]
+   c. Set to [master branch/docs folder] 
+11. visit https://erdogant.github.io/<repo>
+
+To create pdf run:
+12. sphinx-build -b pdf source build

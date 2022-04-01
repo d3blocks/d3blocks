@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross validation and hyperparameter tuning &mdash; pyd3 pyd3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Performance" href="Performance.html" />
+    <link rel="prev" title="Algorithm" href="Algorithm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> pyd3
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+    
+              <p class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Abstract.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Abstract.html#schematic-overview">Schematic overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#uninstalling">Uninstalling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Algorithm.html">Algorithm</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cross validation and hyperparameter tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#training-and-testing">Training and testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gridsearch">Gridsearch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hyperparameter-optimization">Hyperparameter optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance.html#results">Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Save%20and%20Load.html">Save and Load</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html#learn-new-model-with-gridsearch-and-train-test-set">Learn new model with gridsearch and train-test set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html#learn-new-model-on-the-entire-data-set">Learn new model on the entire data set</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Sponsor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#blog">Blog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyd3.pyd3.html">API References</a></li>
+</ul>
+
+    <a href= "genindex.html">Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyd3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Cross validation and hyperparameter tuning</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Cross validation and hyperparameter tuning.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <hr class="docutils" id="code-directive" />
+<section id="cross-validation-and-hyperparameter-tuning">
+<h1>Cross validation and hyperparameter tuning<a class="headerlink" href="#cross-validation-and-hyperparameter-tuning" title="Permalink to this headline"></a></h1>
+<p><em>Cross validation</em> and <em>hyperparameter tuning</em> are two tasks that we do together in the data pipeline.
+<em>Cross validation</em> is the process of training learners using one set of data and testing it using a different set. We set a default of <strong>5-fold crossvalidation</strong> to evalute our results.
+<em>Parameter tuning</em> is the process of selecting the values for a model’s parameters that maximize the accuracy of the model.</p>
+<figure class="align-default" id="five-fold-cross-validation">
+<img alt="_images/five-fold_cross_validation.png" src="_images/five-fold_cross_validation.png" />
+</figure>
+<section id="training-and-testing">
+<h2>Training and testing<a class="headerlink" href="#training-and-testing" title="Permalink to this headline"></a></h2>
+<p>The model <em>sees</em> and <em>learns</em> from the data. To ensure stability in the model and results, we devide the data set into three parts with different sizes, namely: train-set, test-set and validation-set.
+Each set has a different role, and is explained below.</p>
+<dl class="simple">
+<dt>Train dataset</dt><dd><p>80% of the data is used to fit the model. The model sees and learns from this data.</p>
+</dd>
+<dt>Validation dataset</dt><dd><p>The training data set is also split into 80% train and 20% validation set to evaluate the learned model and provide an unbiased evaluation of a model fit after tuning model hyperparameters.
+Evalution is performed in a 5-fold crossvalidation approach.</p>
+</dd>
+<dt>Test dataset</dt><dd><p>20% of all the data is used only once the model is completely trained (using the train and validation sets).
+This will provide an unbiased result of the final model fit on the training dataset.</p>
+</dd>
+</dl>
+<p>The use of training and testing is set as True by default, but can be changed with a boolean value <code class="docutils literal notranslate"><span class="pre">train_test=True</span></code> in the function <code class="xref py py-func docutils literal notranslate"><span class="pre">urldetect.fit_transform()</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">urldetect.fit()</span></code>.
+You may want to set the boolean value at False <code class="docutils literal notranslate"><span class="pre">train_test=False</span></code> if the number of training samples is very low which would lead in a poorly trained model.</p>
+</section>
+<section id="gridsearch">
+<h2>Gridsearch<a class="headerlink" href="#gridsearch" title="Permalink to this headline"></a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">urldetect</span></code> we incorporated hyperparameter optimization using a gridseach <code class="xref py py-func docutils literal notranslate"><span class="pre">urldetect._gridsearch()</span></code>. The goal is to evaluate the value of the combination of parameters in the learning process.
+The use of gridsearch is set True as default by a boolean value <code class="docutils literal notranslate"><span class="pre">gridsearch=True</span></code> in the function <code class="xref py py-func docutils literal notranslate"><span class="pre">urldetect.fit_transform()</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">urldetect.fit()</span></code>.
+You may want to set this value at <code class="docutils literal notranslate"><span class="pre">gridsearch=False</span></code> if the number of samples is very low which would lead in a poorly trained model.</p>
+</section>
+<section id="hyperparameter-optimization">
+<h2>Hyperparameter optimization<a class="headerlink" href="#hyperparameter-optimization" title="Permalink to this headline"></a></h2>
+<p>In our gridsearch we evaluate the Term frequency–inverse document frequency (TF-IDF) and the logistic regression parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;TfidfVectorizer__sublinear_tf&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="s1">&#39;TfidfVectorizer__min_df&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;TfidfVectorizer__max_df&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+    <span class="s1">&#39;TfidfVectorizer__norm&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span><span class="s1">&#39;l2&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;TfidfVectorizer__ngram_range&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We evaluate in total <strong>32</strong> combination of parameters in the learning process.
+To ensure stability, the 5-fold crossvalidation comes into play which leads to a total of <strong>160</strong> fits.
+To speed up the gridsearch, we enable parallel processing. Each fit is scored based on Cohen’s kappa coefficient and the parameters of the best fit are used.
+With 8 cores, running at 2.8GHz (i7-7700HQ) it takes approximately <strong>15</strong> minutes without optimization and up to <strong>&gt;60</strong> minutes to learn an optimized model. An example of the output is shown below:</p>
+<hr>
+<center>
+        <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
+</center>
+<hr></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Algorithm.html" class="btn btn-neutral float-left" title="Algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Performance.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Erdogan Taskesen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

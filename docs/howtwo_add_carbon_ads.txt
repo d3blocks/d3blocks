@@ -1,0 +1,30 @@
+1. Ga naar docs\source\conf.py en voeg toe:
+	# These paths are either relative to html_static_path
+	# or fully qualified paths (eg. https://...)
+	html_css_files = ['css/custom.css',]
+
+2. copy paste de css naar:
+	> docs\source\_static\css\custom.css
+
+3. Open: 
+	> docs\source\index.rst
+	> Helemaal onderin plaats:
+
+	.. raw:: html
+
+		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
+
+
+4. make clean
+5. make html
+
+6. Open de file: 
+	>docs\pages\html\index.html
+	> Zoek naar "api references"
+	> Eronder kan je dit toevoegen:
+
+	<ul>
+	<br>
+		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
+	</ul>
+
