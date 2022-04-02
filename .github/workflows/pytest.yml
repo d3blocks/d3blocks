@@ -1,4 +1,4 @@
-name: Pytest for XXX
+name: Pytest for d3blocks
 on: [push]
 
 jobs:
