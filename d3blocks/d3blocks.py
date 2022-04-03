@@ -8,7 +8,7 @@ from tqdm import tqdm
 import zipfile
 import tempfile
 import webbrowser
-import Movingbubbles as Movingbubbles
+import d3blocks.Movingbubbles as Movingbubbles
 
 
 logger = logging.getLogger('')
