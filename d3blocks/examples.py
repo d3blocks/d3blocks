@@ -1,11 +1,12 @@
 # %%
-import d3blocks
-print(dir(d3blocks))
-print(d3blocks.__version__)
+# import d3blocks
+# print(dir(d3blocks))
+# print(d3blocks.__version__)
 
 # %%
 from d3blocks import d3blocks
-model = d3blocks(verbose=10)
-model.fit_transform()
+d3 = d3blocks()
+X = d3.import_example(data='movingbubbles')
+d3.movingbubbles(X, filepath='c://temp/movingbubbles.html')
 
 # %%

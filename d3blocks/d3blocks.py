@@ -1,11 +1,3 @@
-# --------------------------------------------------
-# Name        : d3blocks.py
-# Author      : E.Taskesen
-# Contact     : erdogant@gmail.com
-# github      : https://github.com/erdogant/d3blocks
-# Licence     : See licences
-# --------------------------------------------------
-
 import os
 import pandas as pd
 import requests
@@ -14,12 +6,15 @@ import logging
 import numpy as np
 from tqdm import tqdm
 import zipfile
+import tempfile
+import webbrowser
+import Movingbubbles as Movingbubbles
+
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
     logger.removeHandler(handler)
 console = logging.StreamHandler()
-# formatter = logging.Formatter('[%(asctime)s] [d3blocks]> %(levelname)s> %(message)s', datefmt='%H:%M:%S')
 formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
 console.setFormatter(formatter)
 logger.addHandler(console)
@@ -29,32 +24,99 @@ logger = logging.getLogger()
 class d3blocks():
     """d3blocks."""
 
-    def __init__(self, method='xgboost', verbose=20):
+    def __init__(self, verbose=20):
         """Initialize d3blocks with user-defined parameters."""
-        self.method=method
+        # Clean
+        self._clean(clean_config=True)
+        # Some library compatibily checks
+        library_compatibility_checks()
+        # Initialize empty config
+        self.config = {}
+        self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # Set the logger
         set_logger(verbose=verbose)
 
-    def fit_transform(self):
-        """Learn the associations in the data."""
-        logger.debug("Hello debug")
-        logger.info("Hello info")
-        logger.critical("Hello critical")
-        logger.warning("Hello warning")
+    def movingbubbles(self, X, figsize=(1500, 800), title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+        """Creation of moving bubble graph.
 
-		# Set logger to warning-error only
-        verbose = logger.getEffectiveLevel()
-        set_logger(verbose=30)
+        Parameters
+        ----------
+        X : Input data
+            Input data.
+        figsize : tuple, (default: (1500, 800))
+            Size of the figure in the browser, [height, width].
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the existing html file.
 
-        # Extract faces and eyes from image
-        for i in tqdm(np.arange(0,10), disable=disable_tqdm()):
-            logger.info(i)
+        Returns
+        -------
+        None.
 
-        # Restore verbose status
-        set_logger(verbose=verbose)
-        return None
+        """
+        self.config['chart'] ='movingbubbles'
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['figsize'] = figsize
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        # Set path locations
+        # self.config['d3_library'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/d3-3-5-5.min.js'))
+        # self.config['d3_script'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/movingbubbles.html.j2'))
+        # self.config['css'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/style.css'))
 
-    def import_example(self, data='titanic', url=None, sep=','):
+        # Create the plot
+        Movingbubbles.show(X, self.config)
+
+        # Open the webbrowser
+        if self.config['showfig']:
+            # Sleeping is required to pevent overlapping windows
+            webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
+
+    def _clean(self, clean_config=True):
+        """Clean previous results to ensure correct working."""
+        if hasattr(self, 'G'): del self.G
+        if clean_config and hasattr(self, 'config'): del self.config
+
+    def set_path(self, filepath='d3blocks.html'):
+        """Set the file path.
+
+        Parameters
+        ----------
+        filepath : str
+            filename and or full pathname.
+            * 'd3graph.html'
+            * 'c://temp/'
+            * 'c://temp/d3graph.html'
+
+        Returns
+        -------
+        filepath : str
+            Path to graph.
+
+        """
+        dirname, filename = os.path.split(filepath)
+
+        if (filename is None) or (filename==''):
+            filename = 'd3blocks.html'
+
+        if (dirname is None) or (dirname==''):
+            dirname = tempfile.TemporaryDirectory().name
+
+        if not os.path.isdir(dirname):
+            logger.info('Create directory: [%s]' %(dirname))
+            os.mkdir(dirname)
+
+        filepath = os.path.abspath(os.path.join(dirname, filename))
+        logger.debug("filepath is set to [%s]" %(filepath))
+        return filepath
+
+    def import_example(self, data='movingbubbles'):
         """Import example dataset from github source.
 
         Description
@@ -64,7 +126,7 @@ class d3blocks():
         Parameters
         ----------
         data : str
-            Name of datasets: 'sprinkler', 'titanic', 'student', 'fifa', 'cancer', 'waterpump', 'retail'
+            Name of datasets: 'movingbubbles'
         url : str
             url link to to dataset.
 
@@ -74,11 +136,11 @@ class d3blocks():
             Dataset containing mixed features.
 
         """
-        return import_example(data=data, url=url, sep=sep)
+        return _import_example(data=data)
 
 
 # %% Import example dataset from github.
-def import_example(data='titanic', url=None, sep=','):
+def _import_example(data='movingbubbles'):
     """Import example dataset from github source.
 
     Description
@@ -88,12 +150,9 @@ def import_example(data='titanic', url=None, sep=','):
     Parameters
     ----------
     data : str
-        Name of datasets: 'sprinkler', 'titanic', 'student', 'fifa', 'cancer', 'waterpump', 'retail'
+            Name of datasets: 'movingbubbles'
     url : str
         url link to to dataset.
-	verbose : int, (default: 20)
-		Print progress to screen. The default is 3.
-		60: None, 40: Error, 30: Warn, 20: Info, 10: Debug
 
     Returns
     -------
@@ -101,23 +160,8 @@ def import_example(data='titanic', url=None, sep=','):
         Dataset containing mixed features.
 
     """
-    if url is None:
-        if data=='sprinkler':
-            url='https://erdogant.github.io/datasets/sprinkler.zip'
-        elif data=='titanic':
-            url='https://erdogant.github.io/datasets/titanic_train.zip'
-        elif data=='student':
-            url='https://erdogant.github.io/datasets/student_train.zip'
-        elif data=='cancer':
-            url='https://erdogant.github.io/datasets/cancer_dataset.zip'
-        elif data=='fifa':
-            url='https://erdogant.github.io/datasets/FIFA_2018.zip'
-        elif data=='waterpump':
-            url='https://erdogant.github.io/datasets/waterpump/waterpump_test.zip'
-        elif data=='retail':
-            url='https://erdogant.github.io/datasets/marketing_data_online_retail_small.zip'
-    else:
-        data = wget.filename_from_url(url)
+    if data=='movingbubbles':
+        url='https://erdogant.github.io/datasets/movingbubbles.zip'
 
     if url is None:
         logger.info('Nothing to download.')
@@ -134,9 +178,13 @@ def import_example(data='titanic', url=None, sep=','):
         logger.info('Downloading [%s] dataset from github source..' %(data))
         wget(url, PATH_TO_DATA)
 
+    csvfile = unzip(PATH_TO_DATA, ext='.csv')
+
     # Import local dataset
     logger.info('Import dataset [%s]' %(data))
-    df = pd.read_csv(PATH_TO_DATA, sep=sep)
+    if data=='movingbubbles':
+        df = Movingbubbles.import_example(csvfile)
+
     # Return
     return df
 
@@ -156,11 +204,6 @@ def wget(url, writepath):
     -------
     None.
 
-    Example
-    -------
-    >>> import clustimage as cl
-    >>> images = cl.wget('https://erdogant.github.io/datasets/flower_images.zip', 'c://temp//flower_images.zip')
-
     """
     r = requests.get(url, stream=True)
     with open(writepath, "wb") as fd:
@@ -168,39 +211,8 @@ def wget(url, writepath):
             fd.write(chunk)
 
 
-# %% Import example dataset from github.
-def load_example(data='breast'):
-    """Import example dataset from sklearn.
-
-    Parameters
-    ----------
-    'breast' : str, two-class
-    'titanic': str, two-class
-    'iris' : str, multi-class
-
-    Returns
-    -------
-    tuple containing dataset and response variable (X,y).
-
-    """
-
-    try:
-        from sklearn import datasets
-    except:
-        print('This requires: <pip install sklearn>')
-        return None, None
-
-    if data=='iris':
-        X, y = datasets.load_iris(return_X_y=True)
-    elif data=='breast':
-        X, y = datasets.load_breast_cancer(return_X_y=True)
-    elif data=='titanic':
-        X, y = datasets.fetch_openml("titanic", version=1, as_frame=True, return_X_y=True)
-
-    return X, y
-
 # %% unzip
-def unzip(path_to_zip):
+def unzip(path_to_zip, ext=''):
     """Unzip files.
 
     Parameters
@@ -213,11 +225,6 @@ def unzip(path_to_zip):
     getpath : str
         Path containing the unzipped files.
 
-    Example
-    -------
-    >>> import clustimage as cl
-    >>> dirpath = cl.unzip('c://temp//flower_images.zip')
-
     """
     getpath = None
     if path_to_zip[-4:]=='.zip':
@@ -228,8 +235,8 @@ def unzip(path_to_zip):
             zip_ref = zipfile.ZipFile(path_to_zip, 'r')
             zip_ref.extractall(pathname)
             zip_ref.close()
-            getpath = path_to_zip.replace('.zip', '')
-            if not os.path.isdir(getpath):
+            getpath = path_to_zip.replace('.zip', ext)
+            if not os.path.isfile(getpath):
                 logger.error('Extraction failed.')
                 getpath = None
     else:
@@ -250,9 +257,23 @@ def disable_tqdm():
     return (True if (logger.getEffectiveLevel()>=30) else False)
 
 
+# %% Do checks
+def library_compatibility_checks():
+    """Library compatibiliy checks.
+
+    Returns
+    -------
+    None.
+
+    """
+    # if not version.parse(nx.__version__) >= version.parse("2.5"):
+        # logger.error('Networkx version should be >= 2.5')
+        # logger.info('Hint: pip install -U networkx')
+    pass
+
 # %% Main
-if __name__ == "__main__":
-    import d3blocks as d3blocks
-    df = d3blocks.import_example()
-    out = d3blocks.fit(df)
-    fig,ax = d3blocks.plot(out)
+# if __name__ == "__main__":
+#     import d3blocks as d3blocks
+#     df = d3blocks.import_example()
+#     out = d3blocks.fit(df)
+#     fig,ax = d3blocks.plot(out)

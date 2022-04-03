@@ -1,9 +1,5 @@
 from d3blocks.d3blocks import d3blocks
-
-from d3blocks.d3blocks import (
-    import_example,
-    load_example,
-    )
+import d3blocks.Movingbubbles as Movingbubbles
 
 
 __author__ = 'Erdogan Tasksen'
@@ -17,13 +13,14 @@ d3blocks
 
 Description
 -----------
-d3blocks is for...
+d3blocks is for the creation of exclusive stand alone and interactive graphs in d3 javascript.
 
 Example
 -------
->>> import d3blocks as d3blocks
->>> model = d3blocks.fit_transform(X)
->>> fig,ax = d3blocks.plot(model)
+>>> from d3blocks import d3blocks
+>>> d3 = d3blocks()
+>>> X = d3.import_example(data='movingbubbles')
+>>> d3.movingbubbles(X)
 
 References
 ----------
