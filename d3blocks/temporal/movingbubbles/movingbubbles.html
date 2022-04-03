@@ -2,8 +2,6 @@
 <head>
 <title>Time Use Simulation</title>
 <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
-<link rel="stylesheet" type="text/css" href="fonts.css" />
-<!-- <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'> -->
 <link rel="stylesheet" type="text/css" href="Inconsolata.css" />
 </head>
 <meta charset="utf-8">
@@ -109,8 +107,10 @@ var svg = d3.select("#chart").append("svg")
 
 
 // Load data and let's do it.
-d3.tsv("days-simulated-v2.tsv", function(error, data) {	
-	
+//d3.tsv("days-simulated-v2.tsv", function(error, data) {	
+
+
+
 	data.forEach(function(d) {
 		var day_array = d.day.split(",");
 		var activities = [];
@@ -122,10 +122,10 @@ d3.tsv("days-simulated-v2.tsv", function(error, data) {
 		}
 		sched_objs.push(activities);
 	});
-	
+
 	// Used for percentages by minute
 	var act_counts = { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0 };
-	
+
 	// A node for each person's schedule
 	var nodes = sched_objs.map(function(o,i) {
 		var act = o[0].act;
@@ -160,7 +160,7 @@ d3.tsv("days-simulated-v2.tsv", function(error, data) {
 		.attr("r", function(d) { return d.radius; })
 		.style("fill", function(d) { return d.color; });
 		// .call(force.drag);
-	
+
 	// Activity labels
 	var label = svg.selectAll("text")
 		.data(act_codes)
@@ -242,7 +242,7 @@ d3.tsv("days-simulated-v2.tsv", function(error, data) {
 			.text(function(d) {
 				return readablePercent(act_counts[d.index]);
 			});
-	
+
 		// Update time
 		var true_minute = curr_minute % 1440;
 		d3.select("#current_time").text(minutesToTime(true_minute));
@@ -277,13 +277,13 @@ d3.tsv("days-simulated-v2.tsv", function(error, data) {
 		setTimeout(timer, speeds[USER_SPEED]);
 	}
 	setTimeout(timer, speeds[USER_SPEED]);
-	
-	
-	
+
+
+
 		
 	function tick(e) {
 	  var k = 0.04 * e.alpha;
-  
+
 	  // Push nodes toward their designated focus.
 	  nodes.forEach(function(o, i) {
 		var curr_act = o.act;
@@ -295,15 +295,15 @@ d3.tsv("days-simulated-v2.tsv", function(error, data) {
 			var damper = 1;
 		}
 		o.color = color(curr_act);
-	    o.y += (foci[curr_act].y - o.y) * k * damper;
-	    o.x += (foci[curr_act].x - o.x) * k * damper;
+		o.y += (foci[curr_act].y - o.y) * k * damper;
+		o.x += (foci[curr_act].x - o.x) * k * damper;
 	  });
 
 	  circle
-	  	  .each(collide(.5))
-	  	  .style("fill", function(d) { return d.color; })
-	      .attr("cx", function(d) { return d.x; })
-	      .attr("cy", function(d) { return d.y; });
+		  .each(collide(.5))
+		  .style("fill", function(d) { return d.color; })
+		  .attr("cx", function(d) { return d.x; })
+		  .attr("cy", function(d) { return d.y; });
 	}
 
 
@@ -311,122 +311,126 @@ d3.tsv("days-simulated-v2.tsv", function(error, data) {
 	function collide(alpha) {
 	  var quadtree = d3.geom.quadtree(nodes);
 	  return function(d) {
-	    var r = d.radius + maxRadius + padding,
-	        nx1 = d.x - r,
-	        nx2 = d.x + r,
-	        ny1 = d.y - r,
-	        ny2 = d.y + r;
-	    quadtree.visit(function(quad, x1, y1, x2, y2) {
-	      if (quad.point && (quad.point !== d)) {
-	        var x = d.x - quad.point.x,
-	            y = d.y - quad.point.y,
-	            l = Math.sqrt(x * x + y * y),
-	            r = d.radius + quad.point.radius + (d.act !== quad.point.act) * padding;
-	        if (l < r) {
-	          l = (l - r) / l * alpha;
-	          d.x -= x *= l;
-	          d.y -= y *= l;
-	          quad.point.x += x;
-	          quad.point.y += y;
-	        }
-	      }
-	      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-	    });
+		var r = d.radius + maxRadius + padding,
+			nx1 = d.x - r,
+			nx2 = d.x + r,
+			ny1 = d.y - r,
+			ny2 = d.y + r;
+		quadtree.visit(function(quad, x1, y1, x2, y2) {
+		  if (quad.point && (quad.point !== d)) {
+			var x = d.x - quad.point.x,
+				y = d.y - quad.point.y,
+				l = Math.sqrt(x * x + y * y),
+				r = d.radius + quad.point.radius + (d.act !== quad.point.act) * padding;
+			if (l < r) {
+			  l = (l - r) / l * alpha;
+			  d.x -= x *= l;
+			  d.y -= y *= l;
+			  quad.point.x += x;
+			  quad.point.y += y;
+			}
+		  }
+		  return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+		});
 	  };
 	}
-	
-	
-	
-	
+
+
+
+
 	// Speed toggle
 	d3.selectAll(".togglebutton")
-      .on("click", function() {
-        if (d3.select(this).attr("data-val") == "slow") {
-            d3.select(".slow").classed("current", true);
+	  .on("click", function() {
+		if (d3.select(this).attr("data-val") == "slow") {
+			d3.select(".slow").classed("current", true);
 			d3.select(".medium").classed("current", false);
-            d3.select(".fast").classed("current", false);
-        } else if (d3.select(this).attr("data-val") == "medium") {
-            d3.select(".slow").classed("current", false);
+			d3.select(".fast").classed("current", false);
+		} else if (d3.select(this).attr("data-val") == "medium") {
+			d3.select(".slow").classed("current", false);
 			d3.select(".medium").classed("current", true);
-            d3.select(".fast").classed("current", false);
-        } 
+			d3.select(".fast").classed("current", false);
+		} 
 		else {
-            d3.select(".slow").classed("current", false);
+			d3.select(".slow").classed("current", false);
 			d3.select(".medium").classed("current", false);
 			d3.select(".fast").classed("current", true);
-        }
+		}
 		
 		USER_SPEED = d3.select(this).attr("data-val");
-    });
-}); // @end d3.tsv
+	});
+	//}); // @end d3.tsv
 
 
 
-function color(activity) {
-	
-	var colorByActivity = {
-		"0": "#e0d400",
-		"1": "#1c8af9",
-		"2": "#51BC05",
-		"3": "#FF7F00",
-		"4": "#DB32A4",
-		"5": "#00CDF8",
-		"6": "#E63B60",
-		"7": "#8E5649",
-		"8": "#68c99e",
-		"9": "#a477c8",
-		"10": "#5C76EC",
-		"11": "#E773C3",
-		"12": "#799fd2",
-		"13": "#038a6c",
-		"14": "#cc87fa",
-		"15": "#ee8e76",
-		"16": "#bbbbbb",
+	function color(activity) {
+		
+		var colorByActivity = {
+			"0": "#e0d400",
+			"1": "#1c8af9",
+			"2": "#51BC05",
+			"3": "#FF7F00",
+			"4": "#DB32A4",
+			"5": "#00CDF8",
+			"6": "#E63B60",
+			"7": "#8E5649",
+			"8": "#68c99e",
+			"9": "#a477c8",
+			"10": "#5C76EC",
+			"11": "#E773C3",
+			"12": "#799fd2",
+			"13": "#038a6c",
+			"14": "#cc87fa",
+			"15": "#ee8e76",
+			"16": "#bbbbbb",
+		}
+		
+		return colorByActivity[activity];
+		
 	}
-	
-	return colorByActivity[activity];
-	
-}
 
 
 
-// Output readable percent based on count.
-function readablePercent(n) {
-	
-	var pct = 100 * n / 1000;
-	if (pct < 1 && pct > 0) {
-		pct = "<1%";
-	} else {
-		pct = Math.round(pct) + "%";
+	// Output readable percent based on count.
+	function readablePercent(n) {
+		
+		var pct = 100 * n / 1000;
+		if (pct < 1 && pct > 0) {
+			pct = "<1%";
+		} else {
+			pct = Math.round(pct) + "%";
+		}
+		
+		return pct;
 	}
-	
-	return pct;
-}
 
 
-// Minutes to time of day. Data is minutes from 4am.
-function minutesToTime(m) {
-	var minutes = (m + 4*60) % 1440;
-	var hh = Math.floor(minutes / 60);
-	var ampm;
-	if (hh > 12) {
-		hh = hh - 12;
-		ampm = "pm";
-	} else if (hh == 12) {
-		ampm = "pm";
-	} else if (hh == 0) {
-		hh = 12;
-		ampm = "am";
-	} else {
-		ampm = "am";
+	// Minutes to time of day. Data is minutes from 4am.
+	function minutesToTime(m) {
+		var minutes = (m + 4*60) % 1440;
+		var hh = Math.floor(minutes / 60);
+		var ampm;
+		if (hh > 12) {
+			hh = hh - 12;
+			ampm = "pm";
+		} else if (hh == 12) {
+			ampm = "pm";
+		} else if (hh == 0) {
+			hh = 12;
+			ampm = "am";
+		} else {
+			ampm = "am";
+		}
+		var mm = minutes % 60;
+		if (mm < 10) {
+			mm = "0" + mm;
+		}
+		
+		return hh + ":" + mm + ampm
 	}
-	var mm = minutes % 60;
-	if (mm < 10) {
-		mm = "0" + mm;
-	}
-	
-	return hh + ":" + mm + ampm
-}
+
+	data = 
+			{"day":[{"0,270,5,32,10,73,16,25,5,165,2,35,4,300,1,53,10,117,0,370"}, {"4,150,16,7,4,623,16,5,8,35,16,20,5,30,2,10,8,14,16,37,1,4,10,295,0,210"}, {"0,270,1,75,16,30,9,15,16,5,8,40,16,5,10,10,16,17,8,63,16,10,4,90,16,10,5,45,2,35,16,10,1,25,16,25,10,30,16,30,10,245,5,40,10,45,0,270"}, {"0,240,1,60,10,50,16,5,5,55,2,32,16,8,10,10,16,12,2,8,4,60,2,2,10,28,16,30,0,50,16,10,6,50,16,35,11,35,16,70,6,20,2,22,10,118,1,40,0,390"}, {"0,170,2,20,16,5,4,285,2,15,3,205,16,5,6,6,16,14,5,30,1,10,16,30,5,10,16,10,6,20,16,7,10,118,0,480"}]
+			
 
 
 </script>
