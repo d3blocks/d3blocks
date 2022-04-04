@@ -9,7 +9,8 @@ import zipfile
 import tempfile
 import webbrowser
 import d3blocks.Movingbubbles as Movingbubbles
-
+import random
+import time
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
@@ -36,13 +37,15 @@ class d3blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, X, figsize=(1500, 800), title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, X, center=None, figsize=(1500, 800), title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
         ----------
         X : Input data
             Input data.
+        center : String, (default: None)
+            Center this catagory.
         figsize : tuple, (default: (1500, 800))
             Size of the figure in the browser, [height, width].
         title : String, (default: None)
@@ -65,6 +68,8 @@ class d3blocks():
         self.config['figsize'] = figsize
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
+        self.config['center'] = center
+
         # Set path locations
         # self.config['d3_library'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/d3-3-5-5.min.js'))
         # self.config['d3_script'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/movingbubbles.html.j2'))

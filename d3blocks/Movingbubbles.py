@@ -39,6 +39,7 @@ def write_html(X, config, overwrite=True):
     content = {
         'json_data': X,
         'title': config['title'],
+        'center': '"' + config['center'] + '"',
         'width': config['figsize'][0],
         'height': config['figsize'][1],
     }
