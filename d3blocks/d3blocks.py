@@ -11,6 +11,7 @@ import webbrowser
 import d3blocks.Movingbubbles as Movingbubbles
 import random
 import time
+import colourmap
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
@@ -37,17 +38,20 @@ class d3blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, X, center=None, figsize=(1500, 800), title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', y='category', center=None, reset_time='day', figsize=(780, 800), title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
         ----------
-        X : Input data
+        df : Input data
             Input data.
         center : String, (default: None)
-            Center this catagory.
+            Center this category.
+        reset_time : String, (default: 'day')
+            'day'  : Every 24h de the day start over again.
+            'year' : Every 365 days the year starts over again.
         figsize : tuple, (default: (1500, 800))
-            Size of the figure in the browser, [height, width].
+            Size of the figure in the browser, [width, height].
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -69,19 +73,47 @@ class d3blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['center'] = center
-
-        # Set path locations
-        # self.config['d3_library'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/d3-3-5-5.min.js'))
-        # self.config['d3_script'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/movingbubbles.html.j2'))
-        # self.config['css'] = os.path.abspath(os.path.join(self.config['curpath'], 'd3js/style.css'))
+        self.config['reset_time'] = reset_time
+        
+        # Compute delta
+        if isinstance(df, pd.DataFrame) and np.any(df.columns==y) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
+            df = self.compute_delta(df, sample_id=sample_id, datetime=datetime, y=y)
+        # Set label properties
+        if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==y):
+            self.set_label_properties(df[y])
+        if not isinstance(df, pd.DataFrame):
+            self.labels=None
+        if not hasattr(self, 'labels'):
+            raise Exception('Set labels is required first or specify the category.')
 
         # Create the plot
-        Movingbubbles.show(X, self.config)
+        self.config = Movingbubbles.show(df, self.config, self.labels)
 
         # Open the webbrowser
         if self.config['showfig']:
             # Sleeping is required to pevent overlapping windows
             webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
+
+    def compute_delta(self, df, sample_id, datetime, y):
+        logger.info('Compute time delta.')
+        # Compute delta
+        df = Movingbubbles.compute_delta(df, sample_id, datetime)
+        # Set default label properties
+        self.set_label_properties(df[y].values)
+        # Return
+        return df
+
+    def set_label_properties(self, y):
+        logger.info('Extracting label properties')
+        # Get unique categories
+        uiy = np.unique(y)
+        # Create unique colors
+        hexcolors = colourmap.generate(len(uiy), cmap='Set1', scheme='hex')
+        # Make dict with properties
+        labels = {}
+        for i, cat in enumerate(uiy):
+            labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat}
+        self.labels = labels
 
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
@@ -121,7 +153,7 @@ class d3blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles', n=1000):
+    def import_example(self, data='movingbubbles', n=1000, samples=100, date_start=None, date_stop=None):
         """Import example dataset from github source.
 
         Description
@@ -131,9 +163,14 @@ class d3blocks():
         Parameters
         ----------
         data : str
-            Name of datasets: 'movingbubbles', 'random_time'
-        url : str
-            url link to to dataset.
+            Name of datasets
+            'movingbubbles', 'random_time'
+        n : int, (default: 1000).
+            Number of events.
+        date_start : str, (default: None)
+            "1-1-2000 00:00:00" : start date
+        date_stop : str, (default: None)
+            "1-1-2010 23:59:59" : Stop date
 
         Returns
         -------
@@ -141,11 +178,11 @@ class d3blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(data=data, n=n)
+        return _import_example(data=data, n=n, samples=samples, date_start=date_start, date_stop=date_stop)
 
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles', n=1000):
+def _import_example(data='movingbubbles', n=1000, samples=100, date_start=None, date_stop=None):
     """Import example dataset from github source.
 
     Description
@@ -155,9 +192,14 @@ def _import_example(data='movingbubbles', n=1000):
     Parameters
     ----------
     data : str
-            Name of datasets: 'movingbubbles', 'random_time'
-    url : str
-        url link to to dataset.
+        Name of datasets
+        'movingbubbles', 'random_time'
+    n : int, (default: 1000).
+        Number of events.
+    date_start : str, (default: None)
+        "1-1-2000 00:00:00" : start date
+    date_stop : str, (default: None)
+        "1-1-2010 23:59:59" : Stop date
 
     Returns
     -------
@@ -168,7 +210,7 @@ def _import_example(data='movingbubbles', n=1000):
     if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
     if data=='random_time':
-        return _generate_data_with_random_datetime(n)
+        return generate_data_with_random_datetime(n, samples=samples, date_start=date_start, date_stop=date_stop)
 
     if url is None:
         logger.info('Nothing to download.')
@@ -196,17 +238,65 @@ def _import_example(data='movingbubbles', n=1000):
     return df
 
 
-def _generate_data_with_random_datetime(n=1000):
-    df = pd.DataFrame(columns=['datetime', 'id', 'event'], data=np.array([[None, None, None]]*n))
-    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Leasure']
+# %%
+def generate_data_with_random_datetime(n=1000, samples=100, date_start=None, date_stop=None):
+    """Generate random time data.
+
+    Parameters
+    ----------
+    n : int, (default: 1000).
+        Number of events or data points.
+    samples : int, (default: 1000).
+        Number of unique samples.
+    date_start : str, (default: None)
+        "1-1-2000 00:00:00" : start date
+    date_stop : str, (default: None)
+        1-1-2010 23:59:59" : Stop date
+
+    Returns
+    -------
+    df : DataFrame
+        Example dataset with datetime.
+
+    """
+    if date_start is None:
+        date_start="1-1-2000 00:00:00"
+        logger.info('Date start is set to %s' %(date_start))
+    if date_stop is None:
+        date_stop="1-1-2010 23:59:59"
+        logger.info('Date start is set to %s' %(date_stop))
+
+    # Create empty dataframe
+    df = pd.DataFrame(columns=['datetime', 'sample_id', 'category'], data=np.array([[None, None, None]] * n))
+    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Travel']
+
+    # Generate random timestamps with catagories and sample ids
     for i in range(0, df.shape[0]):
-        df['datetime'].iloc[i] = random_date("1-1-2000 00:00:00", "1-1-2010 23:59:59", random.random())
-        df['id'].iloc[i] = random.randint(0, 10)
-        df['event'].iloc[i] = location_types[random.randint(0, len(location_types)-1)]
+        df['sample_id'].iloc[i] = random.randint(0, samples)
+        df['category'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
+        df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random())
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df.sort_values(by="datetime")
     df.reset_index(inplace=True, drop=True)
     return df
+
+def str_time_prop(start, end, time_format, prop):
+    """Get a time at a proportion of a range of two formatted times.
+
+    start and end should be strings specifying times formatted in the
+    given format (strftime-style), giving an interval [start, end].
+    prop specifies how a proportion of the interval to be taken after
+    start.  The returned time will be in the specified format.
+    """
+
+    stime = time.mktime(time.strptime(start, time_format))
+    etime = time.mktime(time.strptime(end, time_format))
+    ptime = stime + prop * (etime - stime)
+    return time.strftime(time_format, time.localtime(ptime))
+
+
+def random_date(start, end, prop):
+    return str_time_prop(start, end, '%d-%m-%Y %H:%M:%S', prop)
 
 
 # %% Download files from github source
@@ -291,25 +381,6 @@ def library_compatibility_checks():
         # logger.info('Hint: pip install -U networkx')
     pass
 
-
-# %%
-def str_time_prop(start, end, time_format, prop):
-    """Get a time at a proportion of a range of two formatted times.
-
-    start and end should be strings specifying times formatted in the
-    given format (strftime-style), giving an interval [start, end].
-    prop specifies how a proportion of the interval to be taken after
-    start.  The returned time will be in the specified format.
-    """
-
-    stime = time.mktime(time.strptime(start, time_format))
-    etime = time.mktime(time.strptime(end, time_format))
-    ptime = stime + prop * (etime - stime)
-    return time.strftime(time_format, time.localtime(ptime))
-
-
-def random_date(start, end, prop):
-    return str_time_prop(start, end, '%d-%m-%Y %H:%M:%S', prop)
 
 # %% Main
 # if __name__ == "__main__":

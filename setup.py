@@ -13,7 +13,7 @@ else:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
-     install_requires=['numpy', 'pandas', 'tqdm'],
+     install_requires=['numpy', 'pandas', 'tqdm', 'colourmap'],
      python_requires='>=3',
      name='d3blocks',
      version=new_version,

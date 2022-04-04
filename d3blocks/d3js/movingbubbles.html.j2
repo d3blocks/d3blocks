@@ -46,8 +46,8 @@
 
 var USER_SPEED = "slow";
 
-var width = 780,
-    height = 800,
+var width = {{ width }},
+    height = {{ height }},
 	padding = 1,
 	maxRadius = 3;
 	// color = d3.scale.category10();
@@ -97,10 +97,6 @@ var time_notes = [
 ];
 var notes_index = 0;
 
-
-// Activity to put in center of circle arrangement
-//var center_act = "Traveling",
-//	center_pt = { "x": 380, "y": 365 };
 
 var center_act = {{ center }},
 	center_pt = { "x": 380, "y": 365 };
