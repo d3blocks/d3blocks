@@ -121,7 +121,7 @@ class d3blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles'):
+    def import_example(self, data='movingbubbles', n=1000):
         """Import example dataset from github source.
 
         Description
@@ -131,7 +131,7 @@ class d3blocks():
         Parameters
         ----------
         data : str
-            Name of datasets: 'movingbubbles'
+            Name of datasets: 'movingbubbles', 'random_time'
         url : str
             url link to to dataset.
 
@@ -141,11 +141,11 @@ class d3blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(data=data)
+        return _import_example(data=data, n=n)
 
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles'):
+def _import_example(data='movingbubbles', n=1000):
     """Import example dataset from github source.
 
     Description
@@ -155,7 +155,7 @@ def _import_example(data='movingbubbles'):
     Parameters
     ----------
     data : str
-            Name of datasets: 'movingbubbles'
+            Name of datasets: 'movingbubbles', 'random_time'
     url : str
         url link to to dataset.
 
@@ -167,6 +167,8 @@ def _import_example(data='movingbubbles'):
     """
     if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
+    if data=='random_time':
+        return _generate_data_with_random_datetime(n)
 
     if url is None:
         logger.info('Nothing to download.')
@@ -191,6 +193,19 @@ def _import_example(data='movingbubbles'):
         df = Movingbubbles.import_example(csvfile)
 
     # Return
+    return df
+
+
+def _generate_data_with_random_datetime(n=1000):
+    df = pd.DataFrame(columns=['datetime', 'id', 'event'], data=np.array([[None, None, None]]*n))
+    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Leasure']
+    for i in range(0, df.shape[0]):
+        df['datetime'].iloc[i] = random_date("1-1-2000 00:00:00", "1-1-2010 23:59:59", random.random())
+        df['id'].iloc[i] = random.randint(0, 10)
+        df['event'].iloc[i] = location_types[random.randint(0, len(location_types)-1)]
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df = df.sort_values(by="datetime")
+    df.reset_index(inplace=True, drop=True)
     return df
 
 
@@ -275,6 +290,26 @@ def library_compatibility_checks():
         # logger.error('Networkx version should be >= 2.5')
         # logger.info('Hint: pip install -U networkx')
     pass
+
+
+# %%
+def str_time_prop(start, end, time_format, prop):
+    """Get a time at a proportion of a range of two formatted times.
+
+    start and end should be strings specifying times formatted in the
+    given format (strftime-style), giving an interval [start, end].
+    prop specifies how a proportion of the interval to be taken after
+    start.  The returned time will be in the specified format.
+    """
+
+    stime = time.mktime(time.strptime(start, time_format))
+    etime = time.mktime(time.strptime(end, time_format))
+    ptime = stime + prop * (etime - stime)
+    return time.strftime(time_format, time.localtime(ptime))
+
+
+def random_date(start, end, prop):
+    return str_time_prop(start, end, '%d-%m-%Y %H:%M:%S', prop)
 
 # %% Main
 # if __name__ == "__main__":
