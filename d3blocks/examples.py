@@ -13,7 +13,7 @@
 from d3blocks import d3blocks
 d3 = d3blocks(cmap='Set1')
 
-df = d3.import_example(data='random_time', n=1000, samples=100, date_start="1-1-2000 02:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example(data='random_time', n=100, groups=1, date_start="1-1-2000 07:10:05", date_stop="1-1-2000 23:59:59")
 # df = d3.import_example(data='random_time', n=1000)
 
 # # Compute delta

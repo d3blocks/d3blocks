@@ -149,7 +149,6 @@ def write_html(X, config, overwrite=True):
         'NOTE': config['note'],
         'START_HOUR_MIN': config['start_hour'] + (config['start_minute'] / 60),
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
-        
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))

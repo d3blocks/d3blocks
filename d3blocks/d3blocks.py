@@ -67,7 +67,7 @@ class d3blocks():
         None.
 
         """
-        if note is None: note=("This is a simulation of %s samples across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(df.shape[0]))
+        if note is None: note=("This is a simulation of %s groups across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(df.shape[0]))
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -158,7 +158,7 @@ class d3blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles', n=1000, samples=100, date_start=None, date_stop=None):
+    def import_example(self, data='movingbubbles', n=1000, groups=100, date_start=None, date_stop=None):
         """Import example dataset from github source.
 
         Description
@@ -183,11 +183,11 @@ class d3blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(data=data, n=n, samples=samples, date_start=date_start, date_stop=date_stop)
+        return _import_example(data=data, n=n, groups=groups, date_start=date_start, date_stop=date_stop)
 
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles', n=1000, samples=100, date_start=None, date_stop=None):
+def _import_example(data='movingbubbles', n=1000, groups=100, date_start=None, date_stop=None):
     """Import example dataset from github source.
 
     Description
@@ -215,7 +215,7 @@ def _import_example(data='movingbubbles', n=1000, samples=100, date_start=None, 
     if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
     if data=='random_time':
-        return generate_data_with_random_datetime(n, samples=samples, date_start=date_start, date_stop=date_stop)
+        return generate_data_with_random_datetime(n, groups=groups, date_start=date_start, date_stop=date_stop)
 
     if url is None:
         logger.info('Nothing to download.')
@@ -244,15 +244,15 @@ def _import_example(data='movingbubbles', n=1000, samples=100, date_start=None, 
 
 
 # %%
-def generate_data_with_random_datetime(n=1000, samples=100, date_start=None, date_stop=None):
+def generate_data_with_random_datetime(n=1000, groups=100, date_start=None, date_stop=None):
     """Generate random time data.
 
     Parameters
     ----------
     n : int, (default: 1000).
         Number of events or data points.
-    samples : int, (default: 1000).
-        Number of unique samples.
+    groups : int, (default: 1000).
+        Number of unique groups.
     date_start : str, (default: None)
         "1-1-2000 00:00:00" : start date
     date_stop : str, (default: None)
@@ -277,7 +277,8 @@ def generate_data_with_random_datetime(n=1000, samples=100, date_start=None, dat
 
     # Generate random timestamps with catagories and sample ids
     for i in range(0, df.shape[0]):
-        df['sample_id'].iloc[i] = random.randint(0, samples)
+        # df['sample_id'].iloc[i] = random.randint(0, groups)
+        df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, groups))))
         df['state'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
         df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random())
     df['datetime'] = pd.to_datetime(df['datetime'])
