@@ -69,7 +69,7 @@ class d3blocks():
         None.
 
         """
-        if note is None: note=("This is a simulation of %s groups across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(df.shape[0]))
+        if note is None: note=("This is a simulation of %s groups across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df)))
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
