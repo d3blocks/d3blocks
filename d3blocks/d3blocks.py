@@ -68,6 +68,13 @@ class d3blocks():
         -------
         None.
 
+        Examples
+        --------
+        >>> from d3blocks import d3blocks
+        >>> d3 = d3blocks()
+        >>> df = d3.import_example(data='random_time')
+        >>> d3.movingbubbles(df)
+
         """
         if note is None: note=("This is a simulation of %s groups across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df)))
         self.config['chart'] ='movingbubbles'
