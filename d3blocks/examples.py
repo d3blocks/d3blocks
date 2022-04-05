@@ -17,7 +17,7 @@ df = d3.import_example(data='random_time', n=10000, groups=1000, date_start="1-1
 # df = d3.import_example(data='random_time', n=1000)
 
 # # Compute delta
-# df = d3.compute_delta(df, sample_id='sample_id', datetime='datetime', y='category')
+# df = d3.preprocessing(df, sample_id='sample_id', datetime='datetime', state='state')
 # d3.labels
 
 # Make the moving bubbles

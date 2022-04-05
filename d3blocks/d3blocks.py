@@ -84,8 +84,8 @@ class d3blocks():
         self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
 
         # Compute delta
-        if isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-            df = self.compute_delta(df, sample_id=sample_id, datetime=datetime, state=state)
+        if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
+            df = self.preprocessing(df, sample_id=sample_id, datetime=datetime, state=state)
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
             self.set_label_properties(df[state])
@@ -102,26 +102,12 @@ class d3blocks():
             # Sleeping is required to pevent overlapping windows
             webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
 
-    def compute_delta(self, df, sample_id, datetime, state):
+    def preprocessing(self, df, sample_id, datetime, state):
         logger.info('Compute time delta.')
         # Compute delta
-        df = Movingbubbles.compute_delta(df, sample_id, datetime)
-        # Set default label properties
-        self.set_label_properties(df[state].values)
+        df, self.labels = Movingbubbles.preprocessing(df, sample_id, datetime, state, cmap=self.config['cmap'])
         # Return
         return df
-
-    def set_label_properties(self, y):
-        logger.info('Extracting label properties')
-        # Get unique categories
-        uiy = np.unique(y)
-        # Create unique colors
-        hexcolors = colourmap.generate(len(uiy), cmap=self.config['cmap'], scheme='hex')
-        # Make dict with properties
-        labels = {}
-        for i, cat in enumerate(uiy):
-            labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
-        self.labels = labels
 
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""

@@ -7,6 +7,29 @@ from tqdm import tqdm
 import os
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
+import colourmap
+
+
+def preprocessing(df, sample_id, datetime, state, cmap='Set1'):
+    print('Compute time delta.')
+    # Compute delta
+    df = compute_delta(df, sample_id, datetime)
+    # Set default label properties
+    labels = set_label_properties(df[state].values, cmap=cmap)
+    # Return
+    return df, labels
+
+def set_label_properties(state, cmap='Set1'):
+    print('Extracting label properties')
+    # Get unique categories
+    uiy = np.unique(state)
+    # Create unique colors
+    hexcolors = colourmap.generate(len(uiy), cmap=cmap, scheme='hex')
+    # Make dict with properties
+    labels = {}
+    for i, cat in enumerate(uiy):
+        labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
+    return labels
 
 def compute_delta(df, sample_id, datetime):
     """Compute date time delta.
@@ -67,9 +90,9 @@ def show(df, config, labels=None):
     None.
 
     """
-    if not isinstance(df, pd.DataFrame):
-        write_html(df, config)
-        return config
+    # if not isinstance(df, pd.DataFrame):
+    #     write_html(df, config)
+    #     return config
 
     if not np.any(df.columns=='delta'):
         raise Exception('Column "delta" is missing in dataFrame of type datetime.')
