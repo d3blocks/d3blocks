@@ -18,8 +18,8 @@ Example
 -------
 >>> from d3blocks import d3blocks
 >>> d3 = d3blocks()
->>> X = d3.import_example(data='movingbubbles')
->>> d3.movingbubbles(X)
+>>> df = d3.import_example(data='random_time')
+>>> d3.movingbubbles(df)
 
 References
 ----------
