@@ -74,7 +74,8 @@ def show(df, config, labels=None):
     if not np.any(df.columns=='delta'):
         raise Exception('Column "delta" is missing in dataFrame of type datetime.')
     if config['center'] is None:
-        config['center'] = [*labels.keys()][0]
+        # config['center'] = [*labels.keys()][0]
+        config['center'] = ""
     # Extract minutes and days
     if config['reset_time']=='day':
         df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
@@ -111,9 +112,13 @@ def show(df, config, labels=None):
     config['act_counts'] = act_counts
 
     # Define the starting day, hour, minute
-    config['start_hour'] = df[config['columns']['datetime']].sort_values().dt.hour[0]
-    config['start_minute'] = df[config['columns']['datetime']].sort_values().dt.minute[0]
-    config['start_day'] = df[config['columns']['datetime']].sort_values().dt.day[0]
+    config['start_hour'] = df[config['columns']['datetime']].dt.hour[0]
+    config['start_minute'] = df[config['columns']['datetime']].dt.minute[0]
+    config['start_day'] = df[config['columns']['datetime']].dt.day[0]
+
+    datestart = df[config['columns']['datetime']].iloc[0]
+    datestop = df[config['columns']['datetime']].iloc[-1]
+    config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart+(datestop-datestart)) 
 
     # Write to HTML
     write_html(X, config)
@@ -146,6 +151,7 @@ def write_html(X, config, overwrite=True):
         'ACT_CODES': config['act_codes'],
         'ACT_COUNTS': config['act_counts'],
         'SPEED': config['speed'],
+        'DAMPER': config['damper'],
         'NOTE': config['note'],
         'START_HOUR_MIN': config['start_hour'] + (config['start_minute'] / 60),
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),

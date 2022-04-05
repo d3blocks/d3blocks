@@ -303,11 +303,13 @@ function tick(e) {
 	var curr_act = o.act;
 	
 	// Make sleep more sluggish moving.
-	if (curr_act == "0") {
-		var damper = 0.6;
-	} else {
-		var damper = 1;
-	}
+	var damper = {{ DAMPER }};
+	
+	//if (curr_act == "0") {
+	//	var damper = 0.6;
+	//} else {
+	//	var damper = 1;
+	//}
 	o.color = color(curr_act);
 	o.y += (foci[curr_act].y - o.y) * k * damper;
 	o.x += (foci[curr_act].x - o.x) * k * damper;
@@ -420,7 +422,7 @@ function readablePercent(n) {
 }
 
 
-// Minutes to time of day. Data is minutes from 4am.
+// Minutes to time of day. Data is minutes from first date time point in data
 function minutesToTime(m) {
 	var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
 	var hh = Math.floor(minutes / 60);

@@ -39,7 +39,7 @@ class d3blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -48,6 +48,8 @@ class d3blocks():
             Input data.
         center : String, (default: None)
             Center this category.
+        dampler : float, (default: 1)
+            Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.
         reset_time : String, (default: 'day')
             'day'  : Every 24h de the day start over again.
             'year' : Every 365 days the year starts over again.
@@ -77,6 +79,7 @@ class d3blocks():
         self.config['center'] = center
         self.config['reset_time'] = reset_time
         self.config['speed'] = speed
+        self.config['damper'] = damper
         self.config['note'] = note
         self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
 
@@ -158,7 +161,7 @@ class d3blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles', n=1000, groups=100, date_start=None, date_stop=None):
+    def import_example(self, data='movingbubbles', n=10000, groups=1000, date_start=None, date_stop=None):
         """Import example dataset from github source.
 
         Description
@@ -187,7 +190,7 @@ class d3blocks():
 
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles', n=1000, groups=100, date_start=None, date_stop=None):
+def _import_example(data='movingbubbles', n=10000, groups=1000, date_start=None, date_stop=None):
     """Import example dataset from github source.
 
     Description
@@ -244,12 +247,12 @@ def _import_example(data='movingbubbles', n=1000, groups=100, date_start=None, d
 
 
 # %%
-def generate_data_with_random_datetime(n=1000, groups=100, date_start=None, date_stop=None):
+def generate_data_with_random_datetime(n=10000, groups=1000, date_start=None, date_stop=None):
     """Generate random time data.
 
     Parameters
     ----------
-    n : int, (default: 1000).
+    n : int, (default: 10000).
         Number of events or data points.
     groups : int, (default: 1000).
         Number of unique groups.
@@ -277,8 +280,8 @@ def generate_data_with_random_datetime(n=1000, groups=100, date_start=None, date
 
     # Generate random timestamps with catagories and sample ids
     for i in range(0, df.shape[0]):
-        # df['sample_id'].iloc[i] = random.randint(0, groups)
-        df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, groups))))
+        df['sample_id'].iloc[i] = random.randint(0, groups)
+        # df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, groups))))
         df['state'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
         df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random())
     df['datetime'] = pd.to_datetime(df['datetime'])
