@@ -8,7 +8,7 @@ from tqdm import tqdm
 import zipfile
 import tempfile
 import webbrowser
-import d3blocks.Movingbubbles as Movingbubbles
+import Movingbubbles as Movingbubbles
 import random
 import time
 import colourmap
@@ -26,7 +26,7 @@ logger = logging.getLogger()
 class d3blocks():
     """d3blocks."""
 
-    def __init__(self, verbose=20):
+    def __init__(self, cmap='Set1', verbose=20):
         """Initialize d3blocks with user-defined parameters."""
         # Clean
         self._clean(clean_config=True)
@@ -34,11 +34,12 @@ class d3blocks():
         library_compatibility_checks()
         # Initialize empty config
         self.config = {}
+        self.config['cmap'] = cmap
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', y='category', center=None, reset_time='day', figsize=(780, 800), title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -66,6 +67,7 @@ class d3blocks():
         None.
 
         """
+        if note is None: note=("This is a simulation of %s samples across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(df.shape[0]))
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -74,13 +76,16 @@ class d3blocks():
         self.config['overwrite'] = overwrite
         self.config['center'] = center
         self.config['reset_time'] = reset_time
-        
+        self.config['speed'] = speed
+        self.config['note'] = note
+        self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
+
         # Compute delta
-        if isinstance(df, pd.DataFrame) and np.any(df.columns==y) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-            df = self.compute_delta(df, sample_id=sample_id, datetime=datetime, y=y)
+        if isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
+            df = self.compute_delta(df, sample_id=sample_id, datetime=datetime, state=state)
         # Set label properties
-        if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==y):
-            self.set_label_properties(df[y])
+        if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
+            self.set_label_properties(df[state])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -94,12 +99,12 @@ class d3blocks():
             # Sleeping is required to pevent overlapping windows
             webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
 
-    def compute_delta(self, df, sample_id, datetime, y):
+    def compute_delta(self, df, sample_id, datetime, state):
         logger.info('Compute time delta.')
         # Compute delta
         df = Movingbubbles.compute_delta(df, sample_id, datetime)
         # Set default label properties
-        self.set_label_properties(df[y].values)
+        self.set_label_properties(df[state].values)
         # Return
         return df
 
@@ -108,11 +113,11 @@ class d3blocks():
         # Get unique categories
         uiy = np.unique(y)
         # Create unique colors
-        hexcolors = colourmap.generate(len(uiy), cmap='Set1', scheme='hex')
+        hexcolors = colourmap.generate(len(uiy), cmap=self.config['cmap'], scheme='hex')
         # Make dict with properties
         labels = {}
         for i, cat in enumerate(uiy):
-            labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat}
+            labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
         self.labels = labels
 
     def _clean(self, clean_config=True):
@@ -267,13 +272,13 @@ def generate_data_with_random_datetime(n=1000, samples=100, date_start=None, dat
         logger.info('Date start is set to %s' %(date_stop))
 
     # Create empty dataframe
-    df = pd.DataFrame(columns=['datetime', 'sample_id', 'category'], data=np.array([[None, None, None]] * n))
+    df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
     location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Travel']
 
     # Generate random timestamps with catagories and sample ids
     for i in range(0, df.shape[0]):
         df['sample_id'].iloc[i] = random.randint(0, samples)
-        df['category'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
+        df['state'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
         df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random())
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df.sort_values(by="datetime")

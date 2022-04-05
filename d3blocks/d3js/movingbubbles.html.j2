@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-<title>{{ title }}</title>
+<title>{{ TITLE }}</title>
 
 <style type="text/css">
 {% include "movingbubbles.style.css" %}
@@ -21,7 +21,7 @@
 <body>
     <div id="main-wrapper">
     <div id="sidebar">
-    <div id="current_time">4:00am</div>
+    <div id="current_time">{{ START_TIME }}</div>
     
     <div id="speed">
         <div class="togglebutton slow current" data-val="slow">Slow</div>
@@ -32,7 +32,7 @@
 
     <div id="note"></div>
         <div id="cite">
-        This is a simulation of 1,000 people's average day. It's based on 2014 data from the <a href="http://www.bls.gov/tus/">American Time Use Survey</a>, made way more accessible by the <a href="https://www.atusdata.org/">ATUS Extract Builder</a>.
+        {{ NOTE }}
     </div>
 
     </div>
@@ -46,8 +46,8 @@
 
 var USER_SPEED = "slow";
 
-var width = {{ width }},
-    height = {{ height }},
+var width = {{ WIDTH }},
+    height = {{ HEIGHT }},
 	padding = 1,
 	maxRadius = 3;
 	// color = d3.scale.category10();
@@ -55,31 +55,34 @@ var width = {{ width }},
 var sched_objs = [],
 	curr_minute = 0;
 
-var act_codes = [
-	{"index": "0", "short": "Sleeping", "desc": "Sleeping"},
-	{"index": "1", "short": "Personal Care", "desc": "Personal Care"},
-	{"index": "2", "short": "Eating & Drinking", "desc": "Eating and Drinking"},
-	{"index": "3", "short": "Education", "desc": "Education"},
-	{"index": "4", "short": "Work", "desc": "Work and Work-Related Activities"},
-	{"index": "5", "short": "Housework", "desc": "Household Activities"},
-	{"index": "6", "short": "Household Care", "desc": "Caring for and Helping Household Members"},
-	{"index": "7", "short": "Non-Household Care", "desc": "Caring for and Helping Non-Household Members"},
-	{"index": "8", "short": "Shopping", "desc": "Consumer Purchases"},
-	{"index": "9", "short": "Pro. Care Services", "desc": "Professional and Personal Care Services"},
-	{"index": "10", "short": "Leisure", "desc": "Socializing, Relaxing, and Leisure"},
-	{"index": "11", "short": "Sports", "desc": "Sports, Exercise, and Recreation"},
-	{"index": "12", "short": "Religion", "desc": "Religious and Spiritual Activities"},
-	{"index": "13", "short": "Volunteering", "desc": "Volunteer Activities"},
-	{"index": "14", "short": "Phone Calls", "desc": "Telephone Calls"},
-	{"index": "15", "short": "Misc.", "desc": "Other"},
-	{"index": "16", "short": "Traveling", "desc": "Traveling"},
-];
+var act_codes = {{ ACT_CODES }};
+
+//var act_codes = [
+//	{"index": "0", "short": "Sleeping", "desc": "Sleeping"},
+//	{"index": "1", "short": "Personal Care", "desc": "Personal Care"},
+//	{"index": "2", "short": "Eating & Drinking", "desc": "Eating and Drinking"},
+//	{"index": "3", "short": "Education", "desc": "Education"},
+//	{"index": "4", "short": "Work", "desc": "Work and Work-Related Activities"},
+//	{"index": "5", "short": "Housework", "desc": "Household Activities"},
+//	{"index": "6", "short": "Household Care", "desc": "Caring for and Helping Household Members"},
+//	{"index": "7", "short": "Non-Household Care", "desc": "Caring for and Helping Non-Household Members"},
+//	{"index": "8", "short": "Shopping", "desc": "Consumer Purchases"},
+//	{"index": "9", "short": "Pro. Care Services", "desc": "Professional and Personal Care Services"},
+//	{"index": "10", "short": "Leisure", "desc": "Socializing, Relaxing, and Leisure"},
+//	{"index": "11", "short": "Sports", "desc": "Sports, Exercise, and Recreation"},
+//	{"index": "12", "short": "Religion", "desc": "Religious and Spiritual Activities"},
+//	{"index": "13", "short": "Volunteering", "desc": "Volunteer Activities"},
+//	{"index": "14", "short": "Phone Calls", "desc": "Telephone Calls"},
+//	{"index": "15", "short": "Misc.", "desc": "Other"},
+//	{"index": "16", "short": "Traveling", "desc": "Traveling"},
+//];
 
 // Used for percentages by minute
-var act_counts = { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0 };
+//var act_counts = { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0 };
+var act_counts = {{ ACT_COUNTS }};
 
-
-var speeds = { "slow": 1000, "medium": 200, "fast": 50 };
+//var speeds = { "slow": 1000, "medium": 200, "fast": 50 };
+var speeds = {{ SPEED }};
 
 
 var time_notes = [
@@ -98,7 +101,7 @@ var time_notes = [
 var notes_index = 0;
 
 
-var center_act = {{ center }},
+var center_act = {{ CENTER }},
 	center_pt = { "x": 380, "y": 365 };
 
 
@@ -374,26 +377,28 @@ d3.selectAll(".togglebutton")
 
 
 function color(activity) {
+
+	var colorByActivity = {{ COLORBYACTIVITY }}
 	
-	var colorByActivity = {
-		"0": "#e0d400",
-		"1": "#1c8af9",
-		"2": "#51BC05",
-		"3": "#FF7F00",
-		"4": "#DB32A4",
-		"5": "#00CDF8",
-		"6": "#E63B60",
-		"7": "#8E5649",
-		"8": "#68c99e",
-		"9": "#a477c8",
-		"10": "#5C76EC",
-		"11": "#E773C3",
-		"12": "#799fd2",
-		"13": "#038a6c",
-		"14": "#cc87fa",
-		"15": "#ee8e76",
-		"16": "#bbbbbb",
-	}
+//	var colorByActivity = {
+//		"0": "#e0d400",
+//		"1": "#1c8af9",
+//		"2": "#51BC05",
+//		"3": "#FF7F00",
+//		"4": "#DB32A4",
+//		"5": "#00CDF8",
+//		"6": "#E63B60",
+//		"7": "#8E5649",
+//		"8": "#68c99e",
+//		"9": "#a477c8",
+//		"10": "#5C76EC",
+//		"11": "#E773C3",
+//		"12": "#799fd2",
+//		"13": "#038a6c",
+//		"14": "#cc87fa",
+//		"15": "#ee8e76",
+//		"16": "#bbbbbb",
+//	}
 	
 	return colorByActivity[activity];
 	
@@ -417,27 +422,47 @@ function readablePercent(n) {
 
 // Minutes to time of day. Data is minutes from 4am.
 function minutesToTime(m) {
-	var minutes = (m + 4*60) % 1440;
+	var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
 	var hh = Math.floor(minutes / 60);
-	var ampm;
-	if (hh > 12) {
-		hh = hh - 12;
-		ampm = "pm";
-	} else if (hh == 12) {
-		ampm = "pm";
+	if (hh > 24) {
+		hh = hh - 24;
+	} else if (hh == 24) {
 	} else if (hh == 0) {
-		hh = 12;
-		ampm = "am";
-	} else {
-		ampm = "am";
+		hh = 0;
 	}
 	var mm = minutes % 60;
 	if (mm < 10) {
 		mm = "0" + mm;
 	}
+	if (hh < 10) {
+		hh = "0" + hh;
+	}
 	
-	return hh + ":" + mm + ampm
+	return hh + ":" + mm
 }
+
+//function minutesToTime(m) {
+//	var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
+//	var hh = Math.floor(minutes / 60);
+//	var ampm;
+//	if (hh > 12) {
+//		hh = hh - 12;
+//		ampm = "pm";
+//	} else if (hh == 12) {
+//		ampm = "pm";
+//	} else if (hh == 0) {
+//		hh = 12;
+//		ampm = "am";
+//	} else {
+//		ampm = "am";
+//	}
+//	var mm = minutes % 60;
+//	if (mm < 10) {
+//		mm = "0" + mm;
+//	}
+//	
+//	return hh + ":" + mm + ampm
+//}
 
 			
 

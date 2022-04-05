@@ -4,24 +4,24 @@
 # print(d3blocks.__version__)
 
 # %%
-from d3blocks import d3blocks
-d3 = d3blocks()
-X = d3.import_example(data='movingbubbles')
-d3.movingbubbles(X, filepath='c://temp/movingbubbles_original.html', center='Traveling')
+# from d3blocks import d3blocks
+# d3 = d3blocks()
+# X = d3.import_example(data='movingbubbles')
+# d3.movingbubbles(X, filepath='c://temp/movingbubbles_original.html', center='Traveling')
 
 # %% Create random dataset
 from d3blocks import d3blocks
-d3 = d3blocks()
+d3 = d3blocks(cmap='Set1')
 
-df = d3.import_example(data='random_time', n=1000, samples=500, date_start="1-1-2000 00:00:00", date_stop="1-1-2000 23:59:59")
+df = d3.import_example(data='random_time', n=1000, samples=100, date_start="1-1-2000 02:10:05", date_stop="1-1-2000 23:59:59")
 # df = d3.import_example(data='random_time', n=1000)
 
 # # Compute delta
 # df = d3.compute_delta(df, sample_id='sample_id', datetime='datetime', y='category')
 # d3.labels
-# 
+
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', y='category', sample_id='sample_id', center='Traveling', filepath='c://temp/movingbubbles.html')
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Home', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 
@@ -30,7 +30,7 @@ d3.movingbubbles(df, datetime='datetime', y='category', sample_id='sample_id', c
 
 # %%
 
-X = ['0,10,1,10,2,10,3,10,4,10,5,10,6,10,7,10,8,10,9,10,10,10', '0,20,1,20,2,20,3,20,4,20,5,20']
+X = ['0,10,1,10,2,10,3,10,4,10,5,10,6,10,7,10,8,10,9,10,10,10,0,10', '0,20,1,20,2,20,3,20,4,20,5,20,0,20']
 d3.movingbubbles(X, filepath='c://temp/movingbubbles.html', center='Traveling')
 
 # %%
