@@ -262,7 +262,11 @@ def generate_data_with_random_datetime(n=10000, groups=1000, date_start=None, da
 
     # Create empty dataframe
     df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
-    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Travel']
+    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Work', 'Eating', 'Bored']
+    # Take random few columns
+    location_types = location_types[0:random.randint(2, len(location_types))]
+    # Always add the column Travel
+    location_types = location_types + ['Travel']
 
     # Generate random timestamps with catagories and sample ids
     for i in range(0, df.shape[0]):
