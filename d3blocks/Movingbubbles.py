@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from datetime import datetime
 import re
 from tqdm import tqdm
 import os
@@ -192,6 +193,44 @@ def write_html(X, config, overwrite=True):
     with open(index_file, "w", encoding="utf-8") as f:
         f.write(index_template.render(content))
 
+def normalize_time(df, dt_format='%Y-%m-%d %H:%M:%S'):
+    """Normalize time per sample_id.
+
+    Parameters
+    ----------
+    df : Input DataFrame
+        Dataframe containing the following columns.
+        'sample_id' : Sample id
+        'datetime' : Datetime object (must be already in the form dt_format).
+    dt_format : str, optional
+        '%Y-%m-%d %H:%M:%S'.
+
+    Returns
+    -------
+    df : DataFrame
+        Input Dataframe containing one extra column with normalized time.
+        'datetime_norm'
+
+    """
+    # Get unique
+    uis = df['sample_id'].unique()
+    # Add column with normalized time
+    df['datetime_norm'] = df['datetime'] - df['datetime']
+    # Set a default start point.
+    timenow = datetime.strptime('1980-01-01 00:00:00', dt_format)
+
+    # Normalize per unique sample id.
+    for s in uis:
+        # Get data for specific sample-id
+        idx = df['sample_id']==s
+        dfs = df.loc[idx, :]
+        # Normalize time per unique sample. Each sample will start at timenow.
+        df.loc[idx, 'datetime_norm'] = timenow + (dfs['datetime'].loc[idx] - dfs['datetime'].loc[idx].min())
+
+    # Set datetime
+    df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format)
+    # Return
+    return df
 
 def import_example(filepath):
     print('Reading %s' %(filepath))

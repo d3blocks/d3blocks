@@ -13,7 +13,7 @@
 from d3blocks import d3blocks
 d3 = d3blocks(cmap='Set1')
 
-df = d3.import_example(data='random_time', n=1000, groups=1000, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example(data='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
 # df = d3.import_example(data='random_time', n=1000)
 
 # # Compute delta
@@ -24,8 +24,13 @@ df = d3.import_example(data='random_time', n=1000, groups=1000, date_start="1-1-
 d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
-
 # %%
+# Import example
+df = d3.import_example(data='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
+# Normalize the time per sample id.
+df = d3.normalize_time(df)
+# Make the moving bubbles
+d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 # %%

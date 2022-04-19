@@ -76,7 +76,7 @@ class d3blocks():
         >>> d3.movingbubbles(df)
 
         """
-        if note is None: note=("This is a simulation of %s groups across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df)))
+        if note is None: note=("This is a simulation of [%s] unique classes across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df)))
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -114,6 +114,28 @@ class d3blocks():
         # Compute delta
         df, self.labels = Movingbubbles.preprocessing(df, sample_id, datetime, state, cmap=self.config['cmap'])
         # Return
+        return df
+
+    def normalize_time(self, df, dt_format='%Y-%m-%d %H:%M:%S'):
+        """Normalize time per sample_id.
+
+        Parameters
+        ----------
+        df : Input DataFrame
+            Dataframe containing the following columns.
+            'sample_id' : Sample id
+            'datetime' : Datetime object (must be already in the form dt_format).
+        dt_format : str, optional
+            '%Y-%m-%d %H:%M:%S'.
+
+        Returns
+        -------
+        df : DataFrame
+            Input Dataframe containing one extra column with normalized time.
+            'datetime_norm'
+
+        """
+        df = Movingbubbles.normalize_time(df, dt_format='%Y-%m-%d %H:%M:%S')
         return df
 
     def _clean(self, clean_config=True):
@@ -154,7 +176,7 @@ class d3blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles', n=10000, groups=1000, date_start=None, date_stop=None):
+    def import_example(self, data='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None):
         """Import example dataset from github source.
 
         Description
@@ -179,11 +201,11 @@ class d3blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(data=data, n=n, groups=groups, date_start=date_start, date_stop=date_stop)
+        return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop)
 
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles', n=10000, groups=1000, date_start=None, date_stop=None):
+def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None):
     """Import example dataset from github source.
 
     Description
@@ -211,7 +233,7 @@ def _import_example(data='movingbubbles', n=10000, groups=1000, date_start=None,
     if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
     if data=='random_time':
-        return generate_data_with_random_datetime(n, groups=groups, date_start=date_start, date_stop=date_stop)
+        return generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop)
 
     if url is None:
         logger.info('Nothing to download.')
@@ -240,15 +262,15 @@ def _import_example(data='movingbubbles', n=10000, groups=1000, date_start=None,
 
 
 # %%
-def generate_data_with_random_datetime(n=10000, groups=1000, date_start=None, date_stop=None):
+def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None):
     """Generate random time data.
 
     Parameters
     ----------
     n : int, (default: 10000).
         Number of events or data points.
-    groups : int, (default: 1000).
-        Number of unique groups.
+    c : int, (default: 1000).
+        Number of unique classes.
     date_start : str, (default: None)
         "1-1-2000 00:00:00" : start date
     date_stop : str, (default: None)
@@ -277,8 +299,8 @@ def generate_data_with_random_datetime(n=10000, groups=1000, date_start=None, da
 
     # Generate random timestamps with catagories and sample ids
     for i in range(0, df.shape[0]):
-        df['sample_id'].iloc[i] = random.randint(0, groups)
-        # df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, groups))))
+        df['sample_id'].iloc[i] = random.randint(0, c)
+        # df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, c))))
         df['state'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
         df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random())
     df['datetime'] = pd.to_datetime(df['datetime'])
