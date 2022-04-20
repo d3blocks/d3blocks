@@ -2,7 +2,8 @@
 
 import numpy as np
 import pandas as pd
-from datetime import datetime
+import datetime as dt
+# from datetime import datetime as dt
 import re
 from tqdm import tqdm
 import os
@@ -11,10 +12,11 @@ from pathlib import Path
 import colourmap
 
 
-def preprocessing(df, sample_id, datetime, state, cmap='Set1'):
+def compute_time_delta(df, sample_id, datetime, state, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S'):
     print('Compute time delta.')
+    df.reset_index(drop=True, inplace=True)
     # Compute delta
-    df = compute_delta(df, sample_id, datetime)
+    df = compute_delta(df, sample_id, datetime, dt_format=dt_format)
     # Set default label properties
     labels = set_label_properties(df[state].values, cmap=cmap)
     # Return
@@ -32,16 +34,17 @@ def set_label_properties(state, cmap='Set1'):
         labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
     return labels
 
-def compute_delta(df, sample_id, datetime):
+
+def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
     """Compute date time delta.
 
     Description
     -----------
     The input for movingbubbles is the difference between two time points.
     The following steps are taken to compute the delta:
-        1. Per sample_id or cases/samples/events do the following:
-            a. Sort on datetime
-            b. Substract the two following time points.
+        1. Take evenst from an unique sample id
+        2. Sort on datetime
+        3. Compute stepwise the difference (delta) between two adjacent time points.
 
     Parameters
     ----------
@@ -54,26 +57,36 @@ def compute_delta(df, sample_id, datetime):
 
     Returns
     -------
-    df : TYPE
+    df : pd.DataFrame()
         One extra column is added that contains the time delta.
 
     """
     # Use copy of dataframe
     df = df.copy()
+    # Check datetime format
+    if not isinstance(df[datetime][0], dt.date):
+        print('Set datetime format to [%s]' %(dt_format))
+        df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
+
     # Initialize empty delta
     df['delta'] = df[datetime] - df[datetime]
     # Sort datetime
-    df = df.sort_values(by=datetime)
+    df = df.sort_values(by=[sample_id, datetime])
     df.reset_index(inplace=True, drop=True)
     # Compute per category the delta
     for i in np.unique(df[sample_id]):
+        # Take sample id
         Iloc = df[sample_id]==i
+        # Get data
         dftmp = df.loc[Iloc, :]
-        df['delta'].loc[Iloc] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1]
+        # Store
+        df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1]
+        # df.loc[np.where(Iloc)[0][1:], 'delta'] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1].values
 
     # Set the last event at 0
     Iloc = df['delta'].isna()
-    df['delta'].loc[Iloc] = dftmp[datetime].iloc[0] - dftmp[datetime].iloc[0]
+    if np.any(Iloc):
+        df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[0] - dftmp[datetime].iloc[0]
     # Return
     return df
 
@@ -102,7 +115,8 @@ def show(df, config, labels=None):
         config['center'] = ""
     # Extract minutes and days
     if config['reset_time']=='day':
-        df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
+        # df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
+        df['time_in_state'] = df['delta'].dt.seconds.astype(int)
     elif config['reset_time']=='year':
         df['time_in_state'] = df['delta'].dt.days.astype(int)
 
@@ -142,7 +156,7 @@ def show(df, config, labels=None):
 
     datestart = df[config['columns']['datetime']].iloc[0]
     datestop = df[config['columns']['datetime']].iloc[-1]
-    config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart+(datestop-datestart)) 
+    config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
 
     # Write to HTML
     write_html(X, config)
@@ -193,44 +207,55 @@ def write_html(X, config, overwrite=True):
     with open(index_file, "w", encoding="utf-8") as f:
         f.write(index_template.render(content))
 
-def normalize_time(df, dt_format='%Y-%m-%d %H:%M:%S'):
-    """Normalize time per sample_id.
+
+def standardize(df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
+    """Standardize time per sample_id.
 
     Parameters
     ----------
     df : Input DataFrame
-        Dataframe containing the following columns.
-        'sample_id' : Sample id
-        'datetime' : Datetime object (must be already in the form dt_format).
+        Input data.
+    sample_id : str.
+        Column name of the sample identifier.
+    datetime : datetime
+        Column name of the date time.
     dt_format : str, optional
         '%Y-%m-%d %H:%M:%S'.
 
     Returns
     -------
     df : DataFrame
-        Input Dataframe containing one extra column with normalized time.
+        Dataframe with the input columns with an extra column with normalized time.
         'datetime_norm'
 
     """
     # Get unique
-    uis = df['sample_id'].unique()
+    uis = df[sample_id].unique()
+    df.reset_index(drop=True, inplace=True)
+
+    # Check datetime format
+    if not isinstance(df[datetime][0], dt.date):
+        print('Set datetime format to [%s]' %(dt_format))
+        df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
+
     # Add column with normalized time
-    df['datetime_norm'] = df['datetime'] - df['datetime']
+    df['datetime_norm'] = df[datetime] - df[datetime]
     # Set a default start point.
-    timenow = datetime.strptime('1980-01-01 00:00:00', dt_format)
+    timenow = dt.datetime.strptime('1980-01-01 00:00:00', dt_format)
 
     # Normalize per unique sample id.
     for s in uis:
         # Get data for specific sample-id
-        idx = df['sample_id']==s
+        idx = df[sample_id]==s
         dfs = df.loc[idx, :]
         # Normalize time per unique sample. Each sample will start at timenow.
-        df.loc[idx, 'datetime_norm'] = timenow + (dfs['datetime'].loc[idx] - dfs['datetime'].loc[idx].min())
+        df.loc[idx, 'datetime_norm'] = timenow + (dfs[datetime].loc[idx] - dfs[datetime].loc[idx].min())
 
     # Set datetime
     df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format)
     # Return
     return df
+
 
 def import_example(filepath):
     print('Reading %s' %(filepath))

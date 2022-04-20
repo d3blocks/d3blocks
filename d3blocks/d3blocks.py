@@ -39,7 +39,7 @@ class d3blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -89,10 +89,11 @@ class d3blocks():
         self.config['damper'] = damper
         self.config['note'] = note
         self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
+        self.config['dt_format'] = dt_format
 
         # Compute delta
         if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-            df = self.preprocessing(df, sample_id=sample_id, datetime=datetime, state=state)
+            df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, state=state, dt_format=dt_format)
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
             self.set_label_properties(df[state])
@@ -108,35 +109,38 @@ class d3blocks():
         if self.config['showfig']:
             # Sleeping is required to pevent overlapping windows
             webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
-
-    def preprocessing(self, df, sample_id, datetime, state):
-        logger.info('Compute time delta.')
-        # Compute delta
-        df, self.labels = Movingbubbles.preprocessing(df, sample_id, datetime, state, cmap=self.config['cmap'])
         # Return
         return df
 
-    def normalize_time(self, df, dt_format='%Y-%m-%d %H:%M:%S'):
+    def compute_time_delta(self, df, sample_id='sample_id', datetime='datetime', state='state', dt_format='%Y-%m-%d %H:%M:%S'):
+        logger.info('Compute time delta.')
+        # Compute delta
+        df, self.labels = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'])
+        # Return
+        return df
+
+    def standardize(self, df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
         """Normalize time per sample_id.
 
         Parameters
         ----------
         df : Input DataFrame
-            Dataframe containing the following columns.
-            'sample_id' : Sample id
-            'datetime' : Datetime object (must be already in the form dt_format).
+            Input data.
+        sample_id : str.
+            Column name of the sample identifier.
+        datetime : datetime
+            Column name of the date time.
         dt_format : str, optional
             '%Y-%m-%d %H:%M:%S'.
 
         Returns
         -------
         df : DataFrame
-            Input Dataframe containing one extra column with normalized time.
+            Dataframe with the input columns with an extra column with normalized time.
             'datetime_norm'
 
         """
-        df = Movingbubbles.normalize_time(df, dt_format='%Y-%m-%d %H:%M:%S')
-        return df
+        return Movingbubbles.standardize(df, sample_id=sample_id, datetime=datetime, dt_format=dt_format)
 
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
@@ -307,6 +311,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     df = df.sort_values(by="datetime")
     df.reset_index(inplace=True, drop=True)
     return df
+
 
 def str_time_prop(start, end, time_format, prop):
     """Get a time at a proportion of a range of two formatted times.
