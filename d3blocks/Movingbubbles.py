@@ -14,7 +14,6 @@ import colourmap
 
 def compute_time_delta(df, sample_id, datetime, state, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S'):
     print('Compute time delta.')
-    df.reset_index(drop=True, inplace=True)
     # Compute delta
     df = compute_delta(df, sample_id, datetime, dt_format=dt_format)
     # Set default label properties
@@ -63,6 +62,7 @@ def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
     """
     # Use copy of dataframe
     df = df.copy()
+    df[sample_id] = df[sample_id].astype(str)
     # Check datetime format
     if not isinstance(df[datetime][0], dt.date):
         print('Set datetime format to [%s]' %(dt_format))
@@ -74,7 +74,7 @@ def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
     df = df.sort_values(by=[sample_id, datetime])
     df.reset_index(inplace=True, drop=True)
     # Compute per category the delta
-    for i in np.unique(df[sample_id]):
+    for i in tqdm(np.unique(df[sample_id])):
         # Take sample id
         Iloc = df[sample_id]==i
         # Get data
@@ -122,7 +122,7 @@ def show(df, config, labels=None):
 
     # Transform dataframe into input form for d3
     X = []
-    sid = np.array(list(map(lambda x: labels.get(x)['id'], df['state'].values)))
+    sid = np.array(list(map(lambda x: labels.get(x)['id'], df[config['columns']['state']].values)))
     uiid = np.unique(df['sample_id'])
     for i in uiid:
         Iloc=df['sample_id']==i
@@ -185,6 +185,7 @@ def write_html(X, config, overwrite=True):
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
         'CENTER': '"' + config['center'] + '"',
+        'FONTSIZE': str(config['fontsize']) + 'px',
         'COLORBYACTIVITY': config['colorByActivity'],
         'ACT_CODES': config['act_codes'],
         'ACT_COUNTS': config['act_counts'],
@@ -229,6 +230,8 @@ def standardize(df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m
         'datetime_norm'
 
     """
+    # Use copy of dataframe
+    df = df.copy()
     # Get unique
     uis = df[sample_id].unique()
     df.reset_index(drop=True, inplace=True)
@@ -244,7 +247,7 @@ def standardize(df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m
     timenow = dt.datetime.strptime('1980-01-01 00:00:00', dt_format)
 
     # Normalize per unique sample id.
-    for s in uis:
+    for s in tqdm(uis):
         # Get data for specific sample-id
         idx = df[sample_id]==s
         dfs = df.loc[idx, :]
@@ -252,7 +255,7 @@ def standardize(df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m
         df.loc[idx, 'datetime_norm'] = timenow + (dfs[datetime].loc[idx] - dfs[datetime].loc[idx].min())
 
     # Set datetime
-    df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format)
+    df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format, errors='ignore')
     # Return
     return df
 

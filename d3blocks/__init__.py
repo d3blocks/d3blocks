@@ -1,5 +1,5 @@
-from d3blocks import d3blocks
-import Movingbubbles as Movingbubbles
+from d3blocks.d3blocks import d3blocks
+import d3blocks.Movingbubbles as Movingbubbles
 
 __author__ = 'Erdogan Tasksen'
 __email__ = 'erdogant@gmail.com'

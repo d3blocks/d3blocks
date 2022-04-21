@@ -8,7 +8,7 @@ from tqdm import tqdm
 import zipfile
 import tempfile
 import webbrowser
-import Movingbubbles as Movingbubbles
+import d3blocks.Movingbubbles as Movingbubbles
 import random
 import time
 import colourmap
@@ -39,7 +39,7 @@ class d3blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', fontsize=14, showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -61,6 +61,8 @@ class d3blocks():
             File path to save the output
         showfig : bool, (default: True)
             Open the window to show the network.
+        fontsize : int, (default: 14)
+            Fontsize of the fonts in the circle.
         overwrite : bool, (default: True)
             Overwrite the existing html file.
 
@@ -88,6 +90,7 @@ class d3blocks():
         self.config['speed'] = speed
         self.config['damper'] = damper
         self.config['note'] = note
+        self.config['fontsize'] = fontsize
         self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
         self.config['dt_format'] = dt_format
 
@@ -96,7 +99,7 @@ class d3blocks():
             df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, state=state, dt_format=dt_format)
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
-            self.set_label_properties(df[state])
+            Movingbubbles.set_label_properties(df[state])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):

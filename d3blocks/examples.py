@@ -31,10 +31,12 @@ df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df = pd.concat([df1, df2, df3], axis=0)
 
-# Normalize the time per sample id.
+# Normalize the time per sample id and make the starting-point the same
 df_new = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+# # Compute delta (this is automatically done if not available)
+df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 # %% Create random dataset
