@@ -65,7 +65,6 @@ d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_
 
 
 # %%
-
 X = ['0,10,1,10,2,10,3,10,4,10,5,10,6,10,7,10,8,10,9,10,10,10,0,10', '0,20,1,20,2,20,3,20,4,20,5,20,0,20']
 d3.movingbubbles(X, filepath='c://temp/movingbubbles.html', center='Traveling')
 
