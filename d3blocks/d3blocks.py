@@ -8,7 +8,10 @@ from tqdm import tqdm
 import zipfile
 import tempfile
 import webbrowser
-import d3blocks.Movingbubbles as Movingbubbles
+# import d3blocks.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+import Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
 import random
 import time
 import colourmap
@@ -26,7 +29,7 @@ logger = logging.getLogger()
 class d3blocks():
     """d3blocks."""
 
-    def __init__(self, cmap='Set1', verbose=20):
+    def __init__(self, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S', verbose=20):
         """Initialize d3blocks with user-defined parameters."""
         # Clean
         self._clean(clean_config=True)
@@ -35,11 +38,63 @@ class d3blocks():
         # Initialize empty config
         self.config = {}
         self.config['cmap'] = cmap
+        self.config['dt_format'] = dt_format
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # Set the logger
         set_logger(verbose=verbose)
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='movingbubbles', filepath='movingbubbles.html', fontsize=14, showfig=True, overwrite=True):
+    def timeseries(self, df, datetime=None, sort_on_date=True, title='d3blocks_Timeseries', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
+        """Create of Timeseries graph.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data.
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        fontsize : int, (default: 14)
+            Fontsize of the fonts in the circle.
+        overwrite : bool, (default: True)
+            Overwrite the existing html file.
+
+        Returns
+        -------
+        df : pd.DataFrame()
+            DataFrame.
+
+        """
+        self.config['chart'] ='timeseries'
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['fontsize'] = fontsize
+        self.config['sort_on_date'] = sort_on_date
+        self.config['columns'] = {'datetime': datetime}
+
+        # Convert to datetime
+        if datetime is not None:
+            df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
+            df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
+        else:
+            df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
+
+        # Set default label properties
+        self.labels = self.set_label_properties(df.columns.values, cmap=self.config['cmap'])
+        # Create the plot
+        self.config = Timeseries.show(df, self.config, labels=self.labels)
+        # Open the webbrowser
+        if self.config['showfig']:
+            # Sleeping is required to pevent overlapping windows
+            webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
+        # Return
+        return df
+
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', fontsize=14, showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -68,7 +123,7 @@ class d3blocks():
 
         Returns
         -------
-        None.
+        pd.DataFrame()
 
         Examples
         --------
@@ -99,11 +154,11 @@ class d3blocks():
             df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, state=state, dt_format=dt_format)
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
-            Movingbubbles.set_label_properties(df[state])
+            self.labels = self.set_label_properties(df[state], cmap=self.config['cmap'])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
-            raise Exception('Set labels is required first or specify the category.')
+            raise Exception('Set labels is required or specify the category.')
 
         # Create the plot
         self.config = Movingbubbles.show(df, self.config, self.labels)
@@ -115,10 +170,37 @@ class d3blocks():
         # Return
         return df
 
+    def set_label_properties(self, y, cmap='Set1'):
+        """Set label properties.
+
+        Parameters
+        ----------
+        y : classes
+            Class or column names.
+        cmap : str, (default: 'Set1')
+            Colormap.
+
+        Returns
+        -------
+        labels : dict()
+            Dictionary containing class information.
+
+        """
+        print('Set label properties')
+        # Get unique categories
+        uiy = np.unique(y)
+        # Create unique colors
+        hexcolors = colourmap.generate(len(uiy), cmap=cmap, scheme='hex')
+        # Make dict with properties
+        labels = {}
+        for i, cat in enumerate(uiy):
+            labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
+        return labels
+
     def compute_time_delta(self, df, sample_id='sample_id', datetime='datetime', state='state', dt_format='%Y-%m-%d %H:%M:%S'):
         logger.info('Compute time delta.')
         # Compute delta
-        df, self.labels = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'])
+        df = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'])
         # Return
         return df
 
@@ -183,7 +265,7 @@ class d3blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None):
+    def import_example(self, graph='movingbubbles', n=10000, c=1000, date_start="2000-1-1 00:00:00", date_stop="2010-1-1 23:59:59"):
         """Import example dataset from github source.
 
         Description
@@ -192,7 +274,7 @@ class d3blocks():
 
         Parameters
         ----------
-        data : str
+        graph : str
             Name of datasets
             'movingbubbles', 'random_time'
         n : int, (default: 1000).
@@ -208,11 +290,11 @@ class d3blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop)
+        return _import_example(graph=graph, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'])
 
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None):
+def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S'):
     """Import example dataset from github source.
 
     Description
@@ -221,7 +303,7 @@ def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date
 
     Parameters
     ----------
-    data : str
+    graph : str
         Name of datasets
         'movingbubbles', 'random_time'
     n : int, (default: 1000).
@@ -237,10 +319,14 @@ def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date
         Dataset containing mixed features.
 
     """
-    if data=='movingbubbles':
+    if graph=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
-    if data=='random_time':
+    elif graph=='random_time':
         return generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop)
+    elif graph=='timeseries':
+        df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
+        df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)))
+        return df
 
     if url is None:
         logger.info('Nothing to download.')
@@ -254,14 +340,14 @@ def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date
 
     # Check file exists.
     if not os.path.isfile(PATH_TO_DATA):
-        logger.info('Downloading [%s] dataset from github source..' %(data))
+        logger.info('Downloading [%s] dataset from github source..' %(graph))
         wget(url, PATH_TO_DATA)
 
     csvfile = unzip(PATH_TO_DATA, ext='.csv')
 
     # Import local dataset
-    logger.info('Import dataset [%s]' %(data))
-    if data=='movingbubbles':
+    logger.info('Import dataset [%s]' %(graph))
+    if graph=='movingbubbles':
         df = Movingbubbles.import_example(csvfile)
 
     # Return
@@ -316,7 +402,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     return df
 
 
-def str_time_prop(start, end, time_format, prop):
+def str_time_prop(start, end, dt_format, prop):
     """Get a time at a proportion of a range of two formatted times.
 
     start and end should be strings specifying times formatted in the
@@ -325,14 +411,14 @@ def str_time_prop(start, end, time_format, prop):
     start.  The returned time will be in the specified format.
     """
 
-    stime = time.mktime(time.strptime(start, time_format))
-    etime = time.mktime(time.strptime(end, time_format))
+    stime = time.mktime(time.strptime(start, dt_format))
+    etime = time.mktime(time.strptime(end, dt_format))
     ptime = stime + prop * (etime - stime)
-    return time.strftime(time_format, time.localtime(ptime))
+    return time.strftime(dt_format, time.localtime(ptime))
 
 
-def random_date(start, end, prop):
-    return str_time_prop(start, end, '%d-%m-%Y %H:%M:%S', prop)
+def random_date(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S'):
+    return str_time_prop(start, end, dt_format, prop)
 
 
 # %% Download files from github source

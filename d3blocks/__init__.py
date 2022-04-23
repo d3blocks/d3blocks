@@ -1,5 +1,8 @@
 from d3blocks.d3blocks import d3blocks
-import d3blocks.Movingbubbles as Movingbubbles
+# import d3blocks.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+import Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
 
 __author__ = 'Erdogan Tasksen'
 __email__ = 'erdogant@gmail.com'

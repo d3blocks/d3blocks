@@ -16,23 +16,20 @@ def compute_time_delta(df, sample_id, datetime, state, cmap='Set1', dt_format='%
     print('Compute time delta.')
     # Compute delta
     df = compute_delta(df, sample_id, datetime, dt_format=dt_format)
-    # Set default label properties
-    labels = set_label_properties(df[state].values, cmap=cmap)
     # Return
-    return df, labels
+    return df
 
-def set_label_properties(state, cmap='Set1'):
-    print('Extracting label properties')
-    # Get unique categories
-    uiy = np.unique(state)
-    # Create unique colors
-    hexcolors = colourmap.generate(len(uiy), cmap=cmap, scheme='hex')
-    # Make dict with properties
-    labels = {}
-    for i, cat in enumerate(uiy):
-        labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
-    return labels
-
+# def set_label_properties(state, cmap='Set1'):
+#     print('Set label properties')
+#     # Get unique categories
+#     uiy = np.unique(state)
+#     # Create unique colors
+#     hexcolors = colourmap.generate(len(uiy), cmap=cmap, scheme='hex')
+#     # Make dict with properties
+#     labels = {}
+#     for i, cat in enumerate(uiy):
+#         labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
+#     return labels
 
 def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
     """Compute date time delta.
@@ -81,7 +78,6 @@ def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
         dftmp = df.loc[Iloc, :]
         # Store
         df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1]
-        # df.loc[np.where(Iloc)[0][1:], 'delta'] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1].values
 
     # Set the last event at 0
     Iloc = df['delta'].isna()
