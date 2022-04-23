@@ -63,7 +63,7 @@ body {
 </style>
 </head>
 <body>
-<script src="https://d3js.org/d3.v3.js"></script>
+<script src="d3.v3.js"></script>
 <script>
 
 var margin = {top: 20, right: 200, bottom: 100, left: 50},
@@ -139,32 +139,35 @@ svg.append("defs")
 
 //end slider part----------------------------------------------------------------------------------- 
 
-data = ["date;Ageing;Aids;Animal Welfare;Bird Flu;BSE;Coal Pits;EU;Countryside;Crime;Defence;Drug Abuse;Economy;Education;Farming;German Reunification;GM foods;Housing;Inflation/Prices;Inner Cities;Local Govt;Low Pay;Morality;NHS;Northern Ireland;Nuclear Power;Nuclear Weapons;Pensions;Fuel Prices;Environment;The Pound;Poverty/Inequality;Privatisation;Public Services;Immigration;Scots/Welsh Assembly;Taxation;Trade Unions;Transport;Tsunami;Unemployment", "19740901;7;1;1;7;1;15;5;4;52;13;9;14;2;6;7;27;1;10;7;3;1;11;1;6;29;1;6;3;28", "19741001;4;1;1;9;1;14;9;4;52;14;11;13;3;8;7;19;1;11;4;4;1;14;1;5;26;1;4;3;27", "19771101;8;1;6;2;18;4;5;52;12;9;14;3;7;7;21;1;10;4;5;1;11;1;5;22;1;2;2;23", "19780801;6;1;6;1;19;5;3;55;11;11;17;3;7;7;15;1;8;5;4;1;13;1;5;22;1;4;2;30", "19790201;6;1;6;2;17;6;3;55;14;10;16;4;8;7;20;0;9;5;5;1;13;1;4;19;1;2;4;33", "19790401;9;1;5;3;18;6;5;52;10;1;10;17;4;8;6;19;1;9;6;6;2;11;1;5;21;1;2;1;4;32"]
+var data = ["date;Ageing;Aids;Animal Welfare;Bird Flu;BSE;Coal Pits;EU;Countryside;Crime;Defence;Drug Abuse;Economy;Education;Farming;German Reunification;GM foods;Housing;Inflation/Prices;Inner Cities;Local Govt;Low Pay;Morality;NHS;Northern Ireland;Nuclear Power;Nuclear Weapons;Pensions;Fuel Prices;Environment;The Pound;Poverty/Inequality;Privatisation;Public Services;Immigration;Scots/Welsh Assembly;Taxation;Trade Unions;Transport;Tsunami;Unemployment", "19740901;7;1;1;7;1;15;5;4;52;13;9;14;2;6;7;27;1;10;7;3;1;11;1;6;29;1;6;3;28", "19741001;4;1;1;9;1;14;9;4;52;14;11;13;3;8;7;19;1;11;4;4;1;14;1;5;26;1;4;3;27", "19771101;8;1;6;2;18;4;5;52;12;9;14;3;7;7;21;1;10;4;5;1;11;1;5;22;1;2;2;23", "19780801;6;1;6;1;19;5;3;55;11;11;17;3;7;7;15;1;8;5;4;1;13;1;5;22;1;4;2;30", "19790201;6;1;6;2;17;6;3;55;14;10;16;4;8;7;20;0;9;5;5;1;13;1;4;19;1;2;4;33", "19790401;9;1;5;3;18;6;5;52;10;1;10;17;4;8;6;19;1;9;6;6;2;11;1;5;21;1;2;1;4;32"]
 
-//d3.tsv("data.tsv", function(error, data) { 
-  color.domain(d3.keys(data[0]).filter(function(key) { // Set the domain of the color ordinal scale to be all the csv headers except "date", matching a color to an issue
-    return key !== "date"; 
-  }));
+// Get all column names except the first one
+var names = data[0].split(";").slice(1);
 
-  data.forEach(function(d) { // Make every date in the csv data a javascript date object format
-    d.date = parseDate(d.date);
-  });
+// Set the domain of the color ordinal scale to be all the csv headers except first, matching a color to an issue
+color.domain(names);
 
-  var categories = color.domain().map(function(name) { // Nest the data into an array of objects with new keys
+var categories = names.map(function(name, index) { // Nest the data into an array of objects with new keys
+  return {
+    name: name, // "name": the csv headers except date
+    values: data.map(function(line) { // "values": which has an array of the dates and ratings
+      let d = line.split(";");
+      return {
+        // Make every date in the csv data a javascript date object format
+        date: parseDate(d[0]), 
+        rating: Number(d[index]),
+      };
+    }),
+    // Initially visible (boolean)
+    visible: index === 0
+  };
+});
 
-    return {
-      name: name, // "name": the csv headers except date
-      values: data.map(function(d) { // "values": which has an array of the dates and ratings
-        return {
-          date: d.date, 
-          rating: +(d[name]),
-          };
-      }),
-      visible: (name === "Unemployment" ? true : false) // "visible": all false except for economy which is true.
-    };
-  });
-
-  xScale.domain(d3.extent(data, function(d) { return d.date; })); // extent = highest and lowest points, domain is data, range is bouding box
+// extent = highest and lowest points, domain is data, range is bouding box
+xScale.domain(d3.extent(data, function(d) {
+  let values = d.split(";");
+  return parseDate(values[0]); 
+})); 
 
   yScale.domain([0, 100
     //d3.max(categories, function(c) { return d3.max(c.values, function(v) { return v.rating; }); })
@@ -407,7 +410,7 @@ data = ["date;Ageing;Aids;Animal Welfare;Bird Flu;BSE;Coal Pits;EU;Countryside;C
     
   };      
 
-}); // End Data callback function
+// }); // End Data callback function
   
   function findMaxY(data){  // Define function "findMaxY"
     var maxYValues = data.map(function(d) { 
