@@ -3,6 +3,17 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Timeseries Examples
+import pandas as pd
+from d3blocks import d3blocks
+d3 = d3blocks(cmap='Set2_r')
+
+# Import example dataset
+df = d3.import_example('timeseries', n=1000)
+# Make the timeseries graph
+df = d3.timeseries(df, datetime='datetime', filepath='c://temp/timeseries.html')
+
+
 # %%
 # from d3blocks import d3blocks
 # d3 = d3blocks()
@@ -43,8 +54,10 @@ df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_
 from d3blocks import d3blocks
 d3 = d3blocks(cmap='Set1')
 
-df = d3.import_example(data='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
+df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
 # df = d3.import_example(data='random_time', n=1000)
+
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
 # # Compute delta (this is automatically done if not available)
 # df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
@@ -57,7 +70,7 @@ d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', 
 # %%
 d3 = d3blocks(cmap='Set1')
 # Import example
-df = d3.import_example(data='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # Normalize the time per sample id.
 df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
