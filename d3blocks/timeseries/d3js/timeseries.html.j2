@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>{{ TITLE }}</title>
@@ -77,7 +78,12 @@ var margin = {top: 20, right: 200, bottom: 100, left: 50},
     height2 = 500 - margin2.top - margin2.bottom;
 
 var parseDate = d3.time.format({{ DT_FORMAT }}).parse;
-var bisectDate = d3.bisector(function(d) { return d.date; }).left;
+
+function bisectCenter(a, x) {
+    // TODO after D3 update, use https://github.com/d3/d3-array#bisectCenter
+    const i = d3.bisectLeft(a, x);
+    return i > 0 && (a[i - 1] - x) > (x - a[i]) ? i - 1 : i;
+}
 
 var xScale = d3.time.scale()
     .range([0, width]),
@@ -149,20 +155,20 @@ svg.append("defs")
 var data = {{ json_data }}
 
 // Get all column names except the first one
-var names = data[0].split(";").slice(1);
+var columnNames = data[0].split(";").slice(1);
 
 // Set the domain of the color ordinal scale to be all the csv headers except first, matching a color to an issue
-color.domain(names);
+color.domain(columnNames);
 
-var categories = names.map(function(name, index) { // Nest the data into an array of objects with new keys
+var categories = columnNames.map(function(name, index) { // Nest the data into an array of objects with new keys
   return {
     name: name, // "name": the csv headers except date
-    values: data.map(function(line) { // "values": which has an array of the dates and ratings
+    values: data.slice(1).map(function(line) { // "values": which has an array of the dates and ratings
       let d = line.split(";");
       return {
         // Make every date in the csv data a javascript date object format
         date: parseDate(d[0]), 
-        rating: Number(d[index]),
+        rating: Number(d[index+1]),
       };
     }),
     // Initially visible (boolean)
@@ -170,11 +176,12 @@ var categories = names.map(function(name, index) { // Nest the data into an arra
   };
 });
 
+var dates = data.slice(1).map(function(line) {
+    return parseDate(line.split(";")[0]);
+})
+
 // extent = highest and lowest points, domain is data, range is bouding box
-xScale.domain(d3.extent(data, function(d) {
-  let values = d.split(";");
-  return parseDate(values[0]); 
-})); 
+xScale.domain(d3.extent(dates));
 
   yScale.domain([0, 100
     //d3.max(categories, function(c) { return d3.max(c.values, function(v) { return v.rating; }); })
@@ -330,10 +337,6 @@ xScale.domain(d3.extent(data, function(d) {
             .attr("x", width - 150) // hover date text position
             .style("fill", "#E6E7E8");
 
-  var columnNames = d3.keys(data[0]) //grab the key values from your first data row
-                                     //these are the same as your column names
-                  .slice(1); //remove the first column name (`date`);
-
   var focus = issue.select("g") // create group elements to house tooltip text
       .data(columnNames) // bind each column name date to each g element
     .enter().append("g") //create one <g> for each columnName
@@ -375,23 +378,16 @@ xScale.domain(d3.extent(data, function(d) {
       // Legend tooltips // http://www.d3noob.org/2014/07/my-favourite-tooltip-method-for-line.html
 
       var x0 = xScale.invert(d3.mouse(this)[0]), /* d3.mouse(this)[0] returns the x position on the screen of the mouse. xScale.invert function is reversing the process that we use to map the domain (date) to range (position on screen). So it takes the position on the screen and converts it into an equivalent date! */
-      i = bisectDate(data, x0, 1), // use our bisectDate function that we declared earlier to find the index of our data array that is close to the mouse cursor
       /*It takes our data array and the date corresponding to the position of or mouse cursor and returns the index number of the data array which has a date that is higher than the cursor position.*/
-      d0 = data[i - 1],
-      d1 = data[i],
-      /*d0 is the combination of date and rating that is in the data array at the index to the left of the cursor and d1 is the combination of date and close that is in the data array at the index to the right of the cursor. In other words we now have two variables that know the value and date above and below the date that corresponds to the position of the cursor.*/
-      d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+      i = bisectCenter(dates, x0)
       /*The final line in this segment declares a new array d that is represents the date and close combination that is closest to the cursor. It is using the magic JavaScript short hand for an if statement that is essentially saying if the distance between the mouse cursor and the date and close combination on the left is greater than the distance between the mouse cursor and the date and close combination on the right then d is an array of the date and close on the right of the cursor (d1). Otherwise d is an array of the date and close on the left of the cursor (d0).*/
-
-      //d is now the data row for the date closest to the mouse position
 
       focus.select("text").text(function(columnName){
          //because you didn't explictly set any data on the <text>
          //elements, each one inherits the data from the focus <g>
-
-         return (d[columnName]);
+          return categories.find(cat => cat.name === columnName).values[i].rating;
       });
-  }; 
+  }
 
   //for brusher of the slider bar at the bottom
   function brushed() {
@@ -430,4 +426,5 @@ xScale.domain(d3.extent(data, function(d) {
   }
 
 </script>
+</body>
 </html>
