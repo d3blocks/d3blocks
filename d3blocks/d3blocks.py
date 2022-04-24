@@ -1,16 +1,14 @@
+"""d3blocks library."""
 import os
 import pandas as pd
 import requests
 from urllib.parse import urlparse
 import logging
 import numpy as np
-from tqdm import tqdm
 import zipfile
 import tempfile
 import webbrowser
-# import d3blocks.Movingbubbles as Movingbubbles
-# import d3blocks.timeseries.Timeseries as Timeseries
-import Movingbubbles as Movingbubbles
+import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import random
 import time
@@ -43,7 +41,7 @@ class d3blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def timeseries(self, df, datetime=None, sort_on_date=True, title='d3blocks_Timeseries', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
+    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - d3blocks', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
         """Create of Timeseries graph.
 
         Parameters
@@ -67,6 +65,7 @@ class d3blocks():
             DataFrame.
 
         """
+        df = df.copy()
         self.config['chart'] ='timeseries'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -84,15 +83,15 @@ class d3blocks():
             df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
 
         # Set default label properties
-        self.labels = self.set_label_properties(df.columns.values, cmap=self.config['cmap'])
+        if not hasattr(self, 'labels'):
+            labels = self.get_label_properties(df.columns.values, cmap=self.config['cmap'])
+            self.set_label_properties(labels)
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']:
             # Sleeping is required to pevent overlapping windows
             webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
-        # Return
-        return df
 
     def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', fontsize=14, showfig=True, overwrite=True):
         """Creation of moving bubble graph.
@@ -154,7 +153,7 @@ class d3blocks():
             df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, state=state, dt_format=dt_format)
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
-            self.labels = self.set_label_properties(df[state], cmap=self.config['cmap'])
+            self.labels = self.get_label_properties(df[state], cmap=self.config['cmap'])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -170,8 +169,24 @@ class d3blocks():
         # Return
         return df
 
-    def set_label_properties(self, y, cmap='Set1'):
-        """Set label properties.
+    def set_label_properties(self, labels):
+        """Set the label properties.
+
+        Parameters
+        ----------
+        labels : dict()
+            Dictionary containing class information.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.labels = labels
+        logger.info('Labels are set')
+
+    def get_label_properties(self, y, cmap='Set1'):
+        """Get label properties.
 
         Parameters
         ----------
@@ -186,7 +201,7 @@ class d3blocks():
             Dictionary containing class information.
 
         """
-        print('Set label properties')
+        logger.info('Create label properties based on [%s].' %(cmap))
         # Get unique categories
         uiy = np.unique(y)
         # Create unique colors
@@ -198,6 +213,30 @@ class d3blocks():
         return labels
 
     def compute_time_delta(self, df, sample_id='sample_id', datetime='datetime', state='state', dt_format='%Y-%m-%d %H:%M:%S'):
+        """Compute delta between two time-points that follow-up.
+
+        Parameters
+        ----------
+        df : Input DataFrame
+            Input data.
+        sample_id : str.
+            Column name of the sample identifier.
+        datetime : datetime
+            Column name of the date time.
+        state : str
+            Column name that describes the state.
+        cmap : str, (default: 'Set1')
+            The name of the colormap.
+            'Set1'.
+        dt_format : str
+            '%Y-%m-%d %H:%M:%S'.
+
+        Returns
+        -------
+        df : pd.DataFrame()
+            DataFrame.
+
+        """
         logger.info('Compute time delta.')
         # Compute delta
         df = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'])

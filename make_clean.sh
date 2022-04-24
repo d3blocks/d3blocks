@@ -5,6 +5,8 @@ rm -rf d3blocks.egg-info
 rm -rf __pycache__
 rm -rf .pytest_cache
 rm -rf d3blocks/__pycache__
+rm -rf d3blocks/timeseries/__pycache__
+rm -rf d3blocks/movingbubbles/__pycache__
 rm -rf d3blocks/.pylint.d
 rm -rf tests/__pycache__
 rm -rf d3blocks/utils/__pycache__

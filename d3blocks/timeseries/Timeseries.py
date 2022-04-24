@@ -1,14 +1,9 @@
 """Timeseries graph."""
 
-import numpy as np
 import pandas as pd
-import datetime as dt
-import re
-from tqdm import tqdm
-import os
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
-import colourmap
+import os
 
 
 def show(df, config, labels=None):
@@ -18,18 +13,26 @@ def show(df, config, labels=None):
     ----------
     df : pd.DataFrame()
         Input data.
+    config : dict
+        Dictionary containing configuration keys.
+    labels : dict
+        Dictionary containing hex colorlabels for the classes.
+        The labels are derived using the function: labels = d3blocks.set_label_properties()
 
     Returns
     -------
-    None.
+    config : dict
+        Dictionary containing updated configuration keys.
 
     """
+    # Format for datetime in javascript
+    config['dt_format_js'] = '%Y%m%d'
     # Sort on date
     if config['sort_on_date']:
         df.sort_index(inplace=True)
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=False)
-    df['index'] = df['index'].dt.strftime('%Y%m%d')
+    df['index'] = df['index'].dt.strftime(config['dt_format_js'])
     df.rename(columns={"index": "date"}, errors="raise", inplace=True)
 
     # make dataset for javascript
@@ -53,7 +56,10 @@ def write_html(X, config, overwrite=True):
 
     Parameters
     ----------
-    X : data file
+    X : list of str
+        Input data for javascript.
+    config : dict
+        Dictionary containing configuration keys.
 
     Returns
     -------
@@ -63,6 +69,9 @@ def write_html(X, config, overwrite=True):
     content = {
         'json_data': X,
         'COLOR': config['color'],
+        'TITLE': config['title'],
+        'FONTSIZE': str(config['fontsize']) + 'px',
+        'DT_FORMAT': '"' + config['dt_format_js'] + '"',
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))

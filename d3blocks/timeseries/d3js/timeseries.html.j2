@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <head>
 <meta charset="utf-8">
-<title>Issues Ratings</title>
+<title>{{ TITLE }}</title>
 <style>
 
 body {
-  font: 10px sans-serif;
+  font: {{ FONTSIZE }} sans-serif;
 }
 
 .axis path,
@@ -65,7 +65,6 @@ body {
 <body>
 
 <script>
-<!-- <script src="../d3js/d3.v3.js"></script> -->
 {% include "d3.v3.js" %}
 </script>
 
@@ -77,7 +76,7 @@ var margin = {top: 20, right: 200, bottom: 100, left: 50},
     height = 500 - margin.top - margin.bottom,
     height2 = 500 - margin2.top - margin2.bottom;
 
-var parseDate = d3.time.format("%Y%m%d").parse;
+var parseDate = d3.time.format({{ DT_FORMAT }}).parse;
 var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
 var xScale = d3.time.scale()
@@ -230,7 +229,7 @@ xScale.domain(d3.extent(data, function(d) {
       .attr("x", -10)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Issues Rating");
+      .text("{{ TITLE }}");
 
   var issue = svg.selectAll(".issue")
       .data(categories) // Select nested data and append to new svg group elements
