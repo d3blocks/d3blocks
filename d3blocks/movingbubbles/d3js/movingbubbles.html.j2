@@ -104,6 +104,7 @@ var notes_index = 0;
 var center_act = {{ CENTER }},
 	center_pt = { "x": 380, "y": 365 };
 
+var theta = 2 * Math.PI / (center_act ? (act_codes.length - 1) : act_codes.length );
 
 // Coordinates for activities
 var foci = {};
@@ -111,7 +112,6 @@ act_codes.forEach(function(code, i) {
 	if (code.desc == center_act) {
 		foci[code.index] = center_pt;
 	} else {
-		var theta = 2 * Math.PI / (act_codes.length-1);
 		foci[code.index] = {x: 250 * Math.cos(i * theta)+380, y: 250 * Math.sin(i * theta)+365 };
 	}
 });
@@ -184,7 +184,6 @@ var label = svg.selectAll("text")
 		if (d.desc == center_act) {
 			return center_pt.x;
 		} else {
-			var theta = 2 * Math.PI / (act_codes.length-1);
 			return 340 * Math.cos(i * theta)+380;
 		}
 		
@@ -193,7 +192,6 @@ var label = svg.selectAll("text")
 		if (d.desc == center_act) {
 			return center_pt.y;
 		} else {
-			var theta = 2 * Math.PI / (act_codes.length-1);
 			return 340 * Math.sin(i * theta)+365;
 		}
 		
