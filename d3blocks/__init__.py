@@ -1,12 +1,12 @@
 from d3blocks.d3blocks import d3blocks
 # import d3blocks.Movingbubbles as Movingbubbles
 # import d3blocks.timeseries.Timeseries as Timeseries
-import Movingbubbles as Movingbubbles
+import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 
 __author__ = 'Erdogan Tasksen'
 __email__ = 'erdogant@gmail.com'
-__version__ = '0.1.2'
+__version__ = '0.2.0'
 
 # module level doc-string
 __doc__ = """
