@@ -108,7 +108,7 @@ function timeseries(data, config) {
     // extent = highest and lowest points, domain is data, range is bouding box
     xScale.domain(d3.extent(dates));
 
-    yScale.domain([0, findMaxY(categories)]);
+    yScale.domain([findMinY(categories), findMaxY(categories)]);
 
     xScale2.domain(xScale.domain()); // Setting a duplicate xdomain for brushing reference later
 
@@ -194,8 +194,9 @@ function timeseries(data, config) {
         .on("click", function(d){ // On click make d.visible
             d.visible = !d.visible; // If array key for this data selection is "visible" = true then make it false, if false then make it true
 
+            minY = findMinY(categories); // Find min Y rating value categories data with "visible"; true
             maxY = findMaxY(categories); // Find max Y rating value categories data with "visible"; true
-            yScale.domain([0,maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
+            yScale.domain([minY, maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
             svg.select(".y.axis")
                 .transition()
                 .call(yAxis);
@@ -320,8 +321,9 @@ function timeseries(data, config) {
         svg.select(".x.axis") // replot xAxis with transition when brush used
             .call(xAxis);
 
+        minY = findMinY(categories); // Find min Y rating value categories data with "visible"; true
         maxY = findMaxY(categories); // Find max Y rating value categories data with "visible"; true
-        yScale.domain([0,maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
+        yScale.domain([minY, maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
 
         svg.select(".y.axis") // Redraw yAxis
             .call(yAxis);
@@ -334,6 +336,17 @@ function timeseries(data, config) {
     };
 
     // }); // End Data callback function
+
+    function findMinY(data){  // Define function "findMinY"
+        var minYValues = data.map(function(d) {
+            if (d.visible){
+                return d3.min(d.values, function(value) { // Return min rating value
+                    return value.rating; })
+            }
+        });
+        // TODO configureerbaar
+        return d3.min([0, ...minYValues]);
+    }
 
     function findMaxY(data){  // Define function "findMaxY"
         var maxYValues = data.map(function(d) {
