@@ -529,6 +529,7 @@ def disable_tqdm():
     return (True if (logger.getEffectiveLevel()>=30) else False)
 
 
+# %% Open the webbrowser
 def _showfig(filepath: str):
     file_location = os.path.abspath(filepath)
     if platform == "darwin":  # check if on OSX

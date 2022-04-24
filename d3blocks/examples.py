@@ -10,6 +10,7 @@ d3 = D3Blocks(cmap='Set1')
 
 # Import example dataset
 df = d3.import_example('timeseries', n=1000)
+df.iloc[:, 0] = df.iloc[:, 0] * 0.001
 # Make the timeseries graph
 d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
 
@@ -83,7 +84,7 @@ df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000
 # d3.labels
 
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
 
 # %% Moving bubbles
