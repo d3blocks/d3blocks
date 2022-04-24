@@ -23,11 +23,12 @@ https://github.com/d3/d3/wiki/Gallery
 https://observablehq.com/@d3/sankey
 
 
-### Scatter 3D
+### Scatter (3D)
 https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
 https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
 https://observablehq.com/@d3/brushable-scatterplot-matrix
 https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
+https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
 
 ### Circos
 https://observablehq.com/@d3/hierarchical-edge-bundling
