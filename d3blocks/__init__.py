@@ -1,11 +1,11 @@
-from d3blocks.d3blocks import d3blocks
+from d3blocks import D3Blocks
 # import d3blocks.Movingbubbles as Movingbubbles
 # import d3blocks.timeseries.Timeseries as Timeseries
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 
-__author__ = 'Erdogan Tasksen'
-__email__ = 'erdogant@gmail.com'
+__author__ = 'Erdogan Taskesen, Oliver Verver'
+__email__ = 'erdogant@gmail.com, mail@oliver3.nl'
 __version__ = '0.2.0'
 
 # module level doc-string

@@ -1,5 +1,7 @@
 """d3blocks library."""
 import os
+from sys import platform
+
 import pandas as pd
 import requests
 from urllib.parse import urlparse
@@ -24,8 +26,8 @@ logger.addHandler(console)
 logger = logging.getLogger()
 
 
-class d3blocks():
-    """d3blocks."""
+class D3Blocks():
+    """D3Blocks."""
 
     def __init__(self, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S', verbose=20):
         """Initialize d3blocks with user-defined parameters."""
@@ -90,8 +92,7 @@ class d3blocks():
         self.config = Timeseries.show(df, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']:
-            # Sleeping is required to pevent overlapping windows
-            webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
+            _showfig(self.config['filepath'])
 
     def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', fontsize=14, showfig=True, overwrite=True):
         """Creation of moving bubble graph.
@@ -126,8 +127,8 @@ class d3blocks():
 
         Examples
         --------
-        >>> from d3blocks import d3blocks
-        >>> d3 = d3blocks()
+        >>> from d3blocks import D3Blocks
+        >>> d3 = D3Blocks()
         >>> df = d3.import_example(data='random_time')
         >>> d3.movingbubbles(df)
 
@@ -164,8 +165,8 @@ class d3blocks():
 
         # Open the webbrowser
         if self.config['showfig']:
-            # Sleeping is required to pevent overlapping windows
-            webbrowser.open(os.path.abspath(self.config['filepath']), new=2)
+            _showfig(self.config['filepath'])
+
         # Return
         return df
 
@@ -526,6 +527,13 @@ def set_logger(verbose=20):
 def disable_tqdm():
     """Set the logger for verbosity messages."""
     return (True if (logger.getEffectiveLevel()>=30) else False)
+
+
+def _showfig(filepath: str):
+    file_location = os.path.abspath(filepath)
+    if platform == "darwin":  # check if on OSX
+        file_location = "file:///" + file_location
+    webbrowser.open(file_location, new=2)
 
 
 # %% Do checks

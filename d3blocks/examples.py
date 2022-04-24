@@ -5,19 +5,19 @@
 
 # %% Timeseries - Example 1
 import pandas as pd
-from d3blocks import d3blocks
-d3 = d3blocks(cmap='Set1')
+from d3blocks import D3Blocks
+d3 = D3Blocks(cmap='Set1')
 
 # Import example dataset
 df = d3.import_example('timeseries', n=1000)
 # Make the timeseries graph
-d3.timeseries(df, datetime='datetime', filepath='c://temp/timeseries.html', fontsize=10)
+d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
 
 
 # %% Timeseries - Example 2 - Set colors manually
 import pandas as pd
-from d3blocks import d3blocks
-d3 = d3blocks(cmap='Set1')
+from d3blocks import D3Blocks
+d3 = D3Blocks(cmap='Set1')
 
 # Import example dataset
 df = d3.import_example('timeseries', n=1000)
@@ -33,7 +33,7 @@ d3.set_label_properties(colors)
 print(d3.labels)
 
 # Make timeseries graph where the label properties will be used
-d3.timeseries(df, datetime='datetime', filepath='c://temp/timeseries.html', fontsize=10)
+d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
 
 
 # %%
@@ -44,8 +44,8 @@ d3.timeseries(df, datetime='datetime', filepath='c://temp/timeseries.html', font
 
 # %% Movingbubbles - Make manual dataset to test the working
 import pandas as pd
-from d3blocks import d3blocks
-d3 = d3blocks(cmap='Set2_r')
+from d3blocks import D3Blocks
+d3 = D3Blocks(cmap='Set2_r')
 
 df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
 df1['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:05', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25']
@@ -69,12 +69,12 @@ df_new = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # # Compute delta (this is automatically done if not available)
 df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
 # Make the moving bubbles
-df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
 
 # %% Movingbubbles - Create random dataset
-from d3blocks import d3blocks
-d3 = d3blocks(cmap='Set1')
+from d3blocks import D3Blocks
+d3 = D3Blocks(cmap='Set1')
 
 df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
 
@@ -83,11 +83,11 @@ df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000
 # d3.labels
 
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
 
 # %% Moving bubbles
-d3 = d3blocks(cmap='Set1')
+d3 = D3Blocks(cmap='Set1')
 # Import example
 df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # Normalize the time per sample id.
