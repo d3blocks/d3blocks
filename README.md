@@ -24,3 +24,7 @@ https://github.com/d3/d3/wiki/Gallery
 
 ### Sankey diagram
 https://observablehq.com/@d3/sankey
+
+
+### Scatter 3D
+https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
