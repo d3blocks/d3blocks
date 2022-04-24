@@ -3,7 +3,6 @@ d3blocks
 
 
 https://observablehq.com/@mbostock/the-wealth-health-of-nations
-https://observablehq.com/@d3/sankey
 
 # Timeseries
 http://bl.ocks.org/DStruths/9c042e3a6b66048b5bd4
