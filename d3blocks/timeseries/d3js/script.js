@@ -318,18 +318,15 @@ function timeseries(data, config) {
         xScale.domain(brush.empty() ? xScale2.domain() : brush.extent()); // If brush is empty then reset the Xscale domain to default, if not then make it the brush extent
 
         svg.select(".x.axis") // replot xAxis with transition when brush used
-            .transition()
             .call(xAxis);
 
         maxY = findMaxY(categories); // Find max Y rating value categories data with "visible"; true
         yScale.domain([0,maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
 
         svg.select(".y.axis") // Redraw yAxis
-            .transition()
             .call(yAxis);
 
         issue.select("path") // Redraw lines based on brush xAxis scale and domain
-            .transition()
             .attr("d", function(d){
                 return d.visible ? line(d.values) : null; // If d.visible is true then draw line for this d selection
             });
