@@ -5,7 +5,6 @@ d3blocks
 https://observablehq.com/@mbostock/the-wealth-health-of-nations
 https://observablehq.com/@d3/brushable-scatterplot-matrix
 https://observablehq.com/@d3/sankey
-https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
 
 # Timeseries
 http://bl.ocks.org/DStruths/9c042e3a6b66048b5bd4
@@ -28,3 +27,4 @@ https://observablehq.com/@d3/sankey
 
 ### Scatter 3D
 https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
+https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
