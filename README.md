@@ -30,3 +30,9 @@ https://observablehq.com/@d3/brushable-scatterplot-matrix
 
 ### Circos
 https://observablehq.com/@d3/hierarchical-edge-bundling
+
+### map
+https://observablehq.com/@ncastaldo/gas-stations-italy
+
+### image
+https://observablehq.com/@d3/mona-lisa-histogram?collection=@d3/d3-brush
