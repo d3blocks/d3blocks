@@ -35,6 +35,19 @@ https://observablehq.com/@d3/hierarchical-edge-bundling
 
 ### map
 https://observablehq.com/@ncastaldo/gas-stations-italy
+https://link.medium.com/JiB90NlzKpb
 
 ### image
 https://observablehq.com/@d3/mona-lisa-histogram?collection=@d3/d3-brush
+
+
+### Voorbeelden
+import yfinance as yf
+
+df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], 
+                 start="2019-01-01", 
+                 end="2021-12-31")
+
+df = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = df.div(df.iloc[0])
+df.head()
