@@ -3,6 +3,18 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %%
+import yfinance as yf
+df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = df.div(df.iloc[0])
+df.head()
+
+from d3blocks import D3Blocks
+d3 = D3Blocks(whitelist='close')
+d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+
+
 # %% Timeseries - Example 1
 import pandas as pd
 from d3blocks import D3Blocks

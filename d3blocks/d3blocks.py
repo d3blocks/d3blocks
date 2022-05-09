@@ -29,8 +29,35 @@ logger = logging.getLogger()
 class D3Blocks():
     """D3Blocks."""
 
-    def __init__(self, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S', verbose=20):
-        """Initialize d3blocks with user-defined parameters."""
+    def __init__(self, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S', whitelist=None, verbose=20):
+        """Initialize d3blocks with user-defined parameters.
+
+        Parameters
+        ----------
+        cmap : String, optional
+            'Set1'       (default)
+            'Set2'
+            'rainbow'
+            'bwr'        Blue-white-red
+            'binary' or 'binary_r'
+            'seismic'    Blue-white-red
+            'Blues'      white-to-blue
+            'Reds'       white-to-red
+            'Pastel1'    Discrete colors
+            'Paired'     Discrete colors
+            'Set1'       Discrete colors
+        dt_format : str
+            '%Y-%m-%d %H:%M:%S'.
+        whitelist : str, optional
+            Keep only columns containing this (sub)string (case insensitive)
+        verbose : int, optional
+            Verbose message. The default is 20.
+
+        Returns
+        -------
+        None.
+
+        """
         # Clean
         self._clean(clean_config=True)
         # Some library compatibily checks
@@ -38,6 +65,7 @@ class D3Blocks():
         # Initialize empty config
         self.config = {}
         self.config['cmap'] = cmap
+        self.config['whitelist'] = whitelist
         self.config['dt_format'] = dt_format
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # Set the logger
@@ -82,7 +110,16 @@ class D3Blocks():
             df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
             df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
         else:
+            logger.info('Taking the index for datetime.')
             df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
+        # Check multi-line columns and merge those that are multi-line
+        df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
+        # Check whitelist
+        if self.config['whitelist'] is not None:
+            logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
+            Ikeep = list(map(lambda x: self.config['whitelist'].lower() in x.lower(), df.columns.values))
+            df = df.iloc[:, Ikeep]
+
 
         # Set default label properties
         if not hasattr(self, 'labels'):
