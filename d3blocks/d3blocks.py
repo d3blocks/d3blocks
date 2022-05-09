@@ -94,6 +94,24 @@ class D3Blocks():
         df : pd.DataFrame()
             DataFrame.
 
+        Examples
+        --------
+        >>> # Load example data
+        >>> import yfinance as yf
+        >>> df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+        >>> d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+        >>> df = df.div(df.iloc[0])
+        >>> df.head()
+        >>>
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize with filtering on close columns
+        >>> d3 = D3Blocks(whitelist='close')
+        >>>
+        >>> # Plot
+        >>> d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+
         """
         df = df.copy()
         self.config['chart'] ='timeseries'
