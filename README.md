@@ -32,6 +32,10 @@ https://link.medium.com/JiB90NlzKpb
 https://observablehq.com/@d3/mona-lisa-histogram?collection=@d3/d3-brush
 
 
+### Cool stuff
+
+https://pair-code.github.io/understanding-umap/
+
 ### DONE
 
 # Timeseries
