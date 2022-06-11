@@ -78,7 +78,7 @@ df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 df = pd.concat([df1, df2, df3], axis=0)
 
 # Normalize the time per sample id and make the starting-point the same
-df_new = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # # Compute delta (this is automatically done if not available)
 df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
 # Make the moving bubbles
