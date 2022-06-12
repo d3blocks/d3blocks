@@ -3,7 +3,20 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
-# %%
+# %% SANKEY - EXAMPLE 1
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# df = d3.import_example('sankey')
+df = d3.import_example('stormofswords')
+
+# Run
+d3.sankey(df, filepath='sankey.html', figsize=(1000, 800))
+# 
+# %% TIMESERIES
 import yfinance as yf
 df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
 d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()

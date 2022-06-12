@@ -10,11 +10,13 @@ import numpy as np
 import zipfile
 import tempfile
 import webbrowser
-import movingbubbles.Movingbubbles as Movingbubbles
-import timeseries.Timeseries as Timeseries
 import random
 import time
 import colourmap
+
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
@@ -71,7 +73,7 @@ class D3Blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - d3blocks', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
+    def sankey(self, df, title='Sankey - d3blocks', filepath='sankey.html', figsize=(800, 600), fontsize=10, showfig=True, overwrite=True):
         """Create of Timeseries graph.
 
         Parameters
@@ -86,6 +88,8 @@ class D3Blocks():
             Open the window to show the network.
         fontsize : int, (default: 14)
             Fontsize of the fonts in the circle.
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
         overwrite : bool, (default: True)
             Overwrite the existing html file.
 
@@ -96,21 +100,17 @@ class D3Blocks():
 
         Examples
         --------
-        >>> # Load example data
-        >>> import yfinance as yf
-        >>> df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-        >>> d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
-        >>> df = df.div(df.iloc[0])
-        >>> df.head()
-        >>>
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>>
-        >>> # Initialize with filtering on close columns
-        >>> d3 = D3Blocks(whitelist='close')
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example data
+        >>> df = d3.import_example('sankey')
         >>>
         >>> # Plot
-        >>> d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+        >>> d3.sankey(df, filepath='sankey_demo.html', fontsize=10)
 
         """
         df = df.copy()
@@ -120,31 +120,17 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['fontsize'] = fontsize
-        self.config['sort_on_date'] = sort_on_date
-        self.config['columns'] = {'datetime': datetime}
+        self.config['figsize'] = figsize
 
-        # Convert to datetime
-        if datetime is not None:
-            df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
-            df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
-        else:
-            logger.info('Taking the index for datetime.')
-            df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
-        # Check multi-line columns and merge those that are multi-line
-        df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
-        # Check whitelist
-        if self.config['whitelist'] is not None:
-            logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
-            Ikeep = list(map(lambda x: self.config['whitelist'].lower() in x.lower(), df.columns.values))
-            df = df.iloc[:, Ikeep]
-
+        # Remvove quotes from source-target labels
+        df.loc[:,df.dtypes==object].apply(lambda s:s.str.replace("'", ""))
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(df.columns.values, cmap=self.config['cmap'])
+            labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             self.set_label_properties(labels)
         # Create the plot
-        self.config = Timeseries.show(df, self.config, labels=self.labels)
+        self.config = Sankey.show(df, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']:
             _showfig(self.config['filepath'])
@@ -224,6 +210,84 @@ class D3Blocks():
 
         # Return
         return df
+
+    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - d3blocks', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
+        """Create of Timeseries graph.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data.
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        fontsize : int, (default: 14)
+            Fontsize of the fonts in the circle.
+        overwrite : bool, (default: True)
+            Overwrite the existing html file.
+
+        Returns
+        -------
+        df : pd.DataFrame()
+            DataFrame.
+
+        Examples
+        --------
+        >>> # Load example data
+        >>> import yfinance as yf
+        >>> df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+        >>> d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+        >>> df = df.div(df.iloc[0])
+        >>> df.head()
+        >>>
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize with filtering on close columns
+        >>> d3 = D3Blocks(whitelist='close')
+        >>>
+        >>> # Plot
+        >>> d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+
+        """
+        df = df.copy()
+        self.config['chart'] ='timeseries'
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['fontsize'] = fontsize
+        self.config['sort_on_date'] = sort_on_date
+        self.config['columns'] = {'datetime': datetime}
+
+        # Convert to datetime
+        if datetime is not None:
+            df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
+            df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
+        else:
+            logger.info('Taking the index for datetime.')
+            df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
+        # Check multi-line columns and merge those that are multi-line
+        df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
+        # Check whitelist
+        if self.config['whitelist'] is not None:
+            logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
+            Ikeep = list(map(lambda x: self.config['whitelist'].lower() in x.lower(), df.columns.values))
+            df = df.iloc[:, Ikeep]
+
+
+        # Set default label properties
+        if not hasattr(self, 'labels'):
+            labels = self.get_label_properties(df.columns.values, cmap=self.config['cmap'])
+            self.set_label_properties(labels)
+        # Create the plot
+        self.config = Timeseries.show(df, self.config, labels=self.labels)
+        # Open the webbrowser
+        if self.config['showfig']:
+            _showfig(self.config['filepath'])
 
     def set_label_properties(self, labels):
         """Set the label properties.
@@ -345,15 +409,17 @@ class D3Blocks():
 
         """
         dirname, filename = os.path.split(filepath)
+        # dirname = os.path.abspath(dirname)
 
         if (filename is None) or (filename==''):
             filename = 'd3blocks.html'
 
         if (dirname is None) or (dirname==''):
-            dirname = tempfile.TemporaryDirectory().name
+            # dirname = tempfile.TemporaryDirectory().name
+            dirname = os.path.join(tempfile.gettempdir(), 'd3blocks')
 
         if not os.path.isdir(dirname):
-            logger.info('Create directory: [%s]' %(dirname))
+            logger.info('Create directory: [%s]', dirname)
             os.mkdir(dirname)
 
         filepath = os.path.abspath(os.path.join(dirname, filename))
@@ -422,6 +488,11 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
         df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)))
         return df
+    elif graph=='sankey':
+        url='https://erdogant.github.io/datasets/energy_source_target_value.zip'
+    elif graph=='stormofswords':
+        url='https://erdogant.github.io/datasets/stormofswords.zip'
+
 
     if url is None:
         logger.info('Nothing to download.')
@@ -441,9 +512,14 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     csvfile = unzip(PATH_TO_DATA, ext='.csv')
 
     # Import local dataset
-    logger.info('Import dataset [%s]' %(graph))
+    logger.info('Import demo dataset for [%s] graph' %(graph))
     if graph=='movingbubbles':
         df = Movingbubbles.import_example(csvfile)
+    if graph=='sankey':
+        df = pd.read_csv(csvfile)
+    if graph=='stormofswords':
+        df = pd.read_csv(csvfile)
+        df.rename(columns={'weight':'value'}, inplace=True)
 
     # Return
     return df

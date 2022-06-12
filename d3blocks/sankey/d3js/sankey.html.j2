@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ TITLE }}</title>
+</head>
+<body>
+    //<script src="bundle/sankey.js"></script>
+    <script>
+	{% include "bundle/sankey.js" %}
+
+	const data = {{ json_data }}
+
+        const links = data.links.map(({source, target, value}) => ({
+            source: data.nodes[source].name,
+            target: data.nodes[target].name,
+            value
+        }))
+
+        chart = SankeyChart({
+            links
+        }, {
+            nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+            nodeAlign: sankey.sankeyJustify, // e.g., d3.sankeyJustify; set by input above
+            linkColor: "source", // e.g., "source" or "target"; set by input above
+            format: (value) => `${value.toFixed(1)} TWh`,
+            width: {{ WIDTH }},
+            height: {{ HEIGHT }}
+        })
+
+        document.body.append(chart)
+    </script>
+
+</body>
+</html>

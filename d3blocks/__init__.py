@@ -3,6 +3,7 @@ from d3blocks import D3Blocks
 # import d3blocks.timeseries.Timeseries as Timeseries
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
