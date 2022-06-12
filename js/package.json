@@ -1,0 +1,25 @@
+{
+  "name": "d3blocks-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup --config rollup.config.js",
+    "start": "rollup --config rollup.config.js --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "BSD 3",
+  "dependencies": {
+    "d3-array": "^3.1.6",
+    "d3-format": "^3.1.0",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.0.0",
+    "d3-selection": "^3.0.0",
+    "d3-shape": "^3.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "rollup": "^2.75.6"
+  }
+}
