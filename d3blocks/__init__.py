@@ -7,7 +7,7 @@ import sankey.Sankey as Sankey
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 # module level doc-string
 __doc__ = """
