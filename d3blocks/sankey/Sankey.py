@@ -44,7 +44,7 @@ def show(df, config, labels=None):
     source_target_id = list(zip(list(map(lambda x: labels.get(x)['id'], df['source'])),  list(map(lambda x: labels.get(x)['id'], df['target']))))
     X = X + ' "links":['
     for _, row in df.iterrows():
-        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['value']) + '},'
+        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight']) + '},'
     X = X[:-1] + ']}'
 
     # Write to HTML

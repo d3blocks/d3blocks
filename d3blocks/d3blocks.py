@@ -17,6 +17,8 @@ import colourmap
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
+from d3graph import d3graph
+import d3graph as d3ng
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
@@ -72,6 +74,99 @@ class D3Blocks():
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # Set the logger
         set_logger(verbose=verbose)
+
+    @staticmethod
+    def vec2adjmat(source, target, weight=None):
+        """Convert source and target into adjacency matrix.
+
+        Parameters
+        ----------
+        source : list
+            The source node.
+        target : list
+            The target node.
+        weight : list of int
+            The Weights between the source-target values
+        symmetric : bool, optional
+            Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
+
+        Returns
+        -------
+        pd.DataFrame
+            adjacency matrix.
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> source=['Cloudy','Cloudy','Sprinkler','Rain']
+        >>> target=['Sprinkler','Rain','Wet_Grass','Wet_Grass']
+        >>> vec2adjmat(source, target)
+        >>>
+        >>> weight=[1,2,1,3]
+        >>> df = d3.vec2adjmat(source, target, weight=weight)
+
+        """
+        return d3ng.vec2adjmat(source, target, weight=weight)
+
+    @staticmethod
+    def adjmat2vec(df, min_weight=1):
+        """Convert adjacency matrix into vector with source and target.
+
+        Parameters
+        ----------
+        adjmat : pd.DataFrame()
+            Adjacency matrix.
+
+        min_weight : float
+            edges are returned with a minimum weight.
+
+        Returns
+        -------
+        pd.DataFrame()
+            nodes that are connected based on source and target
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> source=['Cloudy','Cloudy','Sprinkler','Rain']
+        >>> target=['Sprinkler','Rain','Wet_Grass','Wet_Grass']
+        >>>
+        >>> # Convert
+        >>> adjmat = d3.vec2adjmat(source, target, weight=[1,2,1,3])
+        >>>
+        >>> # Convert
+        >>> vector = d3.adjmat2vec(adjmat)
+
+        """
+        return d3ng.adjmat2vec(df, min_weight=min_weight)
+
+    def network(self, df, title='Network - d3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=250, slider=[None, None]):
+        # Copy of data
+        df = df.copy()
+
+        # Set configs
+        self.config['chart'] ='network'
+        self.config['title'] = title
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['figsize'] = figsize
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['collision'] = collision
+        self.config['charge'] = charge * -1
+        self.config['slider'] = slider
+
+        # Initialize network graph
+        model = d3graph(collision=collision, charge=charge, slider=slider)
+        # Convert vector to adjmat
+        df = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+        # Create graph
+        model.graph(df)
+        # Open the webbrowser
+        model.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
     def sankey(self,
                df,
@@ -511,11 +606,17 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
         df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)))
         return df
-    elif graph=='sankey':
+    elif graph=='energy':
+        # Sankey demo
         url='https://erdogant.github.io/datasets/energy_source_target_value.zip'
     elif graph=='stormofswords':
+        # Sankey demo
         url='https://erdogant.github.io/datasets/stormofswords.zip'
-
+    elif graph=='bigbang':
+        # Initialize
+        d3model = d3graph()
+        df = d3model.import_example('bigbang')
+        return d3ng.adjmat2vec(df)
 
     if url is None:
         logger.info('Nothing to download.')
@@ -538,11 +639,12 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     logger.info('Import demo dataset for [%s] graph' %(graph))
     if graph=='movingbubbles':
         df = Movingbubbles.import_example(csvfile)
-    if graph=='sankey':
+    if graph=='energy':
         df = pd.read_csv(csvfile)
+        df.rename(columns={'value': 'weight'}, inplace=True)
     if graph=='stormofswords':
         df = pd.read_csv(csvfile)
-        df.rename(columns={'weight':'value'}, inplace=True)
+        # df.rename(columns={'weight':'value'}, inplace=True)
 
     # Return
     return df

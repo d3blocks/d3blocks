@@ -3,18 +3,35 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
-# %% SANKEY - EXAMPLE 1
+# %% NETWORK - EXAMPLE 1
 
 from d3blocks import D3Blocks
 
 # Initialize
 d3 = D3Blocks()
+# Import example
+# df = d3.import_example('bigbang')
+# Convert to adjmat
+df = d3.import_example('stormofswords')
+df = d3.import_example('energy')
+# df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+# df = d3.adjmat2vec(df)
 
-df = d3.import_example('sankey')
+# Network diagram
+d3.network(df)
+
+
+# %% SANKEY - EXAMPLE 1
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example('energy')
 # df = d3.import_example('stormofswords')
 
 # Link settings
-d3.sankey(df, filepath='sankey_link.html', figsize=(1000, 800), link={"color": "source", 'stroke_opacity': 0.1})
+d3.sankey(df, filepath='sankey_energy_link.html', figsize=(1000, 800), link={"color": "source", 'stroke_opacity': 0.2})
 
 # Figure Margins
 d3.sankey(df, filepath='sankey_margin.html', figsize=(1000, 800), margin={"top": 25, "left": 25})
