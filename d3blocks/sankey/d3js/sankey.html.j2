@@ -7,7 +7,7 @@
 <body>
     //<script src="bundle/sankey.js"></script>
     <script>
-	{% include "bundle/sankey.js" %}
+	{% include "sankey.js" %}
 
 	const data = {{ json_data }}
 
@@ -21,11 +21,19 @@
             links
         }, {
             nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
-            nodeAlign: sankey.sankeyJustify, // e.g., d3.sankeyJustify; set by input above
-            linkColor: "source", // e.g., "source" or "target"; set by input above
+            align: "{{ node_align }}",
+            linkColor: "{{ link_color }}", // source, target, source-target, or static color
+            linkStrokeOpacity: {{ link_stroke_opacity }},
             format: (value) => `${value.toFixed(1)} TWh`,
             width: {{ WIDTH }},
-            height: {{ HEIGHT }}
+            height: {{ HEIGHT }},
+            marginTop: {{ marginTop }},
+            marginRight: {{ marginRight }},
+            marginBottom: {{ marginBottom }},
+            marginLeft: {{ marginLeft }},
+            nodeWidth: {{ node_width }},
+            nodePadding: {{ node_padding }},
+            nodeStroke: "{{ node_stroke_color }}",
         })
 
         document.body.append(chart)
