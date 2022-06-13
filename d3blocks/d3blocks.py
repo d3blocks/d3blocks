@@ -73,8 +73,17 @@ class D3Blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def sankey(self, df, title='Sankey - d3blocks', filepath='sankey.html', figsize=(800, 600), node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, link={"color": "source-target", "stroke_opacity": 0.5}, margin={"top": 5, "right": 1, "bottom": 5, "left": 1}, showfig=True, overwrite=True):
-        """Create of Timeseries graph.
+    def sankey(self,
+               df,
+               title='Sankey - d3blocks',
+               filepath='sankey.html',
+               figsize=(800, 600),
+               node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
+               link={"color": "source-target", "stroke_opacity": 0.5},
+               margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
+               showfig=True,
+               overwrite=True):
+        """Create of sankey graph.
 
         Parameters
         ----------
@@ -119,7 +128,7 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>>
         >>> # Load example data
-        >>> df = d3.import_example('sankey')
+        >>> df = d3.import_example('sankey')  # 'stormofswords'
         >>>
         >>> # Plot
         >>> d3.sankey(df, filepath='sankey_demo.html', fontsize=10)
@@ -137,7 +146,7 @@ class D3Blocks():
         self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Remvove quotes from source-target labels
-        df.loc[:,df.dtypes==object].apply(lambda s:s.str.replace("'", ""))
+        df.loc[:, df.dtypes==object].apply(lambda s: s.str.replace("'", ""))
 
         # Set default label properties
         if not hasattr(self, 'labels'):
