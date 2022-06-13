@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Ignore data
+d3blocks/data
+
 # Distribution / packaging
 .Python
 build/
