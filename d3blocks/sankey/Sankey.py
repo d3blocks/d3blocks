@@ -30,7 +30,7 @@ def show(df, config, labels=None):
     df.reset_index(inplace=True, drop=True)
     df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
     df['target_id'] = list(map(lambda x: labels.get(x)['id'], df['target']))
-    
+
     list_id = np.array(list(map(lambda x: labels.get(x)['id'], df['source'])) + list(map(lambda x: labels.get(x)['id'], df['target'])))
     list_name = np.array(list(map(lambda x: labels.get(x)['desc'], df['source'])) + list(map(lambda x: labels.get(x)['desc'], df['target'])))
     _, idx = np.unique(list_id, return_index=True)
@@ -73,6 +73,16 @@ def write_html(X, config, overwrite=True):
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
+        'link_color': config['link']['color'],
+        'link_stroke_opacity': config['link']['stroke_opacity'],
+        'marginTop': config['margin']['top'],
+        'marginRight': config['margin']['right'],
+        'marginBottom': config['margin']['bottom'],
+        'marginLeft': config['margin']['left'],
+        'node_align': config['node']['align'],
+        'node_width': config['node']['width'],
+        'node_padding': config['node']['padding'],
+        'node_stroke_color': config['node']['color'],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))

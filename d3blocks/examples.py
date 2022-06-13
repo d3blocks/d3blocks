@@ -10,12 +10,36 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 
-# df = d3.import_example('sankey')
+df = d3.import_example('sankey')
+# df = d3.import_example('stormofswords')
+
+# Link settings
+d3.sankey(df, filepath='sankey_link.html', figsize=(1000, 800), link={"color": "source", 'stroke_opacity': 0.1})
+
+# Figure Margins
+d3.sankey(df, filepath='sankey_margin.html', figsize=(1000, 800), margin={"top": 25, "left": 25})
+
+# node settings
+d3.sankey(df, filepath='sankey_node_0.html', figsize=(1000, 800))
+d3.sankey(df, filepath='sankey_node_1.html', figsize=(1000, 800), node={"color": "red"})
+d3.sankey(df, filepath='sankey_node_2.html', figsize=(1000, 800), node={"color": "red", "padding": 25})
+d3.sankey(df, filepath='sankey_node_3.html', figsize=(1000, 800), node={"color": "red", "padding": 25, "width": 5})
+d3.sankey(df, filepath='sankey_node_4.html', figsize=(1000, 800), node={"color": "red", "padding": 25, "width": 5, "align": "left"})
+
+# %% SANKEY - EXAMPLE 2
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
 df = d3.import_example('stormofswords')
 
-# Run
-d3.sankey(df, filepath='sankey.html', figsize=(1000, 800))
-# 
+# Link settings
+d3.sankey(df, filepath='sankey_ex1.html', figsize=(1000, 800), link={"color": "source", 'stroke_opacity': 0.2})
+d3.sankey(df, filepath='sankey_ex2.html', figsize=(1800, 900), node={"width": 10}, margin={"top": 25, "left": 25}, link={"color": "source", 'stroke_opacity': 0.2})
+d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "left", "padding": 50, "width": 15}, margin={"top": 25, "left": 25}, link={"color": "source", 'stroke_opacity': 0.25})
+
 # %% TIMESERIES
 import yfinance as yf
 df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")

@@ -73,7 +73,7 @@ class D3Blocks():
         # Set the logger
         set_logger(verbose=verbose)
 
-    def sankey(self, df, title='Sankey - d3blocks', filepath='sankey.html', figsize=(800, 600), fontsize=10, showfig=True, overwrite=True):
+    def sankey(self, df, title='Sankey - d3blocks', filepath='sankey.html', figsize=(800, 600), node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, link={"color": "source-target", "stroke_opacity": 0.5}, margin={"top": 5, "right": 1, "bottom": 5, "left": 1}, showfig=True, overwrite=True):
         """Create of Timeseries graph.
 
         Parameters
@@ -86,10 +86,22 @@ class D3Blocks():
             File path to save the output
         showfig : bool, (default: True)
             Open the window to show the network.
-        fontsize : int, (default: 14)
-            Fontsize of the fonts in the circle.
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
+        link : dict.
+            "linkColor" : "source", "target", "source-target", or a static olor such as "grey", "blue", "red" etc
+            "linkStrokeOpacity" : 0.5
+        margin : dict.
+            margin, in pixels
+            "top" : 5
+            "right" : 1
+            "bottom" : 5
+            "left" : 1
+        node : dict.
+            "align" : "left", "right", "justify", "center"
+            "width" : 15 (width of the node rectangles)
+            "padding" : 15 (vertical seperation between the nodes)
+            "color" : "currentColor", "grey", "black", "red", etc
         overwrite : bool, (default: True)
             Overwrite the existing html file.
 
@@ -114,13 +126,15 @@ class D3Blocks():
 
         """
         df = df.copy()
-        self.config['chart'] ='timeseries'
+        self.config['chart'] ='sankey'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
-        self.config['fontsize'] = fontsize
         self.config['figsize'] = figsize
+        self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5}, **link}
+        self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
+        self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Remvove quotes from source-target labels
         df.loc[:,df.dtypes==object].apply(lambda s:s.str.replace("'", ""))
