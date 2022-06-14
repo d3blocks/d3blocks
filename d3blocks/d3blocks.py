@@ -160,9 +160,11 @@ class D3Blocks():
         self.config['slider'] = slider
 
         # Set default label properties
-        # if not hasattr(self, 'labels'):
-            # labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
-            # self.set_label_properties(labels)
+        if not hasattr(self, 'labels'):
+            # Create labels
+            labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            # Store in object
+            self.set_label_properties(labels)
 
         # Initialize network graph
         self.Network = d3graph(collision=collision, charge=charge, slider=slider)
