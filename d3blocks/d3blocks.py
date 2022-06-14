@@ -144,7 +144,7 @@ class D3Blocks():
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
 
-    def network(self, df, title='Network - d3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=250, slider=[None, None]):
+    def network(self, df, title='Network - d3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
         # Copy of data
         df = df.copy()
 
@@ -159,14 +159,19 @@ class D3Blocks():
         self.config['charge'] = charge * -1
         self.config['slider'] = slider
 
+        # Set default label properties
+        # if not hasattr(self, 'labels'):
+            # labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            # self.set_label_properties(labels)
+
         # Initialize network graph
-        model = d3graph(collision=collision, charge=charge, slider=slider)
+        self.Network = d3graph(collision=collision, charge=charge, slider=slider)
         # Convert vector to adjmat
         df = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create graph
-        model.graph(df)
+        self.Network.graph(df)
         # Open the webbrowser
-        model.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        self.Network.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
     def sankey(self,
                df,
@@ -247,6 +252,7 @@ class D3Blocks():
         if not hasattr(self, 'labels'):
             labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             self.set_label_properties(labels)
+
         # Create the plot
         self.config = Sankey.show(df, self.config, labels=self.labels)
         # Open the webbrowser
@@ -395,7 +401,6 @@ class D3Blocks():
             logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
             Ikeep = list(map(lambda x: self.config['whitelist'].lower() in x.lower(), df.columns.values))
             df = df.iloc[:, Ikeep]
-
 
         # Set default label properties
         if not hasattr(self, 'labels'):
