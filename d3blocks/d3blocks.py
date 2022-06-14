@@ -19,6 +19,8 @@ import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
 from d3graph import d3graph
 import d3graph as d3ng
+from d3heatmap import d3heatmap
+
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]: #get rid of existing old handlers
@@ -87,8 +89,6 @@ class D3Blocks():
             The target node.
         weight : list of int
             The Weights between the source-target values
-        symmetric : bool, optional
-            Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
 
         Returns
         -------
@@ -100,12 +100,11 @@ class D3Blocks():
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>>
-        >>> source=['Cloudy','Cloudy','Sprinkler','Rain']
-        >>> target=['Sprinkler','Rain','Wet_Grass','Wet_Grass']
-        >>> vec2adjmat(source, target)
+        >>> # Load example
+        >>> df = d3.import_example('energy')
         >>>
-        >>> weight=[1,2,1,3]
-        >>> df = d3.vec2adjmat(source, target, weight=weight)
+        >>> # Convert to adjmat
+        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
 
         """
         return d3ng.vec2adjmat(source, target, weight=weight)
@@ -132,19 +131,151 @@ class D3Blocks():
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>>
-        >>> source=['Cloudy','Cloudy','Sprinkler','Rain']
-        >>> target=['Sprinkler','Rain','Wet_Grass','Wet_Grass']
+        >>> # Load example
+        >>> df = d3.import_example('energy')
         >>>
-        >>> # Convert
-        >>> adjmat = d3.vec2adjmat(source, target, weight=[1,2,1,3])
+        >>> # Convert to adjmat
+        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
         >>>
-        >>> # Convert
+        >>> # Convert back to vector
         >>> vector = d3.adjmat2vec(adjmat)
 
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
 
+    def heatmap(self, df, vmax=None, stroke='red', title='Heatmap - d3blocks', filepath='heatmap.html', figsize=(720, 720), showfig=True, overwrite=True):
+        """Heatmap graph.
+
+        Description
+        -----------
+        heatmap is a module in d3blocks to create interactive heatmaps.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data is an adjacency matrix for which the columns and rows are the names of the variables.
+        vmax : Bool, (default: 100).
+            Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
+                * 1 : cells above value >1 are capped.
+                * None : cells are colored based on the maximum value in the input data.
+        stroke : String, (default: 'red').
+            Color of the recangle when hovering over a cell.
+                * 'red'
+                * 'black'
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+
+        Returns
+        -------
+        None.
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Import example
+        >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
+        >>> df_adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+        >>>
+        >>> d3.heatmap(df_adjmat, showfig=False)
+        >>> d3.Network.show()
+        >>>
+        >>> d3.Network.set_node_properties(color='cluster')
+        >>> d3.Network.show()
+        >>>
+        >>> # Node and edge properties
+        >>> d3.Network.node_properties
+        >>> d3.Network.edge_properties
+
+        """
+        # Copy of data
+        df = df.copy()
+
+        # Set configs
+        self.config['chart'] ='heatmap'
+        self.config['title'] = title
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['figsize'] = figsize
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['vmax'] = vmax
+        self.config['stroke'] = stroke
+
+        # Set default label properties
+        # if not hasattr(self, 'labels'):
+            # Create labels
+            # labels = self.get_label_properties(np.unique(df.columns.values), cmap=self.config['cmap'])
+            # Store in object
+            # self.set_label_properties(labels)
+
+        # Create heatmap graph
+        d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description='', showfig=self.config['showfig'])
+
     def network(self, df, title='Network - d3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
+        """Network graph.
+
+        Description
+        -----------
+        Network is a module of d3blocks that is build on d3js and creates interactive and stand-alone networks.
+        The input data is a adjacency matrix for which the columns and indexes are the nodes and elements>0 the edges.
+        The ouput is a html file that is interactive and stand alone.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+            'source'
+            'target'
+            'weight'
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+        collision : float, (default: 0.5)
+            Response of the network. Higher means that more collisions are prevented.
+        charge : int, (default: 400)
+            Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.
+        slider : typle [min: int, max: int]:, (default: [None, None])
+            Slider is automatically set to the range of the edge weights.
+
+        Returns
+        -------
+        None.
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Import example
+        >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
+        >>>
+        >>> d3.network(df, showfig=False)
+        >>> d3.Network.show()
+        >>>
+        >>> d3.Network.set_node_properties(color='cluster')
+        >>> d3.Network.show()
+        >>>
+        >>> # Node and edge properties
+        >>> d3.Network.node_properties
+        >>> d3.Network.edge_properties
+
+        """
         # Copy of data
         df = df.copy()
 
@@ -160,11 +291,11 @@ class D3Blocks():
         self.config['slider'] = slider
 
         # Set default label properties
-        if not hasattr(self, 'labels'):
+        # if not hasattr(self, 'labels'):
             # Create labels
-            labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            # labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             # Store in object
-            self.set_label_properties(labels)
+            # self.set_label_properties(labels)
 
         # Initialize network graph
         self.Network = d3graph(collision=collision, charge=charge, slider=slider)
@@ -190,13 +321,14 @@ class D3Blocks():
         Parameters
         ----------
         df : pd.DataFrame()
-            Input data.
+            Input data containing the following columns:
+            'source'
+            'target'
+            'weight'
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output
-        showfig : bool, (default: True)
-            Open the window to show the network.
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         link : dict.
@@ -213,8 +345,10 @@ class D3Blocks():
             "width" : 15 (width of the node rectangles)
             "padding" : 15 (vertical seperation between the nodes)
             "color" : "currentColor", "grey", "black", "red", etc
+        showfig : bool, (default: True)
+            Open the window to show the network.
         overwrite : bool, (default: True)
-            Overwrite the existing html file.
+            Overwrite the output html in the destination directory.
 
         Returns
         -------

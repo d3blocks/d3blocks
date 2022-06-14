@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% HEATMAP - EXAMPLE 1
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+df = d3.import_example('energy')
+df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+# df = d3.adjmat2vec(df)
+
+d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700))
+
+
 # %% NETWORK - EXAMPLE 1
 
 from d3blocks import D3Blocks
