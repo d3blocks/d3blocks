@@ -11,15 +11,16 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 # Import example
 # df = d3.import_example('bigbang')
-# Convert to adjmat
-df = d3.import_example('stormofswords')
-# df = d3.import_example('energy')
+# df = d3.import_example('stormofswords')
+df = d3.import_example('energy')
 # df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
 # df = d3.adjmat2vec(df)
 
 # Network diagram
-d3.network(df, showfig=False, slider=[0, 50])
-# d3.set_label_properties(colors)
+d3.network(df, showfig=False)
+d3.Network.show()
+
+d3.Network.set_node_properties(color='cluster')
 d3.Network.show()
 
 d3.Network.node_properties
