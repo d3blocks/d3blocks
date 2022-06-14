@@ -6,6 +6,28 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 
+def _make_data(df, labels):
+    # Set the nodes in an increasing id-order
+    list_id = np.array(list(map(lambda x: labels.get(x)['id'], df['source'])) + list(map(lambda x: labels.get(x)['id'], df['target'])))
+    list_name = np.array(list(map(lambda x: labels.get(x)['desc'], df['source'])) + list(map(lambda x: labels.get(x)['desc'], df['target'])))
+    _, idx = np.unique(list_id, return_index=True)
+
+    # Set the nodes
+    X = '{"nodes":['
+    for i in idx:
+        X = X + '{"name":"' + list_name[i] + '"},'
+    X = X[:-1] + '],'
+
+    # Set the links
+    # source_target_id = list(zip(list(map(lambda x: labels.get(x)['id'], df['source'])),  list(map(lambda x: labels.get(x)['id'], df['target']))))
+    X = X + ' "links":['
+    for _, row in df.iterrows():
+        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight']) + '},'
+    X = X[:-1] + ']}'
+
+    # Return
+    return X
+
 
 def show(df, config, labels=None):
     """Build and show the graph.
@@ -30,23 +52,8 @@ def show(df, config, labels=None):
     df.reset_index(inplace=True, drop=True)
     df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
     df['target_id'] = list(map(lambda x: labels.get(x)['id'], df['target']))
-
-    list_id = np.array(list(map(lambda x: labels.get(x)['id'], df['source'])) + list(map(lambda x: labels.get(x)['id'], df['target'])))
-    list_name = np.array(list(map(lambda x: labels.get(x)['desc'], df['source'])) + list(map(lambda x: labels.get(x)['desc'], df['target'])))
-    _, idx = np.unique(list_id, return_index=True)
-
-    # Set the nodes in an increasing id-order
-    X = '{"nodes":['
-    for i in idx:
-        X = X + '{"name":"' + list_name[i] + '"},'
-    X = X[:-1] + '],'
-
-    source_target_id = list(zip(list(map(lambda x: labels.get(x)['id'], df['source'])),  list(map(lambda x: labels.get(x)['id'], df['target']))))
-    X = X + ' "links":['
-    for _, row in df.iterrows():
-        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight']) + '},'
-    X = X[:-1] + ']}'
-
+    # Create the data from the input of javascript
+    X = _make_data(df, labels)
     # Write to HTML
     write_html(X, config)
     # Return config
