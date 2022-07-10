@@ -171,7 +171,7 @@ df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000
 # d3.labels
 
 # Make the moving bubbles
-d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+d3.movingbubbles(df, center='Travel', datetime='datetime_norm', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
 
 # %% Moving bubbles
@@ -184,4 +184,31 @@ df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
-# %%
+# %% Moving bubbles
+d3 = D3Blocks(cmap='Set1')
+# Import example
+df = d3.import_example(graph='movingbubbles')
+# Normalize the time per sample id.
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+# Make the moving bubbles
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+
+
+# 	{"index": "0", "short": "Sleeping", "desc": "Sleeping"},
+# 	{"index": "1", "short": "Personal Care", "desc": "Personal Care"},
+# 	{"index": "2", "short": "Eating & Drinking", "desc": "Eating and Drinking"},
+# 	{"index": "3", "short": "Education", "desc": "Education"},
+# 	{"index": "4", "short": "Work", "desc": "Work and Work-Related Activities"},
+# 	{"index": "5", "short": "Housework", "desc": "Household Activities"},
+# 	{"index": "6", "short": "Household Care", "desc": "Caring for and Helping Household Members"},
+# 	{"index": "7", "short": "Non-Household Care", "desc": "Caring for and Helping Non-Household Members"},
+# 	{"index": "8", "short": "Shopping", "desc": "Consumer Purchases"},
+# 	{"index": "9", "short": "Pro. Care Services", "desc": "Professional and Personal Care Services"},
+# 	{"index": "10", "short": "Leisure", "desc": "Socializing, Relaxing, and Leisure"},
+# 	{"index": "11", "short": "Sports", "desc": "Sports, Exercise, and Recreation"},
+# 	{"index": "12", "short": "Religion", "desc": "Religious and Spiritual Activities"},
+# 	{"index": "13", "short": "Volunteering", "desc": "Volunteer Activities"},
+# 	{"index": "14", "short": "Phone Calls", "desc": "Telephone Calls"},
+# 	{"index": "15", "short": "Misc.", "desc": "Other"},
+# 	{"index": "16", "short": "Traveling", "desc": "Traveling"},
+    

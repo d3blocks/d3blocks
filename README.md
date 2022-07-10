@@ -12,15 +12,30 @@ https://bl.ocks.org/mbostock/raw/34f08d5e11952a80609169b7917d4172/?raw=true
 ### Network
 https://bl.ocks.org/steveharoz/8c3e2524079a8c440df60c1ab72b5d03
 
-
-## TODO
-
 ### Heatmap
 http://bl.ocks.org/ianyfchang/8119685
 https://github.com/d3/d3/wiki/Gallery
 
-### Circos
+## TODO
+
+### Chord
+http://bl.ocks.org/nbremer/94db779237655907b907
 https://observablehq.com/@d3/hierarchical-edge-bundling
+https://observablehq.com/@d3/directed-chord-diagram
+https://www.visualcinnamon.com/2016/06/orientation-gradient-d3-chord-diagram/
+
+Circle packs
+https://carbondesignsystem.com/data-visualization/complex-charts/
+
+Gauge
+http://bl.ocks.org/msqr/3202712
+https://carbondesignsystem.com/data-visualization/simple-charts/
+
+
+### Network time-graph
+http://www.claudiobellei.com/2017/02/04/viznetworks/
+http://www.claudiobellei.com/2017/02/04/viznetworks/vizgraph.html
+
 
 ### Scatter (3D)
 https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
@@ -46,3 +61,6 @@ https://pair-code.github.io/understanding-umap/
 ### Bubblegraph
 https://observablehq.com/@mbostock/the-wealth-health-of-nations
 
+
+
+https://carbondesignsystem.com/data-visualization/simple-charts/
