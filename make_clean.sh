@@ -7,12 +7,14 @@ rm -rf .pytest_cache
 rm -rf d3blocks/__pycache__
 rm -rf d3blocks/timeseries/__pycache__
 rm -rf d3blocks/movingbubbles/__pycache__
+rm -rf d3blocks/imageslider/__pycache__
 rm -rf d3blocks/.pylint.d
 rm -rf tests/__pycache__
 rm -rf d3blocks/utils/__pycache__
 rm -rf .pylint.d
 rm -rf d3blocks/data/*.zip
 rm -rf d3blocks/data/*.csv
+rm -rf d3blocks/data/*.jpg
 rm -rf *.js
 rm -rf *.html
 rm -rf *.css
