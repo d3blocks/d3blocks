@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+		   {% include "reset.css" %}
+		   {% include "style.css" %}
+		</style>
+		
+		<script>
+		   {% raw %}
+		   {% include "modernizr.js" %}
+		   {% endraw %}
+		</script>
+
+		<title> {{ TITLE }} </title>
+    </head>
+    
+    <body>
+        <div class="main" style="margin-bottom: 200px;">
+
+            <br>
+
+		<figure class="cd-image-container">
+
+		<!-- AFTER IMAGE -->
+                <img alt="{{ ALT_AFTER }}" src="{{ IMG_AFTER }}">
+                <span class="cd-image-label" data-type="original">After</span>
+
+		<!-- BEFORE IMAGE -->
+                <div class="cd-resize-img">
+                <img alt="{{ ALT_BEFORE }}" src="{{ IMG_BEFORE }}">
+		<span class="cd-image-label" data-type="modified">Before</span>
+                </div>
+
+                <span class="cd-handle"></span>
+
+		</figure> <!-- cd-image-container -->
+
+            <div style="position: fixed;bottom: 0;right: 0;padding:1em;">
+                <a href="https://github.com/JohnEdChristensen/WebbCompare/tree/gh-pages">
+		<i class="fa fa-github"></i></a>
+            </div>
+
+        </div>
+
+	
+	<script>
+	   {% include "jquery-2.1.1.js" %}
+	   {% include "main.js" %}
+	</script>
+       
+    </body>
+    
+</html>
+

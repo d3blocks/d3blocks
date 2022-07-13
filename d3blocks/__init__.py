@@ -4,6 +4,7 @@ from d3blocks import D3Blocks
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'

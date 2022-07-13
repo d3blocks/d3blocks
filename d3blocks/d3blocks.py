@@ -17,6 +17,7 @@ import colourmap
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
 from d3graph import d3graph
 import d3graph as d3ng
 from d3heatmap import d3heatmap
@@ -142,6 +143,69 @@ class D3Blocks():
 
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
+
+    def imageslider(self,
+               img_before,
+               img_after,
+               title='Image slider - d3blocks',
+               filepath='imageslider.html',
+               figsize=(800, 600),
+               showfig=True,
+               overwrite=True):
+        """Create image slider.
+
+        Parameters
+        ----------
+        img_before : String
+            absolute path to before image.
+        img_after : String
+            absolute path to after image.
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example data
+        >>> img_before, img_after = d3.import_example('southern_nebula')
+        >>>
+        >>> # Plot
+        >>> d3.imageslider(img_before, img_after, showfig=True)
+
+        """
+        self.config['chart'] ='imageslider'
+        self.config['img_before'] = os.path.abspath(img_before)
+        self.config['img_after'] = os.path.abspath(img_after)
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['alt_before'] = os.path.basename(img_before)
+        self.config['alt_after'] = os.path.basename(img_after)
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['figsize'] = figsize
+
+        # Create the plot
+        self.config = Imageslider.show(self.config)
+        # Open the webbrowser
+        if self.config['showfig']:
+            _showfig(self.config['filepath'])
 
     def heatmap(self, df, vmax=None, stroke='red', title='Heatmap - d3blocks', filepath='heatmap.html', figsize=(720, 720), showfig=True, overwrite=True):
         """Heatmap graph.
@@ -739,6 +803,7 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         Dataset containing mixed features.
 
     """
+    ext = '.csv'
     if graph=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
     elif graph=='random_time':
@@ -758,6 +823,10 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         d3model = d3graph()
         df = d3model.import_example('bigbang')
         return d3ng.adjmat2vec(df)
+    elif graph=='southern_nebula':
+        # Image slider demo
+        url='https://erdogant.github.io/datasets/southern_nebula.zip'
+        ext='.jpg'
 
     if url is None:
         logger.info('Nothing to download.')
@@ -774,7 +843,7 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         logger.info('Downloading [%s] dataset from github source..' %(graph))
         wget(url, PATH_TO_DATA)
 
-    csvfile = unzip(PATH_TO_DATA, ext='.csv')
+    csvfile = unzip(PATH_TO_DATA, ext=ext)
 
     # Import local dataset
     logger.info('Import demo dataset for [%s] graph' %(graph))
@@ -786,6 +855,10 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     if graph=='stormofswords':
         df = pd.read_csv(csvfile)
         # df.rename(columns={'weight':'value'}, inplace=True)
+    if graph=='southern_nebula':
+        img_before = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_before.jpg')
+        img_after = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_after.jpg')
+        return img_before, img_after
 
     # Return
     return df
@@ -905,9 +978,9 @@ def unzip(path_to_zip, ext=''):
             zip_ref.extractall(pathname)
             zip_ref.close()
             getpath = path_to_zip.replace('.zip', ext)
-            if not os.path.isfile(getpath):
-                logger.error('Extraction failed.')
-                getpath = None
+            # if not os.path.isfile(getpath):
+                # logger.error('Extraction failed.')
+                # getpath = None
     else:
         logger.warning('Input is not a zip file: [%s]', path_to_zip)
     # Return

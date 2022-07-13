@@ -3,6 +3,17 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% IMGE SLIDER
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Import example
+img_before, img_after = d3.import_example('southern_nebula')
+# Make comparison
+d3.imageslider(img_before, img_after, showfig=True)
+
+
 # %% HEATMAP - EXAMPLE 1
 
 from d3blocks import D3Blocks
