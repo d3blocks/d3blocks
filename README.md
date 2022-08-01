@@ -18,6 +18,9 @@ https://github.com/d3/d3/wiki/Gallery
 
 ## TODO
 
+### d3graph in 3d
+https://vasturiano.github.io/3d-force-graph/example/text-links/
+
 ### Chord
 http://bl.ocks.org/nbremer/94db779237655907b907
 https://observablehq.com/@d3/hierarchical-edge-bundling
