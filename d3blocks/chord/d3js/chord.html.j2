@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ TITLE }}</title>
+    <style>
+        {% include "d3js/popover.css" %}
+    </style>
 </head>
 <body>
 
@@ -13,17 +16,6 @@
     const names = {{ NAMES }};
     const colors = {{ COLORS }};
     const data = {{ json_data }};
-
-    // const names = ["Black Widow", "Captain America", "Hawkeye", "the Hulk", "Iron Man", "Thor"];
-    // const colors = ["#301E1E", "#083E77", "#342350", "#567235", "#8B161C", "#DF7C00"];
-    // const data = [
-    //     [0, 4, 3, 2, 5, 2], //Black Widow
-    //     [4, 0, 3, 2, 4, 3], //Captain America
-    //     [3, 3, 0, 2, 3, 3], //Hawkeye
-    //     [2, 2, 2, 0, 3, 3], //The Hulk
-    //     [5, 4, 3, 3, 0, 2], //Iron Man
-    //     [2, 3, 3, 3, 2, 0], //Thor
-    // ];
 
     document.addEventListener('DOMContentLoaded', function () {
         window.Chord({
