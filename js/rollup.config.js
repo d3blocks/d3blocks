@@ -6,7 +6,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 const config = {
     input: 'src/sankey/index.js',
     output: {
-        file: 'bundle/sankey.js',
+        file: '../d3blocks/sankey/d3js/sankey.js',
         format: 'iife'
     },
     plugins: [
