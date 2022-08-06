@@ -1,5 +1,5 @@
 import unittest
-import d3blocks as d3blocks
+from d3blocks import D3Blocks
 
 
 class Testd3blocks(unittest.TestCase):
