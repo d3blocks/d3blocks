@@ -136,9 +136,6 @@ class D3Blocks():
         >>> # Load example
         >>> df = d3.import_example('energy')
         >>>
-        >>> # Convert to adjmat
-        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
-        >>>
         >>> # Convert back to vector
         >>> vector = d3.adjmat2vec(adjmat)
 
@@ -146,14 +143,12 @@ class D3Blocks():
         return d3ng.adjmat2vec(df, min_weight=min_weight)
 
     def chord(self,
-               df,
-               title='Chord - d3blocks',
-               filepath='chord.html',
-               figsize=(800, 600),
-               # link={"color": "source-target", "opacity": 0.5},
-               # margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
-               showfig=True,
-               overwrite=True):
+              df,
+              title='Chord - d3blocks',
+              filepath='chord.html',
+              figsize=(1200, 1200),
+              showfig=True,
+              overwrite=True):
         """Create of chord graph.
 
         Parameters
