@@ -1445,7 +1445,7 @@
     return colors;
   }
 
-  var schemeSet1 = colors("e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999");
+  var schemeTableau10 = colors("4e79a7f28e2ce1575976b7b259a14fedc949af7aa1ff9da79c755fbab0ab");
 
   function constant(x) {
     return function constant() {
@@ -1732,12 +1732,9 @@
     return arc;
   }
 
-  function generateChord(data) {
+  function generateChord({data, width= 954, height = width}) {
       const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending);
-      const color = ordinal().domain(names).range(schemeSet1); // TODO wut??
-
-      const width = 954;
-      const height = width;
+      const color = ordinal().domain(names).range(schemeTableau10); // TODO wut??
 
       const innerRadius = Math.min(width, height) * 0.5 - 150;
       const outerRadius = innerRadius + 10;
@@ -1753,6 +1750,8 @@
           .outerRadius(outerRadius);
 
       const svg = create("svg")
+          .attr("width", width)
+          .attr("height", height)
           .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
       const chord = chordDirected()
@@ -1807,8 +1806,8 @@ ${sum(chords, c => (c.target.index === d.index) * c.source.value)} incoming ←`
       return svg.node();
   }
 
-  window.Chord = function ({data}) {
-      const svg = generateChord(data);
+  window.Chord = function ({data, width, height}) {
+      const svg = generateChord({data, width, height});
       document.body.append(svg);
   };
 
