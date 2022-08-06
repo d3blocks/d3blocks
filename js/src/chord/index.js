@@ -1,9 +1,7 @@
-import "jquery/dist/jquery.slim";
-import {tooltip} from "./bootstrap.tooltip";
-import {popover} from "./bootstrap.popover";
-import {chord} from './chord';
+import {generateChord} from "./chord";
+import {rollup} from "d3-array";
 
-tooltip(window.$);
-popover(window.$);
-
-window.Chord = chord;
+window.Chord = function ({data}) {
+    const svg = generateChord(data);
+    document.body.append(svg)
+}
