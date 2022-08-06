@@ -1,10 +1,10 @@
 """Sankey graph."""
 
 import numpy as np
-import pandas as pd
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
+
 
 def show(df, config, labels=None):
     """Build and show the graph.
