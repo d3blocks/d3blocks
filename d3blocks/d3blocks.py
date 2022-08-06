@@ -17,6 +17,7 @@ import colourmap
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
+import chord.Chord as Chord
 import imageslider.Imageslider as Imageslider
 from d3graph import d3graph
 import d3graph as d3ng
@@ -144,14 +145,89 @@ class D3Blocks():
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
 
-    def imageslider(self,
-               img_before,
-               img_after,
-               title='Image slider - d3blocks',
-               filepath='imageslider.html',
+    def chord(self,
+               df,
+               title='Chord - d3blocks',
+               filepath='chord.html',
                figsize=(800, 600),
+               # node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
+               # link={"color": "source-target", "stroke_opacity": 0.5},
+               # margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                showfig=True,
                overwrite=True):
+        """Create of chord graph.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+            'source'
+            'target'
+            'weight'
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+
+        Returns
+        -------
+        df : pd.DataFrame()
+            DataFrame.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example data
+        >>> df = d3.import_example('stormofswords')
+        >>>
+        >>> # Plot
+        >>> d3.chord(df, filepath='chord_demo.html')
+
+        """
+        df = df.copy()
+        self.config['chart'] ='chord'
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['figsize'] = figsize
+        # self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5}, **link}
+        # self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
+        # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
+
+        # Remvove quotes from source-target labels
+        df = remove_quotes(df)
+
+        # Set default label properties
+        if not hasattr(self, 'labels'):
+            labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            self.set_label_properties(labels)
+
+        # Create the plot
+        self.config = Chord.show(df, self.config, labels=self.labels)
+        # Open the webbrowser
+        if self.config['showfig']:
+            _showfig(self.config['filepath'])
+
+    def imageslider(self,
+                    img_before,
+                    img_after,
+                    title='Image slider - d3blocks',
+                    filepath='imageslider.html',
+                    figsize=(800, 600),
+                    showfig=True,
+                    overwrite=True):
         """Create image slider.
 
         Parameters
@@ -1008,8 +1084,8 @@ def _showfig(filepath: str):
 
 
 def remove_quotes(df):
-    return df.loc[:, df.dtypes==object].apply(lambda s: s.str.replace("'", ""))
-
+    df.loc[:, df.dtypes==object].apply(lambda s: s.str.replace("'", ""))
+    return df
 
 # %% Do checks
 def library_compatibility_checks():

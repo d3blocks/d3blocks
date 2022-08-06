@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+
+# %% CHORD - EXAMPLE 1
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+df = d3.import_example('energy')
+# df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+# df = d3.adjmat2vec(df)
+
+# Chord diagram
+d3.chord(df, filepath='chord_demo.html', figsize=(1000, 800))
+
 # %% IMGE SLIDER
 
 from d3blocks import D3Blocks
@@ -53,27 +69,6 @@ d3.Network.show()
 d3.Network.node_properties
 d3.Network.edge_properties
 
-# %% SANKEY - EXAMPLE 1
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-df = d3.import_example('energy')
-# df = d3.import_example('stormofswords')
-
-# Link settings
-d3.sankey(df, filepath='sankey_energy_link.html', figsize=(1000, 800), link={"color": "source", 'stroke_opacity': 0.2})
-
-# Figure Margins
-d3.sankey(df, filepath='sankey_margin.html', figsize=(1000, 800), margin={"top": 25, "left": 25})
-
-# node settings
-d3.sankey(df, filepath='sankey_node_0.html', figsize=(1000, 800))
-d3.sankey(df, filepath='sankey_node_1.html', figsize=(1000, 800), node={"color": "red"})
-d3.sankey(df, filepath='sankey_node_2.html', figsize=(1000, 800), node={"color": "red", "padding": 25})
-d3.sankey(df, filepath='sankey_node_3.html', figsize=(1000, 800), node={"color": "red", "padding": 25, "width": 5})
-d3.sankey(df, filepath='sankey_node_4.html', figsize=(1000, 800), node={"color": "red", "padding": 25, "width": 5, "align": "left"})
 
 # %% SANKEY - EXAMPLE 2
 

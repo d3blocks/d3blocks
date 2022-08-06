@@ -4,6 +4,7 @@ from d3blocks import D3Blocks
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
+import sankey.Chord as Chord
 import imageslider.Imageslider as Imageslider
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
