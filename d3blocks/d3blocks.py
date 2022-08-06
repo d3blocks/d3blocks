@@ -446,7 +446,7 @@ class D3Blocks():
         self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Remvove quotes from source-target labels
-        df.loc[:, df.dtypes==object].apply(lambda s: s.str.replace("'", ""))
+        df = remove_quotes(df)
 
         # Set default label properties
         if not hasattr(self, 'labels'):
@@ -1005,6 +1005,10 @@ def _showfig(filepath: str):
     if platform == "darwin":  # check if on OSX
         file_location = "file:///" + file_location
     webbrowser.open(file_location, new=2)
+
+
+def remove_quotes(df):
+    return df.loc[:, df.dtypes==object].apply(lambda s: s.str.replace("'", ""))
 
 
 # %% Do checks
