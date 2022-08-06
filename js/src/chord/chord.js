@@ -134,17 +134,21 @@ export function chord({
             //If the end angle lies beyond a quarter of a circle (90 degrees or pi/2)
             //flip the end and start position
             if (d.endAngle > 90 * Math.PI / 180 & d.startAngle < 270 * Math.PI / 180) {
-                var startLoc = /M(.*?)A/,		//Everything between the first capital M and first capital A
-                    middleLoc = /A(.*?)0 0 1/,	//Everything between the first capital A and 0 0 1
-                    endLoc = /0 0 1 (.*?)$/;	//Everything between the first 0 0 1 and the end of the string (denoted by $)
-                //Flip the direction of the arc by switching the start en end point (and sweep flag)
-                //of those elements that are below the horizontal line
-                var newStart = endLoc.exec(newArc)[1];
-                var newEnd = startLoc.exec(newArc)[1];
-                var middleSec = middleLoc.exec(newArc)[1];
+                try {
+                    var startLoc = /M(.*?)A/,		//Everything between the first capital M and first capital A
+                        middleLoc = /A(.*?)0 0 1/,	//Everything between the first capital A and 0 0 1
+                        endLoc = /0 0 1 (.*?)$/;	//Everything between the first 0 0 1 and the end of the string (denoted by $)
+                    //Flip the direction of the arc by switching the start en end point (and sweep flag)
+                    //of those elements that are below the horizontal line
+                    var newStart = endLoc.exec(newArc)[1];
+                    var newEnd = startLoc.exec(newArc)[1];
+                    var middleSec = middleLoc.exec(newArc)[1];
 
-                //Build up the new arc notation, set the sweep-flag to 0
-                newArc = "M" + newStart + "A" + middleSec + "0 0 0 " + newEnd;
+                    //Build up the new arc notation, set the sweep-flag to 0
+                    newArc = "M" + newStart + "A" + middleSec + "0 0 0 " + newEnd;
+                } catch {
+                    console.log('Could not parse arc', newArc, d);
+                }
             }//if
 
             //Create a new invisible arc that the text can flow along
