@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ TITLE }}</title>
+    <style>
+        {% include "popover.css" %}
+    </style>
 </head>
 <body>
 
@@ -10,16 +13,14 @@
 <script>
 	{% include "chord.js" %}
     
-    const jsonData = {{ json_data }};
-
-    const data = jsonData.links.map(({source, target, value}) => ({
-        source: jsonData.nodes[source].name,
-        target: jsonData.nodes[target].name,
-        value
-    }))
+    const names = {{ NAMES }};
+    const colors = {{ COLORS }};
+    const data = {{ json_data }};
 
     document.addEventListener('DOMContentLoaded', function () {
         window.Chord({
+            names,
+            colors,
             data
         });
     });

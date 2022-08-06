@@ -25,12 +25,8 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
-    # Transform dataframe into input form for d3
-    df.reset_index(inplace=True, drop=True)
-    df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
-    df['target_id'] = list(map(lambda x: labels.get(x)['id'], df['target']))
     # Create the data from the input of javascript
-    X = get_data_ready_for_d3(df, labels)
+    X, config = get_data_ready_for_d3(df, labels, config)
     # Write to HTML
     write_html(X, config)
     # Return config
@@ -57,6 +53,8 @@ def write_html(X, config, overwrite=True):
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
+        'COLORS': config['colors'],
+        'NAMES': config['labels'],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
@@ -72,7 +70,7 @@ def write_html(X, config, overwrite=True):
         f.write(index_template.render(content))
 
 
-def get_data_ready_for_d3(df, labels):
+def get_data_ready_for_d3(df, labels, config):
     """Convert the source-target data into d3 compatible data.
 
     Parameters
@@ -89,23 +87,8 @@ def get_data_ready_for_d3(df, labels):
         Converted data into a string that is d3 compatible.
 
     """
-    # Set the nodes in an increasing id-order
-    list_id = np.array(list(map(lambda x: labels.get(x)['id'], df['source'])) + list(map(lambda x: labels.get(x)['id'], df['target'])))
-    list_name = np.array(list(map(lambda x: labels.get(x)['desc'], df['source'])) + list(map(lambda x: labels.get(x)['desc'], df['target'])))
-    _, idx = np.unique(list_id, return_index=True)
-
-    # Set the nodes
-    X = '{"nodes":['
-    for i in idx:
-        X = X + '{"name":"' + list_name[i] + '"},'
-    X = X[:-1] + '],'
-
-    # Set the links
-    # source_target_id = list(zip(list(map(lambda x: labels.get(x)['id'], df['source'])),  list(map(lambda x: labels.get(x)['id'], df['target']))))
-    X = X + ' "links":['
-    for _, row in df.iterrows():
-        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight']) + '},'
-    X = X[:-1] + ']}'
-
+    config['colors'] = list(map(lambda x: labels.get(x)['color'], df.columns.values))
+    config['labels'] = list(df.columns.values)
+    X = df.to_json(orient ='values')
     # Return
-    return X
+    return X, config

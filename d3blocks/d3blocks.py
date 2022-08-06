@@ -211,10 +211,6 @@ class D3Blocks():
             labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             self.set_label_properties(labels)
 
-        # Convert vector to adjmat
-        df = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-        df = df + df.T
-        
         # Create the plot
         self.config = Chord.show(df, self.config, labels=self.labels)
         # Open the webbrowser

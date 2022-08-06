@@ -9,9 +9,9 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 
-df = d3.import_example('energy')
+# df = d3.import_example('energy')
 # df = d3.import_example('bigbang')
-# df = d3.import_example('stormofswords')
+df = d3.import_example('stormofswords')
 # adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 
 # Chord diagram
