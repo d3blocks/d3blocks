@@ -10,17 +10,25 @@ var random = d3.randomNormal(0, 0.2),
     points0 = d3.range(300).map(function() { return [random() + sqrt3, random() + 1, 0]; }),
     points1 = d3.range(300).map(function() { return [random() - sqrt3, random() + 1, 1]; }),
     points2 = d3.range(300).map(function() { return [random(), random() - 1, 2]; }),
-    points3 = d3.range(300).map(function() { return [0.9388189819731425,1.3672443739992586, 3]; }),
+    points3 = d3.range(300).map(function(i) { return [0.9388189819731425+i,1.3672443739992586, 3]; })
     //points3 = [2, 2, 3],
-    points = d3.merge([points0, points1, points2, points3]);
+    //points = d3.merge([points0, points1, points2, points3]);
+
+
+var points = [
+	[10, 20, 0],
+	[34, 32, 0],
+	[30, 20, 1],
+	[34, 42, 1],
+];
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
 var k = height / width,
-    x0 = [-4.5, 4.5],
-    y0 = [-4.5, 4.5],
+    x0 = [-40, 45],
+    y0 = [-40, 45],
     x = d3.scaleLinear().domain(x0).range([0, width]),
     y = d3.scaleLinear().domain(y0).range([height, 0]),
     z = d3.scaleOrdinal(d3.schemeCategory10);

@@ -16,20 +16,8 @@
 <script>
 
 	// Create data
-	function randomData(samples) {
-		var data = [],
-			random = d3.randomNormal();
-			
-		for (i = 0; i < samples; i++) {
-			data.push({
-				x: random(),
-				y: random()
-			});
-		}
-		return data;
-	}
-
-	var data = randomData(300);
+	var data = [{x:10, y:20}, {x:40, y: 80}, {x:5, y:16}]
+	
 
 	var margin = { top: 20, right: 20, bottom: 30, left: 30 };
 	width = 900 - margin.left - margin.right,
