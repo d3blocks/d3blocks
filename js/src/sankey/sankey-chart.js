@@ -1,7 +1,7 @@
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/sankey-diagram
-import * as d3Sankey from "./d3-sankey/index";
+import * as d3Sankey from "./d3-sankey";
 import {schemeTableau10} from "d3-scale-chromatic";
 import {map, union} from "d3-array";
 import {format as d3Format } from "d3-format";
