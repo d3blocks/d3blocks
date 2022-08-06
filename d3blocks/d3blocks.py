@@ -17,11 +17,11 @@ import colourmap
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
 import sankey.Sankey as Sankey
-import chord.Chord as Chord
 import imageslider.Imageslider as Imageslider
 from d3graph import d3graph
 import d3graph as d3ng
 from d3heatmap import d3heatmap
+import chord.Chord as Chord
 
 
 logger = logging.getLogger('')
@@ -150,8 +150,7 @@ class D3Blocks():
                title='Chord - d3blocks',
                filepath='chord.html',
                figsize=(800, 600),
-               # node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
-               # link={"color": "source-target", "stroke_opacity": 0.5},
+               # link={"color": "source-target", "opacity": 0.5},
                # margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                showfig=True,
                overwrite=True):
@@ -214,8 +213,11 @@ class D3Blocks():
             labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             self.set_label_properties(labels)
 
+        # Convert vector to adjmat
+        adjmat = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
         # Create the plot
-        self.config = Chord.show(df, self.config, labels=self.labels)
+        self.config = Chord.show(adjmat, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']:
             _showfig(self.config['filepath'])

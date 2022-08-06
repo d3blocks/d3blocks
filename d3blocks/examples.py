@@ -6,18 +6,46 @@
 
 # %% CHORD - EXAMPLE 1
 from d3blocks import D3Blocks
+import numpy as np
+import pandas as pd
 
 # Initialize
 d3 = D3Blocks()
 # Import example
 # df = d3.import_example('bigbang')
 # df = d3.import_example('stormofswords')
-df = d3.import_example('energy')
+# df = d3.import_example('energy')
 # df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
 # df = d3.adjmat2vec(df)
 
+data = np.array([
+    [0, 4, 3, 2, 5, 2], # "Black Widow"
+    [4, 0, 3, 2, 4, 3], # Captain Americ
+    [3, 3, 0, 2, 3, 3], # Hawkeye
+    [2, 2, 2, 0, 3, 3], #The Hulk
+    [5, 4, 3, 3, 0, 2], #Iron Man
+    [2, 3, 3, 3, 2, 0], #Thor
+    ])
+
+df = pd.DataFrame(data=data, columns=["Black Widow", "Captain America", "Hawkeye", "the Hulk", "Iron Man", "Thor"], index=["Black Widow", "Captain America", "Hawkeye", "the Hulk", "Iron Man", "Thor"])
+df = d3.adjmat2vec(df)
+
+# Retrieve default label properties
+labels = d3.get_label_properties(df['source'].unique(), cmap='Set2')
+
+# Make some changes
+labels["Black Widow"]['color'] = "#301E1E"
+labels["Captain America"]['color'] = "#083E77"
+labels["Hawkeye"]['color'] = "#342350"
+labels["the Hulk"]['color'] = "#567235"
+labels["Iron Man"]['color'] = "#8B161C"
+labels["Thor"]['color'] = "#DF7C00"
+
+d3.set_label_properties(labels)
+
 # Chord diagram
-d3.chord(df, filepath='chord_demo.html', figsize=(1000, 800))
+d3.chord(df, filepath='chord_demo.html')
+
 
 # %% IMGE SLIDER
 

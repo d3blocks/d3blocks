@@ -1,0 +1,2 @@
+# Ignore package.json dependencies
+node_modules/
