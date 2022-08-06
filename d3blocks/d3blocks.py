@@ -80,7 +80,7 @@ class D3Blocks():
         set_logger(verbose=verbose)
 
     @staticmethod
-    def vec2adjmat(source, target, weight=None):
+    def vec2adjmat(source, target, weight=None, symmetric=True):
         """Convert source and target into adjacency matrix.
 
         Parameters
@@ -109,7 +109,7 @@ class D3Blocks():
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
 
         """
-        return d3ng.vec2adjmat(source, target, weight=weight)
+        return d3ng.vec2adjmat(source, target, weight=weight, symmetric=symmetric)
 
     @staticmethod
     def adjmat2vec(df, min_weight=1):
@@ -201,8 +201,6 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
-        # self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5}, **link}
-        # self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
         # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Remvove quotes from source-target labels
@@ -214,10 +212,11 @@ class D3Blocks():
             self.set_label_properties(labels)
 
         # Convert vector to adjmat
-        adjmat = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-
+        df = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+        df = df + df.T
+        
         # Create the plot
-        self.config = Chord.show(adjmat, self.config, labels=self.labels)
+        self.config = Chord.show(df, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']:
             _showfig(self.config['filepath'])

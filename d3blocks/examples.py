@@ -3,6 +3,19 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example('energy')
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
+# Chord diagram
+d3.chord(df, filepath='chord_demo.html')
 
 # %% CHORD - EXAMPLE 1
 from d3blocks import D3Blocks
@@ -68,10 +81,10 @@ d3 = D3Blocks()
 # df = d3.import_example('bigbang')
 # df = d3.import_example('stormofswords')
 df = d3.import_example('energy')
-df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 # df = d3.adjmat2vec(df)
 
-d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700))
+d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700))
 
 
 # %% NETWORK - EXAMPLE 1
