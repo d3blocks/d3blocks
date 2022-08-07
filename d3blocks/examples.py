@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% SCATTER EXAMPLE
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('iris')
+
+# Scatter
+d3.scatter(df, filepath='scatter_demo.html')
+
+# Scatter
+d3.scatter(df, filepath='scatter_demo_1.html', xlim=[1, 12], ylim=[])
+
+
 # %% CHORD - EXAMPLE 2
 from d3blocks import D3Blocks
 

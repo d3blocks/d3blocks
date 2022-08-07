@@ -22,6 +22,7 @@ from d3graph import d3graph
 import d3graph as d3ng
 from d3heatmap import d3heatmap
 import chord.Chord as Chord
+import scatter.Scatter as Scatter
 
 
 logger = logging.getLogger('')
@@ -141,6 +142,81 @@ class D3Blocks():
 
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
+
+    def scatter(self,
+              df,
+              title='Scatter - d3blocks',
+              filepath='scatter.html',
+              figsize=(900, 600),
+              xlim = [None, None],
+              ylim = [None, None],
+              showfig=True,
+              overwrite=True):
+        """Create of chord graph.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+            'x'
+            'y'
+            'index' : class labels
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
+        set_xlim : tuple, (default: [None, None])
+            Width of the x-axis: The default is extracted from the data with 10% spacing.
+        set_ylim : tuple, (default: [None, None])
+            Height of the y-axis: The default is extracted from the data with 10% spacing.
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+
+        Returns
+        -------
+        df : pd.DataFrame()
+            DataFrame.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example data
+        >>> df = d3.import_example('iris')
+        >>>
+        >>> # Plot
+        >>> d3.scatter(df)
+
+        """
+        df = df.copy()
+        self.config['chart'] ='scatter'
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['xlim'] = xlim
+        self.config['ylim'] = ylim
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['figsize'] = figsize
+        # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
+
+        # Set default label properties
+        if not hasattr(self, 'labels'):
+            labels = self.get_label_properties(np.unique(df.index.values), cmap=self.config['cmap'])
+            self.set_label_properties(labels)
+
+        # Create the plot
+        self.config = Scatter.show(df, self.config, labels=self.labels)
+        # Open the webbrowser
+        if self.config['showfig']:
+            _showfig(self.config['filepath'])
 
     def chord(self,
               df,
@@ -895,6 +971,13 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         # Image slider demo
         url='https://erdogant.github.io/datasets/southern_nebula.zip'
         ext='.jpg'
+    elif graph=='iris':
+        from sklearn import datasets
+        iris = datasets.load_iris()
+        X = iris.data[:, :2]  # we only take the first two features.
+        labels = iris.target
+        df = pd.DataFrame(data=X, index=labels, columns=['x','y'])
+        return df
 
     if url is None:
         logger.info('Nothing to download.')
