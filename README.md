@@ -18,6 +18,9 @@ https://github.com/d3/d3/wiki/Gallery
 
 ## TODO
 
+### SCATTER
+https://observablehq.com/@observablehq/plot-delaunay
+
 ### d3graph in 3d
 https://vasturiano.github.io/3d-force-graph/example/text-links/
 
@@ -27,10 +30,7 @@ https://observablehq.com/@d3/hierarchical-edge-bundling
 https://observablehq.com/@d3/directed-chord-diagram
 https://www.visualcinnamon.com/2016/06/orientation-gradient-d3-chord-diagram/
 
-Circle packs
-https://carbondesignsystem.com/data-visualization/complex-charts/
-
-Gauge
+### Gauge
 http://bl.ocks.org/msqr/3202712
 https://carbondesignsystem.com/data-visualization/simple-charts/
 
@@ -49,6 +49,7 @@ https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
 
 ### Treemap
 https://observablehq.com/@d3/treemap
+https://bl.ocks.org/ganezasan/52fced34d2182483995f0ca3960fe228
 
 ### map
 https://observablehq.com/@ncastaldo/gas-stations-italy
