@@ -25,13 +25,13 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 
-# df = d3.import_example('energy')
+df = d3.import_example('energy')
 # df = d3.import_example('bigbang')
-df = d3.import_example('stormofswords')
+# df = d3.import_example('stormofswords')
 # adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 
 # Chord diagram
-d3.chord(df, filepath='chord_demo.html')
+d3.chord(df, filepath='chord_demo.html', figsize=[900, 900])
 
 # %% CHORD - EXAMPLE 1
 from d3blocks import D3Blocks
@@ -99,6 +99,9 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 # df = d3.adjmat2vec(df)
+# from sklearn.preprocessing import StandardScaler
+# X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
+# X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
 
 d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700))
 
@@ -118,13 +121,34 @@ df = d3.import_example('energy')
 
 # Network diagram
 d3.network(df, showfig=False)
-d3.Network.show()
-
 d3.Network.set_node_properties(color='cluster')
+
+# Make adjustments to the node: Thermal_generation
+d3.Network.node_properties['Thermal_generation']['size']=20
+d3.Network.node_properties['Thermal_generation']['edge_color']='#000fff' # Blue node edge
+d3.Network.node_properties['Thermal_generation']['edge_size']=3 # Node-edge Size
+
+# Make adjustments to the edge: 'Solar', 'Solar_Thermal'
+d3.Network.edge_properties['Solar', 'Solar_Thermal']['color']='#000fff'
+d3.Network.edge_properties['Solar', 'Solar_Thermal']['weight_scaled']=10
+
+# Show the network graph
 d3.Network.show()
 
-d3.Network.node_properties
-d3.Network.edge_properties
+
+
+# %% SANKEY - EXAMPLE 1
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Link settings
+d3.sankey(df, link={"color": "source-target"})
 
 
 # %% SANKEY - EXAMPLE 2
@@ -234,7 +258,7 @@ df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000
 # d3.labels
 
 # Make the moving bubbles
-d3.movingbubbles(df, center='Travel', datetime='datetime_norm', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
 
 # %% Moving bubbles
@@ -242,9 +266,10 @@ d3 = D3Blocks(cmap='Set1')
 # Import example
 df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # Normalize the time per sample id.
-df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+# d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 # %% Moving bubbles

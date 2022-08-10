@@ -81,7 +81,7 @@ class D3Blocks():
         set_logger(verbose=verbose)
 
     @staticmethod
-    def vec2adjmat(source, target, weight=None, symmetric=True):
+    def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
         """Convert source and target into adjacency matrix.
 
         Parameters
@@ -92,6 +92,11 @@ class D3Blocks():
             The target node.
         weight : list of int
             The Weights between the source-target values
+        symmetric : bool, optional
+            Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
+        aggfunc : str, optional
+            Aggregate function in case multiple values exists for the same relationship.
+            'sum' (default)
 
         Returns
         -------
@@ -110,7 +115,7 @@ class D3Blocks():
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
 
         """
-        return d3ng.vec2adjmat(source, target, weight=weight, symmetric=symmetric)
+        return d3ng.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
 
     @staticmethod
     def adjmat2vec(df, min_weight=1):
@@ -497,13 +502,6 @@ class D3Blocks():
         self.config['collision'] = collision
         self.config['charge'] = charge * -1
         self.config['slider'] = slider
-
-        # Set default label properties
-        # if not hasattr(self, 'labels'):
-            # Create labels
-            # labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
-            # Store in object
-            # self.set_label_properties(labels)
 
         # Initialize network graph
         self.Network = d3graph(collision=collision, charge=charge, slider=slider)
@@ -1003,6 +1001,7 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     if graph=='energy':
         df = pd.read_csv(csvfile)
         df.rename(columns={'value': 'weight'}, inplace=True)
+        df[['source', 'target']] = df[['source', 'target']].astype(str)
     if graph=='stormofswords':
         df = pd.read_csv(csvfile)
         # df.rename(columns={'weight':'value'}, inplace=True)
@@ -1052,7 +1051,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     location_types = location_types + ['Travel']
 
     # Generate random timestamps with catagories and sample ids
-    for i in range(0, df.shape[0]):
+    for i in tqdm(range(0, df.shape[0])):
         df['sample_id'].iloc[i] = random.randint(0, c)
         # df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, c))))
         df['state'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
