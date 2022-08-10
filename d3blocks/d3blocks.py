@@ -13,6 +13,7 @@ import webbrowser
 import random
 import time
 import colourmap
+from tqdm import tqdm
 
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
