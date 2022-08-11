@@ -3,6 +3,21 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Moving bubbles
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S')
+# Import example
+# df = d3.import_example(graph='movingbubbles')
+# Normalize the time per sample id.
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+df = d3.import_example(graph='random_time', n=10000, c=1000, date_start="2000-01-01 00:10:05", date_stop="2000-01-02 23:59:59")
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+# Make the moving bubbles
+d3.movingbubbles(df, datetime='datetime', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 1}, filepath='c://temp/movingbubbles.html')
+
 # %% SCATTER EXAMPLE
 from d3blocks import D3Blocks
 

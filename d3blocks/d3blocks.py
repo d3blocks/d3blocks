@@ -825,7 +825,7 @@ class D3Blocks():
         """
         logger.info('Compute time delta.')
         # Compute delta
-        df = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'])
+        df = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'], dt_format=self.config['dt_format'])
         # Return
         return df
 
@@ -892,7 +892,7 @@ class D3Blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, graph='movingbubbles', n=10000, c=1000, date_start="2000-1-1 00:00:00", date_stop="2010-1-1 23:59:59"):
+    def import_example(self, graph='movingbubbles', n=10000, c=1000, date_start="2000-01-01 00:00:00", date_stop="2010-01-01 23:59:59"):
         """Import example dataset from github source.
 
         Description
@@ -907,9 +907,9 @@ class D3Blocks():
         n : int, (default: 1000).
             Number of events.
         date_start : str, (default: None)
-            "1-1-2000 00:00:00" : start date
+            "2000-01-01 00:00:00" : start date
         date_stop : str, (default: None)
-            "1-1-2010 23:59:59" : Stop date
+            "2010-01-01 23:59:59" : Stop date
 
         Returns
         -------
@@ -936,9 +936,9 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     n : int, (default: 1000).
         Number of events.
     date_start : str, (default: None)
-        "1-1-2000 00:00:00" : start date
+        "2000-01-01 00:00:00" : start date
     date_stop : str, (default: None)
-        "1-1-2010 23:59:59" : Stop date
+        "2010-01-01 23:59:59" : Stop date
 
     Returns
     -------
@@ -950,10 +950,10 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     if graph=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
     elif graph=='random_time':
-        return generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop)
+        return generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop, dt_format=dt_format)
     elif graph=='timeseries':
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
-        df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)))
+        df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)), dt_format=dt_format)
         return df
     elif graph=='energy':
         # Sankey demo
@@ -998,7 +998,12 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     # Import local dataset
     logger.info('Import demo dataset for [%s] graph' %(graph))
     if graph=='movingbubbles':
-        df = Movingbubbles.import_example(csvfile)
+        X = Movingbubbles.import_example(csvfile)
+        labels = "{'index': '0', 'short': 'Sleeping', 'desc': 'Sleeping'}, {'index': '1', 'short': 'Personal Care', 'desc': 'Personal Care'}, {'index': '2', 'short': 'Eating & Drinking', 'desc': 'Eating and Drinking'}, {'index': '3', 'short': 'Education', 'desc': 'Education'}, {'index': '4', 'short': 'Work', 'desc': 'Work and Work-Related Activities'}, {'index': '5', 'short': 'Housework', 'desc': 'Household Activities'}, {'index': '6', 'short': 'Household Care', 'desc': 'Caring for and Helping Household Members'}, {'index': '7', 'short': 'Non-Household Care', 'desc': 'Caring for and Helping Non-Household Members'}, {'index': '8', 'short': 'Shopping', 'desc': 'Consumer Purchases'}, {'index': '9', 'short': 'Pro. Care Services', 'desc': 'Professional and Personal Care Services'}, {'index': '10', 'short': 'Leisure', 'desc': 'Socializing, Relaxing, and Leisure'}, {'index': '11', 'short': 'Sports', 'desc': 'Sports, Exercise, and Recreation'}, {'index': '12', 'short': 'Religion', 'desc': 'Religious and Spiritual Activities'}, {'index': '13', 'short': 'Volunteering', 'desc': 'Volunteer Activities'}, {'index': '14', 'short': 'Phone Calls', 'desc': 'Telephone Calls'}, {'index': '15', 'short': 'Misc.', 'desc': 'Other'}, {'index': '16', 'short': 'Traveling', 'desc': 'Traveling'}"
+        df = {}
+        df['type'] = 'movingbubbles'
+        df['data'] = X
+        df['labels'] = labels
     if graph=='energy':
         df = pd.read_csv(csvfile)
         df.rename(columns={'value': 'weight'}, inplace=True)
@@ -1016,7 +1021,7 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
 
 
 # %%
-def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None):
+def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S'):
     """Generate random time data.
 
     Parameters
@@ -1037,33 +1042,48 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
     """
     if date_start is None:
-        date_start="1-1-2000 00:00:00"
+        date_start="2000-01-01 00:00:00"
         logger.info('Date start is set to %s' %(date_start))
     if date_stop is None:
-        date_stop="1-1-2010 23:59:59"
+        date_stop="2010-01-01 23:59:59"
         logger.info('Date start is set to %s' %(date_stop))
 
     # Create empty dataframe
     df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
     location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Work', 'Eating', 'Bored']
     # Take random few columns
-    location_types = location_types[0:random.randint(2, len(location_types))]
+    # location_types = location_types[0:random.randint(2, len(location_types))]
     # Always add the column Travel
     location_types = location_types + ['Travel']
+    # Set the probability of selecting a certain state
+    pdf = [0.05, 0.02, 0.02, 0.1, 0.55, 0.05, 0.1, 0.03, 0.03, 0.05]
 
     # Generate random timestamps with catagories and sample ids
+    state_mem = 0
     for i in tqdm(range(0, df.shape[0])):
         df['sample_id'].iloc[i] = random.randint(0, c)
-        # df['sample_id'].iloc[i] = int(np.floor(np.absolute(np.random.normal(0, c))))
-        df['state'].iloc[i] = location_types[random.randint(0, len(location_types) - 1)]
-        df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random())
+
+        # Get random idx based pdf
+        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
+        if (idx==state_mem) and idx!=(len(location_types) - 1):
+            idx = np.minimum(idx + 1, len(location_types) - 1)
+
+        df['state'].iloc[i] = location_types[idx]
+        df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
+        state_mem = idx
+    # Set a random time-point at multiple occasion at the same time.
+    df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df.sort_values(by="datetime")
     df.reset_index(inplace=True, drop=True)
     return df
 
 
-def str_time_prop(start, end, dt_format, prop):
+def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S'):
+    return str_time_prop(start, end, prop, dt_format=dt_format)
+
+
+def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S'):
     """Get a time at a proportion of a range of two formatted times.
 
     start and end should be strings specifying times formatted in the
@@ -1076,10 +1096,6 @@ def str_time_prop(start, end, dt_format, prop):
     etime = time.mktime(time.strptime(end, dt_format))
     ptime = stime + prop * (etime - stime)
     return time.strftime(dt_format, time.localtime(ptime))
-
-
-def random_date(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S'):
-    return str_time_prop(start, end, dt_format, prop)
 
 
 # %% Download files from github source
