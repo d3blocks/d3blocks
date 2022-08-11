@@ -49,7 +49,7 @@ def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
     -----------
     The input for movingbubbles is the difference between two time points.
     The following steps are taken to compute the delta:
-        1. Take evenst from an unique sample id
+        1. Take event from an unique sample id
         2. Sort on datetime
         3. Compute stepwise the difference (delta) between two adjacent time points.
 
