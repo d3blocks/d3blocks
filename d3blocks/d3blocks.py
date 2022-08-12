@@ -602,30 +602,43 @@ class D3Blocks():
         if self.config['showfig']:
             _showfig(self.config['filepath'])
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', fontsize=14, showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, fontsize=14, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
         ----------
-        df : Input data
+        df : Input data, pd.DataFrame()
             Input data.
+        datetime : str, (default: 'datetime')
+            Name of the column with the datetime.
+        sample_id : str, (default: 'sample_id')
+            Name of the column with the sample ids.
+        state : str, (default: 'state')
+            Name of the column with the states.
+        dt_format : str, optional
+            Format of the input Date time elements.
+            The default is '%Y-%m-%d %H:%M:%S'.
         center : String, (default: None)
             Center this category.
         dampler : float, (default: 1)
             Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.
+        fontsize : int, (default: 14)
+            Fontsize of the fonts in the circle.
         reset_time : String, (default: 'day')
             'day'  : Every 24h de the day start over again.
             'year' : Every 365 days the year starts over again.
+        speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50})
+            The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
         figsize : tuple, (default: (1500, 800))
             Size of the figure in the browser, [width, height].
+        note : str, (default: None)
+            A specific note, such as project description can be put on the html page.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output
         showfig : bool, (default: True)
             Open the window to show the network.
-        fontsize : int, (default: 14)
-            Fontsize of the fonts in the circle.
         overwrite : bool, (default: True)
             Overwrite the existing html file.
 
@@ -892,7 +905,7 @@ class D3Blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, graph='movingbubbles', n=10000, c=1000, date_start="2000-01-01 00:00:00", date_stop="2010-01-01 23:59:59"):
+    def import_example(self, graph='movingbubbles', n=10000, c=100, date_start="2000-01-01 00:00:00", date_stop="2001-01-01 23:59:59"):
         """Import example dataset from github source.
 
         Description
