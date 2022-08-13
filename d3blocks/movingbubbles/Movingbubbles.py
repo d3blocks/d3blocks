@@ -8,96 +8,7 @@ from tqdm import tqdm
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
-
-
-def compute_time_delta(df, sample_id, datetime, state, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S'):
-    """Compute delta between two time-points that follow-up.
-
-    Parameters
-    ----------
-    df : Input DataFrame
-        Input data.
-    sample_id : str.
-        Column name of the sample identifier.
-    datetime : datetime
-        Column name of the date time.
-    state : str
-        Column name that describes the state.
-    cmap : str, (default: 'Set1')
-        The name of the colormap.
-        'Set1'.
-    dt_format : str
-        '%Y-%m-%d %H:%M:%S'.
-
-    Returns
-    -------
-    df : pd.DataFrame()
-        DataFrame.
-
-    """
-    print('Compute time delta.')
-    # Compute delta
-    df = compute_delta(df, sample_id, datetime, dt_format=dt_format)
-    # Return
-    return df
-
-
-def compute_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
-    """Compute date time delta.
-
-    Description
-    -----------
-    The input for movingbubbles is the difference between two time points.
-    The following steps are taken to compute the delta:
-        1. Take event from an unique sample id
-        2. Sort on datetime
-        3. Compute stepwise the difference (delta) between two adjacent time points.
-
-    Parameters
-    ----------
-    df : Input dataFrame
-        Input data.
-    sample_id : list of str.
-        Category name.
-    datetime : datetime
-        date time.
-    dt_format : str
-        '%Y-%m-%d %H:%M:%S'.
-
-    Returns
-    -------
-    df : pd.DataFrame()
-        One extra column is added that contains the time delta.
-
-    """
-    # Use copy of dataframe
-    df = df.copy()
-    df[sample_id] = df[sample_id].astype(str)
-    # Check datetime format
-    if not isinstance(df[datetime][0], dt.date):
-        print('Set datetime format to [%s]' %(dt_format))
-        df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
-
-    # Initialize empty delta
-    df['delta'] = df[datetime] - df[datetime]
-    # Sort datetime
-    df = df.sort_values(by=[sample_id, datetime])
-    df.reset_index(inplace=True, drop=True)
-    # Compute per category the delta
-    for i in tqdm(np.unique(df[sample_id])):
-        # Take sample id
-        Iloc = df[sample_id]==i
-        # Get data
-        dftmp = df.loc[Iloc, :]
-        # Store
-        df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1]
-
-    # Set the last event at 0
-    Iloc = df['delta'].isna()
-    if np.any(Iloc):
-        df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[0] - dftmp[datetime].iloc[0]
-    # Return
-    return df
+import json
 
 
 def show(df, config, labels=None):
@@ -166,6 +77,8 @@ def show(df, config, labels=None):
     datestart = df[config['columns']['datetime']].iloc[0]
     datestop = df[config['columns']['datetime']].iloc[-1]
     config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
+    # Convert to json format
+    config['time_notes'] = json.dumps(config['time_notes'])
 
     # Write to HTML
     write_html(X, config)
@@ -207,6 +120,7 @@ def write_html(X, config, overwrite=True):
         'SPEED': config['speed'],
         'DAMPER': config['damper'],
         'NOTE': config['note'],
+        'TIME_NOTES': config['time_notes'],
         'START_HOUR_MIN': config['start_hour'] + (config['start_minute'] / 60),
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
     }
@@ -224,13 +138,17 @@ def write_html(X, config, overwrite=True):
         f.write(index_template.render(content))
 
 
-def standardize(df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
+def standardize(df, method='samplewise', sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
     """Standardize time per sample_id.
 
     Parameters
     ----------
     df : Input DataFrame
         Input data.
+    method : str.
+        Method to standardize the data.
+        'samplewise': Normalize per sample_id. Thus the sample_ids are independent of each other.
+        'timewise': Normalize over the entire timeframe. Sample_ids are dependent of each other.
     sample_id : str.
         Column name of the sample identifier.
     datetime : datetime
@@ -245,34 +163,147 @@ def standardize(df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m
         'datetime_norm'
 
     """
+    print('[D3Blocks]> Standardize: [%s]' %(method))
     # Use copy of dataframe
     df = df.copy()
     # Get unique
     uis = df[sample_id].unique()
-    df.reset_index(drop=True, inplace=True)
 
     # Check datetime format
     if not isinstance(df[datetime][0], dt.date):
-        print('Set datetime format to [%s]' %(dt_format))
+        print('[D3Blocks]> Set datetime format to [%s]' %(dt_format))
         df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
 
-    # Add column with normalized time
+    # Initialize empty delta
+    df['delta'] = df[datetime] - df[datetime]
+    # Initialize empty datetime_norm
     df['datetime_norm'] = df[datetime] - df[datetime]
     # Set a default start point.
     timenow = dt.datetime.strptime('1980-01-01 00:00:00', dt_format)
 
-    # Normalize per unique sample id.
-    for s in tqdm(uis):
-        # Get data for specific sample-id
-        idx = df[sample_id]==s
-        dfs = df.loc[idx, :]
-        # Normalize time per unique sample. Each sample will start at timenow.
-        df.loc[idx, 'datetime_norm'] = timenow + (dfs[datetime].loc[idx] - dfs[datetime].loc[idx].min())
+    if method=='samplewise':
+        df = df.sort_values(by=[sample_id, datetime])
+        df.reset_index(drop=True, inplace=True)
+        # Normalize per unique sample id.
+        for s in tqdm(uis):
+            # Get data for specific sample-id
+            Iloc = df[sample_id]==s
+            dfs = df.loc[Iloc, :]
+            # Timedelta
+            timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
+            df.loc[Iloc, 'delta'] = timedelta
+            # Normalize time per unique sample. Each sample will start at timenow.
+            df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
+    if method=='timewise':
+        df = df.sort_values(by=[datetime])
+        df.reset_index(drop=True, inplace=True)
+        timedelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
+        # timedelta = df[datetime].diff()
+        # timedelta.iloc[0] = timedelta.iloc[1]
+        df['delta'] = timedelta
+        df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
+
+    Iloc = df['delta'].isna()
+    if np.any(Iloc):
+        df.loc[Iloc, 'delta'] = df[datetime].iloc[0] - df[datetime].iloc[0]
 
     # Set datetime
     df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format, errors='ignore')
+    # Sort on datetime    
+    df = df.sort_values(by=[datetime])
+    df.reset_index(drop=True, inplace=True)
     # Return
     return df
+
+
+# def compute_time_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
+#     """Compute delta between two time-points that follow-up.
+
+#     Parameters
+#     ----------
+#     df : Input DataFrame
+#         Input data.
+#     sample_id : str.
+#         Column name of the sample identifier.
+#     datetime : datetime
+#         Column name of the date time.
+#     dt_format : str
+#         '%Y-%m-%d %H:%M:%S'.
+
+#     Returns
+#     -------
+#     df : pd.DataFrame()
+#         DataFrame.
+
+#     """
+#     print('Compute time delta.')
+#     # Compute delta
+#     df = compute_delta(df, sample_id, datetime, dt_format=dt_format)
+#     # Return
+#     return df
+
+
+# def compute_time_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
+#     """Compute date time delta.
+
+#     Description
+#     -----------
+#     The input for movingbubbles is the difference between two time points.
+#     The following steps are taken to compute the delta:
+#         1. Take event from an unique sample id
+#         2. Sort on datetime
+#         3. Compute sample-wise and stepwise the difference (delta) between two adjacent time points.
+
+#     Parameters
+#     ----------
+#     df : Input dataFrame
+#         Input data.
+#     sample_id : list of str.
+#         Category name.
+#     datetime : datetime
+#         date time.
+#     dt_format : str
+#         '%Y-%m-%d %H:%M:%S'.
+
+#     Returns
+#     -------
+#     df : pd.DataFrame()
+#         One extra column is added that contains the time delta.
+
+#     """
+#     # Use copy of dataframe
+#     df = df.copy()
+#     df[sample_id] = df[sample_id].astype(str)
+#     # Check datetime format
+#     if not isinstance(df[datetime][0], dt.date):
+#         print('Set datetime format to [%s]' %(dt_format))
+#         df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
+
+#     # Initialize empty delta
+#     df['delta'] = df[datetime] - df[datetime]
+#     # Sort datetime
+#     df = df.sort_values(by=[sample_id, datetime])
+#     df.reset_index(inplace=True, drop=True)
+#     # idx = None
+#     # Compute sample-wise the time-delta
+#     for i in tqdm(np.unique(df[sample_id])):
+#         # Take sample id
+#         Iloc = df[sample_id]==i
+#         # Get data
+#         dftmp = df.loc[Iloc, :]
+#         # Take last time point from previous sample.
+#         # df[datetime].iloc[idx] - df[datetime].iloc[idx+1]
+#         # Store
+#         df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[1:].values - dftmp[datetime].iloc[:-1]
+#         # Store index
+#         # idx = np.where(Iloc)[0].max()
+
+#     # Set the last event at 0
+#     Iloc = df['delta'].isna()
+#     if np.any(Iloc):
+#         df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[0] - dftmp[datetime].iloc[0]
+#     # Return
+#     return df
 
 
 def import_example(filepath):

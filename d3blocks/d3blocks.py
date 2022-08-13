@@ -602,7 +602,7 @@ class D3Blocks():
         if self.config['showfig']:
             _showfig(self.config['filepath'])
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', dt_format='%Y-%m-%d %H:%M:%S', center=None, damper=1, fontsize=14, reset_time='day', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, fontsize=14, reset_time='day', standardize='samplewise', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, time_notes=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -615,15 +615,16 @@ class D3Blocks():
             Name of the column with the sample ids.
         state : str, (default: 'state')
             Name of the column with the states.
-        dt_format : str, optional
-            Format of the input Date time elements.
-            The default is '%Y-%m-%d %H:%M:%S'.
         center : String, (default: None)
             Center this category.
         dampler : float, (default: 1)
             Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.
         fontsize : int, (default: 14)
-            Fontsize of the fonts in the circle.
+            Fontsize of the states.
+        standardize : str.
+            Method to standardize the data.
+            'samplewise': Normalize per sample_id. Thus the sample_ids are independent of each other.
+            'timewise': Normalize over the entire timeframe. Sample_ids are dependent of each other.
         reset_time : String, (default: 'day')
             'day'  : Every 24h de the day start over again.
             'year' : Every 365 days the year starts over again.
@@ -633,12 +634,16 @@ class D3Blocks():
             Size of the figure in the browser, [width, height].
         note : str, (default: None)
             A specific note, such as project description can be put on the html page.
+        time_notes : dict, (default: None)
+            The time notes will be shown between specific time points.
+            time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "Enter your note here and it is shown between 1 min and 5 min."}]
+            time_notes.append[{"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."}]
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the existing html file.
 
@@ -654,7 +659,6 @@ class D3Blocks():
         >>> d3.movingbubbles(df)
 
         """
-        if note is None: note=("This is a simulation of [%s] unique classes across time. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df)))
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -666,13 +670,15 @@ class D3Blocks():
         self.config['speed'] = speed
         self.config['damper'] = damper
         self.config['note'] = note
+        self.config['time_notes'] = time_notes
         self.config['fontsize'] = fontsize
+        self.config['standardize'] = standardize
         self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
-        self.config['dt_format'] = dt_format
 
         # Compute delta
         if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-            df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, state=state, dt_format=dt_format)
+            # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
+            df = self.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
             self.labels = self.get_label_properties(df[state], cmap=self.config['cmap'])
@@ -680,6 +686,10 @@ class D3Blocks():
             self.labels=None
         if not hasattr(self, 'labels'):
             raise Exception('Set labels is required or specify the category.')
+        if time_notes is None:
+            self.config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
+        if note is None:
+            self.config['note']=("This is a simulation of [%s] states across [%s] samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df['state'].unique()), len(df[sample_id].unique()) ))
 
         # Create the plot
         self.config = Movingbubbles.show(df, self.config, self.labels)
@@ -838,17 +848,21 @@ class D3Blocks():
         """
         logger.info('Compute time delta.')
         # Compute delta
-        df = Movingbubbles.compute_time_delta(df, sample_id, datetime, state, cmap=self.config['cmap'], dt_format=self.config['dt_format'])
+        df = Movingbubbles.compute_time_delta(df, sample_id, datetime, dt_format=self.config['dt_format'])
         # Return
         return df
 
-    def standardize(self, df, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
+    def standardize(self, df, method='samplewise', sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
         """Normalize time per sample_id.
 
         Parameters
         ----------
         df : Input DataFrame
             Input data.
+        method : str.
+            Method to standardize the data.
+            'samplewise': Normalize per sample_id. Thus the sample_ids are independent of each other.
+            'timewise':Normalize over the entire timeframe. Sample_ids are dependent of each other.
         sample_id : str.
             Column name of the sample identifier.
         datetime : datetime
@@ -863,7 +877,7 @@ class D3Blocks():
             'datetime_norm'
 
         """
-        return Movingbubbles.standardize(df, sample_id=sample_id, datetime=datetime, dt_format=dt_format)
+        return Movingbubbles.standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format)
 
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
@@ -1072,31 +1086,65 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     pdf = [0.05, 0.02, 0.02, 0.1, 0.55, 0.05, 0.1, 0.03, 0.03, 0.05]
 
     # Generate random timestamps with catagories and sample ids
-    state_mem = 0
-    for i in tqdm(range(0, df.shape[0])):
-        df['sample_id'].iloc[i] = random.randint(0, c)
+    state_mem = {}
+    idx_middle=np.where(np.array(location_types)=='Travel')[0][0]
+    i=0
+    while i <= df.shape[0]-3:
+    # for i in tqdm(range(0, df.shape[0])):
+        # A specific sample always contains 3 states. The start-state, the travel-state and the end-state.
 
+        # Get the particular sample-id
+        sample_id = random.randint(0, c)
+        state_prev = state_mem.get(sample_id, None)
+
+        # Set the start state:
         # Get random idx based pdf
+        df['sample_id'].iloc[i] = sample_id
         idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
-        if (idx==state_mem) and idx!=(len(location_types) - 1):
-            idx = np.minimum(idx + 1, len(location_types) - 1)
-
+        if (state_prev is not None) and (idx==state_prev['state']):
+            idx = np.mod(idx+1, len(location_types))
         df['state'].iloc[i] = location_types[idx]
         df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
-        state_mem = idx
+        i = i + 1
+
+        # The travel-state:
+        df['sample_id'].iloc[i] = sample_id
+        df['state'].iloc[i] = location_types[idx_middle]
+        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
+        i = i + 1
+
+        # Set the end state:
+        # Get random idx based pdf
+        df['sample_id'].iloc[i] = sample_id
+        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
+        if (location_types[idx]==df['state'].iloc[i-1]):
+            idx = np.mod(idx+1, len(location_types))
+
+        df['state'].iloc[i] = location_types[idx]
+        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
+        i = i + 1
+
+        # Store the last state
+        state_mem[sample_id] = {'state':idx}
+        
+        # Rotate pdf list
+        # pdf.insert(0, pdf.pop())
+
+        
     # Set a random time-point at multiple occasion at the same time.
-    df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
+    # df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df.sort_values(by="datetime")
+    df.dropna(inplace=True)
     df.reset_index(inplace=True, drop=True)
     return df
 
 
-def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S'):
-    return str_time_prop(start, end, prop, dt_format=dt_format)
+def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+    return str_time_prop(start, end, prop, dt_format=dt_format, strftime=strftime)
 
 
-def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S'):
+def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
     """Get a time at a proportion of a range of two formatted times.
 
     start and end should be strings specifying times formatted in the
@@ -1108,7 +1156,10 @@ def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S'):
     stime = time.mktime(time.strptime(start, dt_format))
     etime = time.mktime(time.strptime(end, dt_format))
     ptime = stime + prop * (etime - stime)
-    return time.strftime(dt_format, time.localtime(ptime))
+    if strftime:
+        return time.strftime(dt_format, time.localtime(ptime))
+    else:
+        return time.localtime(ptime)
 
 
 # %% Download files from github source
