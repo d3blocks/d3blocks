@@ -997,6 +997,8 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         # Image slider demo
         url='https://erdogant.github.io/datasets/southern_nebula.zip'
         ext='.jpg'
+    elif graph=='cancer':
+        url='https://erdogant.github.io/datasets/cancer_dataset.zip'
     elif graph=='iris':
         from sklearn import datasets
         iris = datasets.load_iris()
@@ -1031,17 +1033,21 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         df['type'] = 'movingbubbles'
         df['data'] = X
         df['labels'] = labels
-    if graph=='energy':
+    elif graph=='energy':
         df = pd.read_csv(csvfile)
         df.rename(columns={'value': 'weight'}, inplace=True)
         df[['source', 'target']] = df[['source', 'target']].astype(str)
-    if graph=='stormofswords':
+    elif graph=='stormofswords':
         df = pd.read_csv(csvfile)
         # df.rename(columns={'weight':'value'}, inplace=True)
-    if graph=='southern_nebula':
+    elif graph=='southern_nebula':
         img_before = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_before.jpg')
         img_after = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_after.jpg')
         return img_before, img_after
+    elif graph=='cancer':
+        df = pd.read_csv(PATH_TO_DATA, sep=',')
+        df.rename(columns={'tsneX': 'x', 'tsneY': 'y', 'labx': 'labels'}, inplace=True)
+        df.set_index(df['labels'], inplace=True)
 
     # Return
     return df
