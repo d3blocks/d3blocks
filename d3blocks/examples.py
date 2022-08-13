@@ -2,6 +2,34 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
+# %%
+
+# %% SCATTER EXAMPLE
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+# Scatter
+d3.scatter(df, filepath='scatter_demo.html')
+
+# Scatter
+d3.scatter(df, filepath='scatter_demo_1.html', xlim=[1, 12], ylim=[])
+
+# %% TIMESERIES
+import yfinance as yf
+df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = df.div(df.iloc[0])
+df.head()
+
+from d3blocks import D3Blocks
+d3 = D3Blocks(whitelist='close')
+d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+
 
 # %% Movingbubbles - Make manual dataset to test the working
 import pandas as pd
@@ -53,7 +81,7 @@ from d3blocks import D3Blocks
 # Initialize with specific cmap.
 d3 = D3Blocks(cmap='Set2_r')
 
-# Normalize the time per sample id and make the starting-point the same
+# Standardize the time per sample id and make the starting-point the same
 # df = d3.standardize(df, method='samplewise', sample_id='sample_id', datetime='datetime')
 
 # Create notes that are shown between two time points.
@@ -66,12 +94,12 @@ time_notes.append({"start_minute": 37, "stop_minute": 60, "note": "Nothing will 
 
 # Make the moving bubbles
 # df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', time_notes=time_notes, filepath='movingbubbles.html')
-df = d3.movingbubbles(df, time_notes=time_notes, filepath='movingbubbles.html')
+df = d3.movingbubbles(df, time_notes=time_notes, standardize='samplewise')
 
 # %% Moving bubbles
 from d3blocks import D3Blocks
 
-d3 = D3Blocks(cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S')
+d3 = D3Blocks(cmap='Set1')
 # Import example
 
 df = d3.import_example(graph='random_time', n=10000, c=500, date_start="2000-01-01 00:10:05", date_stop="2000-01-02 23:59:59")
@@ -83,9 +111,9 @@ d3.movingbubbles(df,
                  datetime='datetime',
                  sample_id='sample_id',
                  state='state',
-                 center='Work',
+                 center='',
                  damper=1,
-                 standardize='timewise',
+                 standardize=None,
                  reset_time='day',
                  speed={"slow": 500, "medium": 200, "fast": 100},
                  figsize=(780, 800),
@@ -212,7 +240,7 @@ adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetri
 # X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
 # X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
 
-d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700))
+d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='')
 
 
 # %% NETWORK - EXAMPLE 1
@@ -370,7 +398,7 @@ print(df)
 # 4  2000-12-12 00:00:30          3    coffee
 # 5  2000-12-12 00:00:35          3  sleeping
 
-# Normalize the time per sample id and make the starting-point the same
+# standardize the time per sample id and make the starting-point the same
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
 # # Compute delta (this is automatically done if not seen in datafame available)
@@ -405,7 +433,7 @@ d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample
 d3 = D3Blocks(cmap='Set1')
 # Import example
 df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-# Normalize the time per sample id.
+# standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
 d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
@@ -418,7 +446,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 # Import example
 df = d3.import_example(graph='movingbubbles')
-# Normalize the time per sample id.
+# standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
 # Make the moving bubbles
