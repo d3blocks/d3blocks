@@ -1,3 +1,65 @@
+# %% Standardization
+
+##############
+# SAMPLEWISE #
+##############
+
+import pandas as pd
+
+# Set colors.
+df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df1['sample_id'] = [1, 1, 1, 1, 1, 1]
+df1['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:05', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25']
+df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df2['sample_id'] = [2, 2, 2, 2, 2, 2]
+df2['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25', '2000-01-01 00:00:30']
+df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df3['sample_id'] = [3, 3, 3, 3, 3, 3]
+df3['datetime'] = ['2000-12-12 00:00:00', '2000-12-12 00:00:15', '2000-12-12 00:00:20', '2000-12-12 00:00:25', '2000-12-12 00:00:30', '2000-12-12 00:00:35']
+df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+# Concatenate the dataframes.
+df = pd.concat([df1, df2, df3], axis=0)
+
+# Import
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Standardize the time per sample id and make the starting-point the same
+df1 = d3.standardize(df, method='samplewise')
+
+print(df1)
+
+#               datetime  sample_id     state           delta       datetime_norm
+# 0  2000-01-01 00:00:00          1      home 0 days 00:00:05 1980-01-01 00:00:00
+# 1  2000-01-01 00:00:05          1    school 0 days 00:00:05 1980-01-01 00:00:05
+# 2  2000-01-01 00:00:10          1      work 0 days 00:00:05 1980-01-01 00:00:10
+# 3  2000-01-01 00:00:15          1    eating 0 days 00:00:05 1980-01-01 00:00:15
+# 4  2000-01-01 00:00:20          1    coffee 0 days 00:00:05 1980-01-01 00:00:20
+# 5  2000-01-01 00:00:25          1  sleeping 0 days 00:00:00 1980-01-01 00:00:25
+# 6  2000-01-01 00:00:00          2      home 0 days 00:00:10 1980-01-01 00:00:00
+# 7  2000-01-01 00:00:10          2    school 0 days 00:00:05 1980-01-01 00:00:10
+# 8  2000-01-01 00:00:15          2      work 0 days 00:00:05 1980-01-01 00:00:15
+# 9  2000-01-01 00:00:20          2    eating 0 days 00:00:05 1980-01-01 00:00:20
+# 10 2000-01-01 00:00:25          2    coffee 0 days 00:00:05 1980-01-01 00:00:25
+# 11 2000-01-01 00:00:30          2  sleeping 0 days 00:00:00 1980-01-01 00:00:30
+# 12 2000-12-12 00:00:00          3      home 0 days 00:00:15 1980-01-01 00:00:00
+# 13 2000-12-12 00:00:15          3    school 0 days 00:00:05 1980-01-01 00:00:15
+# 14 2000-12-12 00:00:20          3      work 0 days 00:00:05 1980-01-01 00:00:20
+# 15 2000-12-12 00:00:25          3    eating 0 days 00:00:05 1980-01-01 00:00:25
+# 16 2000-12-12 00:00:30          3    coffee 0 days 00:00:05 1980-01-01 00:00:30
+# 17 2000-12-12 00:00:35          3  sleeping 0 days 00:00:00 1980-01-01 00:00:35
+
+# Standardize the time per sample id and make the starting-point the same
+df2 = d3.standardize(df, method=None)
+
+
 # %% Moving bubbles
 
 # Import library
@@ -31,7 +93,7 @@ d3.movingbubbles(df,
                  datetime='datetime',
                  sample_id='sample_id',
                  state='state',
-                 center='', # 'bed' or any other state.
+                 center='Work', # 'bed' or any other state.
                  damper=1,
                  reset_time='day',
                  speed={"slow": 100, "medium": 20, "fast": 5},
@@ -47,7 +109,7 @@ d3.movingbubbles(df,
 # %% Movingbubbles - Make manual dataset to test the working
 import pandas as pd
 
-# Set colors.
+# Create example Dataframe.
 df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
 df1['sample_id'] = [1, 1, 1, 1, 1, 1]
 df1['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:05', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25']
@@ -66,7 +128,6 @@ df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 # Concatenate the dataframes.
 df = pd.concat([df1, df2, df3], axis=0)
 
-print(df)
 #               datetime  sample_id     state
 # 0  2000-01-01 00:00:00          1      home
 # 1  2000-01-01 00:00:05          1    school
@@ -87,7 +148,7 @@ print(df)
 # 4  2000-12-12 00:00:30          3    coffee
 # 5  2000-12-12 00:00:35          3  sleeping
 
-# Normalize the time per sample id and make the starting-point the same
+# standardize the time per sample id and make the starting-point the same
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
 # # Compute delta (this is automatically done if not seen in datafame available)
@@ -202,8 +263,8 @@ d3.Network.show()
 # %% Time series example
 
 import yfinance as yf
-df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = yf.download(["TSLA", "TWTR", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+df = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
 df = df.div(df.iloc[0])
 df.head()
 
