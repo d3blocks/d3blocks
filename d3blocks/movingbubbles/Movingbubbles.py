@@ -138,17 +138,17 @@ def write_html(X, config, overwrite=True):
         f.write(index_template.render(content))
 
 
-def standardize(df, method='samplewise', sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
+def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
     """Standardize time per sample_id.
 
     Parameters
     ----------
     df : Input DataFrame
         Input data.
-    method : str.
+    method : str. (default: None)
         Method to standardize the data.
-        'samplewise': Normalize per sample_id. Thus the sample_ids are independent of each other.
-        'timewise': Normalize over the entire timeframe. Sample_ids are dependent of each other.
+        None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+        'samplewise': standardize per sample_id. Thus the sample_ids are independent of each other.
     sample_id : str.
         Column name of the sample identifier.
     datetime : datetime
