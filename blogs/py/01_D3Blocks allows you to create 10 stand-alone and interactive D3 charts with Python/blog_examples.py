@@ -1,3 +1,118 @@
+# %% Moving bubbles
+
+# Import library
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(cmap='Set1')
+
+# Import example
+df = d3.import_example(graph='random_time', n=10000, c=500, date_start="2000-01-01 00:10:05", date_stop="2000-01-02 23:59:59")
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+print(df)
+#                 datetime sample_id     state
+# 0    2000-01-01 00:10:36        61    Eating
+# 1    2000-01-01 00:10:51        83      Sick
+# 2    2000-01-01 00:11:30        61  Sleeping
+# 3    2000-01-01 00:11:37        66  Sleeping
+# 4    2000-01-01 00:11:57        94  Sleeping
+#                  ...       ...       ...
+# 9995 2000-01-02 23:57:12         6      Home
+# 9996 2000-01-02 23:57:23        48      Sick
+# 9997 2000-01-02 23:57:54        61      Home
+# 9998 2000-01-02 23:58:22         4  Sleeping
+# 9999 2000-01-02 23:59:34        88  Sleeping
+
+# [10000 rows x 3 columns]
+
+# Make the moving bubbles
+d3.movingbubbles(df,
+                 datetime='datetime',
+                 sample_id='sample_id',
+                 state='state',
+                 center='', # 'bed' or any other state.
+                 damper=1,
+                 reset_time='day',
+                 speed={"slow": 100, "medium": 20, "fast": 5},
+                 figsize=(780, 800),
+                 note=None,
+                 title='d3blocks_movingbubbles',
+                 filepath='movingbubbles.html',
+                 fontsize=14,
+                 showfig=True,
+                 overwrite=True)
+
+
+# %% Movingbubbles - Make manual dataset to test the working
+import pandas as pd
+
+# Set colors.
+df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df1['sample_id'] = [1, 1, 1, 1, 1, 1]
+df1['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:05', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25']
+df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df2['sample_id'] = [2, 2, 2, 2, 2, 2]
+df2['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25', '2000-01-01 00:00:30']
+df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df3['sample_id'] = [3, 3, 3, 3, 3, 3]
+df3['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25', '2000-01-01 00:00:30', '2000-01-01 00:00:35']
+df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+# Concatenate the dataframes.
+df = pd.concat([df1, df2, df3], axis=0)
+
+print(df)
+#               datetime  sample_id     state
+# 0  2000-01-01 00:00:00          1      home
+# 1  2000-01-01 00:00:05          1    school
+# 2  2000-01-01 00:00:10          1      work
+# 3  2000-01-01 00:00:15          1    eating
+# 4  2000-01-01 00:00:20          1    coffee
+# 5  2000-01-01 00:00:25          1  sleeping
+# 0  2000-01-01 00:00:00          2      home
+# 1  2000-01-01 00:00:10          2    school
+# 2  2000-01-01 00:00:15          2      work
+# 3  2000-01-01 00:00:20          2    eating
+# 4  2000-01-01 00:00:25          2    coffee
+# 5  2000-01-01 00:00:30          2  sleeping
+# 0  2000-12-12 00:00:00          3      home
+# 1  2000-12-12 00:00:15          3    school
+# 2  2000-12-12 00:00:20          3      work
+# 3  2000-12-12 00:00:25          3    eating
+# 4  2000-12-12 00:00:30          3    coffee
+# 5  2000-12-12 00:00:35          3  sleeping
+
+# Normalize the time per sample id and make the starting-point the same
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+# # Compute delta (this is automatically done if not seen in datafame available)
+# df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
+
+# Import
+from d3blocks import D3Blocks
+
+# Initialize with specific cmap.
+d3 = D3Blocks(cmap='Set2_r')
+
+# Create notes that are shown between two time points.
+time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "In the first 5 minutes, nothing will happen and every entity is waiting in it's current state."}]
+time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first entity will move to school. The rest is still at home."})
+time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
+time_notes.append({"start_minute": 16, "stop_minute": 30, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
+time_notes.append({"start_minute": 31, "stop_minute": 36, "note": "The last entity is now at Coffee and will move towards it's final destination too."})
+time_notes.append({"start_minute": 37, "stop_minute": 60, "note": "Nothing will happen after this step anymore. The simulation has ended!"})
+
+# Make the moving bubbles
+# df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', time_notes=time_notes, filepath='movingbubbles.html')
+df = d3.movingbubbles(df, time_notes=time_notes, filepath='movingbubbles.html')
+
+
+# %%
 from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
