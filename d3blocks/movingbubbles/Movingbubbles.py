@@ -159,11 +159,10 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     Returns
     -------
     df : DataFrame
-        Dataframe with the input columns with an extra column with normalized time.
+        Dataframe with the input columns with an extra column with standardized time.
         'datetime_norm'
 
     """
-    print('[D3Blocks]> Standardize: [%s]' %(method))
     # Use copy of dataframe
     df = df.copy()
     # Get unique
@@ -182,9 +181,10 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     timenow = dt.datetime.strptime('1980-01-01 00:00:00', dt_format)
 
     if method=='samplewise':
+        print('[D3Blocks]> Standardize method: [%s]' %(method))
         df = df.sort_values(by=[sample_id, datetime])
         df.reset_index(drop=True, inplace=True)
-        # Normalize per unique sample id.
+        # Standardize per unique sample id.
         for s in tqdm(uis):
             # Get data for specific sample-id
             Iloc = df[sample_id]==s
@@ -192,14 +192,12 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
             # Timedelta
             timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
             df.loc[Iloc, 'delta'] = timedelta
-            # Normalize time per unique sample. Each sample will start at timenow.
+            # Standardize time per unique sample. Each sample will start at timenow.
             df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
-    if method=='timewise':
+    else:
         df = df.sort_values(by=[datetime])
         df.reset_index(drop=True, inplace=True)
         timedelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        # timedelta = df[datetime].diff()
-        # timedelta.iloc[0] = timedelta.iloc[1]
         df['delta'] = timedelta
         df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
 
@@ -209,7 +207,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 
     # Set datetime
     df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format, errors='ignore')
-    # Sort on datetime    
+    # Sort on datetime
     df = df.sort_values(by=[datetime])
     df.reset_index(drop=True, inplace=True)
     # Return
