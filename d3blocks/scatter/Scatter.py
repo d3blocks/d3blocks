@@ -28,11 +28,11 @@ def show(df, config, labels=None):
     # Compute xlim and ylim.
     spacing = 0.12
     if config['xlim']==[None, None] or len(config['xlim'])==0:
-        spacing = (df['x'].max() - df['x'].min()) * spacing
-        config['xlim'] = [df['x'].min() - spacing, df['x'].max() + spacing]
+        x_spacing = (df['x'].max() - df['x'].min()) * spacing
+        config['xlim'] = [df['x'].min() - x_spacing, df['x'].max() + x_spacing]
     if config['ylim']==[None, None] or len(config['ylim'])==0:
-        spacing = (df['y'].max() - df['y'].min()) * spacing
-        config['ylim'] = [df['y'].min() - spacing, df['y'].max() + spacing]
+        y_spacing = (df['y'].max() - df['y'].min()) * spacing
+        config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
 
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, labels)
