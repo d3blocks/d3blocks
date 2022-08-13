@@ -602,7 +602,7 @@ class D3Blocks():
         if self.config['showfig']:
             _showfig(self.config['filepath'])
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, fontsize=14, reset_time='day', standardize='samplewise', speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, time_notes=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
+    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, fontsize=14, reset_time='day', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, time_notes=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
 
         Parameters
@@ -621,10 +621,10 @@ class D3Blocks():
             Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.
         fontsize : int, (default: 14)
             Fontsize of the states.
-        standardize : str.
+        standardize : str. (default: None)
             Method to standardize the data.
-            'samplewise': Normalize per sample_id. Thus the sample_ids are independent of each other.
-            'timewise': Normalize over the entire timeframe. Sample_ids are dependent of each other.
+            None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+            'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
         reset_time : String, (default: 'day')
             'day'  : Every 24h de the day start over again.
             'year' : Every 365 days the year starts over again.
@@ -853,7 +853,7 @@ class D3Blocks():
         return df
 
     def standardize(self, df, method='samplewise', sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
-        """Normalize time per sample_id.
+        """Standardize time per sample_id.
 
         Parameters
         ----------
@@ -861,8 +861,8 @@ class D3Blocks():
             Input data.
         method : str.
             Method to standardize the data.
-            'samplewise': Normalize per sample_id. Thus the sample_ids are independent of each other.
-            'timewise':Normalize over the entire timeframe. Sample_ids are dependent of each other.
+            None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+            'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
         sample_id : str.
             Column name of the sample identifier.
         datetime : datetime
@@ -873,7 +873,7 @@ class D3Blocks():
         Returns
         -------
         df : DataFrame
-            Dataframe with the input columns with an extra column with normalized time.
+            Dataframe with the input columns with an extra column with standardized time.
             'datetime_norm'
 
         """
