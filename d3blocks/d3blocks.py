@@ -216,7 +216,7 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(np.unique(df.index.values), cmap=self.config['cmap'])
+            labels = self.get_label_properties(labels=np.unique(df.index.values), cmap=self.config['cmap'])
             self.set_label_properties(labels)
 
         # Create the plot
@@ -428,7 +428,7 @@ class D3Blocks():
         # Set default label properties
         # if not hasattr(self, 'labels'):
             # Create labels
-            # labels = self.get_label_properties(np.unique(df.columns.values), cmap=self.config['cmap'])
+            # labels = self.get_label_properties(labels=np.unique(df.columns.values), cmap=self.config['cmap'])
             # Store in object
             # self.set_label_properties(labels)
 
@@ -682,7 +682,7 @@ class D3Blocks():
             df = self.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
-            self.labels = self.get_label_properties(df[state], cmap=self.config['cmap'])
+            self.labels = self.get_label_properties(labels=df[state], cmap=self.config['cmap'])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -771,7 +771,7 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(df.columns.values, cmap=self.config['cmap'])
+            labels = self.get_label_properties(labels=df.columns.values, cmap=self.config['cmap'])
             self.set_label_properties(labels)
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
@@ -795,12 +795,12 @@ class D3Blocks():
         self.labels = labels
         logger.info('Labels are set')
 
-    def get_label_properties(self, y, cmap='Set1'):
+    def get_label_properties(self, labels=None, cmap='Set1'):
         """Get label properties.
 
         Parameters
         ----------
-        y : classes
+        labels : classes
             Class or column names.
         cmap : str, (default: 'Set1')
             Colormap.
@@ -811,9 +811,15 @@ class D3Blocks():
             Dictionary containing class information.
 
         """
+        if hasattr(self, 'labels'):
+            labels = [*self.labels.keys()]
+        if (labels is None):
+            logger.warning('Input parameter labels is not specified. Provide it manually. <return>')
+            return None
+
         logger.info('Create label properties based on [%s].' %(cmap))
         # Get unique categories
-        uiy = np.unique(y)
+        uiy = np.unique(labels)
         # Create unique colors
         hexcolors = colourmap.generate(len(uiy), cmap=cmap, scheme='hex')
         # Make dict with properties
