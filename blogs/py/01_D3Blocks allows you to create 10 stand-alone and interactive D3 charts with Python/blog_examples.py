@@ -1,3 +1,41 @@
+# %% SANKEY - EXAMPLE 1
+import pandas as pd
+
+# Create example dataset
+df = pd.DataFrame()
+df['source']= ['A', 'A', 'B', 'C', 'D']
+df['target']= ['F', 'C', 'E', 'D', 'E']
+df['weight']= [1, 1, 1, 1, 2]
+
+# df['source']= ['A', 'A', 'B', 'C', 'D']
+# df['target']= ['F', 'C', 'E', 'D', 'E']
+# df['weight']= [100, 100, 200, 100, 100]
+
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Create the chart
+d3.sankey(df, link={"color": "source-target"})
+
+#   source target  weight
+# 0      A      F       1
+# 1      A      F       1
+# 2      A      F       1
+# 3      A      C       1
+# 4      B      E       1
+# 5      C      D       1
+# 6      D      E       1
+
+    
+# Link settings
+# d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
+# d3.Network.set_node_properties(color='cluster')
+# d3.Network.show()
+
+
 # %% Standardization
 
 ##############
