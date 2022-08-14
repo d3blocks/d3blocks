@@ -2,7 +2,54 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
+
+# %% SANKEY - EXAMPLE 1
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Link settings
+d3.sankey(df, link={"color": "source-target"})
+labels = d3.labels
+# Link settings
+# d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
+# d3.Network.set_node_properties(color='cluster')
+# d3.Network.show()
+
+
+# Network
+d3.network(df, showfig=False)
+d3.Network.set_node_properties()
+
+# # Color the same as for the sankey chart
+for key in labels.keys():
+    d3.Network.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
+
+# # Show the network graph
+d3.Network.show()
+
 # %%
+import pandas as pd
+
+# Create example dataset
+df = pd.DataFrame()
+df['source']= ['A','A','A', 'A', 'B', 'C', 'D']
+df['target']= ['F','F','F', 'C', 'E', 'D', 'E']
+df['weight']= [2, 1, 1, 1, 1, 1, 1]
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Create the chart
+d3.sankey(df, link={"color": "source-target"})
+
 
 # %% SCATTER EXAMPLE
 from d3blocks import D3Blocks
@@ -259,6 +306,7 @@ df = d3.import_example('energy')
 # Network diagram
 d3.network(df, showfig=False)
 d3.Network.set_node_properties(color='cluster')
+d3.Network.show()
 
 # Make adjustments to the node: Thermal_generation
 d3.Network.node_properties['Thermal_generation']['size']=20
@@ -274,18 +322,7 @@ d3.Network.show()
 
 
 
-# %% SANKEY - EXAMPLE 1
 
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# Import example
-df = d3.import_example('energy')
-
-# Link settings
-d3.sankey(df, link={"color": "source-target"})
 
 
 # %% SANKEY - EXAMPLE 2
