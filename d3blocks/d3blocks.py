@@ -282,11 +282,11 @@ class D3Blocks():
         # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Remvove quotes from source-target labels
-        df = remove_quotes(df)
+        df = pre_processing(df)
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            labels = self.get_label_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             self.set_label_properties(labels)
 
         # Create the plot
@@ -505,6 +505,8 @@ class D3Blocks():
         self.config['charge'] = charge * -1
         self.config['slider'] = slider
 
+        # Remvove quotes from source-target labels
+        df = remove_quotes(df)
         # Initialize network graph
         self.Network = d3graph(collision=collision, charge=charge, slider=slider)
         # Convert vector to adjmat
@@ -590,11 +592,11 @@ class D3Blocks():
         self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Remvove quotes from source-target labels
-        df = remove_quotes(df)
+        df = pre_processing(df)
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            labels = self.get_label_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
             self.set_label_properties(labels)
 
         # Create the plot
@@ -602,6 +604,8 @@ class D3Blocks():
         # Open the webbrowser
         if self.config['showfig']:
             _showfig(self.config['filepath'])
+        # Return config
+        # return self.config
 
     def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, fontsize=14, reset_time='day', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, time_notes=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
         """Creation of moving bubble graph.
