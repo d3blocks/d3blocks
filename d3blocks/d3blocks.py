@@ -14,6 +14,7 @@ import random
 import time
 import colourmap
 from tqdm import tqdm
+import unicodedata
 
 import movingbubbles.Movingbubbles as Movingbubbles
 import timeseries.Timeseries as Timeseries
@@ -1244,9 +1245,57 @@ def _showfig(filepath: str):
     webbrowser.open(file_location, new=2)
 
 
-def remove_quotes(df):
-    df.loc[:, df.dtypes==object].apply(lambda s: s.str.replace("'", ""))
+def pre_processing(df):
+    """Pre-processing of the input dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+
+    Returns
+    -------
+    df : pd.DataFrame()
+
+    """
+    df = remove_quotes(df)
+    df = remove_special_chars(df)
     return df
+
+
+def remove_quotes(df):
+    """Pre-processing of the input dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+
+    Returns
+    -------
+    df : pd.DataFrame()
+
+    """
+    Iloc = df.dtypes==object
+    df.loc[:, Iloc] = df.loc[:, Iloc].apply(lambda s: s.str.replace("'", ""))
+    return df
+
+
+# %% Remove special characters from column names
+def remove_special_chars(df):
+    """Remove special characters.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+
+    Returns
+    -------
+    df : pd.DataFrame()
+
+    """
+    df.columns = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.columns.values.astype(str)))
+    df.index = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.index.values.astype(str)))
+    return df
+
 
 # %% Do checks
 def library_compatibility_checks():
