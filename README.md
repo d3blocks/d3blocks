@@ -1,15 +1,22 @@
 # NEW BLOCKS
 # 
-# 1.    Map.
+# 1.    Treemap
+#       https://bl.ocks.org/ganezasan/52fced34d2182483995f0ca3960fe228
+# 
+# 2.    Map.
 #       https://d3-graph-gallery.com/graph/bubblemap_buttonControl.html
 #       https://observablehq.com/@ncastaldo/gas-stations-italy
 # 
-# 2.    Network graph in 3D.
+# 3.    Network graph in 3D.
 #       Mogelijkheid tot 3d plot maken
 #       https://vasturiano.github.io/3d-force-graph/example/text-links/
 # 
-# 3.    Delaunay plot
+# 4.    Delaunay plot
 #       https://observablehq.com/@observablehq/plot-delaunay
+# 
+# 5.    Scatterplot in 3D.
+#       Mogelijkheid tot 3d plot maken
+#       d3blocks\demo\scatter_3d\scatter_3d.html
 # 
 # 
 # BUGS
@@ -31,10 +38,10 @@
 #       Uiteinden vd lijn kunnen wijzingen en kleuren
 # 
 # 3.    Scatter
-#       Dit na maken: http://pancancer-map.ewi.tudelft.nl/
+#       Dit na maken is het beste: http://pancancer-map.ewi.tudelft.nl/
 #       Tooltips toevoegen.
 #       Dotsize kunnen wijzigen.
-#       Zwart (of kleur optioneel) Axis lijnen toevoegen.
+#       Zwart (of kleur optioneel) Axis lijnen toevoegen: https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
 #       Lichtgrijs Grid toevoegen (optioneel maken).
 #       Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2).
 # 
@@ -42,6 +49,9 @@
 #       Update heatmap met de onderstaande want deze heeft tooltips:
 #       http://bl.ocks.org/ianyfchang/8119685
 #       https://github.com/d3/d3/wiki/Gallery
+#       https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
+#       https://observablehq.com/@d3/brushable-scatterplot-matrix
+#       https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
 
 
 
@@ -77,13 +87,6 @@ https://carbondesignsystem.com/data-visualization/simple-charts/
 http://www.claudiobellei.com/2017/02/04/viznetworks/
 http://www.claudiobellei.com/2017/02/04/viznetworks/vizgraph.html
 
-
-### Scatter (3D)
-https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
-https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
-https://observablehq.com/@d3/brushable-scatterplot-matrix
-https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
-https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
 
 ### Treemap
 https://observablehq.com/@d3/treemap
