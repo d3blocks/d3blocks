@@ -29,7 +29,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Link settings
-d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\')
+d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
 labels = d3.labels
 # Link settings
 # d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
@@ -46,7 +46,7 @@ for key in labels.keys():
     d3.Network.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
 
 # # Show the network graph
-d3.Network.show()
+d3.Network.show(filepath='c:\\temp\\d3graph.html')
 
 # %%
 import pandas as pd
