@@ -3,6 +3,21 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% SCATTER EXAMPLE
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+# Scatter
+d3.scatter(df, filepath='scatter_demo.html')
+
+# Scatter
+# d3.scatter(df, filepath='scatter_demo_1.html', xlim=[1, 12], ylim=[])
+
 # %% SANKEY - EXAMPLE 1
 
 from d3blocks import D3Blocks
@@ -14,7 +29,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Link settings
-d3.sankey(df, link={"color": "source-target"})
+d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\')
 labels = d3.labels
 # Link settings
 # d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
@@ -51,20 +66,7 @@ d3 = D3Blocks()
 d3.sankey(df, link={"color": "source-target"})
 
 
-# %% SCATTER EXAMPLE
-from d3blocks import D3Blocks
 
-# Initialize
-d3 = D3Blocks()
-
-# import example
-df = d3.import_example('cancer')
-
-# Scatter
-d3.scatter(df, filepath='scatter_demo.html')
-
-# Scatter
-d3.scatter(df, filepath='scatter_demo_1.html', xlim=[1, 12], ylim=[])
 
 # %% TIMESERIES
 import yfinance as yf
