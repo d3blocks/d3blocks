@@ -151,7 +151,16 @@ class D3Blocks():
         return d3ng.adjmat2vec(df, min_weight=min_weight)
 
     def scatter(self,
-              df,
+              x,
+              y,
+              s=3,
+              c='#00008b',
+              opacity=0.8,
+              stroke='#ffffff',
+              tooltip=None,
+              gradient=None,
+              cmap='tab20',
+              normalize=False,
               title='Scatter - d3blocks',
               filepath='scatter.html',
               figsize=(900, 600),
@@ -163,11 +172,37 @@ class D3Blocks():
 
         Parameters
         ----------
-        df : pd.DataFrame()
-            Input data containing the following columns:
-            'x'
-            'y'
-            'index' : class labels
+        x : numpy array
+            1d coordinates x-axis.
+        y : numpy array
+            1d coordinates y-axis.
+        s: list/array of with same size as (x,y). Can be of type str or int.
+            Size of the samples.
+        c: list/array of hex colors with same size as (x,y)
+            '#ffffff' : All dots are get the same hex color.
+            None: The same color as for c is applied.
+            ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+        stroke: list/array of hex colors with same size as (x,y)
+            Edgecolor of dotsize in hex colors.
+        opacity: Int or list/array of sizes with same size as (x,y)
+            Opacity of the dot.
+        tooltip: list of labels with same size as (x,y)
+            labels of the samples.
+        gradient : String, (default: None)
+            Make a lineair gradient for the scatterplot.
+            '#FFFFFF'
+        cmap : String (default: 'Set2')
+            Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
+            'tab20', 'tab20b', 'tab20c'
+            'Set1', 'Set2'
+            'seismic'    Blue-white-red
+            'Blues'      white-to-blue
+            'Reds'       white-to-red
+            'Pastel1'    Discrete colors
+            'Paired'     Discrete colors
+            'Set1'       Discrete colors
+        normalize: Bool, optional
+            Normalize datapoints. The default is False.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -203,7 +238,16 @@ class D3Blocks():
         >>> d3.scatter(df)
 
         """
-        df = df.copy()
+        if len(x)!=len(y): raise Exception(logger.error('input parameter [x] should be of size of (x, y).'))
+        if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
+        if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
+        # if isinstance(s, (int, float)): raise Exception(logger.error('input parameter [s] should be of type (int, float).'))
+        if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('Error: input parameter [s] should be of same size of (x, y).'))
+        if (tooltip is not None) and len(tooltip)!=len(x): raise Exception(logger.error('input parameter [tooltip] should be of size (x, y) and not None.'))
+
+        # Cleaning
+        self._clean(clean_config=False)
+        # Set config
         self.config['chart'] ='scatter'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -212,15 +256,19 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
+        self.config['normalize'] = normalize
+        self.config['cmap'] = cmap
         # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
+        # Preprocessing
+        labels = preprocessing_scatter(x, y, c, s, tooltip, opacity, gradient, stroke, self.config['cmap'], self.config['normalize'])
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(labels=np.unique(df.index.values), cmap=self.config['cmap'])
             self.set_label_properties(labels)
 
         # Create the plot
-        self.config = Scatter.show(df, self.config, labels=self.labels)
+        df = pd.DataFrame(self.labels).T
+        self.config = Scatter.show(df, self.config)
         # Open the webbrowser
         if self.config['showfig']:
             _showfig(self.config['filepath'])
@@ -823,12 +871,12 @@ class D3Blocks():
 
         logger.info('Create label properties based on [%s].' %(cmap))
         # Get unique categories
-        uiy = np.unique(labels)
+        uil = np.unique(labels)
         # Create unique colors
-        hexcolors = colourmap.generate(len(uiy), cmap=cmap, scheme='hex')
+        hexcolors = colourmap.generate(len(uil), cmap=cmap, scheme='hex')
         # Make dict with properties
-        labels = {}
-        for i, cat in enumerate(uiy):
+        # labels = make_dict_label_properties(uil, hexcolors)
+        for i, cat in enumerate(uil):
             labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
         return labels
 
@@ -893,6 +941,7 @@ class D3Blocks():
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
         if hasattr(self, 'G'): del self.G
+        if hasattr(self, 'labels'): del self.labels
         if clean_config and hasattr(self, 'config'): del self.config
 
     def set_path(self, filepath='d3blocks.html'):
@@ -1065,6 +1114,12 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
 
 
 # %%
+def make_dict_label_properties(labels, colors):
+    dlabel = {}
+    for i, cat in enumerate(labels):
+        dlabel[cat] = {'id': i, 'color': colors[i], 'desc': cat, 'short': cat}
+    return dlabel
+
 def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S'):
     """Generate random time data.
 
@@ -1253,6 +1308,102 @@ def _showfig(filepath: str):
     if platform == "darwin":  # check if on OSX
         file_location = "file:///" + file_location
     webbrowser.open(file_location, new=2)
+
+
+def preprocessing_scatter(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, gradient=None, stroke='#ffffff', cmap='Set2', normalize=False):
+    """Scatterplots."""
+    # Combine into array
+    X = np.c_[x, y]
+    # Normalize data
+    if normalize: X = _normalize_xy(X)
+    # In case only one (s)ize is defined. Set all points to this size.
+    if isinstance(s, (int, float)): s = np.repeat(s, X.shape[0])
+    # In case None tooltip is defined. Set all points to this tooltip.
+    if tooltip is None: tooltip = np.repeat('', X.shape[0])
+    # In case only one opacity is defined. Set all points to this size.
+    if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, X.shape[0])
+    # colors
+    c, labels = set_colors(X, c, cmap, gradient=gradient)
+    # In case stroke is None: use same colors as for c.
+    if stroke is None:
+        stroke = c
+    elif isinstance(stroke, str):
+        # In case only one stroke is defined. Set all points to this size.
+        stroke = np.repeat(stroke, X.shape[0])
+
+
+    # Make dict with properties
+    dict_properties = {}
+    for i in range(0, X.shape[0]):
+        dict_properties[i] = {'id': labels[i], 'x': x[i], 'y': y[i], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+
+    # return
+    return dict_properties
+
+# %% Setup colors
+def set_colors(X, c, cmap, gradient=None):
+    """Scatterplots."""
+    # In case only one (c)olor is defined. Set all to this value.
+    if isinstance(c, str): c = np.repeat(c, X.shape[0])
+
+    # Check whether the input is hex colors.
+    hexok = np.all(list(map(lambda x: (x[0]=='#') and (len(x)==7), c)))
+
+    if hexok:
+        # Input is hex-colors thus we do not need to touch the colors.
+        labels = np.arange(0, X.shape[0]).astype(str)
+        c_hex = c
+    else:
+        # The input are string-labels and not colors. Lets convert to hex-colors.
+        labels = c
+        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=gradient, scheme='hex')
+
+    if (gradient is not None):
+        c_hex = gradient_on_density_color(X, c_hex, c)
+
+    # Return
+    return c_hex, labels
+
+
+# %% Create gradient based on density.
+def gradient_on_density_color(X, colors, labels):
+    """Scatterplots."""
+    from scipy.stats import gaussian_kde
+    uilabels = np.unique(labels)
+    density_colors = np.repeat('#ffffff', X.shape[0])
+
+    if (len(uilabels)!=len(labels)):
+        for label in uilabels:
+            idx = np.where(labels==label)[0]
+            if X.shape[1]==2:
+                xy = np.vstack([X[idx, 0], X[idx, 1]])
+            else:
+                xy = np.vstack([X[idx, 0], X[idx, 1], X[idx, 2]])
+
+            try:
+                # Compute density
+                z = gaussian_kde(xy)(xy)
+                # Sort on density
+                didx = idx[np.argsort(z)[::-1]]
+            except:
+                didx=idx
+
+            # order colors correctly based Density
+            density_colors[didx] = colors[idx]
+            # plt.figure()
+            # plt.scatter(X[didx,0], X[didx,1], color=colors[idx, :])
+            # plt.figure()
+            # plt.scatter(idx, idx, color=colors[idx, :])
+        colors = density_colors
+
+    # Return
+    return colors
+
+
+def _normalize_xy(X):
+    """Scatterplots."""
+    x_min, x_max = np.min(X, 0), np.max(X, 0)
+    return (X - x_min) / (x_max - x_min)
 
 
 def pre_processing(df):

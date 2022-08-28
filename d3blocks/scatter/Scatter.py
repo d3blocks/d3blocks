@@ -6,7 +6,7 @@ from pathlib import Path
 import os
 
 
-def show(df, config, labels=None):
+def show(df, config):
     """Build and show the graph.
 
     Parameters
@@ -35,7 +35,7 @@ def show(df, config, labels=None):
         config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
 
     # Create the data from the input of javascript
-    X = get_data_ready_for_d3(df, labels)
+    X = get_data_ready_for_d3(df)
     # Write to HTML
     write_html(X, config)
     # Return config
@@ -81,16 +81,13 @@ def write_html(X, config, overwrite=True):
         f.write(index_template.render(content))
 
 
-def get_data_ready_for_d3(df, labels):
+def get_data_ready_for_d3(df):
     """Convert the source-target data into d3 compatible data.
 
     Parameters
     ----------
     df : pd.DataFrame()
         Input data.
-    labels : dict
-        Dictionary containing hex colorlabels for the classes.
-        The labels are derived using the function: labels = d3blocks.set_label_properties()
 
     Returns
     -------
@@ -99,6 +96,6 @@ def get_data_ready_for_d3(df, labels):
 
     """
     # Set x, y
-    X = pd.DataFrame(data=np.c_[df['x'].values, df['y'].values, df.index.values]).to_json(orient='values')
+    X = df[['x', 'y', 'color', 'dotsize', 'opacity', 'stroke', 'desc']].to_json(orient='values')
     # Return
     return X
