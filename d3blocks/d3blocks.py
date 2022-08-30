@@ -154,11 +154,11 @@ class D3Blocks():
               x,
               y,
               s=3,
-              c='#00008b',
+              c='#002147',
+              c_gradient=None,
               opacity=0.8,
               stroke='#ffffff',
               tooltip=None,
-              gradient=None,
               cmap='tab20',
               normalize=False,
               title='Scatter - d3blocks',
@@ -182,15 +182,15 @@ class D3Blocks():
             '#ffffff' : All dots are get the same hex color.
             None: The same color as for c is applied.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+        c_gradient : String, (default: None)
+            Make a lineair gradient based on the density for the particular class label.
+            '#FFFFFF'
         stroke: list/array of hex colors with same size as (x,y)
             Edgecolor of dotsize in hex colors.
         opacity: Int or list/array of sizes with same size as (x,y)
             Opacity of the dot.
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
-        gradient : String, (default: None)
-            Make a lineair gradient for the scatterplot.
-            '#FFFFFF'
         cmap : String (default: 'Set2')
             Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
             'tab20', 'tab20b', 'tab20c'
@@ -261,7 +261,7 @@ class D3Blocks():
         # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Preprocessing
-        labels = preprocessing_scatter(x, y, c, s, tooltip, opacity, gradient, stroke, self.config['cmap'], self.config['normalize'])
+        labels = preprocessing_scatter(x, y, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'])
         # Set default label properties
         if not hasattr(self, 'labels'):
             self.set_label_properties(labels)
@@ -1310,7 +1310,7 @@ def _showfig(filepath: str):
     webbrowser.open(file_location, new=2)
 
 
-def preprocessing_scatter(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, gradient=None, stroke='#ffffff', cmap='Set2', normalize=False):
+def preprocessing_scatter(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False):
     """Scatterplots."""
     # Combine into array
     X = np.c_[x, y]
@@ -1323,7 +1323,7 @@ def preprocessing_scatter(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, gra
     # In case only one opacity is defined. Set all points to this size.
     if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, X.shape[0])
     # colors
-    c, labels = set_colors(X, c, cmap, gradient=gradient)
+    c, labels = set_colors(X, c, cmap, c_gradient=c_gradient)
     # In case stroke is None: use same colors as for c.
     if stroke is None:
         stroke = c
@@ -1335,13 +1335,13 @@ def preprocessing_scatter(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, gra
     # Make dict with properties
     dict_properties = {}
     for i in range(0, X.shape[0]):
-        dict_properties[i] = {'id': labels[i], 'x': x[i], 'y': y[i], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
-
+        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+    
     # return
     return dict_properties
 
 # %% Setup colors
-def set_colors(X, c, cmap, gradient=None):
+def set_colors(X, c, cmap, c_gradient=None):
     """Scatterplots."""
     # In case only one (c)olor is defined. Set all to this value.
     if isinstance(c, str): c = np.repeat(c, X.shape[0])
@@ -1356,17 +1356,17 @@ def set_colors(X, c, cmap, gradient=None):
     else:
         # The input are string-labels and not colors. Lets convert to hex-colors.
         labels = c
-        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=gradient, scheme='hex')
+        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=c_gradient, scheme='hex')
 
-    if (gradient is not None):
-        c_hex = gradient_on_density_color(X, c_hex, c)
+    if (c_gradient is not None):
+        c_hex = _density_color(X, c_hex, c)
 
     # Return
     return c_hex, labels
 
 
-# %% Create gradient based on density.
-def gradient_on_density_color(X, colors, labels):
+# %% Create gradient based based on the labels.
+def _density_color(X, colors, labels):
     """Scatterplots."""
     from scipy.stats import gaussian_kde
     uilabels = np.unique(labels)

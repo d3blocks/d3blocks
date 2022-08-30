@@ -32,18 +32,22 @@
 # 
 # 1.    Sankey
 #       https://observablehq.com/@d3/sankey
-#       Toevoegen: Link color en Node alignment selectiebox om het interactief te maken zoals voorbeeld want nu doet het verder niks interactiefs.
+# [ ]   Link color selectiebox om het interactief te maken.
+# [ ]   Node alignment selectiebox om het interactief te maken.
 # 
 # 2.    d3graph
-#       Uiteinden vd lijn kunnen wijzingen en kleuren
+# [ ]   Uiteinden vd lijn kunnen wijzingen en kleuren
 # 
 # 3.    Scatter
-#       Dit na maken is het beste: http://pancancer-map.ewi.tudelft.nl/
-#       Tooltips toevoegen.
-#       Dotsize kunnen wijzigen.
-#       Zwart (of kleur optioneel) Axis lijnen toevoegen: https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
-#       Lichtgrijs Grid toevoegen (optioneel maken).
-#       Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2).
+# [x]   Tooltips toevoegen.
+# [x]   size kunnen wijzigen.
+# [x]   color kunnen wijzigen.
+# [x]   edge-color kunnen wijzigen.
+# [x]   color gradient op class labels.
+# [ ]   Zwart (of kleur optioneel) Axis lijnen toevoegen: https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
+# [ ]   Lichtgrijs Grid toevoegen (optioneel maken).
+# [ ]   Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2). https://stackoverflow.com/questions/38595719/javascript-d3-js-multiple-transitions-of-points-on-a-scatter-plot
+# [ ]   Selectiebox toevoegen zoals: http://pancancer-map.ewi.tudelft.nl/
 # 
 # 4.    Heatmap
 #       Update heatmap met de onderstaande want deze heeft tooltips:

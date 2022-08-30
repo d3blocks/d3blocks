@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+
+# %% Issue color match SCATTER
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+# df = df.loc[(df.index.values=='kich') | (df.index.values=='kirp'), :]
+# color on labels
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+
+
 # %% SCATTER EXAMPLE
 from d3blocks import D3Blocks
 import numpy as np
@@ -17,20 +33,22 @@ df = d3.import_example('cancer')
 d3.scatter(df['x'].values, df['y'].values, filepath='c://temp//scatter_demo.html')
 # color on labels
 d3.scatter(df['x'].values, df['y'].values, c=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+# color on labels + tooltip
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size constant
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, s=5, filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, s=5, tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 # size constant + opacity
-d3.scatter(df['x'].values, df['y'].values, s=5, opacity=0.2, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, s=5, opacity=0.2, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size constant + opacity
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, s=5, opacity=0.2, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, s=5, opacity=0.2, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # color on labels + cmap
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20c')
-# colors + gradient
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, gradient='#ffffff', filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20c')
+# colors + c_gradient
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 # colors + stroke=black
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, stroke='#000000', filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, stroke='#000000', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 # colors + stroke with same color
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, stroke=None, gradient='#ffffff', filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, stroke=None, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 
 # Set the size
 s = df['survival_months'].fillna(1).values
@@ -41,15 +59,17 @@ s = (s/10)+1
 s[s>10]=10
 
 # Scatter with dynamic size
-d3.scatter(df['x'].values, df['y'].values, s=s, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, s=s, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+# size + colors + c_gradient + opacity
+d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, opacity=0.9, stroke=None, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors + stroke + opacity
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke=None, opacity=0.4, filepath='c://temp//scatter_demo.html', cmap='tab20')
-# size + colors + gradient
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, gradient='#ffffff', filepath='c://temp//scatter_demo.html', cmap='tab20')
-# size + colors + gradient + opacity
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, gradient='#ffffff', opacity=0.9, stroke=None, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke=None, opacity=0.4, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+# size + colors + stroke + opacity
+d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+# size + colors + c_gradient
+d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 
 
 # %% SANKEY - EXAMPLE 1

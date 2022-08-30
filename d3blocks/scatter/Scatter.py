@@ -36,6 +36,16 @@ def show(df, config):
 
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df)
+    # Check whether tooltip is available. Otherwise remove the tooltip box.
+    if np.all(df['desc']==''):
+        config['mouseover'] = ''
+        config['mousemove'] = ''
+        config['mouseleave'] = ''
+    else:
+        config['mouseover'] = '.on("mouseover", mouseover)'
+        config['mousemove'] = '.on("mousemove", mousemove)'
+        config['mouseleave'] = '.on("mouseleave", mouseleave)'
+
     # Write to HTML
     write_html(X, config)
     # Return config
@@ -66,6 +76,9 @@ def write_html(X, config, overwrite=True):
         'MAX_X': config['xlim'][1],
         'MIN_Y': config['ylim'][0],
         'MAX_Y': config['ylim'][1],
+        'MOUSEOVER': config['mouseover'],
+        'MOUSEMOVE': config['mousemove'] ,
+        'MOUSELEAVE': config['mouseleave'],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))

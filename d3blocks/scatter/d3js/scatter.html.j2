@@ -10,13 +10,30 @@
 <script>
 	{% include "d3.v4.min.js" %}
 </script>
-    
+
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<!-- Circle are black when hovered-->
+<style>
+.myCircle:hover {
+  stroke: black;
+}
+</style>
+
+
+
 <script>
 	var jsonData = {{ json_data }};
 
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg");
+
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
-    height = +svg.attr("height");
+    height = +svg.attr("height")-1;
 
 var k = height / width,
     x0 = [{{MIN_X}}, {{MAX_X}}],
@@ -32,33 +49,76 @@ var brush = d3.brush().on("end", brushended),
     idleTimeout,
     idleDelay = 350;
 
-svg.selectAll("circle")
-  .data(jsonData)
-  .enter().append("circle")
-    .attr("cx", function(d) { return x(d[0]); })
-    .attr("cy", function(d) { return y(d[1]); })
-//  .attr("fill", function(d) { return z(d[2]); });
-    .attr("fill", function(d) { return d[2]; })    // fill hexcolor
-    .attr("r", function(d) { return d[3]; })       // dotsize
-    .attr("opacity", function(d) { return d[4]; }) // opacity
-    .attr("stroke", function(d) { return d[5]; })  // stroke color
 
+// create a tooltip with the box ****************************
+var Tooltip = d3.select("#my_dataviz")
+  .append("div")
+  .style("opacity", 0)
+  .attr("class", "tooltip")
+  .style("background-color", "white")
+  .style("border", "solid")
+  .style("border-width", "2px")
+  .style("border-radius", "5px")
+  .style("padding", "5px")
+  .style("position", "absolute")
+
+// Three function that change the tooltip when user hover / move / leave a cell
+var mouseover = function(d) {
+Tooltip
+  .style("opacity", 1)
+}
+
+var mousemove = function(d) {
+Tooltip
+  .html(d[6])
+//  .html("Exact value: " + d[6])
+  .style("left", (d3.mouse(this)[0]+70) + "px")
+  .style("top", (d3.mouse(this)[1]) + "px")
+}
+var mouseleave = function(d) {
+Tooltip
+  .style("opacity", 0)
+}
+
+// **********************************************************
+
+
+// Add X axis
 svg.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + (height - 10) + ")")
     .call(xAxis);
 
+// Add Y axis
 svg.append("g")
     .attr("class", "axis axis--y")
     .attr("transform", "translate(10,0)")
     .call(yAxis);
 
-svg.selectAll(".domain")
-    .style("display", "none");
+// Remove x-axis and y-axis
+//svg.selectAll(".domain")
+//    .style("display", "none");
 
 svg.append("g")
     .attr("class", "brush")
     .call(brush);
+
+
+svg.selectAll("circle")
+  .data(jsonData)
+  .enter().append("circle")
+    .attr("class", "myCircle")                     // Edge-color turns black when when hovered
+    .attr("cx", function(d) { return x(d[0]); })
+    .attr("cy", function(d) { return y(d[1]); })
+//  .attr("fill", function(d) { return z(d[6]); });
+    .attr("fill", function(d) { return d[2]; })    // fill hexcolor
+    .attr("r", function(d) { return d[3]; })       // dotsize
+    .attr("opacity", function(d) { return d[4]; }) // opacity
+    .attr("stroke", function(d) { return d[5]; })  // stroke color
+    {{ MOUSEOVER }}
+    {{ MOUSEMOVE }}
+    {{ MOUSELEAVE }}
+
 
 function brushended() {
   var s = d3.event.selection;
@@ -89,6 +149,5 @@ function zoom() {
 
 
 </script>
-<div id="chart"></div>
 </body>
 </html>
