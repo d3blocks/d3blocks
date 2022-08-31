@@ -734,7 +734,12 @@ class D3Blocks():
             df = self.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
-            self.labels = self.get_label_properties(labels=df[state], cmap=self.config['cmap'])
+            labels = list(np.unique(df[state]))
+            # Center should be at the very end of the list for d3!
+            if self.config['center'] is not None:
+                center_label = labels.pop(labels.index(self.config['center']))
+                labels.append(center_label)
+            self.labels = self.get_label_properties(labels=labels, cmap=self.config['cmap'])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -870,12 +875,14 @@ class D3Blocks():
             return None
 
         logger.info('Create label properties based on [%s].' %(cmap))
-        # Get unique categories
-        uil = np.unique(labels)
+        # Get unique categories without sort
+        indexes = np.unique(labels, return_index=True)[1]
+        uil = [labels[index] for index in sorted(indexes)]
+
         # Create unique colors
         hexcolors = colourmap.generate(len(uil), cmap=cmap, scheme='hex')
         # Make dict with properties
-        # labels = make_dict_label_properties(uil, hexcolors)
+        labels = make_dict_label_properties(uil, hexcolors)
         for i, cat in enumerate(uil):
             labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
         return labels
