@@ -1,5 +1,5 @@
 function timeseries(data, config) {
-    var margin = {top: 20, right: 200, bottom: 100, left: 50},
+    var margin = {top: 20, right: 250, bottom: 100, left: 50},
         margin2 = { top: 430, right: 10, bottom: 20, left: 40 },
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom,
@@ -265,10 +265,11 @@ function timeseries(data, config) {
         .data(columnNames) // bind each column name date to each g element
         .enter().append("g") //create one <g> for each columnName
         .attr("class", "focus");
-
+    
+    // LEGEND TEXT IN RIGHT BOX
     focus.append("text") // http://stackoverflow.com/questions/22064083/d3-js-multi-series-chart-with-y-value-tracking
         .attr("class", "tooltip")
-        .attr("x", width + 20) // position tooltips
+        .attr("x", width + 15) // position tooltips
         .attr("y", function (d, i) { return (legendSpace)+i*(legendSpace); }); // (return (11.25/2 =) 5.625) + i * (5.625) // position tooltips
 
     // Add mouseover events for hover line.
