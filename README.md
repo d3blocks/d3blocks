@@ -22,10 +22,10 @@
 # BUGS
 # 
 # 1.    TimeSeries
-#       Getallen zijn te breed in de grafiek. Afronden op 3 decimalen oid?
+# [x]   Getallen zijn te breed in de grafiek. Afronden op 3 decimalen oid?
 # 
 # 2.    MovingBubbles
-#       Overlap van namen in de circle. Ik dacht dat we dit al opgelost hadden?
+# [x]   Overlap van namen in de circle. Ik dacht dat we dit al opgelost hadden?
 # 
 # 
 ## FEATURES
