@@ -4,6 +4,49 @@
 # print(d3blocks.__version__)
 
 
+# %% Moving bubbles
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(cmap='Set1')
+# Import example
+df = d3.import_example(graph='random_time', n=1000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+# standardize the time per sample id.
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+# Make the moving bubbles
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
+# d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+
+
+# %% SANKEY - EXAMPLE 1
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Link settings
+d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
+labels = d3.labels
+# Link settings
+# d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
+# d3.Network.set_node_properties(color='cluster')
+# d3.Network.show()
+
+
+# Network
+d3.network(df, showfig=False)
+d3.Network.set_node_properties()
+
+# # Color the same as for the sankey chart
+for key in labels.keys():
+    d3.Network.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
+
+# # Show the network graph
+d3.Network.show(filepath='c:\\temp\\d3graph.html')
+
 # %% Issue color match SCATTER
 from d3blocks import D3Blocks
 import numpy as np
@@ -62,8 +105,6 @@ s[s>10]=10
 d3.scatter(df['x'].values, df['y'].values, s=s, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors
 d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
-# size + colors + c_gradient + opacity
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, opacity=0.9, stroke=None, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors + stroke + opacity
 d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke=None, opacity=0.4, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors + stroke + opacity
@@ -72,35 +113,7 @@ d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#0000
 d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 
 
-# %% SANKEY - EXAMPLE 1
 
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# Import example
-df = d3.import_example('energy')
-
-# Link settings
-d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
-labels = d3.labels
-# Link settings
-# d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
-# d3.Network.set_node_properties(color='cluster')
-# d3.Network.show()
-
-
-# Network
-d3.network(df, showfig=False)
-d3.Network.set_node_properties()
-
-# # Color the same as for the sankey chart
-for key in labels.keys():
-    d3.Network.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
-
-# # Show the network graph
-d3.Network.show(filepath='c:\\temp\\d3graph.html')
 
 # %%
 import pandas as pd
@@ -131,7 +144,7 @@ df.head()
 
 from d3blocks import D3Blocks
 d3 = D3Blocks(whitelist='close')
-d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10)
 
 
 # %% Movingbubbles - Make manual dataset to test the working
@@ -526,7 +539,7 @@ d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample
 # %% Moving bubbles
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example(graph='random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
