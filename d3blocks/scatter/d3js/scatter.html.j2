@@ -65,7 +65,12 @@ var Tooltip = d3.select("#my_dataviz")
 // Three function that change the tooltip when user hover / move / leave a cell
 var mouseover = function(d) {
 Tooltip
-  .style("opacity", 1)
+  .style("opacity", 1);
+
+// Increases size of the dot with 0.5
+d3.select(this)
+  .style("r",  d[3] + (0.5*d[3]))
+  .style("opacity", 0.8);
 }
 
 var mousemove = function(d) {
@@ -75,9 +80,13 @@ Tooltip
   .style("left", (d3.mouse(this)[0]+70) + "px")
   .style("top", (d3.mouse(this)[1]) + "px")
 }
+
 var mouseleave = function(d) {
 Tooltip
   .style("opacity", 0)
+// Back to orignal dot-size
+d3.select(this)
+  .style("r",  d[3])
 }
 
 // **********************************************************
