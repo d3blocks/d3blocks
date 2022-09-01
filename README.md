@@ -56,7 +56,11 @@
 #       https://bl.ocks.org/Niekes/1c15016ae5b5f11508f92852057136b5
 #       https://observablehq.com/@d3/brushable-scatterplot-matrix
 #       https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
-
+# 
+# 4.    Network
+# [ ]   Clusteren nodes: http://bl.ocks.org/GerHobbelt/3071239
+#
+#
 
 
 # Timeseries
@@ -66,6 +70,7 @@ https://bl.ocks.org/mbostock/34f08d5e11952a80609169b7917d4172
 https://bl.ocks.org/mbostock/raw/34f08d5e11952a80609169b7917d4172/?raw=true
 
 ### Network
+http://bl.ocks.org/GerHobbelt/3071239
 https://bl.ocks.org/steveharoz/8c3e2524079a8c440df60c1ab72b5d03
 
 
