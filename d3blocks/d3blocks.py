@@ -25,6 +25,7 @@ import d3graph as d3ng
 from d3heatmap import d3heatmap
 import chord.Chord as Chord
 import scatter.Scatter as Scatter
+import violin.Violin as Violin
 
 
 logger = logging.getLogger('')
@@ -150,6 +151,124 @@ class D3Blocks():
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
 
+    def violin(self,
+              x,
+              y,
+              s=5,
+              c = None,
+              bins = 20,
+              x_order = None,
+              opacity=0.8,
+              stroke='#ffffff',
+              tooltip=None,
+              title='Violin - d3blocks',
+              filepath='violin.html',
+              figsize=[None, None],
+              ylim = [None, None],
+              cmap='inferno',
+              showfig=True,
+              overwrite=True):
+        """Create of violin graph.
+
+        Parameters
+        ----------
+        x : list of String or numpy array.
+            This 1d-vector contains the class labels for each datapoint in y.
+        y : list of float or numpy array.
+            This 1d-vector contains the values for the samples.
+        s: list/array of with same size as (x,y). Can be of type str or int.
+            Size of the samples.
+        c: list/array of hex colors with same size as y
+            '#002147' : All dots are get the same hex color.
+            None: The colors are generated on value using the colormap specified in cmap.
+            ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
+        bins : Int (default: 20)
+            The bin size is the 'resolution' of the violin plot.
+        x_order : list of String (default: None)
+            The order of the class labels (x-axis).
+            ["setosa", "versicolor", "virginica"]
+        opacity: float or list/array [0-1]
+            Opacity of the dot. Shoud be same size as (x,y)
+        stroke: list/array of hex colors with same size as (x,y)
+            Edgecolor of dot in hex colors.
+        tooltip: list of labels with same size as (x,y)
+            labels of the samples.
+        cmap : String (default: 'inferno')
+            Color scheme for that is used for the scatterplot. All color schemes can be reversed with "_r".
+            Sequential : 'viridis', 'plasma', 'inferno', 'magma', 'cividis'
+            Sequential (white-to) : 'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds', 'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu', 'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn'
+            Sequential2 (to-white) : 'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink', 'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia', 'hot', 'afmhot', 'gist_heat', 'copper'
+            Diverging (from-white-to): 'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic'
+            Cyclic : 'twilight', 'twilight_shifted', 'hsv'
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (None, 500))
+            Size of the figure in the browser, [width, height].
+            The width is determined based on the number of class labels x.
+        showfig : bool, (default: True)
+            Open the window to show the network.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+
+        Returns
+        -------
+        df : pd.DataFrame()
+            DataFrame.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example data
+        >>> df = d3.import_example('stormofswords')
+        >>>
+        >>> # Plot
+        >>> d3.violin(df, filepath='chord_demo.html')
+
+        """
+        if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
+        if s is None: raise Exception(logger.error('input parameter "s" should have value >0.'))
+        if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
+        if stroke is None: raise Exception(logger.error('input parameter "stroke" should have hex value.'))
+        if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
+        if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
+        if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=len(x)): raise Exception(logger.error('input parameter "opacity" should be of same size of (x, y).'))
+
+        # Cleaning
+        self._clean(clean_config=False)
+
+        if bins is None: bins=20
+        self.config['bins'] = bins
+        self.config['chart'] ='violin'
+        self.config['cmap'] = cmap
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['ylim'] = ylim
+        self.config['x_order'] = x_order
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['figsize'] = figsize
+
+        # Remvove quotes from source-target labels
+        df = Violin.preprocessing(x, y, config=self.config, c=c, s=s, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
+
+        # Set default label properties
+        if not hasattr(self, 'labels'):
+            labels = self.get_label_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
+            self.set_label_properties(labels)
+
+        # Create the plot
+        self.config = Violin.show(df, config=self.config, labels=self.labels)
+        # Open the webbrowser
+        if self.config['showfig']:
+            _showfig(self.config['filepath'])
+
     def scatter(self,
               x,
               y,
@@ -163,7 +282,7 @@ class D3Blocks():
               normalize=False,
               title='Scatter - d3blocks',
               filepath='scatter.html',
-              figsize=(900, 600),
+              figsize=[900, 600],
               xlim = [None, None],
               ylim = [None, None],
               showfig=True,
@@ -187,8 +306,8 @@ class D3Blocks():
             '#FFFFFF'
         stroke: list/array of hex colors with same size as (x,y)
             Edgecolor of dotsize in hex colors.
-        opacity: Int or list/array of sizes with same size as (x,y)
-            Opacity of the dot.
+        opacity: float or list/array [0-1]
+            Opacity of the dot. Shoud be same size as (x,y)
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
         cmap : String (default: 'Set2')
@@ -241,8 +360,7 @@ class D3Blocks():
         if len(x)!=len(y): raise Exception(logger.error('input parameter [x] should be of size of (x, y).'))
         if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
         if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
-        # if isinstance(s, (int, float)): raise Exception(logger.error('input parameter [s] should be of type (int, float).'))
-        if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('Error: input parameter [s] should be of same size of (x, y).'))
+        if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('input parameter [s] should be of same size of (x, y).'))
         if (tooltip is not None) and len(tooltip)!=len(x): raise Exception(logger.error('input parameter [tooltip] should be of size (x, y) and not None.'))
 
         # Cleaning
@@ -258,7 +376,6 @@ class D3Blocks():
         self.config['figsize'] = figsize
         self.config['normalize'] = normalize
         self.config['cmap'] = cmap
-        # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
         # Preprocessing
         labels = preprocessing_scatter(x, y, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'])
@@ -1310,7 +1427,10 @@ def disable_tqdm():
 
 
 # %% Open the webbrowser
-def _showfig(filepath: str):
+def _showfig(filepath: str, sleep=0.5):
+    # Sleeping is required to pevent overlapping windows
+    # time.sleep(sleep)
+
     file_location = os.path.abspath(filepath)
     if platform == "darwin":  # check if on OSX
         file_location = "file:///" + file_location
@@ -1337,7 +1457,6 @@ def preprocessing_scatter(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_g
     elif isinstance(stroke, str):
         # In case only one stroke is defined. Set all points to this size.
         stroke = np.repeat(stroke, X.shape[0])
-
 
     # Make dict with properties
     dict_properties = {}
