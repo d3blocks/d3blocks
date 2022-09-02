@@ -8,7 +8,6 @@ function timeseries(data, config) {
     var parseDate = d3.time.format(config.DT_FORMAT).parse;
 
     function bisectCenter(a, x) {
-        // TODO after D3 update, use https://github.com/d3/d3-array#bisectCenter
         const i = d3.bisectLeft(a, x);
         return i > 0 && (a[i - 1] - x) > (x - a[i]) ? i - 1 : i;
     }
@@ -22,8 +21,7 @@ function timeseries(data, config) {
     var yScale = d3.scale.linear()
         .range([height, 0]);
 
-    // 40 Custom DDV colors
-    // var color = d3.scale.ordinal().range(["#48A36D",  "#56AE7C",  "#64B98C", "#72C39B", "#80CEAA", "#80CCB3", "#7FC9BD", "#7FC7C6", "#7EC4CF", "#7FBBCF", "#7FB1CF", "#80A8CE", "#809ECE", "#8897CE", "#8F90CD", "#9788CD", "#9E81CC", "#AA81C5", "#B681BE", "#C280B7", "#CE80B0", "#D3779F", "#D76D8F", "#DC647E", "#E05A6D", "#E16167", "#E26962", "#E2705C", "#E37756", "#E38457", "#E39158", "#E29D58", "#E2AA59", "#E0B15B", "#DFB95C", "#DDC05E", "#DBC75F", "#E3CF6D", "#EAD67C", "#F2DE8A"]);
+    // Colors
     var color = d3.scale.ordinal().range(config.COLOR);
 
     var xAxis = d3.svg.axis()
