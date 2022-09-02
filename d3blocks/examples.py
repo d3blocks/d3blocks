@@ -5,6 +5,39 @@
 
 
 # %% Moving bubbles
+import numpy as np
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+
+
+d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo1.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo2.html', figsize=(1600, 400), cmap='RdYlBu')
+
+d3.violin(x=df['labels'].values, y=df['age'].values, s=df['survival_months'].values/10, filepath='c://temp//violine_demo3.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo4.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo5.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo6.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=(1600, 400))
+
+# only coordinates
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], bins=50, opacity=0.5, stroke='#ffffff', cmap='inferno', s=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
+# d3.violin(x=df['labels'].values, y=df['age'].values,  bins=50, opacity=0.5, stroke='#000000', cmap='inferno', s=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
+
+d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=[None, None])
+
+# %% Moving bubbles
 from d3blocks import D3Blocks
 
 d3 = D3Blocks(cmap='Set1')
