@@ -157,7 +157,7 @@ class D3Blocks():
               collision=0.05,
               fontsize=250,
               spacing=10,
-              cmap='Viridis',
+              cmap='Turbo',
               background='#000000',
               title='Particles - D3blocks',
               filepath='particles.html',
@@ -470,7 +470,6 @@ class D3Blocks():
 
         # Preprocessing
         # Remvove quotes from source-target labels
-        labels = preprocessing_scatter(x, y, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'])
         labels = Scatter.preprocessing(x, y, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
         # Set default label properties
         if not hasattr(self, 'labels'):
@@ -941,7 +940,8 @@ class D3Blocks():
         # Compute delta
         if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
             # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
-            df = self.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
+            df = Movingbubbles.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
+
         # Set label properties
         if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
             labels = list(np.unique(df[state]))
@@ -1097,64 +1097,6 @@ class D3Blocks():
             labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
         return labels
 
-    def compute_time_delta(self, df, sample_id='sample_id', datetime='datetime', state='state', dt_format='%Y-%m-%d %H:%M:%S'):
-        """Compute delta between two time-points that follow-up.
-
-        Parameters
-        ----------
-        df : Input DataFrame
-            Input data.
-        sample_id : str.
-            Column name of the sample identifier.
-        datetime : datetime
-            Column name of the date time.
-        state : str
-            Column name that describes the state.
-        cmap : str, (default: 'Set1')
-            The name of the colormap.
-            'Set1'.
-        dt_format : str
-            '%Y-%m-%d %H:%M:%S'.
-
-        Returns
-        -------
-        df : pd.DataFrame()
-            DataFrame.
-
-        """
-        logger.info('Compute time delta.')
-        # Compute delta
-        df = Movingbubbles.compute_time_delta(df, sample_id, datetime, dt_format=self.config['dt_format'])
-        # Return
-        return df
-
-    def standardize(self, df, method='samplewise', sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
-        """Standardize time per sample_id.
-
-        Parameters
-        ----------
-        df : Input DataFrame
-            Input data.
-        method : str.
-            Method to standardize the data.
-            None: standardize over the entire timeframe. Sample_ids are dependent to each other.
-            'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
-        sample_id : str.
-            Column name of the sample identifier.
-        datetime : datetime
-            Column name of the date time.
-        dt_format : str, optional
-            '%Y-%m-%d %H:%M:%S'.
-
-        Returns
-        -------
-        df : DataFrame
-            Dataframe with the input columns with an extra column with standardized time.
-            'datetime_norm'
-
-        """
-        return Movingbubbles.standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format)
-
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
         if hasattr(self, 'G'): del self.G
@@ -1221,11 +1163,11 @@ class D3Blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(graph=graph, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'])
+        return _import_example(graph=graph, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
 
 
 # %% Import example dataset from github.
-def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S'):
+def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
     """Import example dataset from github source.
 
     Description
@@ -1254,7 +1196,7 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
     if graph=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
     elif graph=='random_time':
-        return generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop, dt_format=dt_format)
+        return Movingbubbles.generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop, dt_format=dt_format, logger=logger)
     elif graph=='timeseries':
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
         df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)), dt_format=dt_format)
@@ -1336,97 +1278,6 @@ def make_dict_label_properties(labels, colors):
     for i, cat in enumerate(labels):
         dlabel[cat] = {'id': i, 'color': colors[i], 'desc': cat, 'short': cat}
     return dlabel
-
-def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S'):
-    """Generate random time data.
-
-    Parameters
-    ----------
-    n : int, (default: 10000).
-        Number of events or data points.
-    c : int, (default: 1000).
-        Number of unique classes.
-    date_start : str, (default: None)
-        "1-1-2000 00:00:00" : start date
-    date_stop : str, (default: None)
-        1-1-2010 23:59:59" : Stop date
-
-    Returns
-    -------
-    df : DataFrame
-        Example dataset with datetime.
-
-    """
-    if date_start is None:
-        date_start="2000-01-01 00:00:00"
-        logger.info('Date start is set to %s' %(date_start))
-    if date_stop is None:
-        date_stop="2010-01-01 23:59:59"
-        logger.info('Date start is set to %s' %(date_stop))
-
-    # Create empty dataframe
-    df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
-    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Work', 'Eating', 'Bored']
-    # Take random few columns
-    # location_types = location_types[0:random.randint(2, len(location_types))]
-    # Always add the column Travel
-    location_types = location_types + ['Travel']
-    # Set the probability of selecting a certain state
-    pdf = [0.05, 0.02, 0.02, 0.1, 0.55, 0.05, 0.1, 0.03, 0.03, 0.05]
-
-    # Generate random timestamps with catagories and sample ids
-    state_mem = {}
-    idx_middle=np.where(np.array(location_types)=='Travel')[0][0]
-    i=0
-    while i <= df.shape[0]-3:
-    # for i in tqdm(range(0, df.shape[0])):
-        # A specific sample always contains 3 states. The start-state, the travel-state and the end-state.
-
-        # Get the particular sample-id
-        sample_id = random.randint(0, c)
-        state_prev = state_mem.get(sample_id, None)
-
-        # Set the start state:
-        # Get random idx based pdf
-        df['sample_id'].iloc[i] = sample_id
-        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
-        if (state_prev is not None) and (idx==state_prev['state']):
-            idx = np.mod(idx+1, len(location_types))
-        df['state'].iloc[i] = location_types[idx]
-        df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
-        i = i + 1
-
-        # The travel-state:
-        df['sample_id'].iloc[i] = sample_id
-        df['state'].iloc[i] = location_types[idx_middle]
-        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
-        i = i + 1
-
-        # Set the end state:
-        # Get random idx based pdf
-        df['sample_id'].iloc[i] = sample_id
-        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
-        if (location_types[idx]==df['state'].iloc[i-1]):
-            idx = np.mod(idx+1, len(location_types))
-
-        df['state'].iloc[i] = location_types[idx]
-        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
-        i = i + 1
-
-        # Store the last state
-        state_mem[sample_id] = {'state':idx}
-        
-        # Rotate pdf list
-        # pdf.insert(0, pdf.pop())
-
-        
-    # Set a random time-point at multiple occasion at the same time.
-    # df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
-    df['datetime'] = pd.to_datetime(df['datetime'])
-    df = df.sort_values(by="datetime")
-    df.dropna(inplace=True)
-    df.reset_index(inplace=True, drop=True)
-    return df
 
 
 def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):

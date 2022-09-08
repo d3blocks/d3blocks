@@ -4,15 +4,13 @@
 # print(d3blocks.__version__)
 
 # %% Particles
-import numpy as np
 from d3blocks import D3Blocks
 
 # Initialize
 d3 = D3Blocks()
 
-# Make particle
-d3.particles('Keira', filepath='c://temp//Keira.html', figsize=[1000, 400])
-d3.particles('Senna', filepath='c://temp//senna.html', figsize=[900, 400], collision=0.05)
+# Make particles
+d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=10, figsize=[1200, 500])
 
 # %% Violin plot
 import numpy as np
@@ -268,7 +266,7 @@ d3.movingbubbles(df,
                  datetime='datetime',
                  sample_id='sample_id',
                  state='state',
-                 center='',
+                 center=None,
                  damper=1,
                  standardize=None,
                  reset_time='day',
@@ -450,17 +448,6 @@ d3.sankey(df, filepath='sankey_ex1.html', figsize=(1000, 800), link={"color": "s
 d3.sankey(df, filepath='sankey_ex2.html', figsize=(1800, 900), node={"width": 10}, margin={"top": 25, "left": 25}, link={"color": "source", 'stroke_opacity': 0.2})
 d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "left", "padding": 50, "width": 15}, margin={"top": 25, "left": 25}, link={"color": "source", 'stroke_opacity': 0.25})
 
-# %% TIMESERIES
-import yfinance as yf
-df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
-df = df.div(df.iloc[0])
-df.head()
-
-from d3blocks import D3Blocks
-d3 = D3Blocks(whitelist='close')
-d3.timeseries(df, filepath='timeseries.html', fontsize=10)
-
 
 # %% Timeseries - Example 1
 import pandas as pd
@@ -567,7 +554,7 @@ df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_
 from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 
-df = d3.import_example(graph='random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
+df = d3.import_example(graph='random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-2 23:59:59")
 
 # # Compute delta (this is automatically done if not available)
 # df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
@@ -601,7 +588,3 @@ df = d3.import_example(graph='movingbubbles')
 d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 states = "{'index': '0', 'short': 'Sleeping', 'desc': 'Sleeping'}, {'index': '1', 'short': 'Personal Care', 'desc': 'Personal Care'}, {'index': '2', 'short': 'Eating & Drinking', 'desc': 'Eating and Drinking'}, {'index': '3', 'short': 'Education', 'desc': 'Education'}, {'index': '4', 'short': 'Work', 'desc': 'Work and Work-Related Activities'}, {'index': '5', 'short': 'Housework', 'desc': 'Household Activities'}, {'index': '6', 'short': 'Household Care', 'desc': 'Caring for and Helping Household Members'}, {'index': '7', 'short': 'Non-Household Care', 'desc': 'Caring for and Helping Non-Household Members'}, {'index': '8', 'short': 'Shopping', 'desc': 'Consumer Purchases'}, {'index': '9', 'short': 'Pro. Care Services', 'desc': 'Professional and Personal Care Services'}, {'index': '10', 'short': 'Leisure', 'desc': 'Socializing, Relaxing, and Leisure'}, {'index': '11', 'short': 'Sports', 'desc': 'Sports, Exercise, and Recreation'}, {'index': '12', 'short': 'Religion', 'desc': 'Religious and Spiritual Activities'}, {'index': '13', 'short': 'Volunteering', 'desc': 'Volunteer Activities'}, {'index': '14', 'short': 'Phone Calls', 'desc': 'Telephone Calls'}, {'index': '15', 'short': 'Misc.', 'desc': 'Other'}, {'index': '16', 'short': 'Traveling', 'desc': 'Traveling'}"
-
-    
-
-
