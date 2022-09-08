@@ -7,7 +7,7 @@ import os
 
 
 # %% Preprocessing
-def preprocessing(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False):
+def preprocessing(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False, logger=None):
     """Scatterplots."""
     # Combine into array
     X = np.c_[x, y]
