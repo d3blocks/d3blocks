@@ -253,7 +253,7 @@ class D3Blocks():
               opacity=0.8,
               stroke='#ffffff',
               tooltip=None,
-              title='Violin - d3blocks',
+              title='Violin - D3blocks',
               filepath='violin.html',
               figsize=[None, None],
               ylim = [None, None],
@@ -300,7 +300,7 @@ class D3Blocks():
             Size of the figure in the browser, [width, height].
             The width is determined based on the number of class labels x.
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -372,7 +372,7 @@ class D3Blocks():
               tooltip=None,
               cmap='tab20',
               normalize=False,
-              title='Scatter - d3blocks',
+              title='Scatter - D3blocks',
               filepath='scatter.html',
               figsize=[900, 600],
               xlim = [None, None],
@@ -425,7 +425,7 @@ class D3Blocks():
         set_ylim : tuple, (default: [None, None])
             Height of the y-axis: The default is extracted from the data with 10% spacing.
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -484,7 +484,7 @@ class D3Blocks():
 
     def chord(self,
               df,
-              title='Chord - d3blocks',
+              title='Chord - D3blocks',
               filepath='chord.html',
               figsize=(1200, 1200),
               showfig=True,
@@ -505,7 +505,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -555,7 +555,7 @@ class D3Blocks():
     def imageslider(self,
                     img_before,
                     img_after,
-                    title='Image slider - d3blocks',
+                    title='Image slider - D3blocks',
                     filepath='imageslider.html',
                     figsize=(800, 600),
                     showfig=True,
@@ -575,7 +575,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -615,7 +615,7 @@ class D3Blocks():
         if self.config['showfig']:
             _showfig(self.config['filepath'])
 
-    def heatmap(self, df, vmax=None, stroke='red', title='Heatmap - d3blocks', filepath='heatmap.html', figsize=(720, 720), showfig=True, overwrite=True):
+    def heatmap(self, df, vmax=None, stroke='red', title='Heatmap - D3blocks', filepath='heatmap.html', figsize=(720, 720), showfig=True, overwrite=True):
         """Heatmap graph.
 
         Description
@@ -641,7 +641,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -692,7 +692,7 @@ class D3Blocks():
         # Create heatmap graph
         d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description='', showfig=self.config['showfig'])
 
-    def network(self, df, title='Network - d3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
+    def network(self, df, title='Network - D3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
         """Network graph.
 
         Description
@@ -715,7 +715,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
         collision : float, (default: 0.5)
@@ -775,7 +775,7 @@ class D3Blocks():
 
     def sankey(self,
                df,
-               title='Sankey - d3blocks',
+               title='Sankey - D3blocks',
                filepath='sankey.html',
                figsize=(800, 600),
                node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
@@ -813,7 +813,7 @@ class D3Blocks():
             "padding" : 15 (vertical seperation between the nodes)
             "color" : "currentColor", "grey", "black", "red", etc
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -968,7 +968,7 @@ class D3Blocks():
         # Return
         return df
 
-    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - d3blocks', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
+    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - D3blocks', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
         """Create of Timeseries graph.
 
         Parameters
@@ -980,7 +980,7 @@ class D3Blocks():
         filepath : String, (Default: user temp directory)
             File path to save the output
         showfig : bool, (default: True)
-            Open the window to show the network.
+            Open the window to show the graph.
         fontsize : int, (default: 14)
             Fontsize of the fonts in the circle.
         overwrite : bool, (default: True)
@@ -1522,7 +1522,6 @@ def disable_tqdm():
 def _showfig(filepath: str, sleep=0.5):
     # Sleeping is required to pevent overlapping windows
     # time.sleep(sleep)
-
     file_location = os.path.abspath(filepath)
     if platform == "darwin":  # check if on OSX
         file_location = "file:///" + file_location
