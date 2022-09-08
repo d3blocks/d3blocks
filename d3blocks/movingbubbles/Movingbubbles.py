@@ -9,6 +9,8 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import json
+import random
+import time
 
 
 def show(df, config, labels=None):
@@ -302,6 +304,119 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 #         df.loc[np.where(Iloc)[0][:-1], 'delta'] = dftmp[datetime].iloc[0] - dftmp[datetime].iloc[0]
 #     # Return
 #     return df
+
+def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
+    """Generate random time data.
+
+    Parameters
+    ----------
+    n : int, (default: 10000).
+        Number of events or data points.
+    c : int, (default: 1000).
+        Number of unique classes.
+    date_start : str, (default: None)
+        "1-1-2000 00:00:00" : start date
+    date_stop : str, (default: None)
+        1-1-2010 23:59:59" : Stop date
+
+    Returns
+    -------
+    df : DataFrame
+        Example dataset with datetime.
+
+    """
+    if date_start is None:
+        date_start="2000-01-01 00:00:00"
+        logger.info('Date start is set to %s' %(date_start))
+    if date_stop is None:
+        date_stop="2010-01-01 23:59:59"
+        logger.info('Date start is set to %s' %(date_stop))
+
+    # Create empty dataframe
+    df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
+    location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Work', 'Eating', 'Bored']
+    # Take random few columns
+    # location_types = location_types[0:random.randint(2, len(location_types))]
+    # Always add the column Travel
+    location_types = location_types + ['Travel']
+    # Set the probability of selecting a certain state
+    pdf = [0.05, 0.02, 0.02, 0.1, 0.55, 0.05, 0.1, 0.03, 0.03, 0.05]
+
+    # Generate random timestamps with catagories and sample ids
+    state_mem = {}
+    idx_middle=np.where(np.array(location_types)=='Travel')[0][0]
+    i=0
+    while i <= df.shape[0]-3:
+    # for i in tqdm(range(0, df.shape[0])):
+        # A specific sample always contains 3 states. The start-state, the travel-state and the end-state.
+
+        # Get the particular sample-id
+        sample_id = random.randint(0, c)
+        state_prev = state_mem.get(sample_id, None)
+
+        # Set the start state:
+        # Get random idx based pdf
+        df['sample_id'].iloc[i] = sample_id
+        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
+        if (state_prev is not None) and (idx==state_prev['state']):
+            idx = np.mod(idx+1, len(location_types))
+        df['state'].iloc[i] = location_types[idx]
+        df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
+        i = i + 1
+
+        # The travel-state:
+        df['sample_id'].iloc[i] = sample_id
+        df['state'].iloc[i] = location_types[idx_middle]
+        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
+        i = i + 1
+
+        # Set the end state:
+        # Get random idx based pdf
+        df['sample_id'].iloc[i] = sample_id
+        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
+        if (location_types[idx]==df['state'].iloc[i-1]):
+            idx = np.mod(idx+1, len(location_types))
+
+        df['state'].iloc[i] = location_types[idx]
+        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
+        i = i + 1
+
+        # Store the last state
+        state_mem[sample_id] = {'state':idx}
+        
+        # Rotate pdf list
+        # pdf.insert(0, pdf.pop())
+
+        
+    # Set a random time-point at multiple occasion at the same time.
+    # df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df = df.sort_values(by="datetime")
+    df.dropna(inplace=True)
+    df.reset_index(inplace=True, drop=True)
+    return df
+
+
+def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+    return str_time_prop(start, end, prop, dt_format=dt_format, strftime=strftime)
+
+
+def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+    """Get a time at a proportion of a range of two formatted times.
+
+    start and end should be strings specifying times formatted in the
+    given format (strftime-style), giving an interval [start, end].
+    prop specifies how a proportion of the interval to be taken after
+    start.  The returned time will be in the specified format.
+    """
+
+    stime = time.mktime(time.strptime(start, dt_format))
+    etime = time.mktime(time.strptime(end, dt_format))
+    ptime = stime + prop * (etime - stime)
+    if strftime:
+        return time.strftime(dt_format, time.localtime(ptime))
+    else:
+        return time.localtime(ptime)
 
 
 def import_example(filepath):
