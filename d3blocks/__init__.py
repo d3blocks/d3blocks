@@ -12,7 +12,7 @@ import particles.Particles as Particles
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 
 # module level doc-string
 __doc__ = """
