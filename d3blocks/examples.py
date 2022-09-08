@@ -63,7 +63,6 @@ d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', 
 
 
 # %% SANKEY - EXAMPLE 1
-
 from d3blocks import D3Blocks
 
 # Initialize

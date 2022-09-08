@@ -1,11 +1,110 @@
 """Scatter graph."""
-import pandas as pd
+import colourmap
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 
 
+# %% Preprocessing
+def preprocessing(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False):
+    """Scatterplots."""
+    # Combine into array
+    X = np.c_[x, y]
+    # Normalize data
+    if normalize: X = _normalize_xy(X)
+    # In case only one (s)ize is defined. Set all points to this size.
+    if isinstance(s, (int, float)): s = np.repeat(s, X.shape[0])
+    # In case None tooltip is defined. Set all points to this tooltip.
+    if tooltip is None: tooltip = np.repeat('', X.shape[0])
+    # In case only one opacity is defined. Set all points to this size.
+    if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, X.shape[0])
+    # colors
+    c, labels = set_colors(X, c, cmap, c_gradient=c_gradient)
+    # In case stroke is None: use same colors as for c.
+    if stroke is None:
+        stroke = c
+    elif isinstance(stroke, str):
+        # In case only one stroke is defined. Set all points to this size.
+        stroke = np.repeat(stroke, X.shape[0])
+
+    # Make dict with properties
+    dict_properties = {}
+    for i in range(0, X.shape[0]):
+        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+
+    # return
+    return dict_properties
+
+
+# %% Normalize data
+def _normalize_xy(X):
+    """Scatterplots."""
+    x_min, x_max = np.min(X, 0), np.max(X, 0)
+    return (X - x_min) / (x_max - x_min)
+
+
+# %% Setup colors
+def set_colors(X, c, cmap, c_gradient=None):
+    """Scatterplots."""
+    # In case only one (c)olor is defined. Set all to this value.
+    if isinstance(c, str): c = np.repeat(c, X.shape[0])
+
+    # Check whether the input is hex colors.
+    hexok = np.all(list(map(lambda x: (x[0]=='#') and (len(x)==7), c)))
+
+    if hexok:
+        # Input is hex-colors thus we do not need to touch the colors.
+        labels = np.arange(0, X.shape[0]).astype(str)
+        c_hex = c
+    else:
+        # The input are string-labels and not colors. Lets convert to hex-colors.
+        labels = c
+        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=c_gradient, scheme='hex')
+
+    if (c_gradient is not None):
+        c_hex = _density_color(X, c_hex, c)
+
+    # Return
+    return c_hex, labels
+
+
+# %% Create gradient based based on the labels.
+def _density_color(X, colors, labels):
+    """Scatterplots."""
+    from scipy.stats import gaussian_kde
+    uilabels = np.unique(labels)
+    density_colors = np.repeat('#ffffff', X.shape[0])
+
+    if (len(uilabels)!=len(labels)):
+        for label in uilabels:
+            idx = np.where(labels==label)[0]
+            if X.shape[1]==2:
+                xy = np.vstack([X[idx, 0], X[idx, 1]])
+            else:
+                xy = np.vstack([X[idx, 0], X[idx, 1], X[idx, 2]])
+
+            try:
+                # Compute density
+                z = gaussian_kde(xy)(xy)
+                # Sort on density
+                didx = idx[np.argsort(z)[::-1]]
+            except:
+                didx=idx
+
+            # order colors correctly based Density
+            density_colors[didx] = colors[idx]
+            # plt.figure()
+            # plt.scatter(X[didx,0], X[didx,1], color=colors[idx, :])
+            # plt.figure()
+            # plt.scatter(idx, idx, color=colors[idx, :])
+        colors = density_colors
+
+    # Return
+    return colors
+
+
+# %% Show
 def show(df, config):
     """Build and show the graph.
 
