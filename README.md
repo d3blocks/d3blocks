@@ -62,6 +62,17 @@
 #
 #
 
+# Some cool blocks from Herman Sontrop’s
+https://bl.ocks.org/FrissAnalytics
+https://bl.ocks.org/FrissAnalytics/80d3b7e5494b4095ca52544a34167095
+http://bl.ocks.org/FrissAnalytics/8360ffae9194ed726f42e850eac3239e
+http://bl.ocks.org/FrissAnalytics/8fcd0a2cdde9fad911ddfcf35abe22df
+https://bl.ocks.org/FrissAnalytics/eb7870ff69569900ea55018e2256d6fd
+https://bl.ocks.org/FrissAnalytics/718c37311728ad539c968e457a09afb4
+http://bl.ocks.org/FrissAnalytics/e5348c6b954f038f40129419a8e8b51b
+
+# particlevest
+http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0c8bd7f
 
 # Timeseries
 http://bl.ocks.org/DStruths/9c042e3a6b66048b5bd4
@@ -72,6 +83,7 @@ https://bl.ocks.org/mbostock/raw/34f08d5e11952a80609169b7917d4172/?raw=true
 ### Network
 http://bl.ocks.org/GerHobbelt/3071239
 https://bl.ocks.org/steveharoz/8c3e2524079a8c440df60c1ab72b5d03
+http://bl.ocks.org/FrissAnalytics/8348e53e720ca275714fbc041d2912e3
 
 
 ## TODO
@@ -116,3 +128,4 @@ https://carbondesignsystem.com/data-visualization/simple-charts/
 
 ### Algemeen
 https://d3-graph-gallery.com/graph/interactivity_button.html#buildWithD3
+https://observablehq.com/@d3/multitouch
