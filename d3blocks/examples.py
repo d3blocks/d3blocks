@@ -3,8 +3,18 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Particles
+import numpy as np
+from d3blocks import D3Blocks
 
-# %% Moving bubbles
+# Initialize
+d3 = D3Blocks()
+
+# Make particle
+d3.particles('Keira', filepath='c://temp//Keira.html', figsize=[1000, 400])
+d3.particles('Senna', filepath='c://temp//senna.html', figsize=[900, 400], collision=0.05)
+
+# %% Violin plot
 import numpy as np
 from d3blocks import D3Blocks
 

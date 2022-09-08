@@ -26,10 +26,11 @@ from d3heatmap import d3heatmap
 import chord.Chord as Chord
 import scatter.Scatter as Scatter
 import violin.Violin as Violin
+import particles.Particles as Particles
 
 
 logger = logging.getLogger('')
-for handler in logger.handlers[:]: #get rid of existing old handlers
+for handler in logger.handlers[:]:  # get rid of existing old handlers
     logger.removeHandler(handler)
 console = logging.StreamHandler()
 formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
@@ -150,6 +151,97 @@ class D3Blocks():
 
         """
         return d3ng.adjmat2vec(df, min_weight=min_weight)
+
+    def particles(self,
+              text,
+              radius=3,
+              collision=0.05,
+              fontsize=250,
+              spacing=10,
+              cmap='Viridis',
+              background='#000000',
+              title='Particles - D3blocks',
+              filepath='particles.html',
+              figsize=[900, 500],
+              showfig=True,
+              overwrite=True):
+        """Create of chord graph.
+
+        Parameters
+        ----------
+        text : string
+            String to be visualized
+        radius : float (Default: 3)
+            Size of the particles.
+        collision : float, (default: 0.1)
+            Response of the interaction. Higher means that more collisions are prevented.
+        fontsize : int (Default: 250)
+            Text fontsize.
+            When increasing: also increase width and slighly the spacing.
+        spacing : int (Default: 10)
+            The number of particles that fit in the text.
+            A larger spacing reults in less particles.
+            A smaller spacing reults in more particles.
+        cmap : String (default: 'Set2')
+            Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
+            'tab20', 'tab20b', 'tab20c'
+            'Set1', 'Set2'
+            'seismic'    Blue-white-red
+            'Blues'      white-to-blue
+            'Reds'       white-to-red
+            'Pastel1'    Discrete colors
+            'Paired'     Discrete colors
+            'Set1'       Discrete colors
+        background : String (default: '#000000')
+            Background color.
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+            File path to save the output
+        figsize : tuple, (default: (800, 600))
+            Size of the figure in the browser, [width, height].
+        showfig : bool, (default: True)
+            Open the window to show the graph.
+        overwrite : bool, (default: True)
+            Overwrite the output html in the destination directory.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Plot
+        >>> d3.particles('D3blocks')
+
+        """
+        # Cleaning
+        self._clean(clean_config=False)
+        # Set config
+        self.config['chart'] ='Particles'
+        self.config['filepath'] = self.set_path(filepath)
+        self.config['title'] = title
+        self.config['showfig'] = showfig
+        self.config['overwrite'] = overwrite
+        self.config['figsize'] = figsize
+        self.config['cmap'] = cmap
+        self.config['background'] = background
+        self.config['radius'] = radius
+        self.config['collision'] = collision
+        self.config['fontsize'] = '"' + str(fontsize) + 'px"'
+        self.config['spacing'] = spacing
+
+        # Create the plot
+        self.config = Particles.show(text, self.config)
+        # Open the webbrowser
+        if self.config['showfig']:
+            _showfig(self.config['filepath'])
 
     def violin(self,
               x,
