@@ -62,6 +62,11 @@
 #
 #
 
+### Gauge
+http://bl.ocks.org/FrissAnalytics/e5348c6b954f038f40129419a8e8b51b
+http://bl.ocks.org/msqr/3202712
+https://carbondesignsystem.com/data-visualization/simple-charts/
+
 # Some cool blocks from Herman Sontrop’s
 https://bl.ocks.org/FrissAnalytics
 https://bl.ocks.org/FrissAnalytics/80d3b7e5494b4095ca52544a34167095
@@ -98,10 +103,6 @@ http://bl.ocks.org/nbremer/94db779237655907b907
 https://observablehq.com/@d3/hierarchical-edge-bundling
 https://observablehq.com/@d3/directed-chord-diagram
 https://www.visualcinnamon.com/2016/06/orientation-gradient-d3-chord-diagram/
-
-### Gauge
-http://bl.ocks.org/msqr/3202712
-https://carbondesignsystem.com/data-visualization/simple-charts/
 
 
 ### Network time-graph
