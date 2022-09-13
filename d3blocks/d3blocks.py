@@ -486,7 +486,7 @@ class D3Blocks():
               df,
               title='Chord - D3blocks',
               filepath='chord.html',
-              figsize=(1200, 1200),
+              figsize=[1200, 1200],
               showfig=True,
               overwrite=True):
         """Create of chord graph.
@@ -518,15 +518,15 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
         >>> df = d3.import_example('stormofswords')
-        >>>
+        >>> #
         >>> # Plot
-        >>> d3.chord(df, filepath='chord_demo.html')
+        >>> d3.chord(df)
 
         """
         df = df.copy()
@@ -1008,7 +1008,7 @@ class D3Blocks():
         >>> d3 = D3Blocks(whitelist='close')
         >>> #
         >>> # Plot
-        >>> d3.timeseries(df, filepath='timeseries.html', fontsize=10)
+        >>> d3.timeseries(df, fontsize=10)
 
         """
         df = df.copy()

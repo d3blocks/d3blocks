@@ -1,8 +1,10 @@
 Timeseries
 ####################
 
-Input
--------
+The TimeSeries graph can be used in case a date-time element is available, and where the time-wise values directly follow up with each other. The javascript code is forked from Mike Bostock and then Pythonized. The TimeSeries graph supports now enabling/disabling columns of interest, brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together in a single graph.
+
+Input Parameters
+---------------------
 
 
 .. automodule:: d3blocks.d3blocks.D3Blocks.timeseries
@@ -11,6 +13,10 @@ Input
 
 
 
+Input Data
+-----------
+
+The input dataset is a DataFrame for which the index column is the datetime, and the columns are plotted with their column name.
 
 .. code:: python
 
@@ -27,9 +33,12 @@ Input
 
 
 
+Chart
+-----------
+
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\timeseries.html" height="700px" width="700px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\timeseries.html" height="600px" width="775px", frameBorder="0"></iframe>
 
 
 
