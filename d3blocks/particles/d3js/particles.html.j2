@@ -23,6 +23,7 @@
 
     // Default mousemove
     var mouse_or_touch="mousemove"
+
     // CHANGE TOUCH OR MOUSE MOVE BASED ON OS TYPE
    	function getPlatform() {
    		const allPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE', 'Android', 'iPhone', 'iPad', 'iPod'];
@@ -50,7 +51,7 @@
     // https://observablehq.com/@d3/color-schemes
     // d3.interpolateTurbo
     // d3.interpolateViridis
-    var color = d3.scaleSequential(d3.interpolateTurbo)
+    var color = d3.scaleSequential(d3.interpolate{{ CMAP }})
       .domain([0, width])
     
     // Rasterized grid of points that represent the text
@@ -108,15 +109,11 @@
     		.enter()
     		//.append("circle")
         .append("rect")
-    			.classed("mouse", function(d, i) { return i == 0; })
-    // 			.attr("cx", function(d) { return d.x; })
-    // 			.attr("cy", function(d) { return d.y; })
-    			.attr("x", function(d) { return d.x; })
-    			.attr("y", function(d) { return d.y; })
-    // 			.attr("r", function(d) { return d.rTarget; })
-    			.attr("width", function(d) { return d.rTarget * 1.5; })
-    			.attr("height", function(d) { return d.rTarget * 1.5; })
-    
+        .classed("mouse", function(d, i) { return i == 0; })
+        .attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; })
+        .attr("width", function(d) { return d.rTarget * 1.5; })
+        .attr("height", function(d) { return d.rTarget * 1.5; })
     
     
     // Nodes want to form the text but won't overlap
@@ -129,10 +126,8 @@
     
     function ticked() {
     	circle
-    		//.attr("cx", function(d) { return d.x; })
-    		//.attr("cy", function(d) { return d.y; })
         .attr("x", function(d) { return d.x; })
-    		.attr("y", function(d) { return d.y; })
+        .attr("y", function(d) { return d.y; })
         .style("fill", function(d){
           return color(d.x)
         })
