@@ -50,6 +50,7 @@ def write_html(X, config, overwrite=True):
         'COLLISION': config['collision'],
         'FONTSIZE': config['fontsize'],
         'SPACING': config['spacing'],
+        'CMAP': config['cmap'],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
