@@ -1,8 +1,8 @@
 function timeseries(data, config) {
     var margin = {top: 20, right: 250, bottom: 100, left: 50},
         margin2 = { top: 430, right: 10, bottom: 20, left: 40 },
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom,
+        width = {{ WIDTH }} - margin.left - margin.right,
+        height = {{ HEIGHT }} - margin.top - margin.bottom,
         height2 = 500 - margin2.top - margin2.bottom;
 
     var parseDate = d3.time.format(config.DT_FORMAT).parse;

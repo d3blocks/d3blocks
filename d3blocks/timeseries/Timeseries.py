@@ -72,6 +72,8 @@ def write_html(X, config, overwrite=True):
         'TITLE': config['title'],
         'FONTSIZE': str(config['fontsize']) + 'px',
         'DT_FORMAT': config['dt_format_js'],
+        'WIDTH': config['figsize'][0],
+        'HEIGHT': config['figsize'][1],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
