@@ -1,43 +1,36 @@
-Installation
-################
+Install from Pypi (pip)
+########################
+
+.. code-block:: console
+
+    pip install d3blocks
+
+
+Install from github
+#####################################
+
+.. code-block:: console
+
+    pip install git+https://github.com/d3blocks/d3blocks
+
 
 Create environment
-**********************
+#####################
+
 
 If desired, install ``d3blocks`` from an isolated Python environment using conda:
 
 .. code-block:: python
 
-    conda create -n env_d3blocks python=3.8
+    conda create -n env_d3blocks python=3.10
     conda activate env_d3blocks
 
 
-Pypi
-**********************
 
-.. code-block:: console
+Uninstall
+###############
 
-    # Install from Pypi:
-    pip install d3blocks
-
-    # Force update to latest version
-    pip install -U d3blocks
-
-
-Github source
-************************************
-
-.. code-block:: console
-
-    # Install directly from github
-    pip install git+https://github.com/erdogant/d3blocks
-
-
-Uninstalling
-################
-
-Remove environment
-**********************
+If you want to remove your ``d3blocks`` installation with your environment, it can be as following:
 
 .. code-block:: console
 
@@ -51,18 +44,6 @@ Remove environment
    conda env list
 
 
-Remove installation
-**********************
-
-Note that the removal of the environment will also remove the ``d3blocks`` installation.
-
-.. code-block:: console
-
-    # Install from Pypi:
-    pip uninstall d3blocks
-
-
-
 .. raw:: html
 
 	<hr>
@@ -70,5 +51,4 @@ Note that the removal of the environment will also remove the ``d3blocks`` insta
 		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
 	</center>
 	<hr>
-
 

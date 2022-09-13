@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                0.1.1
+                0.5.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -41,36 +41,29 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     
-              <p class="caption" role="heading"><span class="caption-text">Background</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Motivation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Abstract.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Abstract.html#schematic-overview">Schematic overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#why-bother-using-d3-js">Why bother using D3.js?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#d3-motivation">D3 Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#d3-charts">D3 charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Installation.html#uninstalling">Uninstalling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Install from Pypi (pip)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#install-from-github">Install from github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#create-environment">Create environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#uninstall">Uninstall</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Methods</span></p>
+<p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Algorithm.html">Algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Cross%20validation%20and%20hyperparameter%20tuning.html">Cross validation and hyperparameter tuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Performance.html">Performance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Performance.html#results">Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Save%20and%20Load.html">Save and Load</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html#learn-new-model-with-gridsearch-and-train-test-set">Learn new model with gridsearch and train-test set</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html#learn-new-model-on-the-entire-data-set">Learn new model on the entire data set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html">Sponsor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Documentation.html#blog">Blog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#medium-blog">Medium Blog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a></li>
 </ul>
@@ -103,26 +96,215 @@
              
   <section id="module-d3blocks.d3blocks">
 <span id="api-references"></span><h1>API References<a class="headerlink" href="#module-d3blocks.d3blocks" title="Permalink to this headline"></a></h1>
+<p>d3blocks library.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.d3blocks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">d3blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xgboost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.d3blocks" title="Permalink to this definition"></a></dt>
-<dd><p>d3blocks.</p>
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">D3Blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">whitelist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks" title="Permalink to this definition"></a></dt>
+<dd><p>D3Blocks.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.d3blocks.fit_transform">
-<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.d3blocks.fit_transform" title="Permalink to this definition"></a></dt>
-<dd><p>Learn the associations in the data.</p>
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.adjmat2vec">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adjmat2vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.adjmat2vec" title="Permalink to this definition"></a></dt>
+<dd><p>Convert adjacency matrix into vector with source and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adjmat</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Adjacency matrix.</p></li>
+<li><p><strong>min_weight</strong> (<em>float</em>) – edges are returned with a minimum weight.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>nodes that are connected based on source and target</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert back to vector</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vector</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">adjmat2vec</span><span class="p">(</span><span class="n">adjmat</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.d3blocks.import_example">
-<span class="sig-name descname"><span class="pre">import_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'titanic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.d3blocks.import_example" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.chord">
+<span class="sig-name descname"><span class="pre">chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Chord</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chord.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1200,</span> <span class="pre">1200)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this definition"></a></dt>
+<dd><p>Create of chord graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
+‘source’
+‘target’
+‘weight’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong> – DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;chord_demo.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.get_label_properties">
+<span class="sig-name descname"><span class="pre">get_label_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set1'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.get_label_properties" title="Permalink to this definition"></a></dt>
+<dd><p>Get label properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labels</strong> (<em>classes</em>) – Class or column names.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – Colormap.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>labels</strong> – Dictionary containing class information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict()</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.heatmap">
+<span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heatmap.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(720,</span> <span class="pre">720)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this definition"></a></dt>
+<dd><p>Heatmap graph.</p>
+<p>heatmap is a module in d3blocks to create interactive heatmaps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data is an adjacency matrix for which the columns and rows are the names of the variables.</p></li>
+<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em></em>) – <dl class="simple">
+<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul>
+<li><p>1 : cells above value &gt;1 are capped.</p></li>
+<li><p>None : cells are colored based on the maximum value in the input data.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em></em>) – <dl class="simple">
+<dt>Color of the recangle when hovering over a cell.</dt><dd><ul>
+<li><p>’red’</p></li>
+<li><p>’black’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_adjmat</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df_adjmat</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node and edge properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">edge_properties</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.imageslider">
+<span class="sig-name descname"><span class="pre">imageslider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_after</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Image</span> <span class="pre">slider</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'imageslider.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(800,</span> <span class="pre">600)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this definition"></a></dt>
+<dd><p>Create image slider.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img_before</strong> (<em>String</em>) – absolute path to before image.</p></li>
+<li><p><strong>img_after</strong> (<em>String</em>) – absolute path to after image.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">imageslider</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.import_example">
+<span class="sig-name descname"><span class="pre">import_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'movingbubbles'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2000-01-01</span> <span class="pre">00:00:00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2001-01-01</span> <span class="pre">23:59:59'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.import_example" title="Permalink to this definition"></a></dt>
 <dd><p>Import example dataset from github source.</p>
 <p>Import one of the few datasets from github source or specify your own download url link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>str</em>) – Name of datasets: ‘sprinkler’, ‘titanic’, ‘student’, ‘fifa’, ‘cancer’, ‘waterpump’, ‘retail’</p></li>
-<li><p><strong>url</strong> (<em>str</em>) – url link to to dataset.</p></li>
+<li><p><strong>graph</strong> (<em>str</em>) – Name of datasets
+‘movingbubbles’, ‘random_time’</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em><em></em>) – Number of events.</p></li>
+<li><p><strong>date_start</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “2000-01-01 00:00:00” : start date</p></li>
+<li><p><strong>date_stop</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “2010-01-01 23:59:59” : Stop date</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -132,6 +314,438 @@
 <dd class="field-odd"><p>pd.DataFrame()</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.movingbubbles">
+<span class="sig-name descname"><span class="pre">movingbubbles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sample_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'state'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'day'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standardize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'fast':</span> <span class="pre">50,</span> <span class="pre">'medium':</span> <span class="pre">200,</span> <span class="pre">'slow':</span> <span class="pre">1000}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(780,</span> <span class="pre">800)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d3blocks_movingbubbles'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'movingbubbles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.movingbubbles" title="Permalink to this definition"></a></dt>
+<dd><p>Creation of moving bubble graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>Input data</em><em>, </em><em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data.</p></li>
+<li><p><strong>datetime</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'datetime'</em><em>)</em>) – Name of the column with the datetime.</p></li>
+<li><p><strong>sample_id</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'sample_id'</em><em>)</em>) – Name of the column with the sample ids.</p></li>
+<li><p><strong>state</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'state'</em><em>)</em>) – Name of the column with the states.</p></li>
+<li><p><strong>center</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Center this category.</p></li>
+<li><p><strong>dampler</strong> (<em>float</em><em>, </em><em>(</em><em>default: 1</em><em>)</em>) – Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the states.</p></li>
+<li><p><strong>standardize</strong> (<em>str.</em><em> (</em><em>default: None</em><em>)</em>) – Method to standardize the data.
+None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+<li><p><strong>reset_time</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'day'</em><em>)</em>) – ‘day’  : Every 24h de the day start over again.
+‘year’ : Every 365 days the year starts over again.</p></li>
+<li><p><strong>speed</strong> (<em>dict</em><em>, </em><em>(</em><em>default: {&quot;slow&quot;: 1000</em><em>, </em><em>&quot;medium&quot;: 200</em><em>, </em><em>&quot;fast&quot;: 50}</em><em>)</em>) – The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>1500</em><em>, </em><em>800</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>note</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – A specific note, such as project description can be put on the html page.</p></li>
+<li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – The time notes will be shown between specific time points.
+time_notes = [{“start_minute”: 1, “stop_minute”: 5, “note”: “Enter your note here and it is shown between 1 min and 5 min.”}]
+time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the chart.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the existing html file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;random_time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">movingbubbles</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.network">
+<span class="sig-name descname"><span class="pre">network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Network</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'network.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1500,</span> <span class="pre">800)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.network" title="Permalink to this definition"></a></dt>
+<dd><p>Network graph.</p>
+<p>Network is a module of d3blocks that is build on d3js and creates interactive and stand-alone networks.
+The input data is a adjacency matrix for which the columns and indexes are the nodes and elements&gt;0 the edges.
+The ouput is a html file that is interactive and stand alone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
+‘source’
+‘target’
+‘weight’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>slider</strong> (<em>typle</em><em> [</em><em>min: int</em><em>, </em><em>max: int</em><em>]</em><em>:</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Slider is automatically set to the range of the edge weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">network</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node and edge properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">edge_properties</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.particles">
+<span class="sig-name descname"><span class="pre">particles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Particles</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'particles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">500]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.particles" title="Permalink to this definition"></a></dt>
+<dd><p>Create of chord graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>string</em>) – String to be visualized</p></li>
+<li><p><strong>radius</strong> (<em>float</em><em> (</em><em>Default: 3</em><em>)</em>) – Size of the particles.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.1</em><em>)</em>) – Response of the interaction. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em> (</em><em>Default: 250</em><em>)</em>) – Text fontsize.
+When increasing: also increase width and slighly the spacing.</p></li>
+<li><p><strong>spacing</strong> (<em>int</em><em> (</em><em>Default: 10</em><em>)</em>) – The number of particles that fit in the text.
+A larger spacing reults in less particles.
+A smaller spacing reults in more particles.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em> (</em><em>default: 'Set2'</em><em>)</em>) – Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with “_r”.
+‘tab20’, ‘tab20b’, ‘tab20c’
+‘Set1’, ‘Set2’
+‘seismic’    Blue-white-red
+‘Blues’      white-to-blue
+‘Reds’       white-to-red
+‘Pastel1’    Discrete colors
+‘Paired’     Discrete colors
+‘Set1’       Discrete colors</p></li>
+<li><p><strong>background</strong> (<em>String</em><em> (</em><em>default: '#000000'</em><em>)</em>) – Background color.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3blocks&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.sankey">
+<span class="sig-name descname"><span class="pre">sankey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sankey</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sankey.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(800,</span> <span class="pre">600)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'align':</span> <span class="pre">'justify',</span> <span class="pre">'color':</span> <span class="pre">'currentColor',</span> <span class="pre">'padding':</span> <span class="pre">15,</span> <span class="pre">'width':</span> <span class="pre">15}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'source-target',</span> <span class="pre">'stroke_opacity':</span> <span class="pre">0.5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bottom':</span> <span class="pre">5,</span> <span class="pre">'left':</span> <span class="pre">1,</span> <span class="pre">'right':</span> <span class="pre">1,</span> <span class="pre">'top':</span> <span class="pre">5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.sankey" title="Permalink to this definition"></a></dt>
+<dd><p>Create of sankey graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
+‘source’
+‘target’
+‘weight’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>link</strong> (<em>dict.</em>) – “linkColor” : “source”, “target”, “source-target”, or a static olor such as “grey”, “blue”, “red” etc
+“linkStrokeOpacity” : 0.5</p></li>
+<li><p><strong>margin</strong> (<em>dict.</em>) – margin, in pixels
+“top” : 5
+“right” : 1
+“bottom” : 5
+“left” : 1</p></li>
+<li><p><strong>node</strong> (<em>dict.</em>) – “align” : “left”, “right”, “justify”, “center”
+“width” : 15 (width of the node rectangles)
+“padding” : 15 (vertical seperation between the nodes)
+“color” : “currentColor”, “grey”, “black”, “red”, etc</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong> – DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;sankey&#39;</span><span class="p">)</span>  <span class="c1"># &#39;stormofswords&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;sankey_demo.html&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.scatter">
+<span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Permalink to this definition"></a></dt>
+<dd><p>Create of chord graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy array</em>) – 1d coordinates x-axis.</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em>) – 1d coordinates y-axis.</p></li>
+<li><p><strong>s</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em> Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>c</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – ‘#ffffff’ : All dots are get the same hex color.
+None: The same color as for c is applied.
+[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
+<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Make a lineair gradient based on the density for the particular class label.
+‘#FFFFFF’</p></li>
+<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – Edgecolor of dotsize in hex colors.</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>]</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
+<li><p><strong>tooltip</strong> (<em>list of labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em> (</em><em>default: 'Set2'</em><em>)</em>) – Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with “_r”.
+‘tab20’, ‘tab20b’, ‘tab20c’
+‘Set1’, ‘Set2’
+‘seismic’    Blue-white-red
+‘Blues’      white-to-blue
+‘Reds’       white-to-red
+‘Pastel1’    Discrete colors
+‘Paired’     Discrete colors
+‘Set1’       Discrete colors</p></li>
+<li><p><strong>normalize</strong> (<em>Bool</em><em>, </em><em>optional</em>) – Normalize datapoints. The default is False.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>set_xlim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Width of the x-axis: The default is extracted from the data with 10% spacing.</p></li>
+<li><p><strong>set_ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Height of the y-axis: The default is extracted from the data with 10% spacing.</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong> – DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;iris&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.set_label_properties">
+<span class="sig-name descname"><span class="pre">set_label_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.set_label_properties" title="Permalink to this definition"></a></dt>
+<dd><p>Set the label properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>labels</strong> (<em>dict</em><em>(</em><em>)</em>) – Dictionary containing class information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.set_path">
+<span class="sig-name descname"><span class="pre">set_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d3blocks.html'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.set_path" title="Permalink to this definition"></a></dt>
+<dd><p>Set the file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>str</em>) – filename and or full pathname.
+* ‘d3graph.html’
+* ‘c://temp/’
+* ‘c://temp/d3graph.html’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>filepath</strong> – Path to graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.timeseries">
+<span class="sig-name descname"><span class="pre">timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_on_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Timeseries</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Create of Timeseries graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the fonts in the circle.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the existing html file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong> – DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">([</span><span class="s2">&quot;TSLA&quot;</span><span class="p">,</span> <span class="s2">&quot;TWTR&quot;</span><span class="p">,</span> <span class="s2">&quot;META&quot;</span><span class="p">,</span> <span class="s2">&quot;AMZN&quot;</span><span class="p">,</span> <span class="s2">&quot;AAPL&quot;</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;2019-01-01&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;2021-12-31&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Adj Close&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize with filtering on close columns</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">whitelist</span><span class="o">=</span><span class="s1">&#39;close&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;timeseries.html&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.vec2adjmat">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vec2adjmat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggfunc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.vec2adjmat" title="Permalink to this definition"></a></dt>
+<dd><p>Convert source and target into adjacency matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>list</em>) – The source node.</p></li>
+<li><p><strong>target</strong> (<em>list</em>) – The target node.</p></li>
+<li><p><strong>weight</strong> (<em>list of int</em>) – The Weights between the source-target values</p></li>
+<li><p><strong>symmetric</strong> (<em>bool</em><em>, </em><em>optional</em>) – Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.</p></li>
+<li><p><strong>aggfunc</strong> (<em>str</em><em>, </em><em>optional</em>) – Aggregate function in case multiple values exists for the same relationship.
+‘sum’ (default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>adjacency matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert to adjmat</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adjmat</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.violin">
+<span class="sig-name descname"><span class="pre">violin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Violin</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'violin.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inferno'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.violin" title="Permalink to this definition"></a></dt>
+<dd><p>Create of violin graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list of String</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the class labels for each datapoint in y.</p></li>
+<li><p><strong>y</strong> (<em>list of float</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the values for the samples.</p></li>
+<li><p><strong>s</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em> Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>c</strong> (<em>list/array of hex colors with same size as y</em>) – ‘#002147’ : All dots are get the same hex color.
+None: The colors are generated on value using the colormap specified in cmap.
+[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p></li>
+<li><p><strong>bins</strong> (<em>Int</em><em> (</em><em>default: 20</em><em>)</em>) – The bin size is the ‘resolution’ of the violin plot.</p></li>
+<li><p><strong>x_order</strong> (<em>list of String</em><em> (</em><em>default: None</em><em>)</em>) – The order of the class labels (x-axis).
+[“setosa”, “versicolor”, “virginica”]</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>]</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
+<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – Edgecolor of dot in hex colors.</p></li>
+<li><p><strong>tooltip</strong> (<em>list of labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em> (</em><em>default: 'inferno'</em><em>)</em>) – Color scheme for that is used for the scatterplot. All color schemes can be reversed with “_r”.
+Sequential : ‘viridis’, ‘plasma’, ‘inferno’, ‘magma’, ‘cividis’
+Sequential (white-to) : ‘Greys’, ‘Purples’, ‘Blues’, ‘Greens’, ‘Oranges’, ‘Reds’, ‘YlOrBr’, ‘YlOrRd’, ‘OrRd’, ‘PuRd’, ‘RdPu’, ‘BuPu’, ‘GnBu’, ‘PuBu’, ‘YlGnBu’, ‘PuBuGn’, ‘BuGn’, ‘YlGn’
+Sequential2 (to-white) : ‘binary’, ‘gist_yarg’, ‘gist_gray’, ‘gray’, ‘bone’, ‘pink’, ‘spring’, ‘summer’, ‘autumn’, ‘winter’, ‘cool’, ‘Wistia’, ‘hot’, ‘afmhot’, ‘gist_heat’, ‘copper’
+Diverging (from-white-to): ‘PiYG’, ‘PRGn’, ‘BrBG’, ‘PuOr’, ‘RdGy’, ‘RdBu’, ‘RdYlBu’, ‘RdYlGn’, ‘Spectral’, ‘coolwarm’, ‘bwr’, ‘seismic’
+Cyclic : ‘twilight’, ‘twilight_shifted’, ‘hsv’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>None</em><em>, </em><em>500</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].
+The width is determined based on the number of class labels x.</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong> – DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">violin</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;chord_demo.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -143,25 +757,34 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.import_example">
-<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">import_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'titanic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.import_example" title="Permalink to this definition"></a></dt>
-<dd><p>Import example dataset from github source.</p>
-<p>Import one of the few datasets from github source or specify your own download url link.</p>
+<dt class="sig sig-object py" id="d3blocks.d3blocks.library_compatibility_checks">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">library_compatibility_checks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.library_compatibility_checks" title="Permalink to this definition"></a></dt>
+<dd><p>Library compatibiliy checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.make_dict_label_properties">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">make_dict_label_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.make_dict_label_properties" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.pre_processing">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">pre_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.pre_processing" title="Permalink to this definition"></a></dt>
+<dd><p>Pre-processing of the input dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>str</em>) – Name of datasets: ‘sprinkler’, ‘titanic’, ‘student’, ‘fifa’, ‘cancer’, ‘waterpump’, ‘retail’</p></li>
-<li><p><strong>url</strong> (<em>str</em>) – <p>url link to to dataset.
-verbose : int, (default: 20)</p>
-<blockquote>
-<div><p>Print progress to screen. The default is 3.
-60: None, 40: Error, 30: Warn, 20: Info, 10: Debug</p>
-</div></blockquote>
-</p></li>
-</ul>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Dataset containing mixed features.</p>
+<dd class="field-even"><p><strong>df</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.DataFrame()</p>
@@ -170,22 +793,40 @@ verbose : int, (default: 20)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.load_example">
-<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">load_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'breast'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.load_example" title="Permalink to this definition"></a></dt>
-<dd><p>Import example dataset from sklearn.</p>
+<dt class="sig sig-object py" id="d3blocks.d3blocks.random_date">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">random_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strftime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.random_date" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.remove_quotes">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">remove_quotes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.remove_quotes" title="Permalink to this definition"></a></dt>
+<dd><p>Pre-processing of the input dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>'breast'</strong> (<em>str</em><em>, </em><em>two-class</em>) – </p></li>
-<li><p><strong>'titanic'</strong> (<em>str</em><em>, </em><em>two-class</em>) – </p></li>
-<li><p><strong>'iris'</strong> (<em>str</em><em>, </em><em>multi-class</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p><strong>df</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple containing dataset and response variable (X,y)</p>
+<dd class="field-odd"><p>pd.DataFrame()</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.remove_special_chars">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">remove_special_chars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.remove_special_chars" title="Permalink to this definition"></a></dt>
+<dd><p>Remove special characters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
 </dd>
 </dl>
 </dd></dl>
@@ -197,8 +838,18 @@ verbose : int, (default: 20)</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.str_time_prop">
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">str_time_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strftime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.str_time_prop" title="Permalink to this definition"></a></dt>
+<dd><p>Get a time at a proportion of a range of two formatted times.</p>
+<p>start and end should be strings specifying times formatted in the
+given format (strftime-style), giving an interval [start, end].
+prop specifies how a proportion of the interval to be taken after
+start.  The returned time will be in the specified format.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.unzip">
-<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">unzip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_zip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.unzip" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">unzip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_zip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.unzip" title="Permalink to this definition"></a></dt>
 <dd><p>Unzip files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -211,11 +862,6 @@ verbose : int, (default: 20)</p>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clustimage</span> <span class="k">as</span> <span class="nn">cl</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dirpath</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">unzip</span><span class="p">(</span><span class="s1">&#39;c://temp//flower_images.zip&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py function">
@@ -236,11 +882,6 @@ verbose : int, (default: 20)</p>
 <dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">clustimage</span> <span class="k">as</span> <span class="nn">cl</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">images</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">wget</span><span class="p">(</span><span class="s1">&#39;https://erdogant.github.io/datasets/flower_images.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;c://temp//flower_images.zip&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <hr>

@@ -1,3 +1,5 @@
+#######################################################################
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -14,6 +16,18 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
 import d3blocks
+
+############## EMBED AND CONVERT ADDITIONAL INFORMATION FOR SHPINX PAGES ##############
+
+# Import PDF from directory in rst files
+#embed_in_rst(currpath, 'pdf', '.pdf', "Additional Information", 'Additional_Information.rst')
+
+# Import notebooks in HTML format
+#convert_ipynb_to_html(currpath, 'notebooks', '.ipynb')
+#embed_in_rst(currpath, 'notebooks', '.html', "Notebook", 'notebook.rst')
+
+########################################################################################
+
 
 # -- Project information -----------------------------------------------------
 
@@ -39,6 +53,7 @@ extensions = [
 	"sphinx.ext.intersphinx",
 	"sphinx.ext.autosectionlabel",
 	"rst2pdf.pdfbuilder",
+	"sphinxcontrib.pdfembed",
 #    'sphinx.ext.duration',
 #    'sphinx.ext.doctest',
 #    'sphinx.ext.autosummary',

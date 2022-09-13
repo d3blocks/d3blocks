@@ -5,11 +5,9 @@
 Coding quality
 '''''''''''''''''''''
 
-I value software quality. Higher quality software has fewer defects, better security, and better performance, which leads to happier users who can work more effectively.
-Code reviews are an effective method for improving software quality. McConnell (2004) suggests that unit testing finds approximately 25% of defects, function testing 35%, integration testing 45%, and code review 55-60%. 
-While this means that none of these methods are good enough on their own and that they should be combined, clearly code review is an essential tool here.
+I value software quality. Higher quality software has fewer defects, better security, and better performance, which leads to happier users who can work more effectively. Code reviews are an effective method for improving software quality. 
 
-This library is therefore developed with several techniques, such as coding styling, low complexity, docstrings, reviews, and unit tests.
+This library is therefore developed with several techniques, such as coding styling, low complexity, docstrings.
 Such conventions are helpfull to improve the quality, make the code cleaner and more understandable but alos to trace future bugs, and spot syntax errors.
 
 
@@ -66,34 +64,6 @@ Developing software with low(er) technical dept may take extra development time,
 * easier maintanable
 * Less prone to bugs and errors
 * Higher security
-
-
-Unit tests
-----------
-
-The use of unit tests is essential to garantee a consistent output of developed functions.
-The following tests are secured using :func:`tests.test_d3blocks`:
-
-* The input are checked.
-* The output values are checked and whether they are encoded properly.
-* The check of whether parameters are handled correctly.
-
-
-.. code-block:: bash
-
-    pytest tests\test_d3blocks.py
-
-    ====================================== test session starts ======================================
-    platform win32 -- Python 3.6.10, pytest-5.4.0, py-1.8.1, pluggy-0.13.1
-    collected 3 items
-    
-    tests\test_d3blocks.py ...                                                                [100%]
-    
-    ======================================= warnings summary ========================================
-    tests/test_d3blocks.py::test_plot
-    
-    =========================== 3 passed, 1 warning in 1254.97s (0:20:54) ===========================    
-
 
 
 .. raw:: html
