@@ -15,18 +15,18 @@ import time
 import colourmap
 import unicodedata
 
-import movingbubbles.Movingbubbles as Movingbubbles
-import timeseries.Timeseries as Timeseries
-import sankey.Sankey as Sankey
-import imageslider.Imageslider as Imageslider
+import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+import d3blocks.timeseries.Timeseries as Timeseries
+import d3blocks.sankey.Sankey as Sankey
+import d3blocks.imageslider.Imageslider as Imageslider
+import d3blocks.chord.Chord as Chord
+import d3blocks.scatter.Scatter as Scatter
+import d3blocks.violin.Violin as Violin
+import d3blocks.particles.Particles as Particles
+
 from d3graph import d3graph
 import d3graph as d3ng
 from d3heatmap import d3heatmap
-import chord.Chord as Chord
-import scatter.Scatter as Scatter
-import violin.Violin as Violin
-import particles.Particles as Particles
-
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]:  # get rid of existing old handlers
@@ -969,7 +969,7 @@ class D3Blocks():
         # Return
         return df
 
-    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - D3blocks', filepath='timeseries.html', fontsize=10, showfig=True, overwrite=True):
+    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - D3blocks', filepath='timeseries.html', fontsize=10, figsize=[1000, 500], showfig=True, overwrite=True):
         """Create of Timeseries graph.
 
         Parameters
@@ -996,17 +996,17 @@ class D3Blocks():
         --------
         >>> # Load example data
         >>> import yfinance as yf
-        >>> df = yf.download(["TSLA", "TWTR", "FB", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+        >>> df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
         >>> d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
         >>> df = df.div(df.iloc[0])
         >>> df.head()
-        >>>
+        >>> #
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize with filtering on close columns
         >>> d3 = D3Blocks(whitelist='close')
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.timeseries(df, filepath='timeseries.html', fontsize=10)
 
@@ -1014,6 +1014,7 @@ class D3Blocks():
         df = df.copy()
         self.config['chart'] ='timeseries'
         self.config['filepath'] = self.set_path(filepath)
+        self.config['figsize'] = figsize
         self.config['title'] = title
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite

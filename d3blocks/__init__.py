@@ -1,14 +1,13 @@
-from d3blocks import D3Blocks
-# import d3blocks.Movingbubbles as Movingbubbles
-# import d3blocks.timeseries.Timeseries as Timeseries
-import chord.Chord as Chord
-import imageslider.Imageslider as Imageslider
-import movingbubbles.Movingbubbles as Movingbubbles
-import sankey.Sankey as Sankey
-import scatter.Scatter as Scatter
-import timeseries.Timeseries as Timeseries
-import violin.Violin as Violin
-import particles.Particles as Particles
+from d3blocks.d3blocks import D3Blocks
+
+# import chord.Chord as Chord
+# import imageslider.Imageslider as Imageslider
+# import movingbubbles.Movingbubbles as Movingbubbles
+# import sankey.Sankey as Sankey
+# import scatter.Scatter as Scatter
+# import timeseries.Timeseries as Timeseries
+# import violin.Violin as Violin
+# import particles.Particles as Particles
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
