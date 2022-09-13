@@ -10,7 +10,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 
 # Make particles
-d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=10, figsize=[1200, 500])
+d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
 
 # %% Violin plot
 import numpy as np
@@ -183,7 +183,7 @@ df.head()
 
 from d3blocks import D3Blocks
 d3 = D3Blocks(whitelist='close')
-d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10)
+d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[800, 500])
 
 
 # %% Movingbubbles - Make manual dataset to test the working
