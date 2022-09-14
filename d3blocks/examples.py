@@ -73,21 +73,21 @@ df = d3.import_example('energy')
 d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
 labels = d3.labels
 # Link settings
-# d3.network(df, filepath='c:\\temp\\network.html', showfig=False)
-# d3.Network.set_node_properties(color='cluster')
-# d3.Network.show()
+# d3.d3graph(df, filepath='c:\\temp\\network.html', showfig=False)
+# d3.D3graph.set_node_properties(color='cluster')
+# d3.D3graph.show()
 
 
 # Network
-d3.network(df, showfig=False)
-d3.Network.set_node_properties()
+d3.d3graph(df, showfig=False)
+d3.D3graph.set_node_properties()
 
 # # Color the same as for the sankey chart
 for key in labels.keys():
-    d3.Network.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
+    d3.D3graph.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
 
 # # Show the network graph
-d3.Network.show(filepath='c:\\temp\\d3graph.html')
+d3.D3graph.show(filepath='c:\\temp\\d3graph.html')
 
 # %% Issue color match SCATTER
 from d3blocks import D3Blocks
@@ -413,21 +413,21 @@ df = d3.import_example('energy')
 # df = d3.adjmat2vec(df)
 
 # Network diagram
-d3.network(df, showfig=False)
-d3.Network.set_node_properties(color='cluster')
-d3.Network.show()
+d3.d3graph(df, showfig=False)
+d3.D3graph.set_node_properties(color='cluster')
+d3.D3graph.show()
 
 # Make adjustments to the node: Thermal_generation
-d3.Network.node_properties['Thermal_generation']['size']=20
-d3.Network.node_properties['Thermal_generation']['edge_color']='#000fff' # Blue node edge
-d3.Network.node_properties['Thermal_generation']['edge_size']=3 # Node-edge Size
+d3.D3graph.node_properties['Thermal_generation']['size']=20
+d3.D3graph.node_properties['Thermal_generation']['edge_color']='#000fff' # Blue node edge
+d3.D3graph.node_properties['Thermal_generation']['edge_size']=3 # Node-edge Size
 
 # Make adjustments to the edge: 'Solar', 'Solar_Thermal'
-d3.Network.edge_properties['Solar', 'Solar_Thermal']['color']='#000fff'
-d3.Network.edge_properties['Solar', 'Solar_Thermal']['weight_scaled']=10
+d3.D3graph.edge_properties['Solar', 'Solar_Thermal']['color']='#000fff'
+d3.D3graph.edge_properties['Solar', 'Solar_Thermal']['weight_scaled']=10
 
 # Show the network graph
-d3.Network.show()
+d3.D3graph.show()
 
 
 

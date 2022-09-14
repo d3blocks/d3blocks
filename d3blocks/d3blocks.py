@@ -24,8 +24,7 @@ import d3blocks.scatter.Scatter as Scatter
 import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
 
-from d3graph import d3graph
-import d3graph as d3ng
+import d3graph as d3network
 from d3heatmap import d3heatmap
 
 logger = logging.getLogger('')
@@ -118,7 +117,7 @@ class D3Blocks():
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
 
         """
-        return d3ng.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
+        return d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
 
     @staticmethod
     def adjmat2vec(df, min_weight=1):
@@ -149,7 +148,7 @@ class D3Blocks():
         >>> vector = d3.adjmat2vec(adjmat)
 
         """
-        return d3ng.adjmat2vec(df, min_weight=min_weight)
+        return d3network.adjmat2vec(df, min_weight=min_weight)
 
     def particles(self,
               text,
@@ -692,7 +691,7 @@ class D3Blocks():
         # Create heatmap graph
         d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description='', showfig=self.config['showfig'])
 
-    def network(self, df, title='Network - D3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
+    def d3graph(self, df, title='Network - D3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
         """Network graph.
 
         Description
@@ -765,13 +764,13 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = remove_quotes(df)
         # Initialize network graph
-        self.Network = d3graph(collision=collision, charge=charge, slider=slider)
+        self.D3graph = d3network.d3graph(collision=collision, charge=charge, slider=slider)
         # Convert vector to adjmat
-        df = d3ng.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+        df = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create graph
-        self.Network.graph(df)
+        self.D3graph.graph(df)
         # Open the webbrowser
-        self.Network.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
     def sankey(self,
                df,
@@ -1210,9 +1209,9 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         url='https://erdogant.github.io/datasets/stormofswords.zip'
     elif graph=='bigbang':
         # Initialize
-        d3model = d3graph()
+        d3model = d3network.d3graph()
         df = d3model.import_example('bigbang')
-        return d3ng.adjmat2vec(df)
+        return d3network.adjmat2vec(df)
     elif graph=='southern_nebula':
         # Image slider demo
         url='https://erdogant.github.io/datasets/southern_nebula.zip'
