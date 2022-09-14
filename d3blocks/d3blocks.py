@@ -24,6 +24,16 @@ import d3blocks.scatter.Scatter as Scatter
 import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
 
+# import movingbubbles.Movingbubbles as Movingbubbles
+# import timeseries.Timeseries as Timeseries
+# import sankey.Sankey as Sankey
+# import imageslider.Imageslider as Imageslider
+# import chord.Chord as Chord
+# import scatter.Scatter as Scatter
+# import violin.Violin as Violin
+# import particles.Particles as Particles
+
+
 import d3graph as d3network
 from d3heatmap import d3heatmap
 
@@ -151,18 +161,18 @@ class D3Blocks():
         return d3network.adjmat2vec(df, min_weight=min_weight)
 
     def particles(self,
-              text,
-              radius=3,
-              collision=0.05,
-              fontsize=250,
-              spacing=10,
-              cmap='Turbo',
-              background='#000000',
-              title='Particles - D3blocks',
-              filepath='particles.html',
-              figsize=[900, 500],
-              showfig=True,
-              overwrite=True):
+                  text,
+                  radius=3,
+                  collision=0.05,
+                  fontsize=250,
+                  spacing=10,
+                  cmap='Turbo',
+                  background='#000000',
+                  title='Particles - D3blocks',
+                  filepath='particles.html',
+                  figsize=[900, 500],
+                  showfig=True,
+                  overwrite=True):
         """Create of chord graph.
 
         Parameters
@@ -242,22 +252,22 @@ class D3Blocks():
             _showfig(self.config['filepath'])
 
     def violin(self,
-              x,
-              y,
-              s=5,
-              c = None,
-              bins = 20,
-              x_order = None,
-              opacity=0.8,
-              stroke='#ffffff',
-              tooltip=None,
-              title='Violin - D3blocks',
-              filepath='violin.html',
-              figsize=[None, None],
-              ylim = [None, None],
-              cmap='inferno',
-              showfig=True,
-              overwrite=True):
+               x,
+               y,
+               s=5,
+               c=None,
+               bins=20,
+               x_order=None,
+               opacity=0.8,
+               stroke='#ffffff',
+               tooltip=None,
+               title='Violin - D3blocks',
+               filepath='violin.html',
+               figsize=[None, None],
+               ylim=[None, None],
+               cmap='inferno',
+               showfig=True,
+               overwrite=True):
         """Create of violin graph.
 
         Parameters
@@ -360,23 +370,23 @@ class D3Blocks():
             _showfig(self.config['filepath'])
 
     def scatter(self,
-              x,
-              y,
-              s=3,
-              c='#002147',
-              c_gradient=None,
-              opacity=0.8,
-              stroke='#ffffff',
-              tooltip=None,
-              cmap='tab20',
-              normalize=False,
-              title='Scatter - D3blocks',
-              filepath='scatter.html',
-              figsize=[900, 600],
-              xlim = [None, None],
-              ylim = [None, None],
-              showfig=True,
-              overwrite=True):
+                x,
+                y,
+                s=3,
+                c='#002147',
+                c_gradient=None,
+                opacity=0.8,
+                stroke='#ffffff',
+                tooltip=None,
+                cmap='tab20',
+                normalize=False,
+                title='Scatter - D3blocks',
+                filepath='scatter.html',
+                figsize=[900, 600],
+                xlim=[None, None],
+                ylim=[None, None],
+                showfig=True,
+                overwrite=True):
         """Create of chord graph.
 
         Parameters
@@ -488,7 +498,13 @@ class D3Blocks():
               figsize=[1200, 1200],
               showfig=True,
               overwrite=True):
-        """Create of chord graph.
+        """Chord graph.
+
+        Description
+        -----------
+        A chord graph represents flows or connections between several entities or nodes.
+        Each entity is represented by a fragment on the outer part of the circular layout.
+        Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.
 
         Parameters
         ----------
@@ -681,23 +697,21 @@ class D3Blocks():
         self.config['vmax'] = vmax
         self.config['stroke'] = stroke
 
-        # Set default label properties
-        # if not hasattr(self, 'labels'):
-            # Create labels
-            # labels = self.get_label_properties(labels=np.unique(df.columns.values), cmap=self.config['cmap'])
-            # Store in object
-            # self.set_label_properties(labels)
-
         # Create heatmap graph
         d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description='', showfig=self.config['showfig'])
 
-    def d3graph(self, df, title='Network - D3blocks', filepath='network.html', figsize=(1500, 800), showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None]):
-        """Network graph.
+    def d3graph(self, df, title='D3graph - D3blocks', filepath='d3graph.html', figsize=[1500, 800], showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None], scaler='zscore'):
+        """d3graph graph.
 
         Description
         -----------
-        Network is a module of d3blocks that is build on d3js and creates interactive and stand-alone networks.
-        The input data is a adjacency matrix for which the columns and indexes are the nodes and elements>0 the edges.
+        d3graph is a integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
+        The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
+        dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
+        The nodes are colored based on the Louvain heuristics which is the partition of highest modularity, i.e.
+        the highest partition of the dendrogram generated by the Louvain algorithm.
+        The strength of the edges is based on the weights. To explore the network, and the strength of the edges more
+        extensively, the slider (located at the top) can break the network based on the edge weights.
         The ouput is a html file that is interactive and stand alone.
 
         Parameters
@@ -732,19 +746,32 @@ class D3Blocks():
         --------
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
-        >>>
-        >>> d3.network(df, showfig=False)
-        >>> d3.Network.show()
-        >>>
-        >>> d3.Network.set_node_properties(color='cluster')
-        >>> d3.Network.show()
-        >>>
-        >>> # Node and edge properties
-        >>> d3.Network.node_properties
-        >>> d3.Network.edge_properties
+        >>> #
+        >>> # Create network using default
+        >>> d3.d3graph(df)
+        >>> #
+        >>> # Change scaler
+        >>> d3.d3graph(df, scaler='minmax')
+        >>> #
+        >>> # Change node properties
+        >>> d3.D3graph.set_node_properties(color='cluster')
+        >>> d3.D3graph.node_properties['Solar']['size']=30
+        >>> d3.D3graph.node_properties['Solar']['edge_color']='#FF0000'
+        >>> d3.D3graph.node_properties['Solar']['edge_size']=5
+        >>> d3.D3graph.show()
+        >>> #
+        >>> # Change edge properties
+        >>> d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
+        >>> d3.D3graph.show()
+        >>> #
+        >>> # Node properties
+        >>> d3.D3graph.node_properties
+        >>> #
+        >>> # Node properties
+        >>> d3.D3graph.edge_properties
 
         """
         # Copy of data
@@ -969,7 +996,14 @@ class D3Blocks():
         return df
 
     def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - D3blocks', filepath='timeseries.html', fontsize=10, figsize=[1000, 500], showfig=True, overwrite=True):
-        """Create of Timeseries graph.
+        """Timeseries graph.
+
+        Description
+        -----------
+        The TimeSeries graph can be used in case a date-time element is available, and where the time-wise values
+        directly follow up with each other. The TimeSeries graph supports now enabling/disabling columns of interest,
+        brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
+        in a single graph.
 
         Parameters
         ----------
@@ -1287,6 +1321,8 @@ def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
 def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
     """Get a time at a proportion of a range of two formatted times.
 
+    Description
+    -----------
     start and end should be strings specifying times formatted in the
     given format (strftime-style), giving an interval [start, end].
     prop specifies how a proportion of the interval to be taken after
@@ -1349,9 +1385,6 @@ def unzip(path_to_zip, ext=''):
             zip_ref.extractall(pathname)
             zip_ref.close()
             getpath = path_to_zip.replace('.zip', ext)
-            # if not os.path.isfile(getpath):
-                # logger.error('Extraction failed.')
-                # getpath = None
     else:
         logger.warning('Input is not a zip file: [%s]', path_to_zip)
     # Return
@@ -1442,6 +1475,6 @@ def library_compatibility_checks():
 
     """
     # if not version.parse(nx.__version__) >= version.parse("2.5"):
-        # logger.error('Networkx version should be >= 2.5')
-        # logger.info('Hint: pip install -U networkx')
+    #     logger.error('Networkx version should be >= 2.5')
+    #     logger.info('Hint: pip install -U networkx')
     pass
