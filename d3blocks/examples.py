@@ -3,6 +3,24 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Load example data
+df = d3.import_example('energy')
+#
+# Plot
+# d3.d3graph(df, showfig=True)
+d3.d3graph(df, filepath='c:/temp/d3graph.html', figsize=[700, 700], scaler='minmax', showfig=False)
+
+# Set colors
+d3.D3graph.set_node_properties(color='cluster')
+d3.D3graph.show()
+
+
+
 # %% Particles
 from d3blocks import D3Blocks
 
