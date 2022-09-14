@@ -183,7 +183,7 @@ df.head()
 
 from d3blocks import D3Blocks
 d3 = D3Blocks(whitelist='close')
-d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[750, 500])
+d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
 
 
 # %% Movingbubbles - Make manual dataset to test the working
