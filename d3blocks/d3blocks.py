@@ -14,6 +14,7 @@ import random
 import time
 import colourmap
 import unicodedata
+import re
 
 import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
 import d3blocks.timeseries.Timeseries as Timeseries
@@ -32,7 +33,6 @@ import d3blocks.particles.Particles as Particles
 # import scatter.Scatter as Scatter
 # import violin.Violin as Violin
 # import particles.Particles as Particles
-
 
 import d3graph as d3network
 from d3heatmap import d3heatmap
@@ -446,15 +446,20 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
-        >>> df = d3.import_example('iris')
-        >>>
-        >>> # Plot
-        >>> d3.scatter(df)
+        >>> df = d3.import_example('cancer')
+        >>> #
+        >>> # Size and tooltip
+        >>> s = df['survival_months'].fillna(1).values / 10
+        >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+        >>> #
+        >>> # Scatter
+        >>> d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
+        >>> #
 
         """
         if len(x)!=len(y): raise Exception(logger.error('input parameter [x] should be of size of (x, y).'))
@@ -570,9 +575,10 @@ class D3Blocks():
     def imageslider(self,
                     img_before,
                     img_after,
+                    background='#000000',
                     title='Image slider - D3blocks',
                     filepath='imageslider.html',
-                    figsize=[800, 600],
+                    figsize=[800, 800],
                     showfig=True,
                     overwrite=True):
         """Image slider.
@@ -590,6 +596,8 @@ class D3Blocks():
             absolute path to before image.
         img_after : String
             absolute path to after image.
+        background : String (default: '#000000')
+            Background color.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -614,7 +622,8 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> img_before, img_after = d3.import_example('southern_nebula')
+        >>> img_before, img_after = d3.import_example('southern_nebula')  # Local location
+        >>> img_before, img_after = d3.import_example('southern_nebula_internet')  # Internet location
         >>> #
         >>> # Plot
         >>> d3.imageslider(img_before, img_after, showfig=True)
@@ -622,8 +631,9 @@ class D3Blocks():
 
         """
         self.config['chart'] ='imageslider'
-        self.config['img_before'] = os.path.abspath(img_before)
-        self.config['img_after'] = os.path.abspath(img_after)
+        self.config['img_before'] = img_before
+        self.config['img_after'] = img_after
+        self.config['background'] = background
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
         self.config['alt_before'] = os.path.basename(img_before)
@@ -631,6 +641,12 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
+
+        # Check whether url, otherwise take absolute path
+        if not check_url(img_before):
+            self.config['img_before'] = os.path.abspath(img_before)
+        if not check_url(img_after):
+            self.config['img_after'] = os.path.abspath(img_after)
 
         # Create the plot
         self.config = Imageslider.show(self.config)
@@ -1304,6 +1320,11 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         # Image slider demo
         url='https://erdogant.github.io/datasets/southern_nebula.zip'
         ext='.jpg'
+    elif graph=='southern_nebula_internet':
+        # Image slider demo
+        before = 'https://erdogant.github.io/datasets/images/southern_nebula_before.jpg'
+        after = 'https://erdogant.github.io/datasets/images/southern_nebula_after.jpg'
+        return before, after
     elif graph=='cancer':
         url='https://erdogant.github.io/datasets/cancer_dataset.zip'
     elif graph=='iris':
@@ -1532,3 +1553,18 @@ def library_compatibility_checks():
     #     logger.error('Networkx version should be >= 2.5')
     #     logger.info('Hint: pip install -U networkx')
     pass
+
+
+# %% Check url
+def check_url(url):
+    regex = re.compile(
+            r'^(?:http|ftp)s?://' # http:// or https://
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+            r'localhost|' #localhost...
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+            r'(?::\d+)?' # optional port
+            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    
+    isvalid = re.match(regex, url) is not None
+    # Return
+    return isvalid

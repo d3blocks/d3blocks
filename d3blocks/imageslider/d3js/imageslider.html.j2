@@ -7,19 +7,23 @@
 		<style>
 		   {% include "reset.css" %}
 		   {% include "style.css" %}
+
+			body { background: {{ BACKGROUND }} }
 		</style>
-		
+
+        <!---		
 		<script>
 		   {% raw %}
-		   {% include "modernizr.js" %}
+    	   {% include "modernizr.js" %}
 		   {% endraw %}
 		</script>
+		-->
 
 		<title> {{ TITLE }} </title>
     </head>
     
     <body>
-        <div class="main" style="margin-bottom: 200px;">
+        <div class="main" style="max-width: {{ WIDTH }}px;">
 
             <br>
 
@@ -40,8 +44,7 @@
 		</figure> <!-- cd-image-container -->
 
             <div style="position: fixed;bottom: 0;right: 0;padding:1em;">
-                <a href="https://github.com/JohnEdChristensen/WebbCompare/tree/gh-pages">
-		<i class="fa fa-github"></i></a>
+                <a href="https://github.com/d3blocks/d3blocks">
             </div>
 
         </div>

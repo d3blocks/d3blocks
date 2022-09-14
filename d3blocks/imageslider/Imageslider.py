@@ -54,6 +54,7 @@ def write_html(img_before, img_after, config, overwrite=True):
         'IMG_AFTER': img_after,
         'ALT_BEFORE': config['alt_before'],
         'ALT_AFTER': config['alt_after'],
+        'BACKGROUND': config['background'],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
