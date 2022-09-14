@@ -197,15 +197,8 @@ class D3Blocks():
             A larger spacing reults in less particles.
             A smaller spacing reults in more particles.
         cmap : String (default: 'Set2')
-            Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
-            'tab20', 'tab20b', 'tab20c'
-            'Set1', 'Set2'
-            'seismic'    Blue-white-red
-            'Blues'      white-to-blue
-            'Reds'       white-to-red
-            'Pastel1'    Discrete colors
-            'Paired'     Discrete colors
-            'Set1'       Discrete colors
+            Color schemes can be found here: https://observablehq.com/@d3/color-schemes
+            'Turbo', 'Rainbow', 'Blues', 'Reds', 'Inferno', 'Magma'
         background : String (default: '#000000')
             Background color.
         title : String, (default: None)
@@ -233,7 +226,9 @@ class D3Blocks():
         >>> #
         >>> # Plot
         >>> d3.particles('D3blocks')
-        >>> d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
+        >>> # 
+        >>> # Specify 
+        >>> d3.particles('D3Blocks', filepath='D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
         >>> #
 
         """
