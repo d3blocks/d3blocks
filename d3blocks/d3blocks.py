@@ -793,9 +793,9 @@ class D3Blocks():
         # Initialize network graph
         self.D3graph = d3network.d3graph(collision=collision, charge=charge, slider=slider)
         # Convert vector to adjmat
-        df = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
-        # Create graph
-        self.D3graph.graph(df)
+        adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+        # Create default graph
+        self.D3graph.graph(adjmat, scaler=scaler)
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
@@ -983,7 +983,7 @@ class D3Blocks():
         if time_notes is None:
             self.config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
         if note is None:
-            self.config['note']=("This is a simulation of [%s] states across [%s] samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df['state'].unique()), len(df[sample_id].unique()) ))
+            self.config['note']=("This is a simulation of [%s] states across [%s] samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df['state'].unique()), len(df[sample_id].unique())))
 
         # Create the plot
         self.config = Movingbubbles.show(df, self.config, self.labels)
@@ -1257,7 +1257,7 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         iris = datasets.load_iris()
         X = iris.data[:, :2]  # we only take the first two features.
         labels = iris.target
-        df = pd.DataFrame(data=X, index=labels, columns=['x','y'])
+        df = pd.DataFrame(data=X, index=labels, columns=['x', 'y'])
         return df
 
     if url is None:
