@@ -1,11 +1,7 @@
-D3graph
+Heatmap
 #############
 
-.. note::
-	`Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python. <https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7>`_
-
-
-.. automodule:: d3blocks.d3blocks.D3Blocks.d3graph
+.. automodule:: d3blocks.d3blocks.D3Blocks.heatmap
     :members:
     :undoc-members:
 
@@ -36,29 +32,10 @@ The input dataset is a DataFrame with three column, source, target and weight.
 Charts
 ************
 
-Default
-'''''''' 
-
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example1.html" height="800px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\heatmap.html" height="800px" width="775px", frameBorder="0"></iframe>
 
-
-Change node properties
-''''''''''''''''''''''''
-
-
-.. raw:: html
-
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example2.html" height="800px" width="775px", frameBorder="0"></iframe>
-
-
-Change Edge properties
-''''''''''''''''''''''''
-
-.. raw:: html
-
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="800px" width="775px", frameBorder="0"></iframe>
 
 
 .. raw:: html

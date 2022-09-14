@@ -56,6 +56,13 @@ Content
    Timeseries
    Chord
    d3graph
+   Sankey
+   Heatmap
+   MovingBubbles
+   Imageslider
+   Scatter
+   Violin
+   Particles
 
 
 .. toctree::

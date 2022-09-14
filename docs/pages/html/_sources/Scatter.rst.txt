@@ -38,7 +38,7 @@ Chart
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\scatter.html" height="600px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\scatter.html" height="400px" width="775px", frameBorder="0"></iframe>
 
 
 

@@ -1,7 +1,7 @@
-Scatter
+Violin
 #############
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.scatter
+.. automodule:: d3blocks.d3blocks.D3Blocks.violin
     :members:
     :undoc-members:
 
@@ -38,7 +38,7 @@ Chart
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\scatter.html" height="400px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io/docs/d3blocks/violine.html" height="450px" width="750px", frameBorder="0"></iframe>
 
 
 

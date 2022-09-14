@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chord &mdash; d3blocks d3blocks documentation</title>
+  <title>Sankey &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="D3graph" href="d3graph.html" />
-    <link rel="prev" title="Timeseries" href="Timeseries.html" /> 
+    <link rel="next" title="Heatmap" href="Heatmap.html" />
+    <link rel="prev" title="D3graph" href="d3graph.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -59,14 +59,14 @@
 <p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Chord</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sankey</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
@@ -99,9 +99,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Chord</li>
+      <li>Sankey</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/Chord.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/Sankey.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -109,14 +109,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-d3blocks.d3blocks.D3Blocks.chord">
-<span id="chord"></span><h1>Chord<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this headline"></a></h1>
-<p>Chord graph.</p>
+  <section id="module-d3blocks.d3blocks.D3Blocks.sankey">
+<span id="sankey"></span><h1>Sankey<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.sankey" title="Permalink to this headline"></a></h1>
+<p>Sankey graph.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
-<p>A chord graph represents flows or connections between several entities or nodes.
-Each entity is represented by a fragment on the outer part of the circular layout.
-Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.</p>
+<p>A Sankey chart is a visualization to depict a flow from one set of values to another.
+The nodes in this case are represented as the rectangle boxes, and the flow or arrows are the links.
+The width of the arrow is proportional to the flow rate. Sankeys are best used when you want to show
+many-to-many relationships or to discover multiple paths through a set of stages. For example, the traffic
+flows from pages to other pages on your website. For demonstration purposes, the “energy” and “stormofswords”
+dataset can be used. The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
 <dd class="field-odd"><p>Input data containing the following columns:
@@ -145,6 +148,32 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple, (default: (800, 600))</p>
 </dd>
+<dt class="field-odd">param link</dt>
+<dd class="field-odd"><p>“linkColor” : “source”, “target”, “source-target”, or a static olor such as “grey”, “blue”, “red” etc
+“linkStrokeOpacity” : 0.5</p>
+</dd>
+<dt class="field-even">type link</dt>
+<dd class="field-even"><p>dict.</p>
+</dd>
+<dt class="field-odd">param margin</dt>
+<dd class="field-odd"><p>margin, in pixels
+“top” : 5
+“right” : 1
+“bottom” : 5
+“left” : 1</p>
+</dd>
+<dt class="field-even">type margin</dt>
+<dd class="field-even"><p>dict.</p>
+</dd>
+<dt class="field-odd">param node</dt>
+<dd class="field-odd"><p>“align” : “left”, “right”, “justify”, “center”
+“width” : 15 (width of the node rectangles)
+“padding” : 15 (vertical seperation between the nodes)
+“color” : “currentColor”, “grey”, “black”, “red”, etc</p>
+</dd>
+<dt class="field-even">type node</dt>
+<dd class="field-even"><p>dict.</p>
+</dd>
 <dt class="field-odd">param showfig</dt>
 <dd class="field-odd"><p>Open the window to show the graph.</p>
 </dd>
@@ -172,36 +201,36 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>  <span class="c1"># &#39;stormofswords&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;sankey.html&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#       source       target  weight</span>
-<span class="c1"># 0      Aemon        Grenn       5</span>
-<span class="c1"># 1      Aemon      Samwell      31</span>
-<span class="c1"># 2      Aerys        Jaime      18</span>
-<span class="c1"># 3      Aerys       Robert       6</span>
-<span class="c1"># 4      Aerys       Tyrion       5</span>
-<span class="c1"># ..       ...          ...     ...</span>
-<span class="c1"># 347   Walder        Petyr       6</span>
-<span class="c1"># 348   Walder       Roslin       6</span>
-<span class="c1"># 349   Walton        Jaime      10</span>
-<span class="c1"># 350  Ygritte       Qhorin       7</span>
-<span class="c1"># 351  Ygritte  Rattleshirt       9</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
+<span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
+<span class="c1"># 1            Bio-conversion            Liquid    0.597</span>
+<span class="c1"># 2            Bio-conversion            Losses   26.862</span>
+<span class="c1"># 3            Bio-conversion             Solid  280.322</span>
+<span class="c1"># 4            Bio-conversion               Gas   81.144</span>
+<span class="c1"># ..                      ...               ...      ...</span>
+<span class="c1"># 63       Thermal generation  District heating   79.329</span>
+<span class="c1"># 64                    Tidal  Electricity grid    9.452</span>
+<span class="c1"># 65  UK land based bioenergy    Bio-conversion  182.010</span>
+<span class="c1"># 66                     Wave  Electricity grid   19.013</span>
+<span class="c1"># 67                     Wind  Electricity grid  289.366</span>
 
-<span class="c1"># [352 rows x 3 columns]</span>
+<span class="c1"># [68 rows x 3 columns]</span>
 </pre></div>
 </div>
 </section>
-<section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
-<iframe src="https://erdogant.github.io\docs\d3blocks\chord.html" height="750px" width="775px", frameBorder="0"></iframe><hr>
+<section id="charts">
+<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this headline"></a></h2>
+<iframe src="https://erdogant.github.io\docs\d3blocks\sankey.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
 </center>
@@ -212,8 +241,8 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Timeseries.html" class="btn btn-neutral float-left" title="Timeseries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="d3graph.html" class="btn btn-neutral float-right" title="D3graph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="d3graph.html" class="btn btn-neutral float-left" title="D3graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Heatmap.html" class="btn btn-neutral float-right" title="Heatmap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
