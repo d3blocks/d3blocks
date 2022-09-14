@@ -10,11 +10,12 @@ make.bat html
 
 cd ..
 
-read -p "Press [q]uit to Quit and [Enter] key to: git add -> commit -> push."
+echo "Press [q]uit to Quit and [Enter] key to: git add -> commit -> push."
 read VAR
 
 
 if [[ $VAR = "" ]]; then 
+    read -p "START."
     git pull
     git add .
     git commit -m "update sphinx pages"

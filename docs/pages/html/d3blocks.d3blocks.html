@@ -59,6 +59,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3Graph - Network</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
@@ -136,7 +137,10 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.chord">
 <span class="sig-name descname"><span class="pre">chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Chord</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chord.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1200,</span> <span class="pre">1200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this definition"></a></dt>
-<dd><p>Create of chord graph.</p>
+<dd><p>Chord graph.</p>
+<p>A chord graph represents flows or connections between several entities or nodes.
+Each entity is represented by a fragment on the outer part of the circular layout.
+Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -170,6 +174,75 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.d3graph">
+<span class="sig-name descname"><span class="pre">d3graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D3graph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d3graph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.d3graph" title="Permalink to this definition"></a></dt>
+<dd><p>d3graph graph.</p>
+<p>d3graph is a integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
+The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
+dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
+The nodes are colored based on the Louvain heuristics which is the partition of highest modularity, i.e.
+the highest partition of the dendrogram generated by the Louvain algorithm.
+The strength of the edges is based on the weights. To explore the network, and the strength of the edges more
+extensively, the slider (located at the top) can break the network based on the edge weights.
+The ouput is a html file that is interactive and stand alone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
+‘source’
+‘target’
+‘weight’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>slider</strong> (<em>typle</em><em> [</em><em>min: int</em><em>, </em><em>max: int</em><em>]</em><em>:</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Slider is automatically set to the range of the edge weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create network using default</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change scaler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">scaler</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#FF0000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change edge properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker_end</span><span class="o">=</span><span class="s1">&#39;arrow&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -360,57 +433,6 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;random_time&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">movingbubbles</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.network">
-<span class="sig-name descname"><span class="pre">network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Network</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'network.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1500,</span> <span class="pre">800)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.network" title="Permalink to this definition"></a></dt>
-<dd><p>Network graph.</p>
-<p>Network is a module of d3blocks that is build on d3js and creates interactive and stand-alone networks.
-The input data is a adjacency matrix for which the columns and indexes are the nodes and elements&gt;0 the edges.
-The ouput is a html file that is interactive and stand alone.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the graph.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
-<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
-<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
-<li><p><strong>slider</strong> (<em>typle</em><em> [</em><em>min: int</em><em>, </em><em>max: int</em><em>]</em><em>:</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Slider is automatically set to the range of the edge weights.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">network</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node and edge properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">node_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">edge_properties</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -619,7 +641,11 @@ None: The same color as for c is applied.
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.timeseries">
 <span class="sig-name descname"><span class="pre">timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_on_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Timeseries</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1000,</span> <span class="pre">500]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this definition"></a></dt>
-<dd><p>Create of Timeseries graph.</p>
+<dd><p>Timeseries graph.</p>
+<p>The TimeSeries graph can be used in case a date-time element is available, and where the time-wise values
+directly follow up with each other. The TimeSeries graph supports now enabling/disabling columns of interest,
+brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
+in a single graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

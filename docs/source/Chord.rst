@@ -1,12 +1,6 @@
 Chord
 ####################
 
-A chord graph represents flows or connections between several entities or nodes. Each entity is represented by a fragment on the outer part of the circular layout. Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow. The javascript code is forked from Mike Bostock and then Pythonized.
-
-
-Input Parameters
----------------------
-
 
 .. automodule:: d3blocks.d3blocks.D3Blocks.chord
     :members:
@@ -15,7 +9,7 @@ Input Parameters
 
 
 Input Data
------------
+***********
 
 The input dataset is a DataFrame with three column, source, target and weight.
 
@@ -39,7 +33,7 @@ The input dataset is a DataFrame with three column, source, target and weight.
 
 
 Chart
------------
+******
 
 .. raw:: html
 

@@ -55,6 +55,7 @@ Content
    
    Timeseries
    Chord
+   d3graph
 
 
 .. toctree::
