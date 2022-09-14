@@ -268,7 +268,16 @@ class D3Blocks():
                cmap='inferno',
                showfig=True,
                overwrite=True):
-        """Create of violin graph.
+        """Violin graph.
+
+        Description
+        -----------
+        The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
+        It is an alternative to the boxplot and brings insights into large datasets where the boxplot could hide a part
+        of the information. The original javascript code is forked from D3.js Graph Gallery but brought alive by
+        Pythonizing the chart. Now it is possible to configure your charts for one or several groups, change colors,
+        add tooltips, customize the bin size, change figure size and store on a specified location. There are many
+        input parameters for the Violin plot that can help to create the most insightful figures.
 
         Parameters
         ----------
@@ -321,15 +330,16 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
-        >>> df = d3.import_example('stormofswords')
-        >>>
+        >>> df = d3.import_example('cancer')
+        >>> #
         >>> # Plot
-        >>> d3.violin(df, filepath='chord_demo.html')
+        >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
+        >>> #
 
         """
         if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
@@ -388,6 +398,14 @@ class D3Blocks():
                 showfig=True,
                 overwrite=True):
         """Scatterplot.
+
+        Description
+        -----------
+        The scatter plot is perhaps the most well-known graph to plot x, and y coordinates. Basic charts are very
+        useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
+        sample-wise colored and used to detect relationships between (groups of) variables.
+        The input data frame should contain 2 columns (x and y) with the coordinates, and the index represents the
+        class label.
 
         Parameters
         ----------
@@ -578,7 +596,7 @@ class D3Blocks():
                     background='#000000',
                     title='Image slider - D3blocks',
                     filepath='imageslider.html',
-                    figsize=[800, 800],
+                    figsize=[800, None],
                     showfig=True,
                     overwrite=True):
         """Image slider.
@@ -602,8 +620,8 @@ class D3Blocks():
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output
-        figsize : tuple, (default: (800, 600))
-            Size of the figure in the browser, [width, height].
+        figsize : tuple, (default: [800, None])
+            Size of the figure in the browser, [width, None]. The heigth is changed according to the width.
         showfig : bool, (default: True)
             Open the window to show the graph.
         overwrite : bool, (default: True)
