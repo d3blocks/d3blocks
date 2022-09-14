@@ -726,7 +726,7 @@ class D3Blocks():
         >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         >>> #
-        >>> d3.heatmap(adjmat, showfig=True, figsize=[400, 400], title='', filepath='c:/temp/heatmap.html')
+        >>> d3.heatmap(adjmat, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
 
         """
         # Copy of data
