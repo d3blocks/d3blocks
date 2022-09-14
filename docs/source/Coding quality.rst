@@ -56,8 +56,6 @@ Each public function contains a docstring that is based on numpy standards.
 Complexity
 ----------
 
-This library has been developed by using measures that help decreasing technical debt.
-Version 0.1.0 of the ``d3blocks`` library scored, according the code analyzer: **VALUE**, for which values > 0 are good and 10 is a maximum score.
 Developing software with low(er) technical dept may take extra development time, but has many advantages:
 
 * Higher quality code

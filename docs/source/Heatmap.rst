@@ -34,7 +34,7 @@ Charts
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\heatmap.html" height="800px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\heatmap.html" height="600px" width="750px", frameBorder="0"></iframe>
 
 
 

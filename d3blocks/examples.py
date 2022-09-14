@@ -20,7 +20,6 @@ d3.D3graph.set_node_properties(color='cluster')
 d3.D3graph.show()
 
 
-
 # %% Particles
 from d3blocks import D3Blocks
 
@@ -414,7 +413,7 @@ adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetri
 # X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
 # X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
 
-d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='')
+d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
 
 
 # %% NETWORK - EXAMPLE 1
