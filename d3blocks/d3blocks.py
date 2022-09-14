@@ -173,7 +173,13 @@ class D3Blocks():
                   figsize=[900, 500],
                   showfig=True,
                   overwrite=True):
-        """Create of chord graph.
+        """Particles graph.
+
+        Description
+        -----------
+        The particles plot is to turn any word into an interactive graph. With a mouse-move or touch, the particle
+        bounce and then return to their original place. Various properties can be changed such as the bouncing,
+        particle size, and colors. The original javascript is forked from Ian Johnson's Block.
 
         Parameters
         ----------
@@ -221,12 +227,14 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.particles('D3blocks')
+        >>> d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
+        >>> #
 
         """
         # Cleaning
