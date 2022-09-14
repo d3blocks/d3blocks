@@ -387,7 +387,7 @@ class D3Blocks():
                 ylim=[None, None],
                 showfig=True,
                 overwrite=True):
-        """Create of chord graph.
+        """Scatterplot.
 
         Parameters
         ----------
@@ -572,10 +572,17 @@ class D3Blocks():
                     img_after,
                     title='Image slider - D3blocks',
                     filepath='imageslider.html',
-                    figsize=(800, 600),
+                    figsize=[800, 600],
                     showfig=True,
                     overwrite=True):
-        """Create image slider.
+        """Image slider.
+
+        Description
+        -----------
+        The imageslider allows comparison of two images. This is useful in case there is a before and after state.
+        For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
+        Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
+        from JohnEdChristensen and then Pythonized to easily make comparisons between images.
 
         Parameters
         ----------
@@ -602,15 +609,16 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
         >>> img_before, img_after = d3.import_example('southern_nebula')
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.imageslider(img_before, img_after, showfig=True)
+        >>> #
 
         """
         self.config['chart'] ='imageslider'
@@ -630,12 +638,16 @@ class D3Blocks():
         if self.config['showfig']:
             _showfig(self.config['filepath'])
 
-    def heatmap(self, df, vmax=None, stroke='red', title='Heatmap - D3blocks', filepath='heatmap.html', figsize=(720, 720), showfig=True, overwrite=True):
+    def heatmap(self, df, vmax=None, stroke='red', fontsize=10, title='Heatmap - D3blocks', description='', filepath='heatmap.html', figsize=[720, 720], showfig=True, overwrite=True):
         """Heatmap graph.
 
         Description
         -----------
         heatmap is a module in d3blocks to create interactive heatmaps.
+        The heatmap graph is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
+        In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
+        create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
+        and then Pythonized.
 
         Parameters
         ----------
@@ -649,8 +661,12 @@ class D3Blocks():
             Color of the recangle when hovering over a cell.
                 * 'red'
                 * 'black'
+        fontsize : int, (default: 14)
+            Fontsize of the states.
         title : String, (default: None)
             Title of the figure.
+        description : String, (default: 'Heatmap description')
+            Description text of the heatmap.
         filepath : String, (Default: user temp directory)
             File path to save the output
         figsize : tuple, (default: (800, 600))
@@ -668,20 +684,12 @@ class D3Blocks():
         --------
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
-        >>> df_adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
-        >>>
-        >>> d3.heatmap(df_adjmat, showfig=False)
-        >>> d3.Network.show()
-        >>>
-        >>> d3.Network.set_node_properties(color='cluster')
-        >>> d3.Network.show()
-        >>>
-        >>> # Node and edge properties
-        >>> d3.Network.node_properties
-        >>> d3.Network.edge_properties
+        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+        >>> #
+        >>> d3.heatmap(adjmat, showfig=True, figsize=[400, 400], title='', filepath='c:/temp/heatmap.html')
 
         """
         # Copy of data
@@ -690,6 +698,7 @@ class D3Blocks():
         # Set configs
         self.config['chart'] ='heatmap'
         self.config['title'] = title
+        self.config['description'] = description
         self.config['filepath'] = self.set_path(filepath)
         self.config['figsize'] = figsize
         self.config['showfig'] = showfig
@@ -698,7 +707,7 @@ class D3Blocks():
         self.config['stroke'] = stroke
 
         # Create heatmap graph
-        d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description='', showfig=self.config['showfig'])
+        d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description=self.config['description'], showfig=self.config['showfig'])
 
     def d3graph(self, df, title='D3graph - D3blocks', filepath='d3graph.html', figsize=[1500, 800], showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None], scaler='zscore'):
         """d3graph graph.
@@ -709,10 +718,10 @@ class D3Blocks():
         The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
         dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
         The nodes are colored based on the Louvain heuristics which is the partition of highest modularity, i.e.
-        the highest partition of the dendrogram generated by the Louvain algorithm.
-        The strength of the edges is based on the weights. To explore the network, and the strength of the edges more
-        extensively, the slider (located at the top) can break the network based on the edge weights.
-        The ouput is a html file that is interactive and stand alone.
+        the highest partition of the dendrogram generated by the Louvain algorithm. The strength of the edges is based
+        on the weights. To explore the network, and the strength of the edges more extensively, the slider
+        (located at the top) can break the network based on the edge weights. The ouput is a html file that is
+        interactive and stand alone. For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
 
         Parameters
         ----------
@@ -803,13 +812,22 @@ class D3Blocks():
                df,
                title='Sankey - D3blocks',
                filepath='sankey.html',
-               figsize=(800, 600),
+               figsize=[800, 600],
                node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
                link={"color": "source-target", "stroke_opacity": 0.5},
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                showfig=True,
                overwrite=True):
-        """Create of sankey graph.
+        """Sankey graph.
+
+        Description
+        -----------
+        A Sankey chart is a visualization to depict a flow from one set of values to another.
+        The nodes in this case are represented as the rectangle boxes, and the flow or arrows are the links.
+        The width of the arrow is proportional to the flow rate. Sankeys are best used when you want to show
+        many-to-many relationships or to discover multiple paths through a set of stages. For example, the traffic
+        flows from pages to other pages on your website. For demonstration purposes, the "energy" and "stormofswords"
+        dataset can be used. The javascript code is forked from Mike Bostock and then Pythonized.
 
         Parameters
         ----------
@@ -852,15 +870,15 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
-        >>> df = d3.import_example('sankey')  # 'stormofswords'
-        >>>
+        >>> df = d3.import_example('energy')  # 'stormofswords'
+        >>> #
         >>> # Plot
-        >>> d3.sankey(df, filepath='sankey_demo.html', fontsize=10)
+        >>> d3.sankey(df, filepath='sankey.html')
 
         """
         df = df.copy()
@@ -890,8 +908,36 @@ class D3Blocks():
         # Return config
         # return self.config
 
-    def movingbubbles(self, df, datetime='datetime', sample_id='sample_id', state='state', center=None, damper=1, fontsize=14, reset_time='day', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 50}, figsize=(780, 800), note=None, time_notes=None, title='d3blocks_movingbubbles', filepath='movingbubbles.html', showfig=True, overwrite=True):
-        """Creation of moving bubble graph.
+    def movingbubbles(self,
+                      df,
+                      datetime='datetime',
+                      sample_id='sample_id',
+                      state='state',
+                      center=None,
+                      damper=1,
+                      fontsize=14,
+                      reset_time='day',
+                      standardize=None,
+                      speed={"slow": 1000, "medium": 200, "fast": 50},
+                      figsize=[780, 800],
+                      note=None,
+                      time_notes=None,
+                      title='d3blocks_movingbubbles',
+                      filepath='movingbubbles.html',
+                      showfig=True,
+                      overwrite=True):
+        """MovingBubbles graph.
+
+        Description
+        -----------
+        The MovingBubbles graph provides insights into when one action follows the other across time. It can help to
+        understand the movements of entities, and whether clusters occur at specific time points and state(s).
+        It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
+        force-directed and colliding nodes. The function d3.import_example(graph='random_time') is created to generate
+        a randomized dataset with various states. The input dataset should contain 3 columns; 
+            * DateTime column: Describes the data-time when an event occurs.
+            * State column: Describes what the particular state was at that point of time of the specific sample_id. 
+            * Sample_id column: A sample can have multiple states at various time points but can not have two states at exactly the same point in time.
 
         Parameters
         ----------
@@ -941,10 +987,18 @@ class D3Blocks():
 
         Examples
         --------
+        >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
         >>> d3 = D3Blocks()
-        >>> df = d3.import_example(data='random_time')
-        >>> d3.movingbubbles(df)
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example(graph='random_time', n=10000, c=300, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+        >>> #
+        >>> # Plot
+        >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+        >>> #
 
         """
         self.config['chart'] ='movingbubbles'
