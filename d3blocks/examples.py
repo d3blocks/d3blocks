@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+
+# %% Issue color match SCATTER
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+# df = df.loc[(df.index.values=='kich') | (df.index.values=='kirp'), :]
+# color on labels
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+
+
 from d3blocks import D3Blocks
 #
 # Initialize

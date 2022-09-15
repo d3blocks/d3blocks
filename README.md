@@ -130,5 +130,8 @@ https://flowingdata.com/2015/12/15/a-day-in-the-life-of-americans/
 https://carbondesignsystem.com/data-visualization/simple-charts/
 
 ### Algemeen
-https://d3-graph-gallery.com/graph/interactivity_button.html#buildWithD3
-https://observablehq.com/@d3/multitouch
+selectionbox:  https://d3-graph-gallery.com/graph/interactivity_button.html#buildWithD3
+multitouch:    https://observablehq.com/@d3/multitouch
+Tooltips:      https://bl.ocks.org/d3noob/a22c42db65eb00d4e369
+transition:    https://stackoverflow.com/questions/38595719/javascript-d3-js-multiple-transitions-of-points-on-a-scatter-plot
+               https://www.youtube.com/watch?v=EpeOzq8eDYk
