@@ -4,17 +4,45 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
+import pandas as pd
 
 
 # %% Preprocessing
-def preprocessing(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False, logger=None):
-    """Scatterplots."""
+def check_exceptions(x, y, x1, y1, s, c, tooltip, label_button, logger):
+    """Check Exceptions."""
+    if len(label_button)!=2: raise Exception(logger.error('input parameter label_button must contain 2 elements.'))
+    if len(x)!=len(y): raise Exception(logger.error('input parameter [x] and [y] should be of size of (x, y).'))
+    if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
+    if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
+    if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('input parameter [s] should be of same size of (x, y).'))
+    if (tooltip is not None) and len(tooltip)!=len(x): raise Exception(logger.error('input parameter [tooltip] should be of size (x, y) and not None.'))
+
+    if (x1 is not None) or (y1 is not None):
+        if len(x1)!=len(y1): raise Exception(logger.error('input parameter [x1] should be of size of (x1, y1).'))
+        if len(x)!=len(x1): raise Exception(logger.error('input parameter (x1, y1) should be of size of (x, y).'))
+
+
+# %% Preprocessing
+def preprocessing(x, y, x1, y1, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False, logger=None):
+    """Preprocessing."""
+    if (x1 is None) or (y1 is None):
+        x1, y1 = x, y
+
     # Combine into array
     X = np.c_[x, y]
+    # Combine second coordinates into array
+    X1 = np.c_[x1, y1]
+
     # Normalize data
-    if normalize: X = _normalize_xy(X)
+    if normalize:
+        logger.info('Scaling xy-coordinates.')
+        X = _scale_xy(X)
+        X1 = _scale_xy(X1)
     # In case only one (s)ize is defined. Set all points to this size.
     if isinstance(s, (int, float)): s = np.repeat(s, X.shape[0])
+    if np.any(s<0):
+        logger.info('[%.0d] sizes are <0 and set to 0.' %(np.sum(s<0)))
+        s[s<0]=0
     # In case None tooltip is defined. Set all points to this tooltip.
     if tooltip is None: tooltip = np.repeat('', X.shape[0])
     # In case only one opacity is defined. Set all points to this size.
@@ -31,15 +59,18 @@ def preprocessing(x, y, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=
     # Make dict with properties
     dict_properties = {}
     for i in range(0, X.shape[0]):
-        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+
+    # Create the plot
+    df = pd.DataFrame(dict_properties).T
 
     # return
-    return dict_properties
+    return df, dict_properties
 
 
 # %% Normalize data
-def _normalize_xy(X):
-    """Scatterplots."""
+def _scale_xy(X):
+    """Scale xy coordinates."""
     x_min, x_max = np.min(X, 0), np.max(X, 0)
     return (X - x_min) / (x_max - x_min)
 
@@ -124,14 +155,22 @@ def show(df, config):
         Dictionary containing updated configuration keys.
 
     """
-    # Compute xlim and ylim.
+    # Compute xlim and ylim for the axis.
     spacing = 0.12
     if config['xlim']==[None, None] or len(config['xlim'])==0:
-        x_spacing = (df['x'].max() - df['x'].min()) * spacing
-        config['xlim'] = [df['x'].min() - x_spacing, df['x'].max() + x_spacing]
+        maxvalue = df[['x', 'x1']].max().max()
+        minvalue = df[['x', 'x1']].min().min()
+        x_spacing = ((maxvalue - minvalue) * spacing)
+        config['xlim'] = [minvalue - x_spacing, maxvalue + x_spacing]
+        # x_spacing = (df['x'].max() - df['x'].min()) * spacing
+        # config['xlim'] = [df['x'].min() - x_spacing, df['x'].max() + x_spacing]
     if config['ylim']==[None, None] or len(config['ylim'])==0:
-        y_spacing = (df['y'].max() - df['y'].min()) * spacing
-        config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
+        maxvalue = df[['y', 'y1']].max().max()
+        minvalue = df[['y', 'y1']].min().min()
+        y_spacing = ((maxvalue - minvalue) * spacing)
+        config['ylim'] = [minvalue - y_spacing, maxvalue + y_spacing]
+        # y_spacing = (df['y'].max() - df['y'].min()) * spacing
+        # config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
 
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df)
@@ -175,8 +214,10 @@ def write_html(X, config, overwrite=True):
         'MAX_X': config['xlim'][1],
         'MIN_Y': config['ylim'][0],
         'MAX_Y': config['ylim'][1],
+        'LABEL_BUTTON1': config['label_button'][0],
+        'LABEL_BUTTON2': config['label_button'][1],
         'MOUSEOVER': config['mouseover'],
-        'MOUSEMOVE': config['mousemove'] ,
+        'MOUSEMOVE': config['mousemove'],
         'MOUSELEAVE': config['mouseleave'],
     }
 
@@ -208,6 +249,6 @@ def get_data_ready_for_d3(df):
 
     """
     # Set x, y
-    X = df[['x', 'y', 'color', 'dotsize', 'opacity', 'stroke', 'desc']].to_json(orient='values')
+    X = df[['x', 'y', 'color', 'dotsize', 'opacity', 'stroke', 'desc', 'x1', 'y1']].to_json(orient='values')
     # Return
     return X

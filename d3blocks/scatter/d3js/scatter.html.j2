@@ -11,6 +11,11 @@
 	{% include "d3.v4.min.js" %}
 </script>
 
+<form>
+	<input type="radio" name="states" value="radiobutton1" checked="checked"> <label> {{ LABEL_BUTTON1 }} </label>
+	<input type="radio" name="states" value="radiobutton2"> <label> {{ LABEL_BUTTON2 }} </label>
+</form>
+
 
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
@@ -89,7 +94,7 @@ d3.select(this)
   .style("r",  d[3])
 }
 
-// **********************************************************
+// ************************************************
 
 
 // Add X axis
@@ -112,13 +117,14 @@ svg.append("g")
     .attr("class", "brush")
     .call(brush);
 
+// initialize all points ***********************
 
-svg.selectAll("circle")
+var circles = svg.selectAll("circle")
   .data(jsonData)
   .enter().append("circle")
     .attr("class", "myCircle")                     // Edge-color turns black when when hovered
-    .attr("cx", function(d) { return x(d[0]); })
-    .attr("cy", function(d) { return y(d[1]); })
+    .attr("cx", function(d) { return x(d[0]); })   // x-coordinates
+    .attr("cy", function(d) { return y(d[1]); })   // y-coordinates
 //  .attr("fill", function(d) { return z(d[6]); });
     .attr("fill", function(d) { return d[2]; })    // fill hexcolor
     .attr("r", function(d) { return d[3]; })       // dotsize
@@ -128,6 +134,29 @@ svg.selectAll("circle")
     {{ MOUSEMOVE }}
     {{ MOUSELEAVE }}
 
+
+// Read checkboxes and create transition ****************************
+const buttons = d3.selectAll('input');
+buttons.on('change', function(d) 
+{
+	console.log('button changed to ' + this.value);
+
+	if (this.value == 'radiobutton1')
+		circles.transition()
+			.duration(2500)
+			.delay(0)
+			.attr("cx", function(d) { return x(d[0]); })  // x-coordinates
+			.attr("cy", function(d) { return y(d[1]); })  // y-coordinates
+	else
+		circles.transition()
+			.duration(2500)
+			.delay(0)
+			.attr("cx", function(d) { return x(d[7]); })  // x1-coordinates
+			.attr("cy", function(d) { return y(d[8]); })  // y1-coordinates
+;})
+
+
+// *************************************************
 
 function brushended() {
   var s = d3.event.selection;
@@ -151,9 +180,19 @@ function zoom() {
   var t = svg.transition().duration(750);
   svg.select(".axis--x").transition(t).call(xAxis);
   svg.select(".axis--y").transition(t).call(yAxis);
-  svg.selectAll("circle").transition(t)
-      .attr("cx", function(d) { return x(d[0]); })
-      .attr("cy", function(d) { return y(d[1]); });
+
+	// console.log(d3.select('input[name="states"]:checked').node().value);
+
+    if (d3.select('input[name="states"]:checked').node().value == 'radiobutton1'){
+        svg.selectAll("circle").transition(t)
+            .attr("cx", function(d) { return x(d[0]); })
+			.attr("cy", function(d) { return y(d[1]); });
+	} else {
+        svg.selectAll("circle").transition(t)
+            .attr("cx", function(d) { return x(d[7]); })
+			.attr("cy", function(d) { return y(d[8]); });
+			}
+
 }
 
 

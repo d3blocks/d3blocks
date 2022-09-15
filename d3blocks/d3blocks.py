@@ -385,6 +385,8 @@ class D3Blocks():
     def scatter(self,
                 x,
                 y,
+                x1=None,
+                y1=None,
                 s=3,
                 c='#002147',
                 c_gradient=None,
@@ -393,6 +395,7 @@ class D3Blocks():
                 tooltip=None,
                 cmap='tab20',
                 normalize=False,
+                label_button=['(x, y)', '(x1, y1)'],
                 title='Scatter - D3blocks',
                 filepath='scatter.html',
                 figsize=[900, 600],
@@ -416,6 +419,10 @@ class D3Blocks():
             1d coordinates x-axis.
         y : numpy array
             1d coordinates y-axis.
+        x1 : numpy array
+            Second set of 1d coordinates x-axis.
+        y1 : numpy array
+            Second set of 1d coordinates y-axis.
         s: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
         c: list/array of hex colors with same size as (x,y)
@@ -443,6 +450,8 @@ class D3Blocks():
             'Set1'       Discrete colors
         normalize: Bool, optional
             Normalize datapoints. The default is False.
+        label_button: List ['(x, y)', '(x1, y1)']
+            The labels used for the radiobuttons.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -483,14 +492,11 @@ class D3Blocks():
         >>> #
 
         """
-        if len(x)!=len(y): raise Exception(logger.error('input parameter [x] should be of size of (x, y).'))
-        if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
-        if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
-        if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('input parameter [s] should be of same size of (x, y).'))
-        if (tooltip is not None) and len(tooltip)!=len(x): raise Exception(logger.error('input parameter [tooltip] should be of size (x, y) and not None.'))
-
+        # Check exceptions
+        Scatter.check_exceptions(x, y, x1, y1, s, c, tooltip, label_button, logger)
         # Cleaning
         self._clean(clean_config=False)
+        # if (x1 is None) or (y1 is None): label_button=None
         # Set config
         self.config['chart'] ='scatter'
         self.config['filepath'] = self.set_path(filepath)
@@ -502,16 +508,15 @@ class D3Blocks():
         self.config['figsize'] = figsize
         self.config['normalize'] = normalize
         self.config['cmap'] = cmap
+        self.config['label_button'] = label_button
 
         # Preprocessing
-        # Remvove quotes from source-target labels
-        labels = Scatter.preprocessing(x, y, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
+        df, labels = Scatter.preprocessing(x, y, x1, y1, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
         # Set default label properties
         if not hasattr(self, 'labels'):
             self.set_label_properties(labels)
 
-        # Create the plot
-        df = pd.DataFrame(self.labels).T
+        # Make het scatterplot
         self.config = Scatter.show(df, self.config)
         # Open the webbrowser
         if self.config['showfig']:
