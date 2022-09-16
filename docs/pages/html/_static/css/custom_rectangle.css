@@ -1,0 +1,80 @@
+body {
+  background-color: #111;
+}
+
+#carbonads {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, Helvetica, Arial, sans-serif;
+  width: 275px;
+  height: 215px;
+  text-align: center;
+  background-color: hsl(0, 0%, 10%);
+  box-shadow: 0 0 1px hsla(0, 0%, 0%, 0.5);
+}
+
+#carbonads a {
+  color: #eee;
+  text-decoration: none;
+}
+
+#carbonads a:hover {
+  color: #eee;
+}
+
+
+#carbonads>span {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  padding: 15px;
+
+  border-radius: 4px;
+  background-color: #1e2021;
+  box-shadow:
+    0 0 1px 1px hsla(0, 0%, 0%, .05),
+    0 0 2px 2px hsla(0, 0%, 0%, .05),
+    0 0 4px 4px hsla(0, 0%, 0%, .05);
+}
+
+
+.carbon-img {
+  display: block;
+  margin: 0 0 8px;
+
+  line-height: 1;
+}
+
+.carbon-img img {
+  width: 150px;
+  max-width: 150px !important;
+  height: auto;
+}
+
+.carbon-text {
+  display: block;
+  margin-bottom: 8px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  font-weight: normal;
+  }
+
+.carbon-poweredby {
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 5px 6px;
+  font-size: 8px;
+  line-height: 1;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: #aaa;
+  background-color: hsl(0, 0%, 10%);
+}
