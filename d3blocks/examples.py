@@ -52,7 +52,8 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 
 # Make particles
-d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
+# d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
+d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', spacing=7)
 
 # %% Violin plot
 import numpy as np

@@ -1,4 +1,6 @@
-# D3Blocks
+<p align="center">
+ <img width="100px" src="hhttps://github.com/d3blocks/D3Blocks/blob/master/logo.png" align="center" />
+</p>
 
 [![Python](https://img.shields.io/pypi/pyversions/D3Blocks)](https://img.shields.io/pypi/pyversions/D3Blocks)
 [![PyPI Version](https://img.shields.io/pypi/v/D3Blocks)](https://pypi.org/project/D3Blocks/)
