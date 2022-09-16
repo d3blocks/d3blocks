@@ -16,7 +16,7 @@
 
 -------------------------------------------------------------------------
 <p align="center">
-  <img src="https://github.com/d3blocks/d3blocks/blob/master/docs/figs/summary.png" width="600" />
+  <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/summary.png" width="600" />
 </p>
 
 -------------------------------------------------------------------------
@@ -64,11 +64,6 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 -------------------------------------------------------------------------
 
-<p align="left">
-  <a href="https://erdogant.github.io/distfit/pages/html/Examples.html#plot-rss">
-  <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/summary.png" width="450" />
-  </a>
-</p>
 
 
 #### References
