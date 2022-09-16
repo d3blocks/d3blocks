@@ -36,31 +36,30 @@ d3 = D3Blocks()
 ```
 
 -------------------------------------------------------------------------
+### [Features](https://d3blocks.github.io/d3blocks/)
 
-### Features
 D3Blocks builts on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
+The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. 
 
 **Supported charts**
 
-* D3graph (network)
-```python
-   d3.d3graph()
-```
 
-* Sankey plot
-```python
-   d3.sankey()
-```
 
-* Movingbubbles
-* Heatmap
-* Chord diagram
-* Timeseries
-* Scatter plot
-* Image slider
-* Violin plot
-* Particles
+|  Block                                                                             |    Function           |
+|------------------------------------------------------------------------------------|-----------------------|
+| [D3graph (network)](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html)   |  d3.d3graph()         |
+| [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               |  d3.sankey()          |
+| [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) |  d3.movingbubbles()   |
+| [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             |  d3.heatmap()         |
+| [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         |  d3.chord()           |
+| [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       |  d3.timeseries()      |
+| [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             |  d3.scatter()         |
+| [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    |  d3.imageslider()     |
+| [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          |  d3.violin()          |
+| [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         |  d3.particles()       |
+|                                                                                    |                       |
 
+<br><br>
 <p align="center">
   <img src="https://github.com/d3blocks/d3blocks/blob/master/docs/figs/summary.png" width="600" />
 </p>
