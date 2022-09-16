@@ -1,7 +1,8 @@
 <p align="center">
-   <img src="https://github.com/d3blocks/d3blocks/blob/master/logo.png" align="center" width="600" />
+  <img src="https://github.com/d3blocks/d3blocks/blob/master/logo.png" align="center" width="400" /> 
 </p>
- 
+
+
 [![Python](https://img.shields.io/pypi/pyversions/d3blocks)](https://img.shields.io/pypi/pyversions/d3blocks)
 [![PyPI Version](https://img.shields.io/pypi/v/d3blocks)](https://pypi.org/project/d3blocks/)
 [![License](https://img.shields.io/badge/license-GPL3-green.svg)](https://github.com/d3blocks/d3blocks/blob/master/LICENSE)
