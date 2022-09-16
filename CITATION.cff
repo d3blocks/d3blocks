@@ -2,8 +2,8 @@
 ---
 authors: 
   -
-    family-names: Taskesen, Verver
-    given-names: Erdogan, Oliver
+    family-names: Taskesen E, Verver O
+    given-names:
     orcid: "https://orcid.org/0000-0002-3430-9618"
 cff-version: "1.0.0"
 date-released: 2022-16-09
