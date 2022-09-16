@@ -3,3 +3,4 @@ pandas
 tqdm
 colourmap
 jinja2
+requests
