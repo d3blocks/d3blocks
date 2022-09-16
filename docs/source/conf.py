@@ -53,7 +53,7 @@ extensions = [
 	"sphinx.ext.intersphinx",
 	"sphinx.ext.autosectionlabel",
 	"rst2pdf.pdfbuilder",
-	"sphinxcontrib.pdfembed",
+#	"sphinxcontrib.pdfembed",
 #    'sphinx.ext.duration',
 #    'sphinx.ext.doctest',
 #    'sphinx.ext.autosummary',
