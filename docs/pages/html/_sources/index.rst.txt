@@ -28,7 +28,7 @@ If you like this project, **star** this repo at the github page! This is importa
 
 Github
 ======
-`Github d3blocks <https://github.com/d3blocks/>`_.
+`Github d3blocks <https://github.com/d3blocks/d3blocks>`_.
 Please report bugs, issues and feature extensions there.
 
 

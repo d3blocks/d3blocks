@@ -13,8 +13,7 @@ You can basically add all your creativity to the charts without limits. However,
 D3 Motivation
 #########################
 
-D3 is a collection of modules that are designed to work together; you can use the modules independently, or you can use them together as part of the default build. The D3 website provides 168 working charts that allow for performant incremental updates during interaction and supports popular interaction such as dragging, brushing, and zooming. The charts can be used for many purposes, such as quantitative analysis, visualizing hierarchies, creating networks graphs, but also bar plots, line plots, scatter plots, radial plots, geographic projections, and various other interactive visualizations for explorable explanations. Some cherry-picked charts are shown in Figure 1.
-
+D3 is a collection of modules that are designed to work together; you can use the modules independently, or you can use them together as part of the default build. The D3 website provides 168 working charts that allow for performant incremental updates during interaction and supports popular interaction such as dragging, brushing, and zooming. The charts can be used for many purposes, such as quantitative analysis, visualizing hierarchies, creating networks graphs, but also bar plots, line plots, scatter plots, radial plots, geographic projections, and various other interactive visualizations for explorable explanations. 
 
 D3 charts
 #########################

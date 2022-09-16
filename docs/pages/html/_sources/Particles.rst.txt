@@ -19,7 +19,7 @@ Chart
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\particles.html" height="250px" width="760px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\particles.html" height="250px" width="750px", frameBorder="0"></iframe>
 
 
 
