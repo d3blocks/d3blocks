@@ -1,50 +1,52 @@
 <p align="center">
- <img width="100px" src="hhttps://github.com/d3blocks/D3Blocks/blob/master/logo.png" align="center" />
+   <img src="https://github.com/d3blocks/d3blocks/blob/master/logo.png" align="center" width="600" />
 </p>
-
-[![Python](https://img.shields.io/pypi/pyversions/D3Blocks)](https://img.shields.io/pypi/pyversions/D3Blocks)
-[![PyPI Version](https://img.shields.io/pypi/v/D3Blocks)](https://pypi.org/project/D3Blocks/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/d3blocks/D3Blocks/blob/master/LICENSE)
-[![Github Forks](https://img.shields.io/github/forks/d3blocks/D3Blocks.svg)](https://github.com/d3blocks/D3Blocks/network)
-[![GitHub Open Issues](https://img.shields.io/github/issues/d3blocks/D3Blocks.svg)](https://github.com/d3blocks/D3Blocks/issues)
+ 
+[![Python](https://img.shields.io/pypi/pyversions/d3blocks)](https://img.shields.io/pypi/pyversions/d3blocks)
+[![PyPI Version](https://img.shields.io/pypi/v/d3blocks)](https://pypi.org/project/d3blocks/)
+[![License](https://img.shields.io/badge/license-GPL3-green.svg)](https://github.com/d3blocks/d3blocks/blob/master/LICENSE)
+[![Github Forks](https://img.shields.io/github/forks/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/network)
+[![GitHub Open Issues](https://img.shields.io/github/issues/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/issues)
 [![Project Status](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Downloads](https://pepy.tech/badge/D3Blocks/month)](https://pepy.tech/project/D3Blocks/month)
-[![Downloads](https://pepy.tech/badge/D3Blocks)](https://pepy.tech/project/D3Blocks)
-[![Sphinx](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/D3Blocks/)
-
-* ``D3Blocks`` is Python package
+[![Downloads](https://pepy.tech/badge/d3blocks/month)](https://pepy.tech/project/d3blocks/month)
+[![Downloads](https://pepy.tech/badge/d3blocks)](https://pepy.tech/project/d3blocks)
+[![Sphinx](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
 
 
-### Installation
-* Install D3Blocks from PyPI (recommended). D3Blocks is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows. 
-* A new environment can be created as following:
+-------------------------------------------------------------------------
 
+#### Installation (Pypi)
 ```bash
-pip install d3blocks            # normal install
-pip install --upgrade d3blocks  # or update if needed
+pip install d3blocks     # Normal installation
+pip install -U d3blocks  # Force update
 ```
 
-# By cloning
+#### Installation (clone)
 ```bash
 git clone https://github.com/d3blocks/d3blocks.git
-cd D3Blocks
+cd d3blocks
 pip install -U .
 ```  
 
-#### Import D3Blocks package
+#### Import d3blocks package
 ```python
-from d3blocks import D3Blocks
+from d3blocks import d3blocks
 ```
 
-#### Example:
-```
+-------------------------------------------------------------------------
+
+#### Features
+D3Blocks builts on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code. 
+
 <p align="center">
-  <img src="https://github.com/d3blocks/D3Blocks/blob/master/docs/figs/summary.png" width="600" />
+  <img src="https://github.com/d3blocks/d3blocks/blob/master/docs/figs/summary.png" width="600" />
 </p>
 
 
+-------------------------------------------------------------------------
+
 #### References
-* https://github.com/d3blocks/D3Blocks
+* https://github.com/d3blocks/d3blocks
 
 #### Citation
 Please cite in your publications if this is useful for your research (see citation).
