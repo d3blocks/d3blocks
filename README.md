@@ -70,9 +70,3 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 #### References
 * [bl.ocks](https://bl.ocks.org/)
 * [observablehq](https://observablehq.com/top)
-
-#### Citation
-Please cite in your publications if this is useful for your research (see citations at right panel).
-   
-### Licence
-See [LICENSE](LICENSE) for details.
