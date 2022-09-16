@@ -11,7 +11,7 @@
 [![Github Forks](https://img.shields.io/github/forks/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/network)
 [![GitHub Open Issues](https://img.shields.io/github/issues/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/issues)
 [![Project Status](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Downloads](https://pepy.tech/badge/d3blocks/month)](https://pepy.tech/project/d3blocks/month)
+[![Downloads](https://pepy.tech/badge/d3blocks/month)](https://pepy.tech/project/d3blocks)
 [![Downloads](https://pepy.tech/badge/d3blocks)](https://pepy.tech/project/d3blocks)
 [![Sphinx](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
 
