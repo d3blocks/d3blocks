@@ -1235,10 +1235,10 @@ class D3Blocks():
         return _import_example(graph=graph, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
 
     # Open the webbrowser
-    def showfig(self, sleep=0.5):
+    def showfig(self, sleep=0.1):
         """Open browser to show chart."""
         # Sleeping is required to pevent overlapping windows
-        # time.sleep(sleep)
+        time.sleep(sleep)
         file_location = os.path.abspath(self.config['filepath'])
         if platform == "darwin":  # check if on OSX
             file_location = "file:///" + file_location
