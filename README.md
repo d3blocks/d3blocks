@@ -1,5 +1,7 @@
 <p align="center">
+  <a href="https://d3blocks.github.io/d3blocks/pages/html/index.html">
   <img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" align="center" width="600" /> 
+  </a>
 </p>
 
 
@@ -16,7 +18,9 @@
 
 -------------------------------------------------------------------------
 <p align="center">
+  <a href="https://d3blocks.github.io/d3blocks/pages/html/index.html">
   <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/summary.png" width="600" />
+  </a>
 </p>
 
 -------------------------------------------------------------------------
