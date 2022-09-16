@@ -10,6 +10,9 @@ rm -rf d3blocks/movingbubbles/__pycache__
 rm -rf d3blocks/imageslider/__pycache__
 rm -rf d3blocks/sankey/__pycache__
 rm -rf d3blocks/scatter/__pycache__
+rm -rf d3blocks/chord/__pycache__
+rm -rf d3blocks/particles/__pycache__
+rm -rf d3blocks/violin/__pycache__
 rm -rf d3blocks/.pylint.d
 rm -rf tests/__pycache__
 rm -rf d3blocks/utils/__pycache__
