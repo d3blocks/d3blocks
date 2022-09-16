@@ -13,11 +13,19 @@ d3 = D3Blocks()
 # import example
 df = d3.import_example('cancer')
 
-df = df.loc[(df.index.values=='kich') | (df.index.values=='brca'), :]
+df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
 
-# color on labels
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
+# No transition
 # d3.scatter(df['x'].values, df['y'].values, s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
+
+# Two transitions
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
+
+# Three transitions
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=df['survival_months'].values/10, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter.html')
 
 # %%
 from d3blocks import D3Blocks
