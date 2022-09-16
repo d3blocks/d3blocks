@@ -8,9 +8,9 @@ import pandas as pd
 
 
 # %% Preprocessing
-def check_exceptions(x, y, x1, y1, s, c, tooltip, label_button, logger):
+def check_exceptions(x, y, x1, y1, s, c, tooltip, label_radio, logger):
     """Check Exceptions."""
-    if len(label_button)!=2: raise Exception(logger.error('input parameter label_button must contain 2 elements.'))
+    if len(label_radio)!=2: raise Exception(logger.error('input parameter label_radio must contain 2 elements.'))
     if len(x)!=len(y): raise Exception(logger.error('input parameter [x] and [y] should be of size of (x, y).'))
     if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
     if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
@@ -184,6 +184,12 @@ def show(df, config):
         config['mousemove'] = '.on("mousemove", mousemove)'
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
 
+    # Enable/disable radiobutton based on availability x1y1 coordinates.
+    config['radio_button_visible'] = ""
+    if (config['label_radio'] is None):
+        config['radio_button_visible'] = "display:none;"
+        config['label_radio'] = ["", ""]
+
     # Write to HTML
     write_html(X, config)
     # Return config
@@ -214,8 +220,9 @@ def write_html(X, config, overwrite=True):
         'MAX_X': config['xlim'][1],
         'MIN_Y': config['ylim'][0],
         'MAX_Y': config['ylim'][1],
-        'LABEL_BUTTON1': config['label_button'][0],
-        'LABEL_BUTTON2': config['label_button'][1],
+        'RADIO_LABEL1': config['label_radio'][0],
+        'RADIO_LABEL2': config['label_radio'][1],
+        'RADIO_VISIBLE': config['radio_button_visible'],
         'MOUSEOVER': config['mouseover'],
         'MOUSEMOVE': config['mousemove'],
         'MOUSELEAVE': config['mouseleave'],

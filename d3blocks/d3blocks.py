@@ -395,7 +395,7 @@ class D3Blocks():
                 tooltip=None,
                 cmap='tab20',
                 normalize=False,
-                label_button=['(x, y)', '(x1, y1)'],
+                label_radio=['(x, y)', '(x1, y1)'],
                 title='Scatter - D3blocks',
                 filepath='scatter.html',
                 figsize=[900, 600],
@@ -450,7 +450,7 @@ class D3Blocks():
             'Set1'       Discrete colors
         normalize: Bool, optional
             Normalize datapoints. The default is False.
-        label_button: List ['(x, y)', '(x1, y1)']
+        label_radio: List ['(x, y)', '(x1, y1)']
             The labels used for the radiobuttons.
         title : String, (default: None)
             Title of the figure.
@@ -493,10 +493,10 @@ class D3Blocks():
 
         """
         # Check exceptions
-        Scatter.check_exceptions(x, y, x1, y1, s, c, tooltip, label_button, logger)
+        Scatter.check_exceptions(x, y, x1, y1, s, c, tooltip, label_radio, logger)
         # Cleaning
         self._clean(clean_config=False)
-        # if (x1 is None) or (y1 is None): label_button=None
+        if (x1 is None) or (y1 is None): label_radio=None
         # Set config
         self.config['chart'] ='scatter'
         self.config['filepath'] = self.set_path(filepath)
@@ -508,7 +508,7 @@ class D3Blocks():
         self.config['figsize'] = figsize
         self.config['normalize'] = normalize
         self.config['cmap'] = cmap
-        self.config['label_button'] = label_button
+        self.config['label_radio'] = label_radio
 
         # Preprocessing
         df, labels = Scatter.preprocessing(x, y, x1, y1, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
