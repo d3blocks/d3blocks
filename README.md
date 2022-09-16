@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/d3blocks/d3blocks/blob/master/logo.png" align="center" width="400" /> 
+  <img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" align="center" width="600" /> 
 </p>
 
 
