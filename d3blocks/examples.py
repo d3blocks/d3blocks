@@ -1,7 +1,7 @@
 # %%
-# import d3blocks
-# print(dir(d3blocks))
-# print(d3blocks.__version__)
+import d3blocks
+print(dir(d3blocks))
+print(d3blocks.__version__)
 
 
 # %% Add function move scatter
@@ -354,11 +354,11 @@ d3 = D3Blocks()
 df = d3.import_example('iris')
 
 # Scatter
-d3.scatter(df['x'].values, df['y'].values, filepath='scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, filepath='scatter_demo1.html')
 # Scatter
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo2.html')
 # Scatter
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo.html', xlim=[1, 12], ylim=[])
+d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo3.html', xlim=[1, 12], ylim=[])
 
 
 # %% CHORD - EXAMPLE 2
@@ -498,38 +498,27 @@ d3.sankey(df, filepath='sankey_ex2.html', figsize=(1800, 900), node={"width": 10
 d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "left", "padding": 50, "width": 15}, margin={"top": 25, "left": 25}, link={"color": "source", 'stroke_opacity': 0.25})
 
 
-# %% Timeseries - Example 1
-import pandas as pd
-from d3blocks import D3Blocks
-d3 = D3Blocks(cmap='Set1')
-
-# Import example dataset
-df = d3.import_example('timeseries', n=1000)
-df.iloc[:, 0] = df.iloc[:, 0] * 0.001
-# Make the timeseries graph
-d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
-
 
 # %% Timeseries - Example 2 - Set colors manually
-import pandas as pd
-from d3blocks import D3Blocks
-d3 = D3Blocks(cmap='Set1')
+# import pandas as pd
+# from d3blocks import D3Blocks
+# d3 = D3Blocks(cmap='Set1')
 
-# Import example dataset
-df = d3.import_example('timeseries', n=1000)
+# # Import example dataset
+# df = d3.import_example('timeseries', n=1000)
 
-# Collect label properties
-colors = d3.get_label_properties(df.columns.values)
-colors['A']['color'] = '#000000'
-colors['C']['color'] = '#000000'
-colors['E']['color'] = '#000000'
-# Set the label properties
-d3.set_label_properties(colors)
-# Check
-print(d3.labels)
+# # Collect label properties
+# colors = d3.get_label_properties(df.columns.values)
+# colors['A']['color'] = '#000000'
+# colors['C']['color'] = '#000000'
+# colors['E']['color'] = '#000000'
+# # Set the label properties
+# d3.set_label_properties(colors)
+# # Check
+# print(d3.labels)
 
-# Make timeseries graph where the label properties will be used
-d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
+# # Make timeseries graph where the label properties will be used
+# d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
 
 
 # %%
@@ -629,7 +618,8 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example(graph='movingbubbles')
+# df = d3.import_example(graph='movingbubbles')
+df = d3.import_example(graph='random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
@@ -637,3 +627,5 @@ df = d3.import_example(graph='movingbubbles')
 d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 states = "{'index': '0', 'short': 'Sleeping', 'desc': 'Sleeping'}, {'index': '1', 'short': 'Personal Care', 'desc': 'Personal Care'}, {'index': '2', 'short': 'Eating & Drinking', 'desc': 'Eating and Drinking'}, {'index': '3', 'short': 'Education', 'desc': 'Education'}, {'index': '4', 'short': 'Work', 'desc': 'Work and Work-Related Activities'}, {'index': '5', 'short': 'Housework', 'desc': 'Household Activities'}, {'index': '6', 'short': 'Household Care', 'desc': 'Caring for and Helping Household Members'}, {'index': '7', 'short': 'Non-Household Care', 'desc': 'Caring for and Helping Non-Household Members'}, {'index': '8', 'short': 'Shopping', 'desc': 'Consumer Purchases'}, {'index': '9', 'short': 'Pro. Care Services', 'desc': 'Professional and Personal Care Services'}, {'index': '10', 'short': 'Leisure', 'desc': 'Socializing, Relaxing, and Leisure'}, {'index': '11', 'short': 'Sports', 'desc': 'Sports, Exercise, and Recreation'}, {'index': '12', 'short': 'Religion', 'desc': 'Religious and Spiritual Activities'}, {'index': '13', 'short': 'Volunteering', 'desc': 'Volunteer Activities'}, {'index': '14', 'short': 'Phone Calls', 'desc': 'Telephone Calls'}, {'index': '15', 'short': 'Misc.', 'desc': 'Other'}, {'index': '16', 'short': 'Traveling', 'desc': 'Traveling'}"
+
+# %%
