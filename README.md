@@ -14,6 +14,11 @@
 
 
 -------------------------------------------------------------------------
+<p align="center">
+  <img src="https://github.com/d3blocks/d3blocks/blob/master/docs/figs/summary.png" width="600" />
+</p>
+
+-------------------------------------------------------------------------
 
 #### Installation (Pypi)
 ```bash
@@ -55,12 +60,6 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         |
 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      |
 |                                                                                    |                              |
-
-<br><br>
-<p align="center">
-  <img src="https://github.com/d3blocks/d3blocks/blob/master/docs/figs/summary.png" width="600" />
-</p>
-
 
 -------------------------------------------------------------------------
 
