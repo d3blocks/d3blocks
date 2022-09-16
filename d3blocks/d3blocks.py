@@ -387,6 +387,8 @@ class D3Blocks():
                 y,
                 x1=None,
                 y1=None,
+                x2=None,
+                y2=None,
                 s=3,
                 c='#002147',
                 c_gradient=None,
@@ -395,7 +397,7 @@ class D3Blocks():
                 tooltip=None,
                 cmap='tab20',
                 normalize=False,
-                label_radio=['(x, y)', '(x1, y1)'],
+                label_radio=['(x, y)', '(x1, y1)', '(x2, y2)'],
                 title='Scatter - D3blocks',
                 filepath='scatter.html',
                 figsize=[900, 600],
@@ -450,7 +452,7 @@ class D3Blocks():
             'Set1'       Discrete colors
         normalize: Bool, optional
             Normalize datapoints. The default is False.
-        label_radio: List ['(x, y)', '(x1, y1)']
+        label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
             The labels used for the radiobuttons.
         title : String, (default: None)
             Title of the figure.
@@ -492,11 +494,8 @@ class D3Blocks():
         >>> #
 
         """
-        # Check exceptions
-        Scatter.check_exceptions(x, y, x1, y1, s, c, tooltip, label_radio, logger)
         # Cleaning
         self._clean(clean_config=False)
-        if (x1 is None) or (y1 is None): label_radio=None
         # Set config
         self.config['chart'] ='scatter'
         self.config['filepath'] = self.set_path(filepath)
@@ -508,10 +507,17 @@ class D3Blocks():
         self.config['figsize'] = figsize
         self.config['normalize'] = normalize
         self.config['cmap'] = cmap
+        # Set the radio button and visibility of the labels
+        self.config['radio_button_visible'] = [("display:none;" if (x1 is None) else ""), ("display:none;" if (x1 is None) else ""), ("display:none;" if (x2 is None) else "")]
         self.config['label_radio'] = label_radio
+        if ("display:none" in self.config['radio_button_visible'][0]): self.config['label_radio'][0]=""
+        if ("display:none" in self.config['radio_button_visible'][1]): self.config['label_radio'][1]=""
+        if ("display:none" in self.config['radio_button_visible'][2]): self.config['label_radio'][2]=""
 
+        # Check exceptions
+        Scatter.check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, self.config, logger)
         # Preprocessing
-        df, labels = Scatter.preprocessing(x, y, x1, y1, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
+        df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
         # Set default label properties
         if not hasattr(self, 'labels'):
             self.set_label_properties(labels)

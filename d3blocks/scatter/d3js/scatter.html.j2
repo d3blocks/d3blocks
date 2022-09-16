@@ -13,8 +13,9 @@
 
 
 <form>
-	<input type="radio" name="radio_states" value="radiobutton1" checked="checked" style={{ RADIO_VISIBLE }}> <label> {{ RADIO_LABEL1 }} </label>
-	<input type="radio" name="radio_states" value="radiobutton2" style={{ RADIO_VISIBLE }}> <label> {{ RADIO_LABEL2 }} </label>
+	<input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
+	<input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
+	<input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
 </form>
 
 
@@ -143,12 +144,18 @@ buttons.on('change', function(d)
 			.duration(2500)                               // Transition speed in ms for radio button
 			.attr("cx", function(d) { return x(d[0]); })  // x-coordinates
 			.attr("cy", function(d) { return y(d[1]); })  // y-coordinates
-	else
+	else if (this.value == 'radiobutton2')
 		circles.transition()
 			.delay(0)                                     // Wait in ms to start transition
 			.duration(2500)                               // Transition speed in ms for radio button
 			.attr("cx", function(d) { return x(d[7]); })  // x1-coordinates
 			.attr("cy", function(d) { return y(d[8]); })  // y1-coordinates
+	else if (this.value == 'radiobutton3')
+		circles.transition()
+			.delay(0)                                     // Wait in ms to start transition
+			.duration(2500)                               // Transition speed in ms for radio button
+			.attr("cx", function(d) { return x(d[9]); })  // x1-coordinates
+			.attr("cy", function(d) { return y(d[10]); })  // y1-coordinates
 ;})
 
 
@@ -183,10 +190,14 @@ function zoom() {
         svg.selectAll("circle").transition(t)
             .attr("cx", function(d) { return x(d[0]); })
 			.attr("cy", function(d) { return y(d[1]); });
-	} else {
+	} else if (d3.select('input[name="radio_states"]:checked').node().value == 'radiobutton2') {
         svg.selectAll("circle").transition(t)
             .attr("cx", function(d) { return x(d[7]); })
 			.attr("cy", function(d) { return y(d[8]); });
+	} else if (d3.select('input[name="radio_states"]:checked').node().value == 'radiobutton3') {
+        svg.selectAll("circle").transition(t)
+            .attr("cx", function(d) { return x(d[9]); })
+			.attr("cy", function(d) { return y(d[10]); });
 			}
 
 }
