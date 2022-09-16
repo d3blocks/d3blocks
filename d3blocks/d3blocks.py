@@ -417,15 +417,18 @@ class D3Blocks():
         >>> # Load example data
         >>> df = d3.import_example('cancer')
         >>> #
-        >>> # Size and tooltip
-        >>> s = df['survival_months'].fillna(1).values / 10
+        >>> # Set size and tooltip
+        >>> s = df['survival_months'].fillna(1).values / 20
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> #
         >>> # Example 1: Scatter plot
         >>> d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
         >>> #
         >>> # Example 2: Scatter plot with transitions
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
+        >>> #
+        >>> # Example 3: Scatter plot with transitions
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
         >>> #
 
         """

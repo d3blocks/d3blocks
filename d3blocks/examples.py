@@ -22,13 +22,13 @@ tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astyp
 # d3.scatter(df['x'].values, df['y'].values, s=df['survival_months'].values/10, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 
 # Two transitions
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 
 # Three transitions
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 
 
 # Set the size

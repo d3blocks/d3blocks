@@ -44,8 +44,16 @@ Default scatterplot
    <iframe src="https://erdogant.github.io\docs\d3blocks\scatter.html" height="600px" width="775px", frameBorder="0"></iframe>
 
 
-Transitions
-''''''''''''''
+Transitions (2 coordinates)
+''''''''''''''''''''''''''''
+
+.. raw:: html
+
+   <iframe src="https://erdogant.github.io\docs\d3blocks\scatter_transitions.html" height="600px" width="775px", frameBorder="0"></iframe>
+
+
+Transitions (3 coordinates)
+''''''''''''''''''''''''''''
 
 .. raw:: html
 
