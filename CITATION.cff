@@ -1,0 +1,20 @@
+# YAML 1.2
+---
+authors: 
+  -
+    family-names: E.Taskesen, O.Verver
+    orcid: "https://orcid.org/0000-0002-3430-9618"
+cff-version: "1.0.0"
+date-released: 2022-16-09
+keywords: 
+  - "interactive-visualizations"
+  - "d3js"
+  - "Python"
+  - "Charts"
+  - "stand-alone"
+license: "GPL3"
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://d3blocks.github.io/d3blocks"
+title: "D3Blocks - The Python library to create stand-alone and interactive d3 charts."
+version: "1.0.0"
+...

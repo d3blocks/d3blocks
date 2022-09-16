@@ -808,7 +808,7 @@ class D3Blocks():
         >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
         >>> #
         >>> # Create network using default
-        >>> d3.d3graph(df)
+        >>> d3.d3graph(df, filepath='d3graph.html')
         >>> #
         >>> # Change scaler
         >>> d3.d3graph(df, scaler='minmax')
