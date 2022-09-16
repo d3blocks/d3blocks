@@ -36,10 +36,20 @@ The input dataset are the x-coordinates and y-coordinates that needs to be speci
 Chart
 ***********
 
+Default scatterplot
+''''''''''''''''''''
+
 .. raw:: html
 
    <iframe src="https://erdogant.github.io\docs\d3blocks\scatter.html" height="600px" width="775px", frameBorder="0"></iframe>
 
+
+Transitions
+''''''''''''''
+
+.. raw:: html
+
+   <iframe src="https://erdogant.github.io\docs\d3blocks\scatter_transitions.html" height="600px" width="775px", frameBorder="0"></iframe>
 
 
 .. raw:: html

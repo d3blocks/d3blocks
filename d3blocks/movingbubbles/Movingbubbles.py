@@ -88,7 +88,7 @@ def show(df, config, labels=None):
     return config
 
 
-def write_html(X, config, overwrite=True):
+def write_html(X, config):
     """Write html.
 
     Parameters
@@ -130,12 +130,11 @@ def write_html(X, config, overwrite=True):
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
     index_template = jinja_env.get_template('movingbubbles.html.j2')
     index_file = Path(config['filepath'])
-    print('Write to path: [%s]' % index_file.absolute())
     # index_file.write_text(index_template.render(content))
-    if os.path.isfile(index_file):
-        if overwrite:
-            print('File already exists and will be overwritten: [%s]' %(index_file))
-            os.remove(index_file)
+    if config['overwrite'] and os.path.isfile(index_file):
+        print('File already exists and will be overwritten: [%s]' %(index_file))
+        os.remove(index_file)
+        time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:
         f.write(index_template.render(content))
 

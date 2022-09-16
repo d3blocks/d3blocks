@@ -5,12 +5,12 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import pandas as pd
-
+import time
 
 # %% Preprocessing
 def check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, config, logger):
     """Check Exceptions."""
-    if len(config['label_radio'])!=sum(list(map(lambda x: x=='', config['radio_button_visible']))): raise Exception(logger.error('input parameter [label_radio] must contain the correct number of labels depending on the (x,y), (x1,y1), (x2,y2) coordinates.'))
+    # if len(config['label_radio'])!=sum(list(map(lambda x: x=='', config['radio_button_visible']))): raise Exception(logger.error('input parameter [label_radio] must contain the correct number of labels depending on the (x,y), (x1,y1), (x2,y2) coordinates.'))
     if len(x)!=len(y): raise Exception(logger.error('input parameter [x] and [y] should be of size of (x, y).'))
     if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
     if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
@@ -203,7 +203,7 @@ def show(df, config):
     return config
 
 
-def write_html(X, config, overwrite=True):
+def write_html(X, config):
     """Write html.
 
     Parameters
@@ -241,12 +241,11 @@ def write_html(X, config, overwrite=True):
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
     index_template = jinja_env.get_template('scatter.html.j2')
     index_file = Path(config['filepath'])
-    print('Write to path: [%s]' % index_file.absolute())
     # index_file.write_text(index_template.render(content))
-    if os.path.isfile(index_file):
-        if overwrite:
-            print('File already exists and will be overwritten: [%s]' %(index_file))
-            os.remove(index_file)
+    if config['overwrite'] and os.path.isfile(index_file):
+        print('File already exists and will be overwritten: [%s]' %(index_file))
+        os.remove(index_file)
+        time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:
         f.write(index_template.render(content))
 

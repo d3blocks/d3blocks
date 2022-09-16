@@ -16,23 +16,23 @@ import colourmap
 import unicodedata
 import re
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
+# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+# import d3blocks.sankey.Sankey as Sankey
+# import d3blocks.imageslider.Imageslider as Imageslider
+# import d3blocks.chord.Chord as Chord
+# import d3blocks.scatter.Scatter as Scatter
+# import d3blocks.violin.Violin as Violin
+# import d3blocks.particles.Particles as Particles
 
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
+import chord.Chord as Chord
+import scatter.Scatter as Scatter
+import violin.Violin as Violin
+import particles.Particles as Particles
 
 import d3graph as d3network
 from d3heatmap import d3heatmap
@@ -91,74 +91,6 @@ class D3Blocks():
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # Set the logger
         set_logger(verbose=verbose)
-
-    @staticmethod
-    def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
-        """Convert source and target into adjacency matrix.
-
-        Parameters
-        ----------
-        source : list
-            The source node.
-        target : list
-            The target node.
-        weight : list of int
-            The Weights between the source-target values
-        symmetric : bool, optional
-            Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
-        aggfunc : str, optional
-            Aggregate function in case multiple values exists for the same relationship.
-            'sum' (default)
-
-        Returns
-        -------
-        pd.DataFrame
-            adjacency matrix.
-
-        Examples
-        --------
-        >>> # Initialize
-        >>> d3 = D3Blocks()
-        >>>
-        >>> # Load example
-        >>> df = d3.import_example('energy')
-        >>>
-        >>> # Convert to adjmat
-        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
-
-        """
-        return d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
-
-    @staticmethod
-    def adjmat2vec(df, min_weight=1):
-        """Convert adjacency matrix into vector with source and target.
-
-        Parameters
-        ----------
-        adjmat : pd.DataFrame()
-            Adjacency matrix.
-
-        min_weight : float
-            edges are returned with a minimum weight.
-
-        Returns
-        -------
-        pd.DataFrame()
-            nodes that are connected based on source and target
-
-        Examples
-        --------
-        >>> # Initialize
-        >>> d3 = D3Blocks()
-        >>>
-        >>> # Load example
-        >>> df = d3.import_example('energy')
-        >>>
-        >>> # Convert back to vector
-        >>> vector = d3.adjmat2vec(adjmat)
-
-        """
-        return d3network.adjmat2vec(df, min_weight=min_weight)
 
     def particles(self,
                   text,
@@ -252,7 +184,7 @@ class D3Blocks():
         self.config = Particles.show(text, self.config)
         # Open the webbrowser
         if self.config['showfig']:
-            _showfig(self.config['filepath'])
+            self.showfig()
 
     def violin(self,
                x,
@@ -380,7 +312,7 @@ class D3Blocks():
         self.config = Violin.show(df, config=self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']:
-            _showfig(self.config['filepath'])
+            self.showfig()
 
     def scatter(self,
                 x,
@@ -489,8 +421,11 @@ class D3Blocks():
         >>> s = df['survival_months'].fillna(1).values / 10
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> #
-        >>> # Scatter
+        >>> # Example 1: Scatter plot
         >>> d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
+        >>> #
+        >>> # Example 2: Scatter plot with transitions
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
         >>> #
 
         """
@@ -512,21 +447,21 @@ class D3Blocks():
         self.config['label_radio'] = label_radio
         if ("display:none" in self.config['radio_button_visible'][0]): self.config['label_radio'][0]=""
         if ("display:none" in self.config['radio_button_visible'][1]): self.config['label_radio'][1]=""
-        if ("display:none" in self.config['radio_button_visible'][2]): self.config['label_radio'][2]=""
+        if len(self.config['label_radio'])==3 and ("display:none" in self.config['radio_button_visible'][2]):
+            self.config['label_radio'][2]=""
+        elif len(self.config['label_radio'])==2:
+            self.config['label_radio'].append("")
 
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, self.config, logger)
         # Preprocessing
         df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
         # Set default label properties
-        if not hasattr(self, 'labels'):
-            self.set_label_properties(labels)
-
+        if not hasattr(self, 'labels'): self.set_label_properties(labels)
         # Make het scatterplot
         self.config = Scatter.show(df, self.config)
         # Open the webbrowser
-        if self.config['showfig']:
-            _showfig(self.config['filepath'])
+        if self.config['showfig']: self.showfig()
 
     def chord(self,
               df,
@@ -601,8 +536,7 @@ class D3Blocks():
         # Create the plot
         self.config = Chord.show(df, self.config, labels=self.labels)
         # Open the webbrowser
-        if self.config['showfig']:
-            _showfig(self.config['filepath'])
+        if self.config['showfig']: self.showfig()
 
     def imageslider(self,
                     img_before,
@@ -683,8 +617,7 @@ class D3Blocks():
         # Create the plot
         self.config = Imageslider.show(self.config)
         # Open the webbrowser
-        if self.config['showfig']:
-            _showfig(self.config['filepath'])
+        if self.config['showfig']: self.showfig()
 
     def heatmap(self, df, vmax=None, stroke='red', fontsize=10, title='Heatmap - D3blocks', description='', filepath='heatmap.html', figsize=[720, 720], showfig=True, overwrite=True):
         """Heatmap graph.
@@ -951,8 +884,7 @@ class D3Blocks():
         # Create the plot
         self.config = Sankey.show(df, self.config, labels=self.labels)
         # Open the webbrowser
-        if self.config['showfig']:
-            _showfig(self.config['filepath'])
+        if self.config['showfig']: self.showfig()
         # Return config
         # return self.config
 
@@ -1089,10 +1021,8 @@ class D3Blocks():
 
         # Create the plot
         self.config = Movingbubbles.show(df, self.config, self.labels)
-
         # Open the webbrowser
-        if self.config['showfig']:
-            _showfig(self.config['filepath'])
+        if self.config['showfig']: self.showfig()
 
         # Return
         return df
@@ -1176,11 +1106,11 @@ class D3Blocks():
         if not hasattr(self, 'labels'):
             labels = self.get_label_properties(labels=df.columns.values, cmap=self.config['cmap'])
             self.set_label_properties(labels)
+
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
         # Open the webbrowser
-        if self.config['showfig']:
-            _showfig(self.config['filepath'])
+        if self.config['showfig']: self.showfig()
 
     def set_label_properties(self, labels):
         """Set the label properties.
@@ -1300,6 +1230,84 @@ class D3Blocks():
 
         """
         return _import_example(graph=graph, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
+
+    # Open the webbrowser
+    def showfig(self, sleep=0.5):
+        """Open browser to show chart."""
+        # Sleeping is required to pevent overlapping windows
+        # time.sleep(sleep)
+        file_location = os.path.abspath(self.config['filepath'])
+        if platform == "darwin":  # check if on OSX
+            file_location = "file:///" + file_location
+        webbrowser.open(file_location, new=2)
+
+    @staticmethod
+    def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
+        """Convert source and target into adjacency matrix.
+
+        Parameters
+        ----------
+        source : list
+            The source node.
+        target : list
+            The target node.
+        weight : list of int
+            The Weights between the source-target values
+        symmetric : bool, optional
+            Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
+        aggfunc : str, optional
+            Aggregate function in case multiple values exists for the same relationship.
+            'sum' (default)
+
+        Returns
+        -------
+        pd.DataFrame
+            adjacency matrix.
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example
+        >>> df = d3.import_example('energy')
+        >>>
+        >>> # Convert to adjmat
+        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
+
+        """
+        return d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
+
+    @staticmethod
+    def adjmat2vec(df, min_weight=1):
+        """Convert adjacency matrix into vector with source and target.
+
+        Parameters
+        ----------
+        adjmat : pd.DataFrame()
+            Adjacency matrix.
+
+        min_weight : float
+            edges are returned with a minimum weight.
+
+        Returns
+        -------
+        pd.DataFrame()
+            nodes that are connected based on source and target
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Load example
+        >>> df = d3.import_example('energy')
+        >>>
+        >>> # Convert back to vector
+        >>> vector = d3.adjmat2vec(adjmat)
+
+        """
+        return d3network.adjmat2vec(df, min_weight=min_weight)
 
 
 # %% Import example dataset from github.
@@ -1508,16 +1516,6 @@ def set_logger(verbose=20):
 def disable_tqdm():
     """Set the logger for verbosity messages."""
     return (True if (logger.getEffectiveLevel()>=30) else False)
-
-
-# %% Open the webbrowser
-def _showfig(filepath: str, sleep=0.5):
-    # Sleeping is required to pevent overlapping windows
-    # time.sleep(sleep)
-    file_location = os.path.abspath(filepath)
-    if platform == "darwin":  # check if on OSX
-        file_location = "file:///" + file_location
-    webbrowser.open(file_location, new=2)
 
 
 def pre_processing(df):
