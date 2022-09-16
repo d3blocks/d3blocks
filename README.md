@@ -31,12 +31,35 @@ pip install -U .
 #### Import d3blocks package
 ```python
 from d3blocks import d3blocks
+# Initialize
+d3 = D3Blocks()
 ```
 
 -------------------------------------------------------------------------
 
-#### Features
-D3Blocks builts on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code. 
+### Features
+D3Blocks builts on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
+
+**Supported charts**
+
+* D3graph (network)
+```python
+   d3.d3graph()
+```
+
+* Sankey plot
+```python
+   d3.sankey()
+```
+
+* Movingbubbles
+* Heatmap
+* Chord diagram
+* Timeseries
+* Scatter plot
+* Image slider
+* Violin plot
+* Particles
 
 <p align="center">
   <img src="https://github.com/d3blocks/d3blocks/blob/master/docs/figs/summary.png" width="600" />
