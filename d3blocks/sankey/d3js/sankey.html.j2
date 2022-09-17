@@ -52,16 +52,18 @@
                 nodeStroke: "{{ node_stroke_color }}",
             })
     
-      		// Before making the chart (svg), we first need to remove the old one. We simply remove all present svg in the document.body
+      		// Before making the chart (svg) after selecting different link_color, we first need to remove the old one.
+      		// We can do this by simply remove all svg that are present in the document.body
       		for (let svg of document.body.getElementsByTagName("svg")) {
                 svg.remove()
       		}
       		
-          		// Now we can again create the chart
-                document.body.append(chart)
+      		// Now we can again create the chart
+            document.body.append(chart)
       		}
-                // Lets draw it 
-                drawchart();
+            
+            // Lets draw it 
+            drawchart();
       
         // Listen if changes are made with the selection (this is linked using "onchange=link_color_changed()" at the top)
         function link_color_changed(linkColor_value) {
