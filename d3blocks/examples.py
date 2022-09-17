@@ -4,6 +4,20 @@ print(dir(d3blocks))
 print(d3blocks.__version__)
 
 
+# %% SANKEY - EXAMPLE 1
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Link settings
+d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
+labels = d3.labels
+
+
 # %% Add function move scatter
 from d3blocks import D3Blocks
 

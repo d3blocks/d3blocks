@@ -15,14 +15,9 @@ D3Blocks
 D3Blocks builts on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code.
 
 
-Sponsor
-=======
-**This library is created and maintained in my free time**. I like to work on my open-source libraries, and you can help by becoming a sponsor! The easiest way is by simply following me on medium, and it will cost you nothing! Simply go to my `medium profile <https://erdogant.medium.com/>`_ and press "follow". Read more on my `sponsor github page <https://github.com/sponsors/erdogant/>`_ why this is important.
-
-
-Star is important too!
+Star is important!
 ======================
-If you like this project, **star** this repo at the github page! This is important because only then I know how much you like it :)
+If you ❤️ this project, **star** this repo at the github page!
 
 
 

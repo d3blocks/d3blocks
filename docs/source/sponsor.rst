@@ -1,7 +1,8 @@
 .. tip::
-	This project needs some love! ❤️ You can help in various ways.
+	If you ❤️ this project, you can help in various ways.
 
 	* Become a **Sponsor**!
+	* Follow me on medium! Go to my `medium profile <https://erdogant.medium.com/>`_ and press "follow".
 	* **Star** this repo at the `github page <https://github.com/erdogant/d3blocks/>`_.
 	* Buy me a coffee! I ❤️ coffee :)
 	* Other contributions can be in the form of feature requests, idea discussions, reporting bugs, opening pull requests.
