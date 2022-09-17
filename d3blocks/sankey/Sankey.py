@@ -67,7 +67,6 @@ def write_html(X, config):
     None.
 
     """
-    print(config['link']['color_static'])
     content = {
         'json_data': X,
         'TITLE': config['title'],
