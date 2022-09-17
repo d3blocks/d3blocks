@@ -17,7 +17,7 @@ D3Blocks builts on the graphics of D3 Javascript to create the most visually att
 
 Star is important!
 ======================
-If you ❤️ this project, **star** this repo at the github page!
+If you ❤️ this project, **star** this repo at the `github page <https://github.com/d3blocks/d3blocks>`_!
 
 
 
