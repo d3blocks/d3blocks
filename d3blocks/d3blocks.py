@@ -798,7 +798,7 @@ class D3Blocks():
                filepath='sankey.html',
                figsize=[800, 600],
                node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
-               link={"color": "source-target", "stroke_opacity": 0.5},
+               link={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#D3D3D3'},
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                showfig=True,
                overwrite=True):
@@ -827,8 +827,9 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         link : dict.
-            "linkColor" : "source", "target", "source-target", or a static olor such as "grey", "blue", "red" etc
+            "linkColor" : "source", "target", "source-target"
             "linkStrokeOpacity" : 0.5
+            "color_static": '#0f0f0f' or "grey", "blue", "red" etc
         margin : dict.
             margin, in pixels
             "top" : 5
@@ -872,10 +873,10 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
-        self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5}, **link}
+        self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
         self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
         self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
-
+        
         # Remvove quotes from source-target labels
         df = pre_processing(df)
 

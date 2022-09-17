@@ -29,6 +29,14 @@ def show(df, config, labels=None):
     df.reset_index(inplace=True, drop=True)
     df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
     df['target_id'] = list(map(lambda x: labels.get(x)['id'], df['target']))
+    # Set link_color selection correct
+    config['link_color_select'] = {'source': '', 'target': '', 'source-target': ''}
+    if config['link']['color']=='source':
+        config['link_color_select']['source']='selected="selected"'
+    elif config['link']['color']=='target':
+        config['link_color_select']['target']='selected="selected"'
+    elif config['link']['color']=='source-target':
+        config['link_color_select']['source-target']='selected="selected"'
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, labels)
     # Write to HTML
@@ -52,12 +60,17 @@ def write_html(X, config):
     None.
 
     """
+    print(config['link']['color_static'])
     content = {
         'json_data': X,
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
         'link_color': config['link']['color'],
+        'link_color_select_source': config['link_color_select']['source'],
+        'link_color_select_target': config['link_color_select']['target'],
+        'link_color_select_source_target': config['link_color_select']['source-target'],
+        'color_static': config['link']['color_static'],
         'link_stroke_opacity': config['link']['stroke_opacity'],
         'marginTop': config['margin']['top'],
         'marginRight': config['margin']['right'],

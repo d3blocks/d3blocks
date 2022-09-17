@@ -5,6 +5,17 @@
     <title>{{ TITLE }}</title>
 </head>
 <body>
+
+    <form>
+    	<select id="linkColorOptions" onchange="link_color_changed(this.value)">
+    	  <option value="source" {{ link_color_select_source }}>Source</option>
+    	  <option value="target" {{ link_color_select_target }}>Target</option>
+    	  <option value="source-target" {{ link_color_select_source_target }}>Source-Target</option>
+    	  <option value="{{ color_static }}">Static color</option>
+    	</select>
+    </form>
+
+
     <script>
 	{% include "sankey.js" %}
 
@@ -16,26 +27,49 @@
             value
         }))
 
-        chart = SankeyChart({
-            links
-        }, {
-            nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
-            align: "{{ node_align }}",
-            linkColor: "{{ link_color }}", // source, target, source-target, or static color
-            linkStrokeOpacity: {{ link_stroke_opacity }},
-            format: (value) => `${value.toFixed(1)} TWh`,
-            width: {{ WIDTH }},
-            height: {{ HEIGHT }},
-            marginTop: {{ marginTop }},
-            marginRight: {{ marginRight }},
-            marginBottom: {{ marginBottom }},
-            marginLeft: {{ marginLeft }},
-            nodeWidth: {{ node_width }},
-            nodePadding: {{ node_padding }},
-            nodeStroke: "{{ node_stroke_color }}",
-        })
+        // Required for selection form
+        let linkColor="{{ link_color }}" // source, target, source-target
+        // We need to redraw the chart after changing the selection
+        function drawchart() {
 
-        document.body.append(chart)
+            // Set all sankey parameters
+            chart = SankeyChart({
+                links
+            }, {
+                nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+                align: "{{ node_align }}",
+                linkColor: linkColor,
+                linkStrokeOpacity: {{ link_stroke_opacity }},
+                format: (value) => `${value.toFixed(1)} TWh`,
+                width: {{ WIDTH }},
+                height: {{ HEIGHT }},
+                marginTop: {{ marginTop }},
+                marginRight: {{ marginRight }},
+                marginBottom: {{ marginBottom }},
+                marginLeft: {{ marginLeft }},
+                nodeWidth: {{ node_width }},
+                nodePadding: {{ node_padding }},
+                nodeStroke: "{{ node_stroke_color }}",
+            })
+    
+      		// Before making the chart (svg), we first need to remove the old one. We simply remove all present svg in the document.body
+      		for (let svg of document.body.getElementsByTagName("svg")) {
+                svg.remove()
+      		}
+      		
+          		// Now we can again create the chart
+                document.body.append(chart)
+      		}
+                // Lets draw it 
+                drawchart();
+      
+        // Listen if changes are made with the selection (this is linked using "onchange=link_color_changed()" at the top)
+        function link_color_changed(linkColor_value) {
+            //console.log(linkColor_value)
+            linkColor = linkColor_value
+            drawchart();
+        }
+
     </script>
 
 </body>

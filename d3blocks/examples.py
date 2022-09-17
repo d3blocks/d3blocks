@@ -14,7 +14,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Link settings
-d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
+d3.sankey(df, link={"color": "target"}, filepath='c:\\temp\\sankey.html')
 labels = d3.labels
 
 
@@ -27,7 +27,7 @@ d3 = D3Blocks()
 # import example
 df = d3.import_example('cancer')
 
-df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
+# df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
 
 s = df['survival_months'].fillna(1).values / 10
 tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
