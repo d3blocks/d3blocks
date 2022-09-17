@@ -15,7 +15,7 @@ df = d3.import_example('energy')
 
 # Link settings
 # d3.sankey(df, link={"color": "target"}, node={'align': 'center'}, filepath='c:\\temp\\sankey.html')
-d3.sankey(df, link={"color": "source"}, node={'align': 'center'}, filepath='c:\\temp\\sankey.html')
+d3.sankey(df, link={"color": "source-target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html', figsize=[650, 500])
 labels = d3.labels
 
 
