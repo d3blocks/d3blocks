@@ -14,7 +14,8 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Link settings
-d3.sankey(df, link={"color": "target"}, filepath='c:\\temp\\sankey.html')
+# d3.sankey(df, link={"color": "target"}, node={'align': 'center'}, filepath='c:\\temp\\sankey.html')
+d3.sankey(df, link={"color": "source"}, node={'align': 'center'}, filepath='c:\\temp\\sankey.html')
 labels = d3.labels
 
 

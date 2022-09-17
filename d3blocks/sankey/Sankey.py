@@ -29,14 +29,21 @@ def show(df, config, labels=None):
     df.reset_index(inplace=True, drop=True)
     df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
     df['target_id'] = list(map(lambda x: labels.get(x)['id'], df['target']))
-    # Set link_color selection correct
+
+    # Set link_color selection correct on the form
     config['link_color_select'] = {'source': '', 'target': '', 'source-target': ''}
-    if config['link']['color']=='source':
-        config['link_color_select']['source']='selected="selected"'
-    elif config['link']['color']=='target':
-        config['link_color_select']['target']='selected="selected"'
-    elif config['link']['color']=='source-target':
-        config['link_color_select']['source-target']='selected="selected"'
+    config['link_color_select'][config['link']['color']] = 'selected="selected"'
+    # if config['link']['color']=='source':
+    #     config['link_color_select']['source']='selected="selected"'
+    # elif config['link']['color']=='target':
+    #     config['link_color_select']['target']='selected="selected"'
+    # elif config['link']['color']=='source-target':
+    #     config['link_color_select']['source-target']='selected="selected"'
+
+    # Set align selection correct on the form
+    config['align_select'] = {'left': '', 'right': '', 'justify': '', 'center': ''}
+    config['align_select'][config['node']['align']] = 'selected="selected"'
+
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, labels)
     # Write to HTML
@@ -70,6 +77,12 @@ def write_html(X, config):
         'link_color_select_source': config['link_color_select']['source'],
         'link_color_select_target': config['link_color_select']['target'],
         'link_color_select_source_target': config['link_color_select']['source-target'],
+
+        'align_select_left': config['align_select']['left'],
+        'align_select_right': config['align_select']['right'],
+        'align_select_justify': config['align_select']['justify'],
+        'align_select_center': config['align_select']['center'],
+
         'color_static': config['link']['color_static'],
         'link_stroke_opacity': config['link']['stroke_opacity'],
         'marginTop': config['margin']['top'],

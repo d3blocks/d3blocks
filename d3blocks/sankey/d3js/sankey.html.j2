@@ -7,13 +7,23 @@
 <body>
 
     <form>
+        <b>Link-color:</b>
     	<select id="linkColorOptions" onchange="link_color_changed(this.value)">
     	  <option value="source" {{ link_color_select_source }}>Source</option>
     	  <option value="target" {{ link_color_select_target }}>Target</option>
     	  <option value="source-target" {{ link_color_select_source_target }}>Source-Target</option>
     	  <option value="{{ color_static }}">Static color</option>
     	</select>
+
+        <b>Align:</b>
+    	<select id="AlignOptions" onchange="align_changed(this.value)">
+    	  <option value="left" {{ align_select_left }}>Left</option>
+    	  <option value="right" {{ align_select_right }}>Right</option>
+    	  <option value="justify" {{ align_select_justify }}>Justify</option>
+    	  <option value="center" {{ align_select_center }}>Center</option>
+    	</select>
     </form>
+    <br>
 
 
     <script>
@@ -27,8 +37,10 @@
             value
         }))
 
-        // Required for selection form
+        // Required for the input selection form
         let linkColor="{{ link_color }}" // source, target, source-target
+        let align="{{ node_align }}"     // "left", "right", "justify", "center"
+
         // We need to redraw the chart after changing the selection
         function drawchart() {
 
@@ -37,7 +49,7 @@
                 links
             }, {
                 nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
-                align: "{{ node_align }}",
+                align: align,
                 linkColor: linkColor,
                 linkStrokeOpacity: {{ link_stroke_opacity }},
                 format: (value) => `${value.toFixed(1)} TWh`,
@@ -52,23 +64,28 @@
                 nodeStroke: "{{ node_stroke_color }}",
             })
     
-      		// Before making the chart (svg) after selecting different link_color, we first need to remove the old one.
-      		// We can do this by simply remove all svg that are present in the document.body
+      		// To update the chart based on the selection, we remove the chart and create a new one.
       		for (let svg of document.body.getElementsByTagName("svg")) {
                 svg.remove()
       		}
       		
-      		// Now we can again create the chart
+      		// Now we can again create the chart with the updated parameters
             document.body.append(chart)
       		}
             
             // Lets draw it 
             drawchart();
       
-        // Listen if changes are made with the selection (this is linked using "onchange=link_color_changed()" at the top)
+        // link_color selection changes. Listen if changes are made (onchange=link_color_changed())
         function link_color_changed(linkColor_value) {
             //console.log(linkColor_value)
             linkColor = linkColor_value
+            drawchart();
+        }
+
+        // align selection changes. Listen if changes are made (onchange=align_changed())
+        function align_changed(align_value) {
+            align = align_value
             drawchart();
         }
 
