@@ -1,8 +1,17 @@
-"""Scatter graph."""
+"""Particles block.
+
+Library     : d3blocks
+Author      : E.Taskesen
+Mail        : erdogant@gmail.com
+Github      : https://github.com/d3blocks/d3blocks
+License     : GPL3
+"""
+
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+
 
 def show(text, config):
     """Build and show the graph.

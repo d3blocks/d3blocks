@@ -1,10 +1,18 @@
-"""Chord graph."""
+"""Chord block.
+
+Library     : d3blocks
+Author      : E.Taskesen, O.Verver
+Mail        : erdogant@gmail.com, oliver@sensibly.nl
+Github      : https://github.com/d3blocks/d3blocks
+License     : GPL3
+"""
 
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+
 
 def show(df, config, labels=None):
     """Build and show the graph.

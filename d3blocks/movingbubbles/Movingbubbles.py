@@ -1,4 +1,12 @@
-"""Moving bubble graph."""
+"""Movingbubbles block.
+
+Library     : d3blocks
+Author      : E.Taskesen, O.Verver
+Mail        : erdogant@gmail.com, oliver@sensibly.nl
+Github      : https://github.com/d3blocks/d3blocks
+License     : GPL3
+
+"""
 
 import numpy as np
 import pandas as pd

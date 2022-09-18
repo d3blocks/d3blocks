@@ -1,4 +1,12 @@
-"""Scatter graph."""
+"""Scatter block.
+
+Library     : d3blocks
+Author      : E.Taskesen
+Mail        : erdogant@gmail.com
+Github      : https://github.com/d3blocks/d3blocks
+License     : GPL3
+"""
+
 import colourmap
 import numpy as np
 from jinja2 import Environment, PackageLoader
@@ -6,6 +14,7 @@ from pathlib import Path
 import os
 import pandas as pd
 import time
+
 
 # %% Preprocessing
 def check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, config, logger):

@@ -1,4 +1,11 @@
-"""Timeseries graph."""
+"""Timeseries block.
+
+Library     : d3blocks
+Author      : E.Taskesen
+Mail        : erdogant@gmail.com
+Github      : https://github.com/d3blocks/d3blocks
+License     : GPL3
+"""
 
 import pandas as pd
 from jinja2 import Environment, PackageLoader

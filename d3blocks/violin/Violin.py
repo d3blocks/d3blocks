@@ -1,4 +1,11 @@
-"""Chord graph."""
+"""Violin block.
+
+Library     : d3blocks
+Author      : E.Taskesen
+Mail        : erdogant@gmail.com
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+"""
 
 import colourmap
 import numpy as np
