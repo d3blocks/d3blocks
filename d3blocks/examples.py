@@ -4,6 +4,27 @@ print(dir(d3blocks))
 print(d3blocks.__version__)
 
 
+# %% HEATMAP - EXAMPLE 1
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+df = d3.import_example('energy')
+# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+# df = d3.adjmat2vec(df)
+# from sklearn.preprocessing import StandardScaler
+# X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
+# X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
+
+d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
+
+
+
+
 # %% SANKEY - EXAMPLE 1
 from d3blocks import D3Blocks
 
@@ -14,9 +35,9 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Link settings
-# d3.sankey(df, link={"color": "target"}, node={'align': 'center'}, filepath='c:\\temp\\sankey.html')
-d3.sankey(df, link={"color": "source-target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html', figsize=[650, 500])
-labels = d3.labels
+d3.sankey(df, link={"color": "target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
+# d3.sankey(df, link={"color": "source-target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html', figsize=[650, 500])
+# labels = d3.labels
 
 
 # %% Add function move scatter
@@ -37,13 +58,13 @@ tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astyp
 # d3.scatter(df['x'].values, df['y'].values, s=df['survival_months'].values/10, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 
 # Two transitions
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', normalize=True)
 
 # Three transitions
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', normalize=True)
 
 
 # Set the size
@@ -74,7 +95,8 @@ d3 = D3Blocks()
 
 # Make particles
 # d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
-d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', spacing=7)
+# d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', fontsize=180, figsize=[900, 200], spacing=8)
+d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff')
 
 # %% Violin plot
 import numpy as np
@@ -443,24 +465,6 @@ img_before, img_after = d3.import_example('southern_nebula')
 # Make comparison
 d3.imageslider(img_before, img_after, showfig=True)
 
-
-# %% HEATMAP - EXAMPLE 1
-
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-# Import example
-# df = d3.import_example('bigbang')
-# df = d3.import_example('stormofswords')
-df = d3.import_example('energy')
-adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-# df = d3.adjmat2vec(df)
-# from sklearn.preprocessing import StandardScaler
-# X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
-# X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
-
-d3.heatmap(adjmat, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
 
 
 # %% NETWORK - EXAMPLE 1
