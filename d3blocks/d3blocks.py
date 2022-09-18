@@ -671,9 +671,9 @@ class D3Blocks():
         >>> #
         >>> # Import example
         >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
-        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         >>> #
         >>> d3.heatmap(adjmat, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
+        >>> #
 
         """
         # Copy of data
@@ -690,8 +690,10 @@ class D3Blocks():
         self.config['vmax'] = vmax
         self.config['stroke'] = stroke
 
+        # Convert vector to adjmat
+        adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create heatmap graph
-        d3heatmap.heatmap(df, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description=self.config['description'], showfig=self.config['showfig'])
+        d3heatmap.heatmap(adjmat, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description=self.config['description'], showfig=self.config['showfig'])
 
     def d3graph(self, df, title='D3graph - D3blocks', filepath='d3graph.html', figsize=[1500, 800], showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None], scaler='zscore'):
         """d3graph graph.
