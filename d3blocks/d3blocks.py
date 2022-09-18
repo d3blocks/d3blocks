@@ -96,13 +96,13 @@ class D3Blocks():
                   text,
                   radius=3,
                   collision=0.05,
-                  fontsize=150,
-                  spacing=9,
+                  fontsize=180,
+                  spacing=8,
                   cmap='Turbo',
                   background='#000000',
                   title='Particles - D3blocks',
                   filepath='particles.html',
-                  figsize=[700, 300],
+                  figsize=[900, 200],
                   showfig=True,
                   overwrite=True):
         """Particles graph.
