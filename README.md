@@ -17,6 +17,10 @@
 
 
 -------------------------------------------------------------------------
+
+D3Blocks builts on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
+The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. 
+
 <p align="center">
   <a href="https://d3blocks.github.io/d3blocks/pages/html/index.html">
   <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/summary.png" width="600" />
@@ -47,9 +51,6 @@ d3 = D3Blocks()
 
 -------------------------------------------------------------------------
 ### [Supported charts](https://d3blocks.github.io/d3blocks/)
-
-D3Blocks builts on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
-The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. 
 
 
 |  Block                                                                             |    Function                  |
