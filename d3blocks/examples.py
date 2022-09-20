@@ -23,7 +23,7 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
 df = d3.import_example('climate')
-d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
+# d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
 d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10)
 
 
