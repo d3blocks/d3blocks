@@ -980,7 +980,7 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example('random_time', n=10000, c=300, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+        >>> df = d3.import_example('random_time', n=10000, c=300, date_start="17-12-1903 00:10:05", date_stop="17-12-1903 23:59:59")
         >>> #
         >>> # Plot
         >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
@@ -1299,13 +1299,27 @@ class D3Blocks():
         ----------
         data : str
             Name of datasets
-            'movingbubbles', 'random_time'
+            * movingbubbles
+            * random_time
+            * timeseries
+            * energy
+            * stormofswords
+            * bigbang
+            * southern_nebula
+            * southern_nebula_internet
+            * cancer
+            * breast_cancer
+            * iris
+            * occupancy
+            * climate
         n : int, (default: 1000).
-            Number of events.
+            Number of events (samples).
+        c : int, (default: 100).
+            Number of classes.
         date_start : str, (default: None)
-            "2000-01-01 00:00:00" : start date
+            "17-12-1903 00:00:00" : start date
         date_stop : str, (default: None)
-            "2010-01-01 23:59:59" : Stop date
+            "17-12-1903 23:59:59" : Stop date
 
         Returns
         -------
@@ -1317,7 +1331,7 @@ class D3Blocks():
 
 
 # %% Import example dataset from github.
-def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
+def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):
     """Import example dataset from github source.
 
     Description
@@ -1334,18 +1348,22 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         * energy
         * stormofswords
         * bigbang
-        * southern_nebula
+        * southern_nebul
         * southern_nebula_internet
+        * unsplash
         * cancer
         * breast_cancer
         * iris
         * occupancy
         * climate
-        Number of events.
+        n : int, (default: 1000).
+            Number of events (samples).
+        c : int, (default: 100).
+            Number of classes.
     date_start : str, (default: None)
-        "2000-01-01 00:00:00" : start date
+        "17-12-1903 00:00:00" : start date
     date_stop : str, (default: None)
-        "2010-01-01 23:59:59" : Stop date
+        "17-12-1903 23:59:59" : Stop date
 
     Returns
     -------
@@ -1457,11 +1475,11 @@ def make_dict_label_properties(labels, colors):
     return dlabel
 
 
-def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+def random_date(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
     return str_time_prop(start, end, prop, dt_format=dt_format, strftime=strftime)
 
 
-def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
     """Get a time at a proportion of a range of two formatted times.
 
     Description
@@ -1470,8 +1488,8 @@ def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True
     given format (strftime-style), giving an interval [start, end].
     prop specifies how a proportion of the interval to be taken after
     start.  The returned time will be in the specified format.
-    """
 
+    """
     stime = time.mktime(time.strptime(start, dt_format))
     etime = time.mktime(time.strptime(end, dt_format))
     ptime = stime + prop * (etime - stime)

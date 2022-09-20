@@ -150,7 +150,7 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example('random_time', n=1000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
@@ -272,16 +272,6 @@ d3.sankey(df, link={"color": "source-target"})
 
 
 
-# %% TIMESERIES
-import yfinance as yf
-df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
-df = df.div(df.iloc[0])
-df.head()
-
-from d3blocks import D3Blocks
-d3 = D3Blocks(whitelist='close')
-d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
 
 
 # %% Movingbubbles - Make manual dataset to test the working

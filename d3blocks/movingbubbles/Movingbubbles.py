@@ -147,7 +147,7 @@ def write_html(X, config):
         f.write(index_template.render(content))
 
 
-def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%Y-%m-%d %H:%M:%S'):
+def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S'):
     """Standardize time per sample_id.
 
     Parameters
@@ -163,7 +163,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     datetime : datetime
         Column name of the date time.
     dt_format : str, optional
-        '%Y-%m-%d %H:%M:%S'.
+        '%d-%m-%Y %H:%M:%S'.
 
     Returns
     -------
@@ -187,7 +187,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     # Initialize empty datetime_norm
     df['datetime_norm'] = df[datetime] - df[datetime]
     # Set a default start point.
-    timenow = dt.datetime.strptime('1980-01-01 00:00:00', dt_format)
+    timenow = dt.datetime.strptime('01-01-1980 00:00:00', dt_format)
 
     if method=='samplewise':
         print('[D3Blocks]> Standardize method: [%s]' %(method))
@@ -223,7 +223,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     return df
 
 
-# def compute_time_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
+# def compute_time_delta(df, sample_id, datetime, dt_format='%d-%m-%Y %H:%M:%S'):
 #     """Compute delta between two time-points that follow-up.
 
 #     Parameters
@@ -235,7 +235,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 #     datetime : datetime
 #         Column name of the date time.
 #     dt_format : str
-#         '%Y-%m-%d %H:%M:%S'.
+#         '%d-%m-%Y %H:%M:%S'.
 
 #     Returns
 #     -------
@@ -250,7 +250,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 #     return df
 
 
-# def compute_time_delta(df, sample_id, datetime, dt_format='%Y-%m-%d %H:%M:%S'):
+# def compute_time_delta(df, sample_id, datetime, dt_format='%d-%m-%Y %H:%M:%S'):
 #     """Compute date time delta.
 
 #     Description
@@ -270,7 +270,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 #     datetime : datetime
 #         date time.
 #     dt_format : str
-#         '%Y-%m-%d %H:%M:%S'.
+#         '%d-%m-%Y %H:%M:%S'.
 
 #     Returns
 #     -------
@@ -312,7 +312,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 #     # Return
 #     return df
 
-def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
+def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):
     """Generate random time data.
 
     Parameters
@@ -322,9 +322,9 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     c : int, (default: 1000).
         Number of unique classes.
     date_start : str, (default: None)
-        "1-1-2000 00:00:00" : start date
+        "17-12-1903 00:00:00" : start date
     date_stop : str, (default: None)
-        1-1-2010 23:59:59" : Stop date
+        "17-12-1913 23:59:59" : Stop date
 
     Returns
     -------
@@ -333,10 +333,10 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
     """
     if date_start is None:
-        date_start="2000-01-01 00:00:00"
+        date_start="17-12-1903 00:00:00"
         logger.info('Date start is set to %s' %(date_start))
     if date_stop is None:
-        date_stop="2010-01-01 23:59:59"
+        date_stop="17-12-1913 23:59:59"
         logger.info('Date start is set to %s' %(date_stop))
 
     # Create empty dataframe
@@ -404,11 +404,11 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     return df
 
 
-def random_date(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+def random_date(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
     return str_time_prop(start, end, prop, dt_format=dt_format, strftime=strftime)
 
 
-def str_time_prop(start, end, prop, dt_format='%Y-%m-%d %H:%M:%S', strftime=True):
+def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
     """Get a time at a proportion of a range of two formatted times.
 
     start and end should be strings specifying times formatted in the
