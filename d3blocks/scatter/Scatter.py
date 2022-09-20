@@ -35,7 +35,7 @@ def check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, config, logger):
 
 
 # %% Preprocessing
-def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', normalize=False, logger=None):
+def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
     """Preprocessing."""
     if (x1 is None): x1 = x
     if (y1 is None): y1 = y
@@ -48,8 +48,8 @@ def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=
     X1 = np.c_[x1, y1]
     X2 = np.c_[x2, y2]
 
-    # Normalize data
-    if normalize:
+    # Scale data
+    if scale:
         logger.info('Scaling xy-coordinates.')
         X = _scale_xy(X)
         X1 = _scale_xy(X1)
@@ -84,7 +84,7 @@ def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=
     return df, dict_properties
 
 
-# %% Normalize data
+# %% Scale data
 def _scale_xy(X):
     """Scale xy coordinates."""
     x_min, x_max = np.min(X, 0), np.max(X, 0)

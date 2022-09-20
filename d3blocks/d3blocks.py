@@ -328,7 +328,7 @@ class D3Blocks():
                 stroke='#ffffff',
                 tooltip=None,
                 cmap='tab20',
-                normalize=False,
+                scale=False,
                 label_radio=['(x, y)', '(x1, y1)', '(x2, y2)'],
                 title='Scatter - D3blocks',
                 filepath='scatter.html',
@@ -382,8 +382,8 @@ class D3Blocks():
             'Pastel1'    Discrete colors
             'Paired'     Discrete colors
             'Set1'       Discrete colors
-        normalize: Bool, optional
-            Normalize datapoints. The default is False.
+        scale: Bool, optional
+            Scale datapoints. The default is False.
         label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
             The labels used for the radiobuttons.
         title : String, (default: None)
@@ -424,11 +424,11 @@ class D3Blocks():
         >>> # Example 1: Scatter plot
         >>> d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
         >>> #
-        >>> # Example 2: Scatter plot with transitions. Note that normalize is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], normalize=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
+        >>> # Example 2: Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], scale=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
         >>> #
-        >>> # Example 3: Scatter plot with transitions. Note that normalize is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], normalize=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
+        >>> # Example 3: Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
         >>> #
 
         """
@@ -443,7 +443,7 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
-        self.config['normalize'] = normalize
+        self.config['scale'] = scale
         self.config['cmap'] = cmap
         # Set the radio button and visibility of the labels
         self.config['radio_button_visible'] = [("display:none;" if (x1 is None) else ""), ("display:none;" if (x1 is None) else ""), ("display:none;" if (x2 is None) else "")]
@@ -458,7 +458,7 @@ class D3Blocks():
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, self.config, logger)
         # Preprocessing
-        df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['normalize'], logger=logger)
+        df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
         # Set default label properties
         if not hasattr(self, 'labels'): self.set_label_properties(labels)
         # Make het scatterplot
