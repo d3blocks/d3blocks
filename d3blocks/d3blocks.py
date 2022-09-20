@@ -545,12 +545,12 @@ class D3Blocks():
                     img_before,
                     img_after,
                     background='#000000',
-                    title='Image slider - D3blocks',
+                    title='Imageslider - D3blocks',
                     filepath='imageslider.html',
                     figsize=[800, None],
                     showfig=True,
                     overwrite=True):
-        """Image slider.
+        """Imageslider Block.
 
         Description
         -----------
@@ -908,7 +908,7 @@ class D3Blocks():
                       figsize=[780, 800],
                       note=None,
                       time_notes=None,
-                      title='d3blocks_movingbubbles',
+                      title='Movingbubbles - D3Blocks',
                       filepath='movingbubbles.html',
                       showfig=True,
                       overwrite=True):
@@ -1046,7 +1046,7 @@ class D3Blocks():
         Parameters
         ----------
         df : pd.DataFrame()
-            Input data. Requires specifying the column: 'datetime'
+            Input data. If the index is not datetime, specify the column with 'datetime'
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
