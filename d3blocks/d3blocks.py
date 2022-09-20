@@ -105,11 +105,11 @@ class D3Blocks():
                   figsize=[900, 200],
                   showfig=True,
                   overwrite=True):
-        """Particles graph.
+        """Particles block.
 
         Description
         -----------
-        The particles plot is to turn any word into an interactive graph. With a mouse-move or touch, the particle
+        The particles plot is to turn any word into an interactive visualization. With a mouse-move or touch, the particle
         bounce and then return to their original place. Various properties can be changed such as the bouncing,
         particle size, and colors. The original javascript is forked from Ian Johnson's Block.
 
@@ -140,7 +140,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the particles.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -203,13 +203,13 @@ class D3Blocks():
                cmap='inferno',
                showfig=True,
                overwrite=True):
-        """Violin graph.
+        """Violin block.
 
         Description
         -----------
         The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
         It is an alternative to the boxplot and brings insights into large datasets where the boxplot could hide a part
-        of the information. The original javascript code is forked from D3.js Graph Gallery but brought alive by
+        of the information. The original javascript code is forked from D3.js graph gallery but brought alive by
         Pythonizing the chart. Now it is possible to configure your charts for one or several groups, change colors,
         add tooltips, customize the bin size, change figure size and store on a specified location. There are many
         input parameters for the Violin plot that can help to create the most insightful figures.
@@ -252,7 +252,7 @@ class D3Blocks():
             Size of the figure in the browser, [width, height].
             The width is determined based on the number of class labels x.
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -337,11 +337,11 @@ class D3Blocks():
                 ylim=[None, None],
                 showfig=True,
                 overwrite=True):
-        """Scatterplot.
+        """Scatterplot block.
 
         Description
         -----------
-        The scatter plot is perhaps the most well-known graph to plot x, and y coordinates. Basic charts are very
+        The scatter plot is perhaps the most well-known chart to plot x, and y coordinates. Basic charts are very
         useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
         sample-wise colored and used to detect relationships between (groups of) variables.
         The input data frame should contain 2 columns (x and y) with the coordinates, and the index represents the
@@ -397,7 +397,7 @@ class D3Blocks():
         set_ylim : tuple, (default: [None, None])
             Height of the y-axis: The default is extracted from the data with 10% spacing.
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -473,11 +473,11 @@ class D3Blocks():
               figsize=[1200, 1200],
               showfig=True,
               overwrite=True):
-        """Chord graph.
+        """Chord block.
 
         Description
         -----------
-        A chord graph represents flows or connections between several entities or nodes.
+        A chord represents flows or connections between several entities or nodes.
         Each entity is represented by a fragment on the outer part of the circular layout.
         Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.
 
@@ -495,7 +495,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -574,7 +574,7 @@ class D3Blocks():
         figsize : tuple, (default: [800, None])
             Size of the figure in the browser, [width, None]. The heigth is changed according to the width.
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -623,12 +623,12 @@ class D3Blocks():
         if self.config['showfig']: self.showfig()
 
     def heatmap(self, df, vmax=None, stroke='red', fontsize=10, title='Heatmap - D3blocks', description='', filepath='heatmap.html', figsize=[720, 720], showfig=True, overwrite=True):
-        """Heatmap graph.
+        """Heatmap block.
 
         Description
         -----------
         heatmap is a module in d3blocks to create interactive heatmaps.
-        The heatmap graph is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
+        The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
         In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
         create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
         and then Pythonized.
@@ -656,7 +656,7 @@ class D3Blocks():
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -692,11 +692,11 @@ class D3Blocks():
 
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
-        # Create heatmap graph
+        # Create heatmap chart
         d3heatmap.heatmap(adjmat, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description=self.config['description'], showfig=self.config['showfig'])
 
     def d3graph(self, df, title='D3graph - D3blocks', filepath='d3graph.html', figsize=[1500, 800], showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None], scaler='zscore'):
-        """d3graph graph.
+        """d3graph block.
 
         Description
         -----------
@@ -804,7 +804,7 @@ class D3Blocks():
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                showfig=True,
                overwrite=True):
-        """Sankey graph.
+        """Sankey block.
 
         Description
         -----------
@@ -844,7 +844,7 @@ class D3Blocks():
             "padding" : 15 (vertical seperation between the nodes)
             "color" : "currentColor", "grey", "black", "red", etc
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
@@ -912,14 +912,14 @@ class D3Blocks():
                       filepath='movingbubbles.html',
                       showfig=True,
                       overwrite=True):
-        """MovingBubbles graph.
+        """MovingBubbles block.
 
         Description
         -----------
-        The MovingBubbles graph provides insights into when one action follows the other across time. It can help to
+        The MovingBubbles provides insights into when one action follows the other across time. It can help to
         understand the movements of entities, and whether clusters occur at specific time points and state(s).
         It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
-        force-directed and colliding nodes. The function d3.import_example(graph='random_time') is created to generate
+        force-directed and colliding nodes. The function d3.import_example('random_time') is created to generate
         a randomized dataset with various states. The input dataset should contain 3 columns; 
             * DateTime column: Describes the data-time when an event occurs.
             * State column: Describes what the particular state was at that point of time of the specific sample_id. 
@@ -980,7 +980,7 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example(graph='random_time', n=10000, c=300, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+        >>> df = d3.import_example('random_time', n=10000, c=300, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
         >>> #
         >>> # Plot
         >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
@@ -1034,25 +1034,25 @@ class D3Blocks():
         return df
 
     def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - D3blocks', filepath='timeseries.html', fontsize=10, figsize=[1000, 500], showfig=True, overwrite=True):
-        """Timeseries graph.
+        """Timeseries block.
 
         Description
         -----------
-        The TimeSeries graph can be used in case a date-time element is available, and where the time-wise values
-        directly follow up with each other. The TimeSeries graph supports now enabling/disabling columns of interest,
+        The TimeSeries can be used in case a date-time element is available, and where the time-wise values
+        directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
         brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
-        in a single graph.
+        in a single chart.
 
         Parameters
         ----------
         df : pd.DataFrame()
-            Input data.
+            Input data. Requires specifying the column: 'datetime'
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output
         showfig : bool, (default: True)
-            Open the window to show the graph.
+            Open the window to show the chart.
         fontsize : int, (default: 14)
             Fontsize of the fonts in the circle.
         overwrite : bool, (default: True)
@@ -1210,7 +1210,7 @@ class D3Blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, graph='movingbubbles', n=10000, c=100, date_start="2000-01-01 00:00:00", date_stop="2001-01-01 23:59:59"):
+    def import_example(self, data='movingbubbles', n=10000, c=100, date_start="2000-01-01 00:00:00", date_stop="2001-01-01 23:59:59"):
         """Import example dataset from github source.
 
         Description
@@ -1219,7 +1219,7 @@ class D3Blocks():
 
         Parameters
         ----------
-        graph : str
+        data : str
             Name of datasets
             'movingbubbles', 'random_time'
         n : int, (default: 1000).
@@ -1235,7 +1235,7 @@ class D3Blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(graph=graph, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
+        return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
 
     # Open the webbrowser
     def showfig(self, sleep=0.1):
@@ -1317,7 +1317,7 @@ class D3Blocks():
 
 
 # %% Import example dataset from github.
-def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
+def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
     """Import example dataset from github source.
 
     Description
@@ -1326,10 +1326,19 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
 
     Parameters
     ----------
-    graph : str
+    data : str
         Name of datasets
-        'movingbubbles', 'random_time'
-    n : int, (default: 1000).
+        * movingbubbles
+        * random_time
+        * timeseries
+        * energy
+        * stormofswords
+        * bigbang
+        * southern_nebula
+        * southern_nebula_internet
+        * cancer
+        * breast_cancer
+        * iris
         Number of events.
     date_start : str, (default: None)
         "2000-01-01 00:00:00" : start date
@@ -1342,44 +1351,47 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
         Dataset containing mixed features.
 
     """
+    from sklearn import datasets
     ext = '.csv'
-    if graph=='movingbubbles':
+
+    if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
-    elif graph=='random_time':
+    elif data=='random_time':
         return Movingbubbles.generate_data_with_random_datetime(n, c=c, date_start=date_start, date_stop=date_stop, dt_format=dt_format, logger=logger)
-    elif graph=='timeseries':
+    elif data=='timeseries':
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
         df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)), dt_format=dt_format)
         return df
-    elif graph=='energy':
+    elif data=='energy':
         # Sankey demo
         url='https://erdogant.github.io/datasets/energy_source_target_value.zip'
-    elif graph=='stormofswords':
+    elif data=='stormofswords':
         # Sankey demo
         url='https://erdogant.github.io/datasets/stormofswords.zip'
-    elif graph=='bigbang':
+    elif data=='bigbang':
         # Initialize
         d3model = d3network.d3graph()
         df = d3model.import_example('bigbang')
         return d3network.adjmat2vec(df)
-    elif graph=='southern_nebula':
+    elif data=='southern_nebula':
         # Image slider demo
         url='https://erdogant.github.io/datasets/southern_nebula.zip'
         ext='.jpg'
-    elif graph=='southern_nebula_internet':
+    elif data=='southern_nebula_internet':
         # Image slider demo
         before = 'https://erdogant.github.io/datasets/images/southern_nebula_before.jpg'
         after = 'https://erdogant.github.io/datasets/images/southern_nebula_after.jpg'
         return before, after
-    elif graph=='cancer':
+    elif data=='cancer':
         url='https://erdogant.github.io/datasets/cancer_dataset.zip'
-    elif graph=='iris':
-        from sklearn import datasets
+    elif data=='iris':
         iris = datasets.load_iris()
         X = iris.data[:, :2]  # we only take the first two features.
         labels = iris.target
         df = pd.DataFrame(data=X, index=labels, columns=['x', 'y'])
         return df
+    elif data=='breast_cancer':
+        return datasets.load_breast_cancer(return_X_y=True, as_frame=True)[0]
 
     if url is None:
         logger.info('Nothing to download.')
@@ -1393,32 +1405,32 @@ def _import_example(graph='movingbubbles', n=10000, c=1000, date_start=None, dat
 
     # Check file exists.
     if not os.path.isfile(PATH_TO_DATA):
-        logger.info('Downloading [%s] dataset from github source..' %(graph))
+        logger.info('Downloading [%s] dataset from github source..' %(data))
         wget(url, PATH_TO_DATA)
 
     csvfile = unzip(PATH_TO_DATA, ext=ext)
 
     # Import local dataset
-    logger.info('Import demo dataset for [%s] graph' %(graph))
-    if graph=='movingbubbles':
+    logger.info('Import dataset: [%s]' %(data))
+    if data=='movingbubbles':
         X = Movingbubbles.import_example(csvfile)
         labels = "{'index': '0', 'short': 'Sleeping', 'desc': 'Sleeping'}, {'index': '1', 'short': 'Personal Care', 'desc': 'Personal Care'}, {'index': '2', 'short': 'Eating & Drinking', 'desc': 'Eating and Drinking'}, {'index': '3', 'short': 'Education', 'desc': 'Education'}, {'index': '4', 'short': 'Work', 'desc': 'Work and Work-Related Activities'}, {'index': '5', 'short': 'Housework', 'desc': 'Household Activities'}, {'index': '6', 'short': 'Household Care', 'desc': 'Caring for and Helping Household Members'}, {'index': '7', 'short': 'Non-Household Care', 'desc': 'Caring for and Helping Non-Household Members'}, {'index': '8', 'short': 'Shopping', 'desc': 'Consumer Purchases'}, {'index': '9', 'short': 'Pro. Care Services', 'desc': 'Professional and Personal Care Services'}, {'index': '10', 'short': 'Leisure', 'desc': 'Socializing, Relaxing, and Leisure'}, {'index': '11', 'short': 'Sports', 'desc': 'Sports, Exercise, and Recreation'}, {'index': '12', 'short': 'Religion', 'desc': 'Religious and Spiritual Activities'}, {'index': '13', 'short': 'Volunteering', 'desc': 'Volunteer Activities'}, {'index': '14', 'short': 'Phone Calls', 'desc': 'Telephone Calls'}, {'index': '15', 'short': 'Misc.', 'desc': 'Other'}, {'index': '16', 'short': 'Traveling', 'desc': 'Traveling'}"
         df = {}
         df['type'] = 'movingbubbles'
         df['data'] = X
         df['labels'] = labels
-    elif graph=='energy':
+    elif data=='energy':
         df = pd.read_csv(csvfile)
         df.rename(columns={'value': 'weight'}, inplace=True)
         df[['source', 'target']] = df[['source', 'target']].astype(str)
-    elif graph=='stormofswords':
+    elif data=='stormofswords':
         df = pd.read_csv(csvfile)
         # df.rename(columns={'weight':'value'}, inplace=True)
-    elif graph=='southern_nebula':
+    elif data=='southern_nebula':
         img_before = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_before.jpg')
         img_after = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_after.jpg')
         return img_before, img_after
-    elif graph=='cancer':
+    elif data=='cancer':
         df = pd.read_csv(PATH_TO_DATA, sep=',')
         df.rename(columns={'tsneX': 'x', 'tsneY': 'y', 'labx': 'labels'}, inplace=True)
         df.set_index(df['labels'], inplace=True)
