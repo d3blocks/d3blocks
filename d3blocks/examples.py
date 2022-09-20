@@ -138,7 +138,7 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example(graph='random_time', n=1000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+df = d3.import_example('random_time', n=1000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
@@ -343,7 +343,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 # Import example
 
-df = d3.import_example(graph='random_time', n=10000, c=500, date_start="2000-01-01 00:10:05", date_stop="2000-01-02 23:59:59")
+df = d3.import_example('random_time', n=10000, c=500, date_start="2000-01-01 00:10:05", date_stop="2000-01-02 23:59:59")
 
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
@@ -543,7 +543,7 @@ d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "l
 # %%
 # from d3blocks import d3blocks
 # d3 = d3blocks()
-# X = d3.import_example(data='movingbubbles')
+# X = d3.import_example('movingbubbles')
 # d3.movingbubbles(X, filepath='c://temp/movingbubbles_original.html', center='Traveling')
 
 # %% Movingbubbles - Make manual dataset to test the working
@@ -611,7 +611,7 @@ df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_
 from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 
-df = d3.import_example(graph='random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-2 23:59:59")
+df = d3.import_example('random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-2 23:59:59")
 
 # # Compute delta (this is automatically done if not available)
 # df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
@@ -624,7 +624,7 @@ d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample
 # %% Moving bubbles
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example(graph='random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+df = d3.import_example('random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
@@ -637,8 +637,8 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(cmap='Set1')
 # Import example
-# df = d3.import_example(graph='movingbubbles')
-df = d3.import_example(graph='random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+# df = d3.import_example('movingbubbles')
+df = d3.import_example('random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
