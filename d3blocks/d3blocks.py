@@ -50,7 +50,7 @@ logger = logging.getLogger()
 class D3Blocks():
     """D3Blocks."""
 
-    def __init__(self, cmap='Set1', dt_format='%Y-%m-%d %H:%M:%S', whitelist=None, verbose=20):
+    def __init__(self, cmap='Set1', dt_format='%d-%m-%Y %H:%M:%S', whitelist=None, verbose=20):
         """Initialize d3blocks with user-defined parameters.
 
         Parameters
@@ -68,7 +68,7 @@ class D3Blocks():
             'Paired'     Discrete colors
             'Set1'       Discrete colors
         dt_format : str
-            '%Y-%m-%d %H:%M:%S'.
+            '%d-%m-%Y %H:%M:%S'.
         whitelist : str, optional
             Keep only columns containing this (sub)string (case insensitive)
         verbose : int, optional
