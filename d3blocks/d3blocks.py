@@ -16,23 +16,23 @@ import colourmap
 import unicodedata
 import re
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
+# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+# import d3blocks.sankey.Sankey as Sankey
+# import d3blocks.imageslider.Imageslider as Imageslider
+# import d3blocks.chord.Chord as Chord
+# import d3blocks.scatter.Scatter as Scatter
+# import d3blocks.violin.Violin as Violin
+# import d3blocks.particles.Particles as Particles
 
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
+import chord.Chord as Chord
+import scatter.Scatter as Scatter
+import violin.Violin as Violin
+import particles.Particles as Particles
 
 import d3graph as d3network
 from d3heatmap import d3heatmap
@@ -1101,7 +1101,7 @@ class D3Blocks():
             logger.info('Taking the index for datetime.')
             df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
         # Check multi-line columns and merge those that are multi-line
-        df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
+        # df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
         # Check whitelist
         if self.config['whitelist'] is not None:
             logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
