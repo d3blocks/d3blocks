@@ -1339,6 +1339,8 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         * cancer
         * breast_cancer
         * iris
+        * occupancy
+        * climate
         Number of events.
     date_start : str, (default: None)
         "2000-01-01 00:00:00" : start date
@@ -1353,6 +1355,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
     """
     from sklearn import datasets
     ext = '.csv'
+    sep=','
 
     if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
@@ -1392,6 +1395,11 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         return df
     elif data=='breast_cancer':
         return datasets.load_breast_cancer(return_X_y=True, as_frame=True)[0]
+    elif data=='occupancy':
+        url='https://erdogant.github.io/datasets/UCI_Occupancy_Detection.zip'
+        sep=','
+    elif data=='climate':
+        url='https://erdogant.github.io/datasets/kaggle_daily_delhi_climate_test.zip'
 
     if url is None:
         logger.info('Nothing to download.')
@@ -1434,6 +1442,8 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         df = pd.read_csv(PATH_TO_DATA, sep=',')
         df.rename(columns={'tsneX': 'x', 'tsneY': 'y', 'labx': 'labels'}, inplace=True)
         df.set_index(df['labels'], inplace=True)
+    else:
+        df = pd.read_csv(PATH_TO_DATA, sep=sep)
 
     # Return
     return df
