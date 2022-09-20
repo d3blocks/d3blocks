@@ -1210,33 +1210,6 @@ class D3Blocks():
         logger.debug("filepath is set to [%s]" %(filepath))
         return filepath
 
-    def import_example(self, data='movingbubbles', n=10000, c=100, date_start="2000-01-01 00:00:00", date_stop="2001-01-01 23:59:59"):
-        """Import example dataset from github source.
-
-        Description
-        -----------
-        Import one of the few datasets from github source or specify your own download url link.
-
-        Parameters
-        ----------
-        data : str
-            Name of datasets
-            'movingbubbles', 'random_time'
-        n : int, (default: 1000).
-            Number of events.
-        date_start : str, (default: None)
-            "2000-01-01 00:00:00" : start date
-        date_stop : str, (default: None)
-            "2010-01-01 23:59:59" : Stop date
-
-        Returns
-        -------
-        pd.DataFrame()
-            Dataset containing mixed features.
-
-        """
-        return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
-
     # Open the webbrowser
     def showfig(self, sleep=0.1):
         """Open browser to show chart."""
@@ -1315,9 +1288,36 @@ class D3Blocks():
         """
         return d3network.adjmat2vec(df, min_weight=min_weight)
 
+    def import_example(self, data='movingbubbles', n=10000, c=100, date_start="2000-01-01 00:00:00", date_stop="2001-01-01 23:59:59", sep=',',):
+        """Import example dataset from github source.
+
+        Description
+        -----------
+        Import one of the few datasets from github source or specify your own download url link.
+
+        Parameters
+        ----------
+        data : str
+            Name of datasets
+            'movingbubbles', 'random_time'
+        n : int, (default: 1000).
+            Number of events.
+        date_start : str, (default: None)
+            "2000-01-01 00:00:00" : start date
+        date_stop : str, (default: None)
+            "2010-01-01 23:59:59" : Stop date
+
+        Returns
+        -------
+        pd.DataFrame()
+            Dataset containing mixed features.
+
+        """
+        return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format=self.config['dt_format'], logger=logger)
+
 
 # %% Import example dataset from github.
-def _import_example(data='movingbubbles', n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
+def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_format='%Y-%m-%d %H:%M:%S', logger=None):
     """Import example dataset from github source.
 
     Description
