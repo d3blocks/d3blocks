@@ -291,17 +291,17 @@ import pandas as pd
 # Set colors.
 df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
 df1['sample_id'] = [1, 1, 1, 1, 1, 1]
-df1['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:05', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25']
+df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
 df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
 df2['sample_id'] = [2, 2, 2, 2, 2, 2]
-df2['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25', '2000-01-01 00:00:30']
+df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
 df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
 df3['sample_id'] = [3, 3, 3, 3, 3, 3]
-df3['datetime'] = ['2000-12-12 00:00:00', '2000-12-12 00:00:15', '2000-12-12 00:00:20', '2000-12-12 00:00:25', '2000-12-12 00:00:30', '2000-12-12 00:00:35']
+df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
 df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 # Concatenate the dataframes.
@@ -309,24 +309,24 @@ df = pd.concat([df1, df2, df3], axis=0)
 
 print(df)
 #               datetime  sample_id     state
-# 0  2000-01-01 00:00:00          1      home
-# 1  2000-01-01 00:00:05          1    school
-# 2  2000-01-01 00:00:10          1      work
-# 3  2000-01-01 00:00:15          1    eating
-# 4  2000-01-01 00:00:20          1    coffee
-# 5  2000-01-01 00:00:25          1  sleeping
-# 0  2000-01-01 00:00:00          2      home
-# 1  2000-01-01 00:00:10          2    school
-# 2  2000-01-01 00:00:15          2      work
-# 3  2000-01-01 00:00:20          2    eating
-# 4  2000-01-01 00:00:25          2    coffee
-# 5  2000-01-01 00:00:30          2  sleeping
-# 0  2000-12-12 00:00:00          3      home
-# 1  2000-12-12 00:00:15          3    school
-# 2  2000-12-12 00:00:20          3      work
-# 3  2000-12-12 00:00:25          3    eating
-# 4  2000-12-12 00:00:30          3    coffee
-# 5  2000-12-12 00:00:35          3  sleeping
+# 0  01-01-2000 00:00:00          1      home
+# 1  01-01-2000 00:00:05          1    school
+# 2  01-01-2000 00:00:10          1      work
+# 3  01-01-2000 00:00:15          1    eating
+# 4  01-01-2000 00:00:20          1    coffee
+# 5  01-01-2000 00:00:25          1  sleeping
+# 0  01-01-2000 00:00:00          2      home
+# 1  01-01-2000 00:00:10          2    school
+# 2  01-01-2000 00:00:15          2      work
+# 3  01-01-2000 00:00:20          2    eating
+# 4  01-01-2000 00:00:25          2    coffee
+# 5  01-01-2000 00:00:30          2  sleeping
+# 0  12-12-2000 00:00:00          3      home
+# 1  12-12-2000 00:00:15          3    school
+# 2  12-12-2000 00:00:20          3      work
+# 3  12-12-2000 00:00:25          3    eating
+# 4  12-12-2000 00:00:30          3    coffee
+# 5  12-12-2000 00:00:35          3  sleeping
 
 
 # Import
@@ -356,7 +356,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 # Import example
 
-df = d3.import_example('random_time', n=10000, c=500, date_start="2000-01-01 00:10:05", date_stop="2000-01-02 23:59:59")
+df = d3.import_example('random_time', n=10000, c=500, date_start="01-01-2000 00:10:05", date_stop="01-02-2000 23:59:59")
 
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
@@ -380,11 +380,11 @@ d3.movingbubbles(df,
 
 
 #                 datetime sample_id     state
-# 0    2000-01-01 00:10:36        61    Eating
-# 1    2000-01-01 00:10:51        83      Sick
-# 2    2000-01-01 00:11:30        61  Sleeping
-# 3    2000-01-01 00:11:37        66  Sleeping
-# 4    2000-01-01 00:11:57        94  Sleeping
+# 0    01-01-2000 00:10:36        61    Eating
+# 1    01-01-2000 00:10:51        83      Sick
+# 2    01-01-2000 00:11:30        61  Sleeping
+# 3    01-01-2000 00:11:37        66  Sleeping
+# 4    01-01-2000 00:11:57        94  Sleeping
 #                  ...       ...       ...
 # 9995 2000-01-02 23:57:12         6      Home
 # 9996 2000-01-02 23:57:23        48      Sick
@@ -478,9 +478,6 @@ img_before, img_after = d3.import_example('unsplash')
 # Make comparison
 d3.imageslider(img_before, img_after, showfig=True, filepath='c:/temp/imageslider_unsplash.html', figsize=[800, None],)
 
-img_before = 'D://before.jpg'
-img_after = 'D://after.jpg'
-
 
 # %% NETWORK - EXAMPLE 1
 
@@ -511,10 +508,6 @@ d3.D3graph.edge_properties['Solar', 'Solar_Thermal']['weight_scaled']=10
 
 # Show the network graph
 d3.D3graph.show()
-
-
-
-
 
 
 # %% SANKEY - EXAMPLE 2
@@ -567,17 +560,17 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set2_r')
 
 df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df1['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:05', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25']
+df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
 df1['sample_id'] = [1, 1, 1, 1, 1, 1]
 df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df2['datetime'] = ['2000-01-01 00:00:00', '2000-01-01 00:00:10', '2000-01-01 00:00:15', '2000-01-01 00:00:20', '2000-01-01 00:00:25', '2000-01-01 00:00:30']
+df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
 df2['sample_id'] = [2, 2, 2, 2, 2, 2]
 df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df3['datetime'] = ['2000-12-12 00:00:00', '2000-12-12 00:00:15', '2000-12-12 00:00:20', '2000-12-12 00:00:25', '2000-12-12 00:00:30', '2000-12-12 00:00:35']
+df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
 df3['sample_id'] = [3, 3, 3, 3, 3, 3]
 df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
@@ -586,24 +579,24 @@ df = pd.concat([df1, df2, df3], axis=0)
 
 print(df)
 #               datetime  sample_id     state
-# 0  2000-01-01 00:00:00          1      home
-# 1  2000-01-01 00:00:05          1    school
-# 2  2000-01-01 00:00:10          1      work
-# 3  2000-01-01 00:00:15          1    eating
-# 4  2000-01-01 00:00:20          1    coffee
-# 5  2000-01-01 00:00:25          1  sleeping
-# 0  2000-01-01 00:00:00          2      home
-# 1  2000-01-01 00:00:10          2    school
-# 2  2000-01-01 00:00:15          2      work
-# 3  2000-01-01 00:00:20          2    eating
-# 4  2000-01-01 00:00:25          2    coffee
-# 5  2000-01-01 00:00:30          2  sleeping
-# 0  2000-12-12 00:00:00          3      home
-# 1  2000-12-12 00:00:15          3    school
-# 2  2000-12-12 00:00:20          3      work
-# 3  2000-12-12 00:00:25          3    eating
-# 4  2000-12-12 00:00:30          3    coffee
-# 5  2000-12-12 00:00:35          3  sleeping
+# 0  01-01-2000 00:00:00          1      home
+# 1  01-01-2000 00:00:05          1    school
+# 2  01-01-2000 00:00:10          1      work
+# 3  01-01-2000 00:00:15          1    eating
+# 4  01-01-2000 00:00:20          1    coffee
+# 5  01-01-2000 00:00:25          1  sleeping
+# 0  01-01-2000 00:00:00          2      home
+# 1  01-01-2000 00:00:10          2    school
+# 2  01-01-2000 00:00:15          2      work
+# 3  01-01-2000 00:00:20          2    eating
+# 4  01-01-2000 00:00:25          2    coffee
+# 5  01-01-2000 00:00:30          2  sleeping
+# 0  12-12-2000 00:00:00          3      home
+# 1  12-12-2000 00:00:15          3    school
+# 2  12-12-2000 00:00:20          3      work
+# 3  12-12-2000 00:00:25          3    eating
+# 4  12-12-2000 00:00:30          3    coffee
+# 5  12-12-2000 00:00:35          3  sleeping
 
 # standardize the time per sample id and make the starting-point the same
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
@@ -626,7 +619,7 @@ df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_
 from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 
-df = d3.import_example('random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-2 23:59:59")
+df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
 
 # # Compute delta (this is automatically done if not available)
 # df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
@@ -639,7 +632,7 @@ d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample
 # %% Moving bubbles
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example('random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
@@ -653,7 +646,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 # Import example
 # df = d3.import_example('movingbubbles')
-df = d3.import_example('random_time', n=10000, c=100, date_start="2000-1-1 00:10:05", date_stop="2000-1-1 23:59:59")
+df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
