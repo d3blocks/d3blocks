@@ -4,16 +4,27 @@
 # print(d3blocks.__version__)
 
 
+# %% TIMESERIES
+import yfinance as yf
+df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = df.div(df.iloc[0])
+df.head()
+df = df.droplevel(0, axis=1)
+
+from d3blocks import D3Blocks
+d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
+d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
+
 
 # %% TIMESERIES
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks()
+d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
 df = d3.import_example('climate')
-
-# d3.timeseries(df[['date', 'Occupancy']], datetime='date', filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
-
+d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
+d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10)
 
 
 # %% HEATMAP - EXAMPLE 1
@@ -71,12 +82,12 @@ tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astyp
 
 # Two transitions
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', normalize=True, figsize=[600, 400])
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
 
 # Three transitions
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', normalize=True, figsize=[600, 400])
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
 
 
 # Set the size
@@ -463,10 +474,12 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 # Import example
-img_before, img_after = d3.import_example('southern_nebula')
+img_before, img_after = d3.import_example('unsplash')
 # Make comparison
-d3.imageslider(img_before, img_after, showfig=True)
+d3.imageslider(img_before, img_after, showfig=True, filepath='c:/temp/imageslider_unsplash.html', figsize=[800, None],)
 
+img_before = 'D://before.jpg'
+img_after = 'D://after.jpg'
 
 
 # %% NETWORK - EXAMPLE 1

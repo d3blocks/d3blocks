@@ -1068,7 +1068,7 @@ class D3Blocks():
         >>> # Load example data
         >>> import yfinance as yf
         >>> df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-        >>> d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+        >>> df = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
         >>> df = df.div(df.iloc[0])
         >>> df.head()
         >>> #
@@ -1093,13 +1093,13 @@ class D3Blocks():
         self.config['sort_on_date'] = sort_on_date
         self.config['columns'] = {'datetime': datetime}
 
-        # Convert to datetime
-        if datetime is not None:
-            df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
-            df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
-        else:
+        # Get datetime
+        if datetime is None:
             logger.info('Taking the index for datetime.')
             df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
+        else:
+            df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
+            df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
         # Check multi-line columns and merge those that are multi-line
         # df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
         # Check whitelist
@@ -1107,6 +1107,10 @@ class D3Blocks():
             logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
             Ikeep = list(map(lambda x: self.config['whitelist'].lower() in x.lower(), df.columns.values))
             df = df.iloc[:, Ikeep]
+
+        if df.shape[1]==0:
+            logger.info('All columns are removed. Change whitelist/blacklist setting.')
+            return None
 
         # Set default label properties
         if not hasattr(self, 'labels'):
@@ -1288,7 +1292,7 @@ class D3Blocks():
         """
         return d3network.adjmat2vec(df, min_weight=min_weight)
 
-    def import_example(self, data='movingbubbles', n=10000, c=100, date_start="2000-01-01 00:00:00", date_stop="2001-01-01 23:59:59", sep=',',):
+    def import_example(self, data, n=10000, c=100, date_start="17-12-1903 00:00:00", date_stop="17-12-1903 23:59:59"):
         """Import example dataset from github source.
 
         Description
@@ -1402,6 +1406,11 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         # Image slider demo
         before = 'https://erdogant.github.io/datasets/images/southern_nebula_before.jpg'
         after = 'https://erdogant.github.io/datasets/images/southern_nebula_after.jpg'
+        return before, after
+    elif data=='unsplash':
+        # Image slider demo
+        before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
+        after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
         return before, after
     elif data=='cancer':
         url='https://erdogant.github.io/datasets/cancer_dataset.zip'
