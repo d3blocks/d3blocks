@@ -1,7 +1,19 @@
 # %%
-import d3blocks
-print(dir(d3blocks))
-print(d3blocks.__version__)
+# import d3blocks
+# print(dir(d3blocks))
+# print(d3blocks.__version__)
+
+
+
+# %% TIMESERIES
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+df = d3.import_example('climate')
+
+# d3.timeseries(df[['date', 'Occupancy']], datetime='date', filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
+
 
 
 # %% HEATMAP - EXAMPLE 1
@@ -59,12 +71,12 @@ tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astyp
 
 # Two transitions
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', normalize=True)
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', normalize=True, figsize=[600, 400])
 
 # Three transitions
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', normalize=True)
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', normalize=True, figsize=[600, 400])
 
 
 # Set the size
