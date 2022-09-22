@@ -1,2 +1,8 @@
-include d3blocks/data/*.zip
-include d3blocks/data/*.txt
+include d3blocks/chord/d3js/*
+include d3blocks/imageslider/d3js/*
+include d3blocks/movingbubbles/d3js/*
+include d3blocks/particles/d3js/*
+include d3blocks/sankey/d3js/*
+include d3blocks/scatter/d3js/*
+include d3blocks/timeseries/d3js/*
+include d3blocks/violin/d3js/*

@@ -1,17 +1,17 @@
 from d3blocks.d3blocks import D3Blocks
 
-# import chord.Chord as Chord
-# import imageslider.Imageslider as Imageslider
 # import movingbubbles.Movingbubbles as Movingbubbles
-# import sankey.Sankey as Sankey
-# import scatter.Scatter as Scatter
 # import timeseries.Timeseries as Timeseries
+# import sankey.Sankey as Sankey
+# import imageslider.Imageslider as Imageslider
+# import chord.Chord as Chord
+# import scatter.Scatter as Scatter
 # import violin.Violin as Violin
 # import particles.Particles as Particles
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
-__version__ = '1.0.5'
+__version__ = '1.0.6'
 
 # module level doc-string
 __doc__ = """
