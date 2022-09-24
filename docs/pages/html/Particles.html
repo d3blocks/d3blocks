@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Sponsor" href="Documentation.html" />
+    <link rel="next" title="vec2adjmat" href="helper_functions.html" />
     <link rel="prev" title="Violin" href="Violin.html" /> 
 </head>
 
@@ -73,6 +73,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
@@ -207,14 +213,18 @@ A smaller spacing reults in more particles.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create chart with defaults</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3blocks&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Specify</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create customized chart</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3Blocks&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;D3Blocks.html&#39;</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">750</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Particles.html">https://d3blocks.github.io/d3blocks/pages/html/Particles.html</a></p></li>
+</ul>
 </section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
@@ -234,7 +244,7 @@ A smaller spacing reults in more particles.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Violin.html" class="btn btn-neutral float-left" title="Violin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Documentation.html" class="btn btn-neutral float-right" title="Sponsor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="helper_functions.html" class="btn btn-neutral float-right" title="vec2adjmat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

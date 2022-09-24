@@ -67,6 +67,11 @@ Content
    Violin
    Particles
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Helper functions
+   
+   helper_functions
 
 .. toctree::
   :maxdepth: 1

@@ -74,6 +74,14 @@ class D3Blocks():
     Returns
     -------
     None.
+
+    References
+    ----------
+    * D3Blocks: https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
+    * D3Graph: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
+    * Github : https://github.com/d3blocks/d3blocks
+    * Documentation: https://d3blocks.github.io/d3blocks/
+
     """
 
     def __init__(self, cmap='Set1', dt_format='%d-%m-%Y %H:%M:%S', whitelist=None, verbose=20):
@@ -155,12 +163,16 @@ class D3Blocks():
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>> #
-        >>> # Plot
+        >>> # Create chart with defaults
         >>> d3.particles('D3blocks')
-        >>> # 
-        >>> # Specify 
+        >>> #
+        >>> # Create customized chart
         >>> d3.particles('D3Blocks', filepath='D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
         >>> #
+
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Particles.html
 
         """
         # Cleaning
@@ -274,6 +286,10 @@ class D3Blocks():
         >>> # Plot
         >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
         >>> #
+
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Violin.html
 
         """
         if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
@@ -430,6 +446,10 @@ class D3Blocks():
         >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
         >>> #
 
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Scatter.html
+
         """
         # Cleaning
         self._clean(clean_config=False)
@@ -517,6 +537,10 @@ class D3Blocks():
         >>> # Plot
         >>> d3.chord(df)
 
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Chord.html
+
         """
         df = df.copy()
         self.config['chart'] ='chord'
@@ -597,6 +621,10 @@ class D3Blocks():
         >>> d3.imageslider(img_before, img_after, showfig=True)
         >>> #
 
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html
+
         """
         self.config['chart'] ='imageslider'
         self.config['img_before'] = img_before
@@ -673,6 +701,11 @@ class D3Blocks():
         >>> #
         >>> d3.heatmap(adjmat, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
         >>> #
+
+        References
+        ----------
+        * Github: https://github.com/erdogant/d3heatmap
+        * Documentation: https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
 
         """
         # Copy of data
@@ -766,6 +799,12 @@ class D3Blocks():
         >>> #
         >>> # Node properties
         >>> d3.D3graph.edge_properties
+
+        References
+        ----------
+        * Blog: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
+        * Github : https://github.com/erdogant/d3graph
+        * Documentation: https://erdogant.github.io/d3graph/
 
         """
         # Copy of data
@@ -866,6 +905,10 @@ class D3Blocks():
         >>> # Plot
         >>> d3.sankey(df, filepath='sankey.html')
 
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Sankey.html
+
         """
         df = df.copy()
         self.config['chart'] ='sankey'
@@ -877,7 +920,7 @@ class D3Blocks():
         self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
         self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
         self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
-        
+
         # Remvove quotes from source-target labels
         df = pre_processing(df)
 
@@ -985,6 +1028,10 @@ class D3Blocks():
         >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
         >>> #
 
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html
+
         """
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
@@ -1079,6 +1126,10 @@ class D3Blocks():
         >>> #
         >>> # Plot
         >>> d3.timeseries(df, fontsize=10)
+
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html
 
         """
         df = df.copy()
@@ -1284,6 +1335,8 @@ class D3Blocks():
         >>>
         >>> # Load example
         >>> df = d3.import_example('energy')
+        >>> Convert into adjmat
+        >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
         >>>
         >>> # Convert back to vector
         >>> vector = d3.adjmat2vec(adjmat)
@@ -1301,20 +1354,19 @@ class D3Blocks():
         Parameters
         ----------
         data : str
-            Name of datasets
-            * movingbubbles
-            * random_time
-            * timeseries
-            * energy
-            * stormofswords
-            * bigbang
-            * southern_nebula
-            * southern_nebula_internet
-            * cancer
-            * breast_cancer
-            * iris
-            * occupancy
-            * climate
+            "movingbubbles"
+            "random_time"
+            "timeseries"
+            "energy"
+            "stormofswords"
+            "bigbang"
+            "southern_nebula"
+            "southern_nebula_internet"
+            "cancer"
+            "breast_cancer"
+            "iris"
+            "occupancy"
+            "climate"
         n : int, (default: 1000).
             Number of events (samples).
         c : int, (default: 100).
@@ -1477,6 +1529,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
 
 # %%
 def make_dict_label_properties(labels, colors):
+    """Create dictionary with label properties."""
     dlabel = {}
     for i, cat in enumerate(labels):
         dlabel[cat] = {'id': i, 'color': colors[i], 'desc': cat, 'short': cat}
@@ -1484,6 +1537,7 @@ def make_dict_label_properties(labels, colors):
 
 
 def random_date(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
+    """Create random dateTimes."""
     return str_time_prop(start, end, prop, dt_format=dt_format, strftime=strftime)
 
 
@@ -1507,7 +1561,7 @@ def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True
         return time.localtime(ptime)
 
 
-# %% Download files from github source
+# %% Retrieve files files.
 def wget(url, writepath):
     """ Retrieve file from url.
 

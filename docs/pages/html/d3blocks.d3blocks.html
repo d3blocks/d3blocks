@@ -68,6 +68,12 @@
 <li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html">Sponsor</a></li>
@@ -136,6 +142,13 @@
 <dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>D3Blocks: <a class="reference external" href="https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4">https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4</a></p></li>
+<li><p>D3Graph: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
+<li><p>Github : <a class="reference external" href="https://github.com/d3blocks/d3blocks">https://github.com/d3blocks/d3blocks</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://d3blocks.github.io/d3blocks/">https://d3blocks.github.io/d3blocks/</a></p></li>
+</ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.adjmat2vec">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adjmat2vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.adjmat2vec" title="Permalink to this definition"></a></dt>
@@ -160,6 +173,8 @@
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Convert</span> <span class="n">into</span> <span class="n">adjmat</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adjmat</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert back to vector</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vector</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">adjmat2vec</span><span class="p">(</span><span class="n">adjmat</span><span class="p">)</span>
@@ -209,6 +224,10 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Chord.html">https://d3blocks.github.io/d3blocks/pages/html/Chord.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -278,6 +297,12 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Blog: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
+<li><p>Github : <a class="reference external" href="https://github.com/erdogant/d3graph">https://github.com/erdogant/d3graph</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -356,6 +381,11 @@ and then Pythonized.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Github: <a class="reference external" href="https://github.com/erdogant/d3heatmap">https://github.com/erdogant/d3heatmap</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -402,6 +432,10 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html">https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -412,20 +446,19 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>str</em>) – Name of datasets
-* movingbubbles
-* random_time
-* timeseries
-* energy
-* stormofswords
-* bigbang
-* southern_nebula
-* southern_nebula_internet
-* cancer
-* breast_cancer
-* iris
-* occupancy
-* climate</p></li>
+<li><p><strong>data</strong> (<em>str</em>) – “movingbubbles”
+“random_time”
+“timeseries”
+“energy”
+“stormofswords”
+“bigbang”
+“southern_nebula”
+“southern_nebula_internet”
+“cancer”
+“breast_cancer”
+“iris”
+“occupancy”
+“climate”</p></li>
 <li><p><strong>n</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em><em></em>) – Number of events (samples).</p></li>
 <li><p><strong>c</strong> (<em>int</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em></em>) – Number of classes.</p></li>
 <li><p><strong>date_start</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 00:00:00” : start date</p></li>
@@ -506,6 +539,10 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html">https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -550,14 +587,18 @@ A smaller spacing reults in more particles.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create chart with defaults</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3blocks&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Specify</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create customized chart</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3Blocks&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;D3Blocks.html&#39;</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">750</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Particles.html">https://d3blocks.github.io/d3blocks/pages/html/Particles.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -617,6 +658,10 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;sankey.html&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Sankey.html">https://d3blocks.github.io/d3blocks/pages/html/Sankey.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -696,6 +741,10 @@ None: The same color as for c is applied.
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Scatter.html">https://d3blocks.github.io/d3blocks/pages/html/Scatter.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -785,6 +834,10 @@ in a single chart.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html">https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -883,6 +936,10 @@ The width is determined based on the number of class labels x.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Violin.html">https://d3blocks.github.io/d3blocks/pages/html/Violin.html</a></p></li>
+</ul>
 </dd></dl>
 
 </dd></dl>
@@ -915,7 +972,8 @@ The width is determined based on the number of class labels x.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.make_dict_label_properties">
 <span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">make_dict_label_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.make_dict_label_properties" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Create dictionary with label properties.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.pre_processing">
@@ -937,7 +995,8 @@ The width is determined based on the number of class labels x.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.random_date">
 <span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">random_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%d-%m-%Y</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strftime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.random_date" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Create random dateTimes.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.remove_quotes">
