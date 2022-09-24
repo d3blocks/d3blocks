@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.4
+                1.0.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -111,13 +111,13 @@
              
   <section id="module-d3blocks.d3blocks.D3Blocks.movingbubbles">
 <span id="movingbubbles"></span><h1>MovingBubbles<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.movingbubbles" title="Permalink to this headline"></a></h1>
-<p>MovingBubbles graph.</p>
+<p>MovingBubbles block.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
-<p>The MovingBubbles graph provides insights into when one action follows the other across time. It can help to
+<p>The MovingBubbles provides insights into when one action follows the other across time. It can help to
 understand the movements of entities, and whether clusters occur at specific time points and state(s).
 It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
-force-directed and colliding nodes. The function d3.import_example(graph=’random_time’) is created to generate
+force-directed and colliding nodes. The function d3.import_example(‘random_time’) is created to generate
 a randomized dataset with various states. The input dataset should contain 3 columns;</p>
 <blockquote>
 <div><ul class="simple">
@@ -234,8 +234,10 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p>pd.DataFrame()</p>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -246,7 +248,7 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;2000-1-1 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;2000-1-1 23:59:59&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;17-12-1903 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;17-12-1903 23:59:59&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">movingbubbles</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;slow&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;fast&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;movingbubbles.html&#39;</span><span class="p">)</span>

@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.4
+                1.0.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -111,16 +111,16 @@
              
   <section id="module-d3blocks.d3blocks.D3Blocks.timeseries">
 <span id="timeseries"></span><h1>Timeseries<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this headline"></a></h1>
-<p>Timeseries graph.</p>
+<p>Timeseries block.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
-<p>The TimeSeries graph can be used in case a date-time element is available, and where the time-wise values
-directly follow up with each other. The TimeSeries graph supports now enabling/disabling columns of interest,
+<p>The TimeSeries can be used in case a date-time element is available, and where the time-wise values
+directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
 brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
-in a single graph.</p>
+in a single chart.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data.</p>
+<dd class="field-odd"><p>Input data. If the index is not datetime, specify the column with ‘datetime’</p>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
@@ -138,7 +138,7 @@ in a single graph.</p>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the graph.</p>
+<dd class="field-odd"><p>Open the window to show the chart.</p>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
@@ -166,7 +166,7 @@ in a single graph.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">([</span><span class="s2">&quot;TSLA&quot;</span><span class="p">,</span> <span class="s2">&quot;TWTR&quot;</span><span class="p">,</span> <span class="s2">&quot;META&quot;</span><span class="p">,</span> <span class="s2">&quot;AMZN&quot;</span><span class="p">,</span> <span class="s2">&quot;AAPL&quot;</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;2019-01-01&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;2021-12-31&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Adj Close&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Adj Close&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
