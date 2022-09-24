@@ -76,8 +76,6 @@ Content
   Coding quality
   d3blocks.d3blocks
 
-* :ref:`genindex`
-
 
 
 Indices and tables
