@@ -77,9 +77,9 @@ class D3Blocks():
 
     References
     ----------
-    * D3Blocks: https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
-    * D3Graph: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
-    * Github : https://github.com/d3blocks/d3blocks
+    * Blog - D3Blocks: https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
+    * Blog - D3Graph: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
+    * Github: https://github.com/d3blocks/d3blocks
     * Documentation: https://d3blocks.github.io/d3blocks/
 
     """
