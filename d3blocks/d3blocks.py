@@ -48,37 +48,36 @@ logger = logging.getLogger()
 
 
 class D3Blocks():
-    """D3Blocks."""
+    """D3Blocks.
+
+    Parameters
+    ----------
+    cmap : String, optional
+        'Set1'       (default)
+        'Set2'
+        'rainbow'
+        'bwr'        Blue-white-red
+        'binary' or 'binary_r'
+        'seismic'    Blue-white-red
+        'Blues'      white-to-blue
+        'Reds'       white-to-red
+        'Pastel1'    Discrete colors
+        'Paired'     Discrete colors
+        'Set1'       Discrete colors
+    dt_format : str
+        '%d-%m-%Y %H:%M:%S'.
+    whitelist : str, optional
+        Keep only columns containing this (sub)string (case insensitive)
+    verbose : int, optional
+        Verbose message. The default is 20.
+
+    Returns
+    -------
+    None.
+    """
 
     def __init__(self, cmap='Set1', dt_format='%d-%m-%Y %H:%M:%S', whitelist=None, verbose=20):
-        """Initialize d3blocks with user-defined parameters.
-
-        Parameters
-        ----------
-        cmap : String, optional
-            'Set1'       (default)
-            'Set2'
-            'rainbow'
-            'bwr'        Blue-white-red
-            'binary' or 'binary_r'
-            'seismic'    Blue-white-red
-            'Blues'      white-to-blue
-            'Reds'       white-to-red
-            'Pastel1'    Discrete colors
-            'Paired'     Discrete colors
-            'Set1'       Discrete colors
-        dt_format : str
-            '%d-%m-%Y %H:%M:%S'.
-        whitelist : str, optional
-            Keep only columns containing this (sub)string (case insensitive)
-        verbose : int, optional
-            Verbose message. The default is 20.
-
-        Returns
-        -------
-        None.
-
-        """
+        """Initialize d3blocks with user-defined parameters."""
         # Clean
         self._clean(clean_config=True)
         # Some library compatibily checks
