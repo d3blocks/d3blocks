@@ -55,7 +55,7 @@ d3 = D3Blocks()
 
 |  Block                                                                             |    Function                  |
 |------------------------------------------------------------------------------------|------------------------------|
-| [D3graph (network)](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html)   | ``` d3.d3graph() ```         |
+| [D3graph (network)](https://erdogant.github.io/d3graph/pages/html/index.html)      | ``` d3.d3graph() ```         |
 | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         |
 | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  |
 | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        |
