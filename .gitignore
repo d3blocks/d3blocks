@@ -9,6 +9,7 @@ __pycache__/
 # Ignore data
 d3blocks/data
 demo/
+libraries/
 
 # Distribution / packaging
 .Python
