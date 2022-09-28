@@ -1638,6 +1638,10 @@ def pre_processing(df):
     df : pd.DataFrame()
 
     """
+    # Create strings from source-target
+    df['source'] = df['source'].astype(str)
+    df['target'] = df['target'].astype(str)
+    # Remove quotes and special chars
     df = remove_quotes(df)
     df = remove_special_chars(df)
     return df
