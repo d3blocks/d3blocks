@@ -1,7 +1,7 @@
 from copy import deepcopy
 import unittest
 from d3blocks import D3Blocks
-
+import pandas as pd
 
 class Testd3blocks(unittest.TestCase):
 
@@ -19,15 +19,19 @@ class Testd3blocks(unittest.TestCase):
         # Create the heatmap
         d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700))
 
+
     def test_sankey(self):
         # Initialize
         d3 = D3Blocks()
-        
         # Import example
         df = d3.import_example('energy')
-        
         # Link settings
         d3.sankey(df, link={"color": "source-target"})
+
+        d3 = D3Blocks()
+        d = [{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}]
+        df = pd.DataFrame(d)
+        d3.sankey(df, showfig=False)
 
     def test_d3graph(self):
         # Initialize
@@ -36,21 +40,22 @@ class Testd3blocks(unittest.TestCase):
         df = d3.import_example('energy')
         # Initialize Network chart but do not yet show the chart.
         d3.d3graph(df, showfig=False)
-        
         # Color node on clustering
         d3.D3graph.set_node_properties(color='cluster')
-        
         # Make adjustments to the node: Thermal_generation
         d3.D3graph.node_properties['Thermal_generation']['size']=20
         d3.D3graph.node_properties['Thermal_generation']['edge_color']='#000fff' # Blue node edge
         d3.D3graph.node_properties['Thermal_generation']['edge_size']=3 # Node-edge Size
-        
         # Make adjustments to the edge: 'Solar', 'Solar_Thermal'
         d3.D3graph.edge_properties['Solar', 'Solar_Thermal']['color']='#000fff'
         d3.D3graph.edge_properties['Solar', 'Solar_Thermal']['weight_scaled']=10
-        
         # Show the network graph
         d3.D3graph.show()
+
+        d3 = D3Blocks()
+        d = [{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}]
+        df = pd.DataFrame(d)
+        d3.d3graph(df, showfig=True)
 
     def test_chord(self):
         # Initialize
@@ -59,6 +64,11 @@ class Testd3blocks(unittest.TestCase):
         df = d3.import_example('energy')
         # Link settings
         d3.chord(df, filepath='chord_demo.html')
+
+        d3 = D3Blocks()
+        d = [{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}]
+        df = pd.DataFrame(d)
+        d3.chord(df, showfig=False)
 
     def test_timeseries(self):
         # Import library.
@@ -69,16 +79,6 @@ class Testd3blocks(unittest.TestCase):
         df = d3.import_example('climate')
         # Create the timeseries chart.
         d3.timeseries(df, datetime='date', fontsize=10)
-
-    def test_movingbubbles(self):
-        # Import library
-        from d3blocks import D3Blocks
-        # Set color scheme
-        d3 = D3Blocks(cmap='Set1')
-        # Generate random data with various states
-        df = d3.import_example('random_time', n=10000, c=500, date_start="1-1-2000 00:10:05", date_stop="1-1-2001 23:59:59")
-        # Make the moving bubbles chart.
-        d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
     def test_imageslider(self):
         # Initialize
@@ -136,3 +136,13 @@ class Testd3blocks(unittest.TestCase):
         d3 = D3Blocks()
         # Make particles
         d3.particles('D3Blocks', collision=0.05, spacing=10, figsize=[1200, 500])
+
+    def test_movingbubbles(self):
+        # Import library
+        from d3blocks import D3Blocks
+        # Set color scheme
+        d3 = D3Blocks(cmap='Set1')
+        # Generate random data with various states
+        df = d3.import_example('random_time', n=10000, c=500, date_start="1-1-2000 00:10:05", date_stop="1-1-2001 23:59:59")
+        # Make the moving bubbles chart.
+        d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
