@@ -487,6 +487,8 @@ class D3Blocks():
 
     def chord(self,
               df,
+              opacity=0.8,
+              fontsize=8,
               title='Chord - D3blocks',
               filepath='chord.html',
               figsize=[1200, 1200],
@@ -507,6 +509,10 @@ class D3Blocks():
             'source'
             'target'
             'weight'
+        opacity: float or list/array [0-1]
+            Opacity of the line.
+        fontsize : int, (default: 8)
+            Fontsize.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -545,14 +551,17 @@ class D3Blocks():
         df = df.copy()
         self.config['chart'] ='chord'
         self.config['filepath'] = self.set_path(filepath)
+        self.config['fontsize'] = fontsize
         self.config['title'] = title
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
         # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
+        if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=df.shape[0]): raise Exception(logger.error('input parameter "opacity" should be of same size of dataframe.'))
 
         # Remvove quotes from source-target labels
         df = pre_processing(df)
+        df = Chord.preprocessing(df, opacity, logger=logger)
 
         # Set default label properties
         if not hasattr(self, 'labels'):

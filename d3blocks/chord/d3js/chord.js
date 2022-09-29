@@ -1766,7 +1766,7 @@
           .padAngle(1 / innerRadius);
 
       const group = svg.append("g")
-          .attr("font-size", 10)
+          .attr("font-size", {{ FONTSIZE }})
           .attr("font-family", "sans-serif")
           .selectAll("g")
           .data(chords.groups)
@@ -1774,6 +1774,7 @@
 
       group.append("path")
           .attr("fill", d => color(names[d.index]))
+          .attr("fill-opacity", 0.75)  // OUTER CIRCLE OPACITY
           .attr("d", arc);
 
       group.append("text")
@@ -1788,9 +1789,9 @@
           .text(d => names[d.index]);
 
       group.append("title")
-          .text(d => `${names[d.index]}
-${sum(chords, c => (c.source.index === d.index) * c.source.value)} outgoing →
-${sum(chords, c => (c.target.index === d.index) * c.source.value)} incoming ←`);
+        .text(d => `${names[d.index]}
+        ${sum(chords, c => (c.source.index === d.index) * c.source.value)} outgoing →
+        ${sum(chords, c => (c.target.index === d.index) * c.source.value)} incoming ←`);
 
       svg.append("g")
           .attr("fill-opacity", 0.75)

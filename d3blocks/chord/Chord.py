@@ -7,11 +7,22 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 
+import pandas as pd
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+
+
+# %% Preprocessing
+def preprocessing(df, opacity=0.8, logger=None):
+    """Preprocessing."""
+    # In case only one opacity is defined. Set all points to this size.
+    if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, df.shape[0])
+    df['opacity'] = opacity
+    # return
+    return df
 
 
 def show(df, config, labels=None):
@@ -65,6 +76,7 @@ def write_html(X, config):
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
+        'FONTSIZE': config['fontsize'],
     }
 
     jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
@@ -111,7 +123,7 @@ def get_data_ready_for_d3(df, labels):
     # source_target_id = list(zip(list(map(lambda x: labels.get(x)['id'], df['source'])),  list(map(lambda x: labels.get(x)['id'], df['target']))))
     X = X + ' "links":['
     for _, row in df.iterrows():
-        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight']) + '},'
+        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight'])  + ',"opacity":' + str(row['opacity']) + '},'
     X = X[:-1] + ']}'
 
     # Return
