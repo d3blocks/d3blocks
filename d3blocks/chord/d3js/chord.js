@@ -1792,9 +1792,11 @@
         .text(d => `${names[d.index]}
         ${sum(chords, c => (c.source.index === d.index) * c.source.value)} outgoing →
         ${sum(chords, c => (c.target.index === d.index) * c.source.value)} incoming ←`);
-
+    
+    // console.log(data)
+    
       svg.append("g")
-          .attr("fill-opacity", 0.75)
+          .attr("fill-opacity", 0.75) // OPACITY OF LINES
           .selectAll("path")
           .data(chords)
           .join("path")
@@ -1802,7 +1804,29 @@
           .attr("fill", d => color(names[d.target.index]))
           .attr("d", ribbon)
           .append("title")
-          .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`);
+          .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`)
+//		  .on("mouseover", mousover)
+//		  .on("mouseout", mouseout)
+          ;
+
+//	  function mousover(event, d) {
+//		link.style("mix-blend-mode", null);
+//		d3.select(this).attr("font-weight", "bold");
+//		d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", "#00f").raise();
+//		d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", "#00f").attr("font-weight", "bold");
+//		d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", "#f00").raise();
+//		d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", "#f00").attr("font-weight", "bold");
+//	  }
+//
+//	  function mouseout(event, d) {
+//		link.style("mix-blend-mode", "multiply");
+//		d3.select(this).attr("font-weight", null);
+//		d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", null);
+//		d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", null).attr("font-weight", null);
+//		d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", null);
+//		d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", null).attr("font-weight", null);
+//	  }
+
 
       return svg.node();
   }
