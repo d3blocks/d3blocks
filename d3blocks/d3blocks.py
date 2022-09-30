@@ -25,6 +25,7 @@ import d3blocks.scatter.Scatter as Scatter
 import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
 
+# #### DEBUG ONLY ####
 # import movingbubbles.Movingbubbles as Movingbubbles
 # import timeseries.Timeseries as Timeseries
 # import sankey.Sankey as Sankey
@@ -33,6 +34,7 @@ import d3blocks.particles.Particles as Particles
 # import scatter.Scatter as Scatter
 # import violin.Violin as Violin
 # import particles.Particles as Particles
+# #####################
 
 import d3graph as d3network
 from d3heatmap import d3heatmap

@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example('energy')
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
+# Chord diagram
+df['opacity'] = 0.75
+df['opacity'].iloc[0] = 0.1
+d3.chord(df, filepath='c://temp//chord_demo.html', figsize=[900, 900], opacity=df['opacity'].values, fontsize=10)
+
 
 # %% TIMESERIES
 import yfinance as yf
@@ -411,19 +427,6 @@ d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, f
 d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo3.html', xlim=[1, 12], ylim=[])
 
 
-# %% CHORD - EXAMPLE 2
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-df = d3.import_example('energy')
-# df = d3.import_example('bigbang')
-# df = d3.import_example('stormofswords')
-# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-
-# Chord diagram
-d3.chord(df, filepath='chord_demo.html', figsize=[900, 900])
 
 # %% CHORD - EXAMPLE 1
 from d3blocks import D3Blocks

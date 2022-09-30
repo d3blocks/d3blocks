@@ -59,7 +59,7 @@ Change Edge properties
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="800px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="775px" width="775px", frameBorder="0"></iframe>
 
 
 .. raw:: html

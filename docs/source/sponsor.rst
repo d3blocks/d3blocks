@@ -1,13 +1,13 @@
 .. tip::
 	If you ❤️ this project, you can help in various ways.
 
-	* Become a **Sponsor**!
-	* Follow me on medium! Go to my `medium profile <https://erdogant.medium.com/>`_ and press "follow".
-	* **Star** this repo at the `github page <https://github.com/erdogant/d3blocks/>`_.
-	* Buy me a coffee! I ❤️ coffee :)
+	* Become a `Sponsor <https://github.com/sponsors/erdogant?o=esb/>`_!
+	* `Buy <https://www.buymeacoffee.com/erdogant>`_ me a coffee! I ❤️ coffee :)
+	* `Donate <https://erdogant.github.io/donate/?currency=USD&amount=1000>`_ in Bitcoin.
+	* Follow me on medium! Go to my `medium profile <https://erdogant.medium.com/>`_ and press *follow*.
+	* **Star** this repo at the github page.
 	* Other contributions can be in the form of feature requests, idea discussions, reporting bugs, opening pull requests.
-	
-	Read more why becoming an **sponsor** is important on the **Sponsor Github Page** (button below).
+
 	Cheers Mate.
 
 .. raw:: html

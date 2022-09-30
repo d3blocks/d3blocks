@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.6
+                1.0.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,10 +118,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.heatmap">
-<span id="heatmap"></span><h1>Heatmap<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this headline"></a></h1>
+<span id="heatmap"></span><h1>Heatmap<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this heading"></a></h1>
 <p>Heatmap block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>heatmap is a module in d3blocks to create interactive heatmaps.
 The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
 In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
@@ -198,10 +200,8 @@ and then Pythonized.</p>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>None.</p>
+<dt class="field-odd">rtype</dt>
+<dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -222,7 +222,7 @@ and then Pythonized.</p>
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
 <span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
@@ -242,7 +242,7 @@ and then Pythonized.</p>
 </div>
 </section>
 <section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this headline"></a></h2>
+<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\heatmap.html" height="600px" width="750px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
