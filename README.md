@@ -14,6 +14,7 @@
 [![Downloads](https://pepy.tech/badge/d3blocks/month)](https://pepy.tech/project/d3blocks)
 [![Downloads](https://pepy.tech/badge/d3blocks)](https://pepy.tech/project/d3blocks)
 [![Sphinx](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
+[![Medium](https://img.shields.io/badge/Medium-Blog-green)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog)
 
 
 -------------------------------------------------------------------------
