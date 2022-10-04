@@ -17,7 +17,7 @@ img_before, img_after = d3.import_example('southern_nebula')
 # img_after = cv2.imread(img_after, -1)
 
 # Make comparison
-d3.imageslider(img_before, img_after, showfig=True, filepath='c:/temp/imageslider.html', figsize=[400, 400], scale=True, colorscale=2)
+d3.imageslider(img_before, img_after, showfig=True, filepath='c:/temp/imageslider.html', figsize=[400, 400], scale=True, colorscale=0)
 # d3.imageslider(img_before, img_after, showfig=True, figsize=[None, None])
 
 
