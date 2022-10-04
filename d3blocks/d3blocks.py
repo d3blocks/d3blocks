@@ -14,7 +14,6 @@ import random
 import time
 import colourmap
 import unicodedata
-import re
 
 import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
 import d3blocks.timeseries.Timeseries as Timeseries
@@ -578,10 +577,12 @@ class D3Blocks():
     def imageslider(self,
                     img_before,
                     img_after,
+                    scale=True,
+                    colorscale=-1,
                     background='#000000',
                     title='Imageslider - D3blocks',
                     filepath='imageslider.html',
-                    figsize=[800, None],
+                    figsize=[None, None],
                     showfig=True,
                     overwrite=True):
         """Imageslider Block.
@@ -599,6 +600,17 @@ class D3Blocks():
             absolute path to before image.
         img_after : String
             absolute path to after image.
+        scale : bool, default: True
+            Scale image in range [0, 255], by img*(255/max(img))
+            True: Scaling image
+            False: Leave image untouched
+        colorscale : int, default: -1 (untouched)
+            colour-scaling from opencv.
+            * 0: cv2.IMREAD_GRAYSCALE
+            * 1: cv2.IMREAD_COLOR
+            * 2: cv2.IMREAD_ANYDEPTH
+            * 8: cv2.COLOR_GRAY2RGB
+            * -1: cv2.IMREAD_UNCHANGED
         background : String (default: '#000000')
             Background color.
         title : String, (default: None)
@@ -640,23 +652,19 @@ class D3Blocks():
         self.config['chart'] ='imageslider'
         self.config['img_before'] = img_before
         self.config['img_after'] = img_after
+        self.config['scale'] = scale
+        self.config['colorscale'] = colorscale
         self.config['background'] = background
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
-        self.config['alt_before'] = os.path.basename(img_before)
-        self.config['alt_after'] = os.path.basename(img_after)
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
 
-        # Check whether url, otherwise take absolute path
-        if not check_url(img_before):
-            self.config['img_before'] = os.path.abspath(img_before)
-        if not check_url(img_after):
-            self.config['img_after'] = os.path.abspath(img_after)
-
+        # Preprocessing
+        self.config = Imageslider.preprocessing(self.config, logger=logger)
         # Create the plot
-        self.config = Imageslider.show(self.config)
+        self.config = Imageslider.show(self.config, logger)
         # Open the webbrowser
         if self.config['showfig']: self.showfig()
 
@@ -1706,18 +1714,3 @@ def library_compatibility_checks():
     #     logger.error('Networkx version should be >= 2.5')
     #     logger.info('Hint: pip install -U networkx')
     pass
-
-
-# %% Check url
-def check_url(url):
-    regex = re.compile(
-            r'^(?:http|ftp)s?://' # http:// or https://
-            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-            r'localhost|' #localhost...
-            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-            r'(?::\d+)?' # optional port
-            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    
-    isvalid = re.match(regex, url) is not None
-    # Return
-    return isvalid
