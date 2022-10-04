@@ -200,12 +200,6 @@ def show(df, config):
         config['mousemove'] = '.on("mousemove", mousemove)'
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
 
-    # Enable/disable radiobutton based on availability x1y1 coordinates.
-    # config['radio_button_visible'] = ["", "", ""]
-    # if (config['label_radio'] is None):
-        # config['radio_button_visible'] = "display:none;"
-        # config['label_radio'] = ["", ""]
-
     # Write to HTML
     write_html(X, config)
     # Return config
