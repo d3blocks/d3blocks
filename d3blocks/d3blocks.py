@@ -1472,6 +1472,11 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         # Image slider demo
         url='https://erdogant.github.io/datasets/southern_nebula.zip'
         ext='.jpg'
+    elif data=='southern_nebula':
+        # Image slider demo
+        before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
+        after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
+        return before, after
     elif data=='southern_nebula_internet':
         # Image slider demo
         before = 'https://erdogant.github.io/datasets/images/southern_nebula_before.jpg'
