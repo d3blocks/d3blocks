@@ -15,9 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -33,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.7
+                1.0.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -118,10 +116,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.imageslider">
-<span id="imageslider"></span><h1>Imageslider<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this heading"></a></h1>
+<span id="imageslider"></span><h1>Imageslider<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this headline"></a></h1>
 <p>Imageslider Block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
 <p>The imageslider allows comparison of two images. This is useful in case there is a before and after state.
 For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
 Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
@@ -138,6 +136,25 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </dd>
 <dt class="field-even">type img_after</dt>
 <dd class="field-even"><p>String</p>
+</dd>
+<dt class="field-odd">param scale</dt>
+<dd class="field-odd"><p>Scale image in range [0, 255], by img*(255/max(img))
+True: Scaling image
+False: Leave image untouched</p>
+</dd>
+<dt class="field-even">type scale</dt>
+<dd class="field-even"><p>bool, default: True</p>
+</dd>
+<dt class="field-odd">param colorscale</dt>
+<dd class="field-odd"><p>colour-scaling from opencv.
+* 0: cv2.IMREAD_GRAYSCALE
+* 1: cv2.IMREAD_COLOR
+* 2: cv2.IMREAD_ANYDEPTH
+* 8: cv2.COLOR_GRAY2RGB
+* -1: cv2.IMREAD_UNCHANGED</p>
+</dd>
+<dt class="field-even">type colorscale</dt>
+<dd class="field-even"><p>int, default: -1 (untouched)</p>
 </dd>
 <dt class="field-odd">param background</dt>
 <dd class="field-odd"><p>Background color.</p>
@@ -182,17 +199,25 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula&#39;</span><span class="p">)</span>  <span class="c1"># Local location</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula_internet&#39;</span><span class="p">)</span>  <span class="c1"># Internet location</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Local images</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Internet location</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula_internet&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Read the image in array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img_after</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_after</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">imageslider</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">imageslider</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">imageslider</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colorscale</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">])</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -201,7 +226,7 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
 <p>The input dataset are two images.</p>
 <table class="docutils align-center" id="id1">
 <caption><span class="caption-text">Two images with different resolution from the Southern Nebula.</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
@@ -217,7 +242,7 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </table>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\imageslider.html" height="600px" width="700px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
