@@ -3,6 +3,24 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% IMGE SLIDER
+import cv2
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Import example
+img_before, img_after = d3.import_example('southern_nebula')
+
+# Read the image
+img_before = cv2.imread(img_before, -1)
+# img_after = cv2.imread(img_after, -1)
+
+# Make comparison
+# d3.imageslider(img_before, img_after, showfig=True, filepath='c:/temp/imageslider.html', figsize=[None, None], scale=True)
+d3.imageslider(img_before, img_after, showfig=True, figsize=[None, None])
+
+
 # %% CHORD - EXAMPLE 2
 from d3blocks import D3Blocks
 
