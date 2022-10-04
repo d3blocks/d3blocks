@@ -628,8 +628,8 @@ class D3Blocks():
         -------
         None
 
-        Example 1
-        ---------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>>
