@@ -135,7 +135,11 @@ def write_html(X, config):
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
     }
 
-    jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    try:
+        jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    except:
+        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.movingbubbles', package_path='d3js'))
+
     index_template = jinja_env.get_template('movingbubbles.html.j2')
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))

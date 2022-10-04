@@ -79,7 +79,11 @@ def write_html(X, config):
         'FONTSIZE': config['fontsize'],
     }
 
-    jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    try:
+        jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    except:
+        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.chord', package_path='d3js'))
+
     index_template = jinja_env.get_template('chord.html.j2')
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))

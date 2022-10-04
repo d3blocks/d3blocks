@@ -102,7 +102,11 @@ def write_html(X, config):
         'node_stroke_color': config['node']['color'],
     }
 
-    jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    try:
+        jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    except:
+        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.sankey', package_path='d3js'))
+
     index_template = jinja_env.get_template('sankey.html.j2')
     index_file = Path(config['filepath'])
     if config['overwrite'] and os.path.isfile(index_file):

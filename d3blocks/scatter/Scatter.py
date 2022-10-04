@@ -241,7 +241,13 @@ def write_html(X, config):
         'MOUSELEAVE': config['mouseleave'],
     }
 
-    jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    # print('NAME')
+    # print(__name__)
+    try:
+        jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
+    except:
+        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.scatter', package_path='d3js'))
+
     index_template = jinja_env.get_template('scatter.html.j2')
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))
