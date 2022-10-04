@@ -628,21 +628,29 @@ class D3Blocks():
         -------
         None
 
-        Examples
-        --------
+        Example 1
+        ---------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>> #
+        >>>
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>> #
-        >>> # Load example data
-        >>> img_before, img_after = d3.import_example('southern_nebula')  # Local location
-        >>> img_before, img_after = d3.import_example('southern_nebula_internet')  # Internet location
-        >>> #
+        >>>
+        >>> # Local images
+        >>> img_before, img_after = d3.import_example('southern_nebula')
+        >>>
+        >>> # Internet location
+        >>> img_before, img_after = d3.import_example('southern_nebula_internet')
+        >>>
+        >>> # Read the image in array
+        >>> img_before = cv2.imread(img_before, -1)
+        >>> img_after = cv2.imread(img_after, -1)
+        >>>
         >>> # Plot
-        >>> d3.imageslider(img_before, img_after, showfig=True)
-        >>> #
+        >>> d3.imageslider(img_before, img_after)
+        >>>
+        >>> # Plot
+        >>> d3.imageslider(img_before, img_after, showfig=True, scale=True, colorscale=2, figsize=[400, 400])
 
         References
         ----------
