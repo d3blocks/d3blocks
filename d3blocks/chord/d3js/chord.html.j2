@@ -21,11 +21,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
     
     const jsonData = {{ json_data }};
 
-    const data = jsonData.links.map(({source, target, value, opacity}) => ({
+    const data = jsonData.links.map(({source, target, value, opacity, color}) => ({
         source: jsonData.nodes[source].name,
         target: jsonData.nodes[target].name,
         value,
         opacity,
+        color,
     }))
 
     document.addEventListener('DOMContentLoaded', function () {
