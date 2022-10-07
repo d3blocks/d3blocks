@@ -3,6 +3,23 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example('bigbang')
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
+# Chord diagram
+df['opacity'] = 0.75
+df['opacity'].iloc[0] = 0.1
+d3.chord(df, filepath='c://temp//chord_demo.html', figsize=[900, 900], opacity=df['opacity'].values, fontsize=10)
+
+
 # %% IMGE SLIDER
 import cv2
 
@@ -653,7 +670,7 @@ d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample
 # %% Moving bubbles
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
@@ -667,7 +684,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(cmap='Set1')
 # Import example
 # df = d3.import_example('movingbubbles')
-df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 
