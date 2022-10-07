@@ -488,8 +488,10 @@ class D3Blocks():
 
     def chord(self,
               df,
+              c=None,
               opacity=0.8,
               fontsize=8,
+              cmap='tab20',
               title='Chord - D3blocks',
               filepath='chord.html',
               figsize=[1200, 1200],
@@ -510,10 +512,24 @@ class D3Blocks():
             'source'
             'target'
             'weight'
+        c: list/array of hex colors with same size as (x,y)
+            '#ffffff' : All dots are get the same hex color.
+            None: The same color as for c is applied.
+            ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
         opacity: float or list/array [0-1]
             Opacity of the line.
         fontsize : int, (default: 8)
             Fontsize.
+        cmap : String (default: 'Set2')
+            Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
+            'tab20', 'tab20b', 'tab20c'
+            'Set1', 'Set2'
+            'seismic'    Blue-white-red
+            'Blues'      white-to-blue
+            'Reds'       white-to-red
+            'Pastel1'    Discrete colors
+            'Paired'     Discrete colors
+            'Set1'       Discrete colors
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -557,12 +573,13 @@ class D3Blocks():
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
+        self.config['cmap'] = cmap
         # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
         if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=df.shape[0]): raise Exception(logger.error('input parameter "opacity" should be of same size of dataframe.'))
 
         # Remvove quotes from source-target labels
         df = pre_processing(df)
-        df = Chord.preprocessing(df, opacity, logger=logger)
+        df = Chord.preprocessing(df, opacity, c, cmap, logger=logger)
 
         # Set default label properties
         if not hasattr(self, 'labels'):

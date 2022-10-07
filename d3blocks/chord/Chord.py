@@ -7,20 +7,30 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 
-import pandas as pd
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+try:
+    from .. utils import set_colors
+except:
+    from utils import set_colors
+from ismember import ismember
 
 
 # %% Preprocessing
-def preprocessing(df, opacity=0.8, logger=None):
+def preprocessing(df, opacity=0.8, c=None, cmap='Set2', logger=None):
     """Preprocessing."""
     # In case only one opacity is defined. Set all points to this size.
     if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, df.shape[0])
     df['opacity'] = opacity
+    # colors
+    if c is None:
+        # Get unique source-target to make sure they get the same color.
+        uidf = df.groupby(['source', 'target']).size().reset_index()
+        _, df['labels'] = ismember(df[['source', 'target']], uidf[['source', 'target']], method='rows')
+        df['color'], _ = set_colors(df, df['labels'].values.astype(str), cmap, c_gradient=None)
     # return
     return df
 
@@ -127,7 +137,7 @@ def get_data_ready_for_d3(df, labels):
     # source_target_id = list(zip(list(map(lambda x: labels.get(x)['id'], df['source'])),  list(map(lambda x: labels.get(x)['id'], df['target']))))
     X = X + ' "links":['
     for _, row in df.iterrows():
-        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight'])  + ',"opacity":' + str(row['opacity']) + '},'
+        X = X + '{"source":' + str(row['source_id']) + ',"target":' + str(row['target_id']) + ',"value":' + str(row['weight']) + ',"opacity":' + str(row['opacity']) + ',"color":' + '"' + str(row['color']) + '"' + '},'
     X = X[:-1] + ']}'
 
     # Return
