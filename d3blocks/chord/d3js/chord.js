@@ -1734,7 +1734,7 @@
 
   function generateChord({data, width= 954, height = width}) {
       const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending);
-      const color = ordinal().domain(names).range(schemeTableau10); // TODO wut??
+      const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
 
       const innerRadius = Math.min(width, height) * 0.5 - 150;
       const outerRadius = innerRadius + 10;
@@ -1773,7 +1773,7 @@
           .join("g");
 
       group.append("path")
-          .attr("fill", d => color(names[d.index]))
+          .attr("fill", d => color_func(names[d.index]))
           .attr("fill-opacity", 0.75)  // OUTER CIRCLE OPACITY
           .attr("d", arc);
 
@@ -1801,7 +1801,7 @@
           .data(chords)
           .join("path")
           .style("mix-blend-mode", "multiply")
-          .attr("fill", d => color(names[d.target.index]))
+          .attr("fill", d => color_func(names[d.target.index]))
           .attr("d", ribbon)
           .append("title")
           .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`)
