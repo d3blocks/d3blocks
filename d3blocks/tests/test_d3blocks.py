@@ -2,7 +2,10 @@ from copy import deepcopy
 import unittest
 from d3blocks import D3Blocks
 import pandas as pd
-import cv2
+try:
+    import cv2
+except:
+    raise ImportError('cv2 must be installed manually. Try to: <pip install opencv-python>')
 
 class Testd3blocks(unittest.TestCase):
 
@@ -92,9 +95,9 @@ class Testd3blocks(unittest.TestCase):
         img_after_X = cv2.imread(img_after_path, -1)
 
         # Make image slider graph
-        d3.imageslider(img_before_path, img_after_path, showfig=True, scale=True, colorscale=2, figsize=[400, 400])
         d3.imageslider(img_before_url, img_after_url, showfig=False, scale=False)
         d3.imageslider(img_before_X, img_after_X, showfig=False)
+        d3.imageslider(img_before_path, img_after_path, showfig=True, scale=True, colorscale=2, figsize=[400, 400])
 
         d3.imageslider(img_before_path, img_after_url, showfig=False)
         d3.imageslider(img_before_url, img_after_X, showfig=False)
@@ -154,8 +157,6 @@ class Testd3blocks(unittest.TestCase):
         d3.particles('D3Blocks', collision=0.05, spacing=10, figsize=[1200, 500])
 
     def test_movingbubbles(self):
-        # Import library
-        from d3blocks import D3Blocks
         # Set color scheme
         d3 = D3Blocks(cmap='Set1')
         # Generate random data with various states
