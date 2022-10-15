@@ -3,4 +3,7 @@ pandas
 tqdm
 colourmap
 jinja2
+d3graph
+d3heatmap
 requests
+ismember>=1.0.1
