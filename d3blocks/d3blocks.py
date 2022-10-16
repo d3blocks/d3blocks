@@ -13,7 +13,8 @@ import webbrowser
 import random
 import time
 import colourmap
-import unicodedata
+from typing import List, Union, Tuple
+from ismember import ismember
 
 import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
 import d3blocks.timeseries.Timeseries as Timeseries
@@ -23,6 +24,7 @@ import d3blocks.chord.Chord as Chord
 import d3blocks.scatter.Scatter as Scatter
 import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
+from d3blocks.utils import pre_processing, remove_quotes
 
 # #### DEBUG ONLY ####
 # import movingbubbles.Movingbubbles as Movingbubbles
@@ -33,6 +35,13 @@ import d3blocks.particles.Particles as Particles
 # import scatter.Scatter as Scatter
 # import violin.Violin as Violin
 # import particles.Particles as Particles
+# from .. utils import pre_processing, remove_quotes
+#
+# try:
+#     from .. utils import pre_processing, remove_quotes
+# except:
+#     from utils import pre_processing, remove_quotes
+#
 # #####################
 
 import d3graph as d3network
@@ -1699,62 +1708,6 @@ def set_logger(verbose=20):
 def disable_tqdm():
     """Set the logger for verbosity messages."""
     return (True if (logger.getEffectiveLevel()>=30) else False)
-
-
-def pre_processing(df):
-    """Pre-processing of the input dataframe.
-
-    Parameters
-    ----------
-    df : pd.DataFrame()
-
-    Returns
-    -------
-    df : pd.DataFrame()
-
-    """
-    # Create strings from source-target
-    df['source'] = df['source'].astype(str)
-    df['target'] = df['target'].astype(str)
-    # Remove quotes and special chars
-    df = remove_quotes(df)
-    df = remove_special_chars(df)
-    return df
-
-
-def remove_quotes(df):
-    """Pre-processing of the input dataframe.
-
-    Parameters
-    ----------
-    df : pd.DataFrame()
-
-    Returns
-    -------
-    df : pd.DataFrame()
-
-    """
-    Iloc = df.dtypes==object
-    df.loc[:, Iloc] = df.loc[:, Iloc].apply(lambda s: s.str.replace("'", ""))
-    return df
-
-
-# %% Remove special characters from column names
-def remove_special_chars(df):
-    """Remove special characters.
-
-    Parameters
-    ----------
-    df : pd.DataFrame()
-
-    Returns
-    -------
-    df : pd.DataFrame()
-
-    """
-    df.columns = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.columns.values.astype(str)))
-    df.index = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.index.values.astype(str)))
-    return df
 
 
 # %% Do checks
