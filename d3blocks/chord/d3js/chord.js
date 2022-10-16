@@ -1732,15 +1732,29 @@
     return arc;
   }
 
-  function generateChord({data, width= 954, height = width}) {
+  function generateChord({data, nodes, width= 954, height = width}) {
       const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending);
-      const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
-
+      // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
+      const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
+      const node_opacity = new Map(nodes.map(n => [n.name, n.opacity]));    // GET NODE OPACITY
       const innerRadius = Math.min(width, height) * 0.5 - 150;
       const outerRadius = innerRadius + 10;
-
       const index = new Map(names.map((name, i) => [name, i]));
       let matrix = Array.from(index, () => new Array(names.length).fill(0));
+  
+      function link_color(source, target){
+          const source_name = names[source]
+          const target_name = names[target]
+          return data.find(d => d.source === source_name && d.target === target_name).color
+	  }
+
+      function link_opacity(source, target){
+          const source_name = names[source]
+          const target_name = names[target]
+          return data.find(d => d.source === source_name && d.target === target_name).opacity
+	  }
+
+      
       for (const {source, target, value} of data) {
           matrix[index.get(source)][index.get(target)] += value;
       }
@@ -1773,8 +1787,11 @@
           .join("g");
 
       group.append("path")
-          .attr("fill", d => color_func(names[d.index]))
-          .attr("fill-opacity", 0.75)  // OUTER CIRCLE OPACITY
+          //.attr("fill", d => color_func(names[d.index]))
+          //.attr("debug", d => JSON.stringify(d))                     // DEBUG
+          .attr("fill", d => node_colors.get(names[d.index]))          // NODE COLOR
+          .attr("fill-opacity", d => node_opacity.get(names[d.index])) // NODE OPACITY
+          //.attr("fill-opacity", 0.75)                                // NODE OPACITY (CONSTANT)
           .attr("d", arc);
 
       group.append("text")
@@ -1796,12 +1813,14 @@
     // console.log(data)
     
       svg.append("g")
-          .attr("fill-opacity", 0.75) // OPACITY OF LINES
+          //.attr("fill-opacity", 0.75) // OPACITY OF LINES
           .selectAll("path")
           .data(chords)
           .join("path")
           .style("mix-blend-mode", "multiply")
-          .attr("fill", d => color_func(names[d.target.index]))
+          //.attr("fill", d => color_func(names[d.target.index]))
+          .attr("fill", d => link_color(d.source.index, d.target.index))              // COLORS LINKS
+          .attr("fill-opacity", d => link_opacity(d.source.index, d.target.index))    // OPACITY LINKS
           .attr("d", ribbon)
           .append("title")
           .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`)
@@ -1831,8 +1850,8 @@
       return svg.node();
   }
 
-  window.Chord = function ({data, width, height}) {
-      const svg = generateChord({data, width, height});
+  window.Chord = function ({data, nodes, width, height}) {
+      const svg = generateChord({data, nodes, width, height});
       document.body.append(svg);
   };
 

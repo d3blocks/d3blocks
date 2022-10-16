@@ -32,6 +32,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
     document.addEventListener('DOMContentLoaded', function () {
         window.Chord({
             data,
+			nodes: jsonData.nodes,
             width: {{ WIDTH }},
             height: {{ HEIGHT }},
         });

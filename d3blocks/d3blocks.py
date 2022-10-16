@@ -321,8 +321,8 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
-            self.set_label_properties(labels)
+            self.node_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
+            # self.set_label_properties(labels)
 
         # Create the plot
         self.config = Violin.show(df, config=self.config, labels=self.labels)
@@ -480,7 +480,7 @@ class D3Blocks():
         # Preprocessing
         df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
         # Set default label properties
-        if not hasattr(self, 'labels'): self.set_label_properties(labels)
+        if not hasattr(self, 'labels'): self.labels = labels
         # Make het scatterplot
         self.config = Scatter.show(df, self.config)
         # Open the webbrowser
@@ -488,13 +488,13 @@ class D3Blocks():
 
     def chord(self,
               df,
-              c=None,
-              opacity=0.8,
-              fontsize=8,
+              color=None,
+              opacity=None,
+              fontsize=10,
               cmap='tab20',
               title='Chord - D3blocks',
               filepath='chord.html',
-              figsize=[1200, 1200],
+              figsize=[900, 900],
               showfig=True,
               overwrite=True):
         """Chord block.
@@ -512,24 +512,28 @@ class D3Blocks():
             'source'
             'target'
             'weight'
-        c: list/array of hex colors with same size as (x,y)
-            '#ffffff' : All dots are get the same hex color.
-            None: The same color as for c is applied.
-            ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
-        opacity: float or list/array [0-1]
-            Opacity of the line.
+            'color' (optional)
+            'opacity'  (optional)
+        color: list/array of str
+            Link colors in Hex notation. Should be the same size as input DataFrame.
+            * None : 'cmap' is used to create colors.
+            * 'source': Color edges/links similar to that of source-color node.
+            * 'target': Color edges/links similar to that of target-color node.
+            * 'source-target': Color edges/link based on unique source-target edges using the colormap.
+            * '#ffffff': All links have the same hex color.
+            * ['#000000', '#ffffff',...]: Define per link.
+        opacity: float or list/array [0..1]
+            Link Opacity. Should be the same size as input DataFrame.
+            * 'source': Opacity of edges/links similar to that of source-opacity node.
+            * 'target': Opacity of edges/links similar to that of target-opacity node.
+            * 0.8: All links have the same opacity.
+            * [0.1, 0.75,...]: Set opacity per edge/link.
         fontsize : int, (default: 8)
             Fontsize.
-        cmap : String (default: 'Set2')
-            Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
-            'tab20', 'tab20b', 'tab20c'
-            'Set1', 'Set2'
-            'seismic'    Blue-white-red
-            'Blues'      white-to-blue
-            'Reds'       white-to-red
-            'Pastel1'    Discrete colors
-            'Paired'     Discrete colors
-            'Set1'       Discrete colors
+        cmap : String, (default: 'tab20')
+            colormap is only used in case color=None.
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -574,20 +578,16 @@ class D3Blocks():
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
         self.config['cmap'] = cmap
-        # self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
-        if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=df.shape[0]): raise Exception(logger.error('input parameter "opacity" should be of same size of dataframe.'))
 
-        # Remvove quotes from source-target labels
-        df = pre_processing(df)
-        df = Chord.preprocessing(df, opacity, c, cmap, logger=logger)
-
-        # Set default label properties
+        # Set label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
-            self.set_label_properties(labels)
+            self.node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
+
+        # Set edge properties based on input parameters
+        df = self.edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
 
         # Create the plot
-        self.config = Chord.show(df, self.config, labels=self.labels)
+        self.config = Chord.show(df, self.config, labels=self.labels, logger=logger)
         # Open the webbrowser
         if self.config['showfig']: self.showfig()
 
@@ -970,8 +970,8 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
-            self.set_label_properties(labels)
+            self.node_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            # self.set_label_properties(labels)
 
         # Create the plot
         self.config = Sankey.show(df, self.config, labels=self.labels)
@@ -1105,7 +1105,7 @@ class D3Blocks():
             if self.config['center'] is not None:
                 center_label = labels.pop(labels.index(self.config['center']))
                 labels.append(center_label)
-            self.labels = self.get_label_properties(labels=labels, cmap=self.config['cmap'])
+            self.labels = self.node_properties(labels=labels, cmap=self.config['cmap'])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -1208,39 +1208,36 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            labels = self.get_label_properties(labels=df.columns.values, cmap=self.config['cmap'])
-            self.set_label_properties(labels)
+            self.node_properties(labels=df.columns.values, cmap=self.config['cmap'])
+            # self.set_label_properties(labels)
 
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']: self.showfig()
 
-    def set_label_properties(self, labels):
-        """Set the label properties.
+    def edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, nodes=None, logger=None):
+        """Set link/edge properties."""
+        if hasattr(self, 'config') and (self.config.get('chart', None) is not None):
+            chart = self.config['chart']
+        if chart is None:
+            raise Exception('Chart parameter is mandatory. Hint: use "chord" or "sankey" etc')
+
+        if chart=='chord':
+            df = Chord.edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=nodes, logger=logger)
+        return df
+
+    def node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1', ):
+        """Set label properties.
 
         Parameters
         ----------
-        labels : dict()
-            Dictionary containing class information.
-
-        Returns
-        -------
-        None.
-
-        """
-        self.labels = labels
-        logger.info('Labels are set')
-
-    def get_label_properties(self, labels=None, cmap='Set1'):
-        """Get label properties.
-
-        Parameters
-        ----------
-        labels : classes
-            Class or column names.
-        cmap : str, (default: 'Set1')
-            Colormap.
+        labels : array-like (default: None)
+            The unique names of the nodes/labels.
+            * In case of pd.DataFrame, the 'source' and 'target' columns are used.
+        cmap : String, (default: 'inferno')
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
 
         Returns
         -------
@@ -1248,23 +1245,43 @@ class D3Blocks():
             Dictionary containing class information.
 
         """
+        logger.info('Set node/label properties.')
+
         if hasattr(self, 'labels'):
-            labels = [*self.labels.keys()]
-        if (labels is None):
+            labels = np.array([*self.labels.keys()])
+        if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
+            labels = np.unique(labels[['source', 'target']].values.flatten())
+            logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+
+        # Preprocessing
+        labels = pre_processing(labels)
+        # Count number of labels
+        label_count = len(labels)
+
+        # Checks
+        if (labels is None) or label_count<1:
             logger.warning('Input parameter labels is not specified. Provide it manually. <return>')
             return None
+        if isinstance(opacity, list) and len(opacity) != label_count:
+            raise ValueError(f'Input parameter [color] has wrong length. Must be of length: {str(label_count)}')
 
-        logger.info('Create label properties based on [%s].' %(cmap))
+        # Opacity
+        if isinstance(opacity, float):
+            opacity = np.repeat(opacity, label_count)
+
         # Get unique categories without sort
         indexes = np.unique(labels, return_index=True)[1]
-        uil = [labels[index] for index in sorted(indexes)]
+        uilabels = [labels[index] for index in sorted(indexes)]
 
-        # Create unique colors
-        hexcolors = colourmap.generate(len(uil), cmap=cmap, scheme='hex')
+        # Create unique label/node colors
+        hexcolors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex')
+
         # Make dict with properties
-        labels = make_dict_label_properties(uil, hexcolors)
-        for i, cat in enumerate(uil):
-            labels[cat] = {'id': i, 'color': hexcolors[i], 'desc': cat, 'short': cat}
+        labels = make_dict(uilabels, colors=hexcolors, opacity=opacity)
+
+        # Store label properties
+        self.labels = labels
+        logger.info('Labels are set')
         return labels
 
     def _clean(self, clean_config=True):
@@ -1577,11 +1594,11 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
 
 
 # %%
-def make_dict_label_properties(labels, colors):
+def make_dict(labels, colors, opacity=0.8):
     """Create dictionary with label properties."""
     dlabel = {}
     for i, cat in enumerate(labels):
-        dlabel[cat] = {'id': i, 'color': colors[i], 'desc': cat, 'short': cat}
+        dlabel[cat] = {'id': i, 'desc': cat, 'short': cat, 'color': colors[i], 'opacity': opacity[i]}
     return dlabel
 
 
