@@ -53,18 +53,9 @@ class D3Blocks():
 
     Parameters
     ----------
-    cmap : String, optional
-        'Set1'       (default)
-        'Set2'
-        'rainbow'
-        'bwr'        Blue-white-red
-        'binary' or 'binary_r'
-        'seismic'    Blue-white-red
-        'Blues'      white-to-blue
-        'Reds'       white-to-red
-        'Pastel1'    Discrete colors
-        'Paired'     Discrete colors
-        'Set1'       Discrete colors
+    cmap : String, (default: 'inferno')
+        All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
     dt_format : str
         '%d-%m-%Y %H:%M:%S'.
     whitelist : str, optional
@@ -249,13 +240,9 @@ class D3Blocks():
             Edgecolor of dot in hex colors.
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
-        cmap : String (default: 'inferno')
-            Color scheme for that is used for the scatterplot. All color schemes can be reversed with "_r".
-            Sequential : 'viridis', 'plasma', 'inferno', 'magma', 'cividis'
-            Sequential (white-to) : 'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds', 'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu', 'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn'
-            Sequential2 (to-white) : 'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink', 'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia', 'hot', 'afmhot', 'gist_heat', 'copper'
-            Diverging (from-white-to): 'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic'
-            Cyclic : 'twilight', 'twilight_shifted', 'hsv'
+        cmap : String, (default: 'inferno')
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -388,16 +375,9 @@ class D3Blocks():
             Opacity of the dot. Shoud be same size as (x,y)
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
-        cmap : String (default: 'Set2')
-            Color scheme for that is used for c(olor) in case list of string is used. All color schemes can be reversed with "_r".
-            'tab20', 'tab20b', 'tab20c'
-            'Set1', 'Set2'
-            'seismic'    Blue-white-red
-            'Blues'      white-to-blue
-            'Reds'       white-to-red
-            'Pastel1'    Discrete colors
-            'Paired'     Discrete colors
-            'Set1'       Discrete colors
+        cmap : String, (default: 'inferno')
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
         scale: Bool, optional
             Scale datapoints. The default is False.
         label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
@@ -693,7 +673,17 @@ class D3Blocks():
         # Open the webbrowser
         if self.config['showfig']: self.showfig()
 
-    def heatmap(self, df, vmax=None, stroke='red', fontsize=10, title='Heatmap - D3blocks', description='', filepath='heatmap.html', figsize=[720, 720], showfig=True, overwrite=True):
+    def heatmap(self,
+                df,
+                vmax=None,
+                stroke='red',
+                fontsize=10,
+                title='Heatmap - D3blocks',
+                description='',
+                filepath='heatmap.html',
+                figsize=[720, 720],
+                showfig=True,
+                overwrite=True):
         """Heatmap block.
 
         Description
@@ -771,7 +761,17 @@ class D3Blocks():
         # Create heatmap chart
         d3heatmap.heatmap(adjmat, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description=self.config['description'], showfig=self.config['showfig'])
 
-    def d3graph(self, df, title='D3graph - D3blocks', filepath='d3graph.html', figsize=[1500, 800], showfig=True, overwrite=True, collision=0.5, charge=400, slider=[None, None], scaler='zscore'):
+    def d3graph(self,
+                df,
+                title='D3graph - D3blocks',
+                filepath='d3graph.html',
+                figsize=[1500, 800],
+                showfig=True,
+                overwrite=True,
+                collision=0.5,
+                charge=400,
+                slider=[None, None],
+                scaler='zscore'):
         """d3graph block.
 
         Description
@@ -1123,7 +1123,16 @@ class D3Blocks():
         # Return
         return df
 
-    def timeseries(self, df, datetime=None, sort_on_date=True, title='Timeseries - D3blocks', filepath='timeseries.html', fontsize=10, figsize=[1000, 500], showfig=True, overwrite=True):
+    def timeseries(self,
+                   df,
+                   datetime=None,
+                   sort_on_date=True,
+                   title='Timeseries - D3blocks',
+                   filepath='timeseries.html',
+                   fontsize=10,
+                   figsize=[1000, 500],
+                   showfig=True,
+                   overwrite=True):
         """Timeseries block.
 
         Description
