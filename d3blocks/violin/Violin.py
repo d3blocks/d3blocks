@@ -15,9 +15,10 @@ from pathlib import Path
 import os
 import time
 
-def preprocessing(x, y, config, c=None, s=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
+
+def label_properties(x, y, config, color=None, s=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
     # Convert to dataframe
-    df = pd.DataFrame({'x': x, 'y': y, 'color': c, 'size': s, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
+    df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': s, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
 
     # Remove NaN values
     Irem = df['y'].isna()
@@ -32,7 +33,7 @@ def preprocessing(x, y, config, c=None, s=5, stroke='#ffffff', opacity=0.8, tool
         logger.info('Filter on: [%s]' %(classes))
 
     # Color on values and cmap (after cleaning and filtering)
-    if c is None:
+    if color is None:
         df['color'] = colourmap.fromlist(df['y'].values, scheme='hex', cmap=config['cmap'])[0]
 
     df.reset_index(inplace=True, drop=True)

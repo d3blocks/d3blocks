@@ -3,6 +3,23 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+from d3blocks import D3Blocks
+
+d3 = D3Blocks()
+# import example
+df = d3.import_example('cancer')
+# Tooltip
+tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+# Make the plot
+d3.violin(x=df['labels'].values, # class labels on the x axis
+          y=df['age'].values,    # Age
+          tooltip=tooltip,       # Tooltip for hovering
+          bins=50,               # Bins used for the histogram
+          s=df['survival_months'].values/10, # Dotsize
+          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
+          figsize=[None, None],   # Figure size is automatically determined.
+          filepath='violine_demo.html')
+
 
 # %% CHORD - EXAMPLE 2
 from d3blocks import D3Blocks
@@ -256,7 +273,6 @@ df = d3.import_example('cancer')
 tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
 
 d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='c://temp//violine_demo6.html', figsize=[900, None])
-
 
 d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo1.html', figsize=(1600, 400))
 

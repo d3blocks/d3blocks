@@ -35,13 +35,7 @@ from d3blocks.utils import pre_processing, remove_quotes
 # import scatter.Scatter as Scatter
 # import violin.Violin as Violin
 # import particles.Particles as Particles
-# from .. utils import pre_processing, remove_quotes
-#
-# try:
-#     from .. utils import pre_processing, remove_quotes
-# except:
-#     from utils import pre_processing, remove_quotes
-#
+# from utils import pre_processing, remove_quotes
 # #####################
 
 import d3graph as d3network
@@ -202,7 +196,7 @@ class D3Blocks():
                x,
                y,
                s=5,
-               c=None,
+               color=None,
                bins=20,
                x_order=None,
                opacity=0.8,
@@ -234,7 +228,7 @@ class D3Blocks():
             This 1d-vector contains the values for the samples.
         s: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
-        c: list/array of hex colors with same size as y
+        color: list/array of hex colors with same size as y
             '#002147' : All dots are get the same hex color.
             None: The colors are generated on value using the colormap specified in cmap.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
@@ -313,12 +307,11 @@ class D3Blocks():
         self.config['figsize'] = figsize
 
         # Remvove quotes from source-target labels
-        df = Violin.preprocessing(x, y, config=self.config, c=c, s=s, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
+        df = Violin.label_properties(x, y, config=self.config, color=color, s=s, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
 
         # Set default label properties
         if not hasattr(self, 'labels'):
             self.node_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
-            # self.set_label_properties(labels)
 
         # Create the plot
         self.config = Violin.show(df, config=self.config, labels=self.labels)
@@ -503,7 +496,7 @@ class D3Blocks():
             'weight'
             'color' (optional)
             'opacity'  (optional)
-        color: list/array of str
+        color: list/array of str (default: None)
             Link colors in Hex notation. Should be the same size as input DataFrame.
             * None : 'cmap' is used to create colors.
             * 'source': Color edges/links similar to that of source-color node.
@@ -511,7 +504,7 @@ class D3Blocks():
             * 'source-target': Color edges/link based on unique source-target edges using the colormap.
             * '#ffffff': All links have the same hex color.
             * ['#000000', '#ffffff',...]: Define per link.
-        opacity: float or list/array [0..1]
+        opacity: float or list/array [0..1] (default: None)
             Link Opacity. Should be the same size as input DataFrame.
             * 'source': Opacity of edges/links similar to that of source-opacity node.
             * 'target': Opacity of edges/links similar to that of target-opacity node.
@@ -980,7 +973,6 @@ class D3Blocks():
         # Set default label properties
         if not hasattr(self, 'labels'):
             self.node_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
-            # self.set_label_properties(labels)
 
         # Create the plot
         self.config = Sankey.show(df, self.config, labels=self.labels)
@@ -1227,7 +1219,6 @@ class D3Blocks():
         # Set default label properties
         if not hasattr(self, 'labels'):
             self.node_properties(labels=df.columns.values, cmap=self.config['cmap'])
-            # self.set_label_properties(labels)
 
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
