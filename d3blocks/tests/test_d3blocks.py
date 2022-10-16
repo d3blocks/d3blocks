@@ -67,11 +67,14 @@ class Testd3blocks(unittest.TestCase):
         # Import example
         df = d3.import_example('energy')
         # Link settings
-        d3.chord(df, filepath='chord_demo.html')
+        d3.chord(df, filepath='chord_demo.html', color='target')
+        d3.chord(df, filepath='chord_demo.html', color='source')
+        d3.chord(df, filepath='chord_demo.html', color='source-target')
 
         d3 = D3Blocks()
-        d = [{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}]
-        df = pd.DataFrame(d)
+        df = pd.DataFrame([{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}])
+        # Get the node properties by setting them to defaults
+        d3.node_properties(df, opacity=0.8, cmap='tab20')
         d3.chord(df, showfig=False)
 
     def test_timeseries(self):
@@ -130,7 +133,7 @@ class Testd3blocks(unittest.TestCase):
                    opacity=0.4,           # Opacity
                    tooltip=tooltip,       # Tooltip
                    cmap='tab20',          # Colormap in case strings are given for "c" as input
-                   filepath='c://temp//scatter_demo.html')
+                   filepath='scatter_demo.html')
     
 
     def test_violin(self):
@@ -148,7 +151,7 @@ class Testd3blocks(unittest.TestCase):
                   s=df['survival_months'].values/10, # Dotsize
                   x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
                   figsize=[None, None],   # Figure size is automatically determined.
-                  filepath='c://temp//violine_demo.html')
+                  filepath='violine_demo.html')
 
     def test_particles(self):
         # Initialize
