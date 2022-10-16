@@ -8,7 +8,9 @@ License     : GPL3
 """
 
 import numpy as np
+import pandas as pd
 import colourmap
+import unicodedata
 
 
 # %% Setup colors
@@ -85,3 +87,72 @@ def density_color(X, colors, labels):
 
     # Return
     return colors
+
+
+# %% Pre processing
+def pre_processing(df):
+    """Pre-processing of the input dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+
+    Returns
+    -------
+    df : pd.DataFrame()
+
+    """
+    # Create strings from source-target
+    if isinstance(df, pd.DataFrame):
+        df['source'] = df['source'].astype(str)
+        df['target'] = df['target'].astype(str)
+    else:
+        if isinstance(df, list): df = np.array(df)
+        df = df.astype(str)
+
+    # Remove quotes and special chars
+    df = remove_quotes(df)
+    df = remove_special_chars(df)
+    return df
+
+
+# %% Remove quotes.
+def remove_quotes(df):
+    """Pre-processing of the input dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+
+    Returns
+    -------
+    df : pd.DataFrame()
+
+    """
+    if isinstance(df, pd.DataFrame):
+        Iloc = df.dtypes==object
+        df.loc[:, Iloc] = df.loc[:, Iloc].apply(lambda s: s.str.replace("'", ""))
+        return df
+    else:
+        return np.array(list(map(lambda x: x.replace("'", ""), df)))
+
+
+# %% Remove special characters from column names
+def remove_special_chars(df):
+    """Remove special characters.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+
+    Returns
+    -------
+    df : pd.DataFrame()
+
+    """
+    if isinstance(df, pd.DataFrame):
+        df.columns = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.columns.values.astype(str)))
+        df.index = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.index.values.astype(str)))
+        return df
+    else:
+        return df
