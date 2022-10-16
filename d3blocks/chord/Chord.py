@@ -12,30 +12,110 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
-try:
-    from .. utils import set_colors
-except:
-    from utils import set_colors
 from ismember import ismember
+
+try:
+    from .. utils import set_colors, pre_processing
+except:
+    from utils import set_colors, pre_processing
 
 
 # %% Preprocessing
-def preprocessing(df, opacity=0.8, c=None, cmap='Set2', logger=None):
-    """Preprocessing."""
-    # In case only one opacity is defined. Set all points to this size.
-    if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, df.shape[0])
-    df['opacity'] = opacity
-    # colors
-    if c is None:
+def edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=None, logger=None):
+    """Set the edge/link properties.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+        Input data containing the following columns:
+        'source'
+        'target'
+        'weight'
+        'color' (optional)
+        'opacity' (optional)
+    color: list/array of str
+        Link colors in Hex notation. Should be the same size as input DataFrame.
+        * None : 'cmap' is used to create colors.
+        * 'source': Color edges/links similar to that of source-color node.
+        * 'target': Color edges/links similar to that of target-color node.
+        * 'source-target': Color edges/link based on unique source-target edges using the colormap.
+        * '#ffffff': All links have the same hex color.
+        * ['#000000', '#ffffff',...]: Define per link.
+    opacity: float or list/array [0..1]
+        Link Opacity. Should be the same size as input DataFrame.
+        * 'source': Opacity of edges/links similar to that of source-opacity node.
+        * 'target': Opacity of edges/links similar to that of target-opacity node.
+        * 0.8: All links have the same opacity.
+        * [0.1, 0.75,...]: Set opacity per edge/link.
+    cmap : String, (default: 'inferno')
+        All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+    nodes : dict, (default: None)
+        Dictionary containing node properties using the function: d3.node_properties(df). Output is stored in d3.nodes
+
+    logger : Object, (default: None)
+        Logger.
+
+    Returns
+    -------
+    df : pd.DataFrame()
+        DataFrame.
+
+    """
+    if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=df.shape[0]):
+        raise Exception('Input parameter "opacity" should be of same size of dataframe.')
+    elif (opacity is None) and np.any(df.columns=='opacity'):
+        # Set to dataframe.
+        if logger is not None: logger.info('Set link-opacity using the column "opacity" of the input DataFrame.')
+        # opacity = df['opacity'].values
+    elif (nodes is not None) and isinstance(opacity, str) and (opacity=='source' or opacity=='target'):
+        # Set to source or target node color.
+        if logger is not None: logger.info('Set link-opacity based on the [%s] node-opacity.' %(opacity))
+        df['opacity'] = 0.8
+        for key in nodes.keys():
+            df.loc[df[opacity]==key, 'opacity']=nodes.get(key)['opacity']
+    elif isinstance(opacity, (int, float)):
+        # In case one opacity is defined.
+        if logger is not None: logger.info('Set link-opacity to [%s].' %(opacity))
+        df['opacity'] = opacity
+    elif isinstance(color, (list, np.ndarray)) and (len(color)==df.shape[0]):
+        if logger is not None: logger.info('Set link-opacity to user defined input.')
+    else:
+        if logger is not None: logger.info('Set link-opacity to default value (0.8).')
+        df['opacity'] = 0.8
+
+    # Pre processing
+    df = pre_processing(df)
+
+    # Set colors based on source or target
+    if (color is None) and np.any(df.columns=='color'):
+        # Set to dataframe.
+        if logger is not None: logger.info('Set link-colors using the column "color" of the input DataFrame.')
+        color = df['color'].values
+    elif (nodes is not None) and (isinstance(color, str)) and (color=='source' or color=='target'):
+        # Set to source or target node color.
+        if logger is not None: logger.info('Set link-colors based on the [%s] node-color.' %(color))
+        df['color'] = '#000000'
+        for key in nodes.keys():
+            df.loc[df[color]==key, 'color']=nodes.get(key)['color']
+    elif isinstance(color, str) and (color[0]=='#') and (len(color)==7):
+        # In case one hex color is defined.
+        if logger is not None: logger.info('Set all link-colors to [%s].' %(color))
+        df['color'] = np.repeat(color, df.shape[0])
+    elif isinstance(color, (list, np.ndarray)) and (len(color)==df.shape[0]):
+        if logger is not None: logger.info('Set link-colors to user defined input.')
+    else:
         # Get unique source-target to make sure they get the same color.
+        if logger is not None: logger.info('Set link-colors based on unique source-target pairs.')
         uidf = df.groupby(['source', 'target']).size().reset_index()
         _, df['labels'] = ismember(df[['source', 'target']], uidf[['source', 'target']], method='rows')
         df['color'], _ = set_colors(df, df['labels'].values.astype(str), cmap, c_gradient=None)
+
     # return
     return df
 
 
-def show(df, config, labels=None):
+def show(df, config, labels=None, logger=None):
     """Build and show the graph.
 
     Parameters
@@ -61,12 +141,12 @@ def show(df, config, labels=None):
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, labels)
     # Write to HTML
-    write_html(X, config)
+    write_html(X, config, logger=logger)
     # Return config
     return config
 
 
-def write_html(X, config):
+def write_html(X, config, logger=None):
     """Write html.
 
     Parameters
@@ -98,7 +178,7 @@ def write_html(X, config):
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))
     if config['overwrite'] and os.path.isfile(index_file):
-        print('File already exists and will be overwritten: [%s]' %(index_file))
+        if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
         os.remove(index_file)
         time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:
@@ -130,7 +210,12 @@ def get_data_ready_for_d3(df, labels):
     # Set the nodes
     X = '{"nodes":['
     for i in idx:
-        X = X + '{"name":"' + list_name[i] + '"},'
+        color = labels.get(list_name[i])['color']
+        opacity = labels.get(list_name[i])['opacity']
+        X = X + '{"name":"' + list_name[i] + '",'
+        X = X + '"color":"' + color + '",'
+        X = X + '"opacity":' + str(opacity)
+        X = X + '}, '
     X = X[:-1] + '],'
 
     # Set the links
