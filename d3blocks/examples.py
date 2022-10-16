@@ -3,22 +3,95 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+
 # %% CHORD - EXAMPLE 2
 from d3blocks import D3Blocks
 
 # Initialize
 d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.node_properties(df, opacity=0.4, cmap='Set1')
 
-df = d3.import_example('bigbang')
-# df = d3.import_example('bigbang')
-# df = d3.import_example('stormofswords')
-# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+# Create chord diagram
+# d3.chord(df)
+d3.chord(df, color='source', opacity=0.4)
+# d3.chord(df, color='target')
+# d3.chord(df, color='#000000')
+
+# df = d3.edge_properties(df, chart='chord', color='source')
+# d3.chord(df)
+
+
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Get the node properties by setting them to defaults
+d3.node_properties(df, opacity=0.8, cmap='tab20')
+
+# Node properties are stored in labels
+# d3.labels
+
+# Set one specific node to black color
+d3.labels.get('Bio-conversion')['color']='#000000'
+
+# Color nodes on characteristics
+for key in d3.labels.keys():
+    # GREEN
+    if 'bio' in key.lower():
+        d3.labels.get(key)['color']='#00FF00'
+        d3.labels.get(key)['opacity']=0.9
+    # ORANGE
+    elif 'gas' in key.lower():
+        d3.labels.get(key)['color']='#FFA500'
+    # GREY
+    elif 'oil' in key.lower():
+        d3.labels.get(key)['color']='#808080'
+        d3.labels.get(key)['opacity']=0.1
+    # RED
+    elif 'thermal' in key.lower() or 'heat' in key.lower():
+        d3.labels.get(key)['color']='#FF0000'
+        d3.labels.get(key)['opacity']=0.5
+    # BLUE
+    elif 'electr' in key.lower() or 'solar' in key.lower() or 'nuclear' in key.lower():
+        d3.labels.get(key)['color']='#0000FF'
+        d3.labels.get(key)['opacity']=0.2
+    else:
+        d3.labels.get(key)['color']='#000000'
+        d3.labels.get(key)['opacity']=0.1
 
 # Chord diagram
-df['opacity'] = 0.75
-df['opacity'].iloc[0] = 0.1
-d3.chord(df, filepath='c://temp//chord_demo.html', figsize=[900, 900], opacity=df['opacity'].values, fontsize=10)
+df = d3.edge_properties(df, chart='chord', color='target', opacity='target')
 
+d3.chord(df, showfig=True)
+d3.chord(df, opacity='source', showfig=True)
+d3.chord(df, color='source', opacity=0.1, showfig=True)
+d3.chord(df, color='source', showfig=True)
+d3.chord(df, color='source', opacity='source', showfig=True)
+d3.chord(df, color='source', opacity='target', showfig=True)
+d3.chord(df, color='target', opacity='target', showfig=True)
+d3.chord(df, color='target', showfig=True)
+d3.chord(df, color='source-target', showfig=True)
+d3.chord(df, color='#000000', showfig=True)
+
+d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
+d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
+
+
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Make plot
+d3.chord(df, filepath='c://temp//chord_demo1.html', figsize=[900, 900], fontsize=10, cmap='Set1')
 
 # %% IMGE SLIDER
 import cv2
@@ -44,7 +117,7 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 
-df = d3.import_example('energy')
+# df = d3.import_example('energy')
 # df = d3.import_example('bigbang')
 # df = d3.import_example('stormofswords')
 # adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
@@ -140,8 +213,6 @@ d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].val
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
 d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
 
-
-# Set the size
 
 # %%
 from d3blocks import D3Blocks
@@ -490,7 +561,7 @@ df = pd.DataFrame(data=data, columns=["Black Widow", "Captain America", "Hawkeye
 df = d3.adjmat2vec(df)
 
 # Retrieve default label properties
-labels = d3.get_label_properties(df['source'].unique(), cmap='Set2')
+labels = d3.node_properties(df['source'].unique(), cmap='Set2')
 
 # Make some changes
 labels["Black Widow"]['color'] = "#301E1E"
@@ -500,7 +571,7 @@ labels["the Hulk"]['color'] = "#567235"
 labels["Iron Man"]['color'] = "#8B161C"
 labels["Thor"]['color'] = "#DF7C00"
 
-d3.set_label_properties(labels)
+d3.node_properties(labels)
 
 # Chord diagram
 d3.chord(df, filepath='chord_demo.html')
@@ -573,12 +644,12 @@ d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "l
 # df = d3.import_example('timeseries', n=1000)
 
 # # Collect label properties
-# colors = d3.get_label_properties(df.columns.values)
+# colors = d3.node_properties(df.columns.values)
 # colors['A']['color'] = '#000000'
 # colors['C']['color'] = '#000000'
 # colors['E']['color'] = '#000000'
 # # Set the label properties
-# d3.set_label_properties(colors)
+# d3.node_properties(colors)
 # # Check
 # print(d3.labels)
 
@@ -676,6 +747,20 @@ df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10
 # Make the moving bubbles
 d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 # d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+
+
+# %% Movingbubbles - Create random dataset
+from d3blocks import D3Blocks
+d3 = D3Blocks(cmap='Set1')
+
+df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
+
+# # Compute delta (this is automatically done if not available)
+# df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
+# d3.labels
+
+# Make the moving bubbles
+d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
 
 
 # %% Moving bubbles
