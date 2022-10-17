@@ -40,7 +40,7 @@ def check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, config, logger):
 
 
 # %% Preprocessing
-def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
+def preprocessing(x, y, x1, y1, x2, y2, color='#69b3a2', size=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
     """Preprocessing."""
     if (x1 is None): x1 = x
     if (y1 is None): y1 = y
@@ -60,16 +60,16 @@ def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=
         X1 = _scale_xy(X1)
         X2 = _scale_xy(X2)
     # In case only one (s)ize is defined. Set all points to this size.
-    if isinstance(s, (int, float)): s = np.repeat(s, X.shape[0])
-    if np.any(s<0):
-        logger.info('[%.0d] sizes are <0 and set to 0.' %(np.sum(s<0)))
-        s[s<0]=0
+    if isinstance(size, (int, float)): size = np.repeat(size, X.shape[0])
+    if np.any(size<0):
+        logger.info('[%.0d] sizes are <0 and set to 0.' %(np.sum(size<0)))
+        size[size<0]=0
     # In case None tooltip is defined. Set all points to this tooltip.
     if tooltip is None: tooltip = np.repeat('', X.shape[0])
     # In case only one opacity is defined. Set all points to this size.
     if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, X.shape[0])
     # colors
-    c, labels = set_colors(X, c, cmap, c_gradient=c_gradient)
+    c, labels = set_colors(X, color, cmap, c_gradient=c_gradient)
     # In case stroke is None: use same colors as for c.
     if stroke is None:
         stroke = c
@@ -80,7 +80,7 @@ def preprocessing(x, y, x1, y1, x2, y2, c='#69b3a2', s=5, tooltip=None, opacity=
     # Make dict with properties
     dict_properties = {}
     for i in range(0, X.shape[0]):
-        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': c[i], 'dotsize': s[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': color[i], 'dotsize': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
 
     # Create the plot
     df = pd.DataFrame(dict_properties).T

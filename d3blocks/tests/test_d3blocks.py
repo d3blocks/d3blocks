@@ -74,7 +74,7 @@ class Testd3blocks(unittest.TestCase):
         d3 = D3Blocks()
         df = pd.DataFrame([{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}])
         # Get the node properties by setting them to defaults
-        d3.node_properties(df, opacity=0.8, cmap='tab20')
+        d3.set_node_properties(df, opacity=0.8, cmap='tab20')
         d3.chord(df, showfig=False)
 
     def test_timeseries(self):
@@ -119,7 +119,7 @@ class Testd3blocks(unittest.TestCase):
         # Setup the tooltip
         tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         # Set the size
-        s = df['survival_months'].fillna(1).values / 10
+        size = df['survival_months'].fillna(1).values / 10
         # Scatter
         d3.scatter(df['x'].values,        # tSNE x-coordinates
                    df['y'].values,        # tSNE y-coordinates
@@ -127,8 +127,8 @@ class Testd3blocks(unittest.TestCase):
                    y1=df['PC2'].values,   # PC2 y-coordinates
                    scale=True,            # Scale the 
                    label_radio=['tSNE', 'PCA'],
-                   s=s,                   # Size
-                   c=df['labels'].values, # List with hex colors or strings
+                   size=size,             # Size
+                   color=df['labels'].values, # List with hex colors or strings
                    stroke='#000000',      # Edge color
                    opacity=0.4,           # Opacity
                    tooltip=tooltip,       # Tooltip
@@ -148,7 +148,7 @@ class Testd3blocks(unittest.TestCase):
                   y=df['age'].values,    # Age
                   tooltip=tooltip,       # Tooltip for hovering
                   bins=50,               # Bins used for the histogram
-                  s=df['survival_months'].values/10, # Dotsize
+                  size=df['survival_months'].values/10, # Dotsize
                   x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
                   figsize=[None, None],   # Figure size is automatically determined.
                   filepath='violine_demo.html')

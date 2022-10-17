@@ -16,9 +16,9 @@ import os
 import time
 
 
-def label_properties(x, y, config, color=None, s=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
+def label_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
     # Convert to dataframe
-    df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': s, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
+    df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': size, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
 
     # Remove NaN values
     Irem = df['y'].isna()

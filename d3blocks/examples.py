@@ -16,7 +16,7 @@ d3.violin(x=df['labels'].values, # class labels on the x axis
           y=df['age'].values,    # Age
           tooltip=tooltip,       # Tooltip for hovering
           bins=50,               # Bins used for the histogram
-          s=df['survival_months'].values/10, # Dotsize
+          size=df['survival_months'].values/10, # Dotsize
           x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
           figsize=[None, None],   # Figure size is automatically determined.
           filepath='violine_demo.html')
@@ -34,7 +34,7 @@ d3.set_node_properties(df, opacity=0.4, cmap='Set1')
 
 # Create chord diagram
 # d3.chord(df)
-d3.chord(df, c='source', opacity=0.4)
+d3.chord(df, color='source', opacity=0.4)
 # d3.chord(df, color='target')
 # d3.chord(df, color='#000000')
 
@@ -88,17 +88,17 @@ df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target')
 
 d3.chord(df, showfig=True)
 d3.chord(df, opacity='source', showfig=True)
-d3.chord(df, c='source', opacity=0.1, showfig=True)
-d3.chord(df, c='source', showfig=True)
-d3.chord(df, c='source', opacity='source', showfig=True)
-d3.chord(df, c='source', opacity='target', showfig=True)
-d3.chord(df, c='target', opacity='target', showfig=True)
-d3.chord(df, c='target', showfig=True)
-d3.chord(df, c='source-target', showfig=True)
-d3.chord(df, c='#000000', showfig=True)
+d3.chord(df, color='source', opacity=0.1, showfig=True)
+d3.chord(df, color='source', showfig=True)
+d3.chord(df, color='source', opacity='source', showfig=True)
+d3.chord(df, color='source', opacity='target', showfig=True)
+d3.chord(df, color='target', opacity='target', showfig=True)
+d3.chord(df, color='target', showfig=True)
+d3.chord(df, color='source-target', showfig=True)
+d3.chord(df, color='#000000', showfig=True)
 
-d3.chord(df, filepath='c://temp//chord_demo1.html', c=df['color'].values, opacity=df['opacity'].values, showfig=True)
-d3.chord(df, filepath='c://temp//chord_demo1.html', c=df['color'].values, showfig=True)
+d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
+d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
 
 
 # %% CHORD - EXAMPLE 2
@@ -216,20 +216,20 @@ df = d3.import_example('cancer')
 
 # df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
 
-s = df['survival_months'].fillna(1).values / 10
+size = df['survival_months'].fillna(1).values / 10
 tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
 
 # No transition
-# d3.scatter(df['x'].values, df['y'].values, s=df['survival_months'].values/10, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, size=df['survival_months'].values/10, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 
 # Two transitions
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
 
 # Three transitions
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
 
 
 # %%
@@ -273,34 +273,34 @@ df = d3.import_example('cancer')
 
 tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
 
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='c://temp//violine_demo6.html', figsize=[900, None])
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='c://temp//violine_demo6.html', figsize=[900, None])
 
 d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo1.html', figsize=(1600, 400))
 
 d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo2.html', figsize=(1600, 400), cmap='RdYlBu')
 
-d3.violin(x=df['labels'].values, y=df['age'].values, s=df['survival_months'].values/10, filepath='c://temp//violine_demo3.html', figsize=(1600, 400))
+d3.violin(x=df['labels'].values, y=df['age'].values, size=df['survival_months'].values/10, filepath='c://temp//violine_demo3.html', figsize=(1600, 400))
 
-d3.violin(x=df['labels'].values, y=df['age'].values, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo4.html', figsize=(1600, 400))
+d3.violin(x=df['labels'].values, y=df['age'].values, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo4.html', figsize=(1600, 400))
 
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo5.html', figsize=(1600, 400))
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo5.html', figsize=(1600, 400))
 
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo6.html', figsize=(1600, 400))
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo6.html', figsize=(1600, 400))
 
-d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=(1600, 400))
+d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=(1600, 400))
 
 # only coordinates
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], bins=50, opacity=0.5, stroke='#ffffff', cmap='inferno', s=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], bins=50, opacity=0.5, stroke='#ffffff', cmap='inferno', size=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
 # d3.violin(x=df['labels'].values, y=df['age'].values,  bins=50, opacity=0.5, stroke='#000000', cmap='inferno', s=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
 
-d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, s=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=[None, None])
+d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=[None, None])
 
 # %% Moving bubbles
 from d3blocks import D3Blocks
 
 d3 = D3Blocks(cmap='Set1')
 # Import example
-df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example('random_time', n=1000, color=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
@@ -349,7 +349,7 @@ df = d3.import_example('cancer')
 
 # df = df.loc[(df.index.values=='kich') | (df.index.values=='kirp'), :]
 # color on labels
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 
 
 # %% SCATTER EXAMPLE
@@ -365,23 +365,23 @@ df = d3.import_example('cancer')
 # only coordinates
 d3.scatter(df['x'].values, df['y'].values, filepath='c://temp//scatter_demo.html')
 # color on labels
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # color on labels + tooltip
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size constant
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, s=5, tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, size=5, tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 # size constant + opacity
-d3.scatter(df['x'].values, df['y'].values, s=5, opacity=0.2, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, size=5, opacity=0.2, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size constant + opacity
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, s=5, opacity=0.2, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, size=5, opacity=0.2, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # color on labels + cmap
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20c')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20c')
 # colors + c_gradient
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 # colors + stroke=black
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, stroke='#000000', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, stroke='#000000', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 # colors + stroke with same color
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values, stroke=None, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values, stroke=None, c_gradient='#ffffff', tooltip=df.index.values, filepath='c://temp//scatter_demo.html')
 
 # Set the size
 s = df['survival_months'].fillna(1).values / 10
@@ -389,16 +389,16 @@ s = df['survival_months'].fillna(1).values / 10
 tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
 
 # Scatter with dynamic size
-d3.scatter(df['x'].values, df['y'].values, s=s, tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, size=size, tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors + stroke + opacity
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=df.index.values, filepath='c://temp//scatter_demo.html', cmap='tab20')
 # size + colors + c_gradient
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, c_gradient='#ffffff', tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, c_gradient='#ffffff', tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
 
 # size + colors + stroke + opacity
-d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke=None, opacity=0.4, tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
+d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, stroke=None, opacity=0.4, tooltip=tooltip, filepath='c://temp//scatter_demo.html', cmap='tab20')
 
 
 
@@ -545,9 +545,9 @@ df = d3.import_example('iris')
 # Scatter
 d3.scatter(df['x'].values, df['y'].values, filepath='scatter_demo1.html')
 # Scatter
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo2.html')
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values.astype(str), size=5, filepath='scatter_demo2.html')
 # Scatter
-d3.scatter(df['x'].values, df['y'].values, c=df.index.values.astype(str), s=5, filepath='scatter_demo3.html', xlim=[1, 12], ylim=[])
+d3.scatter(df['x'].values, df['y'].values, color=df.index.values.astype(str), size=5, filepath='scatter_demo3.html', xlim=[1, 12], ylim=[])
 
 
 

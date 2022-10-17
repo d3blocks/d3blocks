@@ -189,14 +189,13 @@ class D3Blocks():
         # Create the plot
         self.config = Particles.show(text, self.config)
         # Open the webbrowser
-        if self.config['showfig']:
-            self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
     def violin(self,
                x,
                y,
-               s=5,
-               c=None,
+               size=5,
+               color=None,
                bins=20,
                x_order=None,
                opacity=0.8,
@@ -226,9 +225,9 @@ class D3Blocks():
             This 1d-vector contains the class labels for each datapoint in y.
         y : list of float or numpy array.
             This 1d-vector contains the values for the samples.
-        s: list/array of with same size as (x,y). Can be of type str or int.
+        size: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
-        c: list/array of hex colors with same size as y
+        color: list/array of hex colors with same size as y
             '#002147' : All dots are get the same hex color.
             None: The colors are generated on value using the colormap specified in cmap.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
@@ -275,7 +274,7 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Plot
-        >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, s=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
+        >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
         >>> #
 
         References
@@ -284,8 +283,8 @@ class D3Blocks():
 
         """
         if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
-        if s is None: raise Exception(logger.error('input parameter "s" should have value >0.'))
-        if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
+        if size is None: raise Exception(logger.error('input parameter "size" should have value >0.'))
+        if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
         if stroke is None: raise Exception(logger.error('input parameter "stroke" should have hex value.'))
         if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
         if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
@@ -307,7 +306,7 @@ class D3Blocks():
         self.config['figsize'] = figsize
 
         # Remvove quotes from source-target labels
-        df = Violin.label_properties(x, y, config=self.config, color=c, s=s, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
+        df = Violin.label_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
 
         # Set default label properties
         if not hasattr(self, 'labels'):
@@ -316,8 +315,7 @@ class D3Blocks():
         # Create the plot
         self.config = Violin.show(df, config=self.config, labels=self.labels)
         # Open the webbrowser
-        if self.config['showfig']:
-            self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
     def scatter(self,
                 x,
@@ -326,8 +324,8 @@ class D3Blocks():
                 y1=None,
                 x2=None,
                 y2=None,
-                s=3,
-                c='#002147',
+                size=3,
+                color='#002147',
                 c_gradient=None,
                 opacity=0.8,
                 stroke='#ffffff',
@@ -362,9 +360,9 @@ class D3Blocks():
             Second set of 1d coordinates x-axis.
         y1 : numpy array
             Second set of 1d coordinates y-axis.
-        s: list/array of with same size as (x,y). Can be of type str or int.
+        size: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
-        c: list/array of hex colors with same size as (x,y)
+        color: list/array of hex colors with same size as (x,y)
             '#ffffff' : All dots are get the same hex color.
             None: The same color as for c is applied.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
@@ -416,17 +414,17 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Set size and tooltip
-        >>> s = df['survival_months'].fillna(1).values / 20
+        >>> size = df['survival_months'].fillna(1).values / 20
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> #
         >>> # Example 1: Scatter plot
-        >>> d3.scatter(df['x'].values, df['y'].values, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
+        >>> d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
         >>> #
         >>> # Example 2: Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], scale=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
         >>> #
         >>> # Example 3: Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, s=s, c=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
+        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
         >>> #
 
         References
@@ -458,19 +456,19 @@ class D3Blocks():
             self.config['label_radio'].append("")
 
         # Check exceptions
-        Scatter.check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, self.config, logger)
+        Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, self.config, logger)
         # Preprocessing
-        df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, c, s, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
+        df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, color, size, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
         # Set default label properties
         if not hasattr(self, 'labels'): self.labels = labels
         # Make het scatterplot
         self.config = Scatter.show(df, self.config)
         # Open the webbrowser
-        if self.config['showfig']: self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
     def chord(self,
               df,
-              c=None,
+              color=None,
               opacity=None,
               fontsize=10,
               cmap='tab20',
@@ -496,7 +494,7 @@ class D3Blocks():
             'weight'
             'color' (optional)
             'opacity'  (optional)
-        c: list/array of str (default: None)
+        color: list/array of str (default: None)
             Link colors in Hex notation. Should be the same size as input DataFrame.
             * None : 'cmap' is used to create colors.
             * 'source': Color edges/links similar to that of source-color node.
@@ -566,12 +564,12 @@ class D3Blocks():
             self.set_node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
 
         # Set edge properties based on input parameters
-        df = self.set_edge_properties(df, color=c, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
+        df = self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
 
         # Create the plot
         self.config = Chord.show(df, self.config, labels=self.labels, logger=logger)
         # Open the webbrowser
-        if self.config['showfig']: self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
     def imageslider(self,
                     img_before,
@@ -673,7 +671,7 @@ class D3Blocks():
         # Create the plot
         self.config = Imageslider.show(self.config, logger)
         # Open the webbrowser
-        if self.config['showfig']: self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
     def heatmap(self,
                 df,
@@ -977,7 +975,7 @@ class D3Blocks():
         # Create the plot
         self.config = Sankey.show(df, self.config, labels=self.labels)
         # Open the webbrowser
-        if self.config['showfig']: self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
         # Return config
         # return self.config
 
@@ -1119,7 +1117,7 @@ class D3Blocks():
         # Create the plot
         self.config = Movingbubbles.show(df, self.config, self.labels)
         # Open the webbrowser
-        if self.config['showfig']: self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
         # Return
         return df
@@ -1223,7 +1221,7 @@ class D3Blocks():
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
         # Open the webbrowser
-        if self.config['showfig']: self.showfig()
+        if self.config['showfig']: self.showfig(logger=logger)
 
     def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, nodes=None, logger=None):
         """Set link/edge properties."""
@@ -1335,14 +1333,17 @@ class D3Blocks():
         return filepath
 
     # Open the webbrowser
-    def showfig(self, sleep=0.1):
+    def showfig(self, sleep=0.2, logger=None):
         """Open browser to show chart."""
         # Sleeping is required to pevent overlapping windows
         time.sleep(sleep)
         file_location = os.path.abspath(self.config['filepath'])
         if platform == "darwin":  # check if on OSX
             file_location = "file:///" + file_location
-        webbrowser.open(file_location, new=2)
+        if os.path.isfile(file_location):
+            webbrowser.open(file_location, new=2)
+        else:
+            if logger is not None: logger.info('File not found: [%s]' %(file_location))
 
     @staticmethod
     def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
