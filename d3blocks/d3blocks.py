@@ -228,7 +228,7 @@ class D3Blocks():
             This 1d-vector contains the values for the samples.
         s: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
-        color: list/array of hex colors with same size as y
+        c: list/array of hex colors with same size as y
             '#002147' : All dots are get the same hex color.
             None: The colors are generated on value using the colormap specified in cmap.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
@@ -307,7 +307,7 @@ class D3Blocks():
         self.config['figsize'] = figsize
 
         # Remvove quotes from source-target labels
-        df = Violin.label_properties(x, y, config=self.config, color=color, s=s, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
+        df = Violin.label_properties(x, y, config=self.config, color=c, s=s, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
 
         # Set default label properties
         if not hasattr(self, 'labels'):
@@ -470,7 +470,7 @@ class D3Blocks():
 
     def chord(self,
               df,
-              color=None,
+              c=None,
               opacity=None,
               fontsize=10,
               cmap='tab20',
@@ -496,7 +496,7 @@ class D3Blocks():
             'weight'
             'color' (optional)
             'opacity'  (optional)
-        color: list/array of str (default: None)
+        c: list/array of str (default: None)
             Link colors in Hex notation. Should be the same size as input DataFrame.
             * None : 'cmap' is used to create colors.
             * 'source': Color edges/links similar to that of source-color node.
@@ -566,7 +566,7 @@ class D3Blocks():
             self.node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
 
         # Set edge properties based on input parameters
-        df = self.edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
+        df = self.edge_properties(df, color=c, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
 
         # Create the plot
         self.config = Chord.show(df, self.config, labels=self.labels, logger=logger)
