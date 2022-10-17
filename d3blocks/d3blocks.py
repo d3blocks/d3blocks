@@ -279,6 +279,7 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Plot
+        >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
         >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
         >>> #
 
@@ -749,7 +750,7 @@ class D3Blocks():
         >>> # Import example
         >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
         >>> #
-        >>> d3.heatmap(adjmat, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
+        >>> d3.heatmap(df, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
         >>> #
 
         References
@@ -855,7 +856,7 @@ class D3Blocks():
         >>> #
         >>> # Change edge properties
         >>> d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
-        >>> d3.D3graph.show()
+        >>> 8
         >>> #
         >>> # Node properties
         >>> d3.D3graph.node_properties
@@ -1094,7 +1095,7 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example('random_time', n=10000, c=300, date_start="17-12-1903 00:10:05", date_stop="17-12-1903 23:59:59")
+        >>> df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
         >>> #
         >>> # Plot
         >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
@@ -1210,7 +1211,7 @@ class D3Blocks():
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize with filtering on close columns
-        >>> d3 = D3Blocks(whitelist='close')
+        >>> d3 = D3Blocks()
         >>> #
         >>> # Plot
         >>> d3.timeseries(df, fontsize=10)
