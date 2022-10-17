@@ -45,18 +45,23 @@ for key in d3.node_properties.keys():
         d3.node_properties.get(key)['opacity']=0.1
 
 # Chord diagram
-df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target', cmap='tab20')
-
+d3.set_edge_properties(df, chart='chord', color='source-target', opacity='target', cmap='tab20')
 d3.chord(df, showfig=True)
-d3.chord(df, color='source-target', showfig=True)
-d3.chord(df, opacity='source', showfig=True)
-d3.chord(df, color='source', opacity=0.1, showfig=True)
-d3.chord(df, color='source', showfig=True)
-d3.chord(df, color='source', opacity='source', showfig=True)
-d3.chord(df, color='source', opacity='target', showfig=True)
-d3.chord(df, color='target', opacity='target', showfig=True)
-d3.chord(df, color='target', showfig=True)
-d3.chord(df, color='#000000', showfig=True)
+
+d3.set_edge_properties(df, chart='chord', color='source', opacity='source', cmap='tab20')
+d3.chord(df, showfig=True)
+
+d3.set_edge_properties(df, chart='chord', color='source', opacity='target', cmap='tab20')
+d3.chord(df, showfig=True)
+
+d3.set_edge_properties(df, chart='chord', color='target', opacity='target', cmap='tab20')
+d3.chord(df, showfig=True)
+
+d3.set_edge_properties(df, chart='chord', color='#000000', opacity='target', cmap='tab20')
+d3.chord(df, showfig=True)
+
+d3.set_edge_properties(df, chart='chord', color='#000000', opacity=0.1, cmap='tab20')
+d3.chord(df, showfig=True)
 
 # d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
 # d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
@@ -73,11 +78,11 @@ df = d3.import_example('energy')
 d3.set_node_properties(df, opacity=0.4, cmap='Set1');
 # d3.node_properties
 
-edge_properties = d3.set_edge_properties(df, chart='chord')
+d3.set_edge_properties(df, chart='chord')
 
 # Create chord diagram
 # d3.chord(df)
-d3.chord(edge_properties, color='source', opacity=0.4)
+d3.chord(df, color='source', opacity=0.4)
 # d3.chord(df, color='target')
 # d3.chord(df, color='#000000')
 

@@ -575,7 +575,8 @@ class D3Blocks():
             self.set_node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
 
         # Set edge properties based on input parameters
-        self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.node_properties, logger=logger)
+        if not hasattr(self, 'edge_properties'):
+            self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, logger=logger)
 
         # Create the plot
         self.config = Chord.show(self.edge_properties, self.config, labels=self.node_properties, logger=logger)
@@ -1259,13 +1260,16 @@ class D3Blocks():
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
 
-    def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, nodes=None, logger=None):
+    def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, logger=None):
         """Set link/edge properties."""
+        nodes=None
         # Get or set the chart type
         if hasattr(self, 'config') and (self.config.get('chart', None) is not None):
             chart = self.config['chart']
         if chart is None:
             raise Exception('"chart" parameter is mandatory. Hint: use chart="chord" or chart="sankey" etc')
+        if hasattr(self, 'node_properties'):
+            nodes = self.node_properties
 
         # Compute edge properties for the specified chart.
         if chart=='chord':
@@ -1277,7 +1281,6 @@ class D3Blocks():
         self.edge_properties = convert_dataframe_dict(df, frame=self.config['frame'])
         # Store and return
         if logger is not None: logger.info('Edge properties are set.')
-        return self.edge_properties
 
     def set_node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1'):
         """Set label properties.
