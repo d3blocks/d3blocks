@@ -311,15 +311,15 @@ class D3Blocks():
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
 
-        # Remvove quotes from source-target labels
+        # Remvove quotes from source-target node_properties
         df = Violin.label_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
 
         # Set default label properties
-        if not hasattr(self, 'labels'):
+        if not hasattr(self, 'node_properties'):
             self.set_node_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
 
         # Create the plot
-        self.config = Violin.show(df, config=self.config, labels=self.labels)
+        self.config = Violin.show(df, config=self.config, labels=self.node_properties)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
 
@@ -466,9 +466,9 @@ class D3Blocks():
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, self.config, logger)
         # Preprocessing
-        df, labels = Scatter.preprocessing(x, y, x1, y1, x2, y2, color, size, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
+        df, node_properties = Scatter.preprocessing(x, y, x1, y1, x2, y2, color, size, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
         # Set default label properties
-        if not hasattr(self, 'labels'): self.labels = labels
+        if not hasattr(self, 'node_properties'): self.node_properties = node_properties
         # Make het scatterplot
         self.config = Scatter.show(df, self.config)
         # Open the webbrowser
@@ -557,9 +557,6 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Chord.html
 
         """
-        # Cleaning
-        self._clean(clean_config=False)
-
         # Store properties
         self.config['chart'] ='chord'
         self.config['filepath'] = self.set_path(filepath)
@@ -574,14 +571,14 @@ class D3Blocks():
         df = convert_dataframe_dict(df.copy(), frame=True)
 
         # Set label properties
-        if not hasattr(self, 'labels'):
+        if not hasattr(self, 'node_properties'):
             self.set_node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
 
         # Set edge properties based on input parameters
-        self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
+        self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.node_properties, logger=logger)
 
         # Create the plot
-        self.config = Chord.show(self.edge_properties, self.config, labels=self.labels, logger=logger)
+        self.config = Chord.show(self.edge_properties, self.config, labels=self.node_properties, logger=logger)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
 
@@ -775,7 +772,6 @@ class D3Blocks():
 
         # Copy of data
         df = df.copy()
-
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create heatmap chart
@@ -996,18 +992,16 @@ class D3Blocks():
         df = pre_processing(df)
 
         # Set default label properties
-        if not hasattr(self, 'labels'):
+        if not hasattr(self, 'node_properties'):
             self.set_node_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
 
         # Set edge properties
         self.set_edge_properties(df)
 
         # Create the plot
-        self.config = Sankey.show(self.edge_properties, self.config, labels=self.labels)
+        self.config = Sankey.show(self.edge_properties, self.config, labels=self.node_properties)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
-        # Return config
-        # return self.config
 
     def movingbubbles(self,
                       df,
@@ -1132,7 +1126,7 @@ class D3Blocks():
             df = Movingbubbles.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
 
         # Set label properties
-        if isinstance(df, pd.DataFrame) and not hasattr(self, 'labels') and np.any(df.columns==state):
+        if isinstance(df, pd.DataFrame) and not hasattr(self, 'node_properties') and np.any(df.columns==state):
             labels = list(np.unique(df[state]))
             # Center should be at the very end of the list for d3!
             if self.config['center'] is not None:
@@ -1143,8 +1137,8 @@ class D3Blocks():
             self.set_node_properties(labels=labels, cmap=self.config['cmap'])
 
         if not isinstance(df, pd.DataFrame):
-            self.labels=None
-        if not hasattr(self, 'labels'):
+            self.node_properties=None
+        if not hasattr(self, 'node_properties'):
             raise Exception('Set labels is required or specify the category.')
         if time_notes is None:
             self.config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
@@ -1152,7 +1146,7 @@ class D3Blocks():
             self.config['note']=("This is a simulation of [%s] states across [%s] samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df['state'].unique()), len(df[sample_id].unique())))
 
         # Create the plot
-        self.config = Movingbubbles.show(df, self.config, self.labels)
+        self.config = Movingbubbles.show(df, self.config, self.node_properties)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
 
@@ -1257,11 +1251,11 @@ class D3Blocks():
             return None
 
         # Set default label properties
-        if not hasattr(self, 'labels'):
+        if not hasattr(self, 'node_properties'):
             self.set_node_properties(labels=df.columns.values, cmap=self.config['cmap'])
 
         # Create the plot
-        self.config = Timeseries.show(df, self.config, labels=self.labels)
+        self.config = Timeseries.show(df, self.config, labels=self.node_properties)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
 
@@ -1272,7 +1266,7 @@ class D3Blocks():
             chart = self.config['chart']
         if chart is None:
             raise Exception('"chart" parameter is mandatory. Hint: use chart="chord" or chart="sankey" etc')
-        
+
         # Compute edge properties for the specified chart.
         if chart=='chord':
             df = Chord.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=nodes, logger=logger)
@@ -1305,8 +1299,8 @@ class D3Blocks():
         """
         logger.info('Set node/label properties.')
 
-        if hasattr(self, 'labels'):
-            labels = np.array([*self.labels.keys()])
+        if hasattr(self, 'node_properties'):
+            labels = np.array([*self.node_properties.keys()])
         if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
             labels = np.unique(labels[['source', 'target']].values.flatten())
             logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
@@ -1338,13 +1332,14 @@ class D3Blocks():
         labels = make_dict(uilabels, colors=hexcolors, opacity=opacity)
 
         # Convert to frame
-        self.labels = convert_dataframe_dict(labels, frame=self.config['frame'])
+        self.node_properties = convert_dataframe_dict(labels, frame=self.config['frame'])
         logger.info('Node properties are set.')
 
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
+        logger.info('Cleaning parameters..')
         if hasattr(self, 'G'): del self.G
-        if hasattr(self, 'labels'): del self.labels
+        if hasattr(self, 'node_properties'): del self.node_properties
         if clean_config and hasattr(self, 'config'): del self.config
 
     def set_path(self, filepath='d3blocks.html'):
