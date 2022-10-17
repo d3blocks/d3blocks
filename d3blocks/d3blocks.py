@@ -176,6 +176,7 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
+
         # Set config
         self.config['chart'] ='Particles'
         self.config['filepath'] = self.set_path(filepath)
@@ -286,6 +287,9 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Violin.html
 
         """
+        # Cleaning
+        self._clean(clean_config=False)
+
         if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
         if size is None: raise Exception(logger.error('input parameter "size" should have value >0.'))
         if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
@@ -293,9 +297,6 @@ class D3Blocks():
         if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
         if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
         if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=len(x)): raise Exception(logger.error('input parameter "opacity" should be of same size of (x, y).'))
-
-        # Cleaning
-        self._clean(clean_config=False)
 
         if bins is None: bins=20
         self.config['bins'] = bins
@@ -438,6 +439,7 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
+
         # Set config
         self.config['chart'] ='scatter'
         self.config['filepath'] = self.set_path(filepath)
@@ -449,6 +451,7 @@ class D3Blocks():
         self.config['figsize'] = figsize
         self.config['scale'] = scale
         self.config['cmap'] = cmap
+
         # Set the radio button and visibility of the labels
         self.config['radio_button_visible'] = [("display:none;" if (x1 is None) else ""), ("display:none;" if (x1 is None) else ""), ("display:none;" if (x2 is None) else "")]
         self.config['label_radio'] = label_radio
@@ -553,7 +556,10 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Chord.html
 
         """
-        df = convert_dataframe_dict(df.copy(), frame=True)
+        # Cleaning
+        self._clean(clean_config=False)
+
+        # Store properties
         self.config['chart'] ='chord'
         self.config['filepath'] = self.set_path(filepath)
         self.config['fontsize'] = fontsize
@@ -562,6 +568,9 @@ class D3Blocks():
         self.config['overwrite'] = overwrite
         self.config['figsize'] = figsize
         self.config['cmap'] = cmap
+
+        # Convert to Frame
+        df = convert_dataframe_dict(df.copy(), frame=True)
 
         # Set label properties
         if not hasattr(self, 'labels'):
@@ -658,6 +667,9 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html
 
         """
+        # Cleaning
+        self._clean(clean_config=False)
+
         self.config['chart'] ='imageslider'
         self.config['img_before'] = img_before
         self.config['img_after'] = img_after
@@ -746,8 +758,8 @@ class D3Blocks():
         * Documentation: https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
 
         """
-        # Copy of data
-        df = df.copy()
+        # Cleaning
+        self._clean(clean_config=False)
 
         # Set configs
         self.config['chart'] ='heatmap'
@@ -759,6 +771,9 @@ class D3Blocks():
         self.config['overwrite'] = overwrite
         self.config['vmax'] = vmax
         self.config['stroke'] = stroke
+
+        # Copy of data
+        df = df.copy()
 
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
@@ -855,8 +870,8 @@ class D3Blocks():
         * Documentation: https://erdogant.github.io/d3graph/
 
         """
-        # Copy of data
-        df = df.copy()
+        # Cleaning
+        self._clean(clean_config=False)
 
         # Set configs
         self.config['chart'] ='network'
@@ -869,6 +884,8 @@ class D3Blocks():
         self.config['charge'] = charge * -1
         self.config['slider'] = slider
 
+        # Copy of data
+        df = df.copy()
         # Remvove quotes from source-target labels
         df = remove_quotes(df)
         # Initialize network graph
@@ -958,7 +975,10 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Sankey.html
 
         """
-        df = convert_dataframe_dict(df.copy(), frame=True)
+        # Cleaning
+        self._clean(clean_config=False)
+
+        # Store paramters
         self.config['chart'] ='sankey'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -969,7 +989,9 @@ class D3Blocks():
         self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
         self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
 
-        # Remvove quotes from source-target labels
+        # Convert to Frame
+        df = convert_dataframe_dict(df.copy(), frame=True)
+        # Remove quotes from source-target labels
         df = pre_processing(df)
 
         # Set default label properties
@@ -1083,6 +1105,10 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html
 
         """
+        # Cleaning
+        self._clean(clean_config=False)
+
+        # Store parameters
         self.config['chart'] ='movingbubbles'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -1194,7 +1220,10 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html
 
         """
-        df = df.copy()
+        # Cleaning
+        self._clean(clean_config=False)
+
+        # Store parameters
         self.config['chart'] ='timeseries'
         self.config['filepath'] = self.set_path(filepath)
         self.config['figsize'] = figsize
@@ -1205,6 +1234,8 @@ class D3Blocks():
         self.config['sort_on_date'] = sort_on_date
         self.config['columns'] = {'datetime': datetime}
 
+        # Make copy
+        df = df.copy()
         # Get datetime
         if datetime is None:
             logger.info('Taking the index for datetime.')
