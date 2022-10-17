@@ -3,6 +3,86 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=False)
+# Import example
+df = d3.import_example('energy')
+# Get the node properties by setting them to defaults
+d3.set_node_properties(df, opacity=0.8, cmap='tab20')
+
+# Node properties are stored in labels
+# d3.node_properties
+
+# Set one specific node to black color
+d3.node_properties.get('Bio-conversion')['color']='#000000'
+
+# Color nodes on characteristics
+for key in d3.node_properties.keys():
+    # GREEN
+    if 'bio' in key.lower():
+        d3.node_properties.get(key)['color']='#00FF00'
+        d3.node_properties.get(key)['opacity']=0.9
+    # ORANGE
+    elif 'gas' in key.lower():
+        d3.node_properties.get(key)['color']='#FFA500'
+    # GREY
+    elif 'oil' in key.lower():
+        d3.node_properties.get(key)['color']='#808080'
+        d3.node_properties.get(key)['opacity']=0.1
+    # RED
+    elif 'thermal' in key.lower() or 'heat' in key.lower():
+        d3.node_properties.get(key)['color']='#FF0000'
+        d3.node_properties.get(key)['opacity']=0.5
+    # BLUE
+    elif 'electr' in key.lower() or 'solar' in key.lower() or 'nuclear' in key.lower():
+        d3.node_properties.get(key)['color']='#0000FF'
+        d3.node_properties.get(key)['opacity']=0.2
+    else:
+        d3.node_properties.get(key)['color']='#000000'
+        d3.node_properties.get(key)['opacity']=0.1
+
+# Chord diagram
+df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target', cmap='tab20')
+
+d3.chord(df, showfig=True)
+d3.chord(df, color='source-target', showfig=True)
+d3.chord(df, opacity='source', showfig=True)
+d3.chord(df, color='source', opacity=0.1, showfig=True)
+d3.chord(df, color='source', showfig=True)
+d3.chord(df, color='source', opacity='source', showfig=True)
+d3.chord(df, color='source', opacity='target', showfig=True)
+d3.chord(df, color='target', opacity='target', showfig=True)
+d3.chord(df, color='target', showfig=True)
+d3.chord(df, color='#000000', showfig=True)
+
+# d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
+# d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
+
+
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=True)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df, opacity=0.4, cmap='Set1');
+# d3.node_properties
+
+edge_properties = d3.set_edge_properties(df, chart='chord')
+
+# Create chord diagram
+# d3.chord(df)
+d3.chord(edge_properties, color='source', opacity=0.4)
+# d3.chord(df, color='target')
+# d3.chord(df, color='#000000')
+
+# df = d3.edge_properties(df, chart='chord', color='source')
+# d3.chord(df)
 
 
 # %% Violin plot
@@ -81,28 +161,8 @@ df = d3.import_example('energy')
 # Link settings
 d3.sankey(df, link={"color": "target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
 # d3.sankey(df, link={"color": "source-target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html', figsize=[650, 500])
-# labels = d3.labels
+# labels = d3.node_properties
 
-# %% CHORD - EXAMPLE 2
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks(frame=True)
-# Import example
-df = d3.import_example('energy')
-# Node properties
-d3.set_node_properties(df, opacity=0.4, cmap='Set1');
-
-edge_properties = d3.set_edge_properties(df, chart='chord')
-
-# Create chord diagram
-# d3.chord(df)
-d3.chord(edge_properties, color='source', opacity=0.4)
-# d3.chord(df, color='target')
-# d3.chord(df, color='#000000')
-
-# df = d3.edge_properties(df, chart='chord', color='source')
-# d3.chord(df)
 
 # %%
 from d3blocks import D3Blocks
@@ -123,63 +183,6 @@ d3.violin(x=df['labels'].values, # class labels on the x axis
           figsize=[None, None],   # Figure size is automatically determined.
           filepath='violine_demo.html')
 
-# %% CHORD - EXAMPLE 2
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks(frame=False)
-# Import example
-df = d3.import_example('energy')
-# Get the node properties by setting them to defaults
-d3.set_node_properties(df, opacity=0.8, cmap='inferno')
-
-# Node properties are stored in labels
-# d3.labels
-
-# Set one specific node to black color
-d3.labels.get('Bio-conversion')['color']='#000000'
-
-# Color nodes on characteristics
-for key in d3.labels.keys():
-    # GREEN
-    if 'bio' in key.lower():
-        d3.labels.get(key)['color']='#00FF00'
-        d3.labels.get(key)['opacity']=0.9
-    # ORANGE
-    elif 'gas' in key.lower():
-        d3.labels.get(key)['color']='#FFA500'
-    # GREY
-    elif 'oil' in key.lower():
-        d3.labels.get(key)['color']='#808080'
-        d3.labels.get(key)['opacity']=0.1
-    # RED
-    elif 'thermal' in key.lower() or 'heat' in key.lower():
-        d3.labels.get(key)['color']='#FF0000'
-        d3.labels.get(key)['opacity']=0.5
-    # BLUE
-    elif 'electr' in key.lower() or 'solar' in key.lower() or 'nuclear' in key.lower():
-        d3.labels.get(key)['color']='#0000FF'
-        d3.labels.get(key)['opacity']=0.2
-    else:
-        d3.labels.get(key)['color']='#000000'
-        d3.labels.get(key)['opacity']=0.1
-
-# Chord diagram
-df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target', cmap='inferno')
-
-d3.chord(df, showfig=True)
-d3.chord(df, opacity='source', showfig=True)
-d3.chord(df, color='source', opacity=0.1, showfig=True)
-d3.chord(df, color='source', showfig=True)
-d3.chord(df, color='source', opacity='source', showfig=True)
-d3.chord(df, color='source', opacity='target', showfig=True)
-d3.chord(df, color='target', opacity='target', showfig=True)
-d3.chord(df, color='target', showfig=True)
-d3.chord(df, color='source-target', showfig=True)
-d3.chord(df, color='#000000', showfig=True)
-
-# d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
-# d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
 
 
 # %% CHORD - EXAMPLE 2
@@ -269,7 +272,6 @@ df = d3.import_example('energy')
 d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
 
 
-
 # %%
 from d3blocks import D3Blocks
 #
@@ -300,8 +302,6 @@ d3 = D3Blocks()
 d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff')
 
 
-
-
 # %% SANKEY - EXAMPLE 1
 from d3blocks import D3Blocks
 
@@ -313,7 +313,7 @@ df = d3.import_example('energy')
 
 # Link settings
 d3.sankey(df, link={"color": "source-target"}, filepath='c:\\temp\\sankey.html')
-labels = d3.labels
+labels = d3.node_properties
 # Link settings
 # d3.d3graph(df, filepath='c:\\temp\\network.html', showfig=False)
 # d3.D3graph.set_node_properties(color='cluster')
@@ -586,12 +586,12 @@ df = d3.adjmat2vec(df)
 d3.set_node_properties(df, cmap='Set2')
 
 # Make some changes
-d3.labels["Black Widow"]['color'] = "#301E1E"
-d3.labels["Captain America"]['color'] = "#083E77"
-d3.labels["Hawkeye"]['color'] = "#342350"
-d3.labels["the Hulk"]['color'] = "#567235"
-d3.labels["Iron Man"]['color'] = "#8B161C"
-d3.labels["Thor"]['color'] = "#DF7C00"
+d3.node_properties["Black Widow"]['color'] = "#301E1E"
+d3.node_properties["Captain America"]['color'] = "#083E77"
+d3.node_properties["Hawkeye"]['color'] = "#342350"
+d3.node_properties["the Hulk"]['color'] = "#567235"
+d3.node_properties["Iron Man"]['color'] = "#8B161C"
+d3.node_properties["Thor"]['color'] = "#DF7C00"
 
 # Chord diagram
 d3.chord(df, filepath='chord_demo.html')
@@ -671,7 +671,7 @@ d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "l
 # # Set the label properties
 # d3.node_properties(colors)
 # # Check
-# print(d3.labels)
+# print(d3.node_properties)
 
 # # Make timeseries graph where the label properties will be used
 # d3.timeseries(df, datetime='datetime', filepath='timeseries.html', fontsize=10)
@@ -752,7 +752,7 @@ df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10
 
 # # Compute delta (this is automatically done if not available)
 # df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
-# d3.labels
+# d3.node_properties
 
 # Make the moving bubbles
 d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
@@ -777,7 +777,7 @@ df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10
 
 # # Compute delta (this is automatically done if not available)
 # df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
-# d3.labels
+# d3.node_properties
 
 # Make the moving bubbles
 d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')

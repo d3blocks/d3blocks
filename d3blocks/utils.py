@@ -36,6 +36,15 @@ def convert_dataframe_dict(X, frame, logger=None):
         if logger is not None: logger.info('Convert to Dictionary.')
         X = X.to_dict(orient='index')
 
+    # if isinstance(X, dict) and frame:
+    #     if logger is not None: logger.info('Convert to Frame.')
+    #     X = pd.DataFrame.from_dict(X, orient='index').reset_index(drop=False).rename(columns={'level_0': 'source', 'level_1': 'target'})
+    # elif isinstance(X, pd.DataFrame) and not frame:
+    #     if logger is not None: logger.info('Convert to Dictionary.')
+    #     X.index = X[['source', 'target']]
+    #     X.drop(labels=['source', 'target'], axis=1, inplace=True)
+    #     X = X.to_dict(orient='index')
+
     return X
 
 
