@@ -9,10 +9,6 @@ License     : GPL3
 
 # import colourmap
 
-try:
-    from .. utils import set_colors
-except:
-    from utils import set_colors
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
@@ -20,15 +16,20 @@ import os
 import pandas as pd
 import time
 
+try:
+    from .. utils import set_colors, convert_dataframe_dict
+except:
+    from utils import set_colors, convert_dataframe_dict
+
 
 # %% Preprocessing
-def check_exceptions(x, y, x1, y1, x2, y2, s, c, tooltip, config, logger):
+def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, config, logger):
     """Check Exceptions."""
     # if len(config['label_radio'])!=sum(list(map(lambda x: x=='', config['radio_button_visible']))): raise Exception(logger.error('input parameter [label_radio] must contain the correct number of labels depending on the (x,y), (x1,y1), (x2,y2) coordinates.'))
     if len(x)!=len(y): raise Exception(logger.error('input parameter [x] and [y] should be of size of (x, y).'))
-    if s is None: raise Exception(logger.error('input parameter [s] should have value >0.'))
-    if c is None: raise Exception(logger.error('input parameter [c] should be of a list of string with hex color, such as "#000000".'))
-    if isinstance(s, (list, np.ndarray)) and (len(s)!=len(x)): raise Exception(logger.error('input parameter [s] should be of same size of (x, y).'))
+    if size is None: raise Exception(logger.error('input parameter [size] should have value >0.'))
+    if color is None: raise Exception(logger.error('input parameter [color] should be of a list of string with hex color, such as "#000000".'))
+    if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter [s] should be of same size of (x, y).'))
     if (tooltip is not None) and len(tooltip)!=len(x): raise Exception(logger.error('input parameter [tooltip] should be of size (x, y) and not None.'))
 
     if (x1 is not None) or (y1 is not None):
@@ -69,10 +70,10 @@ def preprocessing(x, y, x1, y1, x2, y2, color='#69b3a2', size=5, tooltip=None, o
     # In case only one opacity is defined. Set all points to this size.
     if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, X.shape[0])
     # colors
-    c, labels = set_colors(X, color, cmap, c_gradient=c_gradient)
+    color, labels = set_colors(X, color, cmap, c_gradient=c_gradient)
     # In case stroke is None: use same colors as for c.
     if stroke is None:
-        stroke = c
+        stroke = color
     elif isinstance(stroke, str):
         # In case only one stroke is defined. Set all points to this size.
         stroke = np.repeat(stroke, X.shape[0])
@@ -96,67 +97,6 @@ def _scale_xy(X):
     return (X - x_min) / (x_max - x_min)
 
 
-# %% Setup colors
-# def set_colors(X, c, cmap, c_gradient=None):
-#     """Scatterplots."""
-#     hexok = False
-#     # In case only one (c)olor is defined. Set all to this value.
-#     if isinstance(c, str): c = np.repeat(c, X.shape[0])
-
-#     # Check whether the input is hex colors.
-#     hexok = np.all(list(map(lambda x: (x[0]=='#') and (len(x)==7), c)))
-
-#     if hexok:
-#         # Input is hex-colors thus we do not need to touch the colors.
-#         labels = np.arange(0, X.shape[0]).astype(str)
-#         c_hex = c
-#     else:
-#         # The input are string-labels and not colors. Lets convert to hex-colors.
-#         labels = c
-#         c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=c_gradient, scheme='hex')
-
-#     if (c_gradient is not None):
-#         c_hex = _density_color(X, c_hex, c)
-
-#     # Return
-#     return c_hex, labels
-
-
-# %% Create gradient based based on the labels.
-# def _density_color(X, colors, labels):
-#     """Scatterplots."""
-#     from scipy.stats import gaussian_kde
-#     uilabels = np.unique(labels)
-#     density_colors = np.repeat('#ffffff', X.shape[0])
-
-#     if (len(uilabels)!=len(labels)):
-#         for label in uilabels:
-#             idx = np.where(labels==label)[0]
-#             if X.shape[1]==2:
-#                 xy = np.vstack([X[idx, 0], X[idx, 1]])
-#             else:
-#                 xy = np.vstack([X[idx, 0], X[idx, 1], X[idx, 2]])
-
-#             try:
-#                 # Compute density
-#                 z = gaussian_kde(xy)(xy)
-#                 # Sort on density
-#                 didx = idx[np.argsort(z)[::-1]]
-#             except:
-#                 didx=idx
-
-#             # order colors correctly based Density
-#             density_colors[didx] = colors[idx]
-#             # plt.figure()
-#             # plt.scatter(X[didx,0], X[didx,1], color=colors[idx, :])
-#             # plt.figure()
-#             # plt.scatter(idx, idx, color=colors[idx, :])
-#         colors = density_colors
-
-#     # Return
-#     return colors
-
-
 # %% Show
 def show(df, config):
     """Build and show the graph.
@@ -177,6 +117,9 @@ def show(df, config):
         Dictionary containing updated configuration keys.
 
     """
+    # Convert dict/frame.
+    df = convert_dataframe_dict(df, frame=True)
+
     # Compute xlim and ylim for the axis.
     spacing = 0.12
     if config['xlim']==[None, None] or len(config['xlim'])==0:

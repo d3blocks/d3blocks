@@ -13,6 +13,32 @@ import colourmap
 import unicodedata
 
 
+def convert_dataframe_dict(X, frame, logger=None):
+    """Convert between dataframe and dictionary.
+
+    Parameters
+    ----------
+    X : containing label information.
+        Dataframe of dictionary.
+    frame : Bool
+        True: Convert to DataFrame.
+        False: Convert to dictionary.
+
+    Returns
+    -------
+    None.
+
+    """
+    if isinstance(X, dict) and frame:
+        if logger is not None: logger.info('Convert to Frame.')
+        X = pd.DataFrame.from_dict(X, orient='index')
+    elif isinstance(X, pd.DataFrame) and not frame:
+        if logger is not None: logger.info('Convert to Dictionary.')
+        X = X.to_dict(orient='index')
+
+    return X
+
+
 # %% Setup colors
 def set_colors(X, c, cmap, c_gradient=None):
     """Set colors for in various blocks.
@@ -107,7 +133,8 @@ def pre_processing(df):
         df['source'] = df['source'].astype(str)
         df['target'] = df['target'].astype(str)
     else:
-        if isinstance(df, list): df = np.array(df)
+        if isinstance(df, list):
+            df = np.array(df)
         df = df.astype(str)
 
     # Remove quotes and special chars

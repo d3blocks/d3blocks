@@ -14,6 +14,10 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+try:
+    from .. utils import convert_dataframe_dict
+except:
+    from utils import convert_dataframe_dict
 
 
 def label_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
@@ -60,6 +64,10 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    # Convert dict/frame.
+    labels = convert_dataframe_dict(labels, frame=False)
+    df = convert_dataframe_dict(df, frame=True)
+
     spacing = 0.10
     if config['ylim']==[None, None] or len(config['ylim'])==0:
         y_spacing = (df['y'].max() - df['y'].min()) * spacing

@@ -12,6 +12,11 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+try:
+    from .. utils import convert_dataframe_dict
+except:
+    from utils import convert_dataframe_dict
+
 
 def show(df, config, labels=None):
     """Build and show the graph.
@@ -32,6 +37,10 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    # Convert dict/frame.
+    labels = convert_dataframe_dict(labels, frame=False)
+    df = convert_dataframe_dict(df, frame=True)
+
     # Format for datetime in javascript
     config['dt_format_js'] = '%Y%m%d'
     # Sort on date

@@ -19,6 +19,10 @@ import os
 import json
 import random
 import time
+try:
+    from .. utils import convert_dataframe_dict
+except:
+    from utils import convert_dataframe_dict
 
 
 def show(df, config, labels=None):
@@ -38,6 +42,10 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    # Convert dict/frame.
+    labels = convert_dataframe_dict(labels, frame=False)
+    df = convert_dataframe_dict(df, frame=True)
+
     if not np.any(df.columns=='delta'):
         raise Exception('Column "delta" is missing in dataFrame of type datetime.')
     if config['center'] is None:

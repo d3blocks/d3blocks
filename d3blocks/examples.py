@@ -3,6 +3,108 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+
+
+# %% Violin plot
+import numpy as np
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='c://temp//violine_demo6.html', figsize=[900, None])
+
+d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo1.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo2.html', figsize=(1600, 400), cmap='RdYlBu')
+
+d3.violin(x=df['labels'].values, y=df['age'].values, size=df['survival_months'].values/10, filepath='c://temp//violine_demo3.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo4.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo5.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo6.html', figsize=(1600, 400))
+
+d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=(1600, 400))
+
+# only coordinates
+d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], bins=50, opacity=0.5, stroke='#ffffff', cmap='inferno', size=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
+# d3.violin(x=df['labels'].values, y=df['age'].values,  bins=50, opacity=0.5, stroke='#000000', cmap='inferno', s=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
+
+d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=[None, None])
+
+
+
+# %% Add function move scatter
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# import example
+df = d3.import_example('cancer')
+
+# df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
+
+size = df['survival_months'].fillna(1).values / 10
+tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+
+# No transition
+# d3.scatter(df['x'].values, df['y'].values, size=df['survival_months'].values/10, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+
+# Two transitions
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
+
+# Three transitions
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
+
+
+
+# %% SANKEY - EXAMPLE 1
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Link settings
+d3.sankey(df, link={"color": "target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
+# d3.sankey(df, link={"color": "source-target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html', figsize=[650, 500])
+# labels = d3.labels
+
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=True)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df, opacity=0.4, cmap='Set1');
+
+edge_properties = d3.set_edge_properties(df, chart='chord')
+
+# Create chord diagram
+# d3.chord(df)
+d3.chord(edge_properties, color='source', opacity=0.4)
+# d3.chord(df, color='target')
+# d3.chord(df, color='#000000')
+
+# df = d3.edge_properties(df, chart='chord', color='source')
+# d3.chord(df)
+
+# %%
 from d3blocks import D3Blocks
 
 # Initialize
@@ -21,36 +123,15 @@ d3.violin(x=df['labels'].values, # class labels on the x axis
           figsize=[None, None],   # Figure size is automatically determined.
           filepath='violine_demo.html')
 
-
 # %% CHORD - EXAMPLE 2
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks()
-# Import example
-df = d3.import_example('energy')
-# Node properties
-d3.set_node_properties(df, opacity=0.4, cmap='Set1')
-
-# Create chord diagram
-# d3.chord(df)
-d3.chord(df, color='source', opacity=0.4)
-# d3.chord(df, color='target')
-# d3.chord(df, color='#000000')
-
-# df = d3.edge_properties(df, chart='chord', color='source')
-# d3.chord(df)
-
-
-# %% CHORD - EXAMPLE 2
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
+d3 = D3Blocks(frame=False)
 # Import example
 df = d3.import_example('energy')
 # Get the node properties by setting them to defaults
-d3.set_node_properties(df, opacity=0.8, cmap='tab20')
+d3.set_node_properties(df, opacity=0.8, cmap='inferno')
 
 # Node properties are stored in labels
 # d3.labels
@@ -84,7 +165,7 @@ for key in d3.labels.keys():
         d3.labels.get(key)['opacity']=0.1
 
 # Chord diagram
-df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target')
+df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target', cmap='inferno')
 
 d3.chord(df, showfig=True)
 d3.chord(df, opacity='source', showfig=True)
@@ -97,8 +178,8 @@ d3.chord(df, color='target', showfig=True)
 d3.chord(df, color='source-target', showfig=True)
 d3.chord(df, color='#000000', showfig=True)
 
-d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
-d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
+# d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
+# d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
 
 
 # %% CHORD - EXAMPLE 2
@@ -189,49 +270,6 @@ d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='d3
 
 
 
-
-# %% SANKEY - EXAMPLE 1
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# Import example
-df = d3.import_example('energy')
-
-# Link settings
-d3.sankey(df, link={"color": "target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
-# d3.sankey(df, link={"color": "source-target"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html', figsize=[650, 500])
-# labels = d3.labels
-
-
-# %% Add function move scatter
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# import example
-df = d3.import_example('cancer')
-
-# df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
-
-size = df['survival_months'].fillna(1).values / 10
-tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
-
-# No transition
-# d3.scatter(df['x'].values, df['y'].values, size=df['survival_months'].values/10, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-
-# Two transitions
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
-
-# Three transitions
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
-
-
 # %%
 from d3blocks import D3Blocks
 #
@@ -261,51 +299,7 @@ d3 = D3Blocks()
 # d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', fontsize=180, figsize=[900, 200], spacing=8)
 d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff')
 
-# %% Violin plot
-import numpy as np
-from d3blocks import D3Blocks
 
-# Initialize
-d3 = D3Blocks()
-
-# import example
-df = d3.import_example('cancer')
-
-tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
-
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='c://temp//violine_demo6.html', figsize=[900, None])
-
-d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo1.html', figsize=(1600, 400))
-
-d3.violin(x=df['labels'].values, y=df['age'].values, filepath='c://temp//violine_demo2.html', figsize=(1600, 400), cmap='RdYlBu')
-
-d3.violin(x=df['labels'].values, y=df['age'].values, size=df['survival_months'].values/10, filepath='c://temp//violine_demo3.html', figsize=(1600, 400))
-
-d3.violin(x=df['labels'].values, y=df['age'].values, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo4.html', figsize=(1600, 400))
-
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo5.html', figsize=(1600, 400))
-
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo6.html', figsize=(1600, 400))
-
-d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=(1600, 400))
-
-# only coordinates
-d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], bins=50, opacity=0.5, stroke='#ffffff', cmap='inferno', size=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
-# d3.violin(x=df['labels'].values, y=df['age'].values,  bins=50, opacity=0.5, stroke='#000000', cmap='inferno', s=df['survival_months'].values/10, filepath='c://temp//violine_demo.html')
-
-d3.violin(x=df['labels'].values, y=df['age'].values, opacity=0.5, stroke='#000000', tooltip=tooltip, bins=50, size=df['survival_months'].values/10, filepath='c://temp//violine_demo7.html', figsize=[None, None])
-
-# %% Moving bubbles
-from d3blocks import D3Blocks
-
-d3 = D3Blocks(cmap='Set1')
-# Import example
-df = d3.import_example('random_time', n=1000, color=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-# standardize the time per sample id.
-# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
-# Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
-# d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 # %% SANKEY - EXAMPLE 1
@@ -421,6 +415,18 @@ d3.sankey(df, link={"color": "source-target"})
 
 
 
+
+# %% Moving bubbles
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(cmap='Set1')
+# Import example
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+# standardize the time per sample id.
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+# Make the moving bubbles
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
+# d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 
@@ -550,14 +556,13 @@ d3.scatter(df['x'].values, df['y'].values, color=df.index.values.astype(str), si
 d3.scatter(df['x'].values, df['y'].values, color=df.index.values.astype(str), size=5, filepath='scatter_demo3.html', xlim=[1, 12], ylim=[])
 
 
-
 # %% CHORD - EXAMPLE 1
 from d3blocks import D3Blocks
 import numpy as np
 import pandas as pd
 
 # Initialize
-d3 = D3Blocks()
+d3 = D3Blocks(frame=False)
 # Import example
 # df = d3.import_example('bigbang')
 # df = d3.import_example('stormofswords')
@@ -578,17 +583,15 @@ df = pd.DataFrame(data=data, columns=["Black Widow", "Captain America", "Hawkeye
 df = d3.adjmat2vec(df)
 
 # Retrieve default label properties
-labels = d3.node_properties(df['source'].unique(), cmap='Set2')
+d3.set_node_properties(df, cmap='Set2')
 
 # Make some changes
-labels["Black Widow"]['color'] = "#301E1E"
-labels["Captain America"]['color'] = "#083E77"
-labels["Hawkeye"]['color'] = "#342350"
-labels["the Hulk"]['color'] = "#567235"
-labels["Iron Man"]['color'] = "#8B161C"
-labels["Thor"]['color'] = "#DF7C00"
-
-d3.set_node_properties(labels)
+d3.labels["Black Widow"]['color'] = "#301E1E"
+d3.labels["Captain America"]['color'] = "#083E77"
+d3.labels["Hawkeye"]['color'] = "#342350"
+d3.labels["the Hulk"]['color'] = "#567235"
+d3.labels["Iron Man"]['color'] = "#8B161C"
+d3.labels["Thor"]['color'] = "#DF7C00"
 
 # Chord diagram
 d3.chord(df, filepath='chord_demo.html')

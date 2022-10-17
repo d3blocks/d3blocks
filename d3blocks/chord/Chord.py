@@ -15,9 +15,9 @@ import time
 from ismember import ismember
 
 try:
-    from .. utils import set_colors, pre_processing
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict
 except:
-    from utils import set_colors, pre_processing
+    from utils import set_colors, pre_processing, convert_dataframe_dict
 
 
 # %% Preprocessing
@@ -34,7 +34,7 @@ def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=Non
         'color' (optional)
         'opacity' (optional)
     color: list/array of str
-        Link colors in Hex notation. Should be the same size as input DataFrame.
+        Edge colors in Hex notation. Should be the same size as input DataFrame.
         * None : 'cmap' is used to create colors.
         * 'source': Color edges/links similar to that of source-color node.
         * 'target': Color edges/links similar to that of target-color node.
@@ -42,7 +42,7 @@ def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=Non
         * '#ffffff': All links have the same hex color.
         * ['#000000', '#ffffff',...]: Define per link.
     opacity: float or list/array [0..1]
-        Link Opacity. Should be the same size as input DataFrame.
+        Edge Opacity. Should be the same size as input DataFrame.
         * 'source': Opacity of edges/links similar to that of source-opacity node.
         * 'target': Opacity of edges/links similar to that of target-opacity node.
         * 0.8: All links have the same opacity.
@@ -62,26 +62,30 @@ def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=Non
         DataFrame.
 
     """
+    # Convert to dict/frame.
+    nodes = convert_dataframe_dict(nodes, frame=False)
+    df = convert_dataframe_dict(df, frame=True)
+
     if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=df.shape[0]):
         raise Exception('Input parameter "opacity" should be of same size of dataframe.')
     elif (opacity is None) and np.any(df.columns=='opacity'):
         # Set to dataframe.
-        if logger is not None: logger.info('Set link-opacity using the column "opacity" of the input DataFrame.')
+        if logger is not None: logger.info('Set edge-opacity using the column "opacity" of the input DataFrame.')
         # opacity = df['opacity'].values
     elif (nodes is not None) and isinstance(opacity, str) and (opacity=='source' or opacity=='target'):
         # Set to source or target node color.
-        if logger is not None: logger.info('Set link-opacity based on the [%s] node-opacity.' %(opacity))
+        if logger is not None: logger.info('Set edge-opacity based on the [%s] node-opacity.' %(opacity))
         df['opacity'] = 0.8
         for key in nodes.keys():
             df.loc[df[opacity]==key, 'opacity']=nodes.get(key)['opacity']
     elif isinstance(opacity, (int, float)):
         # In case one opacity is defined.
-        if logger is not None: logger.info('Set link-opacity to [%s].' %(opacity))
+        if logger is not None: logger.info('Set edge-opacity to [%s].' %(opacity))
         df['opacity'] = opacity
-    elif isinstance(color, (list, np.ndarray)) and (len(color)==df.shape[0]):
-        if logger is not None: logger.info('Set link-opacity to user defined input.')
+    elif isinstance(opacity, (list, np.ndarray)) and (len(opacity)==df.shape[0]):
+        if logger is not None: logger.info('Set edge-opacity to user defined input.')
     else:
-        if logger is not None: logger.info('Set link-opacity to default value (0.8).')
+        if logger is not None: logger.info('Set edge-opacity to default value (0.8).')
         df['opacity'] = 0.8
 
     # Pre processing
@@ -90,23 +94,23 @@ def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=Non
     # Set colors based on source or target
     if (color is None) and np.any(df.columns=='color'):
         # Set to dataframe.
-        if logger is not None: logger.info('Set link-colors using the column "color" of the input DataFrame.')
+        if logger is not None: logger.info('Set edge-colors using the column "color" of the input DataFrame.')
         color = df['color'].values
     elif (nodes is not None) and (isinstance(color, str)) and (color=='source' or color=='target'):
         # Set to source or target node color.
-        if logger is not None: logger.info('Set link-colors based on the [%s] node-color.' %(color))
+        if logger is not None: logger.info('Set edge-colors based on the [%s] node-color.' %(color))
         df['color'] = '#000000'
         for key in nodes.keys():
-            df.loc[df[color]==key, 'color']=nodes.get(key)['color']
+            df.loc[df[color]==key, 'color'] = nodes.get(key)['color']
     elif isinstance(color, str) and (color[0]=='#') and (len(color)==7):
         # In case one hex color is defined.
-        if logger is not None: logger.info('Set all link-colors to [%s].' %(color))
+        if logger is not None: logger.info('Set all edge-colors to [%s].' %(color))
         df['color'] = np.repeat(color, df.shape[0])
     elif isinstance(color, (list, np.ndarray)) and (len(color)==df.shape[0]):
-        if logger is not None: logger.info('Set link-colors to user defined input.')
+        if logger is not None: logger.info('Set edge-colors to user defined input.')
     else:
         # Get unique source-target to make sure they get the same color.
-        if logger is not None: logger.info('Set link-colors based on unique source-target pairs.')
+        if logger is not None: logger.info('Set edge-colors based on unique source-target pairs.')
         uidf = df.groupby(['source', 'target']).size().reset_index()
         _, df['labels'] = ismember(df[['source', 'target']], uidf[['source', 'target']], method='rows')
         df['color'], _ = set_colors(df, df['labels'].values.astype(str), cmap, c_gradient=None)
@@ -134,6 +138,10 @@ def show(df, config, labels=None, logger=None):
         Dictionary containing updated configuration keys.
 
     """
+    # Convert dict/frame.
+    labels = convert_dataframe_dict(labels, frame=False)
+    df = convert_dataframe_dict(df, frame=True)
+
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=True)
     df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))

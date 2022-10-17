@@ -12,6 +12,10 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+try:
+    from .. utils import convert_dataframe_dict
+except:
+    from utils import convert_dataframe_dict
 
 
 def show(df, config, labels=None):
@@ -33,6 +37,10 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    # Convert dict/frame.
+    labels = convert_dataframe_dict(labels, frame=False)
+    df = convert_dataframe_dict(df, frame=True)
+
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=True)
     df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
@@ -41,12 +49,6 @@ def show(df, config, labels=None):
     # Set link_color selection correct on the form
     config['link_color_select'] = {'source': '', 'target': '', 'source-target': ''}
     config['link_color_select'][config['link']['color']] = 'selected="selected"'
-    # if config['link']['color']=='source':
-    #     config['link_color_select']['source']='selected="selected"'
-    # elif config['link']['color']=='target':
-    #     config['link_color_select']['target']='selected="selected"'
-    # elif config['link']['color']=='source-target':
-    #     config['link_color_select']['source-target']='selected="selected"'
 
     # Set align selection correct on the form
     config['align_select'] = {'left': '', 'right': '', 'justify': '', 'center': ''}

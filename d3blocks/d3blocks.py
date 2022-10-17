@@ -24,7 +24,7 @@ import d3blocks.chord.Chord as Chord
 import d3blocks.scatter.Scatter as Scatter
 import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
-from d3blocks.utils import pre_processing, remove_quotes
+from d3blocks.utils import pre_processing, remove_quotes, convert_dataframe_dict
 
 # ###################### DEBUG ONLY ###################
 # import movingbubbles.Movingbubbles as Movingbubbles
@@ -35,7 +35,7 @@ from d3blocks.utils import pre_processing, remove_quotes
 # import scatter.Scatter as Scatter
 # import violin.Violin as Violin
 # import particles.Particles as Particles
-# from utils import pre_processing, remove_quotes
+# from utils import pre_processing, remove_quotes, convert_dataframe_dict
 # #####################################################
 
 import d3graph as d3network
@@ -63,6 +63,9 @@ class D3Blocks():
         '%d-%m-%Y %H:%M:%S'.
     whitelist : str, optional
         Keep only columns containing this (sub)string (case insensitive)
+    frame : Bool, (default: True)
+        True: Return in DataFrame.
+        False: Return in dictionary.
     verbose : int, optional
         Verbose message. The default is 20.
 
@@ -79,7 +82,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, cmap='Set1', dt_format='%d-%m-%Y %H:%M:%S', whitelist=None, verbose=20):
+    def __init__(self, cmap='Set1', dt_format='%d-%m-%Y %H:%M:%S', whitelist=None, frame=True, verbose=20):
         """Initialize d3blocks with user-defined parameters."""
         # Clean
         self._clean(clean_config=True)
@@ -88,6 +91,7 @@ class D3Blocks():
         # Initialize empty config
         self.config = {}
         self.config['cmap'] = cmap
+        self.config['frame'] = frame
         self.config['whitelist'] = whitelist
         self.config['dt_format'] = dt_format
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
@@ -549,7 +553,7 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Chord.html
 
         """
-        df = df.copy()
+        df = convert_dataframe_dict(df.copy(), frame=True)
         self.config['chart'] ='chord'
         self.config['filepath'] = self.set_path(filepath)
         self.config['fontsize'] = fontsize
@@ -564,10 +568,10 @@ class D3Blocks():
             self.set_node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
 
         # Set edge properties based on input parameters
-        df = self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
+        self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
 
         # Create the plot
-        self.config = Chord.show(df, self.config, labels=self.labels, logger=logger)
+        self.config = Chord.show(self.edge_properties, self.config, labels=self.labels, logger=logger)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
 
@@ -954,7 +958,7 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Sankey.html
 
         """
-        df = df.copy()
+        df = convert_dataframe_dict(df.copy(), frame=True)
         self.config['chart'] ='sankey'
         self.config['filepath'] = self.set_path(filepath)
         self.config['title'] = title
@@ -972,8 +976,11 @@ class D3Blocks():
         if not hasattr(self, 'labels'):
             self.set_node_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
 
+        # Set edge properties
+        self.set_edge_properties(df)
+
         # Create the plot
-        self.config = Sankey.show(df, self.config, labels=self.labels)
+        self.config = Sankey.show(self.edge_properties, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']: self.showfig(logger=logger)
         # Return config
@@ -1104,7 +1111,10 @@ class D3Blocks():
             if self.config['center'] is not None:
                 center_label = labels.pop(labels.index(self.config['center']))
                 labels.append(center_label)
-            self.labels = self.set_node_properties(labels=labels, cmap=self.config['cmap'])
+
+            # Set the label properties
+            self.set_node_properties(labels=labels, cmap=self.config['cmap'])
+
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -1225,16 +1235,25 @@ class D3Blocks():
 
     def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, nodes=None, logger=None):
         """Set link/edge properties."""
+        # Get or set the chart type
         if hasattr(self, 'config') and (self.config.get('chart', None) is not None):
             chart = self.config['chart']
         if chart is None:
-            raise Exception('Chart parameter is mandatory. Hint: use "chord" or "sankey" etc')
-
+            raise Exception('"chart" parameter is mandatory. Hint: use chart="chord" or chart="sankey" etc')
+        
+        # Compute edge properties for the specified chart.
         if chart=='chord':
             df = Chord.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=nodes, logger=logger)
-        return df
+        if chart=='sankey':
+            pass
 
-    def set_node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1', ):
+        # Convert to frame/dictionary
+        self.edge_properties = convert_dataframe_dict(df, frame=self.config['frame'])
+        # Store and return
+        if logger is not None: logger.info('Edge properties are set.')
+        return self.edge_properties
+
+    def set_node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1'):
         """Set label properties.
 
         Parameters
@@ -1286,10 +1305,9 @@ class D3Blocks():
         # Make dict with properties
         labels = make_dict(uilabels, colors=hexcolors, opacity=opacity)
 
-        # Store label properties
-        self.labels = labels
-        logger.info('Labels are set')
-        return labels
+        # Convert to frame
+        self.labels = convert_dataframe_dict(labels, frame=self.config['frame'])
+        logger.info('Node properties are set.')
 
     def _clean(self, clean_config=True):
         """Clean previous results to ensure correct working."""
