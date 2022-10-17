@@ -77,17 +77,9 @@ df = d3.import_example('energy')
 # Node properties
 d3.set_node_properties(df, opacity=0.4, cmap='Set1');
 # d3.node_properties
-
-d3.set_edge_properties(df, chart='chord')
-
+d3.set_edge_properties(df, chart='chord', color='source', opacity=0.6)
 # Create chord diagram
-# d3.chord(df)
-d3.chord(df, color='source', opacity=0.4)
-# d3.chord(df, color='target')
-# d3.chord(df, color='#000000')
-
-# df = d3.edge_properties(df, chart='chord', color='source')
-# d3.chord(df)
+d3.chord(df)
 
 
 # %% Violin plot
@@ -151,7 +143,6 @@ d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].val
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
 # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
 d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
-
 
 
 # %% SANKEY - EXAMPLE 1
