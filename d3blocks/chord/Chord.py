@@ -21,7 +21,7 @@ except:
 
 
 # %% Preprocessing
-def edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=None, logger=None):
+def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=None, logger=None):
     """Set the edge/link properties.
 
     Parameters

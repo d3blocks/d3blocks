@@ -26,7 +26,7 @@ import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
 from d3blocks.utils import pre_processing, remove_quotes
 
-# #### DEBUG ONLY ####
+# ###################### DEBUG ONLY ###################
 # import movingbubbles.Movingbubbles as Movingbubbles
 # import timeseries.Timeseries as Timeseries
 # import sankey.Sankey as Sankey
@@ -36,7 +36,7 @@ from d3blocks.utils import pre_processing, remove_quotes
 # import violin.Violin as Violin
 # import particles.Particles as Particles
 # from utils import pre_processing, remove_quotes
-# #####################
+# #####################################################
 
 import d3graph as d3network
 from d3heatmap import d3heatmap
@@ -196,7 +196,7 @@ class D3Blocks():
                x,
                y,
                s=5,
-               color=None,
+               c=None,
                bins=20,
                x_order=None,
                opacity=0.8,
@@ -311,7 +311,7 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            self.node_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
+            self.set_node_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
 
         # Create the plot
         self.config = Violin.show(df, config=self.config, labels=self.labels)
@@ -563,10 +563,10 @@ class D3Blocks():
 
         # Set label properties
         if not hasattr(self, 'labels'):
-            self.node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
+            self.set_node_properties(labels=df[['source', 'target']], cmap=self.config['cmap'])
 
         # Set edge properties based on input parameters
-        df = self.edge_properties(df, color=c, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
+        df = self.set_edge_properties(df, color=c, opacity=opacity, cmap=cmap, nodes=self.labels, logger=logger)
 
         # Create the plot
         self.config = Chord.show(df, self.config, labels=self.labels, logger=logger)
@@ -972,7 +972,7 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            self.node_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
+            self.set_node_properties(labels=np.unique(df[['source', 'target']].values.ravel()), cmap=self.config['cmap'])
 
         # Create the plot
         self.config = Sankey.show(df, self.config, labels=self.labels)
@@ -1106,7 +1106,7 @@ class D3Blocks():
             if self.config['center'] is not None:
                 center_label = labels.pop(labels.index(self.config['center']))
                 labels.append(center_label)
-            self.labels = self.node_properties(labels=labels, cmap=self.config['cmap'])
+            self.labels = self.set_node_properties(labels=labels, cmap=self.config['cmap'])
         if not isinstance(df, pd.DataFrame):
             self.labels=None
         if not hasattr(self, 'labels'):
@@ -1218,14 +1218,14 @@ class D3Blocks():
 
         # Set default label properties
         if not hasattr(self, 'labels'):
-            self.node_properties(labels=df.columns.values, cmap=self.config['cmap'])
+            self.set_node_properties(labels=df.columns.values, cmap=self.config['cmap'])
 
         # Create the plot
         self.config = Timeseries.show(df, self.config, labels=self.labels)
         # Open the webbrowser
         if self.config['showfig']: self.showfig()
 
-    def edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, nodes=None, logger=None):
+    def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20', chart: str = None, nodes=None, logger=None):
         """Set link/edge properties."""
         if hasattr(self, 'config') and (self.config.get('chart', None) is not None):
             chart = self.config['chart']
@@ -1233,10 +1233,10 @@ class D3Blocks():
             raise Exception('Chart parameter is mandatory. Hint: use "chord" or "sankey" etc')
 
         if chart=='chord':
-            df = Chord.edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=nodes, logger=logger)
+            df = Chord.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, nodes=nodes, logger=logger)
         return df
 
-    def node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1', ):
+    def set_node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1', ):
         """Set label properties.
 
         Parameters

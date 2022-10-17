@@ -5,6 +5,7 @@
 
 from d3blocks import D3Blocks
 
+# Initialize
 d3 = D3Blocks()
 # import example
 df = d3.import_example('cancer')
@@ -29,11 +30,11 @@ d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy')
 # Node properties
-d3.node_properties(df, opacity=0.4, cmap='Set1')
+d3.set_node_properties(df, opacity=0.4, cmap='Set1')
 
 # Create chord diagram
 # d3.chord(df)
-d3.chord(df, color='source', opacity=0.4)
+d3.chord(df, c='source', opacity=0.4)
 # d3.chord(df, color='target')
 # d3.chord(df, color='#000000')
 
@@ -49,7 +50,7 @@ d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy')
 # Get the node properties by setting them to defaults
-d3.node_properties(df, opacity=0.8, cmap='tab20')
+d3.set_node_properties(df, opacity=0.8, cmap='tab20')
 
 # Node properties are stored in labels
 # d3.labels
@@ -83,21 +84,21 @@ for key in d3.labels.keys():
         d3.labels.get(key)['opacity']=0.1
 
 # Chord diagram
-df = d3.edge_properties(df, chart='chord', color='target', opacity='target')
+df = d3.set_edge_properties(df, chart='chord', color='target', opacity='target')
 
 d3.chord(df, showfig=True)
 d3.chord(df, opacity='source', showfig=True)
-d3.chord(df, color='source', opacity=0.1, showfig=True)
-d3.chord(df, color='source', showfig=True)
-d3.chord(df, color='source', opacity='source', showfig=True)
-d3.chord(df, color='source', opacity='target', showfig=True)
-d3.chord(df, color='target', opacity='target', showfig=True)
-d3.chord(df, color='target', showfig=True)
-d3.chord(df, color='source-target', showfig=True)
-d3.chord(df, color='#000000', showfig=True)
+d3.chord(df, c='source', opacity=0.1, showfig=True)
+d3.chord(df, c='source', showfig=True)
+d3.chord(df, c='source', opacity='source', showfig=True)
+d3.chord(df, c='source', opacity='target', showfig=True)
+d3.chord(df, c='target', opacity='target', showfig=True)
+d3.chord(df, c='target', showfig=True)
+d3.chord(df, c='source-target', showfig=True)
+d3.chord(df, c='#000000', showfig=True)
 
-d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
-d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
+d3.chord(df, filepath='c://temp//chord_demo1.html', c=df['color'].values, opacity=df['opacity'].values, showfig=True)
+d3.chord(df, filepath='c://temp//chord_demo1.html', c=df['color'].values, showfig=True)
 
 
 # %% CHORD - EXAMPLE 2
@@ -331,7 +332,7 @@ d3.D3graph.set_node_properties()
 
 # # Color the same as for the sankey chart
 for key in labels.keys():
-    d3.D3graph.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
+    d3.D3graph.set_node_properties[key.replace(' ','_')]['color']=labels[key]['color']
 
 # # Show the network graph
 d3.D3graph.show(filepath='c:\\temp\\d3graph.html')
@@ -587,7 +588,7 @@ labels["the Hulk"]['color'] = "#567235"
 labels["Iron Man"]['color'] = "#8B161C"
 labels["Thor"]['color'] = "#DF7C00"
 
-d3.node_properties(labels)
+d3.set_node_properties(labels)
 
 # Chord diagram
 d3.chord(df, filepath='chord_demo.html')
