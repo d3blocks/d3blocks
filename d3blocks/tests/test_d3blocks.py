@@ -69,9 +69,9 @@ class Testd3blocks(unittest.TestCase):
         # Import example
         df = d3.import_example('energy')
         # Link settings
-        d3.chord(df, filepath='c://temp//chord_demo1.html', color='target')
-        d3.chord(df, filepath='c://temp//chord_demo2.html', color='source')
-        d3.chord(df, filepath='c://temp//chord_demo3.html', color='source-target')
+        d3.chord(df, filepath='chord_demo1.html', color='target')
+        d3.chord(df, filepath='chord_demo2.html', color='source')
+        d3.chord(df, filepath='chord_demo3.html', color='source-target')
 
         d3 = D3Blocks()
         df = pd.DataFrame([{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}])
