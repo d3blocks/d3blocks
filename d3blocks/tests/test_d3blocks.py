@@ -2,6 +2,7 @@ from copy import deepcopy
 import unittest
 from d3blocks import D3Blocks
 import pandas as pd
+import numpy as np
 try:
     import cv2
 except:
@@ -67,15 +68,41 @@ class Testd3blocks(unittest.TestCase):
         # Import example
         df = d3.import_example('energy')
         # Link settings
-        d3.chord(df, filepath='chord_demo.html', color='target')
-        d3.chord(df, filepath='chord_demo.html', color='source')
-        d3.chord(df, filepath='chord_demo.html', color='source-target')
+        d3.chord(df, filepath='c://temp//chord_demo1.html', color='target')
+        d3.chord(df, filepath='c://temp//chord_demo2.html', color='source')
+        d3.chord(df, filepath='c://temp//chord_demo3.html', color='source-target')
 
         d3 = D3Blocks()
         df = pd.DataFrame([{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}])
         # Get the node properties by setting them to defaults
         d3.set_node_properties(df, opacity=0.8, cmap='tab20')
         d3.chord(df, showfig=False)
+        
+        #### TEST USING NODE AND EDGE PROPERTIES
+        # Initialize
+        d3 = D3Blocks(chart='Chord', frame=True)
+        # Import example
+        df = d3.import_example('energy')
+        # Node properties
+        d3.set_node_properties(df, opacity=0.6, cmap='Set1')
+        assert np.all(d3.node_properties['opacity']==0.6)
+        assert np.all(d3.node_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#377eb8','#ff7f00'])
+        ### CHECK COLORS
+        d3.set_edge_properties(df, color='target')
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#ff7f00','#ff7f00','#999999','#ff7f00'])
+        d3.set_edge_properties(df, color='source')
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#e41a1c','#377eb8'])
+        d3.set_edge_properties(df, color='source-target')
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#1f77b4','#d62728','#f7b6d2','#9edae5','#ff7f0e'])
+        d3.set_edge_properties(df, color='#f0f0f0')
+        assert np.all(d3.edge_properties['color']=='#f0f0f0')
+        ### CHECK OPACITY
+        d3.set_edge_properties(df, color='target', opacity=0.2)
+        assert np.all(d3.edge_properties['opacity']==0.2)
+
+        # d3.edge_properties
+        # Show the chord diagram
+        d3.show(showfig=True, filepath='chord.html')
 
     def test_timeseries(self):
         # Import library.

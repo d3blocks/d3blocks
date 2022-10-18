@@ -7,11 +7,39 @@
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(frame=False)
+d3 = D3Blocks(chart='Chord', frame=False)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df, opacity=0.6, cmap='Set1')
+# d3.node_properties
+# d3.node_properties
+d3.set_edge_properties(df, color='target', opacity='target')
+# d3.edge_properties
+# Show the chord diagram
+d3.show(showfig=True, filepath='chord.html')
+
+# or
+
+# Create chord diagram
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Create chord diagram
+d3.chord(df, color='target')
+# d3.chord(df, color='#000000', opacity=0.4)
+
+# %% CHORD - EXAMPLE 2
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='chord', frame=False)
 # Import example
 df = d3.import_example('energy')
 # Get the node properties by setting them to defaults
-d3.set_node_properties(df, opacity=0.8, cmap='tab20')
+d3.set_node_properties(df, opacity=0.8, cmap='Set1')
 
 # Node properties are stored in labels
 # d3.node_properties
@@ -45,42 +73,26 @@ for key in d3.node_properties.keys():
         d3.node_properties.get(key)['opacity']=0.1
 
 # Chord diagram
-d3.set_edge_properties(df, chart='chord', color='source-target', opacity='target', cmap='tab20')
-d3.chord(df, showfig=True)
+d3.set_edge_properties(df, color='source-target', opacity='target', cmap='Set1')
+d3.show(showfig=True, filepath='c://temp//chord1.html')
 
-d3.set_edge_properties(df, chart='chord', color='source', opacity='source', cmap='tab20')
-d3.chord(df, showfig=True)
+d3.set_edge_properties(df, color='source', opacity='source', cmap='Set1')
+d3.show(showfig=True, filepath='c://temp//chord2.html')
 
-d3.set_edge_properties(df, chart='chord', color='source', opacity='target', cmap='tab20')
-d3.chord(df, showfig=True)
+d3.set_edge_properties(df, color='source', opacity='target', cmap='Set1')
+d3.show(showfig=True, filepath='c://temp//chord3.html')
 
-d3.set_edge_properties(df, chart='chord', color='target', opacity='target', cmap='tab20')
-d3.chord(df, showfig=True)
+d3.set_edge_properties(df, color='target', opacity='target', cmap='Set1')
+d3.show(showfig=True, filepath='c://temp//chord4.html')
 
-d3.set_edge_properties(df, chart='chord', color='#000000', opacity='target', cmap='tab20')
-d3.chord(df, showfig=True)
+d3.set_edge_properties(df, color='#000000', opacity='target', cmap='Set1')
+d3.show(showfig=True, filepath='c://temp//chord5.html')
 
-d3.set_edge_properties(df, chart='chord', color='#000000', opacity=0.1, cmap='tab20')
-d3.chord(df, showfig=True)
+d3.set_edge_properties(df, color='#000000', opacity=0.1, cmap='Set1')
+d3.show(showfig=True, filepath='c://temp//chord6.html')
 
 # d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, opacity=df['opacity'].values, showfig=True)
 # d3.chord(df, filepath='c://temp//chord_demo1.html', color=df['color'].values, showfig=True)
-
-
-# %% CHORD - EXAMPLE 2
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks(frame=True)
-# Import example
-df = d3.import_example('energy')
-# Node properties
-d3.set_node_properties(df, opacity=0.4, cmap='Set1');
-# d3.node_properties
-d3.set_edge_properties(df, chart='chord', color='source', opacity=0.6)
-# Create chord diagram
-d3.chord(df)
-
 
 # %% Violin plot
 import numpy as np
@@ -302,7 +314,7 @@ d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks()
+d3 = D3Blocks(frame=False)
 
 # Import example
 df = d3.import_example('energy')
@@ -322,7 +334,7 @@ d3.D3graph.set_node_properties()
 
 # # Color the same as for the sankey chart
 for key in labels.keys():
-    d3.D3graph.set_node_properties[key.replace(' ','_')]['color']=labels[key]['color']
+    d3.D3graph.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
 
 # # Show the network graph
 d3.D3graph.show(filepath='c:\\temp\\d3graph.html')

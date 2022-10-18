@@ -20,9 +20,33 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict
+    from .. utils import convert_dataframe_dict, set_path
 except:
-    from utils import convert_dataframe_dict
+    from utils import convert_dataframe_dict, set_path
+
+
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='movingbubbles'
+    config['title']='Movingbubbles - D3Blocks'
+    config['filepath']=set_path('movingbubbles.html')
+    config['showfig']=True
+    config['overwrite']=True
+    config['figsize']=[780, 800]
+    config['datetime']='datetime'
+    config['sample_id']='sample_id'
+    config['state']='state'
+    config['center']=None
+    config['damper']=1
+    config['fontsize']=14
+    config['reset_time']='day'
+    config['standardize']=None
+    config['speed']={"slow": 1000, "medium": 200, "fast": 50}
+    config['note']=None
+    config['time_notes']=None
+    config['columns'] = {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']}
+    return config
 
 
 def show(df, config, labels=None):

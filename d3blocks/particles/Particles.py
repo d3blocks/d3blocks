@@ -11,6 +11,28 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
+try:
+    from .. utils import set_path
+except:
+    from utils import set_path
+
+
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='Particles'
+    config['title']='Particles - D3blocks'
+    config['filepath']=set_path('particles.html')
+    config['figsize']=[900, 200]
+    config['showfig']=True
+    config['overwrite']=True
+    config['fontsize'] = '"' + str(180) + 'px"'
+    config['radius']=3
+    config['collision']=0.5
+    config['spacing']=8
+    config['cmap']='Turbo'
+    config['background']='#000000'
+    return config
 
 
 def show(text, config):

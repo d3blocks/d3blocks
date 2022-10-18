@@ -15,9 +15,25 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict
+    from .. utils import convert_dataframe_dict, set_path
 except:
-    from utils import convert_dataframe_dict
+    from utils import convert_dataframe_dict, set_path
+
+
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='violin'
+    config['title']='Violin - D3blocks'
+    config['filepath']=set_path('violin.html')
+    config['overwrite'] = True
+    config['showfig'] = True
+    config['bins'] = 20
+    config['cmap'] = 'inferno'
+    config['figsize'] = [None, None]
+    config['ylim'] = [None, None]
+    config['x_order'] = None
+    return config
 
 
 def label_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):

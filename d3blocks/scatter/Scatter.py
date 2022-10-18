@@ -17,9 +17,25 @@ import pandas as pd
 import time
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict
+    from .. utils import set_colors, convert_dataframe_dict, set_path
 except:
-    from utils import set_colors, convert_dataframe_dict
+    from utils import set_colors, convert_dataframe_dict, set_path
+
+
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='scatter'
+    config['title']='Scatter - D3blocks'
+    config['filepath']=set_path('scatter.html')
+    config['figsize']=[900, 600]
+    config['showfig']=True
+    config['overwrite']=True
+    config['xlim']=[None, None]
+    config['ylim']=[None, None]
+    config['scale']=False
+    config['cmap']='tab20'
+    return config
 
 
 # %% Preprocessing

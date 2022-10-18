@@ -20,6 +20,7 @@ rm -rf .pylint.d
 rm -rf d3blocks/data/*.zip
 rm -rf d3blocks/data/*.csv
 rm -rf d3blocks/data/*.jpg
+rm -rf d3blocks/d3blocks/*.html
 rm -rf *.js
 rm -rf *.html
 rm -rf *.css

@@ -13,9 +13,26 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict
+    from .. utils import convert_dataframe_dict, set_path
 except:
-    from utils import convert_dataframe_dict
+    from utils import convert_dataframe_dict, set_path
+
+def set_edge_properties():
+    pass
+
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='sankey'
+    config['title']='Sankey - D3blocks'
+    config['filepath']=set_path('sankey.html')
+    config['figsize']=[800, 600]
+    config['showfig']=True
+    config['overwrite']=True
+    config['node']={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}
+    config['link']={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#D3D3D3'}
+    config['margin']={"top": 5, "right": 1, "bottom": 5, "left": 1}
+    return config
 
 
 def show(df, config, labels=None):

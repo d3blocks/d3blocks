@@ -7,10 +7,50 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 
+from ismember import ismember
 import numpy as np
 import pandas as pd
 import colourmap
 import unicodedata
+import os
+import tempfile
+
+
+def set_path(filepath='d3blocks.html', logger=None):
+    """Set the file path.
+
+    Parameters
+    ----------
+    filepath : str
+        filename and or full pathname.
+        * 'd3graph.html'
+        * 'c://temp/'
+        * 'c://temp/d3graph.html'
+
+    Returns
+    -------
+    filepath : str
+        Path to graph.
+
+    """
+    dirname, filename = os.path.split(filepath)
+    # dirname = os.path.abspath(dirname)
+
+    if (filename is None) or (filename==''):
+        filename = 'd3blocks.html'
+
+    if (dirname is None) or (dirname==''):
+        # dirname = tempfile.TemporaryDirectory().name
+        dirname = os.path.join(tempfile.gettempdir(), 'd3blocks')
+
+    if not os.path.isdir(dirname):
+        if logger is not None: logger.info('Create directory: [%s]', dirname)
+        os.mkdir(dirname)
+
+    filepath = os.path.abspath(os.path.join(dirname, filename))
+    if logger is not None: logger.debug("filepath is set to [%s]" %(filepath))
+    # Return
+    return filepath
 
 
 def convert_dataframe_dict(X, frame, logger=None):
@@ -29,21 +69,23 @@ def convert_dataframe_dict(X, frame, logger=None):
     None.
 
     """
-    if isinstance(X, dict) and frame:
-        if logger is not None: logger.info('Convert to Frame.')
-        X = pd.DataFrame.from_dict(X, orient='index')
-    elif isinstance(X, pd.DataFrame) and not frame:
-        if logger is not None: logger.info('Convert to Dictionary.')
-        X = X.to_dict(orient='index')
-
     # if isinstance(X, dict) and frame:
     #     if logger is not None: logger.info('Convert to Frame.')
-    #     X = pd.DataFrame.from_dict(X, orient='index').reset_index(drop=False).rename(columns={'level_0': 'source', 'level_1': 'target'})
+    #     X = pd.DataFrame.from_dict(X, orient='index')
     # elif isinstance(X, pd.DataFrame) and not frame:
     #     if logger is not None: logger.info('Convert to Dictionary.')
-    #     X.index = X[['source', 'target']]
-    #     X.drop(labels=['source', 'target'], axis=1, inplace=True)
     #     X = X.to_dict(orient='index')
+
+    if isinstance(X, dict) and frame:
+        if logger is not None: logger.info('Convert to Frame.')
+        X = pd.DataFrame.from_dict(X, orient='index').reset_index(drop=True)
+    elif isinstance(X, pd.DataFrame) and not frame:
+        if logger is not None: logger.info('Convert to Dictionary.')
+        if np.all(ismember(['source', 'target'], X.columns.values)[0]):
+            X.index = X[['source', 'target']]
+        else:
+            X.index = X['label']
+        X = X.to_dict(orient='index')
 
     return X
 
@@ -73,7 +115,7 @@ def set_colors(X, c, cmap, c_gradient=None):
     else:
         # The input are string-labels and not colors. Lets convert to hex-colors.
         labels = c
-        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=c_gradient, scheme='hex')
+        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=c_gradient, scheme='hex', verbose=0)
 
     if (c_gradient is not None):
         c_hex = density_color(X, c_hex, c)

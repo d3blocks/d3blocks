@@ -13,9 +13,24 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict
+    from .. utils import convert_dataframe_dict, set_path
 except:
-    from utils import convert_dataframe_dict
+    from utils import convert_dataframe_dict, set_path
+
+
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='timeseries'
+    config['title']='Timeseries - D3blocks'
+    config['filepath']=set_path('timeseries.html')
+    config['figsize']=[1000, 500]
+    config['showfig']=True
+    config['overwrite']=True
+    config['fontsize']=10
+    config['sort_on_date'] = True
+    config['columns'] = {'datetime': None}
+    return config
 
 
 def show(df, config, labels=None):

@@ -15,12 +15,26 @@ import time
 from ismember import ismember
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path
 
 
-# %% Preprocessing
+# %% Set configuration properties
+def set_config(config, logger=None):
+    """Set the general configuration setting."""
+    config['chart'] ='chord'
+    config['title']='Chord - D3blocks'
+    config['filepath']=set_path('Chord.html')
+    config['figsize']=[900, 900]
+    config['cmap'] = 'Set1'
+    config['fontsize']=10
+    config['showfig']=True
+    config['overwrite']=True
+    return config
+
+
+# %% Set Edge properties
 def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=None, logger=None):
     """Set the edge/link properties.
 
@@ -134,13 +148,12 @@ def show(df, config, labels=None, logger=None):
 
     Returns
     -------
-    config : dict
-        Dictionary containing updated configuration keys.
+    None
 
     """
     # Convert dict/frame.
+    df = convert_dataframe_dict(df.copy(), frame=True)
     labels = convert_dataframe_dict(labels, frame=False)
-    df = convert_dataframe_dict(df, frame=True)
 
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=True)
