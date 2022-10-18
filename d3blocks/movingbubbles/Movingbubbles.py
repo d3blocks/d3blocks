@@ -7,7 +7,7 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 
 """
-
+import colourmap
 import numpy as np
 import pandas as pd
 import datetime as dt
@@ -23,6 +23,23 @@ try:
     from .. utils import convert_dataframe_dict, set_path
 except:
     from utils import convert_dataframe_dict, set_path
+
+
+# %% Labels
+def set_labels(df):
+    return np.unique(df.columns.values)
+
+# %% Node properties
+def set_node_properties(labels, cmap, logger, **kwargs):
+    """Set the node properties."""
+    # Create unique label/node colors
+    colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
+
+    dict_labels = {}
+    for i, label in enumerate(labels):
+        dict_labels[label] = {'id': i, 'label': label, 'short': label, 'desc': label, 'color': colors[i]}
+    # Return
+    return dict_labels
 
 
 # %% Set configuration properties
@@ -49,7 +66,7 @@ def set_config(config, logger=None):
     return config
 
 
-def show(df, config, labels=None):
+def show(df, **kwargs):
     """Build and show the graph.
 
     df : pd.DataFrame()
@@ -66,9 +83,13 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    config = kwargs.get('config')
+    labels = kwargs.get('node_properties')
+    logger = kwargs.get('logger', None)
+
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)
-    df = convert_dataframe_dict(df, frame=True)
+    # df = convert_dataframe_dict(df, frame=True)
 
     if not np.any(df.columns=='delta'):
         raise Exception('Column "delta" is missing in dataFrame of type datetime.')
@@ -123,12 +144,12 @@ def show(df, config, labels=None):
     config['time_notes'] = json.dumps(config['time_notes'])
 
     # Write to HTML
-    write_html(X, config)
+    write_html(X, config, logger)
     # Return config
     return config
 
 
-def write_html(X, config):
+def write_html(X, config, logger=None):
     """Write html.
 
     Parameters
@@ -176,7 +197,7 @@ def write_html(X, config):
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))
     if config['overwrite'] and os.path.isfile(index_file):
-        print('File already exists and will be overwritten: [%s]' %(index_file))
+        if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
         os.remove(index_file)
         time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:

@@ -3,7 +3,75 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
-# %% CHORD - EXAMPLE 2
+
+# %% Moving bubbles
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(cmap='Set1')
+# Import example
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+# standardize the time per sample id.
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+# Make the moving bubbles
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
+
+
+
+# %% TIMESERIES
+import yfinance as yf
+df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
+df = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = df.div(df.iloc[0])
+df.head()
+# df = df.droplevel(0, axis=1)
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(chart='Timeseries', frame=False)
+# Node properties
+d3.set_node_properties(df.columns.values)
+# d3.node_properties
+d3.node_properties.get('META')['color']='#000000'
+# Show
+d3.timeseries(df, filepath='c://temp//timeseries.html', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
+
+
+# %% VIOLIN - EXAMPLE
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Violin', frame=True)
+# Import example
+df = d3.import_example('cancer')
+# Node properties
+d3.set_node_properties(df['labels'].values)
+# d3.node_properties
+# d3.set_edge_properties(df)
+# d3.edge_properties
+d3.violin(x=df['labels'].values, y=df['age'].values)
+# Show the chart
+d3.show(showfig=True, filepath='violin1.html')
+
+# or
+
+# Create chord diagram
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('cancer')
+# Create chord diagram
+d3.violin(x=df['labels'].values, y=df['age'].values)
+# 
+d3.violin(x=df['labels'].values, # class labels on the x axis
+          y=df['age'].values,    # Age
+          size=df['survival_months'].values/10, # Dotsize
+          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
+          figsize=[None, None],   # Figure size is automatically determined.
+          filepath='violine_demo.html')
+
+
+# %% CHORD - EXAMPLE
 from d3blocks import D3Blocks
 
 # Initialize
@@ -13,10 +81,9 @@ df = d3.import_example('energy')
 # Node properties
 d3.set_node_properties(df, opacity=0.6, cmap='Set1')
 # d3.node_properties
-# d3.node_properties
 d3.set_edge_properties(df, color='target', opacity='target')
 # d3.edge_properties
-# Show the chord diagram
+# Show the chart
 d3.show(showfig=True, filepath='chord.html')
 
 # or
@@ -30,6 +97,30 @@ df = d3.import_example('energy')
 # Create chord diagram
 d3.chord(df, color='target')
 # d3.chord(df, color='#000000', opacity=0.4)
+
+# %% Sankey
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Sankey', frame=True)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df)
+# d3.node_properties
+d3.set_edge_properties(df, color='target', opacity='target')
+# d3.edge_properties
+# Show the chart
+d3.show(showfig=True, filepath='Sankey.html')
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Link settings
+d3.sankey(df, link={"color": "source"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
+# labels = d3.node_properties
+
 
 # %% CHORD - EXAMPLE 2
 from d3blocks import D3Blocks
@@ -241,10 +332,9 @@ d3.chord(df, filepath='c://temp//chord_demo.html', figsize=[900, 900], opacity=d
 # %% TIMESERIES
 import yfinance as yf
 df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-d = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
+df = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
 df = df.div(df.iloc[0])
 df.head()
-df = df.droplevel(0, axis=1)
 
 from d3blocks import D3Blocks
 d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
@@ -424,17 +514,6 @@ d3.sankey(df, link={"color": "source-target"})
 
 
 
-# %% Moving bubbles
-from d3blocks import D3Blocks
-
-d3 = D3Blocks(cmap='Set1')
-# Import example
-df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-# standardize the time per sample id.
-# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
-# Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
-# d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 

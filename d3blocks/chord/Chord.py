@@ -6,13 +6,14 @@ Mail        : erdogant@gmail.com, oliver@sensibly.nl
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
+from ismember import ismember
+import colourmap
 
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
-from ismember import ismember
 
 try:
     from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path
@@ -20,23 +21,47 @@ except:
     from utils import set_colors, pre_processing, convert_dataframe_dict, set_path
 
 
+# %% Get unique labels
+def set_labels(df):
+    return np.unique(df[['source', 'target']].values.flatten())
+
+
 # %% Set configuration properties
-def set_config(config, logger=None):
-    """Set the general configuration setting."""
+def set_config(config={}, **kwargs):
+    """Set the default configuration setting."""
     config['chart'] ='chord'
-    config['title']='Chord - D3blocks'
-    config['filepath']=set_path('Chord.html')
-    config['figsize']=[900, 900]
-    config['cmap'] = 'Set1'
-    config['fontsize']=10
-    config['showfig']=True
-    config['overwrite']=True
+    config['title'] = kwargs.get('title', 'Chord - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'chord.html'))
+    config['figsize'] = kwargs.get('figsize', [900, 900])
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['fontsize'] = kwargs.get('fontsize', 10)
+    # return
     return config
 
 
+def set_node_properties(labels, cmap, logger, **kwargs):
+    """Set the node properties."""
+    # Set Opacity
+    opacity = kwargs.get('opacity', None)
+    if opacity is None: opacity=0.8
+    if isinstance(opacity, list) and len(opacity) != len(labels): raise ValueError(f'Input parameter [color] has wrong length. Must be of length: {str(len(labels))}')
+    if isinstance(opacity, float): opacity = np.repeat(opacity, len(labels))
+
+    # Create unique label/node colors
+    colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
+
+    dict_labels = {}
+    for i, label in enumerate(labels):
+        dict_labels[label] = {'id': i, 'label': label, 'color': colors[i], 'opacity': opacity[i]}
+    # Return
+    return dict_labels
+
+
 # %% Set Edge properties
-def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=None, logger=None):
-    """Set the edge/link properties.
+def set_edge_properties(df, node_properties, **kwargs):
+    """Set the edge properties.
 
     Parameters
     ----------
@@ -76,8 +101,13 @@ def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=Non
         DataFrame.
 
     """
+    color = kwargs.get('color', 'target')
+    opacity = kwargs.get('opacity', 0.8)
+    cmap = kwargs.get('cmap', 'tab20')
+    logger = kwargs.get('logger', None)
+
     # Convert to dict/frame.
-    nodes = convert_dataframe_dict(nodes, frame=False)
+    nodes = convert_dataframe_dict(node_properties, frame=False)
     df = convert_dataframe_dict(df, frame=True)
 
     if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=df.shape[0]):
@@ -133,7 +163,7 @@ def set_edge_properties(df, color='target', opacity=0.8, cmap='tab20', nodes=Non
     return df
 
 
-def show(df, config, labels=None, logger=None):
+def show(df, **kwargs):
     """Build and show the graph.
 
     Parameters
@@ -142,7 +172,7 @@ def show(df, config, labels=None, logger=None):
         Input data.
     config : dict
         Dictionary containing configuration keys.
-    labels : dict
+    node_properties : dict
         Dictionary containing hex colorlabels for the classes.
         The labels are derived using the function: labels = d3blocks.set_label_properties()
 
@@ -151,16 +181,20 @@ def show(df, config, labels=None, logger=None):
     None
 
     """
+    config = kwargs.get('config')
+    node_properties = kwargs.get('node_properties')
+    logger = kwargs.get('logger', None)
+
     # Convert dict/frame.
     df = convert_dataframe_dict(df.copy(), frame=True)
-    labels = convert_dataframe_dict(labels, frame=False)
+    node_properties = convert_dataframe_dict(node_properties, frame=False)
 
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=True)
-    df['source_id'] = list(map(lambda x: labels.get(x)['id'], df['source']))
-    df['target_id'] = list(map(lambda x: labels.get(x)['id'], df['target']))
+    df['source_id'] = list(map(lambda x: node_properties.get(x)['id'], df['source']))
+    df['target_id'] = list(map(lambda x: node_properties.get(x)['id'], df['target']))
     # Create the data from the input of javascript
-    X = get_data_ready_for_d3(df, labels)
+    X = get_data_ready_for_d3(df, node_properties)
     # Write to HTML
     write_html(X, config, logger=logger)
     # Return config
@@ -225,7 +259,7 @@ def get_data_ready_for_d3(df, labels):
     """
     # Set the nodes in an increasing id-order
     list_id = np.array(list(map(lambda x: labels.get(x)['id'], df['source'])) + list(map(lambda x: labels.get(x)['id'], df['target'])))
-    list_name = np.array(list(map(lambda x: labels.get(x)['desc'], df['source'])) + list(map(lambda x: labels.get(x)['desc'], df['target'])))
+    list_name = np.array(list(map(lambda x: labels.get(x)['label'], df['source'])) + list(map(lambda x: labels.get(x)['label'], df['target'])))
     _, idx = np.unique(list_id, return_index=True)
 
     # Set the nodes

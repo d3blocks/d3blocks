@@ -11,7 +11,6 @@ import zipfile
 import webbrowser
 import random
 import time
-import colourmap
 from typing import List, Union, Tuple
 from ismember import ismember
 
@@ -96,6 +95,7 @@ class D3Blocks():
         self.config['chart'] = chart
         self.config['frame'] = frame
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
+        # TODO: REMOVE WHITELIST, DT_FORMAT AND CMAP FROM INITIALIZATION
         self.config['cmap'] = cmap
         self.config['whitelist'] = whitelist
         self.config['dt_format'] = dt_format
@@ -302,28 +302,17 @@ class D3Blocks():
         if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
         if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=len(x)): raise Exception(logger.error('input parameter "opacity" should be of same size of (x, y).'))
 
-        if bins is None: bins=20
-        self.config['bins'] = bins
-        self.config['chart'] ='violin'
-        self.config['cmap'] = cmap
-        self.config['filepath'] = set_path(filepath)
-        self.config['title'] = title
-        self.config['ylim'] = ylim
-        self.config['x_order'] = x_order
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['figsize'] = figsize
+        # Store chart
         self.chart = eval('Violin')
-
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order)
         # Remvove quotes from source-target node_properties
-        df = Violin.label_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
-
+        self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
         # Set default label properties
         if not hasattr(self, 'node_properties'):
-            self.set_node_properties(labels=np.unique(df['x'].values), cmap=self.config['cmap'])
-
+            self.set_node_properties(np.unique(self.edge_properties['x'].values), cmap=self.config['cmap'])
         # Create the plot
-        self.config = Violin.show(df, config=self.config, labels=self.node_properties)
+        self.config = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -562,23 +551,16 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Chord.html
 
         """
-        # Store properties
-        self.config['chart'] ='chord'
-        self.config['filepath'] = set_path(filepath)
-        self.config['fontsize'] = fontsize
-        self.config['title'] = title
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['figsize'] = figsize
-        self.config['cmap'] = cmap
+        # Store chart
         self.chart = set_chart_func('Chord', logger)
-
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap)
         # Set label properties
-        self.set_node_properties(labels=df, cmap=cmap)
+        self.set_node_properties(df, cmap=cmap)
         # Set edge properties based on input parameters
-        self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap)
+        self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, logger=logger)
         # Create the plot
-        self.config = Chord.show(self.edge_properties, self.config, labels=self.node_properties, logger=logger)
+        self.config = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -975,33 +957,20 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
-
-        # Store paramters
-        self.config['chart'] ='sankey'
-        self.config['filepath'] = set_path(filepath)
-        self.config['title'] = title
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['figsize'] = figsize
-        self.config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
-        self.config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
-        self.config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
-        self.chart=None
-
+        # Store chart
+        self.chart = set_chart_func('sankey', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin)
         # Convert to Frame
         df = convert_dataframe_dict(df.copy(), frame=True)
         # Remove quotes from source-target labels
         df = pre_processing(df)
-
         # Set default label properties
-        if not hasattr(self, 'node_properties'):
-            self.set_node_properties(labels=df, cmap=self.config['cmap'])
-
+        self.set_node_properties(df, cmap=self.config['cmap'])
         # Set edge properties
         self.set_edge_properties(df)
-
         # Create the plot
-        self.config = Sankey.show(self.edge_properties, self.config, labels=self.node_properties)
+        self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -1121,6 +1090,8 @@ class D3Blocks():
         self.config['fontsize'] = fontsize
         self.config['standardize'] = standardize
         self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
+
+        # Store chart
         self.chart = eval('Movingbubbles')
 
         # Compute delta
@@ -1137,7 +1108,7 @@ class D3Blocks():
                 labels.append(center_label)
 
             # Set the label properties
-            self.set_node_properties(labels=labels, cmap=self.config['cmap'])
+            self.set_node_properties(labels, cmap=self.config['cmap'])
 
         if not isinstance(df, pd.DataFrame):
             self.node_properties=None
@@ -1149,7 +1120,7 @@ class D3Blocks():
             self.config['note']=("This is a simulation of [%s] states across [%s] samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df['state'].unique()), len(df[sample_id].unique())))
 
         # Create the plot
-        self.config = Movingbubbles.show(df, self.config, self.node_properties)
+        self.chart.show(df, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -1160,6 +1131,7 @@ class D3Blocks():
                    df,
                    datetime=None,
                    sort_on_date=True,
+                   dt_format: str = '%d-%m-%Y %H:%M:%S',
                    title='Timeseries - D3blocks',
                    filepath='timeseries.html',
                    fontsize=10,
@@ -1179,14 +1151,23 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data. If the index is not datetime, specify the column with 'datetime'
+        datetime : str, (default: None)
+            Column name that contains the datetime.
+        sort_on_date : Bool (default: True)
+            True: Sort on datetime.
+            False: Do not change the input order.
+        dt_format : str
+            '%d-%m-%Y %H:%M:%S'.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output
-        showfig : bool, (default: True)
-            Open the window to show the chart.
         fontsize : int, (default: 14)
             Fontsize of the fonts in the circle.
+        figsize : tuple, (default: [1000, 500])
+            Size of the figure in the browser, [width, height].
+        showfig : bool, (default: True)
+            Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the existing html file.
 
@@ -1220,50 +1201,22 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
-
-        # Store parameters
-        self.config['chart'] ='timeseries'
-        self.config['filepath'] = set_path(filepath)
-        self.config['figsize'] = figsize
-        self.config['title'] = title
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['fontsize'] = fontsize
-        self.config['sort_on_date'] = sort_on_date
-        self.config['columns'] = {'datetime': datetime}
+        # Store chart
         self.chart = eval('Timeseries')
-
-        # Make copy
-        df = df.copy()
-        # Get datetime
-        if datetime is None:
-            logger.info('Taking the index for datetime.')
-            df.index = pd.to_datetime(df.index.values, format=self.config['dt_format'])
-        else:
-            df.index = pd.to_datetime(df[self.config['columns']['datetime']].values, format=self.config['dt_format'])
-            df.drop(labels=self.config['columns']['datetime'], axis=1, inplace=True)
-        # Check multi-line columns and merge those that are multi-line
-        # df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
-        # Check whitelist
-        if self.config['whitelist'] is not None:
-            logger.info('Filtering columns on [%s]' %(self.config['whitelist']))
-            Ikeep = list(map(lambda x: self.config['whitelist'].lower() in x.lower(), df.columns.values))
-            df = df.iloc[:, Ikeep]
-
-        if df.shape[1]==0:
-            logger.info('All columns are removed. Change whitelist/blacklist setting.')
-            return None
-
-        # Set default label properties
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime)
+        # Set edge properties
+        self.edge_properties = self.chart.set_edge_properties(df.copy(), self.config, datetime=datetime, logger=logger)
+        # Set node properties
         if not hasattr(self, 'node_properties'):
-            self.set_node_properties(labels=df.columns.values, cmap=self.config['cmap'])
-
+            self.set_node_properties(self.edge_properties.columns.values, cmap=self.config['cmap'])
         # Create the plot
-        self.config = Timeseries.show(df, self.config, labels=self.node_properties)
+        self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
-    def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20'):
+    # def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20'):
+    def set_edge_properties(self, df, **kwargs):
         """Set edge properties.
 
         Parameters
@@ -1306,14 +1259,15 @@ class D3Blocks():
 
         # Compute edge properties for the specified chart.
         if self.chart is not None:
-            df = self.chart.set_edge_properties(df.copy(), color=color, opacity=opacity, cmap=cmap, nodes=self.node_properties)
+            df = self.chart.set_edge_properties(df.copy(), self.node_properties, **kwargs)
+            # df = self.chart.set_edge_properties(df.copy(), color=color, opacity=opacity, cmap=cmap, nodes=self.node_properties)
 
         # Convert to frame/dictionary
         self.edge_properties = convert_dataframe_dict(df, frame=self.config['frame'])
         # Store and return
         logger.info('Edge properties are set.')
 
-    def set_node_properties(self, labels=None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'Set1'):
+    def set_node_properties(self, labels, cmap: str = 'Set1', **kwargs):
         """Set label properties.
 
         Parameters
@@ -1331,7 +1285,9 @@ class D3Blocks():
             Dictionary containing class information.
 
         """
-        if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
+        if isinstance(labels, pd.DataFrame) and (self.chart is not None):
+            labels = self.chart.set_labels(labels)
+        elif isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
             logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
             labels = np.unique(labels[['source', 'target']].values.flatten())
         if labels is None:
@@ -1344,42 +1300,45 @@ class D3Blocks():
         if (labels is None) or len(labels)<1:
             logger.warning('Input parameter labels is not specified. Provide it manually. <return>')
             return None
-        if isinstance(opacity, list) and len(opacity) != len(labels):
-            raise ValueError(f'Input parameter [color] has wrong length. Must be of length: {str(len(labels))}')
+        # if isinstance(opacity, list) and len(opacity) != len(labels):
+            # raise ValueError(f'Input parameter [color] has wrong length. Must be of length: {str(len(labels))}')
 
         # Opacity
-        if isinstance(opacity, float):
-            opacity = np.repeat(opacity, len(labels))
+        # if isinstance(opacity, float):
+            # opacity = np.repeat(opacity, len(labels))
 
         # Get unique categories without sort
         indexes = np.unique(labels, return_index=True)[1]
         uilabels = [labels[index] for index in sorted(indexes)]
 
-        # Create unique label/node colors
-        hexcolors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
+        # # Create unique label/node colors
+        # hexcolors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
 
         # Make dict with properties
-        # TODO: MAKE_DICT PER CHART
-        labels = self.make_dict(uilabels, colors=hexcolors, opacity=opacity)
+        if self.chart is not None:
+            labels = self.chart.set_node_properties(uilabels, cmap, logger, **kwargs)
+
+        # labels = self.make_dict(uilabels, colors=hexcolors, **kwargs)
 
         # Convert to frame
         self.node_properties = convert_dataframe_dict(labels, frame=self.config['frame'])
         logger.info('Node properties are set.')
 
-    def make_dict(self, labels, colors, opacity=0.8):
-        """Create dictionary with label properties."""
-        dlabel = {}
+    # def make_dict(self, labels, colors, opacity=0.8):
+        # """Create dictionary with label properties."""
+        # dlabel = {}
+        # TODO: MAKE_DICT PER CHART
         # if self.chart is not None:
             # dlabel = self.chart.make_dict(labels=labels, colors=colors, opacity=opacity, logger=logger)
-        for i, cat in enumerate(labels):
-            dlabel[cat] = {'id': i, 'label': cat, 'desc': cat, 'short': cat, 'color': colors[i], 'opacity': opacity[i]}
-        return dlabel
+        # for i, cat in enumerate(labels):
+        #     dlabel[cat] = {'id': i, 'label': cat, 'desc': cat, 'short': cat, 'color': colors[i], 'opacity': opacity[i]}
+        # return dlabel
 
     def set_config(self):
         """Set the general configuration setting."""
         # Set default config settings for the specified chart.
         if self.chart is not None:
-            self.config = self.chart.set_config(self.config, logger)
+            self.config = self.chart.set_config(self.config, logger=logger)
 
     def show(self,
              figsize: Tuple[int, int] = None,
@@ -1422,7 +1381,8 @@ class D3Blocks():
         if filepath is not None: self.config['filepath'] = filepath
 
         # Create the plot
-        Chord.show(self.edge_properties, self.config, labels=self.node_properties, logger=logger)
+        if self.chart is not None:
+            self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -1430,7 +1390,6 @@ class D3Blocks():
         """Clean previous results to ensure correct working."""
         if logger is not None: logger.info('Cleaning parameters..')
         if hasattr(self, 'G'): del self.G
-        if hasattr(self, 'node_properties'): del self.node_properties
         if hasattr(self, 'edge_properties'): del self.edge_properties
         if clean_config and hasattr(self, 'config'): del self.config
 
@@ -1734,7 +1693,7 @@ def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True
 
 # %% Retrieve files files.
 def wget(url, writepath):
-    """ Retrieve file from url.
+    """Retrieve file from url.
 
     Parameters
     ----------
@@ -1811,7 +1770,7 @@ def set_chart_func(chart=None, logger=None):
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
         # if np.isin(chart, ['Movingbubbles', 'Timeseries', 'Sankey', 'Imageslider', 'Chord', 'Scatter', 'Violin', 'Particles']):
-        if np.isin(chart, ['Chord']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

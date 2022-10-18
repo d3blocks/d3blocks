@@ -20,23 +20,38 @@ except:
     from utils import convert_dataframe_dict, set_path
 
 
+# %% Get unique labels
+def set_labels(df):
+    return np.unique(df['x'].values)
+
+
 # %% Set configuration properties
-def set_config(config, logger=None):
-    """Set the general configuration setting."""
+def set_config(config={}, **kwargs):
+    """Set the default configuration settings."""
     config['chart'] ='violin'
-    config['title']='Violin - D3blocks'
-    config['filepath']=set_path('violin.html')
-    config['overwrite'] = True
-    config['showfig'] = True
-    config['bins'] = 20
-    config['cmap'] = 'inferno'
-    config['figsize'] = [None, None]
-    config['ylim'] = [None, None]
-    config['x_order'] = None
+    config['title'] = kwargs.get('title', 'Violin - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'violin.html'))
+    config['figsize'] = kwargs.get('figsize', [None, None])
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['bins'] = kwargs.get('bins', 20)
+    config['cmap'] = kwargs.get('cmap', 'inferno')
+    config['ylim'] = kwargs.get('ylim', [None, None])
+    config['x_order'] = kwargs.get('x_order', None)
+    # Return
     return config
 
 
-def label_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
+def set_node_properties(labels, cmap, logger, **kwargs):
+    """Set the node properties."""
+    dict_labels = {}
+    for i, label in enumerate(labels):
+        dict_labels[label] = {'id': i, 'label': label}
+    # Return
+    return dict_labels
+
+
+def set_edge_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
     # Convert to dataframe
     df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': size, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
 
@@ -61,7 +76,7 @@ def label_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity
     return df
 
 
-def show(df, config, labels=None):
+def show(df, **kwargs):
     """Build and show the graph.
 
     Parameters
@@ -70,9 +85,9 @@ def show(df, config, labels=None):
         Input data.
     config : dict
         Dictionary containing configuration keys.
-    labels : dict
+    node_properties : dict
         Dictionary containing hex colorlabels for the classes.
-        The labels are derived using the function: labels = d3blocks.set_label_properties()
+        The node_properties are derived using the function: node_properties = d3.set_label_properties()
 
     Returns
     -------
@@ -80,19 +95,23 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    config = kwargs.get('config')
+    node_properties = kwargs.get('node_properties')
+    logger = kwargs.get('logger', None)
+
     # Convert dict/frame.
-    labels = convert_dataframe_dict(labels, frame=False)
+    node_properties = convert_dataframe_dict(node_properties, frame=False)
     df = convert_dataframe_dict(df, frame=True)
 
     spacing = 0.10
     if config['ylim']==[None, None] or len(config['ylim'])==0:
         y_spacing = (df['y'].max() - df['y'].min()) * spacing
         config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
-    # Ordering the class labels
+    # Ordering the class node_properties
     if config['x_order'] is None:
-        config['x_order'] = str([*labels.keys()])
+        config['x_order'] = str([*node_properties.keys()])
     if config['figsize'][0] is None:
-        config['figsize'][0] = len(labels.keys()) * 95
+        config['figsize'][0] = len(node_properties.keys()) * 95
     if config['figsize'][1] is None:
         config['figsize'][1] = 400
 
@@ -109,12 +128,12 @@ def show(df, config, labels=None):
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df)
     # Write to HTML
-    write_html(X, config)
+    write_html(X, config, logger)
     # Return config
     return config
 
 
-def write_html(X, config):
+def write_html(X, config, logger=None):
     """Write html.
 
     Parameters
@@ -154,7 +173,7 @@ def write_html(X, config):
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))
     if config['overwrite'] and os.path.isfile(index_file):
-        print('File already exists and will be overwritten: [%s]' %(index_file))
+        if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
         os.remove(index_file)
         time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:

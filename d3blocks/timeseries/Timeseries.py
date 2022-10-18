@@ -6,7 +6,8 @@ Mail        : erdogant@gmail.com
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
-
+import colourmap
+import numpy as np
 import pandas as pd
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
@@ -18,22 +19,69 @@ except:
     from utils import convert_dataframe_dict, set_path
 
 
+# %% Get unique labels
+def set_labels(df):
+    return np.unique(df.columns.values)
+
+
 # %% Set configuration properties
-def set_config(config, logger=None):
-    """Set the general configuration setting."""
+def set_config(config={}, **kwargs):
+    """Set the default configuration setting."""
     config['chart'] ='timeseries'
-    config['title']='Timeseries - D3blocks'
-    config['filepath']=set_path('timeseries.html')
-    config['figsize']=[1000, 500]
-    config['showfig']=True
-    config['overwrite']=True
-    config['fontsize']=10
-    config['sort_on_date'] = True
-    config['columns'] = {'datetime': None}
+    config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'))
+    config['figsize'] = kwargs.get('figsize', [1000, 500])
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['fontsize'] = kwargs.get('fontsize', 10)
+    config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['sort_on_date'] = kwargs.get('sort_on_date', True)
+    datetime = kwargs.get('datetime', None)
+    config['columns'] = kwargs.get('columns', {'datetime': datetime})
+    # return
     return config
 
 
-def show(df, config, labels=None):
+# %% Node properties
+def set_node_properties(labels, cmap, logger, **kwargs):
+    """Set the node properties."""
+    # Create unique label/node colors
+    colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
+
+    dict_labels = {}
+    for i, label in enumerate(labels):
+        dict_labels[label] = {'id': i, 'label': label, 'color': colors[i]}
+    # Return
+    return dict_labels
+
+
+# %% Set Edge properties
+def set_edge_properties(df, config, **kwargs):
+    datetime = kwargs.get('datetime', None)
+    logger = kwargs.get('logger', None)
+
+    # Get datetime
+    if datetime is None:
+        logger.info('Taking the index for datetime.')
+        df.index = pd.to_datetime(df.index.values, format=config['dt_format'])
+    else:
+        df.index = pd.to_datetime(df[config['columns']['datetime']].values, format=config['dt_format'])
+        df.drop(labels=config['columns']['datetime'], axis=1, inplace=True)
+    # Check multi-line columns and merge those that are multi-line
+    # df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
+    # Check whitelist
+    if config['whitelist'] is not None:
+        logger.info('Filtering columns on [%s]' %(config['whitelist']))
+        Ikeep = list(map(lambda x: config['whitelist'].lower() in x.lower(), df.columns.values))
+        df = df.iloc[:, Ikeep]
+
+    if df.shape[1]==0:
+        logger.info('All columns are removed. Change whitelist/blacklist setting.')
+        return None
+    return df
+
+
+def show(df, **kwargs):
     """Build and show the graph.
 
     Parameters
@@ -52,9 +100,13 @@ def show(df, config, labels=None):
         Dictionary containing updated configuration keys.
 
     """
+    config = kwargs.get('config')
+    labels = kwargs.get('node_properties')
+    logger = kwargs.get('logger', None)
+
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)
-    df = convert_dataframe_dict(df, frame=True)
+    # df = convert_dataframe_dict(df, frame=True)
 
     # Format for datetime in javascript
     config['dt_format_js'] = '%Y%m%d'
@@ -77,12 +129,12 @@ def show(df, config, labels=None):
     config['color'] = '"' + str('","'.join(df_labels['color'].values.astype(str))) + '"'
 
     # Write to HTML
-    write_html(X, config)
+    write_html(X, config, logger)
     # Return config
     return config
 
 
-def write_html(X, config):
+def write_html(X, config, logger=None):
     """Write html.
 
     Parameters
@@ -116,7 +168,7 @@ def write_html(X, config):
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))
     if config['overwrite'] and os.path.isfile(index_file):
-        print('File already exists and will be overwritten: [%s]' %(index_file))
+        if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
         os.remove(index_file)
         time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:
