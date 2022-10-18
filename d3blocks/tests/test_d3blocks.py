@@ -10,7 +10,7 @@ except:
 
 class Testd3blocks(unittest.TestCase):
 
-    def test_instantiate_d3blocks_no_args() -> None:
+    def test_instantiate_d3blocks_no_args(self) -> None:
         """Test instantiation works with defaults"""
         # Initialize
         d3 = D3Blocks()
@@ -28,15 +28,16 @@ class Testd3blocks(unittest.TestCase):
     def test_sankey(self):
         # Initialize
         d3 = D3Blocks()
+        d = [{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}]
+        df = pd.DataFrame(d)
+        d3.sankey(df, showfig=False)
+
+        # Initialize
+        d3 = D3Blocks()
         # Import example
         df = d3.import_example('energy')
         # Link settings
         d3.sankey(df, link={"color": "source-target"})
-
-        d3 = D3Blocks()
-        d = [{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}]
-        df = pd.DataFrame(d)
-        d3.sankey(df, showfig=False)
 
     def test_d3graph(self):
         # Initialize
