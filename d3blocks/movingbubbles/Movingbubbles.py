@@ -20,52 +20,153 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path
+    from .. utils import convert_dataframe_dict, set_path, pre_processing
 except:
-    from utils import convert_dataframe_dict, set_path
+    from utils import convert_dataframe_dict, set_path, pre_processing
+
+
+# %% Set configuration properties
+def set_config(config={}, **kwargs):
+    """Set the default configuration settings."""
+    config['chart'] ='movingbubbles'
+    config['title'] = kwargs.get('title', 'Movingbubbles - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'movingbubbles.html'))
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['figsize'] = kwargs.get('figsize', [780, 800])
+    config['datetime'] = kwargs.get('datetime', 'datetime')
+    config['sample_id'] = kwargs.get('sample_id', 'sample_id')
+    config['state'] = kwargs.get('state', 'state')
+    config['center'] = kwargs.get('center', None)
+    config['damper'] = kwargs.get('damper', 1)
+    config['fontsize'] = kwargs.get('fontsize', 14)
+    config['reset_time'] = kwargs.get('reset_time', 'day')
+    config['standardize'] = kwargs.get('standardize', None)
+    config['speed'] = kwargs.get('speed', {"slow": 1000, "medium": 200, "fast": 50})
+    config['note'] = kwargs.get('note', None)
+    config['time_notes'] = kwargs.get('time_notes', None)
+    config['reset_properties'] = kwargs.get('reset_properties', True)
+    config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
+    config['columns'] = kwargs.get('columns', {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']})
+
+    if config['time_notes'] is None:
+        config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
+    if config['note'] is None:
+        config['note']=("This is a simulation of multiple states and samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>.")
+
+    return config
 
 
 # %% Labels
-def set_labels(df):
-    return np.unique(df.columns.values)
+def set_labels(labels, logger=None):
+    """Set unique labels."""
+    if isinstance(labels, pd.DataFrame):
+        labels = labels.values.flatten()
+
+    # Checks
+    if (labels is None) or len(labels)<1:
+        raise Exception(logger.error('Could not extract the labels!'))
+
+    # Get unique categories without sort
+    indexes = np.unique(labels, return_index=True)[1]
+    uilabels = [labels[index] for index in sorted(indexes)]
+
+    # Preprocessing
+    uilabels = pre_processing(uilabels)
+
+    # Return
+    return uilabels
+
 
 # %% Node properties
-def set_node_properties(labels, cmap, logger, **kwargs):
-    """Set the node properties."""
-    # Create unique label/node colors
-    colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
+def set_node_properties(labels, **kwargs):
+    """Set the node properties for the Movingbubbles block.
+    Parameters
+    ----------
+    labels : array-like or list.
+        Contains the state names.
+    center : String, (default: None)
+        Center this category.
+    cmap : String, (default: 'Set1')
+        All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
 
+    Returns
+    -------
+    dict_labels : dictionary()
+        Dictionary containing the label properties.
+
+    """
+    center = kwargs.get('center', None)
+    cmap = kwargs.get('cmap', 'Set1')
+    logger = kwargs.get('logger', None)
+
+    # Set the unique labels
+    uilabels = set_labels(labels)
+
+    # Center should be at the very end of the list for d3!
+    if center is not None:
+        center_label = uilabels.pop(uilabels.index(center))
+        if logger is not None: logger.info('Set the center state at: [%s]' %(center))
+        uilabels.append(center_label)
+
+    # Create unique label/node colors
+    colors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
+
+    # Make dict
     dict_labels = {}
-    for i, label in enumerate(labels):
+    for i, label in enumerate(uilabels):
         dict_labels[label] = {'id': i, 'label': label, 'short': label, 'desc': label, 'color': colors[i]}
+
     # Return
     return dict_labels
 
 
-# %% Set configuration properties
-def set_config(config, logger=None):
-    """Set the general configuration setting."""
-    config['chart'] ='movingbubbles'
-    config['title']='Movingbubbles - D3Blocks'
-    config['filepath']=set_path('movingbubbles.html')
-    config['showfig']=True
-    config['overwrite']=True
-    config['figsize']=[780, 800]
-    config['datetime']='datetime'
-    config['sample_id']='sample_id'
-    config['state']='state'
-    config['center']=None
-    config['damper']=1
-    config['fontsize']=14
-    config['reset_time']='day'
-    config['standardize']=None
-    config['speed']={"slow": 1000, "medium": 200, "fast": 50}
-    config['note']=None
-    config['time_notes']=None
-    config['columns'] = {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']}
-    return config
+# %% Set Edge properties
+def set_edge_properties(df, **kwargs):
+    """Set the edge properties for the Movingbubbles block.
 
+    Parameters
+    ----------
+    df : Input data, pd.DataFrame()
+        Input data.
+    datetime : str, (default: 'datetime')
+        Name of the column with the datetime.
+    sample_id : str, (default: 'sample_id')
+        Name of the column with the sample ids.
+    state : str, (default: 'state')
+        Name of the column with the states.
+    method : str. (default: None)
+        Method to standardize the data.
+        None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+        'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
+    dt_format : str
+        '%d-%m-%Y %H:%M:%S'.
 
+    Returns
+    -------
+    df : pd.DataFrame()
+        Processed dataframe.
+
+    """
+    datetime = kwargs.get('datetime', 'datetime')
+    sample_id = kwargs.get('sample_id', 'sample_id')
+    state = kwargs.get('state', 'state')
+    method = kwargs.get('standardize', None)
+    dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
+    logger = kwargs.get('logger', None)
+
+    # Compute delta
+    if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
+        if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
+        # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
+        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format)
+    else:
+        raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
+    return df
+
+    
 def show(df, **kwargs):
     """Build and show the graph.
 

@@ -1073,54 +1073,17 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
-
-        # Store parameters
-        self.config['chart'] ='movingbubbles'
-        self.config['filepath'] = set_path(filepath)
-        self.config['title'] = title
-        self.config['figsize'] = figsize
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['center'] = center
-        self.config['reset_time'] = reset_time
-        self.config['speed'] = speed
-        self.config['damper'] = damper
-        self.config['note'] = note
-        self.config['time_notes'] = time_notes
-        self.config['fontsize'] = fontsize
-        self.config['standardize'] = standardize
-        self.config['columns'] = {'datetime': datetime, 'sample_id': sample_id, 'state': state}
-
         # Store chart
-        self.chart = eval('Movingbubbles')
-
-        # Compute delta
-        if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-            # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
-            df = Movingbubbles.standardize(df, method=self.config['standardize'], sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
-
-        # Set label properties
-        if isinstance(df, pd.DataFrame) and not hasattr(self, 'node_properties') and np.any(df.columns==state):
-            labels = list(np.unique(df[state]))
-            # Center should be at the very end of the list for d3!
-            if self.config['center'] is not None:
-                center_label = labels.pop(labels.index(self.config['center']))
-                labels.append(center_label)
-
-            # Set the label properties
-            self.set_node_properties(labels, cmap=self.config['cmap'])
-
-        if not isinstance(df, pd.DataFrame):
-            self.node_properties=None
-        if not hasattr(self, 'node_properties'):
-            raise Exception('Set labels is required or specify the category.')
-        if time_notes is None:
-            self.config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
-        if note is None:
-            self.config['note']=("This is a simulation of [%s] states across [%s] samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>." %(len(df['state'].unique()), len(df[sample_id].unique())))
-
+        self.chart = set_chart_func('Movingbubbles', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_time=reset_time, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format)
+        # Set node properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
+        # Set edge properties
+        self.set_edge_properties(df, state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], method=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
-        self.chart.show(df, config=self.config, node_properties=self.node_properties, logger=logger)
+        self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
