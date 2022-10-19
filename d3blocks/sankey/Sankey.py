@@ -17,6 +17,24 @@ except:
     from utils import convert_dataframe_dict, set_path, pre_processing
 
 
+# %% Set configuration properties
+def set_config(config={}, link={}, node={}, margin={}, **kwargs):
+    """Set the default configuration setting."""
+    # Store configurations
+    config['chart'] ='sankey'
+    config['title'] = kwargs.get('title', 'Sankey - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'))
+    config['figsize'] = kwargs.get('figsize', [800, 600])
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['reset_properties'] = kwargs.get('reset_properties', True)
+    config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
+    config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
+    config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
+    # return
+    return config
+
+
 # %% Get unique labels
 def set_labels(df):
     return np.unique(df[['source', 'target']].values.flatten())
@@ -29,30 +47,15 @@ def set_edge_properties(df, node_properties, **kwargs):
     return df
 
 
-def set_node_properties(labels, cmap, logger, **kwargs):
+# def set_node_properties(labels, cmap, logger, **kwargs):
+def set_node_properties(*args, **kwargs):
     """Set the node properties."""
+    labels, cmap, logger = args
     dict_labels = {}
     for i, label in enumerate(labels):
         dict_labels[label] = {'id': i, 'label': label}
     # Return
     return dict_labels
-
-
-# %% Set configuration properties
-def set_config(config={}, link={}, node={}, margin={}, **kwargs):
-    """Set the default configuration setting."""
-    # Store configurations
-    config['chart'] ='sankey'
-    config['title'] = kwargs.get('title', 'Sankey - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'))
-    config['figsize'] = kwargs.get('figsize', [800, 600])
-    config['showfig'] = kwargs.get('showfig', True)
-    config['overwrite'] = kwargs.get('overwrite', True)
-    config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
-    config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
-    config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
-    # return
-    return config
 
 
 def show(df, **kwargs):
