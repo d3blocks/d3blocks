@@ -204,18 +204,19 @@ class D3Blocks():
                y,
                size=5,
                color=None,
-               bins=20,
+               bins=50,
                x_order=None,
-               opacity=0.8,
-               stroke='#ffffff',
+               opacity=0.6,
+               stroke='#000000',
                tooltip=None,
+               cmap='inferno',
+               ylim=[None, None],
                title='Violin - D3blocks',
                filepath='violin.html',
                figsize=[None, None],
-               ylim=[None, None],
-               cmap='inferno',
                showfig=True,
-               overwrite=True):
+               overwrite=True,
+               reset_properties=True):
         """Violin block.
 
         Description

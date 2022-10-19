@@ -15,14 +15,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path
+    from .. utils import convert_dataframe_dict, set_path, pre_processing
 except:
-    from utils import convert_dataframe_dict, set_path
-
-
-# %% Get unique labels
-def set_labels(df):
-    return np.unique(df['x'].values)
+    from utils import convert_dataframe_dict, set_path, pre_processing
 
 
 # %% Set configuration properties
@@ -38,20 +33,70 @@ def set_config(config={}, **kwargs):
     config['cmap'] = kwargs.get('cmap', 'inferno')
     config['ylim'] = kwargs.get('ylim', [None, None])
     config['x_order'] = kwargs.get('x_order', None)
+    config['reset_properties'] = kwargs.get('reset_properties', True)
     # Return
     return config
 
 
-def set_node_properties(labels, cmap, logger, **kwargs):
-    """Set the node properties."""
+# %% Get unique labels
+def set_labels(labels, logger=None):
+    """Set unique labels."""
+    if isinstance(labels, pd.DataFrame) and np.isin(['x'], labels.columns.values):
+        if logger is not None: logger.info('Collecting labels from DataFrame using the "x" columns.')
+        labels = labels['x'].values.flatten()
+
+    # Preprocessing
+    labels = pre_processing(labels)
+
+    # Checks
+    if (labels is None) or len(labels)<1:
+        raise Exception(logger.error('Could not extract the labels!'))
+
+    # Get unique categories without sort
+    indexes = np.unique(labels, return_index=True)[1]
+    uilabels = [labels[index] for index in sorted(indexes)]
+    # Return
+    return uilabels
+
+
+def set_node_properties(labels, cmap='tab20', logger=None, **kwargs):
+    """Set the node properties.
+
+    Parameters
+    ----------
+    labels : list or array.
+        Containing the nodes/labels.
+    cmap : String, (default: 'tab20')
+        All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
+
+    Returns
+    -------
+    dict_labels : dictionary()
+        Dictionary containing the label properties.
+
+    """
+    # Get unique label
+    uilabel = set_labels(labels)
+
+    # Make dict.
     dict_labels = {}
-    for i, label in enumerate(labels):
+    for i, label in enumerate(uilabel):
         dict_labels[label] = {'id': i, 'label': label}
     # Return
     return dict_labels
 
 
 def set_edge_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
+    # Make checks
+    if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
+    if size is None: raise Exception(logger.error('input parameter "size" should have value >0.'))
+    if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
+    if stroke is None: raise Exception(logger.error('input parameter "stroke" should have hex value.'))
+    if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
+    if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
+    if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=len(x)): raise Exception(logger.error('input parameter "opacity" should be of same size of (x, y).'))
+
     # Convert to dataframe
     df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': size, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
 
