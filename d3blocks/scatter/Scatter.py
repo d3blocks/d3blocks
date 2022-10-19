@@ -23,18 +23,18 @@ except:
 
 
 # %% Set configuration properties
-def set_config(config, logger=None):
-    """Set the general configuration setting."""
+def set_config(config={}, **kwargs):
+    """Set the default configuration setting."""
     config['chart'] ='scatter'
-    config['title']='Scatter - D3blocks'
-    config['filepath']=set_path('scatter.html')
-    config['figsize']=[900, 600]
-    config['showfig']=True
-    config['overwrite']=True
-    config['xlim']=[None, None]
-    config['ylim']=[None, None]
-    config['scale']=False
-    config['cmap']='tab20'
+    config['title'] = kwargs.get('title', 'scatter - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'scatter.html'))
+    config['figsize'] = kwargs.get('figsize', [900, 600])
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['xlim'] = kwargs.get('xlim', [None, None])
+    config['ylim'] = kwargs.get('ylim', [None, None])
+    config['scale'] = kwargs.get('scale', False)
+    config['cmap'] = kwargs.get('cmap', 'tab20')
     return config
 
 
@@ -56,9 +56,22 @@ def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, config, logger)
         if len(x)!=len(x2): raise Exception(logger.error('input parameter (x2, y2) should be of size of (x, y).'))
 
 
-# %% Preprocessing
-def preprocessing(x, y, x1, y1, x2, y2, color='#69b3a2', size=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
-    """Preprocessing."""
+# %% Set the Node properties
+# def node_properties(x, y, x1, y1, x2, y2, color='#69b3a2', size=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
+def node_properties(*args, **kwargs):
+    """Set the node properties."""
+    x, y, x1, y1, x2, y2 = args
+    # Collect key-word arguments
+    color = kwargs.get('color', '#69b3a2')
+    size = kwargs.get('size', 5)
+    tooltip = kwargs.get('tooltip', None)
+    opacity = kwargs.get('opacity', 0.8)
+    c_gradient = kwargs.get('c_gradient', None)
+    stroke = kwargs.get('stroke', '#ffffff')
+    cmap = kwargs.get('cmap', 'Set2')
+    scale = kwargs.get('scale', False)
+    logger = kwargs.get('logger', None)
+
     if (x1 is None): x1 = x
     if (y1 is None): y1 = y
     if (x2 is None): x2 = x
