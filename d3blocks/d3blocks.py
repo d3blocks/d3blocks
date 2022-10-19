@@ -14,26 +14,26 @@ import time
 from typing import List, Union, Tuple
 from ismember import ismember
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
-from d3blocks.utils import pre_processing, remove_quotes, convert_dataframe_dict, set_path
+# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+# import d3blocks.sankey.Sankey as Sankey
+# import d3blocks.imageslider.Imageslider as Imageslider
+# import d3blocks.chord.Chord as Chord
+# import d3blocks.scatter.Scatter as Scatter
+# import d3blocks.violin.Violin as Violin
+# import d3blocks.particles.Particles as Particles
+# from d3blocks.utils import pre_processing, remove_quotes, convert_dataframe_dict, set_path
 
 # ###################### DEBUG ONLY ###################
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
-# from utils import pre_processing, remove_quotes, convert_dataframe_dict, set_path
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
+import chord.Chord as Chord
+import scatter.Scatter as Scatter
+import violin.Violin as Violin
+import particles.Particles as Particles
+from utils import pre_processing, remove_quotes, convert_dataframe_dict, set_path
 # #####################################################
 
 import d3graph as d3network
@@ -80,7 +80,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, cmap: str = 'Set1', dt_format: str = '%d-%m-%Y %H:%M:%S', whitelist=None, chart: str = None, frame: bool = True, verbose: str = 20):
+    def __init__(self, dt_format: str = '%d-%m-%Y %H:%M:%S', whitelist=None, chart: str = None, frame: bool = True, verbose: str = 20):
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         set_logger(verbose=verbose)
@@ -96,7 +96,6 @@ class D3Blocks():
         self.config['frame'] = frame
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         # TODO: REMOVE WHITELIST, DT_FORMAT AND CMAP FROM INITIALIZATION
-        self.config['cmap'] = cmap
         self.config['whitelist'] = whitelist
         self.config['dt_format'] = dt_format
 
@@ -237,23 +236,27 @@ class D3Blocks():
         size: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
         color: list/array of hex colors with same size as y
-            '#002147' : All dots are get the same hex color.
+            '#002147' : All dots/nodes are get the same hex color.
             None: The colors are generated on value using the colormap specified in cmap.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
-        bins : Int (default: 20)
+        bins : Int (default: 50)
             The bin size is the 'resolution' of the violin plot.
         x_order : list of String (default: None)
             The order of the class labels (x-axis).
             ["setosa", "versicolor", "virginica"]
-        opacity: float or list/array [0-1]
+        opacity: float or list/array [0-1] (default: 0.6)
             Opacity of the dot. Shoud be same size as (x,y)
         stroke: list/array of hex colors with same size as (x,y)
             Edgecolor of dot in hex colors.
+            '#000000' : Edge colors are all black.
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
         cmap : String, (default: 'inferno')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
             'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+        ylim : tuple, (default: [None, None])
+            Limit the width of the y-axis [min, max].
+            [None, None] : The width is determined based on the min-max value range.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -265,6 +268,9 @@ class D3Blocks():
             Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
+        reset_properties : bool, (default: True)
+            True: Reset the node_properties at each run.
+            False: Use the d3.node_properties()
 
         Returns
         -------
@@ -294,23 +300,14 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
-
-        if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
-        if size is None: raise Exception(logger.error('input parameter "size" should have value >0.'))
-        if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
-        if stroke is None: raise Exception(logger.error('input parameter "stroke" should have hex value.'))
-        if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
-        if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
-        if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=len(x)): raise Exception(logger.error('input parameter "opacity" should be of same size of (x, y).'))
-
         # Store chart
         self.chart = eval('Violin')
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties)
         # Remvove quotes from source-target node_properties
         self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, logger=logger)
         # Set default label properties
-        if not hasattr(self, 'node_properties'):
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(np.unique(self.edge_properties['x'].values), cmap=self.config['cmap'])
         # Create the plot
         self.config = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
@@ -434,19 +431,11 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
-
-        # Set config
-        self.config['chart'] ='scatter'
-        self.config['filepath'] = set_path(filepath)
-        self.config['title'] = title
-        self.config['xlim'] = xlim
-        self.config['ylim'] = ylim
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['figsize'] = figsize
-        self.config['scale'] = scale
-        self.config['cmap'] = cmap
+        # Store chart
         self.chart = eval('Scatter')
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim)
+
 
         # Set the radio button and visibility of the labels
         self.config['radio_button_visible'] = [("display:none;" if (x1 is None) else ""), ("display:none;" if (x1 is None) else ""), ("display:none;" if (x2 is None) else "")]
@@ -461,9 +450,10 @@ class D3Blocks():
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, self.config, logger)
         # Preprocessing
-        df, node_properties = Scatter.preprocessing(x, y, x1, y1, x2, y2, color, size, tooltip, opacity, c_gradient, stroke, self.config['cmap'], self.config['scale'], logger=logger)
+        df, node_properties = Scatter.edge_properties(x, y, x1, y1, x2, y2, color=color, size=size, tooltip=tooltip, opacity=opacity, c_gradient=c_gradient, stroke=stroke, cmap=self.config['cmap'], scale=self.config['scale'], logger=logger)
         # Set default label properties
-        if not hasattr(self, 'node_properties'): self.node_properties = node_properties
+        if not hasattr(self, 'node_properties'):
+            self.node_properties = node_properties
         # Make het scatterplot
         self.config = Scatter.show(df, self.config)
         # Open the webbrowser
@@ -474,12 +464,14 @@ class D3Blocks():
               color=None,
               opacity=None,
               fontsize=10,
-              cmap='Set1',
+              cmap='tab20',
               title='Chord - D3blocks',
               filepath='chord.html',
               figsize=[900, 900],
               showfig=True,
-              overwrite=True):
+              overwrite=True,
+              reset_properties=True,
+              ):
         """Chord block.
 
         Description
@@ -527,6 +519,9 @@ class D3Blocks():
             Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
+        reset_properties : bool, (default: True)
+            True: Reset the node_properties at each run.
+            False: Use the d3.node_properties()
 
         Returns
         -------
@@ -557,7 +552,8 @@ class D3Blocks():
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap)
         # Set label properties
-        self.set_node_properties(df, cmap=cmap)
+        if reset_properties or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=cmap)
         # Set edge properties based on input parameters
         self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, logger=logger)
         # Create the plot
@@ -887,7 +883,9 @@ class D3Blocks():
                link={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#D3D3D3'},
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                showfig=True,
-               overwrite=True):
+               overwrite=True,
+               reset_properties=True,
+               ):
         """Sankey block.
 
         Description
@@ -931,6 +929,9 @@ class D3Blocks():
             Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
+        reset_properties : bool, (default: True)
+            True: Reset the node_properties at each run.
+            False: Use the d3.node_properties()
 
         Returns
         -------
@@ -961,13 +962,14 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('sankey', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties)
         # Convert to Frame
         df = convert_dataframe_dict(df.copy(), frame=True)
         # Remove quotes from source-target labels
         df = pre_processing(df)
         # Set default label properties
-        self.set_node_properties(df, cmap=self.config['cmap'])
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=self.config['cmap'])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
@@ -981,6 +983,7 @@ class D3Blocks():
                       sample_id='sample_id',
                       state='state',
                       center=None,
+                      dt_format: str = '%d-%m-%Y %H:%M:%S',
                       damper=1,
                       fontsize=14,
                       reset_time='day',
@@ -989,10 +992,13 @@ class D3Blocks():
                       figsize=[780, 800],
                       note=None,
                       time_notes=None,
+                      cmap='Set1',
                       title='Movingbubbles - D3Blocks',
                       filepath='movingbubbles.html',
                       showfig=True,
-                      overwrite=True):
+                      overwrite=True,
+                      reset_properties=True,
+                      ):
         """MovingBubbles block.
 
         Description
@@ -1018,6 +1024,8 @@ class D3Blocks():
             Name of the column with the states.
         center : String, (default: None)
             Center this category.
+        dt_format : str
+            '%d-%m-%Y %H:%M:%S'.
         dampler : float, (default: 1)
             Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.
         fontsize : int, (default: 14)
@@ -1039,6 +1047,9 @@ class D3Blocks():
             The time notes will be shown between specific time points.
             time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "Enter your note here and it is shown between 1 min and 5 min."}]
             time_notes.append[{"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."}]
+        cmap : String, (default: 'Set1')
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -1047,6 +1058,9 @@ class D3Blocks():
             Open the window to show the chart.
         overwrite : bool, (default: True)
             Overwrite the existing html file.
+        reset_properties : bool, (default: True)
+            True: Reset the node_properties at each run.
+            False: Use the d3.node_properties()
 
         Returns
         -------
@@ -1179,8 +1193,8 @@ class D3Blocks():
         # Open the webbrowser
         self.showfig(logger=logger)
 
-    # def set_edge_properties(self, df, color: Union[float, List[float]] = None, opacity: Union[float, List[float]] = 0.8, cmap: str = 'tab20'):
-    def set_edge_properties(self, df, **kwargs):
+    def set_edge_properties(self, *args, **kwargs):
+    # def set_edge_properties(self, df, **kwargs):
         """Set edge properties.
 
         Parameters
@@ -1218,20 +1232,20 @@ class D3Blocks():
         """
         if self.config['chart'] is None:
             raise Exception('"chart" parameter is mandatory. Hint: Initialize with the chart type such as: d3 = D3Blocks(chart="chord")')
-        if not hasattr(self, 'node_properties'):
+        if not hasattr(self, 'node_properties') or (self.node_properties is None):
             raise Exception('Set the node_properties first. Hint: d3.node_properties(df)')
 
         # Compute edge properties for the specified chart.
         if self.chart is not None:
-            df = self.chart.set_edge_properties(df.copy(), self.node_properties, **kwargs)
-            # df = self.chart.set_edge_properties(df.copy(), color=color, opacity=opacity, cmap=cmap, nodes=self.node_properties)
+            # df = self.chart.set_edge_properties(df.copy(), self.node_properties, **kwargs)
+            df = self.chart.set_edge_properties(*args, node_properties=self.node_properties, **kwargs)
 
         # Convert to frame/dictionary
-        self.edge_properties = convert_dataframe_dict(df, frame=self.config['frame'])
+        self.edge_properties = convert_dataframe_dict(df, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
         # Store and return
         logger.info('Edge properties are set.')
 
-    def set_node_properties(self, labels, cmap: str = 'Set1', **kwargs):
+    def set_node_properties(self, *args, **kwargs):
         """Set label properties.
 
         Parameters
@@ -1239,9 +1253,6 @@ class D3Blocks():
         labels : array-like (default: None)
             The unique names of the nodes/labels.
             * In case of pd.DataFrame, the 'source' and 'target' columns are used.
-        cmap : String, (default: 'Set1')
-            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
 
         Returns
         -------
@@ -1249,54 +1260,33 @@ class D3Blocks():
             Dictionary containing class information.
 
         """
-        if isinstance(labels, pd.DataFrame) and (self.chart is not None):
-            labels = self.chart.set_labels(labels)
-        elif isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
-            logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
-            labels = np.unique(labels[['source', 'target']].values.flatten())
-        if labels is None:
-            raise Exception(logger.error('Could not extract the labels!'))
+        # cmap = kwargs.get('cmap', 'Set1')
+        # if self.chart is not None:
+            # labels = self.chart.set_labels(*args, logger)
+        # if labels is None:
+            # raise Exception(logger.error('Could not extract the labels!'))
 
         # Preprocessing
-        labels = pre_processing(labels)
+        # labels = pre_processing(labels)
 
         # Checks
-        if (labels is None) or len(labels)<1:
-            logger.warning('Input parameter labels is not specified. Provide it manually. <return>')
-            return None
-        # if isinstance(opacity, list) and len(opacity) != len(labels):
-            # raise ValueError(f'Input parameter [color] has wrong length. Must be of length: {str(len(labels))}')
-
-        # Opacity
-        # if isinstance(opacity, float):
-            # opacity = np.repeat(opacity, len(labels))
+        # if (labels is None) or len(labels)<1:
+        #     logger.warning('Input parameter labels is not specified. Provide it manually. <return>')
+        #     return None
 
         # Get unique categories without sort
-        indexes = np.unique(labels, return_index=True)[1]
-        uilabels = [labels[index] for index in sorted(indexes)]
-
-        # # Create unique label/node colors
-        # hexcolors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
+        # indexes = np.unique(labels, return_index=True)[1]
+        # uilabels = [labels[index] for index in sorted(indexes)]
 
         # Make dict with properties
         if self.chart is not None:
-            labels = self.chart.set_node_properties(uilabels, cmap, logger, **kwargs)
-
-        # labels = self.make_dict(uilabels, colors=hexcolors, **kwargs)
+            labels = self.chart.set_node_properties(*args, **kwargs)
+        else:
+            raise Exception(logger.error('You need to specify the chart during initialization. Hint: d3 = D3Blocks(chart="movingbubbles")'))
 
         # Convert to frame
         self.node_properties = convert_dataframe_dict(labels, frame=self.config['frame'])
         logger.info('Node properties are set.')
-
-    # def make_dict(self, labels, colors, opacity=0.8):
-        # """Create dictionary with label properties."""
-        # dlabel = {}
-        # TODO: MAKE_DICT PER CHART
-        # if self.chart is not None:
-            # dlabel = self.chart.make_dict(labels=labels, colors=colors, opacity=opacity, logger=logger)
-        # for i, cat in enumerate(labels):
-        #     dlabel[cat] = {'id': i, 'label': cat, 'desc': cat, 'short': cat, 'color': colors[i], 'opacity': opacity[i]}
-        # return dlabel
 
     def set_config(self):
         """Set the general configuration setting."""
@@ -1352,7 +1342,7 @@ class D3Blocks():
 
     def _clean(self, clean_config=True, logger=None):
         """Clean previous results to ensure correct working."""
-        if logger is not None: logger.info('Cleaning parameters..')
+        if logger is not None: logger.info('Cleaning edge_properties and config parameters..')
         if hasattr(self, 'G'): del self.G
         if hasattr(self, 'edge_properties'): del self.edge_properties
         if clean_config and hasattr(self, 'config'): del self.config
@@ -1734,7 +1724,7 @@ def set_chart_func(chart=None, logger=None):
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
         # if np.isin(chart, ['Movingbubbles', 'Timeseries', 'Sankey', 'Imageslider', 'Chord', 'Scatter', 'Violin', 'Particles']):
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

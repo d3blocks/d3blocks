@@ -3,17 +3,75 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
-
 # %% Moving bubbles
 from d3blocks import D3Blocks
-
-d3 = D3Blocks(cmap='Set1')
+# Initialize
+d3 = D3Blocks(chart='movingbubbles', frame=False)
 # Import example
 df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-# standardize the time per sample id.
-# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
-# Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
+# Node properties
+d3.set_node_properties(df['state'])
+# d3.node_properties
+d3.node_properties.get('Sleeping')['color'] = '#000000'
+# d3.node_properties
+d3.set_edge_properties(df)
+# d3.edge_properties
+# Show
+d3.show(title='Movingbubbles with adjusted configurations.', showfig=True)
+
+# or
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(frame=False)
+# Import example
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+# Show
+d3.movingbubbles(df)
+d3.movingbubbles(df, reset_properties=False, cmap='tab20', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
+
+
+# %% SCATTER
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Scatter', frame=True)
+# Import example
+df = d3.import_example('cancer')
+# Node properties
+d3.set_edge_properties(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
+# d3.node_properties
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
+# Show the chart
+d3.show(showfig=True, filepath='c://temp//scatter_transitions2.html', figsize=[600, 400])
+
+
+# from d3blocks import D3Blocks
+
+# # Initialize
+# d3 = D3Blocks()
+
+# # import example
+# df = d3.import_example('cancer')
+
+# # df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
+
+# size = df['survival_months'].fillna(1).values / 10
+# tooltip=
+
+# # No transition
+# # d3.scatter(df['x'].values, df['y'].values, size=df['survival_months'].values/10, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+
+# Two transitions
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
+d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
+
+# # Three transitions
+# # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
+# # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
+
+
 
 
 
@@ -46,15 +104,13 @@ df = d3.import_example('cancer')
 # Node properties
 d3.set_node_properties(df['labels'].values)
 # d3.node_properties
-# d3.set_edge_properties(df)
-# d3.edge_properties
 d3.violin(x=df['labels'].values, y=df['age'].values)
 # Show the chart
 d3.show(showfig=True, filepath='violin1.html')
 
 # or
 
-# Create chord diagram
+# Create violin diagram
 from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
@@ -68,7 +124,8 @@ d3.violin(x=df['labels'].values, # class labels on the x axis
           size=df['survival_months'].values/10, # Dotsize
           x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
           figsize=[None, None],   # Figure size is automatically determined.
-          filepath='violine_demo.html')
+          filepath='violine_demo.html',
+          reset_properties=True)
 
 
 # %% CHORD - EXAMPLE
@@ -79,7 +136,7 @@ d3 = D3Blocks(chart='Chord', frame=False)
 # Import example
 df = d3.import_example('energy')
 # Node properties
-d3.set_node_properties(df, opacity=0.6, cmap='Set1')
+d3.set_node_properties(df, opacity=0.6, cmap='tab20')
 # d3.node_properties
 d3.set_edge_properties(df, color='target', opacity='target')
 # d3.edge_properties
@@ -95,8 +152,8 @@ d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy')
 # Create chord diagram
-d3.chord(df, color='target')
-# d3.chord(df, color='#000000', opacity=0.4)
+d3.chord(df, color='source')
+d3.chord(df, color='#000000', opacity=0.4)
 
 # %% Sankey
 from d3blocks import D3Blocks
