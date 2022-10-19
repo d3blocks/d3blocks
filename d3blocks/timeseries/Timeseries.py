@@ -43,11 +43,12 @@ def set_config(config={}, **kwargs):
 
 
 # %% Node properties
-def set_node_properties(labels, cmap, logger, **kwargs):
+def set_node_properties(*args, **kwargs):
     """Set the node properties."""
+    labels, cmap, logger = args
     # Create unique label/node colors
     colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
-
+    # Make dict
     dict_labels = {}
     for i, label in enumerate(labels):
         dict_labels[label] = {'id': i, 'label': label, 'color': colors[i]}
