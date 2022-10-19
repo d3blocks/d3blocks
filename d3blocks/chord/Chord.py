@@ -9,6 +9,7 @@ License     : GPL3
 from ismember import ismember
 import colourmap
 
+import pandas as pd
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
@@ -19,11 +20,6 @@ try:
     from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path
 except:
     from utils import set_colors, pre_processing, convert_dataframe_dict, set_path
-
-
-# %% Get unique labels
-def set_labels(df):
-    return np.unique(df[['source', 'target']].values.flatten())
 
 
 # %% Set configuration properties
@@ -41,26 +37,68 @@ def set_config(config={}, **kwargs):
     return config
 
 
-def set_node_properties(labels, cmap, logger, **kwargs):
-    """Set the node properties."""
+# %% Get unique labels
+def set_labels(labels, logger=None):
+    """Set unique labels."""
+    if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
+        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+        labels = labels[['source', 'target']].values.flatten()
+
+    # Preprocessing
+    labels = pre_processing(labels)
+
+    # Checks
+    if (labels is None) or len(labels)<1:
+        raise Exception(logger.error('Could not extract the labels!'))
+
+    # Get unique categories without sort
+    indexes = np.unique(labels, return_index=True)[1]
+    uilabels = [labels[index] for index in sorted(indexes)]
+    # Return
+    return uilabels
+
+
+def set_node_properties(df, cmap='tab20', logger=None, **kwargs):
+    """Set the node properties.
+    Parameters
+    ----------
+    df : pd.DataFrame()
+        Input data containing the following columns:
+        'source'
+        'target'
+    cmap : String, (default: 'tab20')
+        All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
+    opacity: float [0..1] (default: 0.8)
+        Opacity of the edge/link.
+        * 0.8: All edges/links have the same opacity.
+
+    Returns
+    -------
+    dict_labels : dictionary()
+        Dictionary containing the label properties.
+
+    """
     # Set Opacity
-    opacity = kwargs.get('opacity', None)
-    if opacity is None: opacity=0.8
-    if isinstance(opacity, list) and len(opacity) != len(labels): raise ValueError(f'Input parameter [color] has wrong length. Must be of length: {str(len(labels))}')
-    if isinstance(opacity, float): opacity = np.repeat(opacity, len(labels))
+    opacity = kwargs.get('opacity', 0.8)
+    # Get unique labels
+    uilabels = set_labels(df, logger)
 
+    # Set opacity properties
+    opacity = np.repeat(opacity, len(uilabels))
     # Create unique label/node colors
-    colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
+    colors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
 
+    # Make dict
     dict_labels = {}
-    for i, label in enumerate(labels):
+    for i, label in enumerate(uilabels):
         dict_labels[label] = {'id': i, 'label': label, 'color': colors[i], 'opacity': opacity[i]}
     # Return
     return dict_labels
 
 
 # %% Set Edge properties
-def set_edge_properties(df, node_properties, **kwargs):
+def set_edge_properties(df, **kwargs):
     """Set the edge properties.
 
     Parameters
@@ -104,6 +142,7 @@ def set_edge_properties(df, node_properties, **kwargs):
     color = kwargs.get('color', 'target')
     opacity = kwargs.get('opacity', 0.8)
     cmap = kwargs.get('cmap', 'tab20')
+    node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
 
     # Convert to dict/frame.
