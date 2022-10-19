@@ -73,7 +73,7 @@ def set_labels(labels, logger=None):
     uilabels = [labels[index] for index in sorted(indexes)]
 
     # Preprocessing
-    uilabels = pre_processing(uilabels)
+    # uilabels = pre_processing(uilabels)
 
     # Return
     return uilabels
@@ -156,6 +156,7 @@ def set_edge_properties(df, **kwargs):
     method = kwargs.get('standardize', None)
     dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     logger = kwargs.get('logger', None)
+    df = df.copy()
 
     # Compute delta
     if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):

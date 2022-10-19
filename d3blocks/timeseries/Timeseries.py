@@ -7,6 +7,7 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 import colourmap
+from ismember import ismember
 import numpy as np
 import pandas as pd
 from jinja2 import Environment, PackageLoader
@@ -14,14 +15,30 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path
+    from .. utils import convert_dataframe_dict, set_path, pre_processing
 except:
-    from utils import convert_dataframe_dict, set_path
+    from utils import convert_dataframe_dict, set_path, pre_processing
 
 
 # %% Get unique labels
-def set_labels(df):
-    return np.unique(df.columns.values)
+def set_labels(labels, logger=None):
+    """Set unique labels."""
+    if isinstance(labels, pd.DataFrame):
+        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+        labels = labels.columns.values
+
+    # Preprocessing
+    labels = pre_processing(labels)
+
+    # Checks
+    if (labels is None) or len(labels)<1:
+        raise Exception(logger.error('Could not extract the labels!'))
+
+    # Get unique categories without sort
+    indexes = np.unique(labels, return_index=True)[1]
+    uilabels = np.array([labels[index] for index in sorted(indexes)])
+    # Return
+    return uilabels
 
 
 # %% Set configuration properties
@@ -30,54 +47,123 @@ def set_config(config={}, **kwargs):
     config['chart'] ='timeseries'
     config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'))
-    config['figsize'] = kwargs.get('figsize', [1000, 500])
+    config['figsize'] = kwargs.get('figsize', [1000, 400])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['fontsize'] = kwargs.get('fontsize', 10)
     config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['whitelist'] = kwargs.get('whitelist', None)
     config['sort_on_date'] = kwargs.get('sort_on_date', True)
-    datetime = kwargs.get('datetime', None)
-    config['columns'] = kwargs.get('columns', {'datetime': datetime})
+    config['reset_properties'] = kwargs.get('reset_properties', True)
+    config['datetime'] = kwargs.get('datetime', 'datetime')
+    config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
+    config['columns'] = kwargs.get('columns', {'datetime': config['datetime']})
     # return
     return config
 
 
+# %% Filter labels using whitelist
+def _clean_on_whitelist(labels, whitelist=None, datetime=None, logger=None):
+    # Keep only whitelist and remove datetime
+    # Remove datetime
+    if (datetime is not None) and np.any(np.isin(labels, datetime)):
+        if logger is not None: logger.info('Removing [%s] from labels.' %(datetime))
+        Ikeep = list(map(lambda x: datetime.lower() in x.lower(), labels))
+        labels = labels[~np.isin(labels, datetime)]
+
+    if whitelist is not None:
+        if logger is not None: logger.info('Filtering columns on: [%s]' %(whitelist))
+        Ikeep = list(map(lambda x: x in whitelist, labels))
+        labels = labels[Ikeep]
+    return labels
+
+
 # %% Node properties
-def set_node_properties(*args, **kwargs):
-    """Set the node properties."""
-    labels, cmap, logger = args
+def set_node_properties(labels, **kwargs):
+    """Set the node properties for the Timeseries block.
+
+    Parameters
+    ----------
+    labels : array-like or list
+        Name of the nodes/links.
+    datetime : str, (default: 'datetime')
+        Column name that contains the datetime.
+    whitelist : str, (Default: None)
+        Keep only columns containing this (sub)string (case insensitive)
+    logger : Object, (default: None)
+        Show messages on screen.
+
+    Returns
+    -------
+    dict_labels : dictionary()
+        Dictionary containing the label properties.
+
+    """
+    cmap = kwargs.get('cmap', 'Set1')
+    datetime = kwargs.get('datetime', 'datetime')
+    whitelist = kwargs.get('whitelist', None)
+    logger = kwargs.get('logger', None)
+
+    # Set unique labels
+    uilabels = set_labels(labels)
+    # Keep only whitelist and remove datetime
+    uilabels = _clean_on_whitelist(uilabels, whitelist, datetime, logger)
+
     # Create unique label/node colors
-    colors = colourmap.generate(len(labels), cmap=cmap, scheme='hex', verbose=0)
+    colors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
     # Make dict
     dict_labels = {}
-    for i, label in enumerate(labels):
+    for i, label in enumerate(uilabels):
         dict_labels[label] = {'id': i, 'label': label, 'color': colors[i]}
     # Return
     return dict_labels
 
 
 # %% Set Edge properties
-def set_edge_properties(df, config, **kwargs):
-    datetime = kwargs.get('datetime', None)
-    logger = kwargs.get('logger', None)
+def set_edge_properties(df, **kwargs):
+    """Set the edge properties for the Timeseries block.
 
+    Parameters
+    ----------
+    df : Input data, pd.DataFrame()
+        Input data.
+    datetime : str, (default: 'datetime')
+        Column name that contains the datetime.
+    dt_format : str
+        '%d-%m-%Y %H:%M:%S'
+    logger : Object, (default: None)
+        Show messages on screen.
+
+    Returns
+    -------
+    df : pd.DataFrame()
+        Processed dataframe.
+
+    """
+    datetime = kwargs.get('datetime', 'datetime')
+    dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
+    node_properties = kwargs.get('node_properties', None)
+    logger = kwargs.get('logger', None)
+    node_properties = convert_dataframe_dict(node_properties, frame=False)
+    
     # Get datetime
     if datetime is None:
-        logger.info('Taking the index for datetime.')
-        df.index = pd.to_datetime(df.index.values, format=config['dt_format'])
+        if logger is not None: logger.info('Set index for datetime.')
+        df.index = pd.to_datetime(df.index.values, format=dt_format)
     else:
-        df.index = pd.to_datetime(df[config['columns']['datetime']].values, format=config['dt_format'])
-        df.drop(labels=config['columns']['datetime'], axis=1, inplace=True)
+        df.index = pd.to_datetime(df[datetime].values, format=dt_format)
+        df.drop(labels=datetime, axis=1, inplace=True)
+
     # Check multi-line columns and merge those that are multi-line
     # df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
-    # Check whitelist
-    if config['whitelist'] is not None:
-        logger.info('Filtering columns on [%s]' %(config['whitelist']))
-        Ikeep = list(map(lambda x: config['whitelist'].lower() in x.lower(), df.columns.values))
-        df = df.iloc[:, Ikeep]
+
+    if node_properties is not None:
+        labels = [*node_properties.keys()]
+        idx, _ = ismember(df.columns, labels)
+        if ~np.any(idx): df = df.loc[:, idx]
 
     if df.shape[1]==0:
-        logger.info('All columns are removed. Change whitelist/blacklist setting.')
+        if logger is not None: logger.info('All columns are removed. Change whitelist/blacklist setting.')
         return None
     return df
 
@@ -91,9 +177,11 @@ def show(df, **kwargs):
         Input data.
     config : dict
         Dictionary containing configuration keys.
-    labels : dict
-        Dictionary containing hex colorlabels for the classes.
-        The labels are derived using the function: labels = d3blocks.set_label_properties()
+    node_properties : dict
+        Dictionary containing the node properties.
+        The node_properties are derived using the function: node_properties = d3.set_node_properties()
+    logger : Object, (default: None)
+        Show messages on screen.
 
     Returns
     -------
@@ -107,13 +195,18 @@ def show(df, **kwargs):
 
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)
-    # df = convert_dataframe_dict(df, frame=True)
 
     # Format for datetime in javascript
     config['dt_format_js'] = '%Y%m%d'
     # Sort on date
     if config['sort_on_date']:
         df.sort_index(inplace=True)
+
+    df_labels = pd.DataFrame(labels).T
+    Iloc, idx = ismember(df.columns, df_labels.index.values)
+    config['color'] = '"' + str('","'.join(df_labels['color'].iloc[idx].values.astype(str))) + '"'
+
+
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=False)
     df['index'] = df['index'].dt.strftime(config['dt_format_js'])
@@ -122,12 +215,11 @@ def show(df, **kwargs):
     # make dataset for javascript
     vals = df.to_string(header=True, index=False, index_names=False).split('\n')
     X = [';'.join(ele.split()) for ele in vals]
-
-    # Set color codes for the d3js
-    df_labels = pd.DataFrame(labels).T
-    X = [';'.join(ele.split()) for ele in vals]
     # Set color
-    config['color'] = '"' + str('","'.join(df_labels['color'].values.astype(str))) + '"'
+    
+    # df_labels = pd.DataFrame(labels).T
+    # Iloc, idx = ismember(df.columns, df_labels.index.values)
+    # config['color'] = '"' + str('","'.join(df_labels['color'].iloc[idx].values.astype(str))) + '"'
 
     # Write to HTML
     write_html(X, config, logger)

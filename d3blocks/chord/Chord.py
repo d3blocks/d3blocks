@@ -31,7 +31,7 @@ def set_config(config={}, **kwargs):
     config['figsize'] = kwargs.get('figsize', [900, 900])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
-    config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['cmap'] = kwargs.get('cmap', 'tab20')
     config['fontsize'] = kwargs.get('fontsize', 10)
     # return
     return config
@@ -58,7 +58,7 @@ def set_labels(labels, logger=None):
     return uilabels
 
 
-def set_node_properties(df, cmap='tab20', logger=None, **kwargs):
+def set_node_properties(df, **kwargs):
     """Set the node properties.
     Parameters
     ----------
@@ -72,6 +72,8 @@ def set_node_properties(df, cmap='tab20', logger=None, **kwargs):
     opacity: float [0..1] (default: 0.8)
         Opacity of the edge/link.
         * 0.8: All edges/links have the same opacity.
+    logger : Object, (default: None)
+        Show messages on screen.
 
     Returns
     -------
@@ -80,7 +82,9 @@ def set_node_properties(df, cmap='tab20', logger=None, **kwargs):
 
     """
     # Set Opacity
+    cmap = kwargs.get('cmap', 'tab20')
     opacity = kwargs.get('opacity', 0.8)
+    logger = kwargs.get('logger', None)
     # Get unique labels
     uilabels = set_labels(df, logger)
 
@@ -129,9 +133,8 @@ def set_edge_properties(df, **kwargs):
         'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
     nodes : dict, (default: None)
         Dictionary containing node properties using the function: d3.node_properties(df). Output is stored in d3.nodes
-
     logger : Object, (default: None)
-        Logger.
+        Show messages on screen.
 
     Returns
     -------
@@ -144,6 +147,7 @@ def set_edge_properties(df, **kwargs):
     cmap = kwargs.get('cmap', 'tab20')
     node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
+    df = df.copy()
 
     # Convert to dict/frame.
     nodes = convert_dataframe_dict(node_properties, frame=False)

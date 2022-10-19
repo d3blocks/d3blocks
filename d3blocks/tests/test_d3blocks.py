@@ -73,7 +73,7 @@ class Testd3blocks(unittest.TestCase):
         d3.chord(df, filepath='chord_demo2.html', color='source')
         d3.chord(df, filepath='chord_demo3.html', color='source-target')
 
-        d3 = D3Blocks()
+        d3 = D3Blocks(chart='chord')
         df = pd.DataFrame([{'source':1, 'target':2, 'weight':10}, {'source':2, 'target':3, 'weight':100}, {'source':3,'target':4, 'weight':160}, {'source':4, 'target':1, 'weight':108}])
         # Get the node properties by setting them to defaults
         d3.set_node_properties(df, opacity=0.8, cmap='tab20')
@@ -89,31 +89,31 @@ class Testd3blocks(unittest.TestCase):
         assert np.all(d3.node_properties['opacity']==0.6)
         assert np.all(d3.node_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#377eb8','#ff7f00'])
         ### CHECK COLORS
-        d3.set_edge_properties(df, color='target')
-        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#ff7f00','#ff7f00','#999999','#ff7f00'])
-        d3.set_edge_properties(df, color='source')
-        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#e41a1c','#377eb8'])
+        d3.set_edge_properties(df, color='target', cmap='Set1')
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#e41a1c','#ff7f00'])
+        d3.set_edge_properties(df, color='source', cmap='Set1')
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#377eb8','#377eb8','#4daf4a'])
         d3.set_edge_properties(df, color='source-target')
         assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#1f77b4','#d62728','#f7b6d2','#9edae5','#ff7f0e'])
-        d3.set_edge_properties(df, color='#f0f0f0')
-        assert np.all(d3.edge_properties['color']=='#f0f0f0')
         ### CHECK OPACITY
-        d3.set_edge_properties(df, color='target', opacity=0.2)
-        assert np.all(d3.edge_properties['opacity']==0.2)
+        d3.set_edge_properties(df, color='target', opacity=0.3)
+        assert np.all(d3.edge_properties['opacity']==0.3)
 
         # d3.edge_properties
         # Show the chord diagram
+        d3.set_edge_properties(df, color='#f0f0f0')
+        assert np.all(d3.edge_properties['color']=='#f0f0f0')
         d3.show(showfig=True, filepath='chord.html')
 
     def test_timeseries(self):
         # Import library.
         from d3blocks import D3Blocks
         # Initialize and set the datetime format
-        d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
+        d3 = D3Blocks()
         # Import climate dataset
         df = d3.import_example('climate')
         # Create the timeseries chart.
-        d3.timeseries(df, datetime='date', fontsize=10)
+        d3.timeseries(df, datetime='date', fontsize=10, dt_format='%Y-%m-%d')
 
     def test_imageslider(self):
         # Initialize
@@ -189,7 +189,7 @@ class Testd3blocks(unittest.TestCase):
 
     def test_movingbubbles(self):
         # Set color scheme
-        d3 = D3Blocks(cmap='Set1')
+        d3 = D3Blocks()
         # Generate random data with various states
         df = d3.import_example('random_time', n=10000, c=500, date_start="1-1-2000 00:10:05", date_stop="1-1-2001 23:59:59")
         # Make the moving bubbles chart.

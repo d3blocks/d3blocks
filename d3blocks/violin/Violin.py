@@ -131,8 +131,10 @@ def show(df, **kwargs):
     config : dict
         Dictionary containing configuration keys.
     node_properties : dict
-        Dictionary containing hex colorlabels for the classes.
-        The node_properties are derived using the function: node_properties = d3.set_label_properties()
+        Dictionary containing the node properties.
+        The node_properties are derived using the function: node_properties = d3.set_node_properties()
+    logger : Object, (default: None)
+        Show messages on screen.
 
     Returns
     -------

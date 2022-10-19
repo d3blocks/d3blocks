@@ -69,26 +69,21 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
     None.
 
     """
-    # if isinstance(X, dict) and frame:
-    #     if logger is not None: logger.info('Convert to Frame.')
-    #     X = pd.DataFrame.from_dict(X, orient='index')
-    # elif isinstance(X, pd.DataFrame) and not frame:
-    #     if logger is not None: logger.info('Convert to Dictionary.')
-    #     X = X.to_dict(orient='index')
-
-    if (chart is not None) and np.any(np.isin(chart.lower(), ['movingbubbles'])):
+    if (chart is not None) and np.any(np.isin(chart.lower(), ['movingbubbles', 'timeseries'])):
         return X
-    else:
-        if isinstance(X, dict) and frame:
-            if logger is not None: logger.info('Convert to Frame.')
-            X = pd.DataFrame.from_dict(X, orient='index').reset_index(drop=True)
-        elif isinstance(X, pd.DataFrame) and not frame:
-            if logger is not None: logger.info('Convert to Dictionary.')
-            if np.all(ismember(['source', 'target'], X.columns.values)[0]):
-                X.index = X[['source', 'target']]
-            else:
-                X.index = X['label']
-            X = X.to_dict(orient='index')
+    elif (chart is not None) and (chart=='scatter'):
+        return pd.DataFrame(X).T
+
+    if isinstance(X, dict) and frame:
+        if logger is not None: logger.info('Convert to Frame.')
+        X = pd.DataFrame.from_dict(X, orient='index').reset_index(drop=True)
+    elif isinstance(X, pd.DataFrame) and not frame:
+        if logger is not None: logger.info('Convert to Dictionary.')
+        if np.all(ismember(['source', 'target'], X.columns.values)[0]):
+            X.index = X[['source', 'target']]
+        else:
+            X.index = X['label']
+        X = X.to_dict(orient='index')
 
     return X
 

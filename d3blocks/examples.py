@@ -2,6 +2,236 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
+# %% Movingbubbles - Make manual dataset to test the working
+import pandas as pd
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
+df1['sample_id'] = [1, 1, 1, 1, 1, 1]
+df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
+df2['sample_id'] = [2, 2, 2, 2, 2, 2]
+df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
+df3['sample_id'] = [3, 3, 3, 3, 3, 3]
+df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+# Concatenate the dataframes
+df = pd.concat([df1, df2, df3], axis=0)
+
+print(df)
+#               datetime  sample_id     state
+# 0  01-01-2000 00:00:00          1      home
+# 1  01-01-2000 00:00:05          1    school
+# 2  01-01-2000 00:00:10          1      work
+# 3  01-01-2000 00:00:15          1    eating
+# 4  01-01-2000 00:00:20          1    coffee
+# 5  01-01-2000 00:00:25          1  sleeping
+# 0  01-01-2000 00:00:00          2      home
+# 1  01-01-2000 00:00:10          2    school
+# 2  01-01-2000 00:00:15          2      work
+# 3  01-01-2000 00:00:20          2    eating
+# 4  01-01-2000 00:00:25          2    coffee
+# 5  01-01-2000 00:00:30          2  sleeping
+# 0  12-12-2000 00:00:00          3      home
+# 1  12-12-2000 00:00:15          3    school
+# 2  12-12-2000 00:00:20          3      work
+# 3  12-12-2000 00:00:25          3    eating
+# 4  12-12-2000 00:00:30          3    coffee
+# 5  12-12-2000 00:00:35          3  sleeping
+
+# standardize the time per sample id and make the starting-point the same
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+# # Compute delta (this is automatically done if not seen in datafame available)
+# df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
+
+# Notes that are shown between two time points.
+time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "In the first 5 minutes, nothing will happen and every entity is waiting in it's current state."}]
+time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first entity will move to school. The rest is still at home."})
+time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
+time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
+
+# Make the moving bubbles
+df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+
+
+
+# %% SCATTER
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Scatter', frame=False)
+# Import example
+df = d3.import_example('cancer')
+# Node properties
+d3.set_node_properties(df)
+# Edge properties
+d3.set_edge_properties(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
+# Show the chart
+d3.show(filepath='c://temp//scatter_demo.html', figsize=[600, 400])
+# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
+
+
+from d3blocks import D3Blocks
+# # Initialize
+d3 = D3Blocks(frame=False)
+# # import example
+df = d3.import_example('cancer')
+df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
+size = df['survival_months'].fillna(1).values / 10
+tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+
+# # No transition
+# d3.scatter(df['x'].values, df['y'].values, size=df['survival_months'].values/10, tooltip=tooltip, color=df.index.values, filepath='c://temp//scatter.html')
+
+# Two transitions
+d3.scatter(df['x'].values,
+           df['y'].values,
+           x1=df['PC1'].values,
+           y1=df['PC2'].values,
+           size=size,
+           color=df.index.values,
+           tooltip=tooltip,
+           filepath='c://temp//scatter_transitions1.html')
+
+d3.scatter(df['x'].values,
+           df['y'].values,
+           x1=df['PC1'].values,
+           y1=df['PC2'].values,
+           label_radio=['tSNE','PCA'],
+           size=size,
+           color=df.index.values,
+           tooltip=tooltip,
+           scale=True,
+           figsize=[600, 400],
+           filepath='c://temp//scatter_transitions2.html')
+
+d3.scatter(df['x'].values,
+           df['y'].values,
+           x1=df['PC1'].values,
+           y1=df['PC2'].values,
+           x2=df['PC2'].values,
+           y2=df['PC1'].values,
+           label_radio=['tSNE', 'PCA', 'Magic'],
+           size=size,
+           color=df.index.values,
+           tooltip=tooltip,
+           scale=True,
+           filepath='c://temp//scatter_transitions2.html')
+
+# Three transitions
+d3.scatter(df['x'].values,
+            df['y'].values,
+            x1=df['PC1'].values,
+            y1=df['PC2'].values,
+            x2=df['PC2'].values,
+            y2=df['PC1'].values,
+            size=size,
+            color=df.index.values,
+            tooltip=tooltip,
+            scale=True,
+            filepath='c://temp//scatter_transitions10.html')
+
+
+d3.scatter(df['x'].values,
+           df['y'].values,
+           x1=df['PC1'].values,
+           y1=df['PC2'].values,
+           x2=df['PC2'].values,
+           y2=df['PC1'].values,
+           label_radio=['tSNE', 'PCA', 'PCA_reverse'],
+           size=size,
+           color=df.index.values,
+           tooltip=tooltip,
+           scale=True,
+           figsize=[600, 400],
+           filepath='c://temp//scatter_transitions3.html')
+
+
+# %% CHORD - EXAMPLE
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Chord', frame=False)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df, opacity=0.6, cmap='tab20')
+# d3.node_properties
+d3.set_edge_properties(df, color='target', opacity='target')
+# d3.edge_properties
+# Show the chart
+d3.show(showfig=True, filepath='chord1.html')
+
+# or
+
+# Create chord diagram
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Create chord diagram
+d3.chord(df, color='source', filepath='chord2.html')
+d3.chord(df, color='#000000', opacity=0.4, filepath='chord3.html')
+
+
+# %% Sankey
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Sankey', frame=True)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df)
+# d3.node_properties
+d3.set_edge_properties(df, color='target', opacity='target')
+# d3.edge_properties
+# Show the chart
+d3.show(showfig=True, filepath='Sankey.html')
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Link settings
+d3.sankey(df, link={"color": "source"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
+# labels = d3.node_properties
+
+# %% TIMESERIES
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(chart='Timeseries', frame=False)
+# Import example
+df = d3.import_example('climate')
+# Node properties
+d3.set_node_properties(df.columns.values)
+# d3.node_properties
+d3.node_properties.get('wind_speed')['color'] = '#000000'
+# d3.node_properties
+d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
+# d3.edge_properties
+# Show
+d3.show(title='Timeseries with adjusted configurations.', showfig=True)
+
+# or
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(chart='Timeseries', frame=True)
+# Import example
+df = d3.import_example('climate')
+# Show
+d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
 
 # %% Moving bubbles
 from d3blocks import D3Blocks
@@ -31,69 +261,6 @@ d3.movingbubbles(df)
 d3.movingbubbles(df, reset_properties=False, cmap='tab20', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
 
 
-# %% SCATTER
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks(chart='Scatter', frame=True)
-# Import example
-df = d3.import_example('cancer')
-# Node properties
-d3.set_edge_properties(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
-# d3.node_properties
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
-# Show the chart
-d3.show(showfig=True, filepath='c://temp//scatter_transitions2.html', figsize=[600, 400])
-
-
-# from d3blocks import D3Blocks
-
-# # Initialize
-# d3 = D3Blocks()
-
-# # import example
-# df = d3.import_example('cancer')
-
-# # df = df.loc[(df.index.values=='kich') | (df.index.values=='brca') | (df.index.values=='laml'), :]
-
-# size = df['survival_months'].fillna(1).values / 10
-# tooltip=
-
-# # No transition
-# # d3.scatter(df['x'].values, df['y'].values, size=df['survival_months'].values/10, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-
-# Two transitions
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html')
-d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
-
-# # Three transitions
-# # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter.html')
-# # d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html')
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions3.html', scale=True, figsize=[600, 400])
-
-
-
-
-
-# %% TIMESERIES
-import yfinance as yf
-df = yf.download(["TSLA", "TWTR", "META", "AMZN", "AAPL"], start="2019-01-01", end="2021-12-31")
-df = df[["Adj Close"]].droplevel(0, axis=1).resample("M").last()
-df = df.div(df.iloc[0])
-df.head()
-# df = df.droplevel(0, axis=1)
-
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks(chart='Timeseries', frame=False)
-# Node properties
-d3.set_node_properties(df.columns.values)
-# d3.node_properties
-d3.node_properties.get('META')['color']='#000000'
-# Show
-d3.timeseries(df, filepath='c://temp//timeseries.html', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
-
-
 # %% VIOLIN - EXAMPLE
 from d3blocks import D3Blocks
 
@@ -118,7 +285,7 @@ d3 = D3Blocks()
 df = d3.import_example('cancer')
 # Create chord diagram
 d3.violin(x=df['labels'].values, y=df['age'].values)
-# 
+
 d3.violin(x=df['labels'].values, # class labels on the x axis
           y=df['age'].values,    # Age
           size=df['survival_months'].values/10, # Dotsize
@@ -126,57 +293,6 @@ d3.violin(x=df['labels'].values, # class labels on the x axis
           figsize=[None, None],   # Figure size is automatically determined.
           filepath='violine_demo.html',
           reset_properties=True)
-
-
-# %% CHORD - EXAMPLE
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks(chart='Chord', frame=False)
-# Import example
-df = d3.import_example('energy')
-# Node properties
-d3.set_node_properties(df, opacity=0.6, cmap='tab20')
-# d3.node_properties
-d3.set_edge_properties(df, color='target', opacity='target')
-# d3.edge_properties
-# Show the chart
-d3.show(showfig=True, filepath='chord.html')
-
-# or
-
-# Create chord diagram
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks()
-# Import example
-df = d3.import_example('energy')
-# Create chord diagram
-d3.chord(df, color='source')
-d3.chord(df, color='#000000', opacity=0.4)
-
-# %% Sankey
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks(chart='Sankey', frame=True)
-# Import example
-df = d3.import_example('energy')
-# Node properties
-d3.set_node_properties(df)
-# d3.node_properties
-d3.set_edge_properties(df, color='target', opacity='target')
-# d3.edge_properties
-# Show the chart
-d3.show(showfig=True, filepath='Sankey.html')
-
-# Initialize
-d3 = D3Blocks()
-# Import example
-df = d3.import_example('energy')
-# Link settings
-d3.sankey(df, link={"color": "source"}, node={'align': 'justify'}, filepath='c:\\temp\\sankey.html')
-# labels = d3.node_properties
 
 
 # %% CHORD - EXAMPLE 2
@@ -394,18 +510,18 @@ df = df.div(df.iloc[0])
 df.head()
 
 from d3blocks import D3Blocks
-d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
-d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
+d3 = D3Blocks()
+d3.timeseries(df, filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500], dt_format='%Y-%m-%d %H:%M:%S', datetime=None)
 
 
 # %% TIMESERIES
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(dt_format='%Y-%m-%d %H:%M:%S')
+d3 = D3Blocks()
 df = d3.import_example('climate')
 # d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10, figsize=[850, 500])
-d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10)
+d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', fontsize=10, dt_format='%Y-%m-%d %H:%M:%S')
 
 
 # %% HEATMAP - EXAMPLE 1
@@ -454,14 +570,14 @@ d3 = D3Blocks()
 # Make particles
 # d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
 # d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', fontsize=180, figsize=[900, 200], spacing=8)
-d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff')
+d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', color_background='#ffffff')
 
 
 # %% SANKEY - EXAMPLE 1
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(frame=False)
+d3 = D3Blocks(frame=True)
 
 # Import example
 df = d3.import_example('energy')
@@ -478,10 +594,6 @@ labels = d3.node_properties
 # Network
 d3.d3graph(df, showfig=False)
 d3.D3graph.set_node_properties()
-
-# # Color the same as for the sankey chart
-for key in labels.keys():
-    d3.D3graph.node_properties[key.replace(' ','_')]['color']=labels[key]['color']
 
 # # Show the network graph
 d3.D3graph.show(filepath='c:\\temp\\d3graph.html')
@@ -569,80 +681,10 @@ d3 = D3Blocks()
 d3.sankey(df, link={"color": "source-target"})
 
 
-
-
-
-
-
-# %% Movingbubbles - Make manual dataset to test the working
-import pandas as pd
-
-# Set colors.
-df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df1['sample_id'] = [1, 1, 1, 1, 1, 1]
-df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
-df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
-
-df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df2['sample_id'] = [2, 2, 2, 2, 2, 2]
-df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
-df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
-
-df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df3['sample_id'] = [3, 3, 3, 3, 3, 3]
-df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
-df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
-
-# Concatenate the dataframes.
-df = pd.concat([df1, df2, df3], axis=0)
-
-print(df)
-#               datetime  sample_id     state
-# 0  01-01-2000 00:00:00          1      home
-# 1  01-01-2000 00:00:05          1    school
-# 2  01-01-2000 00:00:10          1      work
-# 3  01-01-2000 00:00:15          1    eating
-# 4  01-01-2000 00:00:20          1    coffee
-# 5  01-01-2000 00:00:25          1  sleeping
-# 0  01-01-2000 00:00:00          2      home
-# 1  01-01-2000 00:00:10          2    school
-# 2  01-01-2000 00:00:15          2      work
-# 3  01-01-2000 00:00:20          2    eating
-# 4  01-01-2000 00:00:25          2    coffee
-# 5  01-01-2000 00:00:30          2  sleeping
-# 0  12-12-2000 00:00:00          3      home
-# 1  12-12-2000 00:00:15          3    school
-# 2  12-12-2000 00:00:20          3      work
-# 3  12-12-2000 00:00:25          3    eating
-# 4  12-12-2000 00:00:30          3    coffee
-# 5  12-12-2000 00:00:35          3  sleeping
-
-
-# Import
-from d3blocks import D3Blocks
-
-# Initialize with specific cmap.
-d3 = D3Blocks(cmap='Set2_r')
-
-# Standardize the time per sample id and make the starting-point the same
-# df = d3.standardize(df, method='samplewise', sample_id='sample_id', datetime='datetime')
-
-# Create notes that are shown between two time points.
-time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "In the first 5 minutes, nothing will happen and every entity is waiting in it's current state."}]
-time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first entity will move to school. The rest is still at home."})
-time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
-time_notes.append({"start_minute": 16, "stop_minute": 30, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
-time_notes.append({"start_minute": 31, "stop_minute": 36, "note": "The last entity is now at Coffee and will move towards it's final destination too."})
-time_notes.append({"start_minute": 37, "stop_minute": 60, "note": "Nothing will happen after this step anymore. The simulation has ended!"})
-
-# Make the moving bubbles
-# df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', time_notes=time_notes, filepath='movingbubbles.html')
-df = d3.movingbubbles(df, time_notes=time_notes, standardize='samplewise')
-
 # %% Moving bubbles
 from d3blocks import D3Blocks
 
-d3 = D3Blocks(cmap='Set1')
+d3 = D3Blocks()
 # Import example
 
 df = d3.import_example('random_time', n=10000, c=500, date_start="01-01-2000 00:10:05", date_stop="01-02-2000 23:59:59")
@@ -665,6 +707,7 @@ d3.movingbubbles(df,
                  filepath='movingbubbles.html',
                  fontsize=14,
                  showfig=True,
+                 cmap='Set1',
                  overwrite=True)
 
 
@@ -706,7 +749,7 @@ import numpy as np
 import pandas as pd
 
 # Initialize
-d3 = D3Blocks(frame=False)
+d3 = D3Blocks(frame=False, chart='chord')
 # Import example
 # df = d3.import_example('bigbang')
 # df = d3.import_example('stormofswords')
@@ -830,7 +873,7 @@ d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "l
 # %% Movingbubbles - Make manual dataset to test the working
 import pandas as pd
 from d3blocks import D3Blocks
-d3 = D3Blocks(cmap='Set2_r')
+d3 = D3Blocks()
 
 df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
 df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
@@ -883,14 +926,13 @@ time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first enti
 time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
 time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
 
-
 # Make the moving bubbles
-df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html')
+df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
 
 
 # %% Movingbubbles - Create random dataset
 from d3blocks import D3Blocks
-d3 = D3Blocks(cmap='Set1')
+d3 = D3Blocks()
 
 df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
 
@@ -899,23 +941,23 @@ df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10
 # d3.node_properties
 
 # Make the moving bubbles
-d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, cmap='Set1', filepath='movingbubbles.html')
 
 
 # %% Moving bubbles
-d3 = D3Blocks(cmap='Set1')
+d3 = D3Blocks()
 # Import example
 df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 # standardize the time per sample id.
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html', cmap='Set1')
 # d3.movingbubbles(df, datetime='datetime_norm', state='state', sample_id='sample_id', center='Travel', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles.html')
 
 
 # %% Movingbubbles - Create random dataset
 from d3blocks import D3Blocks
-d3 = D3Blocks(cmap='Set1')
+d3 = D3Blocks()
 
 df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-2-2000 23:59:59")
 
@@ -924,13 +966,13 @@ df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10
 # d3.node_properties
 
 # Make the moving bubbles
-d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+d3.movingbubbles(df, center='Travel', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html', cmap='Set1')
 
 
 # %% Moving bubbles
 from d3blocks import D3Blocks
 
-d3 = D3Blocks(cmap='Set1')
+d3 = D3Blocks()
 # Import example
 # df = d3.import_example('movingbubbles')
 df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")

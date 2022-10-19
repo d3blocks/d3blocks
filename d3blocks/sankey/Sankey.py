@@ -6,7 +6,9 @@ Mail        : erdogant@gmail.com, oliver@sensibly.nl
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
+import pandas as pd
 import numpy as np
+from ismember import ismember
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
@@ -27,6 +29,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['figsize'] = kwargs.get('figsize', [800, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
+    config['cmap'] = kwargs.get('cmap', 'Set1')
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
     config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
@@ -36,23 +39,72 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
 
 
 # %% Get unique labels
-def set_labels(df):
-    return np.unique(df[['source', 'target']].values.flatten())
+def set_labels(labels, logger=None):
+    """Set unique labels."""
+    if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
+        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+        labels = labels[['source', 'target']].values.flatten()
+
+    # Preprocessing
+    labels = pre_processing(labels)
+
+    # Checks
+    if (labels is None) or len(labels)<1:
+        raise Exception(logger.error('Could not extract the labels!'))
+
+    # Get unique categories without sort
+    indexes = np.unique(labels, return_index=True)[1]
+    uilabels = [labels[index] for index in sorted(indexes)]
+    # Return
+    return uilabels
 
 
 # %% Set Edge properties
-def set_edge_properties(df, node_properties, **kwargs):
-    """Set the edge properties."""
+def set_edge_properties(df, **kwargs):
+    """Set the edge properties.
+
+    Parameters
+    ----------
+    df : pd.DataFrame()
+        Input data containing the following columns:
+        'source'
+        'target'
+        'weight'
+    logger : Object, (default: None)
+        Logger.
+
+    Returns
+    -------
+    df : pd.DataFrame()
+        DataFrame.
+
+    """
+    # node_properties = kwargs.get('node_properties')
+    df = df.copy()
     df = pre_processing(df)
     return df
 
 
-# def set_node_properties(labels, cmap, logger, **kwargs):
-def set_node_properties(*args, **kwargs):
-    """Set the node properties."""
-    labels, cmap, logger = args
+def set_node_properties(df, **kwargs):
+    """Set the node properties.
+    Parameters
+    ----------
+    df : pd.DataFrame()
+        Input data containing the following columns:
+        'source'
+        'target'
+
+    Returns
+    -------
+    dict_labels : dictionary()
+        Dictionary containing the label properties.
+
+    """
+    # Get unique label
+    uilabel = set_labels(df)
+
     dict_labels = {}
-    for i, label in enumerate(labels):
+    for i, label in enumerate(uilabel):
         dict_labels[label] = {'id': i, 'label': label}
     # Return
     return dict_labels
@@ -68,7 +120,7 @@ def show(df, **kwargs):
     config : dict
         Dictionary containing configuration keys.
     node_properties : dict
-        Dictionary containing hex colorlabels for the classes.
+        Dictionary containing the node properties.
         The node_properties are derived using the function: node_properties = d3.set_node_properties()
 
     Returns

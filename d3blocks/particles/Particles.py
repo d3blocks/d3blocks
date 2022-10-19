@@ -77,7 +77,7 @@ def write_html(X, config):
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
-        'BACKGROUND': config['background'],
+        'COLOR_BACKGROUND': config['color_background'],
         'RADIUS': config['radius'],
         'COLLISION': config['collision'],
         'FONTSIZE': config['fontsize'],

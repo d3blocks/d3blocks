@@ -28,18 +28,22 @@ def set_config(config={}, **kwargs):
     config['chart'] ='scatter'
     config['title'] = kwargs.get('title', 'scatter - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'scatter.html'))
-    config['figsize'] = kwargs.get('figsize', [900, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
-    config['xlim'] = kwargs.get('xlim', [None, None])
-    config['ylim'] = kwargs.get('ylim', [None, None])
-    config['scale'] = kwargs.get('scale', False)
+    config['figsize'] = kwargs.get('figsize', [900, 600])
     config['cmap'] = kwargs.get('cmap', 'tab20')
+    config['scale'] = kwargs.get('scale', False)
+    config['ylim'] = kwargs.get('ylim', [None, None])
+    config['xlim'] = kwargs.get('xlim', [None, None])
+    config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)'])
+    config['color_background'] = kwargs.get('color_background', '#ffffff')
+    config['reset_properties'] = kwargs.get('reset_properties', True)
+
     return config
 
 
 # %% Preprocessing
-def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, config, logger):
+def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger):
     """Check Exceptions."""
     # if len(config['label_radio'])!=sum(list(map(lambda x: x=='', config['radio_button_visible']))): raise Exception(logger.error('input parameter [label_radio] must contain the correct number of labels depending on the (x,y), (x1,y1), (x2,y2) coordinates.'))
     if len(x)!=len(y): raise Exception(logger.error('input parameter [x] and [y] should be of size of (x, y).'))
@@ -57,11 +61,21 @@ def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, config, logger)
 
 
 # %% Set the Node properties
+def set_node_properties(*args, **kwargs):
+    return None
+
+
+# %% Set the edge properties
 # def node_properties(x, y, x1, y1, x2, y2, color='#69b3a2', size=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
-def node_properties(*args, **kwargs):
-    """Set the node properties."""
-    x, y, x1, y1, x2, y2 = args
+def set_edge_properties(*args, **kwargs):
+    """Set the edge properties."""
+    x, y = args
     # Collect key-word arguments
+    x1 = kwargs.get('x1', None)
+    y1 = kwargs.get('y1', None)
+    x2 = kwargs.get('x2', None)
+    y2 = kwargs.get('y2', None)
+
     color = kwargs.get('color', '#69b3a2')
     size = kwargs.get('size', 5)
     tooltip = kwargs.get('tooltip', None)
@@ -72,10 +86,15 @@ def node_properties(*args, **kwargs):
     scale = kwargs.get('scale', False)
     logger = kwargs.get('logger', None)
 
-    if (x1 is None): x1 = x
-    if (y1 is None): y1 = y
-    if (x2 is None): x2 = x
-    if (y2 is None): y2 = y
+    # if (x1 is None): x1 = x
+    # if (y1 is None): y1 = y
+    # if (x2 is None): x2 = x
+    # if (y2 is None): y2 = y
+
+    if (x1 is None): x1 = np.zeros_like(x) * np.nan
+    if (y1 is None): y1 = np.zeros_like(x) * np.nan
+    if (x2 is None): x2 = np.zeros_like(x) * np.nan
+    if (y2 is None): y2 = np.zeros_like(x) * np.nan
 
     # Combine into array
     X = np.c_[x, y]
@@ -85,14 +104,14 @@ def node_properties(*args, **kwargs):
 
     # Scale data
     if scale:
-        logger.info('Scaling xy-coordinates.')
+        if logger is not None: logger.info('Scaling xy-coordinates.')
         X = _scale_xy(X)
         X1 = _scale_xy(X1)
         X2 = _scale_xy(X2)
     # In case only one (s)ize is defined. Set all points to this size.
     if isinstance(size, (int, float)): size = np.repeat(size, X.shape[0])
     if np.any(size<0):
-        logger.info('[%.0d] sizes are <0 and set to 0.' %(np.sum(size<0)))
+        if logger is not None: logger.info('[%.0d] sizes are <0 and set to 0.' %(np.sum(size<0)))
         size[size<0]=0
     # In case None tooltip is defined. Set all points to this tooltip.
     if tooltip is None: tooltip = np.repeat('', X.shape[0])
@@ -110,13 +129,13 @@ def node_properties(*args, **kwargs):
     # Make dict with properties
     dict_properties = {}
     for i in range(0, X.shape[0]):
-        dict_properties[i] = {'id': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': color[i], 'dotsize': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+        dict_properties[i] = {'label': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': color[i], 'dotsize': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
 
     # Create the plot
-    df = pd.DataFrame(dict_properties).T
+    # df = pd.DataFrame(dict_properties).T
 
     # return
-    return df, dict_properties
+    return dict_properties
 
 
 # %% Scale data
@@ -127,7 +146,7 @@ def _scale_xy(X):
 
 
 # %% Show
-def show(df, config):
+def show(df, **kwargs):
     """Build and show the graph.
 
     Parameters
@@ -136,9 +155,11 @@ def show(df, config):
         Input data.
     config : dict
         Dictionary containing configuration keys.
-    labels : dict
-        Dictionary containing hex colorlabels for the classes.
-        The labels are derived using the function: labels = d3blocks.set_label_properties()
+    node_properties : dict
+        Dictionary containing the node properties.
+        The node_properties are derived using the function: node_properties = d3.set_node_properties()
+    logger : Object, (default: None)
+        Show messages on screen.
 
     Returns
     -------
@@ -146,8 +167,23 @@ def show(df, config):
         Dictionary containing updated configuration keys.
 
     """
+    config = kwargs.get('config')
+    labels = kwargs.get('node_properties')
+    logger = kwargs.get('logger', None)
+
     # Convert dict/frame.
-    df = convert_dataframe_dict(df, frame=True)
+    df = convert_dataframe_dict(df.copy(), frame=True)
+
+    # Set the radio button and visibility of the labels
+    config['radio_button_visible'] = [("display:none;" if (np.all(list(map(np.isnan, df['x1'])))) else ""),
+                                      ("display:none;" if (np.all(list(map(np.isnan, df['x1'])))) else ""),
+                                      ("display:none;" if (np.all(list(map(np.isnan, df['x2'])))) else "")]
+    if ("display:none" in config['radio_button_visible'][0]): config['label_radio'][0]=""
+    if ("display:none" in config['radio_button_visible'][1]): config['label_radio'][1]=""
+    if len(config['label_radio'])==3 and ("display:none" in config['radio_button_visible'][2]):
+        config['label_radio'][2]=""
+    elif len(config['label_radio'])==2:
+        config['label_radio'].append("")
 
     # Compute xlim and ylim for the axis.
     spacing = 0.12
@@ -179,12 +215,12 @@ def show(df, config):
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
 
     # Write to HTML
-    write_html(X, config)
+    write_html(X, config, logger=logger)
     # Return config
     return config
 
 
-def write_html(X, config):
+def write_html(X, config, logger=None):
     """Write html.
 
     Parameters
@@ -201,6 +237,7 @@ def write_html(X, config):
     """
     content = {
         'json_data': X,
+        'COLOR_BACKGROUND': config['color_background'],
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
@@ -219,8 +256,6 @@ def write_html(X, config):
         'MOUSELEAVE': config['mouseleave'],
     }
 
-    # print('NAME')
-    # print(__name__)
     try:
         jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
     except:
@@ -230,7 +265,7 @@ def write_html(X, config):
     index_file = Path(config['filepath'])
     # index_file.write_text(index_template.render(content))
     if config['overwrite'] and os.path.isfile(index_file):
-        print('File already exists and will be overwritten: [%s]' %(index_file))
+        if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
         os.remove(index_file)
         time.sleep(0.5)
     with open(index_file, "w", encoding="utf-8") as f:
