@@ -974,7 +974,12 @@ class D3Blocks():
 
         Returns
         -------
-        pd.DataFrame()
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+        d3.config: dictionary
+             Contains configuration properties.
 
         Example 1
         ---------
@@ -1218,7 +1223,12 @@ class D3Blocks():
 
         Returns
         -------
-        None.
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+        d3.config: dictionary
+             Contains configuration properties.
 
         Examples
         --------
