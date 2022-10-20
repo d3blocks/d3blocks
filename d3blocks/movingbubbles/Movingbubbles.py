@@ -20,9 +20,9 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config
 
 
 # %% Set configuration properties
@@ -185,9 +185,9 @@ def show(df, **kwargs):
         Dictionary containing updated configuration keys.
 
     """
-    config = kwargs.get('config')
     labels = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
+    config = update_config(kwargs, logger)
 
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)

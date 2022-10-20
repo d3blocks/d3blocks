@@ -15,9 +15,30 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config
+
+
+# %% Set configuration properties
+def set_config(config={}, **kwargs):
+    """Set the default configuration setting."""
+    config['chart'] ='timeseries'
+    config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'))
+    config['figsize'] = kwargs.get('figsize', [1200, 500])
+    config['showfig'] = kwargs.get('showfig', True)
+    config['overwrite'] = kwargs.get('overwrite', True)
+    config['fontsize'] = kwargs.get('fontsize', 10)
+    config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['whitelist'] = kwargs.get('whitelist', None)
+    config['sort_on_date'] = kwargs.get('sort_on_date', True)
+    config['reset_properties'] = kwargs.get('reset_properties', True)
+    config['datetime'] = kwargs.get('datetime', 'datetime')
+    config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
+    config['columns'] = kwargs.get('columns', {'datetime': config['datetime']})
+    # return
+    return config
 
 
 # %% Get unique labels
@@ -39,27 +60,6 @@ def set_labels(labels, logger=None):
     uilabels = np.array([labels[index] for index in sorted(indexes)])
     # Return
     return uilabels
-
-
-# %% Set configuration properties
-def set_config(config={}, **kwargs):
-    """Set the default configuration setting."""
-    config['chart'] ='timeseries'
-    config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'))
-    config['figsize'] = kwargs.get('figsize', [1000, 400])
-    config['showfig'] = kwargs.get('showfig', True)
-    config['overwrite'] = kwargs.get('overwrite', True)
-    config['fontsize'] = kwargs.get('fontsize', 10)
-    config['cmap'] = kwargs.get('cmap', 'Set1')
-    config['whitelist'] = kwargs.get('whitelist', None)
-    config['sort_on_date'] = kwargs.get('sort_on_date', True)
-    config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['datetime'] = kwargs.get('datetime', 'datetime')
-    config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
-    config['columns'] = kwargs.get('columns', {'datetime': config['datetime']})
-    # return
-    return config
 
 
 # %% Filter labels using whitelist
@@ -140,12 +140,13 @@ def set_edge_properties(df, **kwargs):
         Processed dataframe.
 
     """
+    df=df.copy()
     datetime = kwargs.get('datetime', 'datetime')
     dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     node_properties = kwargs.get('node_properties', None)
     logger = kwargs.get('logger', None)
     node_properties = convert_dataframe_dict(node_properties, frame=False)
-    
+
     # Get datetime
     if datetime is None:
         if logger is not None: logger.info('Set index for datetime.')
@@ -153,9 +154,6 @@ def set_edge_properties(df, **kwargs):
     else:
         df.index = pd.to_datetime(df[datetime].values, format=dt_format)
         df.drop(labels=datetime, axis=1, inplace=True)
-
-    # Check multi-line columns and merge those that are multi-line
-    # df.columns = list(map(lambda x: '_'.join('_'.join(x).split()), df.columns))
 
     if node_properties is not None:
         labels = [*node_properties.keys()]
@@ -189,9 +187,10 @@ def show(df, **kwargs):
         Dictionary containing updated configuration keys.
 
     """
-    config = kwargs.get('config')
+    df = df.copy()
     labels = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
+    config = update_config(kwargs, logger)
 
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)
@@ -206,7 +205,6 @@ def show(df, **kwargs):
     Iloc, idx = ismember(df.columns, df_labels.index.values)
     config['color'] = '"' + str('","'.join(df_labels['color'].iloc[idx].values.astype(str))) + '"'
 
-
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=False)
     df['index'] = df['index'].dt.strftime(config['dt_format_js'])
@@ -215,11 +213,6 @@ def show(df, **kwargs):
     # make dataset for javascript
     vals = df.to_string(header=True, index=False, index_names=False).split('\n')
     X = [';'.join(ele.split()) for ele in vals]
-    # Set color
-    
-    # df_labels = pd.DataFrame(labels).T
-    # Iloc, idx = ismember(df.columns, df_labels.index.values)
-    # config['color'] = '"' + str('","'.join(df_labels['color'].iloc[idx].values.astype(str))) + '"'
 
     # Write to HTML
     write_html(X, config, logger)

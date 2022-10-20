@@ -17,9 +17,9 @@ import os
 import time
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config
 
 
 # %% Set configuration properties
@@ -114,7 +114,7 @@ def set_edge_properties(df, **kwargs):
         'weight'
         'color' (optional)
         'opacity' (optional)
-    color: list/array of str
+        color: (default: 'source')
         Edge colors in Hex notation. Should be the same size as input DataFrame.
         * None : 'cmap' is used to create colors.
         * 'source': Color edges/links similar to that of source-color node.
@@ -122,7 +122,7 @@ def set_edge_properties(df, **kwargs):
         * 'source-target': Color edges/link based on unique source-target edges using the colormap.
         * '#ffffff': All links have the same hex color.
         * ['#000000', '#ffffff',...]: Define per link.
-    opacity: float or list/array [0..1]
+        opacity: (default: 'source')
         Edge Opacity. Should be the same size as input DataFrame.
         * 'source': Opacity of edges/links similar to that of source-opacity node.
         * 'target': Opacity of edges/links similar to that of target-opacity node.
@@ -142,12 +142,15 @@ def set_edge_properties(df, **kwargs):
         DataFrame.
 
     """
-    color = kwargs.get('color', 'target')
-    opacity = kwargs.get('opacity', 0.8)
-    cmap = kwargs.get('cmap', 'tab20')
+    df = df.copy()
     node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
-    df = df.copy()
+    color = kwargs.get('color', 'source')
+    opacity = kwargs.get('opacity', 'source')
+    cmap = kwargs.get('cmap', 'tab20')
+
+    # Convert dict/frame.
+    df = convert_dataframe_dict(df, frame=True)
 
     # Convert to dict/frame.
     nodes = convert_dataframe_dict(node_properties, frame=False)
@@ -207,26 +210,36 @@ def set_edge_properties(df, **kwargs):
 
 
 def show(df, **kwargs):
-    """Build and show the graph.
+    """Show the Chord chart.
 
     Parameters
     ----------
     df : pd.DataFrame()
         Input data.
-    config : dict
-        Dictionary containing configuration keys.
-    node_properties : dict
-        Dictionary containing hex colorlabels for the classes.
-        The labels are derived using the function: labels = d3blocks.set_label_properties()
+    title : String, (default: None)
+        Title of the figure.
+    filepath : String, (Default: user temp directory)
+        File path to save the output.
+        'c://temp//Violin.html'
+    figsize : tuple, (default: [None, None])
+        Size of the figure in the browser, [width, height].
+        [None, None]: The width is auto-determined based on the #labels.
+    showfig : bool, (default: True)
+        True: Open browser-window.
+        False: Do not open browser-window.
+    overwrite : bool, (default: True)
+        True: Overwrite the html in the destination directory.
+        False: Do not overwrite destination file but show warning instead.
 
     Returns
     -------
-    None
+    config : dict
+        Dictionary containing updated configuration keys.
 
     """
-    config = kwargs.get('config')
     node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
+    config = update_config(kwargs, logger)
 
     # Convert dict/frame.
     df = convert_dataframe_dict(df.copy(), frame=True)

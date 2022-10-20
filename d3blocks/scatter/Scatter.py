@@ -13,13 +13,12 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
-import pandas as pd
 import time
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config
 
 
 # %% Set configuration properties
@@ -38,7 +37,7 @@ def set_config(config={}, **kwargs):
     config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)'])
     config['color_background'] = kwargs.get('color_background', '#ffffff')
     config['reset_properties'] = kwargs.get('reset_properties', True)
-
+    # Return
     return config
 
 
@@ -62,27 +61,75 @@ def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger):
 
 # %% Set the Node properties
 def set_node_properties(*args, **kwargs):
+    """Set the node properties."""
     return None
 
 
 # %% Set the edge properties
-# def node_properties(x, y, x1, y1, x2, y2, color='#69b3a2', size=5, tooltip=None, opacity=0.8, c_gradient=None, stroke='#ffffff', cmap='Set2', scale=False, logger=None):
 def set_edge_properties(*args, **kwargs):
-    """Set the edge properties."""
-    x, y = args
+    """Set the edge properties for the scatterplot block.
+
+    Parameters
+    ----------
+    x : numpy array
+        1d coordinates x-axis.
+    y : numpy array
+        1d coordinates y-axis.
+    x1 : numpy array
+        Second set of 1d coordinates x-axis.
+    y1 : numpy array
+        Second set of 1d coordinates y-axis.
+    x2 : numpy array
+        Third set of 1d coordinates x-axis.
+    y2 : numpy array
+        Third set of 1d coordinates y-axis.
+    size: list/array of with same size as (x,y). Can be of type str or int.
+        Size of the samples.
+    color: list/array of hex colors with same size as (x,y)
+        '#ffffff' : All dots are get the same hex color.
+        None: The same color as for c is applied.
+        ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+    c_gradient : String, (default: None)
+        Make a lineair gradient based on the density for the particular class label.
+        '#FFFFFF'
+    tooltip: list of labels with same size as (x,y)
+        labels of the samples.
+    stroke: list/array of hex colors with same size as (x,y)
+        Edgecolor of dotsize in hex colors.
+    opacity: float or list/array [0-1]
+        Opacity of the dot. Shoud be same size as (x,y)
+    cmap : String, (default: 'inferno')
+        All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+    scale: Bool, optional
+        Scale datapoints. The default is False.
+
+    Returns
+    -------
+    d3.edge_properties: DataFrame of dictionary
+         Contains properties of the unique input edges/links.
+
+    """
+    # Collect arguments
+    if len(args)==2:
+        x, y = args
+    else:
+        x = kwargs.get('x', None)
+        y = kwargs.get('y', None)
+
     # Collect key-word arguments
     x1 = kwargs.get('x1', None)
     y1 = kwargs.get('y1', None)
     x2 = kwargs.get('x2', None)
     y2 = kwargs.get('y2', None)
 
-    color = kwargs.get('color', '#69b3a2')
     size = kwargs.get('size', 5)
-    tooltip = kwargs.get('tooltip', None)
-    opacity = kwargs.get('opacity', 0.8)
+    color = kwargs.get('color', '#69b3a2')
     c_gradient = kwargs.get('c_gradient', None)
+    tooltip = kwargs.get('tooltip', None)
     stroke = kwargs.get('stroke', '#ffffff')
-    cmap = kwargs.get('cmap', 'Set2')
+    opacity = kwargs.get('opacity', 0.8)
+    cmap = kwargs.get('cmap', 'tab20')
     scale = kwargs.get('scale', False)
     logger = kwargs.get('logger', None)
 
@@ -129,7 +176,7 @@ def set_edge_properties(*args, **kwargs):
     # Make dict with properties
     dict_properties = {}
     for i in range(0, X.shape[0]):
-        dict_properties[i] = {'label': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': color[i], 'dotsize': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'desc': tooltip[i], 'short': labels[i]}
+        dict_properties[i] = {'label': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': color[i], 'size': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'tooltip': tooltip[i]}
 
     # Create the plot
     # df = pd.DataFrame(dict_properties).T
@@ -153,11 +200,32 @@ def show(df, **kwargs):
     ----------
     df : pd.DataFrame()
         Input data.
+    label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
+        The labels used for the radiobuttons.
+    set_xlim : tuple, (default: [None, None])
+        Width of the x-axis: The default is extracted from the data with 10% spacing.
+    set_ylim : tuple, (default: [None, None])
+        Height of the y-axis: The default is extracted from the data with 10% spacing.
+    title : String, (default: None)
+        Title of the figure.
+        'Scatterplot'
+    filepath : String, (Default: user temp directory)
+        File path to save the output.
+        'c://temp//Scatter_demo.html'
+    figsize : tuple, (default: [None, None])
+        Size of the figure in the browser, [width, height].
+        [900, 600]
+    showfig : bool, (default: True)
+        True: Open browser-window.
+        False: Do not open browser-window.
+    overwrite : bool, (default: True)
+        True: Overwrite the html in the destination directory.
+        False: Do not overwrite destination file but show warning instead.
+    reset_properties : bool, (default: True)
+        True: Reset the node_properties at each run.
+        False: Use the d3.node_properties()
     config : dict
         Dictionary containing configuration keys.
-    node_properties : dict
-        Dictionary containing the node properties.
-        The node_properties are derived using the function: node_properties = d3.set_node_properties()
     logger : Object, (default: None)
         Show messages on screen.
 
@@ -167,12 +235,12 @@ def show(df, **kwargs):
         Dictionary containing updated configuration keys.
 
     """
-    config = kwargs.get('config')
-    labels = kwargs.get('node_properties')
+    df = df.copy()
     logger = kwargs.get('logger', None)
+    config = update_config(kwargs, logger)
 
     # Convert dict/frame.
-    df = convert_dataframe_dict(df.copy(), frame=True)
+    df = convert_dataframe_dict(df, frame=True)
 
     # Set the radio button and visibility of the labels
     config['radio_button_visible'] = [("display:none;" if (np.all(list(map(np.isnan, df['x1'])))) else ""),
@@ -205,7 +273,7 @@ def show(df, **kwargs):
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df)
     # Check whether tooltip is available. Otherwise remove the tooltip box.
-    if np.all(df['desc']==''):
+    if np.all(df['tooltip']==''):
         config['mouseover'] = ''
         config['mousemove'] = ''
         config['mouseleave'] = ''
@@ -287,6 +355,6 @@ def get_data_ready_for_d3(df):
 
     """
     # Set x, y
-    X = df[['x', 'y', 'color', 'dotsize', 'opacity', 'stroke', 'desc', 'x1', 'y1', 'x2', 'y2']].to_json(orient='values')
+    X = df[['x', 'y', 'color', 'size', 'opacity', 'stroke', 'tooltip', 'x1', 'y1', 'x2', 'y2']].to_json(orient='values')
     # Return
     return X

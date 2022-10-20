@@ -15,9 +15,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing
+    from .. utils import convert_dataframe_dict, set_path, update_config
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing
+    from utils import convert_dataframe_dict, set_path, update_config
 
 
 # %% Set configuration properties
@@ -45,9 +45,6 @@ def set_labels(labels, logger=None):
         if logger is not None: logger.info('Collecting labels from DataFrame using the "x" columns.')
         labels = labels['x'].values.flatten()
 
-    # Preprocessing
-    labels = pre_processing(labels)
-
     # Checks
     if (labels is None) or len(labels)<1:
         raise Exception(logger.error('Could not extract the labels!'))
@@ -59,35 +56,61 @@ def set_labels(labels, logger=None):
     return uilabels
 
 
-def set_node_properties(labels, cmap='tab20', logger=None, **kwargs):
-    """Set the node properties.
+def set_node_properties(*args, **kwargs):
+    """Set the node properties."""
+    return None
+
+
+def set_edge_properties(*args, **kwargs):
+    """Set the properties for the Violin block.
 
     Parameters
     ----------
-    labels : list or array.
-        Containing the nodes/labels.
-    cmap : String, (default: 'tab20')
+    x : list of String or numpy array.
+        This 1d-vector contains the class labels for each datapoint in y.
+    y : list of float or numpy array.
+        This 1d-vector contains the values for the samples.
+    size: list/array of with same size as (x,y). Can be of type str or int.
+        Size of the samples.
+    color: list/array of hex colors with same size as y
+        '#002147' : All dots/nodes are get the same hex color.
+        None: The colors are generated on value using the colormap specified in cmap.
+        ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
+    x_order : list of String (default: None)
+        The order of the class labels on the x-axis.
+        ["setosa", "versicolor", "virginica"]
+    opacity: float or list/array [0-1] (default: 0.6)
+        Opacity of the dot. Shoud be same size as (x,y)
+    stroke: list/array of hex colors with same size as (x,y)
+        Edgecolor of dot in hex colors.
+        '#000000' : Edge colors are all black.
+    tooltip: list of labels with same size as (x,y)
+        labels of the samples.
+    cmap : String, (default: 'inferno')
         All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
+        'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
 
     Returns
     -------
-    dict_labels : dictionary()
-        Dictionary containing the label properties.
-
+    d3.edge_properties: DataFrame of dictionary
+         Contains properties of the unique input edges/links.
     """
-    # Get unique label
-    uilabel = set_labels(labels)
+    # Collect arguments
+    if len(args)==2:
+        x, y = args
+    else:
+        x = kwargs.get('x', None)
+        y = kwargs.get('y', None)
+    # Collect key-word arguments
+    color = kwargs.get('color', None)
+    size = kwargs.get('size', 5)
+    stroke = kwargs.get('stroke', '#ffffff')
+    opacity = kwargs.get('opacity', 0.8)
+    tooltip = kwargs.get('tooltip', '')
+    cmap = kwargs.get('cmap', 'inferno')
+    x_order = kwargs.get('x_order', None)
+    logger = kwargs.get('logger', None)
 
-    # Make dict.
-    dict_labels = {}
-    for i, label in enumerate(uilabel):
-        dict_labels[label] = {'id': i, 'label': label}
-    # Return
-    return dict_labels
-
-
-def set_edge_properties(x, y, config, color=None, size=5, stroke='#ffffff', opacity=0.8, tooltip='', logger=None):
     # Make checks
     if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
     if size is None: raise Exception(logger.error('input parameter "size" should have value >0.'))
@@ -103,38 +126,50 @@ def set_edge_properties(x, y, config, color=None, size=5, stroke='#ffffff', opac
     # Remove NaN values
     Irem = df['y'].isna()
     if np.any(Irem):
-        logger.info('Removing [%.0d] NaN values.' %(sum(Irem)))
+        if logger is not None: logger.info('Removing [%.0d] NaN values.' %(sum(Irem)))
         df = df.loc[~Irem, :]
 
     # Filter on class labels
-    if config['x_order'] is not None:
-        classes = "|".join(config['x_order'])
+    if x_order is not None:
+        classes = "|".join(x_order)
         df = df.loc[df['x'].str.contains(classes), :]
-        logger.info('Filter on: [%s]' %(classes))
+        if logger is not None: logger.info('Filter on: [%s]' %(classes))
 
     # Color on values and cmap (after cleaning and filtering)
     if color is None:
-        df['color'] = colourmap.fromlist(df['y'].values, scheme='hex', cmap=config['cmap'])[0]
+        df['color'] = colourmap.fromlist(df['y'].values, scheme='hex', cmap=cmap)[0]
 
     df.reset_index(inplace=True, drop=True)
-    logger.info('Number of samples: %d' %(df.shape[0]))
+    if logger is not None: logger.info('Number of samples: %d' %(df.shape[0]))
     return df
 
 
 def show(df, **kwargs):
-    """Build and show the graph.
+    """Show the Violin chart.
 
     Parameters
     ----------
     df : pd.DataFrame()
         Input data.
-    config : dict
-        Dictionary containing configuration keys.
-    node_properties : dict
-        Dictionary containing the node properties.
-        The node_properties are derived using the function: node_properties = d3.set_node_properties()
-    logger : Object, (default: None)
-        Show messages on screen.
+    bins : Int (default: 50)
+        The bin size is the 'resolution' of the violin plot.
+    ylim : tuple, (default: [None, None])
+        Limit the width of the y-axis [min, max].
+        [None, None] : The width is determined based on the min-max value range.
+    title : String, (default: None)
+        Title of the figure.
+    filepath : String, (Default: user temp directory)
+        File path to save the output.
+        'c://temp//Violin.html'
+    figsize : tuple, (default: [None, None])
+        Size of the figure in the browser, [width, height].
+        [None, None]: The width is auto-determined based on the #labels.
+    showfig : bool, (default: True)
+        True: Open browser-window.
+        False: Do not open browser-window.
+    overwrite : bool, (default: True)
+        True: Overwrite the html in the destination directory.
+        False: Do not overwrite destination file but show warning instead.
 
     Returns
     -------
@@ -142,23 +177,22 @@ def show(df, **kwargs):
         Dictionary containing updated configuration keys.
 
     """
-    config = kwargs.get('config')
-    node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
+    config = update_config(kwargs, logger)
 
     # Convert dict/frame.
-    node_properties = convert_dataframe_dict(node_properties, frame=False)
     df = convert_dataframe_dict(df, frame=True)
+    labels=np.unique(df['x'].values)
 
     spacing = 0.10
     if config['ylim']==[None, None] or len(config['ylim'])==0:
         y_spacing = (df['y'].max() - df['y'].min()) * spacing
         config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
-    # Ordering the class node_properties
+    # Ordering the class labels
     if config['x_order'] is None:
-        config['x_order'] = str([*node_properties.keys()])
+        config['x_order'] = str(list(labels))
     if config['figsize'][0] is None:
-        config['figsize'][0] = len(node_properties.keys()) * 95
+        config['figsize'][0] = len(labels) * 95
     if config['figsize'][1] is None:
         config['figsize'][1] = 400
 

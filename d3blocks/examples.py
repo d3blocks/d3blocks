@@ -2,66 +2,43 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
-# %% Movingbubbles - Make manual dataset to test the working
-import pandas as pd
+
+# %% CHORD - EXAMPLE
 from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Chord', frame=False)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df, opacity=0.2, cmap='tab20')
+d3.set_edge_properties(df, color='source', opacity='source')
+# Show the chart
+d3.show()
+# Make some edits to highlight the Nuclear node
+# d3.node_properties
+d3.node_properties.get('Nuclear')['color']='#ff0000'
+d3.node_properties.get('Nuclear')['opacity']=1
+d3.show()
+# Make edits to highlight the Nuclear Edge
+d3.edge_properties.get(('Nuclear', 'Thermal generation'))['color']='#ff0000'
+d3.edge_properties.get(('Nuclear', 'Thermal generation'))['opacity']=0.8
+d3.edge_properties.get(('Nuclear', 'Thermal generation'))['weight']=1000
+# Show the chart
+d3.show()
+
+# or
+
+# Create chord diagram
+from d3blocks import D3Blocks
+# Initialize
 d3 = D3Blocks()
-
-df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
-df1['sample_id'] = [1, 1, 1, 1, 1, 1]
-df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
-
-df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
-df2['sample_id'] = [2, 2, 2, 2, 2, 2]
-df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
-
-df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
-df3['sample_id'] = [3, 3, 3, 3, 3, 3]
-df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
-
-# Concatenate the dataframes
-df = pd.concat([df1, df2, df3], axis=0)
-
-print(df)
-#               datetime  sample_id     state
-# 0  01-01-2000 00:00:00          1      home
-# 1  01-01-2000 00:00:05          1    school
-# 2  01-01-2000 00:00:10          1      work
-# 3  01-01-2000 00:00:15          1    eating
-# 4  01-01-2000 00:00:20          1    coffee
-# 5  01-01-2000 00:00:25          1  sleeping
-# 0  01-01-2000 00:00:00          2      home
-# 1  01-01-2000 00:00:10          2    school
-# 2  01-01-2000 00:00:15          2      work
-# 3  01-01-2000 00:00:20          2    eating
-# 4  01-01-2000 00:00:25          2    coffee
-# 5  01-01-2000 00:00:30          2  sleeping
-# 0  12-12-2000 00:00:00          3      home
-# 1  12-12-2000 00:00:15          3    school
-# 2  12-12-2000 00:00:20          3      work
-# 3  12-12-2000 00:00:25          3    eating
-# 4  12-12-2000 00:00:30          3    coffee
-# 5  12-12-2000 00:00:35          3  sleeping
-
-# standardize the time per sample id and make the starting-point the same
-# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
-
-# # Compute delta (this is automatically done if not seen in datafame available)
-# df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
-
-# Notes that are shown between two time points.
-time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "In the first 5 minutes, nothing will happen and every entity is waiting in it's current state."}]
-time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first entity will move to school. The rest is still at home."})
-time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
-time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
-
-# Make the moving bubbles
-df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
-df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
-
+# Import example
+df = d3.import_example('energy')
+# Create chord diagram
+d3.chord(df)
+d3.chord(df, color='source', opacity=0.8, filepath='chord_demo1.html')
+d3.chord(df, color='#000000', opacity=0.4, filepath='chord_demo2.html')
 
 
 # %% SCATTER
@@ -71,13 +48,10 @@ from d3blocks import D3Blocks
 d3 = D3Blocks(chart='Scatter', frame=False)
 # Import example
 df = d3.import_example('cancer')
-# Node properties
-d3.set_node_properties(df)
 # Edge properties
 d3.set_edge_properties(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
 # Show the chart
 d3.show(filepath='c://temp//scatter_demo.html', figsize=[600, 400])
-# d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=size, color=df.index.values, tooltip=tooltip, filepath='c://temp//scatter_transitions2.html', scale=True, figsize=[600, 400])
 
 
 from d3blocks import D3Blocks
@@ -156,32 +130,102 @@ d3.scatter(df['x'].values,
            filepath='c://temp//scatter_transitions3.html')
 
 
-# %% CHORD - EXAMPLE
+# %% VIOLIN - EXAMPLE
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(chart='Chord', frame=False)
+d3 = D3Blocks(chart='Violin', frame=True)
 # Import example
-df = d3.import_example('energy')
-# Node properties
-d3.set_node_properties(df, opacity=0.6, cmap='tab20')
-# d3.node_properties
-d3.set_edge_properties(df, color='target', opacity='target')
+df = d3.import_example('cancer')
+# Edge properties
+d3.set_edge_properties(x=df['labels'].values,
+                        y=df['age'].values,
+                        size=df['survival_months'].values/10,
+                        x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
+                        filepath='violine_demo.html')
 # d3.edge_properties
-# Show the chart
-d3.show(showfig=True, filepath='chord1.html')
+d3.show(filepath='c://temp//violin1.html')
 
 # or
 
-# Create chord diagram
+# Create violin diagram
 from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 # Import example
-df = d3.import_example('energy')
+df = d3.import_example('cancer')
 # Create chord diagram
-d3.chord(df, color='source', filepath='chord2.html')
-d3.chord(df, color='#000000', opacity=0.4, filepath='chord3.html')
+d3.violin(x=df['labels'].values, # class labels on the x axis
+          y=df['age'].values,    # Age
+          size=df['survival_months'].values/10, # Dotsize
+          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
+          figsize=[None, None],   # Figure size is automatically determined.
+          filepath='violine_demo.html',
+          reset_properties=True)
+
+# %% Movingbubbles - Make manual dataset to test the working
+import pandas as pd
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
+df1['sample_id'] = [1, 1, 1, 1, 1, 1]
+df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
+df2['sample_id'] = [2, 2, 2, 2, 2, 2]
+df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
+df3['sample_id'] = [3, 3, 3, 3, 3, 3]
+df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+# Concatenate the dataframes
+df = pd.concat([df1, df2, df3], axis=0)
+
+print(df)
+#               datetime  sample_id     state
+# 0  01-01-2000 00:00:00          1      home
+# 1  01-01-2000 00:00:05          1    school
+# 2  01-01-2000 00:00:10          1      work
+# 3  01-01-2000 00:00:15          1    eating
+# 4  01-01-2000 00:00:20          1    coffee
+# 5  01-01-2000 00:00:25          1  sleeping
+# 0  01-01-2000 00:00:00          2      home
+# 1  01-01-2000 00:00:10          2    school
+# 2  01-01-2000 00:00:15          2      work
+# 3  01-01-2000 00:00:20          2    eating
+# 4  01-01-2000 00:00:25          2    coffee
+# 5  01-01-2000 00:00:30          2  sleeping
+# 0  12-12-2000 00:00:00          3      home
+# 1  12-12-2000 00:00:15          3    school
+# 2  12-12-2000 00:00:20          3      work
+# 3  12-12-2000 00:00:25          3    eating
+# 4  12-12-2000 00:00:30          3    coffee
+# 5  12-12-2000 00:00:35          3  sleeping
+
+# standardize the time per sample id and make the starting-point the same
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+# # Compute delta (this is automatically done if not seen in datafame available)
+# df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
+
+# Notes that are shown between two time points.
+time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "In the first 5 minutes, nothing will happen and every entity is waiting in it's current state."}]
+time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first entity will move to school. The rest is still at home."})
+time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
+time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
+
+# Make the moving bubbles
+df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+
+
+
+
 
 
 # %% Sankey
@@ -197,7 +241,7 @@ d3.set_node_properties(df)
 d3.set_edge_properties(df, color='target', opacity='target')
 # d3.edge_properties
 # Show the chart
-d3.show(showfig=True, filepath='Sankey.html')
+d3.show()
 
 # Initialize
 d3 = D3Blocks()
@@ -231,7 +275,7 @@ d3 = D3Blocks(chart='Timeseries', frame=True)
 # Import example
 df = d3.import_example('climate')
 # Show
-d3.timeseries(df, datetime='date', filepath='c://temp//timeseries.html', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
+d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
 
 # %% Moving bubbles
 from d3blocks import D3Blocks
@@ -261,38 +305,7 @@ d3.movingbubbles(df)
 d3.movingbubbles(df, reset_properties=False, cmap='tab20', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
 
 
-# %% VIOLIN - EXAMPLE
-from d3blocks import D3Blocks
 
-# Initialize
-d3 = D3Blocks(chart='Violin', frame=True)
-# Import example
-df = d3.import_example('cancer')
-# Node properties
-d3.set_node_properties(df['labels'].values)
-# d3.node_properties
-d3.violin(x=df['labels'].values, y=df['age'].values)
-# Show the chart
-d3.show(showfig=True, filepath='violin1.html')
-
-# or
-
-# Create violin diagram
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks()
-# Import example
-df = d3.import_example('cancer')
-# Create chord diagram
-d3.violin(x=df['labels'].values, y=df['age'].values)
-
-d3.violin(x=df['labels'].values, # class labels on the x axis
-          y=df['age'].values,    # Age
-          size=df['survival_months'].values/10, # Dotsize
-          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], # Keep only these classes and plot in this order.
-          figsize=[None, None],   # Figure size is automatically determined.
-          filepath='violine_demo.html',
-          reset_properties=True)
 
 
 # %% CHORD - EXAMPLE 2

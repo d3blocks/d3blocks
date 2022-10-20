@@ -16,6 +16,21 @@ import os
 import tempfile
 
 
+def update_config(kwargs, logger=None):
+    """Update configuration file."""
+    # Get all user defined parameters.
+    config = kwargs.get('config')
+    params = np.array([*kwargs.keys()])
+    params = params[~np.isin([*kwargs.keys()], ['config', 'node_properties', 'logger'])]
+    # Update config file with new user-defined settings
+    for p in params:
+        getvalue = kwargs.get(p, None)
+        if getvalue is not None:
+            if logger is not None: logger.info('Set [%s]: %s' %(p, kwargs.get(p)))
+            config[p] = getvalue
+    return config
+
+
 def set_path(filepath='d3blocks.html', logger=None):
     """Set the file path.
 
