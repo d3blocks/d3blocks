@@ -24,7 +24,9 @@ except:
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
-    config['chart'] ='scatter'
+    logger = kwargs.get('logger', None)
+    if logger is not None: logger.info('Set config to defaults.')
+    config['chart'] ='Scatter'
     config['title'] = kwargs.get('title', 'scatter - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'scatter.html'))
     config['showfig'] = kwargs.get('showfig', True)
@@ -89,13 +91,15 @@ def set_edge_properties(*args, **kwargs):
         '#ffffff' : All dots are get the same hex color.
         None: The same color as for c is applied.
         ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
-    c_gradient : String, (default: None)
-        Make a lineair gradient based on the density for the particular class label.
-        '#FFFFFF'
-    tooltip: list of labels with same size as (x,y)
-        labels of the samples.
     stroke: list/array of hex colors with same size as (x,y)
         Edgecolor of dotsize in hex colors.
+        '#000000' : All dots are get the same hex color.
+        ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+    c_gradient : String, (default: None)
+        Make a lineair gradient based on the density for the particular class label.
+        '#ffffff'
+    tooltip: list of labels with same size as (x,y)
+        labels of the samples.
     opacity: float or list/array [0-1]
         Opacity of the dot. Shoud be same size as (x,y)
     cmap : String, (default: 'inferno')
@@ -125,9 +129,9 @@ def set_edge_properties(*args, **kwargs):
 
     size = kwargs.get('size', 5)
     color = kwargs.get('color', '#69b3a2')
+    stroke = kwargs.get('stroke', '#000000')
     c_gradient = kwargs.get('c_gradient', None)
     tooltip = kwargs.get('tooltip', None)
-    stroke = kwargs.get('stroke', '#ffffff')
     opacity = kwargs.get('opacity', 0.8)
     cmap = kwargs.get('cmap', 'tab20')
     scale = kwargs.get('scale', False)
@@ -238,6 +242,7 @@ def show(df, **kwargs):
     df = df.copy()
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
+    config = config.copy()
 
     # Convert dict/frame.
     df = convert_dataframe_dict(df, frame=True)
@@ -284,8 +289,6 @@ def show(df, **kwargs):
 
     # Write to HTML
     write_html(X, config, logger=logger)
-    # Return config
-    return config
 
 
 def write_html(X, config, logger=None):

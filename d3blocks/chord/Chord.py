@@ -8,8 +8,6 @@ License     : GPL3
 """
 from ismember import ismember
 import colourmap
-
-import pandas as pd
 import numpy as np
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
@@ -17,15 +15,15 @@ import os
 import time
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels
 
 
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
-    config['chart'] ='chord'
+    config['chart'] ='Chord'
     config['title'] = kwargs.get('title', 'Chord - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'chord.html'))
     config['figsize'] = kwargs.get('figsize', [900, 900])
@@ -35,27 +33,6 @@ def set_config(config={}, **kwargs):
     config['fontsize'] = kwargs.get('fontsize', 10)
     # return
     return config
-
-
-# %% Get unique labels
-def set_labels(labels, logger=None):
-    """Set unique labels."""
-    if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
-        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
-        labels = labels[['source', 'target']].values.flatten()
-
-    # Preprocessing
-    labels = pre_processing(labels)
-
-    # Checks
-    if (labels is None) or len(labels)<1:
-        raise Exception(logger.error('Could not extract the labels!'))
-
-    # Get unique categories without sort
-    indexes = np.unique(labels, return_index=True)[1]
-    uilabels = [labels[index] for index in sorted(indexes)]
-    # Return
-    return uilabels
 
 
 def set_node_properties(df, **kwargs):
@@ -81,12 +58,13 @@ def set_node_properties(df, **kwargs):
         Dictionary containing the label properties.
 
     """
-    # Set Opacity
     cmap = kwargs.get('cmap', 'tab20')
     opacity = kwargs.get('opacity', 0.8)
     logger = kwargs.get('logger', None)
+    col_labels = kwargs.get('labels', ['source', 'target'])
+
     # Get unique labels
-    uilabels = set_labels(df, logger)
+    uilabels = set_labels(df, col_labels=col_labels, logger=logger)
 
     # Set opacity properties
     opacity = np.repeat(opacity, len(uilabels))
@@ -240,6 +218,7 @@ def show(df, **kwargs):
     node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
+    config = config.copy()
 
     # Convert dict/frame.
     df = convert_dataframe_dict(df.copy(), frame=True)
@@ -253,8 +232,6 @@ def show(df, **kwargs):
     X = get_data_ready_for_d3(df, node_properties)
     # Write to HTML
     write_html(X, config, logger=logger)
-    # Return config
-    return config
 
 
 def write_html(X, config, logger=None):

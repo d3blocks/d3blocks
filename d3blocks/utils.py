@@ -16,6 +16,31 @@ import os
 import tempfile
 
 
+# %% Get unique labels
+def set_labels(df, col_labels=None, logger=None):
+    """Set unique labels."""
+    if df is None: raise Exception('Input labels must be provided.')
+    if isinstance(df, pd.DataFrame) and (col_labels is not None) and np.all(ismember(col_labels, df.columns.values)[0]):
+        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+        labels = df[col_labels].values.flatten().astype(str)
+    else:
+        labels = df
+
+    # Preprocessing
+    labels = pre_processing(labels)
+
+    # Checks
+    if (labels is None) or len(labels)<1:
+        raise Exception(logger.error('Could not extract the labels!'))
+
+    # Get unique categories without sort
+    indexes = np.unique(labels, return_index=True)[1]
+    uilabels = [labels[index] for index in sorted(indexes)]
+    # Return
+    return uilabels
+
+
+# %% Update config
 def update_config(kwargs, logger=None):
     """Update configuration file."""
     # Get all user defined parameters.

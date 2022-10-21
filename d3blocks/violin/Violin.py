@@ -179,10 +179,11 @@ def show(df, **kwargs):
     """
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
+    config = config.copy()
 
     # Convert dict/frame.
     df = convert_dataframe_dict(df, frame=True)
-    labels=np.unique(df['x'].values)
+    labels = np.unique(df['x'].values)
 
     spacing = 0.10
     if config['ylim']==[None, None] or len(config['ylim'])==0:

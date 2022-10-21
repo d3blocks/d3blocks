@@ -6,17 +6,15 @@ Mail        : erdogant@gmail.com, oliver@sensibly.nl
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
-import pandas as pd
 import numpy as np
-from ismember import ismember
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels
 
 
 # %% Set configuration properties
@@ -39,24 +37,24 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
 
 
 # %% Get unique labels
-def set_labels(labels, logger=None):
-    """Set unique labels."""
-    if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
-        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
-        labels = labels[['source', 'target']].values.flatten()
+# def set_labels(labels, logger=None):
+#     """Set unique labels."""
+#     if isinstance(labels, pd.DataFrame) and np.all(ismember(['source', 'target'], labels.columns.values)[0]):
+#         if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+#         labels = labels[['source', 'target']].values.flatten()
 
-    # Preprocessing
-    labels = pre_processing(labels)
+#     # Preprocessing
+#     labels = pre_processing(labels)
 
-    # Checks
-    if (labels is None) or len(labels)<1:
-        raise Exception(logger.error('Could not extract the labels!'))
+#     # Checks
+#     if (labels is None) or len(labels)<1:
+#         raise Exception(logger.error('Could not extract the labels!'))
 
-    # Get unique categories without sort
-    indexes = np.unique(labels, return_index=True)[1]
-    uilabels = [labels[index] for index in sorted(indexes)]
-    # Return
-    return uilabels
+#     # Get unique categories without sort
+#     indexes = np.unique(labels, return_index=True)[1]
+#     uilabels = [labels[index] for index in sorted(indexes)]
+#     # Return
+#     return uilabels
 
 
 # %% Set Edge properties
@@ -101,10 +99,12 @@ def set_node_properties(df, **kwargs):
 
     """
     # Get unique label
-    uilabel = set_labels(df)
+    col_labels = kwargs.get('labels', ['source', 'target'])
+    logger = kwargs.get('logger', None)
+    uilabels = set_labels(df, col_labels=col_labels, logger=logger)
 
     dict_labels = {}
-    for i, label in enumerate(uilabel):
+    for i, label in enumerate(uilabels):
         dict_labels[label] = {'id': i, 'label': label}
     # Return
     return dict_labels
@@ -133,6 +133,7 @@ def show(df, **kwargs):
     node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
+    config = config.copy()
 
     # Convert dict/frame.
     node_properties = convert_dataframe_dict(node_properties, frame=False)

@@ -53,8 +53,6 @@ def show(text, config):
     """
     # Write to HTML
     write_html(text, config)
-    # Return config
-    return config
 
 
 def write_html(X, config):

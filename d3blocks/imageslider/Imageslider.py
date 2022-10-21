@@ -100,8 +100,6 @@ def show(config, logger):
     img_after = config['img_after']
     # Write to HTML
     write_html(img_before, img_after, config, logger)
-    # Return config
-    return config
 
 
 def write_html(img_before, img_after, config, logger):

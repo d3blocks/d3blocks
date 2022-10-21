@@ -184,7 +184,7 @@ class D3Blocks():
         self.chart = eval('Particles')
 
         # Create the plot
-        self.config = Particles.show(text, self.config)
+        Particles.show(text, self.config)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -344,7 +344,7 @@ class D3Blocks():
                 color='#002147',
                 c_gradient=None,
                 opacity=0.8,
-                stroke='#ffffff',
+                stroke='#000000',
                 tooltip=None,
                 cmap='tab20',
                 scale=False,
@@ -389,11 +389,13 @@ class D3Blocks():
             '#ffffff' : All dots are get the same hex color.
             None: The same color as for c is applied.
             ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+        stroke: list/array of hex colors with same size as (x,y)
+            Edgecolor of dotsize in hex colors.
+            '#000000' : All dots are get the same hex color.
+            ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
         c_gradient : String, (default: None)
             Make a lineair gradient based on the density for the particular class label.
             '#FFFFFF'
-        stroke: list/array of hex colors with same size as (x,y)
-            Edgecolor of dotsize in hex colors.
         opacity: float or list/array [0-1]
             Opacity of the dot. Shoud be same size as (x,y)
         tooltip: list of labels with same size as (x,y)
@@ -754,7 +756,7 @@ class D3Blocks():
         # Preprocessing
         self.config = Imageslider.preprocessing(self.config, logger=logger)
         # Create the plot
-        self.config = Imageslider.show(self.config, logger)
+        Imageslider.show(self.config, logger)
         # Open the webbrowser
         self.showfig(logger=logger)
 
@@ -1390,6 +1392,11 @@ class D3Blocks():
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
+    # def set_properties(self, *args, **kwargs):
+        # self.set_node_properties(*args, **kwargs)
+        # self.set_edge_properties(*args, **kwargs)
+        # return (self.config, self.edge_properties, self.node_properties)
+
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
 
@@ -1426,12 +1433,17 @@ class D3Blocks():
         None.
 
         """
-        if self.config['chart'] is not None and np.any(np.isin(self.config['chart'], ['Violin', 'Scatter'])):
-            self.node_properties = self.chart.set_node_properties()
         if self.config['chart'] is None:
             raise Exception('"chart" parameter is mandatory. Hint: Initialize with the chart type such as: d3 = D3Blocks(chart="chord")')
+        if (not hasattr(self, 'node_properties')) and np.any(np.isin(self.config['chart'], ['Violin', 'Scatter'])):
+            self.node_properties = self.chart.set_node_properties()
+        # if (hasattr(self, 'config')) and np.any(np.isin(self.config['chart'], ['Scatter'])):
+            # self._clean(clean_config=True)
+            # self.config = self.chart.set_config(config=self.config, **kwargs)
         if not hasattr(self, 'node_properties'):
             raise Exception('Set the node_properties first. Hint: d3.node_properties(df)')
+        if hasattr(self, 'edge_properties'):
+            del self.edge_properties
 
         # Compute edge properties for the specified chart.
         if self.chart is not None:
@@ -1466,7 +1478,7 @@ class D3Blocks():
 
         # Convert to frame
         self.node_properties = convert_dataframe_dict(labels, frame=self.config['frame'], logger=logger)
-        logger.info('Node properties are set.')
+        if self.node_properties is not None: logger.info('Node properties are set.')
 
     def set_config(self):
         """Set the general configuration setting."""
@@ -1501,11 +1513,16 @@ class D3Blocks():
             logger.error('Can not show the chart without the edge_properties and/or node_properties. <return>"')
             return None
 
-        # Update config parameters if required
-        # if figsize is not None: self.config['figsize'] = figsize
-        # if title is not None: self.config['title'] = title
-        # if showfig is not None: self.config['showfig'] = showfig
-        # if filepath is not None: self.config['filepath'] = filepath
+        # Use the user-defined config parameters.
+        if kwargs.get('config', None) is not None:
+            self.config = kwargs.get('config')
+            kwargs.pop('config')
+        if kwargs.get('edge_properties', None) is not None:
+            self.edge_properties = kwargs.get('edge_properties')
+            kwargs.pop('edge_properties')
+        if kwargs.get('node_properties', None) is not None:
+            self.node_properties = kwargs.get('node_properties')
+            kwargs.pop('node_properties')
 
         # Create the plot
         if self.chart is not None:
@@ -1520,6 +1537,7 @@ class D3Blocks():
         if hasattr(self, 'G'): del self.G
         if hasattr(self, 'edge_properties'): del self.edge_properties
         if clean_config and hasattr(self, 'config'):
+            # Remove all configurations except for the chart, frame and path
             chart = self.config.get('chart', None)
             frame = self.config.get('frame', True)
             curpath = self.config.get('curpath', os.path.dirname(os.path.abspath(__file__)))

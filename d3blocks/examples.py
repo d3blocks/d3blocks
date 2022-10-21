@@ -2,6 +2,18 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
+# Initialize
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Make particles
+# d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
+# d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', fontsize=180, figsize=[900, 200], spacing=8)
+d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', color_background='#ffffff')
+
 
 # %% CHORD - EXAMPLE
 from d3blocks import D3Blocks
@@ -19,12 +31,38 @@ d3.show()
 # d3.node_properties
 d3.node_properties.get('Nuclear')['color']='#ff0000'
 d3.node_properties.get('Nuclear')['opacity']=1
+# Show the chart
 d3.show()
 # Make edits to highlight the Nuclear Edge
 d3.edge_properties.get(('Nuclear', 'Thermal generation'))['color']='#ff0000'
 d3.edge_properties.get(('Nuclear', 'Thermal generation'))['opacity']=0.8
 d3.edge_properties.get(('Nuclear', 'Thermal generation'))['weight']=1000
 # Show the chart
+d3.show()
+
+
+# Initialize
+d3 = D3Blocks(chart='Chord', frame=False)
+# Import example
+df = d3.import_example('energy')
+# Node properties
+d3.set_node_properties(df, opacity=0.2, cmap='tab20')
+d3.set_edge_properties(df)
+# Show the chart
+d3.show()
+# Make some edits to highlight the Nuclear node
+# d3.node_properties
+d3.node_properties.get('Electricity grid')['color']='#000000'
+d3.node_properties.get('Electricity grid')['opacity']=1
+d3.show()
+# Make edits to highlight the link Thermal generation <-> Thermal generation
+d3.edge_properties.get(('Thermal generation', 'Electricity grid'))['color']='#ff0000'
+d3.edge_properties.get(('Thermal generation', 'Electricity grid'))['opacity']=0.8
+# d3.edge_properties.get(('Thermal generation', 'Electricity grid'))['weight']=1000
+# Show the chart
+d3.show()
+# Use the opacity color of the nodes to color the edges/links
+d3.set_edge_properties(df, opacity='source')
 d3.show()
 
 # or
@@ -37,7 +75,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 # Create chord diagram
 d3.chord(df)
-d3.chord(df, color='source', opacity=0.8, filepath='chord_demo1.html')
+d3.chord(df, color='target', opacity=0.8, filepath='chord_demo1.html')
 d3.chord(df, color='#000000', opacity=0.4, filepath='chord_demo2.html')
 
 
@@ -258,7 +296,7 @@ d3 = D3Blocks(chart='Timeseries', frame=False)
 # Import example
 df = d3.import_example('climate')
 # Node properties
-d3.set_node_properties(df.columns.values)
+d3.set_node_properties(df.columns)
 # d3.node_properties
 d3.node_properties.get('wind_speed')['color'] = '#000000'
 # d3.node_properties
@@ -276,6 +314,7 @@ d3 = D3Blocks(chart='Timeseries', frame=True)
 df = d3.import_example('climate')
 # Show
 d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
+
 
 # %% Moving bubbles
 from d3blocks import D3Blocks

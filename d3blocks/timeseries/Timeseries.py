@@ -15,9 +15,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels
 
 
 # %% Set configuration properties
@@ -42,28 +42,29 @@ def set_config(config={}, **kwargs):
 
 
 # %% Get unique labels
-def set_labels(labels, logger=None):
-    """Set unique labels."""
-    if isinstance(labels, pd.DataFrame):
-        if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
-        labels = labels.columns.values
+# def set_labels(labels, logger=None):
+#     """Set unique labels."""
+#     if isinstance(labels, pd.DataFrame):
+#         if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
+#         labels = labels.columns.values
 
-    # Preprocessing
-    labels = pre_processing(labels)
+#     # Preprocessing
+#     labels = pre_processing(labels)
 
-    # Checks
-    if (labels is None) or len(labels)<1:
-        raise Exception(logger.error('Could not extract the labels!'))
+#     # Checks
+#     if (labels is None) or len(labels)<1:
+#         raise Exception(logger.error('Could not extract the labels!'))
 
-    # Get unique categories without sort
-    indexes = np.unique(labels, return_index=True)[1]
-    uilabels = np.array([labels[index] for index in sorted(indexes)])
-    # Return
-    return uilabels
+#     # Get unique categories without sort
+#     indexes = np.unique(labels, return_index=True)[1]
+#     uilabels = np.array([labels[index] for index in sorted(indexes)])
+#     # Return
+#     return uilabels
 
 
 # %% Filter labels using whitelist
 def _clean_on_whitelist(labels, whitelist=None, datetime=None, logger=None):
+    labels = np.array(labels)
     # Keep only whitelist and remove datetime
     # Remove datetime
     if (datetime is not None) and np.any(np.isin(labels, datetime)):
@@ -79,12 +80,12 @@ def _clean_on_whitelist(labels, whitelist=None, datetime=None, logger=None):
 
 
 # %% Node properties
-def set_node_properties(labels, **kwargs):
+def set_node_properties(df, **kwargs):
     """Set the node properties for the Timeseries block.
 
     Parameters
     ----------
-    labels : array-like or list
+    df : array-like or list
         Name of the nodes/links.
     datetime : str, (default: 'datetime')
         Column name that contains the datetime.
@@ -103,9 +104,11 @@ def set_node_properties(labels, **kwargs):
     datetime = kwargs.get('datetime', 'datetime')
     whitelist = kwargs.get('whitelist', None)
     logger = kwargs.get('logger', None)
+    labels = kwargs.get('labels', df)
 
     # Set unique labels
-    uilabels = set_labels(labels)
+    uilabels = set_labels(labels, logger=logger)
+
     # Keep only whitelist and remove datetime
     uilabels = _clean_on_whitelist(uilabels, whitelist, datetime, logger)
 
@@ -151,6 +154,8 @@ def set_edge_properties(df, **kwargs):
     if datetime is None:
         if logger is not None: logger.info('Set index for datetime.')
         df.index = pd.to_datetime(df.index.values, format=dt_format)
+    elif not np.isin(datetime, df.columns):
+        raise Exception('[%s] does not exists.' %(datetime))
     else:
         df.index = pd.to_datetime(df[datetime].values, format=dt_format)
         df.drop(labels=datetime, axis=1, inplace=True)
@@ -191,6 +196,7 @@ def show(df, **kwargs):
     labels = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
+    config = config.copy()
 
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)
