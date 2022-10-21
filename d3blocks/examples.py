@@ -2,18 +2,6 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
-# Initialize
-
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# Make particles
-# d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', background='#ffffff')
-# d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', background='#ffffff', fontsize=180, figsize=[900, 200], spacing=8)
-d3.particles('D3Blocks', filepath='c://temp//D3Blocks.html', color_background='#ffffff')
-
 
 # %% CHORD - EXAMPLE
 from d3blocks import D3Blocks
@@ -262,10 +250,6 @@ df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_
 df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
 
 
-
-
-
-
 # %% Sankey
 from d3blocks import D3Blocks
 
@@ -342,9 +326,6 @@ df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:
 # Show
 d3.movingbubbles(df)
 d3.movingbubbles(df, reset_properties=False, cmap='tab20', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
-
-
-
 
 
 # %% CHORD - EXAMPLE 2
