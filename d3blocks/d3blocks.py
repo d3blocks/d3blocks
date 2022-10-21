@@ -1437,9 +1437,6 @@ class D3Blocks():
             raise Exception('"chart" parameter is mandatory. Hint: Initialize with the chart type such as: d3 = D3Blocks(chart="chord")')
         if (not hasattr(self, 'node_properties')) and np.any(np.isin(self.config['chart'], ['Violin', 'Scatter'])):
             self.node_properties = self.chart.set_node_properties()
-        # if (hasattr(self, 'config')) and np.any(np.isin(self.config['chart'], ['Scatter'])):
-            # self._clean(clean_config=True)
-            # self.config = self.chart.set_config(config=self.config, **kwargs)
         if not hasattr(self, 'node_properties'):
             raise Exception('Set the node_properties first. Hint: d3.node_properties(df)')
         if hasattr(self, 'edge_properties'):
