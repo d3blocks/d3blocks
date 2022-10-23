@@ -5,5 +5,5 @@ jinja2
 d3graph
 d3heatmap
 requests
-"colourmap>=1.1.10"
+colourmap>="1.1.10"
 ismember>=1.0.1
