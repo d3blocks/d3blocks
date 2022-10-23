@@ -276,41 +276,41 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example 1
-        ---------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Import example dataset
         >>> df = d3.import_example('cancer')
         >>> # Set some input variables.
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
-        >>>
+        >>> #
         >>> # Create the chart
         >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
 
-        Example 2
-        ---------
+        Examples
+        --------
         >>> # Initialize for the Violin chart and set output to Frame.
         >>> d3 = D3Blocks(chart='Violin', frame=True)
-        >>>
+        >>> #
         >>> # Import example dataset
         >>> df = d3.import_example('cancer')
-        >>>
+        >>> #
         >>> # Set the properties by providing the labels
         >>> d3.set_edge_properties(x=df['labels'].values, y=df['age'].values, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'])
-        >>>
+        >>> #
         >>> # Set specific node properties.
         >>> d3.edge_properties.loc[0,'size']=50
         >>> d3.edge_properties.loc[0,'color']='#000000'
         >>> d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
-        >>>
+        >>> #
         >>> # Configuration can be changed too.
         >>> print(d3.config)
-        >>>
+        >>> #
         >>> # Show the chart
         >>> d3.show()
 
@@ -439,53 +439,53 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example 1
-        ---------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
         >>> df = d3.import_example('cancer')
-        >>>
+        >>> #
         >>> # Set size and tooltip
         >>> size = df['survival_months'].fillna(1).values / 20
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
-        >>>
+        >>> #
         >>> # Scatter plot
         >>> d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
-        >>>
+        >>> #
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
         >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
-        >>>
+        >>> #
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
         >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
 
-        Example 2
-        ---------
+        Examples
+        --------
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Scatter')
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('cancer')
-        >>>
+        >>> #
         >>> # Set properties
         >>> d3.set_edge_properties(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
-        >>>
+        >>> #
         >>> # Show the chart
         >>> d3.show()
-        >>>
+        >>> #
         >>> # Set specific node properties.
         >>> print(d3.edge_properties)
         >>> d3.edge_properties.loc[0,'size']=50
         >>> d3.edge_properties.loc[0,'color']='#000000'
         >>> d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
-        >>>
+        >>> #
         >>> # Configuration can be changed too.
         >>> print(d3.config)
-        >>>
+        >>> #
         >>> # Show the chart again with adjustments
         >>> d3.show()
 
@@ -586,47 +586,47 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example 1
-        ---------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
         >>> df = d3.import_example('energy')
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.chord(df)
 
-        Example 2
-        ---------
+        Examples
+        --------
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Chord', frame=False)
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('energy')
-        >>>
+        >>> #
         >>> # Node properties
         >>> d3.set_node_properties(df, opacity=0.2, cmap='tab20')
         >>> d3.set_edge_properties(df, color='source', opacity='source')
-        >>>
+        >>> #
         >>> # Show the chart
         >>> d3.show()
-        >>>
+        >>> #
         >>> # Make some edits to highlight the Nuclear node
         >>> # d3.node_properties
         >>> d3.node_properties.get('Nuclear')['color']='#ff0000'
         >>> d3.node_properties.get('Nuclear')['opacity']=1
         >>> # Show the chart
-        >>>
+        >>> #
         >>> d3.show()
         >>> # Make edits to highlight the Nuclear Edge
         >>> d3.edge_properties.get(('Nuclear', 'Thermal generation'))['color']='#ff0000'
         >>> d3.edge_properties.get(('Nuclear', 'Thermal generation'))['opacity']=0.8
         >>> d3.edge_properties.get(('Nuclear', 'Thermal generation'))['weight']=1000
-        >>>
+        >>> #
         >>> # Show the chart
         >>> d3.show()
 
@@ -712,23 +712,23 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Local images
         >>> img_before, img_after = d3.import_example('southern_nebula')
-        >>>
+        >>> #
         >>> # Internet location
         >>> img_before, img_after = d3.import_example('southern_nebula_internet')
-        >>>
+        >>> #
         >>> # Read the image in array
         >>> img_before = cv2.imread(img_before, -1)
         >>> img_after = cv2.imread(img_after, -1)
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.imageslider(img_before, img_after)
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.imageslider(img_before, img_after, showfig=True, scale=True, colorscale=2, figsize=[400, 400])
 
@@ -833,35 +833,35 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example 1
-        ---------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
         >>> df = d3.import_example('energy')
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.sankey(df)
 
-        Example 2
-        ---------
+        Examples
+        --------
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Sankey', frame=True)
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('energy')
-        >>>
+        >>> #
         >>> # Node properties
         >>> d3.set_node_properties(df)
         >>> print(d3.node_properties)
-        >>>
+        >>> #
         >>> d3.set_edge_properties(df, color='target', opacity='target')
         >>> print(d3.edge_properties)
-        >>>
+        >>> #
         >>> # Show the chart
         >>> d3.show()
 
@@ -983,41 +983,41 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example 1
-        ---------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example data
         >>> df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-        >>>
+        >>> #
         >>> # Plot
         >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
-        >>>
+        >>> #
 
-        Example 2
-        ---------
+        Examples
+        --------
         >>> Import
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks(chart='movingbubbles', frame=False)
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-        >>>
+        >>> #
         >>> # Node properties: provide the states
         >>> d3.set_node_properties(df['state'])
         >>> print(d3.node_properties)
         >>> # Color the sleeping state black
         >>> d3.node_properties.get('Sleeping')['color']='#000000'
-        >>>
+        >>> #
         >>> d3.set_edge_properties(df)
         >>> print(d3.edge_properties)
-        >>>
+        >>> #
         >>> # Show
         >>> d3.show(title='Movingbubbles with adjusted configurations')
 
@@ -1110,44 +1110,44 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example 1
-        ---------
-        >>>
+        Examples
+        --------
+        >>> #
         >>> # Import
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('climate')
-        >>>
+        >>> #
         >>> # Show
         >>> d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
 
-        Example 2
-        ---------
-        >>>
+        Examples
+        --------
+        >>> #
         >>> # Import
         >>> from d3blocks import D3Blocks
-        >>>
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Timeseries', frame=False)
-        >>>
+        >>> #
         >>> # Import example
         >>> df = d3.import_example('climate')
-        >>>
+        >>> #
         >>> # Node properties
         >>> d3.set_node_properties(df.columns.values)
         >>> d3.node_properties.get('wind_speed')['color']='#000000'
         >>> print(d3.node_properties)
-        >>>
+        >>> #
         >>> d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
         >>> d3.edge_properties
-        >>>
+        >>> #
         >>> # Show
         >>> d3.show(title='Timeseries with adjusted configurations')
-        >>>
+        >>> #
 
         References
         ----------
@@ -1350,7 +1350,7 @@ class D3Blocks():
         >>> #
         >>> # Change edge properties
         >>> d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
-        >>> 8
+        >>> #
         >>> #
         >>> # Node properties
         >>> d3.D3graph.node_properties
@@ -1581,10 +1581,10 @@ class D3Blocks():
         --------
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example
         >>> df = d3.import_example('energy')
-        >>>
+        >>> #
         >>> # Convert to adjmat
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
 
@@ -1612,12 +1612,12 @@ class D3Blocks():
         --------
         >>> # Initialize
         >>> d3 = D3Blocks()
-        >>>
+        >>> #
         >>> # Load example
         >>> df = d3.import_example('energy')
         >>> Convert into adjmat
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
-        >>>
+        >>> #
         >>> # Convert back to vector
         >>> vector = d3.adjmat2vec(adjmat)
 

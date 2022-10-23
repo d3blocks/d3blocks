@@ -247,6 +247,7 @@ time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this poi
 
 # Make the moving bubbles
 df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+
 df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
 
 
