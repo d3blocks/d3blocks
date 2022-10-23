@@ -32,13 +32,18 @@
 # 
 # 1.    Sankey
 #       https://observablehq.com/@d3/sankey
-# [ ]   Link color selectiebox om het interactief te maken.
-# [ ]   Node alignment selectiebox om het interactief te maken.
+# [x]   Link color selectiebox om het interactief te maken.
+# [x]   Node alignment selectiebox om het interactief te maken.
 # 
-# 2.    d3graph
-# [ ]   Uiteinden vd lijn kunnen wijzingen en kleuren
+# 2.    Chord
+# [x]   Change the node color and opacity.
+# [x]   Change the Link/edge color and opacity.
+# [ ]   Highlight the edges/links when hovering.
 # 
-# 3.    Scatter
+# 3.    d3graph
+# [x]   Uiteinden vd lijn kunnen wijzingen en kleuren
+# 
+# 4.    Scatter
 # [x]   Tooltips toevoegen.
 # [x]   size kunnen wijzigen.
 # [x]   color kunnen wijzigen.
@@ -49,7 +54,7 @@
 # [ ]   Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2). https://stackoverflow.com/questions/38595719/javascript-d3-js-multiple-transitions-of-points-on-a-scatter-plot
 # [ ]   Selectiebox toevoegen zoals: http://pancancer-map.ewi.tudelft.nl/
 # 
-# 4.    Heatmap
+# 5.    Heatmap
 #       Update heatmap met de onderstaande want deze heeft tooltips:
 #       http://bl.ocks.org/ianyfchang/8119685
 #       https://github.com/d3/d3/wiki/Gallery
@@ -57,11 +62,15 @@
 #       https://observablehq.com/@d3/brushable-scatterplot-matrix
 #       https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
 # 
-# 4.    Network
+# 6.    Network
 #       https://bl.ocks.org/GerHobbelt/3104394
 #      http://bl.ocks.org/GerHobbelt/3071239
 # 
 #
+
+### Wind
+http://bl.ocks.org/FrissAnalytics/8360ffae9194ed726f42e850eac3239e
+
 
 ### Gauge
 http://bl.ocks.org/FrissAnalytics/e5348c6b954f038f40129419a8e8b51b
