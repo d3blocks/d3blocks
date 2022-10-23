@@ -292,11 +292,11 @@ class D3Blocks():
         >>> # Create the chart
         >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
         >>> #
-        >>> #
-        >>> ##########################
-        >>> # Example 2
-        >>> ##########################
-        >>> #
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize for the Violin chart and set output to Frame.
         >>> d3 = D3Blocks(chart='Violin', frame=True)
@@ -467,10 +467,11 @@ class D3Blocks():
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
         >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
         >>> #
-        >>> #
-        >>> ##########################
-        >>> # Example 2
-        >>> ##########################
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Scatter')
@@ -607,10 +608,11 @@ class D3Blocks():
         >>> # Plot
         >>> d3.chord(df)
         >>> #
-        >>> #
-        >>> ##########################
-        >>> # Example 2
-        >>> ##########################
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Chord', frame=False)
@@ -857,10 +859,11 @@ class D3Blocks():
         >>> # Plot
         >>> d3.sankey(df)
         >>> #
-        >>> #
-        >>> ##########################
-        >>> # Example 2
-        >>> ##########################
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Sankey', frame=True)
@@ -1010,12 +1013,10 @@ class D3Blocks():
         >>> # Plot
         >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
         >>> #
-        >>> #
-        >>> ##########################
-        >>> # Example 2
-        >>> ##########################
-        >>> #
-        >>> Import
+
+        Examples
+        --------
+        >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
@@ -1140,13 +1141,10 @@ class D3Blocks():
         >>> # Show
         >>> d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
         >>> #
-        >>> #
-        >>> ##########################
-        >>> # Example 2
-        >>> ##########################
-        >>> #
-        >>> #
-        >>> # Import
+
+        Examples
+        --------
+        >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
