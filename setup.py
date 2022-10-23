@@ -13,7 +13,7 @@ else:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
-     install_requires=['numpy', 'pandas', 'tqdm', 'colourmap>=1.1.9', 'jinja2', 'd3graph', 'd3heatmap', 'requests', 'ismember>=1.0.1'],
+     install_requires=['numpy', 'pandas', 'tqdm', 'colourmap>=1.1.10', 'jinja2', 'd3graph', 'd3heatmap', 'requests', 'ismember>=1.0.1'],
      python_requires='>=3',
      name='d3blocks',
      version=new_version,

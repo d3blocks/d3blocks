@@ -11,7 +11,7 @@ from d3blocks.d3blocks import D3Blocks
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
-__version__ = '1.0.9'
+__version__ = '1.0.10'
 
 # module level doc-string
 __doc__ = """
