@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.8
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -115,11 +117,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-d3blocks.d3blocks.D3Blocks.movingbubbles">
-<span id="movingbubbles"></span><h1>MovingBubbles<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.movingbubbles" title="Permalink to this headline"></a></h1>
-<p>MovingBubbles block.</p>
+  <section id="movingbubbles">
+<h1>MovingBubbles<a class="headerlink" href="#movingbubbles" title="Permalink to this heading"></a></h1>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><a class="reference external" href="https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226">Medium Blog: D3Blocks: How to Create Storytelling Moving Bubbles Charts in d3js with Python.</a></p>
+</div>
+<span class="target" id="module-d3blocks.d3blocks.D3Blocks.movingbubbles"></span><p>MovingBubbles block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The MovingBubbles provides insights into when one action follows the other across time. It can help to
 understand the movements of entities, and whether clusters occur at specific time points and state(s).
 It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
@@ -163,6 +169,12 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dt class="field-even">type center</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
+<dt class="field-odd">param dt_format</dt>
+<dd class="field-odd"><p>‘%d-%m-%Y %H:%M:%S’.</p>
+</dd>
+<dt class="field-even">type dt_format</dt>
+<dd class="field-even"><p>str</p>
+</dd>
 <dt class="field-odd">param dampler</dt>
 <dd class="field-odd"><p>Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.</p>
 </dd>
@@ -175,6 +187,13 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dt class="field-even">type fontsize</dt>
 <dd class="field-even"><p>int, (default: 14)</p>
 </dd>
+<dt class="field-odd">param reset_time</dt>
+<dd class="field-odd"><p>‘day’  : Every 24h de the day start over again.
+‘year’ : Every 365 days the year starts over again.</p>
+</dd>
+<dt class="field-even">type reset_time</dt>
+<dd class="field-even"><p>String, (default: ‘day’)</p>
+</dd>
 <dt class="field-odd">param standardize</dt>
 <dd class="field-odd"><p>Method to standardize the data.
 None: standardize over the entire timeframe. Sample_ids are dependent to each other.
@@ -183,24 +202,11 @@ None: standardize over the entire timeframe. Sample_ids are dependent to each ot
 <dt class="field-even">type standardize</dt>
 <dd class="field-even"><p>str. (default: None)</p>
 </dd>
-<dt class="field-odd">param reset_time</dt>
-<dd class="field-odd"><p>‘day’  : Every 24h de the day start over again.
-‘year’ : Every 365 days the year starts over again.</p>
-</dd>
-<dt class="field-even">type reset_time</dt>
-<dd class="field-even"><p>String, (default: ‘day’)</p>
-</dd>
 <dt class="field-odd">param speed</dt>
 <dd class="field-odd"><p>The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p>
 </dd>
 <dt class="field-even">type speed</dt>
 <dd class="field-even"><p>dict, (default: {“slow”: 1000, “medium”: 200, “fast”: 50})</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple, (default: (1500, 800))</p>
 </dd>
 <dt class="field-odd">param note</dt>
 <dd class="field-odd"><p>A specific note, such as project description can be put on the html page.</p>
@@ -216,32 +222,61 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <dt class="field-even">type time_notes</dt>
 <dd class="field-even"><p>dict, (default: None)</p>
 </dd>
+<dt class="field-odd">param cmap</dt>
+<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p>
+</dd>
+<dt class="field-even">type cmap</dt>
+<dd class="field-even"><p>String, (default: ‘Set1’)</p>
+</dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.</p>
+<dd class="field-odd"><p>Title of the figure.
+‘Movingbubbles’</p>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output</p>
+<dd class="field-odd"><p>File path to save the output.
+‘c://temp//Movingbubbles_demo.html’</p>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
+<dt class="field-odd">param figsize</dt>
+<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
+[780, 800]</p>
+</dd>
+<dt class="field-even">type figsize</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the chart.</p>
+<dd class="field-odd"><p>True: Open browser-window.
+False: Do not open browser-window.</p>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>Overwrite the existing html file.</p>
+<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p>pd.DataFrame()</p>
+<dt class="field-odd">param reset_properties</dt>
+<dd class="field-odd"><p>True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p>
+</dd>
+<dt class="field-even">type reset_properties</dt>
+<dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -252,11 +287,34 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;17-12-1903 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;17-12-1903 23:59:59&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;1-1-2000 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;1-1-2000 23:59:59&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">movingbubbles</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;slow&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;fast&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;movingbubbles.html&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Import</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;movingbubbles&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;1-1-2000 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;1-1-2000 23:59:59&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties: provide the states</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Color the sleeping state black</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Sleeping&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Movingbubbles with adjusted configurations&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -265,7 +323,7 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input data is a dataframe that should contain the columns datatime, sample_id and state.
 If the column names are different, then the column name can be specified.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                 datetime sample_id     state</span>
@@ -286,7 +344,7 @@ If the column names are different, then the column name can be specified.</p>
 </div>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\movingbubbles.html" height="900px" width="900px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.8
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,10 +118,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.imageslider">
-<span id="imageslider"></span><h1>Imageslider<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this headline"></a></h1>
+<span id="imageslider"></span><h1>Imageslider<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this heading"></a></h1>
 <p>Imageslider Block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The imageslider allows comparison of two images. This is useful in case there is a before and after state.
 For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
 Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
@@ -163,31 +165,36 @@ False: Leave image untouched</p>
 <dd class="field-even"><p>String (default: ‘#000000’)</p>
 </dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.</p>
+<dd class="field-odd"><p>Title of the figure.
+‘Imageslider’</p>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output</p>
+<dd class="field-odd"><p>File path to save the output.
+‘c://temp//imageslider_demo.html’</p>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, None]. The heigth is changed according to the width.</p>
+<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
+[900, 900]</p>
 </dd>
 <dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple, (default: [800, None])</p>
+<dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the chart.</p>
+<dd class="field-odd"><p>True: Open browser-window.
+False: Do not open browser-window.</p>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>Overwrite the output html in the destination directory.</p>
+<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
@@ -199,23 +206,23 @@ False: Leave image untouched</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Local images</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula&#39;</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Internet location</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;southern_nebula_internet&#39;</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Read the image in array</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_before</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_after</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_after</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">imageslider</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">imageslider</span><span class="p">(</span><span class="n">img_before</span><span class="p">,</span> <span class="n">img_after</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colorscale</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">])</span>
 </pre></div>
@@ -226,7 +233,7 @@ False: Leave image untouched</p>
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset are two images.</p>
 <table class="docutils align-center" id="id1">
 <caption><span class="caption-text">Two images with different resolution from the Southern Nebula.</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
@@ -242,7 +249,7 @@ False: Leave image untouched</p>
 </table>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\imageslider.html" height="600px" width="700px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

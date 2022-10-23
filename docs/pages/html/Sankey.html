@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.8
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,10 +118,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.sankey">
-<span id="sankey"></span><h1>Sankey<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.sankey" title="Permalink to this headline"></a></h1>
+<span id="sankey"></span><h1>Sankey<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.sankey" title="Permalink to this heading"></a></h1>
 <p>Sankey block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>A Sankey chart is a visualization to depict a flow from one set of values to another.
 The nodes in this case are represented as the rectangle boxes, and the flow or arrows are the links.
 The width of the arrow is proportional to the flow rate. Sankeys are best used when you want to show
@@ -135,24 +137,6 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple, (default: (800, 600))</p>
 </dd>
 <dt class="field-odd">param link</dt>
 <dd class="field-odd"><p>“linkColor” : “source”, “target”, “source-target”
@@ -181,23 +165,54 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 <dt class="field-even">type node</dt>
 <dd class="field-even"><p>dict.</p>
 </dd>
+<dt class="field-odd">param title</dt>
+<dd class="field-odd"><p>Title of the figure.
+‘Sankey’</p>
+</dd>
+<dt class="field-even">type title</dt>
+<dd class="field-even"><p>String, (default: None)</p>
+</dd>
+<dt class="field-odd">param filepath</dt>
+<dd class="field-odd"><p>File path to save the output.
+‘c://temp//Sankey_demo.html’</p>
+</dd>
+<dt class="field-even">type filepath</dt>
+<dd class="field-even"><p>String, (Default: user temp directory)</p>
+</dd>
+<dt class="field-odd">param figsize</dt>
+<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
+[800, 600]</p>
+</dd>
+<dt class="field-even">type figsize</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the chart.</p>
+<dd class="field-odd"><p>True: Open browser-window.
+False: Do not open browser-window.</p>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>Overwrite the output html in the destination directory.</p>
+<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>df</strong> – DataFrame.</p>
+<dt class="field-odd">param reset_properties</dt>
+<dd class="field-odd"><p>True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p>
 </dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
+<dt class="field-even">type reset_properties</dt>
+<dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -208,10 +223,28 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>  <span class="c1"># &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;sankey.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Sankey&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -220,7 +253,7 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
 <span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
@@ -240,7 +273,7 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 </div>
 </section>
 <section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this headline"></a></h2>
+<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\sankey.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

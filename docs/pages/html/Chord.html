@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.8
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,10 +118,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.chord">
-<span id="chord"></span><h1>Chord<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this headline"></a></h1>
+<span id="chord"></span><h1>Chord<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this heading"></a></h1>
 <p>Chord block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>A chord represents flows or connections between several entities or nodes.
 Each entity is represented by a fragment on the outer part of the circular layout.
 Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.</p>
@@ -128,16 +130,33 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <dd class="field-odd"><p>Input data containing the following columns:
 ‘source’
 ‘target’
-‘weight’</p>
+‘weight’
+‘color’ (optional)
+‘opacity’  (optional)</p>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
+<dt class="field-odd">param color</dt>
+<dd class="field-odd"><p>Link colors in Hex notation. Should be the same size as input DataFrame.
+* ‘source’: Color edges/links similar to that of source-color node.
+* ‘target’: Color edges/links similar to that of target-color node.
+* ‘source-target’: Color edges/link based on unique source-target edges using the colormap.
+* ‘#ffffff’: All links have the same hex color.
+* [‘#000000’, ‘#ffffff’,…]: Define per link.</p>
+</dd>
+<dt class="field-even">type color</dt>
+<dd class="field-even"><p>(default: ‘source’)</p>
+</dd>
 <dt class="field-odd">param opacity</dt>
-<dd class="field-odd"><p>Opacity of the line.</p>
+<dd class="field-odd"><p>Link Opacity. Should be the same size as input DataFrame.
+* ‘source’: Opacity of edges/links similar to that of source-opacity node.
+* ‘target’: Opacity of edges/links similar to that of target-opacity node.
+* 0.8: All links have the same opacity.
+* [0.1, 0.75,…]: Set opacity per edge/link.</p>
 </dd>
 <dt class="field-even">type opacity</dt>
-<dd class="field-even"><p>float or list/array [0-1]</p>
+<dd class="field-even"><p>(default: ‘source’)</p>
 </dd>
 <dt class="field-odd">param fontsize</dt>
 <dd class="field-odd"><p>Fontsize.</p>
@@ -145,41 +164,62 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <dt class="field-even">type fontsize</dt>
 <dd class="field-even"><p>int, (default: 8)</p>
 </dd>
+<dt class="field-odd">param cmap</dt>
+<dd class="field-odd"><p>colormap is only used in case color=None.
+All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p>
+</dd>
+<dt class="field-even">type cmap</dt>
+<dd class="field-even"><p>String, (default: ‘tab20’)</p>
+</dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.</p>
+<dd class="field-odd"><p>Title of the figure.
+‘Chord’</p>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output</p>
+<dd class="field-odd"><p>File path to save the output.
+‘c://temp//Chord_demo.html’</p>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].</p>
+<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
+[900, 900]</p>
 </dd>
 <dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple, (default: (800, 600))</p>
+<dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the chart.</p>
+<dd class="field-odd"><p>True: Open browser-window.
+False: Do not open browser-window.</p>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>Overwrite the output html in the destination directory.</p>
+<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>df</strong> – DataFrame.</p>
+<dt class="field-odd">param reset_properties</dt>
+<dd class="field-odd"><p>True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p>
 </dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
+<dt class="field-even">type reset_properties</dt>
+<dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -190,10 +230,40 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Chord&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;tab20&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Make some edits to highlight the Nuclear node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># d3.node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#ff0000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">)[</span><span class="s1">&#39;opacity&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Make edits to highlight the Nuclear Edge</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">,</span> <span class="s1">&#39;Thermal generation&#39;</span><span class="p">))[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#ff0000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">,</span> <span class="s1">&#39;Thermal generation&#39;</span><span class="p">))[</span><span class="s1">&#39;opacity&#39;</span><span class="p">]</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">,</span> <span class="s1">&#39;Thermal generation&#39;</span><span class="p">))[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -202,7 +272,7 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#       source       target  weight</span>
 <span class="c1"># 0      Aemon        Grenn       5</span>
@@ -222,7 +292,7 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </div>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\chord.html" height="750px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

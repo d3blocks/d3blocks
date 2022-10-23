@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.8
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,38 +118,45 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.timeseries">
-<span id="timeseries"></span><h1>Timeseries<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this headline"></a></h1>
+<span id="timeseries"></span><h1>Timeseries<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this heading"></a></h1>
 <p>Timeseries block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The TimeSeries can be used in case a date-time element is available, and where the time-wise values
 directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
 brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
 in a single chart.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data. If the index is not datetime, specify the column with ‘datetime’</p>
+<dd class="field-odd"><p>Input data containing the columns “datetime” together with the names of the timeseries to plot.</p>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.</p>
+<dt class="field-odd">param datetime</dt>
+<dd class="field-odd"><p>Column name that contains the datetime.</p>
 </dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
+<dt class="field-even">type datetime</dt>
+<dd class="field-even"><p>str, (default: None)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output</p>
+<dt class="field-odd">param dt_format</dt>
+<dd class="field-odd"><p>‘%d-%m-%Y %H:%M:%S’.</p>
 </dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
+<dt class="field-even">type dt_format</dt>
+<dd class="field-even"><p>str</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the chart.</p>
+<dt class="field-odd">param sort_on_date</dt>
+<dd class="field-odd"><p>True: Sort on datetime.
+False: Do not change the input order.</p>
 </dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
+<dt class="field-even">type sort_on_date</dt>
+<dd class="field-even"><p>Bool (default: True)</p>
+</dd>
+<dt class="field-odd">param whitelist</dt>
+<dd class="field-odd"><p>Keep only columns containing this (sub)string (case insensitive)</p>
+</dd>
+<dt class="field-even">type whitelist</dt>
+<dd class="field-even"><p>str, optional</p>
 </dd>
 <dt class="field-odd">param fontsize</dt>
 <dd class="field-odd"><p>Fontsize of the fonts in the circle.</p>
@@ -155,35 +164,100 @@ in a single chart.</p>
 <dt class="field-even">type fontsize</dt>
 <dd class="field-even"><p>int, (default: 14)</p>
 </dd>
+<dt class="field-odd">param cmap</dt>
+<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p>
+</dd>
+<dt class="field-even">type cmap</dt>
+<dd class="field-even"><p>String, (default: ‘Set1’)</p>
+</dd>
+<dt class="field-odd">param title</dt>
+<dd class="field-odd"><p>Title of the figure.
+‘Timeseries’</p>
+</dd>
+<dt class="field-even">type title</dt>
+<dd class="field-even"><p>String, (default: None)</p>
+</dd>
+<dt class="field-odd">param filepath</dt>
+<dd class="field-odd"><p>File path to save the output.
+‘c://temp//Timeseries_demo.html’</p>
+</dd>
+<dt class="field-even">type filepath</dt>
+<dd class="field-even"><p>String, (Default: user temp directory)</p>
+</dd>
+<dt class="field-odd">param figsize</dt>
+<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
+[1200, 500]</p>
+</dd>
+<dt class="field-even">type figsize</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+<dt class="field-odd">param showfig</dt>
+<dd class="field-odd"><p>True: Open browser-window.
+False: Do not open browser-window.</p>
+</dd>
+<dt class="field-even">type showfig</dt>
+<dd class="field-even"><p>bool, (default: True)</p>
+</dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>Overwrite the existing html file.</p>
+<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>df</strong> – DataFrame.</p>
+<dt class="field-odd">param reset_properties</dt>
+<dd class="field-odd"><p>True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p>
 </dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
+<dt class="field-even">type reset_properties</dt>
+<dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">([</span><span class="s2">&quot;TSLA&quot;</span><span class="p">,</span> <span class="s2">&quot;TWTR&quot;</span><span class="p">,</span> <span class="s2">&quot;META&quot;</span><span class="p">,</span> <span class="s2">&quot;AMZN&quot;</span><span class="p">,</span> <span class="s2">&quot;AAPL&quot;</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;2019-01-01&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;2021-12-31&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Adj Close&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize with filtering on close columns</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">whitelist</span><span class="o">=</span><span class="s1">&#39;close&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;climate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">dt_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">850</span><span class="p">,</span> <span class="mi">500</span><span class="p">])</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Timeseries&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;climate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wind_speed&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">dt_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Timeseries with adjusted configurations&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -192,7 +266,7 @@ in a single chart.</p>
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame for which the index column is the datetime, and the columns are plotted with their column name.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#            Adj Close                      ...    Volume</span>
 <span class="c1">#                 AAPL      AMZN      META  ...      META      TSLA      TWTR</span>
@@ -208,7 +282,7 @@ in a single chart.</p>
 </div>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\timeseries.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

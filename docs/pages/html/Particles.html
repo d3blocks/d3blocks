@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.0.8
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,10 +118,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.particles">
-<span id="particles"></span><h1>Particles<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.particles" title="Permalink to this headline"></a></h1>
+<span id="particles"></span><h1>Particles<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.particles" title="Permalink to this heading"></a></h1>
 <p>Particles block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The particles plot is to turn any word into an interactive visualization. With a mouse-move or touch, the particle
 bounce and then return to their original place. Various properties can be changed such as the bouncing,
 particle size, and colors. The original javascript is forked from Ian Johnson’s Block.</p>
@@ -164,10 +166,10 @@ A smaller spacing reults in more particles.</p>
 <dt class="field-even">type cmap</dt>
 <dd class="field-even"><p>String (default: ‘Set2’)</p>
 </dd>
-<dt class="field-odd">param background</dt>
+<dt class="field-odd">param color_background</dt>
 <dd class="field-odd"><p>Background color.</p>
 </dd>
-<dt class="field-even">type background</dt>
+<dt class="field-even">type color_background</dt>
 <dd class="field-even"><p>String (default: ‘#000000’)</p>
 </dd>
 <dt class="field-odd">param title</dt>
@@ -215,7 +217,7 @@ A smaller spacing reults in more particles.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3blocks&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create customized chart</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3Blocks&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;D3Blocks.html&#39;</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">750</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3Blocks&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;D3Blocks.html&#39;</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">750</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span> <span class="n">color_background</span><span class="o">=</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
@@ -225,11 +227,11 @@ A smaller spacing reults in more particles.</p>
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input is a text string, such as “<strong>D3Blocks</strong>”</p>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\particles.html" height="250px" width="750px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

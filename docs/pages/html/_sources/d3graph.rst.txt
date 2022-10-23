@@ -1,10 +1,11 @@
 D3graph
 #############
 
-.. note::
+.. tip::
 	`Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python. <https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7>`_
 
-This page contains a summary of the possiblities what you can do with D3graph. More details can be found on the `D3graph documentation pages <https://erdogant.github.io/d3graph>`_.
+.. note::
+	This page contains a summary of the possiblities what you can do with D3graph. More details can be found on the `D3graph documentation pages <https://erdogant.github.io/d3graph>`_.
 
 .. automodule:: d3blocks.d3blocks.D3Blocks.d3graph
     :members:
