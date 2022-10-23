@@ -1,9 +1,9 @@
 numpy
 pandas
 tqdm
-colourmap
 jinja2
 d3graph
 d3heatmap
 requests
+colourmap>=1.1.9
 ismember>=1.0.1
