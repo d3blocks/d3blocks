@@ -13,22 +13,22 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Plot
-d3.spydergraph(df, filepath='c:/temp/spydergraph.html', group='cluster', charge=250, showfig=False)
+d3.elasticgraph(df, filepath='c:/temp/elasticgraph.html', group='cluster', charge=250, showfig=False)
 
-# Show spydergraph
-d3.Spydergraph.show()
+# Show elasticgraph
+d3.Elasticgraph.show()
 # Show original graph
-d3.Spydergraph.D3graph.show()
+d3.Elasticgraph.D3graph.show()
 
 # Set clusters to None
-d3.Spydergraph.D3graph.set_node_properties(color=None)
-# Show spydergraph
-d3.Spydergraph.show()
+d3.Elasticgraph.D3graph.set_node_properties(color=None)
+# Show elasticgraph
+d3.Elasticgraph.show()
 # Show original graph
-d3.Spydergraph.D3graph.show()
+d3.Elasticgraph.D3graph.show()
 
-d3.Spydergraph.D3graph.edge_properties
-d3.Spydergraph.D3graph.node_properties
+d3.Elasticgraph.D3graph.edge_properties
+d3.Elasticgraph.D3graph.node_properties
 
 # %% Force directed graphs
 from d3blocks import D3Blocks

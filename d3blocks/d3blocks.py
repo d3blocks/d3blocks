@@ -35,7 +35,7 @@ from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
 # from utils import remove_quotes, convert_dataframe_dict, set_path
 # #####################################################
 
-from spydergraph import Spydergraph
+from elasticgraph import Elasticgraph
 import d3graph as d3network
 from d3heatmap import d3heatmap
 
@@ -1421,11 +1421,11 @@ class D3Blocks():
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
-    def spydergraph(self,
+    def elasticgraph(self,
                  df,
                  group='cluster',
-                 title='Spydergraph - D3blocks',
-                 filepath='Spydergraph.html',
+                 title='Elasticgraph - D3blocks',
+                 filepath='Elasticgraph.html',
                  figsize=[1500, 800],
                  showfig=True,
                  overwrite=True,
@@ -1436,7 +1436,7 @@ class D3Blocks():
 
         Description
         -----------
-        Spydergraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
+        Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
         the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
         dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
         in the d3blocks library.
@@ -1494,26 +1494,26 @@ class D3Blocks():
         >>> df = d3.import_example('energy') # 'stormofswords'
         >>> #
         >>> # Create force-directed-network (without cluster labels)
-        >>> d3.spydergraph(df, filepath='Spydergraph.html')
+        >>> d3.elasticgraph(df, filepath='Elasticgraph.html')
         >>> #
-        >>> # Show spydergraph
-        >>> d3.Spydergraph.show()
+        >>> # Show elasticgraph
+        >>> d3.Elasticgraph.show()
         >>> # Show original graph with the same properties
-        >>> d3.Spydergraph.D3graph.show()
+        >>> d3.Elasticgraph.D3graph.show()
         >>> #
         >>> # Add cluster labels (no need to do it again because it is the default)
-        >>> # d3.Spydergraph.set_node_properties(color=None)
+        >>> # d3.Elasticgraph.set_node_properties(color=None)
         >>> #
         >>> # After making changes, show the graph again using show()
-        >>> d3.Spydergraph.show()
+        >>> d3.Elasticgraph.show()
         >>> # Show original graph
-        >>> d3.Spydergraph.D3graph.show()
+        >>> d3.Elasticgraph.D3graph.show()
         >>> #
         >>> # Node properties
-        >>> d3.Spydergraph.D3graph.node_properties
+        >>> d3.Elasticgraph.D3graph.node_properties
         >>> #
         >>> # Node properties
-        >>> d3.Spydergraph.D3graph.edge_properties
+        >>> d3.Elasticgraph.D3graph.edge_properties
         >>> #
 
         References
@@ -1529,7 +1529,7 @@ class D3Blocks():
         self._clean(clean_config=False)
 
         # Set configs
-        self.config['chart'] ='spydergraph'
+        self.config['chart'] ='elasticgraphh'
         self.config['title'] = title
         self.config['filepath'] = set_path(filepath)
         self.config['figsize'] = figsize
@@ -1543,13 +1543,13 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = remove_quotes(df)
         # Initialize network d3-force-graph
-        self.Spydergraph = Spydergraph(collision=collision, charge=charge)
+        self.Elasticgraph = Elasticgraphh(collision=collision, charge=charge)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
-        self.Spydergraph.graph(adjmat, group=group, scaler=scaler)
+        self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
         # Open the webbrowser
-        self.Spydergraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
