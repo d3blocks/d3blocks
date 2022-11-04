@@ -1425,7 +1425,7 @@ class D3Blocks():
                  df,
                  group='cluster',
                  title='Spydergraph - D3blocks',
-                 filepath='d3_force_graph.html',
+                 filepath='Spydergraph.html',
                  figsize=[1500, 800],
                  showfig=True,
                  overwrite=True,

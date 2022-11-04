@@ -13,8 +13,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Plot
-d3.spydergraph(df, showfig=False)
-# d3.spydergraph(df, filepath='c:/temp/d3graph.html', group='cluster', charge=250, showfig=False)
+d3.spydergraph(df, filepath='c:/temp/spydergraph.html', group='cluster', charge=250, showfig=False)
 
 # Show spydergraph
 d3.Spydergraph.show()
