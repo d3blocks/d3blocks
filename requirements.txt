@@ -2,8 +2,9 @@ numpy
 pandas
 tqdm
 jinja2
-d3graph
-d3heatmap
 requests
+d3graph>="2.3.5"
+d3heatmap
 colourmap>="1.1.10"
 ismember>=1.0.1
+spydergraph

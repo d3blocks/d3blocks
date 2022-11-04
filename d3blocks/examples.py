@@ -3,6 +3,48 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Force directed clustered graphs
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('energy')
+
+# Plot
+d3.spydergraph(df, filepath='c:/temp/d3graph.html', group='cluster', charge=250, showfig=False)
+
+# Show spydergraph
+d3.Spydergraph.show()
+# Show original graph
+d3.Spydergraph.D3graph.show()
+
+# Set clusters to None
+d3.Spydergraph.D3graph.set_node_properties(color=None)
+# Show spydergraph
+d3.Spydergraph.show()
+# Show original graph
+d3.Spydergraph.D3graph.show()
+
+
+# %% Force directed graphs
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('energy')
+
+# Plot
+d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True, charge=400)
+
+# Set clusters
+d3.D3graph.set_node_properties(color=None)
+d3.D3graph.show()
+
+
 # %% CHORD - EXAMPLE
 from d3blocks import D3Blocks
 
