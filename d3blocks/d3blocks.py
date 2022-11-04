@@ -1351,6 +1351,9 @@ class D3Blocks():
 
         Examples
         --------
+        >>> # Load library
+        >>> from d3blocks import D3Blocks
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>> #
@@ -1364,14 +1367,16 @@ class D3Blocks():
         >>> d3.d3graph(df, scaler='minmax')
         >>> #
         >>> # Change node properties
-        >>> d3.D3graph.set_node_properties(color='cluster')
+        >>> d3.D3graph.set_node_properties(color=None)
         >>> d3.D3graph.node_properties['Solar']['size']=30
-        >>> d3.D3graph.node_properties['Solar']['edge_color']='#FF0000'
+        >>> d3.D3graph.node_properties['Solar']['color']='#FF0000'
+        >>> d3.D3graph.node_properties['Solar']['edge_color']='#000000'
         >>> d3.D3graph.node_properties['Solar']['edge_size']=5
         >>> d3.D3graph.show()
         >>> #
         >>> # Change edge properties
         >>> d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
+        >>> d3.D3graph.show()
         >>> #
         >>> # Node properties
         >>> d3.D3graph.node_properties
@@ -1380,7 +1385,7 @@ class D3Blocks():
         >>> d3.D3graph.edge_properties
         >>> #
         >>> # After making changes, show the graph again using show()
-        >>> d3.D3fgraph.show()
+        >>> d3.D3graph.show()
 
         References
         ----------
