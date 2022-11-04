@@ -1743,7 +1743,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
     elif data=='bigbang':
         # Initialize
         d3model = d3network.d3graph()
-        df = d3model.import_example('bigbang')
+        df = d3model.import_example('bigbang')[0]
         return d3network.adjmat2vec(df)
     elif data=='southern_nebula':
         # Image slider demo
