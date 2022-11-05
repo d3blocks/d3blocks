@@ -1543,7 +1543,7 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = remove_quotes(df)
         # Initialize network d3-force-graph
-        self.Elasticgraph = Elasticgraphh(collision=collision, charge=charge)
+        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
