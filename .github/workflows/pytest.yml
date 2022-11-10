@@ -21,6 +21,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install opencv-python
+	  pip install sklearn
       - name: Test with pytest
         run: |
           pip install pytest
