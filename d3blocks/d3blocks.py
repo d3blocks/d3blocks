@@ -1860,7 +1860,6 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         Dataset containing mixed features.
 
     """
-    from sklearn import datasets
     ext = '.csv'
     sep=','
 
@@ -1905,13 +1904,11 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
     elif data=='cancer':
         url='https://erdogant.github.io/datasets/cancer_dataset.zip'
     elif data=='iris':
-        iris = datasets.load_iris()
-        X = iris.data[:, :2]  # we only take the first two features.
-        labels = iris.target
-        df = pd.DataFrame(data=X, index=labels, columns=['x', 'y'])
-        return df
+        url='https://erdogant.github.io/datasets/iris_dataset.zip'
+        sep=';'
     elif data=='breast_cancer':
-        return datasets.load_breast_cancer(return_X_y=True, as_frame=True)[0]
+        url='https://erdogant.github.io/datasets/breast_cancer_dataset.zip'
+        sep=';'
     elif data=='occupancy':
         url='https://erdogant.github.io/datasets/UCI_Occupancy_Detection.zip'
         sep=','
