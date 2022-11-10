@@ -6,15 +6,17 @@
 
 
 [![Python](https://img.shields.io/pypi/pyversions/d3blocks)](https://img.shields.io/pypi/pyversions/d3blocks)
-[![PyPI Version](https://img.shields.io/pypi/v/d3blocks)](https://pypi.org/project/d3blocks/)
+[![Pypi](https://img.shields.io/pypi/v/d3blocks)](https://pypi.org/project/d3blocks/)
+[![Docs](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
+[![LOC](https://sloc.xyz/github/d3blocks/d3blocks/?category=code)](https://github.com/d3blocks/d3blocks/)
+[![Downloads](https://static.pepy.tech/personalized-badge/d3blocks?period=month&units=international_system&left_color=grey&right_color=brightgreen&left_text=PyPI%20downloads/month)](https://pepy.tech/project/d3blocks)
+[![Downloads](https://static.pepy.tech/personalized-badge/d3blocks?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=Downloads)](https://pepy.tech/project/d3blocks)
 [![License](https://img.shields.io/badge/license-GPL3-green.svg)](https://github.com/d3blocks/d3blocks/blob/master/LICENSE)
-[![Github Forks](https://img.shields.io/github/forks/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/network)
-[![GitHub Open Issues](https://img.shields.io/github/issues/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/issues)
+[![Forks](https://img.shields.io/github/forks/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/network)
+[![Open Issues](https://img.shields.io/github/issues/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/issues)
 [![Project Status](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Downloads](https://pepy.tech/badge/d3blocks/month)](https://pepy.tech/project/d3blocks)
-[![Downloads](https://pepy.tech/badge/d3blocks)](https://pepy.tech/project/d3blocks)
-[![Sphinx](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
 [![Medium](https://img.shields.io/badge/Medium-Blog-green)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog)
+[![Donate](https://img.shields.io/badge/Support%20this%20project-grey.svg?logo=github%20sponsors)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#)
 
 
 -------------------------------------------------------------------------
