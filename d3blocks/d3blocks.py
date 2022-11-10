@@ -35,7 +35,7 @@ from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
 # from utils import remove_quotes, convert_dataframe_dict, set_path
 # #####################################################
 
-from elasticgraph import Elasticgraph
+# from elasticgraph import Elasticgraph
 import d3graph as d3network
 from d3heatmap import d3heatmap
 
@@ -1421,135 +1421,135 @@ class D3Blocks():
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
-    def elasticgraph(self,
-                 df,
-                 group='cluster',
-                 title='Elasticgraph - D3blocks',
-                 filepath='Elasticgraph.html',
-                 figsize=[1500, 800],
-                 showfig=True,
-                 overwrite=True,
-                 collision=0.5,
-                 charge=250,
-                 scaler='zscore'):
-        """d3-force-graph block.
+    # def elasticgraph(self,
+    #              df,
+    #              group='cluster',
+    #              title='Elasticgraph - D3blocks',
+    #              filepath='Elasticgraph.html',
+    #              figsize=[1500, 800],
+    #              showfig=True,
+    #              overwrite=True,
+    #              collision=0.5,
+    #              charge=250,
+    #              scaler='zscore'):
+    #     """d3-force-graph block.
 
-        Description
-        -----------
-        Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
-        the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
-        dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
-        in the d3blocks library.
-        In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
-        with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
-        heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
-        by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
-        interactive and stand alone. For demonstration purposes, the "bigbang", "energy" and "stormofswords" dataset can
-        be used.
+    #     Description
+    #     -----------
+    #     Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
+    #     the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
+    #     dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
+    #     in the d3blocks library.
+    #     In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
+    #     with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
+    #     heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
+    #     by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
+    #     interactive and stand alone. For demonstration purposes, the "bigbang", "energy" and "stormofswords" dataset can
+    #     be used.
 
-        Parameters
-        ----------
-        df : pd.DataFrame()
-            Input data containing the following columns:
-            'source'
-            'target'
-            'weight'
-        group : list of strings (default: 'cluster')
-            Grouping (and coloring) of the nodes.
-            * 'cluster' : Colours are based on the community distance clusters.
-            * None: All nodes will have the same color (auto generated).
-        collision : float, (default: 0.5)
-            Response of the network. Higher means that more collisions are prevented.
-        charge : int, (default: 400)
-            Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.
-        title : String, (default: None)
-            Title of the figure.
-            'd3graph'
-        filepath : String, (Default: user temp directory)
-            File path to save the output.
-            'c://temp//d3graph_demo.html'
-        figsize : tuple
-            Size of the figure in the browser, [width, height].
-            [1500, 800]
-        showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
-        overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+    #     Parameters
+    #     ----------
+    #     df : pd.DataFrame()
+    #         Input data containing the following columns:
+    #         'source'
+    #         'target'
+    #         'weight'
+    #     group : list of strings (default: 'cluster')
+    #         Grouping (and coloring) of the nodes.
+    #         * 'cluster' : Colours are based on the community distance clusters.
+    #         * None: All nodes will have the same color (auto generated).
+    #     collision : float, (default: 0.5)
+    #         Response of the network. Higher means that more collisions are prevented.
+    #     charge : int, (default: 400)
+    #         Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.
+    #     title : String, (default: None)
+    #         Title of the figure.
+    #         'd3graph'
+    #     filepath : String, (Default: user temp directory)
+    #         File path to save the output.
+    #         'c://temp//d3graph_demo.html'
+    #     figsize : tuple
+    #         Size of the figure in the browser, [width, height].
+    #         [1500, 800]
+    #     showfig : bool, (default: True)
+    #         True: Open browser-window.
+    #         False: Do not open browser-window.
+    #     overwrite : bool, (default: True)
+    #         True: Overwrite the html in the destination directory.
+    #         False: Do not overwrite destination file but show warning instead.
 
-        Returns
-        -------
-        None.
+    #     Returns
+    #     -------
+    #     None.
 
-        Examples
-        --------
-        >>> # Load library
-        >>> from d3blocks import D3Blocks
-        >>> #
-        >>> # Initialize
-        >>> d3 = D3Blocks()
-        >>> #
-        >>> # Import example
-        >>> df = d3.import_example('energy') # 'stormofswords'
-        >>> #
-        >>> # Create force-directed-network (without cluster labels)
-        >>> d3.elasticgraph(df, filepath='Elasticgraph.html')
-        >>> #
-        >>> # Show elasticgraph
-        >>> d3.Elasticgraph.show()
-        >>> # Show original graph with the same properties
-        >>> d3.Elasticgraph.D3graph.show()
-        >>> #
-        >>> # Add cluster labels (no need to do it again because it is the default)
-        >>> # d3.Elasticgraph.set_node_properties(color=None)
-        >>> #
-        >>> # After making changes, show the graph again using show()
-        >>> d3.Elasticgraph.show()
-        >>> # Show original graph
-        >>> d3.Elasticgraph.D3graph.show()
-        >>> #
-        >>> # Node properties
-        >>> d3.Elasticgraph.D3graph.node_properties
-        >>> #
-        >>> # Node properties
-        >>> d3.Elasticgraph.D3graph.edge_properties
-        >>> #
+    #     Examples
+    #     --------
+    #     >>> # Load library
+    #     >>> from d3blocks import D3Blocks
+    #     >>> #
+    #     >>> # Initialize
+    #     >>> d3 = D3Blocks()
+    #     >>> #
+    #     >>> # Import example
+    #     >>> df = d3.import_example('energy') # 'stormofswords'
+    #     >>> #
+    #     >>> # Create force-directed-network (without cluster labels)
+    #     >>> d3.elasticgraph(df, filepath='Elasticgraph.html')
+    #     >>> #
+    #     >>> # Show elasticgraph
+    #     >>> d3.Elasticgraph.show()
+    #     >>> # Show original graph with the same properties
+    #     >>> d3.Elasticgraph.D3graph.show()
+    #     >>> #
+    #     >>> # Add cluster labels (no need to do it again because it is the default)
+    #     >>> # d3.Elasticgraph.set_node_properties(color=None)
+    #     >>> #
+    #     >>> # After making changes, show the graph again using show()
+    #     >>> d3.Elasticgraph.show()
+    #     >>> # Show original graph
+    #     >>> d3.Elasticgraph.D3graph.show()
+    #     >>> #
+    #     >>> # Node properties
+    #     >>> d3.Elasticgraph.D3graph.node_properties
+    #     >>> #
+    #     >>> # Node properties
+    #     >>> d3.Elasticgraph.D3graph.edge_properties
+    #     >>> #
 
-        References
-        ----------
-        * Blog: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
-        * Github : https://github.com/erdogant/d3graph
-        * Documentation: https://erdogant.github.io/d3graph/
-        * Github : https://gitlab.com/rwsdatalab/public/codebase/tools/d3-force-graph
-        * Fork Ger Hobbelts (Block 3104394): https://bl.ocks.org/GerHobbelt/3104394
+    #     References
+    #     ----------
+    #     * Blog: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
+    #     * Github : https://github.com/erdogant/d3graph
+    #     * Documentation: https://erdogant.github.io/d3graph/
+    #     * Github : https://gitlab.com/rwsdatalab/public/codebase/tools/d3-force-graph
+    #     * Fork Ger Hobbelts (Block 3104394): https://bl.ocks.org/GerHobbelt/3104394
 
-        """
-        # Cleaning
-        self._clean(clean_config=False)
+    #     """
+    #     # Cleaning
+    #     self._clean(clean_config=False)
 
-        # Set configs
-        self.config['chart'] ='elasticgraphh'
-        self.config['title'] = title
-        self.config['filepath'] = set_path(filepath)
-        self.config['figsize'] = figsize
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['collision'] = collision
-        self.config['charge'] = -abs(charge)
+    #     # Set configs
+    #     self.config['chart'] ='elasticgraphh'
+    #     self.config['title'] = title
+    #     self.config['filepath'] = set_path(filepath)
+    #     self.config['figsize'] = figsize
+    #     self.config['showfig'] = showfig
+    #     self.config['overwrite'] = overwrite
+    #     self.config['collision'] = collision
+    #     self.config['charge'] = -abs(charge)
 
-        # Copy of data
-        df = df.copy()
-        # Remvove quotes from source-target labels
-        df = remove_quotes(df)
-        # Initialize network d3-force-graph
-        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge)
-        # Convert vector to adjmat
-        adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
-        # Create default graph
-        self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
-        # Open the webbrowser
-        self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+    #     # Copy of data
+    #     df = df.copy()
+    #     # Remvove quotes from source-target labels
+    #     df = remove_quotes(df)
+    #     # Initialize network d3-force-graph
+    #     self.Elasticgraph = Elasticgraph(collision=collision, charge=charge)
+    #     # Convert vector to adjmat
+    #     adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+    #     # Create default graph
+    #     self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
+    #     # Open the webbrowser
+    #     self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
