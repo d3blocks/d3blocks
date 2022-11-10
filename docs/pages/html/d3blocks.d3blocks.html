@@ -87,6 +87,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.adjmat2vec"><code class="docutils literal notranslate"><span class="pre">D3Blocks.adjmat2vec()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.chord"><code class="docutils literal notranslate"><span class="pre">D3Blocks.chord()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.d3graph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.d3graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.elasticgraph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.elasticgraph()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.heatmap"><code class="docutils literal notranslate"><span class="pre">D3Blocks.heatmap()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.imageslider"><code class="docutils literal notranslate"><span class="pre">D3Blocks.imageslider()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.import_example"><code class="docutils literal notranslate"><span class="pre">D3Blocks.import_example()</span></code></a></li>
@@ -204,106 +205,54 @@ False: Return in dictionary.</p></li>
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.chord">
 <span class="sig-name descname"><span class="pre">chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Chord</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chord.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">900]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this definition"></a></dt>
 <dd><p>Chord block.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>A chord represents flows or connections between several entities or nodes.
 Each entity is represented by a fragment on the outer part of the circular layout.
 Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the following columns:
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
 ‘source’
 ‘target’
 ‘weight’
 ‘color’ (optional)
-‘opacity’  (optional)</p>
-</dd>
-<dt class="field-even">type df</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param color</dt>
-<dd class="field-odd"><p>Link colors in Hex notation. Should be the same size as input DataFrame.
+‘opacity’  (optional)</p></li>
+<li><p><strong>color</strong> (<em>(</em><em>default: 'source'</em><em>)</em>) – Link colors in Hex notation. Should be the same size as input DataFrame.
 * ‘source’: Color edges/links similar to that of source-color node.
 * ‘target’: Color edges/links similar to that of target-color node.
 * ‘source-target’: Color edges/link based on unique source-target edges using the colormap.
 * ‘#ffffff’: All links have the same hex color.
-* [‘#000000’, ‘#ffffff’,…]: Define per link.</p>
-</dd>
-<dt class="field-even">type color</dt>
-<dd class="field-even"><p>(default: ‘source’)</p>
-</dd>
-<dt class="field-odd">param opacity</dt>
-<dd class="field-odd"><p>Link Opacity. Should be the same size as input DataFrame.
+* [‘#000000’, ‘#ffffff’,…]: Define per link.</p></li>
+<li><p><strong>opacity</strong> (<em>(</em><em>default: 'source'</em><em>)</em>) – Link Opacity. Should be the same size as input DataFrame.
 * ‘source’: Opacity of edges/links similar to that of source-opacity node.
 * ‘target’: Opacity of edges/links similar to that of target-opacity node.
 * 0.8: All links have the same opacity.
-* [0.1, 0.75,…]: Set opacity per edge/link.</p>
-</dd>
-<dt class="field-even">type opacity</dt>
-<dd class="field-even"><p>(default: ‘source’)</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int, (default: 8)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>colormap is only used in case color=None.
+* [0.1, 0.75,…]: Set opacity per edge/link.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 8</em><em>)</em>) – Fontsize.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'tab20'</em><em>)</em>) – colormap is only used in case color=None.
 All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p>
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Chord’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//Chord_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[900, 900]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
+</ul>
 </dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String, (default: ‘tab20’)</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Chord’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//Chord_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 900]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
-</dd>
-<dt class="field-even">type reset_properties</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -358,16 +307,13 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Chord.html">https://d3blocks.github.io/d3blocks/pages/html/Chord.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.d3graph">
-<span class="sig-name descname"><span class="pre">d3graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D3graph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d3graph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.d3graph" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">d3graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D3graph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d3graph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.d3graph" title="Permalink to this definition"></a></dt>
 <dd><p>d3graph block.</p>
-<section id="id1">
-<h2>Description<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
-<p>d3graph is a integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
+<p>d3graph is integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
 The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
 dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
 The nodes are colored based on the Louvain heuristics which is the partition of highest modularity, i.e.
@@ -376,74 +322,39 @@ on the weights. To explore the network, and the strength of the edges more exten
 (located at the top) can break the network based on the edge weights. The ouput is a html file that is
 interactive and stand alone. For demonstration purposes, the “energy” and “stormofswords” dataset can be used.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the following columns:
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
 ‘source’
 ‘target’
-‘weight’</p>
+‘weight’</p></li>
+<li><p><strong>group</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Grouping (and coloring) of the nodes.
+* ‘cluster’ : Colours are based on the community distance clusters.
+* None: All nodes will have the same color (auto generated).</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>slider</strong> (<em>typle</em><em> [</em><em>min: int</em><em>, </em><em>max: int</em><em>]</em><em>:</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Slider is automatically set to the range of the edge weights.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘d3graph’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//d3graph_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[1500, 800]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
-<dt class="field-even">type df</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param collision</dt>
-<dd class="field-odd"><p>Response of the network. Higher means that more collisions are prevented.</p>
-</dd>
-<dt class="field-even">type collision</dt>
-<dd class="field-even"><p>float, (default: 0.5)</p>
-</dd>
-<dt class="field-odd">param charge</dt>
-<dd class="field-odd"><p>Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p>
-</dd>
-<dt class="field-even">type charge</dt>
-<dd class="field-even"><p>int, (default: 400)</p>
-</dd>
-<dt class="field-odd">param slider</dt>
-<dd class="field-odd"><p>Slider is automatically set to the range of the edge weights.</p>
-</dd>
-<dt class="field-even">type slider</dt>
-<dd class="field-even"><p>typle [min: int, max: int]:, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘d3graph’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//d3graph_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[1500, 800]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
@@ -456,21 +367,25 @@ False: Do not overwrite destination file but show warning instead.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">scaler</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#FF0000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#FF0000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change edge properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker_end</span><span class="o">=</span><span class="s1">&#39;arrow&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># After making changes, show the graph again using show()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -479,104 +394,144 @@ False: Do not overwrite destination file but show warning instead.</p>
 <li><p>Github : <a class="reference external" href="https://github.com/erdogant/d3graph">https://github.com/erdogant/d3graph</a></p></li>
 <li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
 </ul>
-</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.elasticgraph">
+<span class="sig-name descname"><span class="pre">elasticgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.elasticgraph" title="Permalink to this definition"></a></dt>
+<dd><p>d3-force-graph block.</p>
+<p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
+the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
+dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
+in the d3blocks library.
+In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
+with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
+heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
+by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
+interactive and stand alone. For demonstration purposes, the “bigbang”, “energy” and “stormofswords” dataset can
+be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
+‘source’
+‘target’
+‘weight’</p></li>
+<li><p><strong>group</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Grouping (and coloring) of the nodes.
+* ‘cluster’ : Colours are based on the community distance clusters.
+* None: All nodes will have the same color (auto generated).</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘d3graph’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//d3graph_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[1500, 800]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create force-directed-network (without cluster labels)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show elasticgraph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph with the same properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add cluster labels (no need to do it again because it is the default)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># d3.Elasticgraph.set_node_properties(color=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># After making changes, show the graph again using show()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Blog: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
+<li><p>Github : <a class="reference external" href="https://github.com/erdogant/d3graph">https://github.com/erdogant/d3graph</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
+<li><p>Github : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/d3-force-graph">https://gitlab.com/rwsdatalab/public/codebase/tools/d3-force-graph</a></p></li>
+<li><p>Fork Ger Hobbelts (Block 3104394): <a class="reference external" href="https://bl.ocks.org/GerHobbelt/3104394">https://bl.ocks.org/GerHobbelt/3104394</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.heatmap">
 <span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heatmap.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[720,</span> <span class="pre">720]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this definition"></a></dt>
 <dd><p>Heatmap block.</p>
-<section id="id2">
-<h2>Description<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>heatmap is a module in d3blocks to create interactive heatmaps.
 The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
 In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
 create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
 and then Pythonized.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data is an adjacency matrix for which the columns and rows are the names of the variables.</p>
-</dd>
-<dt class="field-even">type df</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param vmax</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul class="simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data is an adjacency matrix for which the columns and rows are the names of the variables.</p></li>
+<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul>
 <li><p>1 : cells above value &gt;1 are capped.</p></li>
 <li><p>None : cells are colored based on the maximum value in the input data.</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type vmax</dt>
-<dd class="field-even"><p>Bool, (default: 100).</p>
-</dd>
-<dt class="field-odd">param stroke</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Color of the recangle when hovering over a cell.</dt><dd><ul class="simple">
-<li><p>‘red’</p></li>
-<li><p>‘black’</p></li>
+</p></li>
+<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Color of the recangle when hovering over a cell.</dt><dd><ul>
+<li><p>’red’</p></li>
+<li><p>’black’</p></li>
 </ul>
 </dd>
 </dl>
+</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the states.</p></li>
+<li><p><strong>description</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Heatmap description'</em><em>)</em>) – Description text of the heatmap.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Heatmap’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//heatmap_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[900, 900]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
-<dt class="field-even">type stroke</dt>
-<dd class="field-even"><p>String, (default: ‘red’).</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize of the states.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int, (default: 14)</p>
-</dd>
-<dt class="field-odd">param description</dt>
-<dd class="field-odd"><p>Description text of the heatmap.</p>
-</dd>
-<dt class="field-even">type description</dt>
-<dd class="field-even"><p>String, (default: ‘Heatmap description’)</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Heatmap’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//heatmap_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 900]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -595,94 +550,45 @@ False: Do not overwrite destination file but show warning instead.</p>
 <li><p>Github: <a class="reference external" href="https://github.com/erdogant/d3heatmap">https://github.com/erdogant/d3heatmap</a></p></li>
 <li><p>Documentation: <a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.imageslider">
 <span class="sig-name descname"><span class="pre">imageslider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_after</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Imageslider</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'imageslider.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this definition"></a></dt>
 <dd><p>Imageslider Block.</p>
-<section id="id3">
-<h2>Description<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>The imageslider allows comparison of two images. This is useful in case there is a before and after state.
 For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
 Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
 from JohnEdChristensen and then Pythonized to easily make comparisons between images.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param img_before</dt>
-<dd class="field-odd"><p>absolute path to before image.</p>
-</dd>
-<dt class="field-even">type img_before</dt>
-<dd class="field-even"><p>String</p>
-</dd>
-<dt class="field-odd">param img_after</dt>
-<dd class="field-odd"><p>absolute path to after image.</p>
-</dd>
-<dt class="field-even">type img_after</dt>
-<dd class="field-even"><p>String</p>
-</dd>
-<dt class="field-odd">param scale</dt>
-<dd class="field-odd"><p>Scale image in range [0, 255], by img*(255/max(img))
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img_before</strong> (<em>String</em>) – absolute path to before image.</p></li>
+<li><p><strong>img_after</strong> (<em>String</em>) – absolute path to after image.</p></li>
+<li><p><strong>scale</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Scale image in range [0, 255], by img*(255/max(img))
 True: Scaling image
-False: Leave image untouched</p>
-</dd>
-<dt class="field-even">type scale</dt>
-<dd class="field-even"><p>bool, default: True</p>
-</dd>
-<dt class="field-odd">param colorscale</dt>
-<dd class="field-odd"><p>colour-scaling from opencv.
+False: Leave image untouched</p></li>
+<li><p><strong>colorscale</strong> (<em>int</em><em>, </em><em>default: -1</em><em> (</em><em>untouched</em><em>)</em>) – colour-scaling from opencv.
 * 0: cv2.IMREAD_GRAYSCALE
 * 1: cv2.IMREAD_COLOR
 * 2: cv2.IMREAD_ANYDEPTH
 * 8: cv2.COLOR_GRAY2RGB
-* -1: cv2.IMREAD_UNCHANGED</p>
+* -1: cv2.IMREAD_UNCHANGED</p></li>
+<li><p><strong>background</strong> (<em>String</em><em> (</em><em>default: '#000000'</em><em>)</em>) – Background color.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Imageslider’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//imageslider_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[900, 900]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
-<dt class="field-even">type colorscale</dt>
-<dd class="field-even"><p>int, default: -1 (untouched)</p>
-</dd>
-<dt class="field-odd">param background</dt>
-<dd class="field-odd"><p>Background color.</p>
-</dd>
-<dt class="field-even">type background</dt>
-<dd class="field-even"><p>String (default: ‘#000000’)</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Imageslider’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//imageslider_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 900]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -713,19 +619,17 @@ False: Do not overwrite destination file but show warning instead.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html">https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.import_example">
 <span class="sig-name descname"><span class="pre">import_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'17-12-1903</span> <span class="pre">00:00:00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'17-12-1903</span> <span class="pre">23:59:59'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.import_example" title="Permalink to this definition"></a></dt>
 <dd><p>Import example dataset from github source.</p>
-<section id="id4">
-<h2>Description<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>Import one of the few datasets from github source or specify your own download url link.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param data</dt>
-<dd class="field-odd"><p>“movingbubbles”
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>str</em>) – “movingbubbles”
 “random_time”
 “timeseries”
 “energy”
@@ -737,51 +641,26 @@ False: Do not overwrite destination file but show warning instead.</p>
 “breast_cancer”
 “iris”
 “occupancy”
-“climate”</p>
+“climate”</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em><em>.</em>) – Number of events (samples).</p></li>
+<li><p><strong>c</strong> (<em>int</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – Number of classes.</p></li>
+<li><p><strong>date_start</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 00:00:00” : start date</p></li>
+<li><p><strong>date_stop</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 23:59:59” : Stop date</p></li>
+</ul>
 </dd>
-<dt class="field-even">type data</dt>
-<dd class="field-even"><p>str</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataset containing mixed features.</p>
 </dd>
-<dt class="field-odd">param n</dt>
-<dd class="field-odd"><p>Number of events (samples).</p>
-</dd>
-<dt class="field-even">type n</dt>
-<dd class="field-even"><p>int, (default: 1000).</p>
-</dd>
-<dt class="field-odd">param c</dt>
-<dd class="field-odd"><p>Number of classes.</p>
-</dd>
-<dt class="field-even">type c</dt>
-<dd class="field-even"><p>int, (default: 100).</p>
-</dd>
-<dt class="field-odd">param date_start</dt>
-<dd class="field-odd"><p>“17-12-1903 00:00:00” : start date</p>
-</dd>
-<dt class="field-even">type date_start</dt>
-<dd class="field-even"><p>str, (default: None)</p>
-</dd>
-<dt class="field-odd">param date_stop</dt>
-<dd class="field-odd"><p>“17-12-1903 23:59:59” : Stop date</p>
-</dd>
-<dt class="field-even">type date_stop</dt>
-<dd class="field-even"><p>str, (default: None)</p>
-</dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p>Dataset containing mixed features.</p>
-</dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame()</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.movingbubbles">
 <span class="sig-name descname"><span class="pre">movingbubbles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sample_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'state'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%d-%m-%Y</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'day'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standardize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'fast':</span> <span class="pre">50,</span> <span class="pre">'medium':</span> <span class="pre">200,</span> <span class="pre">'slow':</span> <span class="pre">1000}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[780,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Movingbubbles</span> <span class="pre">-</span> <span class="pre">D3Blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'movingbubbles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.movingbubbles" title="Permalink to this definition"></a></dt>
 <dd><p>MovingBubbles block.</p>
-<section id="id5">
-<h2>Description<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>The MovingBubbles provides insights into when one action follows the other across time. It can help to
 understand the movements of entities, and whether clusters occur at specific time points and state(s).
 It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
@@ -795,144 +674,49 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </ul>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data.</p>
-</dd>
-<dt class="field-even">type df</dt>
-<dd class="field-even"><p>Input data, pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param datetime</dt>
-<dd class="field-odd"><p>Name of the column with the datetime.</p>
-</dd>
-<dt class="field-even">type datetime</dt>
-<dd class="field-even"><p>str, (default: ‘datetime’)</p>
-</dd>
-<dt class="field-odd">param sample_id</dt>
-<dd class="field-odd"><p>Name of the column with the sample ids.</p>
-</dd>
-<dt class="field-even">type sample_id</dt>
-<dd class="field-even"><p>str, (default: ‘sample_id’)</p>
-</dd>
-<dt class="field-odd">param state</dt>
-<dd class="field-odd"><p>Name of the column with the states.</p>
-</dd>
-<dt class="field-even">type state</dt>
-<dd class="field-even"><p>str, (default: ‘state’)</p>
-</dd>
-<dt class="field-odd">param center</dt>
-<dd class="field-odd"><p>Center this category.</p>
-</dd>
-<dt class="field-even">type center</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param dt_format</dt>
-<dd class="field-odd"><p>‘%d-%m-%Y %H:%M:%S’.</p>
-</dd>
-<dt class="field-even">type dt_format</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-<dt class="field-odd">param dampler</dt>
-<dd class="field-odd"><p>Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.</p>
-</dd>
-<dt class="field-even">type dampler</dt>
-<dd class="field-even"><p>float, (default: 1)</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize of the states.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int, (default: 14)</p>
-</dd>
-<dt class="field-odd">param reset_time</dt>
-<dd class="field-odd"><p>‘day’  : Every 24h de the day start over again.
-‘year’ : Every 365 days the year starts over again.</p>
-</dd>
-<dt class="field-even">type reset_time</dt>
-<dd class="field-even"><p>String, (default: ‘day’)</p>
-</dd>
-<dt class="field-odd">param standardize</dt>
-<dd class="field-odd"><p>Method to standardize the data.
-None: standardize over the entire timeframe. Sample_ids are dependent to each other.
-‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p>
-</dd>
-<dt class="field-even">type standardize</dt>
-<dd class="field-even"><p>str. (default: None)</p>
-</dd>
-<dt class="field-odd">param speed</dt>
-<dd class="field-odd"><p>The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p>
-</dd>
-<dt class="field-even">type speed</dt>
-<dd class="field-even"><p>dict, (default: {“slow”: 1000, “medium”: 200, “fast”: 50})</p>
-</dd>
-<dt class="field-odd">param note</dt>
-<dd class="field-odd"><p>A specific note, such as project description can be put on the html page.</p>
-</dd>
-<dt class="field-even">type note</dt>
-<dd class="field-even"><p>str, (default: None)</p>
-</dd>
-<dt class="field-odd">param time_notes</dt>
-<dd class="field-odd"><p>The time notes will be shown between specific time points.
-time_notes = [{“start_minute”: 1, “stop_minute”: 5, “note”: “Enter your note here and it is shown between 1 min and 5 min.”}]
-time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p>
-</dd>
-<dt class="field-even">type time_notes</dt>
-<dd class="field-even"><p>dict, (default: None)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p>
-</dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String, (default: ‘Set1’)</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Movingbubbles’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//Movingbubbles_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[780, 800]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
-</dd>
-<dt class="field-even">type reset_properties</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>Input data</em><em>, </em><em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data.</p></li>
+<li><p><strong>datetime</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'datetime'</em><em>)</em>) – Name of the column with the datetime.</p></li>
+<li><p><strong>sample_id</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'sample_id'</em><em>)</em>) – Name of the column with the sample ids.</p></li>
+<li><p><strong>state</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'state'</em><em>)</em>) – Name of the column with the states.</p></li>
+<li><p><strong>center</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Center this category.</p></li>
+<li><p><strong>dt_format</strong> (<em>str</em>) – ‘%d-%m-%Y %H:%M:%S’.</p></li>
+<li><p><strong>dampler</strong> (<em>float</em><em>, </em><em>(</em><em>default: 1</em><em>)</em>) – Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the states.</p></li>
+<li><p><strong>reset_time</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'day'</em><em>)</em>) – ‘day’  : Every 24h de the day start over again.
+‘year’ : Every 365 days the year starts over again.</p></li>
+<li><p><strong>standardize</strong> (<em>str.</em><em> (</em><em>default: None</em><em>)</em>) – Method to standardize the data.
+None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+<li><p><strong>speed</strong> (<em>dict</em><em>, </em><em>(</em><em>default: {&quot;slow&quot;: 1000</em><em>, </em><em>&quot;medium&quot;: 200</em><em>, </em><em>&quot;fast&quot;: 50}</em><em>)</em>) – The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p></li>
+<li><p><strong>note</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – A specific note, such as project description can be put on the html page.</p></li>
+<li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – The time notes will be shown between specific time points.
+time_notes = [{“start_minute”: 1, “stop_minute”: 5, “note”: “Enter your note here and it is shown between 1 min and 5 min.”}]
+time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Movingbubbles’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//Movingbubbles_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[780, 800]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -977,97 +761,38 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html">https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.particles">
 <span class="sig-name descname"><span class="pre">particles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Particles</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'particles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.particles" title="Permalink to this definition"></a></dt>
 <dd><p>Particles block.</p>
-<section id="id6">
-<h2>Description<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
 <p>The particles plot is to turn any word into an interactive visualization. With a mouse-move or touch, the particle
 bounce and then return to their original place. Various properties can be changed such as the bouncing,
 particle size, and colors. The original javascript is forked from Ian Johnson’s Block.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param text</dt>
-<dd class="field-odd"><p>String to be visualized</p>
-</dd>
-<dt class="field-even">type text</dt>
-<dd class="field-even"><p>string</p>
-</dd>
-<dt class="field-odd">param radius</dt>
-<dd class="field-odd"><p>Size of the particles.</p>
-</dd>
-<dt class="field-even">type radius</dt>
-<dd class="field-even"><p>float (Default: 3)</p>
-</dd>
-<dt class="field-odd">param collision</dt>
-<dd class="field-odd"><p>Response of the interaction. Higher means that more collisions are prevented.</p>
-</dd>
-<dt class="field-even">type collision</dt>
-<dd class="field-even"><p>float, (default: 0.1)</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Text fontsize.
-When increasing: also increase width and slighly the spacing.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int (Default: 250)</p>
-</dd>
-<dt class="field-odd">param spacing</dt>
-<dd class="field-odd"><p>The number of particles that fit in the text.
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>string</em>) – String to be visualized</p></li>
+<li><p><strong>radius</strong> (<em>float</em><em> (</em><em>Default: 3</em><em>)</em>) – Size of the particles.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.1</em><em>)</em>) – Response of the interaction. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em> (</em><em>Default: 250</em><em>)</em>) – Text fontsize.
+When increasing: also increase width and slighly the spacing.</p></li>
+<li><p><strong>spacing</strong> (<em>int</em><em> (</em><em>Default: 10</em><em>)</em>) – The number of particles that fit in the text.
 A larger spacing reults in less particles.
-A smaller spacing reults in more particles.</p>
+A smaller spacing reults in more particles.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em> (</em><em>default: 'Set2'</em><em>)</em>) – Color schemes can be found here: <a class="reference external" href="https://observablehq.com/&#64;d3/color-schemes">https://observablehq.com/&#64;d3/color-schemes</a>
+‘Turbo’, ‘Rainbow’, ‘Blues’, ‘Reds’, ‘Inferno’, ‘Magma’</p></li>
+<li><p><strong>color_background</strong> (<em>String</em><em> (</em><em>default: '#000000'</em><em>)</em>) – Background color.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the window to show the particles.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
+</ul>
 </dd>
-<dt class="field-even">type spacing</dt>
-<dd class="field-even"><p>int (Default: 10)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>Color schemes can be found here: <a class="reference external" href="https://observablehq.com/&#64;d3/color-schemes">https://observablehq.com/&#64;d3/color-schemes</a>
-‘Turbo’, ‘Rainbow’, ‘Blues’, ‘Reds’, ‘Inferno’, ‘Magma’</p>
-</dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String (default: ‘Set2’)</p>
-</dd>
-<dt class="field-odd">param color_background</dt>
-<dd class="field-odd"><p>Background color.</p>
-</dd>
-<dt class="field-even">type color_background</dt>
-<dd class="field-even"><p>String (default: ‘#000000’)</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple, (default: (800, 600))</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>Open the window to show the particles.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>Overwrite the output html in the destination directory.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -1089,15 +814,12 @@ A smaller spacing reults in more particles.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Particles.html">https://d3blocks.github.io/d3blocks/pages/html/Particles.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.sankey">
 <span class="sig-name descname"><span class="pre">sankey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'align':</span> <span class="pre">'justify',</span> <span class="pre">'color':</span> <span class="pre">'currentColor',</span> <span class="pre">'padding':</span> <span class="pre">15,</span> <span class="pre">'width':</span> <span class="pre">15}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'source-target',</span> <span class="pre">'color_static':</span> <span class="pre">'#D3D3D3',</span> <span class="pre">'stroke_opacity':</span> <span class="pre">0.5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bottom':</span> <span class="pre">5,</span> <span class="pre">'left':</span> <span class="pre">1,</span> <span class="pre">'right':</span> <span class="pre">1,</span> <span class="pre">'top':</span> <span class="pre">5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sankey</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sankey.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[800,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.sankey" title="Permalink to this definition"></a></dt>
 <dd><p>Sankey block.</p>
-<section id="id7">
-<h2>Description<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
 <p>A Sankey chart is a visualization to depict a flow from one set of values to another.
 The nodes in this case are represented as the rectangle boxes, and the flow or arrows are the links.
 The width of the arrow is proportional to the flow rate. Sankeys are best used when you want to show
@@ -1105,90 +827,45 @@ many-to-many relationships or to discover multiple paths through a set of stages
 flows from pages to other pages on your website. For demonstration purposes, the “energy” and “stormofswords”
 dataset can be used. The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the following columns:
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
 ‘source’
 ‘target’
-‘weight’</p>
-</dd>
-<dt class="field-even">type df</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param link</dt>
-<dd class="field-odd"><p>“linkColor” : “source”, “target”, “source-target”
+‘weight’</p></li>
+<li><p><strong>link</strong> (<em>dict.</em>) – “linkColor” : “source”, “target”, “source-target”
 “linkStrokeOpacity” : 0.5
-“color_static”: ‘#0f0f0f’ or “grey”, “blue”, “red” etc</p>
-</dd>
-<dt class="field-even">type link</dt>
-<dd class="field-even"><p>dict.</p>
-</dd>
-<dt class="field-odd">param margin</dt>
-<dd class="field-odd"><p>margin, in pixels
+“color_static”: ‘#0f0f0f’ or “grey”, “blue”, “red” etc</p></li>
+<li><p><strong>margin</strong> (<em>dict.</em>) – margin, in pixels
 “top” : 5
 “right” : 1
 “bottom” : 5
-“left” : 1</p>
-</dd>
-<dt class="field-even">type margin</dt>
-<dd class="field-even"><p>dict.</p>
-</dd>
-<dt class="field-odd">param node</dt>
-<dd class="field-odd"><p>“align” : “left”, “right”, “justify”, “center”
+“left” : 1</p></li>
+<li><p><strong>node</strong> (<em>dict.</em>) – “align” : “left”, “right”, “justify”, “center”
 “width” : 15 (width of the node rectangles)
 “padding” : 15 (vertical seperation between the nodes)
-“color” : “currentColor”, “grey”, “black”, “red”, etc</p>
+“color” : “currentColor”, “grey”, “black”, “red”, etc</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Sankey’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//Sankey_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[800, 600]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
+</ul>
 </dd>
-<dt class="field-even">type node</dt>
-<dd class="field-even"><p>dict.</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Sankey’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//Sankey_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[800, 600]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
-</dd>
-<dt class="field-even">type reset_properties</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -1231,177 +908,64 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Sankey.html">https://d3blocks.github.io/d3blocks/pages/html/Sankey.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.scatter">
 <span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_radio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['(x,</span> <span class="pre">y)',</span> <span class="pre">'(x1,</span> <span class="pre">y1)',</span> <span class="pre">'(x2,</span> <span class="pre">y2)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Permalink to this definition"></a></dt>
 <dd><p>Scatterplot block.</p>
-<section id="id8">
-<h2>Description<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
 <p>The scatter plot is perhaps the most well-known chart to plot x, and y coordinates. Basic charts are very
 useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
 sample-wise colored and used to detect relationships between (groups of) variables.
 The input data frame should contain 2 columns (x and y) with the coordinates, and the index represents the
 class label.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param x</dt>
-<dd class="field-odd"><p>1d coordinates x-axis.</p>
-</dd>
-<dt class="field-even">type x</dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param y</dt>
-<dd class="field-odd"><p>1d coordinates y-axis.</p>
-</dd>
-<dt class="field-even">type y</dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param x1</dt>
-<dd class="field-odd"><p>Second set of 1d coordinates x-axis.</p>
-</dd>
-<dt class="field-even">type x1</dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param y1</dt>
-<dd class="field-odd"><p>Second set of 1d coordinates y-axis.</p>
-</dd>
-<dt class="field-even">type y1</dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param x2</dt>
-<dd class="field-odd"><p>Third set of 1d coordinates x-axis.</p>
-</dd>
-<dt class="field-even">type x2</dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param y2</dt>
-<dd class="field-odd"><p>Third set of 1d coordinates y-axis.</p>
-</dd>
-<dt class="field-even">type y2</dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param size</dt>
-<dd class="field-odd"><p>Size of the samples.</p>
-</dd>
-<dt class="field-even">type size</dt>
-<dd class="field-even"><p>list/array of with same size as (x,y). Can be of type str or int.</p>
-</dd>
-<dt class="field-odd">param color</dt>
-<dd class="field-odd"><p>‘#ffffff’ : All dots are get the same hex color.
-None: The same color as for c is applied.
-[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-even">type color</dt>
-<dd class="field-even"><p>list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param stroke</dt>
-<dd class="field-odd"><p>Edgecolor of dotsize in hex colors.
-‘#000000’ : All dots are get the same hex color.
-[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-even">type stroke</dt>
-<dd class="field-even"><p>list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param c_gradient</dt>
-<dd class="field-odd"><p>Make a lineair gradient based on the density for the particular class label.
-‘#FFFFFF’</p>
-</dd>
-<dt class="field-even">type c_gradient</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param opacity</dt>
-<dd class="field-odd"><p>Opacity of the dot. Shoud be same size as (x,y)</p>
-</dd>
-<dt class="field-even">type opacity</dt>
-<dd class="field-even"><p>float or list/array [0-1]</p>
-</dd>
-<dt class="field-odd">param tooltip</dt>
-<dd class="field-odd"><p>labels of the samples.</p>
-</dd>
-<dt class="field-even">type tooltip</dt>
-<dd class="field-even"><p>list of labels with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p>
-</dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String, (default: ‘inferno’)</p>
-</dd>
-<dt class="field-odd">param scale</dt>
-<dd class="field-odd"><p>Scale datapoints. The default is False.</p>
-</dd>
-<dt class="field-even">type scale</dt>
-<dd class="field-even"><p>Bool, optional</p>
-</dd>
-<dt class="field-odd">param label_radio</dt>
-<dd class="field-odd"><p>The labels used for the radiobuttons.</p>
-</dd>
-<dt class="field-even">type label_radio</dt>
-<dd class="field-even"><p>List [‘(x, y)’, ‘(x1, y1)’, ‘(x2, y2)’]</p>
-</dd>
-<dt class="field-odd">param set_xlim</dt>
-<dd class="field-odd"><p>Width of the x-axis: The default is extracted from the data with 10% spacing.</p>
-</dd>
-<dt class="field-even">type set_xlim</dt>
-<dd class="field-even"><p>tuple, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param set_ylim</dt>
-<dd class="field-odd"><p>Height of the y-axis: The default is extracted from the data with 10% spacing.</p>
-</dd>
-<dt class="field-even">type set_ylim</dt>
-<dd class="field-even"><p>tuple, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Scatterplot’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//Scatter_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 600]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
-</dd>
-<dt class="field-even">type reset_properties</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy array</em>) – 1d coordinates x-axis.</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em>) – 1d coordinates y-axis.</p></li>
+<li><p><strong>x1</strong> (<em>numpy array</em>) – Second set of 1d coordinates x-axis.</p></li>
+<li><p><strong>y1</strong> (<em>numpy array</em>) – Second set of 1d coordinates y-axis.</p></li>
+<li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
+<li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
+<li><p><strong>size</strong> (<em>list/array</em><em> of </em><em>with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be</em><em> of </em><em>type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>color</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – ‘#ffffff’ : All dots are get the same hex color.
+None: The same color as for c is applied.
+[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
+<li><p><strong>stroke</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – Edgecolor of dotsize in hex colors.
+‘#000000’ : All dots are get the same hex color.
+[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
+<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Make a lineair gradient based on the density for the particular class label.
+‘#FFFFFF’</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>]</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
+<li><p><strong>tooltip</strong> (<em>list</em><em> of </em><em>labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
+<li><p><strong>scale</strong> (<em>Bool</em><em>, </em><em>optional</em>) – Scale datapoints. The default is False.</p></li>
+<li><p><strong>label_radio</strong> (<em>List</em><em> [</em><em>'</em><em>(</em><em>x</em><em>, </em><em>y</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x1</em><em>, </em><em>y1</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x2</em><em>, </em><em>y2</em><em>)</em><em>'</em><em>]</em>) – The labels used for the radiobuttons.</p></li>
+<li><p><strong>set_xlim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Width of the x-axis: The default is extracted from the data with 10% spacing.</p></li>
+<li><p><strong>set_ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Height of the y-axis: The default is extracted from the data with 10% spacing.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Scatterplot’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//Scatter_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[900, 600]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -1462,7 +1026,6 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Scatter.html">https://d3blocks.github.io/d3blocks/pages/html/Scatter.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1556,105 +1119,43 @@ False: Do not open browser.</p></li>
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.timeseries">
 <span class="sig-name descname"><span class="pre">timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%d-%m-%Y</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_on_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">whitelist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Timeseries</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1200,</span> <span class="pre">500]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this definition"></a></dt>
 <dd><p>Timeseries block.</p>
-<section id="id9">
-<h2>Description<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
 <p>The TimeSeries can be used in case a date-time element is available, and where the time-wise values
 directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
 brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
 in a single chart.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the columns “datetime” together with the names of the timeseries to plot.</p>
-</dd>
-<dt class="field-even">type df</dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param datetime</dt>
-<dd class="field-odd"><p>Column name that contains the datetime.</p>
-</dd>
-<dt class="field-even">type datetime</dt>
-<dd class="field-even"><p>str, (default: None)</p>
-</dd>
-<dt class="field-odd">param dt_format</dt>
-<dd class="field-odd"><p>‘%d-%m-%Y %H:%M:%S’.</p>
-</dd>
-<dt class="field-even">type dt_format</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-<dt class="field-odd">param sort_on_date</dt>
-<dd class="field-odd"><p>True: Sort on datetime.
-False: Do not change the input order.</p>
-</dd>
-<dt class="field-even">type sort_on_date</dt>
-<dd class="field-even"><p>Bool (default: True)</p>
-</dd>
-<dt class="field-odd">param whitelist</dt>
-<dd class="field-odd"><p>Keep only columns containing this (sub)string (case insensitive)</p>
-</dd>
-<dt class="field-even">type whitelist</dt>
-<dd class="field-even"><p>str, optional</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize of the fonts in the circle.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int, (default: 14)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p>
-</dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String, (default: ‘Set1’)</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Timeseries’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//Timeseries_demo.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[1200, 500]</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
-</dd>
-<dt class="field-even">type reset_properties</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the columns “datetime” together with the names of the timeseries to plot.</p></li>
+<li><p><strong>datetime</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Column name that contains the datetime.</p></li>
+<li><p><strong>dt_format</strong> (<em>str</em>) – ‘%d-%m-%Y %H:%M:%S’.</p></li>
+<li><p><strong>sort_on_date</strong> (<em>Bool</em><em> (</em><em>default: True</em><em>)</em>) – True: Sort on datetime.
+False: Do not change the input order.</p></li>
+<li><p><strong>whitelist</strong> (<em>str</em><em>, </em><em>optional</em>) – Keep only columns containing this (sub)string (case insensitive)</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the fonts in the circle.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Timeseries’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//Timeseries_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[1200, 500]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -1700,7 +1201,6 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html">https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1742,8 +1242,6 @@ False: Use the d3.node_properties()</p>
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.violin">
 <span class="sig-name descname"><span class="pre">violin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inferno'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Violin</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'violin.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.violin" title="Permalink to this definition"></a></dt>
 <dd><p>Violin block.</p>
-<section id="id10">
-<h2>Description<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
 <p>The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
 It is an alternative to the boxplot and brings insights into large datasets where the boxplot could hide a part
 of the information. The original javascript code is forked from D3.js graph gallery but brought alive by
@@ -1751,125 +1249,44 @@ Pythonizing the chart. Now it is possible to configure your charts for one or se
 add tooltips, customize the bin size, change figure size and store on a specified location. There are many
 input parameters for the Violin plot that can help to create the most insightful figures.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param x</dt>
-<dd class="field-odd"><p>This 1d-vector contains the class labels for each datapoint in y.</p>
-</dd>
-<dt class="field-even">type x</dt>
-<dd class="field-even"><p>list of String or numpy array.</p>
-</dd>
-<dt class="field-odd">param y</dt>
-<dd class="field-odd"><p>This 1d-vector contains the values for the samples.</p>
-</dd>
-<dt class="field-even">type y</dt>
-<dd class="field-even"><p>list of float or numpy array.</p>
-</dd>
-<dt class="field-odd">param size</dt>
-<dd class="field-odd"><p>Size of the samples.</p>
-</dd>
-<dt class="field-even">type size</dt>
-<dd class="field-even"><p>list/array of with same size as (x,y). Can be of type str or int.</p>
-</dd>
-<dt class="field-odd">param color</dt>
-<dd class="field-odd"><p>‘#002147’ : All dots/nodes are get the same hex color.
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list</em><em> of </em><em>String</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the class labels for each datapoint in y.</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> of </em><em>float</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the values for the samples.</p></li>
+<li><p><strong>size</strong> (<em>list/array</em><em> of </em><em>with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be</em><em> of </em><em>type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>color</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as y</em>) – ‘#002147’ : All dots/nodes are get the same hex color.
 None: The colors are generated on value using the colormap specified in cmap.
-[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p>
+[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p></li>
+<li><p><strong>x_order</strong> (<em>list</em><em> of </em><em>String</em><em> (</em><em>default: None</em><em>)</em>) – The order of the class labels on the x-axis.
+[“setosa”, “versicolor”, “virginica”]</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>] </em><em>(</em><em>default: 0.6</em><em>)</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
+<li><p><strong>stroke</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – Edgecolor of dot in hex colors.
+‘#000000’ : Edge colors are all black.</p></li>
+<li><p><strong>tooltip</strong> (<em>list</em><em> of </em><em>labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
+<li><p><strong>bins</strong> (<em>Int</em><em> (</em><em>default: 50</em><em>)</em>) – The bin size is the ‘resolution’ of the violin plot.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Limit the width of the y-axis [min, max].
+[None, None] : The width is determined based on the min-max value range.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘Violin Chart’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//Violin.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[None, None]: The width is auto-determined based on the #labels.</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
+</ul>
 </dd>
-<dt class="field-even">type color</dt>
-<dd class="field-even"><p>list/array of hex colors with same size as y</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>d3.node_properties</strong> – Contains properties of the unique input label/nodes/samples.</p>
 </dd>
-<dt class="field-odd">param x_order</dt>
-<dd class="field-odd"><p>The order of the class labels on the x-axis.
-[“setosa”, “versicolor”, “virginica”]</p>
-</dd>
-<dt class="field-even">type x_order</dt>
-<dd class="field-even"><p>list of String (default: None)</p>
-</dd>
-<dt class="field-odd">param opacity</dt>
-<dd class="field-odd"><p>Opacity of the dot. Shoud be same size as (x,y)</p>
-</dd>
-<dt class="field-even">type opacity</dt>
-<dd class="field-even"><p>float or list/array [0-1] (default: 0.6)</p>
-</dd>
-<dt class="field-odd">param stroke</dt>
-<dd class="field-odd"><p>Edgecolor of dot in hex colors.
-‘#000000’ : Edge colors are all black.</p>
-</dd>
-<dt class="field-even">type stroke</dt>
-<dd class="field-even"><p>list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param tooltip</dt>
-<dd class="field-odd"><p>labels of the samples.</p>
-</dd>
-<dt class="field-even">type tooltip</dt>
-<dd class="field-even"><p>list of labels with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p>
-</dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String, (default: ‘inferno’)</p>
-</dd>
-<dt class="field-odd">param bins</dt>
-<dd class="field-odd"><p>The bin size is the ‘resolution’ of the violin plot.</p>
-</dd>
-<dt class="field-even">type bins</dt>
-<dd class="field-even"><p>Int (default: 50)</p>
-</dd>
-<dt class="field-odd">param ylim</dt>
-<dd class="field-odd"><p>Limit the width of the y-axis [min, max].
-[None, None] : The width is determined based on the min-max value range.</p>
-</dd>
-<dt class="field-even">type ylim</dt>
-<dd class="field-even"><p>tuple, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Violin Chart’</p>
-</dd>
-<dt class="field-even">type title</dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-‘c://temp//Violin.html’</p>
-</dd>
-<dt class="field-even">type filepath</dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[None, None]: The width is auto-determined based on the #labels.</p>
-</dd>
-<dt class="field-even">type figsize</dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
-</dd>
-<dt class="field-even">type showfig</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
-</dd>
-<dt class="field-even">type overwrite</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
-</dd>
-<dt class="field-even">type reset_properties</dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>d3.node_properties</strong> – Contains properties of the unique input label/nodes/samples.</p>
-</dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>DataFrame of dictionary</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame of dictionary</p>
 </dd>
 </dl>
 <dl class="simple">
@@ -1924,7 +1341,6 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Violin.html">https://d3blocks.github.io/d3blocks/pages/html/Violin.html</a></p></li>
 </ul>
-</section>
 </dd></dl>
 
 </dd></dl>
@@ -1962,13 +1378,10 @@ False: Use the d3.node_properties()</p>
 <dt class="sig sig-object py" id="d3blocks.d3blocks.str_time_prop">
 <span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">str_time_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%d-%m-%Y</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strftime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.str_time_prop" title="Permalink to this definition"></a></dt>
 <dd><p>Get a time at a proportion of a range of two formatted times.</p>
-<section id="id11">
-<h2>Description<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
 <p>start and end should be strings specifying times formatted in the
 given format (strftime-style), giving an interval [start, end].
 prop specifies how a proportion of the interval to be taken after
 start.  The returned time will be in the specified format.</p>
-</section>
 </dd></dl>
 
 <dl class="py function">
