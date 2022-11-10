@@ -11,7 +11,7 @@ from d3blocks.d3blocks import D3Blocks
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 # module level doc-string
 __doc__ = """
@@ -27,6 +27,6 @@ References
 * D3Blocks (blog): https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
 * D3Graph (blog): https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
 * Github : https://github.com/d3blocks/d3blocks
-* Documentation: https://d3blocks.github.io/d3blocks/
+* Docs: https://d3blocks.github.io/d3blocks/
 
 """
