@@ -128,6 +128,19 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
     return X
 
 
+# %% Create unique dataframe and update weights
+def create_unique_dataframe(X, logger=None):
+    # Check whether labels are unique
+    if isinstance(X, pd.DataFrame):
+        Iloc = ismember(X.columns, ['source','target','weight'])[0]
+        X = X.loc[:, Iloc]
+        if 'weight' in X.columns: X['weight'] = X['weight'].astype(float)
+        # Groupby values and sum the weights
+        X = X.groupby(by=['source', 'target']).sum()
+        X.reset_index(drop=False, inplace=True)
+    return X
+
+
 # %% Setup colors
 def set_colors(X, c, cmap, c_gradient=None):
     """Set colors for in various blocks.

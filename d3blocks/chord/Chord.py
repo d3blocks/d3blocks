@@ -15,9 +15,9 @@ import os
 import time
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe
 
 
 # %% Set configuration properties
@@ -37,6 +37,7 @@ def set_config(config={}, **kwargs):
 
 def set_node_properties(df, **kwargs):
     """Set the node properties.
+
     Parameters
     ----------
     df : pd.DataFrame()
@@ -126,6 +127,9 @@ def set_edge_properties(df, **kwargs):
     color = kwargs.get('color', 'source')
     opacity = kwargs.get('opacity', 'source')
     cmap = kwargs.get('cmap', 'tab20')
+
+    # Create unique dataframe, udpate weights
+    df = create_unique_dataframe(df, logger=logger)
 
     # Convert dict/frame.
     df = convert_dataframe_dict(df, frame=True)

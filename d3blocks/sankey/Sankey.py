@@ -12,9 +12,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe
 
 
 # %% Set configuration properties
@@ -78,8 +78,11 @@ def set_edge_properties(df, **kwargs):
 
     """
     # node_properties = kwargs.get('node_properties')
+    logger = kwargs.get('logger', None)
     df = df.copy()
     df = pre_processing(df)
+    # Create unique dataframe, udpate weights
+    # df = create_unique_dataframe(df, logger=logger)
     return df
 
 

@@ -3,6 +3,48 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Issue: 
+import pandas as pd
+import numpy as np
+
+source=['A','A','B','C','E','F']
+target=['B','B','C','D','D','D']
+weights=[1,1,2,1,1,1]
+
+df = pd.DataFrame(data=np.c_[source, target, weights], columns=['source','target','weight'])
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=True)
+d3.sankey(df)
+
+# Edit any of the properties you want in the dataframe:
+d3.node_properties
+
+#        id label    color  opacity
+# label                            
+# A       0     A  #1f77b4      0.8
+# B       1     B  #2ca02c      0.8
+# C       2     C  #9467bd      0.8
+# D       3     D  #e377c2      0.8
+# E       4     E  #bcbd22      0.8
+# F       5     F  #9edae5      0.8
+
+d3.edge_properties
+d3.edge_properties['color'].iloc[1]='#000000'
+
+#   source target weight  opacity    color
+# 0      A      B      1      0.8  #1f77b4
+# 1      A      B      1      0.8  #1f77b4
+# 2      B      C      2      0.8  #2ca02c
+# 3      C      D      1      0.8  #9467bd
+# 4      E      D      1      0.8  #bcbd22
+# 5      F      D      1      0.8  #9edae5
+
+# Plot again
+d3.show()
+
+
 # %% Force directed clustered graphs
 from d3blocks import D3Blocks
 
