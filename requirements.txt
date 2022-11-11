@@ -7,5 +7,5 @@ d3graph>="2.3.5"
 d3heatmap
 colourmap>="1.1.10"
 ismember>=1.0.1
-sklearn
+scikit-learn
 
