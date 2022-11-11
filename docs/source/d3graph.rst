@@ -7,6 +7,9 @@ D3graph
 .. note::
 	This page contains a summary of the possiblities what you can do with D3graph. More details can be found on the `D3graph documentation pages <https://erdogant.github.io/d3graph>`_.
 
+-------------------------
+
+
 .. automodule:: d3blocks.d3blocks.D3Blocks.d3graph
     :members:
     :undoc-members:

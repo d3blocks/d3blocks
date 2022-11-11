@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.0
+                1.1.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -87,7 +87,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.adjmat2vec"><code class="docutils literal notranslate"><span class="pre">D3Blocks.adjmat2vec()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.chord"><code class="docutils literal notranslate"><span class="pre">D3Blocks.chord()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.d3graph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.d3graph()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.elasticgraph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.elasticgraph()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.heatmap"><code class="docutils literal notranslate"><span class="pre">D3Blocks.heatmap()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.imageslider"><code class="docutils literal notranslate"><span class="pre">D3Blocks.imageslider()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.import_example"><code class="docutils literal notranslate"><span class="pre">D3Blocks.import_example()</span></code></a></li>
@@ -393,92 +392,6 @@ False: Do not overwrite destination file but show warning instead.</p></li>
 <li><p>Blog: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
 <li><p>Github : <a class="reference external" href="https://github.com/erdogant/d3graph">https://github.com/erdogant/d3graph</a></p></li>
 <li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
-</ul>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.elasticgraph">
-<span class="sig-name descname"><span class="pre">elasticgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.elasticgraph" title="Permalink to this definition"></a></dt>
-<dd><p>d3-force-graph block.</p>
-<p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
-the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
-dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
-in the d3blocks library.
-In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
-with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
-heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
-by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
-interactive and stand alone. For demonstration purposes, the “bigbang”, “energy” and “stormofswords” dataset can
-be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p></li>
-<li><p><strong>group</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Grouping (and coloring) of the nodes.
-* ‘cluster’ : Colours are based on the community distance clusters.
-* None: All nodes will have the same color (auto generated).</p></li>
-<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
-<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘d3graph’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-‘c://temp//d3graph_demo.html’</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[1500, 800]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;stormofswords&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create force-directed-network (without cluster labels)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show elasticgraph</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph with the same properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add cluster labels (no need to do it again because it is the default)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># d3.Elasticgraph.set_node_properties(color=None)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># After making changes, show the graph again using show()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-</pre></div>
-</div>
-<p class="rubric">References</p>
-<ul class="simple">
-<li><p>Blog: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
-<li><p>Github : <a class="reference external" href="https://github.com/erdogant/d3graph">https://github.com/erdogant/d3graph</a></p></li>
-<li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
-<li><p>Github : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/d3-force-graph">https://gitlab.com/rwsdatalab/public/codebase/tools/d3-force-graph</a></p></li>
-<li><p>Fork Ger Hobbelts (Block 3104394): <a class="reference external" href="https://bl.ocks.org/GerHobbelt/3104394">https://bl.ocks.org/GerHobbelt/3104394</a></p></li>
 </ul>
 </dd></dl>
 

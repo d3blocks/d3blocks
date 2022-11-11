@@ -1,10 +1,14 @@
 Sankey
 #############
 
+.. tip::
+	`Blog 4. Hands-on Guide to Create beautiful Sankey Charts in d3js with Python. <https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43>`_
+
+-------------------------
+
 .. automodule:: d3blocks.d3blocks.D3Blocks.sankey
     :members:
     :undoc-members:
-
 
 
 Input Data

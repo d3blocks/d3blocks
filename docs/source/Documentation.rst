@@ -8,13 +8,16 @@ Medium Blog
 ############
 
 .. note::
-	`Blog 1. D3Graph: Creating beautiful stand-alone interactive D3 charts with Python. <https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7>`_
+	`Blog 1. D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts. <https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4>`_
 
 .. note::
-	`Blog 2. D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts. <https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4>`_
+	`Blog 2. Creating beautiful stand-alone interactive D3 charts with Python. <https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7>`_
 
 .. note::
-	`Blog 3. D3Blocks: How to Create Storytelling Moving Bubbles Charts in d3js with Python. <https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226>`_
+	`Blog 3. How to Create Storytelling Moving Bubbles Charts in d3js with Python. <https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226>`_
+
+.. note::
+	`Blog 4. Hands-on Guide to Create beautiful Sankey Charts in d3js with Python. <https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43>`_
 
 
 Github
