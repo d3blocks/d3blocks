@@ -90,11 +90,11 @@ class Testd3blocks(unittest.TestCase):
         assert np.all(d3.node_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#377eb8','#ff7f00'])
         ### CHECK COLORS
         d3.set_edge_properties(df, color='target', cmap='Set1')
-        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#e41a1c','#ff7f00'])
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#e41a1c','#377eb8','#984ea3'])
         d3.set_edge_properties(df, color='source', cmap='Set1')
         assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#e41a1c','#e41a1c','#377eb8','#377eb8','#4daf4a'])
         d3.set_edge_properties(df, color='source-target')
-        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#1f77b4','#d62728','#f7b6d2','#9edae5','#ff7f0e'])
+        assert np.all(d3.edge_properties['color'].iloc[[0,2,5,9,22]]==['#1f77b4','#ffbb78','#f7b6d2','#9edae5','#2ca02c'])
         ### CHECK OPACITY
         d3.set_edge_properties(df, color='target', opacity=0.3)
         assert np.all(d3.edge_properties['opacity']==0.3)

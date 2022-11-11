@@ -16,7 +16,7 @@ from d3blocks import D3Blocks
 
 # Initialize
 d3 = D3Blocks(frame=True)
-d3.sankey(df)
+d3.chord(df)
 
 # Edit any of the properties you want in the dataframe:
 d3.node_properties
