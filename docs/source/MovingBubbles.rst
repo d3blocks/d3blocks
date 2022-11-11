@@ -2,7 +2,7 @@ MovingBubbles
 ###############
 
 .. tip::
-	`Medium Blog: D3Blocks: How to Create Storytelling Moving Bubbles Charts in d3js with Python. <https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226>`_
+	`D3Blocks: How to Create Storytelling Moving Bubbles Charts in d3js with Python. <https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226>`_
 
 -------------------------
 
