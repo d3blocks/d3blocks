@@ -1554,6 +1554,11 @@ class D3Blocks():
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
 
+        Description
+        -----------
+        The input for edge properties are the arguments that are inherited from the chart-function. As an example, the
+        edge properties for the scatter chart are those described in the scatter function. 
+
         Parameters
         ----------
         df : pd.DataFrame()
