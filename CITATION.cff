@@ -16,7 +16,8 @@ keywords:
 license: "GPL3"
 message: "If you use this software, please cite it using these metadata."
 repository-code: "https://d3blocks.github.io/d3blocks"
-title: "D3Blocks - The Python library to create stand-alone and interactive d3 charts."
+title: "D3Blocks: A Python Package to create interactive d3js visualizations."
+
 version: "1.0.0"
 ...
 
