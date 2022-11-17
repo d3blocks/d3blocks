@@ -33,7 +33,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.4
+                1.1.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -154,13 +154,25 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param group</dt>
-<dd class="field-odd"><p>Grouping (and coloring) of the nodes.
+<dt class="field-odd">param color</dt>
+<dd class="field-odd"><p>Color of the node.
 * ‘cluster’ : Colours are based on the community distance clusters.
-* None: All nodes will have the same color (auto generated).</p>
+* None: All nodes will have the same color (auto generated).
+* [‘#000000’]: All nodes will have the same hex color.
+* [‘#377eb8’,’#ffffff’,’#000000’,…]: Hex colors are directly used.
+* [‘A’]: All nodes will have hte same color. Color is generated on CMAP and the unique labels.
+* [‘A’,’A’,’B’,…]:  Colors are generated using cmap and the unique labels accordingly colored.</p>
 </dd>
-<dt class="field-even">type group</dt>
-<dd class="field-even"><p>list of strings (default: ‘cluster’)</p>
+<dt class="field-even">type color</dt>
+<dd class="field-even"><p>list of strings (default: ‘#000080’)</p>
+</dd>
+<dt class="field-odd">param size</dt>
+<dd class="field-odd"><p>Size of the nodes.
+* 10: all nodes sizes are set to 10
+* [10, 5, 3, 1, …]: Specify node sizes</p>
+</dd>
+<dt class="field-even">type size</dt>
+<dd class="field-even"><p>array of integers (default: 5)</p>
 </dd>
 <dt class="field-odd">param collision</dt>
 <dd class="field-odd"><p>Response of the network. Higher means that more collisions are prevented.</p>
