@@ -319,7 +319,7 @@ d3.scatter(df['x'].values,
            color=df.index.values,
            tooltip=tooltip,
            scale=True,
-           figsize=[600, 400],
+           figsize=[1024, 768],
            filepath='c://temp//scatter_transitions3.html')
 
 
@@ -455,7 +455,7 @@ d3.node_properties.get('wind_speed')['color'] = '#000000'
 d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
 # d3.edge_properties
 # Show
-d3.show(title='Timeseries with adjusted configurations.', showfig=True)
+d3.show(title='Timeseries with adjusted configurations.', showfig=True, filepath='c://temp/timeseries.html')
 
 # or
 
