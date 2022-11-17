@@ -1189,6 +1189,7 @@ class D3Blocks():
 
     def heatmap(self,
                 df,
+                color='cluster',
                 vmax=None,
                 stroke='red',
                 fontsize=10,
@@ -1212,6 +1213,9 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data is an adjacency matrix for which the columns and rows are the names of the variables.
+        color : Numpy array (default: 'cluster')
+            Should be in the same order as the columns and of the input dataframe
+            None or 'cluster': a clustering approach is used for coloring.
         vmax : Bool, (default: 100).
             Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
                 * 1 : cells above value >1 are capped.
@@ -1285,11 +1289,20 @@ class D3Blocks():
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create heatmap chart
-        d3heatmap.heatmap(adjmat, vmax=self.config['vmax'], stroke=self.config['stroke'], width=self.config['figsize'][0], height=self.config['figsize'][1], path=self.config['filepath'], title=title, description=self.config['description'], showfig=self.config['showfig'])
+        d3heatmap.heatmap(adjmat,
+                          color=color,
+                          vmax=self.config['vmax'],
+                          stroke=self.config['stroke'],
+                          width=self.config['figsize'][0], height=self.config['figsize'][1],
+                          path=self.config['filepath'],
+                          title=title,
+                          description=self.config['description'],
+                          showfig=self.config['showfig'])
 
     def d3graph(self,
                 df,
-                group='cluster',
+                color='cluster',
+                size=10,
                 title='D3graph - D3blocks',
                 filepath='d3graph.html',
                 figsize=[1500, 800],
@@ -1319,10 +1332,18 @@ class D3Blocks():
             'source'
             'target'
             'weight'
-        group : list of strings (default: 'cluster')
-            Grouping (and coloring) of the nodes.
+        color : list of strings (default: '#000080')
+            Color of the node.
             * 'cluster' : Colours are based on the community distance clusters.
             * None: All nodes will have the same color (auto generated).
+            * ['#000000']: All nodes will have the same hex color.
+            * ['#377eb8','#ffffff','#000000',...]: Hex colors are directly used.
+            * ['A']: All nodes will have hte same color. Color is generated on CMAP and the unique labels.
+            * ['A','A','B',...]:  Colors are generated using cmap and the unique labels accordingly colored.
+        size : array of integers (default: 5)
+            Size of the nodes.
+            * 10: all nodes sizes are set to 10
+            * [10, 5, 3, 1, ...]: Specify node sizes
         collision : float, (default: 0.5)
             Response of the network. Higher means that more collisions are prevented.
         charge : int, (default: 400)
@@ -1417,7 +1438,7 @@ class D3Blocks():
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
-        self.D3graph.graph(adjmat, scaler=scaler)
+        self.D3graph.graph(adjmat, color=color, size=size, scaler=scaler)
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
 
@@ -1557,7 +1578,7 @@ class D3Blocks():
         Description
         -----------
         The input for edge properties are the arguments that are inherited from the chart-function. As an example, the
-        edge properties for the scatter chart are those described in the scatter function. 
+        edge properties for the scatter chart are those described in the scatter function.
 
         Parameters
         ----------

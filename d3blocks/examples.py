@@ -85,9 +85,11 @@ df = d3.import_example('energy')
 d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True, charge=400)
 
 # Set clusters
-d3.D3graph.set_node_properties(color=None)
+d3.D3graph.set_node_properties(color='cluster')
 d3.D3graph.show()
 
+d3.D3graph.set_node_properties(color='#000000')
+d3.D3graph.show()
 
 # %% CHORD - EXAMPLE
 from d3blocks import D3Blocks
@@ -151,6 +153,85 @@ df = d3.import_example('energy')
 d3.chord(df)
 d3.chord(df, color='target', opacity=0.8, filepath='chord_demo1.html')
 d3.chord(df, color='#000000', opacity=0.4, filepath='chord_demo2.html')
+
+
+# %% SCATTER - prevent overplotting by including density
+# Load library
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=True)
+# Import example
+df = d3.import_example('cancer')
+
+# Setup the tooltip
+tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+# Set the size
+size = df['survival_months'].fillna(1).values / 10
+
+# Set all propreties
+d3.scatter(df['x'].values,              # tSNE x-coordinates
+           df['y'].values,              # tSNE y-coordinates
+           x1=df['PC1'].values,         # PC1 x-coordinates
+           y1=df['PC2'].values,         # PC2 y-coordinates
+           size=size,                   # Size
+           color=df['labels'].values,   # Hex-colors or classlabels
+           stroke='#000000',            # Edge color
+           opacity=0.7,                 # Opacity
+           tooltip=tooltip,             # Tooltip
+           cmap='tab20',                # Colormap
+           scale=True,                  # Scale the datapoints
+           label_radio=['tSNE', 'PCA'],
+           figsize=[1024, 768],
+           filepath='c://temp//scatter_demo.html',
+           )
+
+
+# Make edits in the dataframe.
+d3.edge_properties
+
+#      label         x         y  ...   stroke  opacity                     tooltip
+# 0      acc  0.796433  0.745925  ...  #000000      0.8   acc <br /> Survival: 44.5
+# 1      acc  0.795550  0.739818  ...  #000000      0.8   acc <br /> Survival: 55.0
+# 2      acc  0.793272  0.739995  ...  #000000      0.8   acc <br /> Survival: 63.8
+# 3      acc  0.803293  0.747982  ...  #000000      0.8   acc <br /> Survival: 11.9
+# 4      acc  0.793152  0.725707  ...  #000000      0.8   acc <br /> Survival: 79.7
+#    ...       ...       ...  ...      ...      ...                         ...
+# 4669  brca  0.507579  0.473040  ...  #000000      0.8   brca <br /> Survival: nan
+# 4670  brca  0.454501  0.570091  ...  #000000      0.8   brca <br /> Survival: nan
+# 4671  brca  0.426309  0.560061  ...  #000000      0.8  brca <br /> Survival: 6.80
+# 4672  brca  0.469009  0.598039  ...  #000000      0.8   brca <br /> Survival: nan
+# 4673  brca  0.502737  0.478357  ...  #000000      0.8   brca <br /> Survival: nan
+# [4674 rows x 12 columns]
+
+# Show the updated chart!
+d3.show(filepath='c://temp//scatter_update.html', figsize=[1020, 768], label_radio=['t-SNE', 'PCA'])
+
+# Initialize
+d3 = D3Blocks(chart='Scatter', frame=True)
+# Import example
+df = d3.import_example('cancer')
+
+d3.set_edge_properties(df['x'].values,
+                        df['y'].values,
+                        x1=df['PC1'].values,
+                        y1=df['PC2'].values,
+                        # size=df['survival_months'].fillna(1).values / 10,
+                        size=10,
+                        color=df.index.values,
+                        tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                        c_gradient = '#FFFFFF',
+                        stroke = None,
+                        opacity=0.1,
+                        scale=True,
+                        )
+
+
+
+
+# Show the chart
+d3.show(filepath='c://temp//scatter_demo.html', figsize=[800, 600], label_radio=['tSNE', 'PCA'])
+
 
 
 # %% SCATTER
