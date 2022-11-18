@@ -136,6 +136,8 @@ def set_edge_properties(*args, **kwargs):
     cmap = kwargs.get('cmap', 'tab20')
     scale = kwargs.get('scale', False)
     logger = kwargs.get('logger', None)
+    
+    if isinstance(size, list): size=np.array(size)
 
     # if (x1 is None): x1 = x
     # if (y1 is None): y1 = y
