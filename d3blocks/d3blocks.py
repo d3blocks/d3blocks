@@ -1827,6 +1827,7 @@ class D3Blocks():
             "iris"
             "occupancy"
             "climate"
+            "mnist"
         n : int, (default: 1000).
             Number of events (samples).
         c : int, (default: 100).
@@ -1871,6 +1872,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         * iris
         * occupancy
         * climate
+        * "mnist"
         n : int, (default: 1000).
             Number of events (samples).
         c : int, (default: 100).
@@ -1940,6 +1942,9 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         sep=','
     elif data=='climate':
         url='https://erdogant.github.io/datasets/kaggle_daily_delhi_climate_test.zip'
+    elif data=='mnist':
+        url='https://erdogant.github.io/datasets/mnist.zip'
+        sep=';'
 
     if url is None:
         logger.info('Nothing to download.')
