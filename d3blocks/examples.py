@@ -3,6 +3,79 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Create scatter chart
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('mnist')
+
+size=np.random.randint(0, 8, df.shape[0])
+opacity=np.random.randint(0, 8, df.shape[0])/10
+tooltip = df['y'].values.astype(str)
+
+# Set all propreties
+d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
+           df['PC2'].values,                   # PC2 y-coordinates
+           x1=df['tsne_1'].values,             # tSNE x-coordinates
+           y1=df['tsne_2'].values,             # tSNE y-coordinates
+           color=df['y'].values.astype(str),   # Hex-colors or classlabels
+           tooltip=tooltip,                    # Tooltip
+           size=size,                          # Node size
+           opacity=opacity,                    # Opacity
+           stroke='#000000',
+           cmap='tab20',                       # Colormap
+           scale=True,                         # Scale the datapoints
+           label_radio=['PCA', 'tSNE'],
+           figsize=[1024, 768], 
+           filepath='scatter_demo.html',
+           )
+
+
+# %% Create scatter chart with movements example
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=True)
+# Import example
+x=[1, 1, 1]
+y=[1, 2, 3]
+
+x1=[1,  1, 1]
+y1=[10, 9, 5]
+
+x2=[5, 6, 7]
+y2=[5, 5, 5]
+
+size=[15, 20, 25]
+color=['#FF0000', '#0000FF', '#00FF00']
+stroke=['#FFFFFF', '#FFFFFF', '#FFFFFF']
+opacity=[0.7, 0.8, 0.8]
+tooltip=['1st datapoint', '2nd datapoint', '3th datapoint']
+
+# Set all propreties
+d3.scatter(x,              # tSNE x-coordinates
+           y,              # tSNE y-coordinates
+           x1=x1,         # PC1 x-coordinates
+           y1=y1,         # PC2 y-coordinates
+           x2=x2,         # PC1 x-coordinates
+           y2=y2,         # PC2 y-coordinates
+           size=size,                   # Size
+           color=color,   # Hex-colors or classlabels
+           stroke=stroke,            # Edge color
+           opacity=opacity,                 # Opacity
+           tooltip=tooltip,             # Tooltip
+           cmap='tab20',                # Colormap
+           scale=False,                  # Scale the datapoints
+           label_radio=['(x, y)', '(x1, y1)', '(x2, y2)'],
+           figsize=[1024, 768],
+           filepath='c://temp//scatter_demo.html',
+           )
+
+
 # %% Issue: 
 import pandas as pd
 import numpy as np
