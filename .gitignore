@@ -10,6 +10,7 @@ __pycache__/
 d3blocks/data
 demo/
 libraries/
+ppt/
 
 # Distribution / packaging
 .Python
