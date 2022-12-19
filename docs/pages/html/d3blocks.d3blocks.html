@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -30,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.7
+                1.1.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -60,6 +61,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
@@ -110,7 +112,7 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks">
-<span id="api-references"></span><h1>API References<a class="headerlink" href="#module-d3blocks.d3blocks" title="Permalink to this headline"></a></h1>
+<span id="api-references"></span><h1>API References<a class="headerlink" href="#module-d3blocks.d3blocks" title="Permalink to this heading"></a></h1>
 <p>d3blocks library.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks">
@@ -124,11 +126,8 @@ False: Return in dictionary.</p></li>
 <li><p><strong>verbose</strong> (<em>int</em><em>, </em><em>optional</em>) – Verbose message. The default is 20.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
@@ -323,11 +322,8 @@ False: Do not open browser-window.</p></li>
 False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -377,6 +373,93 @@ False: Do not overwrite destination file but show warning instead.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.elasticgraph">
+<span class="sig-name descname"><span class="pre">elasticgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_click_expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.elasticgraph" title="Permalink to this definition"></a></dt>
+<dd><p>D3 Elasticgraph block.</p>
+<p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
+the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
+dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
+in the d3blocks library.
+In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
+with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
+heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
+by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
+interactive and stand alone. For demonstration purposes, the “bigbang”, “energy” and “stormofswords” dataset can
+be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
+‘source’
+‘target’
+‘weight’</p></li>
+<li><p><strong>group</strong> (<em>list of strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Grouping (and coloring) of the nodes.
+* ‘cluster’ : Colours are based on the community distance clusters.
+* None: All nodes will have the same color (auto generated).</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 250</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>size</strong> (<em>float</em><em>, </em><em>(</em><em>default: 4</em><em>)</em>) – Size of the nodes.</p></li>
+<li><p><strong>hull_offset</strong> (<em>float</em><em>, </em><em>(</em><em>default: 15</em><em>)</em>) – The higher the number the more the clusters will overlap after expanding.</p></li>
+<li><p><strong>single_click_expand</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Nodes are not expanded with a single click.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
+‘d3graph’</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
+‘c://temp//d3graph_demo.html’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
+[None, None] # Full screen
+[1500, 800]</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
+False: Do not open browser-window.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
+False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create force-directed-network (without cluster labels)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show elasticgraph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph with the same properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add cluster labels (no need to do it again because it is the default)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># d3.Elasticgraph.set_node_properties(color=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># After making changes, show the graph again using show()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Blog: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
+<li><p>Gitlab : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph">https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph</a></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.heatmap">
 <span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heatmap.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[720,</span> <span class="pre">720]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this definition"></a></dt>
 <dd><p>Heatmap block.</p>
@@ -391,7 +474,7 @@ and then Pythonized.</p>
 <li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data is an adjacency matrix for which the columns and rows are the names of the variables.</p></li>
 <li><p><strong>color</strong> (<em>Numpy array</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Should be in the same order as the columns and of the input dataframe
 None or ‘cluster’: a clustering approach is used for coloring.</p></li>
-<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em></em>) – <dl class="simple">
+<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – <dl class="simple">
 <dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul>
 <li><p>1 : cells above value &gt;1 are capped.</p></li>
 <li><p>None : cells are colored based on the maximum value in the input data.</p></li>
@@ -399,7 +482,7 @@ None or ‘cluster’: a clustering approach is used for coloring.</p></li>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em></em>) – <dl class="simple">
+<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – <dl class="simple">
 <dt>Color of the recangle when hovering over a cell.</dt><dd><ul>
 <li><p>’red’</p></li>
 <li><p>’black’</p></li>
@@ -450,7 +533,7 @@ False: Do not overwrite destination file but show warning instead.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.imageslider">
-<span class="sig-name descname"><span class="pre">imageslider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_after</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Imageslider</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'imageslider.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">imageslider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_after</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Imageslider</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'imageslider.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this definition"></a></dt>
 <dd><p>Imageslider Block.</p>
 <p>The imageslider allows comparison of two images. This is useful in case there is a before and after state.
 For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
@@ -483,11 +566,8 @@ False: Do not open browser-window.</p></li>
 False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -542,8 +622,8 @@ False: Do not overwrite destination file but show warning instead.</p></li>
 “occupancy”
 “climate”
 “mnist”</p></li>
-<li><p><strong>n</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em><em></em>) – Number of events (samples).</p></li>
-<li><p><strong>c</strong> (<em>int</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em></em>) – Number of classes.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em><em>.</em>) – Number of events (samples).</p></li>
+<li><p><strong>c</strong> (<em>int</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – Number of classes.</p></li>
 <li><p><strong>date_start</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 00:00:00” : start date</p></li>
 <li><p><strong>date_stop</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 23:59:59” : Stop date</p></li>
 </ul>
@@ -691,11 +771,8 @@ A smaller spacing reults in more particles.</p></li>
 <li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite the output html in the destination directory.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -831,7 +908,7 @@ class label.</p>
 <li><p><strong>y1</strong> (<em>numpy array</em>) – Second set of 1d coordinates y-axis.</p></li>
 <li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
 <li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
-<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em> Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
 <li><p><strong>color</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – ‘#ffffff’ : All dots are get the same hex color.
 None: The same color as for c is applied.
 [‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
@@ -969,11 +1046,8 @@ All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
 ‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1011,11 +1085,8 @@ False: Do not open browser.</p></li>
 <li><p><strong>kwargs</strong> (<em>Various</em>) – Other options are possible depending on the chart that is being used.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1164,7 +1235,7 @@ input parameters for the Violin plot that can help to create the most insightful
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>list of String</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the class labels for each datapoint in y.</p></li>
 <li><p><strong>y</strong> (<em>list of float</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the values for the samples.</p></li>
-<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em> Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
 <li><p><strong>color</strong> (<em>list/array of hex colors with same size as y</em>) – ‘#002147’ : All dots/nodes are get the same hex color.
 None: The colors are generated on value using the colormap specified in cmap.
 [‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p></li>
@@ -1273,11 +1344,8 @@ False: Use the d3.node_properties()</p></li>
 <span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">set_chart_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.set_chart_func" title="Permalink to this definition"></a></dt>
 <dd><p>Library compatibiliy checks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>chart function as Object.</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>chart function as Object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1326,11 +1394,8 @@ start.  The returned time will be in the specified format.</p>
 <li><p><strong>writepath</strong> (<em>str.</em>) – Directory to write the file.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>

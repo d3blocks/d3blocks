@@ -48,6 +48,7 @@ Contents
    Timeseries
    Chord
    d3graph
+   elasticgraph
    Sankey
    Heatmap
    MovingBubbles

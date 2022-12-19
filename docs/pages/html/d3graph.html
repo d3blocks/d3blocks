@@ -15,11 +15,12 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Sankey" href="Sankey.html" />
+    <link rel="next" title="Elasticgraph" href="elasticgraph.html" />
     <link rel="prev" title="Chord" href="Chord.html" /> 
 </head>
 
@@ -31,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.7
+                1.1.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -71,6 +72,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
@@ -121,7 +123,7 @@
            <div itemprop="articleBody">
              
   <section id="d3graph">
-<h1>D3graph<a class="headerlink" href="#d3graph" title="Permalink to this headline"></a></h1>
+<h1>D3graph<a class="headerlink" href="#d3graph" title="Permalink to this heading"></a></h1>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p><a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python.</a></p>
@@ -133,7 +135,7 @@
 <hr class="docutils" />
 <span class="target" id="module-d3blocks.d3blocks.D3Blocks.d3graph"></span><p>d3graph block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>d3graph is integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
 The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
 dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
@@ -225,10 +227,8 @@ False: Do not overwrite destination file but show warning instead.</p>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>None.</p>
+<dt class="field-odd">rtype</dt>
+<dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -277,7 +277,7 @@ False: Do not overwrite destination file but show warning instead.</p>
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
 <span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
@@ -297,15 +297,15 @@ False: Do not overwrite destination file but show warning instead.</p>
 </div>
 </section>
 <section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this headline"></a></h2>
+<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading"></a></h2>
 <section id="default">
-<h3>Default<a class="headerlink" href="#default" title="Permalink to this headline"></a></h3>
+<h3>Default<a class="headerlink" href="#default" title="Permalink to this heading"></a></h3>
 <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example1.html" height="800px" width="775px", frameBorder="0"></iframe></section>
 <section id="change-node-properties">
-<h3>Change node properties<a class="headerlink" href="#change-node-properties" title="Permalink to this headline"></a></h3>
+<h3>Change node properties<a class="headerlink" href="#change-node-properties" title="Permalink to this heading"></a></h3>
 <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example2.html" height="800px" width="775px", frameBorder="0"></iframe></section>
 <section id="change-edge-properties">
-<h3>Change Edge properties<a class="headerlink" href="#change-edge-properties" title="Permalink to this headline"></a></h3>
+<h3>Change Edge properties<a class="headerlink" href="#change-edge-properties" title="Permalink to this heading"></a></h3>
 <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="775px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
@@ -319,7 +319,7 @@ False: Do not overwrite destination file but show warning instead.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Chord.html" class="btn btn-neutral float-left" title="Chord" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Sankey.html" class="btn btn-neutral float-right" title="Sankey" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="elasticgraph.html" class="btn btn-neutral float-right" title="Elasticgraph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

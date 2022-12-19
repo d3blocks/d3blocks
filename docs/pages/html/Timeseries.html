@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -31,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.7
+                1.1.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -66,6 +67,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
@@ -116,10 +118,10 @@
            <div itemprop="articleBody">
              
   <section id="module-d3blocks.d3blocks.D3Blocks.timeseries">
-<span id="timeseries"></span><h1>Timeseries<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this headline"></a></h1>
+<span id="timeseries"></span><h1>Timeseries<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this heading"></a></h1>
 <p>Timeseries block.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The TimeSeries can be used in case a date-time element is available, and where the time-wise values
 directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
 brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
@@ -264,7 +266,7 @@ False: Use the d3.node_properties()</p>
 </ul>
 </section>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame for which the index column is the datetime, and the columns are plotted with their column name.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#            Adj Close                      ...    Volume</span>
 <span class="c1">#                 AAPL      AMZN      META  ...      META      TSLA      TWTR</span>
@@ -280,7 +282,7 @@ False: Use the d3.node_properties()</p>
 </div>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this headline"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\timeseries.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
