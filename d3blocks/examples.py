@@ -3,6 +3,18 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Link settings
+d3.chord(df, filepath='chord_demo1.html', color='target')
+d3.chord(df, filepath='chord_demo2.html', color='source')
+d3.chord(df, filepath='chord_demo3.html', color='source-target')
+
+
 # %% Force directed clustered graphs
 # Load library
 from d3blocks import D3Blocks

@@ -184,7 +184,7 @@ def set_edge_properties(df, **kwargs):
         # Get unique source-target to make sure they get the same color.
         if logger is not None: logger.info('Set edge-colors based on unique source-target pairs.')
         uidf = df.groupby(['source', 'target']).size().reset_index()
-        _, df['labels'] = ismember(df[['source', 'target']], uidf[['source', 'target']], method='rows')
+        _, df['labels'] = ismember(df[['source', 'target']].values.astype(str), uidf[['source', 'target']].values.astype(str), method='rows')
         df['color'], _ = set_colors(df, df['labels'].values.astype(str), cmap, c_gradient=None)
 
     # return
