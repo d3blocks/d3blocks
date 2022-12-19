@@ -3,6 +3,39 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Force directed clustered graphs
+# Load library
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Import example
+df = d3.import_example('energy') # 'stormofswords'
+#
+# Create force-directed-network (without cluster labels)
+d3.elasticgraph(df, filepath='Elasticgraph.html', figsize=[700, 700])
+#
+# Show elasticgraph
+d3.Elasticgraph.show()
+# Show original graph with the same properties
+d3.Elasticgraph.D3graph.show()
+#
+# Add cluster labels (no need to do it again because it is the default)
+# d3.Elasticgraph.set_node_properties(color=None)
+#
+# After making changes, show the graph again using show()
+d3.Elasticgraph.show()
+# Show original graph
+d3.Elasticgraph.D3graph.show()
+#
+# Node properties
+d3.Elasticgraph.D3graph.node_properties
+#
+# Node properties
+d3.Elasticgraph.D3graph.edge_properties
+
+
 # %% Create scatter chart
 from d3blocks import D3Blocks
 import numpy as np
@@ -136,32 +169,7 @@ d3.edge_properties['color'].iloc[1]='#000000'
 d3.show()
 
 
-# %% Force directed clustered graphs
-from d3blocks import D3Blocks
 
-# Initialize
-d3 = D3Blocks()
-
-# Load example data
-df = d3.import_example('energy')
-
-# Plot
-d3.elasticgraph(df, filepath='c:/temp/elasticgraph.html', group='cluster', charge=250, showfig=False)
-
-# Show elasticgraph
-d3.Elasticgraph.show()
-# Show original graph
-d3.Elasticgraph.D3graph.show()
-
-# Set clusters to None
-d3.Elasticgraph.D3graph.set_node_properties(color=None)
-# Show elasticgraph
-d3.Elasticgraph.show()
-# Show original graph
-d3.Elasticgraph.D3graph.show()
-
-d3.Elasticgraph.D3graph.edge_properties
-d3.Elasticgraph.D3graph.node_properties
 
 # %% Force directed graphs
 from d3blocks import D3Blocks
