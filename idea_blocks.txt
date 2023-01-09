@@ -6,7 +6,8 @@
 # 2.    Map.
 #       https://d3-graph-gallery.com/graph/bubblemap_buttonControl.html
 #       https://observablehq.com/@ncastaldo/gas-stations-italy
-# 
+#       https://github.com/citrusvanilla/manhattanpopulationexplorer
+#
 # 3.    Network graph in 3D.
 #       Mogelijkheid tot 3d plot maken
 #       https://vasturiano.github.io/3d-force-graph/example/text-links/
