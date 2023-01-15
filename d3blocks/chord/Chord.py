@@ -25,12 +25,13 @@ def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
     config['chart'] ='Chord'
     config['title'] = kwargs.get('title', 'Chord - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'chord.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'chord.html')) if kwargs.get('filepath') is not None else None
     config['figsize'] = kwargs.get('figsize', [900, 900])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'tab20')
     config['fontsize'] = kwargs.get('fontsize', 10)
+    config['notebook'] = kwargs.get('notebook', False)
     # return
     return config
 
@@ -235,7 +236,7 @@ def show(df, **kwargs):
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)
     # Write to HTML
-    write_html(X, config, logger=logger)
+    return write_html(X, config, logger=logger)
 
 
 def write_html(X, config, logger=None):
@@ -267,14 +268,22 @@ def write_html(X, config, logger=None):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.chord', package_path='d3js'))
 
     index_template = jinja_env.get_template('chord.html.j2')
-    index_file = Path(config['filepath'])
+    index_file = config['filepath']
     # index_file.write_text(index_template.render(content))
-    if config['overwrite'] and os.path.isfile(index_file):
-        if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-        os.remove(index_file)
-        time.sleep(0.5)
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write(index_template.render(content))
+
+    # Generate html content
+    html = index_template.render(content)
+    if index_file and (not config['notebook']):
+        
+        if config['overwrite'] and os.path.isfile(index_file):
+            if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
+            os.remove(index_file)
+            time.sleep(0.5)
+
+        with open(index_file, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    return html
 
 
 def get_data_ready_for_d3(df, labels):

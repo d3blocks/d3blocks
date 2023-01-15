@@ -10,7 +10,11 @@ d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy')
 # Link settings
-d3.chord(df, filepath='chord_demo1.html', color='target')
+d3.chord(df, filepath=None, color='target', showfig=False)
+d3.chord(df, filepath=None, color='target', showfig=True)
+d3.chord(df, filepath=None, color='target', notebook=True)
+d3.chord(df, filepath=None, color='target', notebook=False)
+
 d3.chord(df, filepath='chord_demo2.html', color='source')
 d3.chord(df, filepath='chord_demo3.html', color='source-target')
 

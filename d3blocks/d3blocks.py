@@ -529,6 +529,7 @@ class D3Blocks():
               figsize=[900, 900],
               showfig=True,
               overwrite=True,
+              notebook=False,
               reset_properties=True,
               ):
         """Chord block.
@@ -653,7 +654,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Chord', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook)
         # Set node properties
         if reset_properties or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=cmap)
@@ -1713,10 +1714,16 @@ class D3Blocks():
 
         # Create the plot
         if self.chart is not None:
-            self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger, **kwargs)
+            html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger, **kwargs)
 
-        # Open the webbrowser
-        self.showfig(logger=logger)
+        if self.config['notebook']:
+            import IPython
+            IPython.display.display(IPython.display.HTML(html))
+        elif self.config['filepath'] is not None:
+            # Open the webbrowser
+            self.open_browser(logger=logger)
+        else:
+            return html
 
     def _clean(self, clean_config=True, logger=None):
         """Clean previous results to ensure correct working."""
@@ -1731,7 +1738,7 @@ class D3Blocks():
             self.config = {'chart': chart, 'frame': frame, 'curpath': curpath}
 
     # Open the webbrowser
-    def showfig(self, sleep=0.2, logger=None):
+    def open_browser(self, sleep=0.2, logger=None):
         """Open browser to show chart."""
         if self.config['showfig']:
             # Sleeping is required to pevent overlapping windows

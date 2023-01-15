@@ -14,7 +14,7 @@ import colourmap
 import unicodedata
 import os
 import tempfile
-
+from pathlib import Path
 
 # %% Get unique labels
 def set_labels(df, col_labels=None, logger=None):
@@ -80,7 +80,6 @@ def set_path(filepath='d3blocks.html', logger=None):
         filename = 'd3blocks.html'
 
     if (dirname is None) or (dirname==''):
-        # dirname = tempfile.TemporaryDirectory().name
         dirname = os.path.join(tempfile.gettempdir(), 'd3blocks')
 
     if not os.path.isdir(dirname):
@@ -90,7 +89,7 @@ def set_path(filepath='d3blocks.html', logger=None):
     filepath = os.path.abspath(os.path.join(dirname, filename))
     if logger is not None: logger.debug("filepath is set to [%s]" %(filepath))
     # Return
-    return filepath
+    return Path(filepath)
 
 
 def convert_dataframe_dict(X, frame, chart=None, logger=None):
