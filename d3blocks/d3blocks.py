@@ -661,7 +661,7 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, logger=logger)
         # Create the plot
-        self.show()
+        return self.show()
 
     def imageslider(self,
                     img_before,
