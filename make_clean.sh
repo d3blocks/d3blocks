@@ -27,3 +27,4 @@ rm -rf *.css
 rm -rf *.dot
 rm -rf .coverage*
 rm -rf .pkl
+rm -rf .ipynb_checkpoints
