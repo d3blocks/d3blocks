@@ -73,7 +73,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, chart: str = None, frame: bool = True, verbose: str = 20):
+    def __init__(self, chart: str = None, frame: bool = True, verbose: int = 20):
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
@@ -784,6 +784,7 @@ class D3Blocks():
                figsize=[800, 600],
                showfig=True,
                overwrite=True,
+               notebook=False,
                reset_properties=True,
                ):
         """Sankey block.
@@ -893,14 +894,14 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('sankey', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
-        self.show()
+        return self.show()
 
     def movingbubbles(self,
                       df,
@@ -1736,7 +1737,7 @@ class D3Blocks():
             chart = self.config.get('chart', None)
             frame = self.config.get('frame', True)
             curpath = self.config.get('curpath', os.path.dirname(os.path.abspath(__file__)))
-            self.config = {'chart': chart, 'frame': frame, 'curpath': curpath}
+            self.config = {'chart': chart, 'frame': frame, 'curpath': curpath, 'notebook': False}
 
     # Open the webbrowser
     def open_browser(self, sleep=0.2, logger=None):

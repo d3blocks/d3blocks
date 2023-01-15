@@ -272,7 +272,7 @@ def write_html(X, config, logger=None):
     # Generate html content
     html = index_template.render(content)
     write_html_file(config, html, logger)
-
+    # Return html
     return html
 
 

@@ -3,16 +3,31 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Sankey
 from d3blocks import D3Blocks
-
 # Initialize
 d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy')
 # Link settings
-d3.chord(df, filepath=None, color='target', showfig=False)
-d3.chord(df, filepath=None, color='target', showfig=True)
-d3.chord(df, filepath=None, color='target', notebook=True)
+html = d3.sankey(df, filepath=None, notebook=False)
+html = d3.sankey(df, filepath=None, notebook=True)
+html = d3.sankey(df, filepath='./test.html', notebook=False)
+
+# %%
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(verbose=10)
+# Import example
+df = d3.import_example('energy')
+html = d3.chord(df, filepath=None, notebook=True)
+
+# Link settings
+# d3.chord(df, filepath=None, color='target', showfig=False)
+# html = d3.chord(df, filepath=None, showfig=True)
+
+
 d3.chord(df, filepath=None, color='target', notebook=False)
 
 d3.chord(df, filepath='chord_demo2.html', color='source')
@@ -535,6 +550,12 @@ df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state',
 
 # %% Sankey
 from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('energy')
+# Link settings
+html = d3.sankey(df, filepath=None, notebook=False)
 
 # Initialize
 d3 = D3Blocks(chart='Sankey', frame=True)

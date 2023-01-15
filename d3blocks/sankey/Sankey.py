@@ -12,9 +12,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file
 
 
 # %% Set configuration properties
@@ -23,7 +23,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     # Store configurations
     config['chart'] ='sankey'
     config['title'] = kwargs.get('title', 'Sankey - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html')) if kwargs.get('filepath') is not None else None
     config['figsize'] = kwargs.get('figsize', [800, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
@@ -32,6 +32,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
     config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
     config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
+    config['notebook'] = kwargs.get('notebook', False)
     # return
     return config
 
@@ -157,9 +158,9 @@ def show(df, **kwargs):
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)
     # Write to HTML
-    write_html(X, config, logger)
+    return write_html(X, config, logger)
     # Return config
-    return config
+     # return config
 
 
 def write_html(X, config, logger=None):
@@ -210,13 +211,20 @@ def write_html(X, config, logger=None):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.sankey', package_path='d3js'))
 
     index_template = jinja_env.get_template('sankey.html.j2')
-    index_file = Path(config['filepath'])
-    if config['overwrite'] and os.path.isfile(index_file):
-        if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-        os.remove(index_file)
-        time.sleep(0.5)
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write(index_template.render(content))
+
+    # Generate html content
+    html = index_template.render(content)
+    write_html_file(config, html, logger)
+    # Return html
+    return html
+
+    # index_file = Path(config['filepath'])
+    # if config['overwrite'] and os.path.isfile(index_file):
+    #     if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
+    #     os.remove(index_file)
+    #     time.sleep(0.5)
+    # with open(index_file, "w", encoding="utf-8") as f:
+    #     f.write(index_template.render(content))
 
 
 def get_data_ready_for_d3(df, labels):
