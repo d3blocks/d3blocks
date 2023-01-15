@@ -15,6 +15,7 @@ import unicodedata
 import os
 import tempfile
 from pathlib import Path
+import time
 
 # %% Get unique labels
 def set_labels(df, col_labels=None, logger=None):
@@ -284,3 +285,38 @@ def remove_special_chars(df):
         return df
     else:
         return df
+
+def write_html_file(config, html, logger):
+    """Write html file.
+
+    This function writes an HTML file specified in the config dictionary to the file path specified in the 'filepath' key of the config dictionary.
+    If the 'overwrite' key of the config dictionary is set to True and the file already exists, the file will be overwritten.
+    If a logger object is provided, log messages will be output to the logger.
+
+    Parameters
+    ----------
+    config : dict
+        A dictionary containing the following keys:
+            'filepath': (str) The file path to write the HTML file to.
+            'overwrite': (bool) If true, existing file will be overwritten.
+            'notebook': (bool) If true, the file will not be written.
+    html : str
+        A string containing the HTML to be written to the file.
+    logger : logging.Logger, optional
+        A logger object to output log messages (optional)
+
+    Returns
+    -------
+    None
+    """
+
+    index_file = config['filepath']
+    if index_file and (not config['notebook']):
+
+        if config['overwrite'] and os.path.isfile(index_file):
+            if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
+            os.remove(index_file)
+            time.sleep(0.5)
+
+        with open(index_file, "w", encoding="utf-8") as f:
+            f.write(html)

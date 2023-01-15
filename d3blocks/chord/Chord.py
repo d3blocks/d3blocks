@@ -15,9 +15,9 @@ import os
 import time
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file
 
 
 # %% Set configuration properties
@@ -268,20 +268,10 @@ def write_html(X, config, logger=None):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.chord', package_path='d3js'))
 
     index_template = jinja_env.get_template('chord.html.j2')
-    index_file = config['filepath']
-    # index_file.write_text(index_template.render(content))
 
     # Generate html content
     html = index_template.render(content)
-    if index_file and (not config['notebook']):
-        
-        if config['overwrite'] and os.path.isfile(index_file):
-            if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-            os.remove(index_file)
-            time.sleep(0.5)
-
-        with open(index_file, "w", encoding="utf-8") as f:
-            f.write(html)
+    write_html_file(config, html, logger)
 
     return html
 
