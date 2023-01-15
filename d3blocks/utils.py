@@ -74,6 +74,9 @@ def set_path(filepath='d3blocks.html', logger=None):
         Path to graph.
 
     """
+    if filepath is None:
+        return None
+
     dirname, filename = os.path.split(filepath)
     # dirname = os.path.abspath(dirname)
 

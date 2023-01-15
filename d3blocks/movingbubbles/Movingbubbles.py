@@ -20,9 +20,9 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file
 
 
 # %% Set configuration properties
@@ -49,6 +49,7 @@ def set_config(config={}, **kwargs):
     config['cmap'] = kwargs.get('cmap', 'Set1')
     config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     config['columns'] = kwargs.get('columns', {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']})
+    config['notebook'] = kwargs.get('notebook', False)
 
     if config['time_notes'] is None:
         config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
@@ -246,9 +247,7 @@ def show(df, **kwargs):
     config['time_notes'] = json.dumps(config['time_notes'])
 
     # Write to HTML
-    write_html(X, config, logger)
-    # Return config
-    return config
+    return write_html(X, config, logger)
 
 
 def write_html(X, config, logger=None):
@@ -296,14 +295,20 @@ def write_html(X, config, logger=None):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.movingbubbles', package_path='d3js'))
 
     index_template = jinja_env.get_template('movingbubbles.html.j2')
-    index_file = Path(config['filepath'])
-    # index_file.write_text(index_template.render(content))
-    if config['overwrite'] and os.path.isfile(index_file):
-        if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-        os.remove(index_file)
-        time.sleep(0.5)
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write(index_template.render(content))
+    # index_file = Path(config['filepath'])
+    # # index_file.write_text(index_template.render(content))
+    # if config['overwrite'] and os.path.isfile(index_file):
+    #     if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
+    #     os.remove(index_file)
+    #     time.sleep(0.5)
+    # with open(index_file, "w", encoding="utf-8") as f:
+    #     f.write(index_template.render(content))
+
+    # Generate html content
+    html = index_template.render(content)
+    write_html_file(config, html, logger)
+    # Return html
+    return html
 
 
 def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S'):

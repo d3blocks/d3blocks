@@ -13,27 +13,28 @@ import random
 import time
 from typing import List, Union, Tuple
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
-from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
-
-# ###################### DEBUG ONLY ###################
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
-# from utils import remove_quotes, convert_dataframe_dict, set_path
-# #####################################################
+try:
+    import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+    import d3blocks.timeseries.Timeseries as Timeseries
+    import d3blocks.sankey.Sankey as Sankey
+    import d3blocks.imageslider.Imageslider as Imageslider
+    import d3blocks.chord.Chord as Chord
+    import d3blocks.scatter.Scatter as Scatter
+    import d3blocks.violin.Violin as Violin
+    import d3blocks.particles.Particles as Particles
+    from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
+except:
+    # ###################### DEBUG ONLY ###################
+    import movingbubbles.Movingbubbles as Movingbubbles
+    import timeseries.Timeseries as Timeseries
+    import sankey.Sankey as Sankey
+    import imageslider.Imageslider as Imageslider
+    import chord.Chord as Chord
+    import scatter.Scatter as Scatter
+    import violin.Violin as Violin
+    import particles.Particles as Particles
+    from utils import remove_quotes, convert_dataframe_dict, set_path
+    # #####################################################
 
 from elasticgraph import Elasticgraph
 import d3graph as d3network
@@ -102,6 +103,7 @@ class D3Blocks():
                   filepath='particles.html',
                   figsize=[900, 200],
                   showfig=True,
+                  notebook=False,
                   overwrite=True):
         """Particles block.
 
@@ -182,12 +184,15 @@ class D3Blocks():
         self.config['collision'] = collision
         self.config['fontsize'] = '"' + str(fontsize) + 'px"'
         self.config['spacing'] = spacing
+        self.config['notebook'] = notebook
         self.chart = eval('Particles')
 
         # Create the plot
-        Particles.show(text, self.config)
+        html = Particles.show(text, self.config, logger)
         # Open the webbrowser
-        self.showfig(logger=logger)
+        # self.open_browser(logger=logger)
+        # Display the chart
+        return self.display(html)
 
     def violin(self,
                x,
@@ -206,8 +211,8 @@ class D3Blocks():
                figsize=[None, None],
                showfig=True,
                overwrite=True,
-               reset_properties=True,
-               ):
+               notebook=False,
+               reset_properties=True):
         """Violin block.
 
         Description
@@ -329,14 +334,14 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Violin', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook)
         # Remvove quotes from source-target node_properties
         self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(np.unique(self.edge_properties['x'].values), cmap=self.config['cmap'])
         # Create the plot
-        self.show()
+        return self.show()
 
     def scatter(self,
                 x,
@@ -349,7 +354,7 @@ class D3Blocks():
                 color='#002147',
                 c_gradient=None,
                 opacity=0.8,
-                stroke='#000000',
+                stroke='#ffffff',
                 tooltip=None,
                 cmap='tab20',
                 scale=False,
@@ -362,6 +367,7 @@ class D3Blocks():
                 figsize=[900, 600],
                 showfig=True,
                 overwrite=True,
+                notebook=False,
                 reset_properties=True,
                 ):
         """Scatterplot block.
@@ -508,7 +514,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Scatter', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook)
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger)
         # Set node properties
@@ -516,7 +522,7 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(x, y, x1=x1, y1=y1, x2=x2, y2=y2, color=color, size=size, tooltip=tooltip, opacity=opacity, c_gradient=c_gradient, stroke=stroke, cmap=self.config['cmap'], scale=self.config['scale'], logger=logger)
         # Create the plot
-        self.show()
+        return self.show()
 
     def chord(self,
               df,
@@ -673,6 +679,7 @@ class D3Blocks():
                     filepath='imageslider.html',
                     figsize=[None, None],
                     showfig=True,
+                    notebook=False,
                     overwrite=True):
         """Imageslider Block.
 
@@ -764,15 +771,19 @@ class D3Blocks():
         self.config['title'] = title
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
+        self.config['notebook'] = notebook
         self.config['figsize'] = figsize
         self.chart = eval('Imageslider')
+        # if self.config['filepath'] is None: raise Exception('filepath can not be None.')
 
         # Preprocessing
         self.config = Imageslider.preprocessing(self.config, logger=logger)
         # Create the plot
-        Imageslider.show(self.config, logger)
+        html = Imageslider.show(self.config, logger)
         # Open the webbrowser
-        self.showfig(logger=logger)
+        # self.open_browser(logger=logger)
+        # Display the chart
+        return self.display(html)
 
     def sankey(self,
                df,
@@ -923,6 +934,7 @@ class D3Blocks():
                       filepath='movingbubbles.html',
                       showfig=True,
                       overwrite=True,
+                      notebook=False,
                       reset_properties=True,
                       ):
         """MovingBubbles block.
@@ -1050,14 +1062,14 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_time=reset_time, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_time=reset_time, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
         # Set edge properties
         self.set_edge_properties(df, state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
-        self.show()
+        return self.show()
 
     def timeseries(self,
                    df,
@@ -1072,6 +1084,7 @@ class D3Blocks():
                    figsize=[1200, 500],
                    showfig=True,
                    overwrite=True,
+                   notebook=False,
                    reset_properties=True,
                    ):
         """Timeseries block.
@@ -1178,16 +1191,18 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df.columns.values, cmap=self.config['cmap'], whitelist=self.config['whitelist'], datetime=self.config['datetime'])
         # Set edge properties
         self.set_edge_properties(df, dt_format=self.config['dt_format'], datetime=self.config['datetime'], logger=logger)
         # Create the plot
-        self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
+        html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Open the webbrowser
-        self.showfig(logger=logger)
+        # self.open_browser(logger=logger)
+        # Display the chart
+        return self.display(html)
 
     def heatmap(self,
                 df,
@@ -1200,6 +1215,7 @@ class D3Blocks():
                 filepath='heatmap.html',
                 figsize=[720, 720],
                 showfig=True,
+                notebook=False,
                 overwrite=True):
         """Heatmap block.
 
@@ -1285,6 +1301,7 @@ class D3Blocks():
         self.config['overwrite'] = overwrite
         self.config['vmax'] = vmax
         self.config['stroke'] = stroke
+        self.config['notebook'] = notebook
 
         # Copy of data
         df = df.copy()
@@ -1300,20 +1317,23 @@ class D3Blocks():
                           title=title,
                           description=self.config['description'],
                           showfig=self.config['showfig'])
+        # Display the chart
+        # return self.display(html)
 
     def d3graph(self,
                 df,
                 color='cluster',
                 size=10,
+                scaler='zscore',
                 title='D3graph - D3blocks',
                 filepath='d3graph.html',
                 figsize=[1500, 800],
-                showfig=True,
-                overwrite=True,
                 collision=0.5,
                 charge=400,
                 slider=[None, None],
-                scaler='zscore'):
+                notebook=False,
+                showfig=True,
+                overwrite=True):
         """d3graph block.
 
         Description
@@ -1430,6 +1450,7 @@ class D3Blocks():
         self.config['collision'] = collision
         self.config['charge'] = -abs(charge)
         self.config['slider'] = slider
+        self.config['notebook'] = notebook
 
         # Copy of data
         df = df.copy()
@@ -1443,21 +1464,24 @@ class D3Blocks():
         self.D3graph.graph(adjmat, color=color, size=size, scaler=scaler)
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        # Display the chart
+        # return self.display(html)
 
     def elasticgraph(self,
                   df,
+                  scaler='zscore',
                   group='cluster',
                   title='Elasticgraph - D3blocks',
                   filepath='Elasticgraph.html',
                   figsize=[None, None],
-                  showfig=False,
-                  overwrite=True,
                   collision=0.5,
                   charge=250,
                   size=4,
                   hull_offset=15,
                   single_click_expand=False,
-                  scaler='zscore'):
+                  notebook=False,
+                  showfig=False,
+                  overwrite=True):
         """D3 Elasticgraph block.
 
         Description
@@ -1570,6 +1594,7 @@ class D3Blocks():
         self.config['size'] = size
         self.config['hull_offset'] = hull_offset
         self.config['single_click_expand'] = single_click_expand
+        self.config['notebook'] = notebook
 
         # Copy of data
         df = df.copy()
@@ -1583,6 +1608,8 @@ class D3Blocks():
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
         # Open the webbrowser
         self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        # Display the chart
+        # return self.display(html)
 
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
@@ -1717,14 +1744,21 @@ class D3Blocks():
         if self.chart is not None:
             html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger, **kwargs)
 
+        # Display the chart
+        return self.display(html)
+
+    def display(self, html):
+        """Display."""
         if self.config['notebook']:
             import IPython
-            logger.debug('Display in notebook using IPython.')
+            logger.info('Display in notebook using IPython.')
             IPython.display.display(IPython.display.HTML(html))
         elif self.config['filepath'] is not None:
             # Open the webbrowser
+            logger.info('Display in browser.')
             self.open_browser(logger=logger)
         else:
+            logger.info('Nothing to display when filepath is None and notebook is False. Return HTML.')
             return html
 
     def _clean(self, clean_config=True, logger=None):

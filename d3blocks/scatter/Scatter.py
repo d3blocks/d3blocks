@@ -16,9 +16,9 @@ import os
 import time
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path, update_config
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file
 
 
 # %% Set configuration properties
@@ -39,6 +39,7 @@ def set_config(config={}, **kwargs):
     config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)'])
     config['color_background'] = kwargs.get('color_background', '#ffffff')
     config['reset_properties'] = kwargs.get('reset_properties', True)
+    config['notebook'] = kwargs.get('notebook', False)
     # Return
     return config
 
@@ -290,7 +291,7 @@ def show(df, **kwargs):
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
 
     # Write to HTML
-    write_html(X, config, logger=logger)
+    return write_html(X, config, logger=logger)
 
 
 def write_html(X, config, logger=None):
@@ -335,14 +336,21 @@ def write_html(X, config, logger=None):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.scatter', package_path='d3js'))
 
     index_template = jinja_env.get_template('scatter.html.j2')
-    index_file = Path(config['filepath'])
-    # index_file.write_text(index_template.render(content))
-    if config['overwrite'] and os.path.isfile(index_file):
-        if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-        os.remove(index_file)
-        time.sleep(0.5)
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write(index_template.render(content))
+
+    # index_file = Path(config['filepath'])
+    # # index_file.write_text(index_template.render(content))
+    # if config['overwrite'] and os.path.isfile(index_file):
+    #     if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
+    #     os.remove(index_file)
+    #     time.sleep(0.5)
+    # with open(index_file, "w", encoding="utf-8") as f:
+    #     f.write(index_template.render(content))
+
+    # Generate html content
+    html = index_template.render(content)
+    write_html_file(config, html, logger)
+    # Return html
+    return html
 
 
 def get_data_ready_for_d3(df):

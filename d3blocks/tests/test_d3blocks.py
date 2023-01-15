@@ -39,6 +39,17 @@ class Testd3blocks(unittest.TestCase):
         # Link settings
         d3.sankey(df, link={"color": "source-target"})
 
+        # Initialize
+        d3 = D3Blocks()
+        df = d3.import_example('energy')
+        html = d3.sankey(df, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.sankey(df, filepath=None, notebook=True)
+        assert html is None
+        html = d3.sankey(df, filepath='./test.html', notebook=False)
+        assert html is None
+
+
     def test_d3graph(self):
         # Initialize
         d3 = D3Blocks()
@@ -105,15 +116,33 @@ class Testd3blocks(unittest.TestCase):
         assert np.all(d3.edge_properties['color']=='#f0f0f0')
         d3.show(showfig=True, filepath='chord.html')
 
+        d3 = D3Blocks()
+        df = d3.import_example('energy')
+        html = d3.chord(df, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.chord(df, filepath=None, notebook=True)
+        assert html is None
+        html = d3.chord(df, filepath='test.html', notebook=False)
+        assert html is None
+
     def test_timeseries(self):
         # Import library.
-        from d3blocks import D3Blocks
         # Initialize and set the datetime format
         d3 = D3Blocks()
         # Import climate dataset
         df = d3.import_example('climate')
         # Create the timeseries chart.
         d3.timeseries(df, datetime='date', fontsize=10, dt_format='%Y-%m-%d')
+
+        d3 = D3Blocks()
+        df = d3.import_example('climate')
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=False)
+        assert html is not None
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=True)
+        assert html is None
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath='./test.html', notebook=False)
+        assert html is None
+        
 
     def test_imageslider(self):
         # Initialize
@@ -137,6 +166,16 @@ class Testd3blocks(unittest.TestCase):
         d3.imageslider(img_before_url, img_after_path, showfig=False)
         d3.imageslider(img_before_X, img_before_url, showfig=False)
         d3.imageslider(img_before_path, img_after_X, showfig=False)
+
+        # Initialize
+        d3 = D3Blocks()
+        img_before, img_after = d3.import_example('southern_nebula_internet')
+        html = d3.imageslider(img_before, img_after, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.imageslider(img_before, img_after, filepath=None, notebook=True)
+        assert html is None
+        html = d3.imageslider(img_before, img_after, filepath='test.html', notebook=False)
+        assert html is None
 
 
     def test_scatter(self):
@@ -162,7 +201,16 @@ class Testd3blocks(unittest.TestCase):
                    tooltip=tooltip,       # Tooltip
                    cmap='tab20',          # Colormap in case strings are given for "c" as input
                    filepath='scatter_demo.html')
-    
+
+        d3 = D3Blocks()
+        df = d3.import_example('cancer')
+        html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=True)
+        assert html is None
+        html = d3.scatter(df['x'].values, df['y'].values, filepath='./test.html', notebook=False)
+        assert html is None
+
 
     def test_violin(self):
         # Initialize
@@ -181,11 +229,32 @@ class Testd3blocks(unittest.TestCase):
                   figsize=[None, None],   # Figure size is automatically determined.
                   filepath='violine_demo.html')
 
+        # Violin
+        d3 = D3Blocks()
+        df = d3.import_example('cancer')
+        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=True)
+        assert html is None
+        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath='./test.html', notebook=False)
+        assert html is None
+
     def test_particles(self):
         # Initialize
         d3 = D3Blocks()
         # Make particles
         d3.particles('D3Blocks', collision=0.05, spacing=10, figsize=[1200, 500])
+
+        # Initialize
+        d3 = D3Blocks()
+        df = d3.import_example('energy')
+        html = d3.particles('D3blocks', filepath=None, notebook=False)
+        assert html is not None
+        html = d3.particles('D3blocks', filepath=None, notebook=True)
+        assert html is None
+        html = d3.particles('D3blocks', filepath='test.html', notebook=False)
+        assert html is None
+        
 
     def test_movingbubbles(self):
         # Set color scheme
@@ -194,3 +263,13 @@ class Testd3blocks(unittest.TestCase):
         df = d3.import_example('random_time', n=10000, c=500, date_start="1-1-2000 00:10:05", date_stop="1-1-2001 23:59:59")
         # Make the moving bubbles chart.
         d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+
+        d3 = D3Blocks()
+        df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
+        assert html is None
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False)
+        assert html is None
+        

@@ -3,16 +3,106 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
-# %% Sankey
+# %% Notebook examples
+
+# d3graph
+# elasticgraph
+# heatmap
+
+
+# Violin
 from d3blocks import D3Blocks
-# Initialize
 d3 = D3Blocks()
-# Import example
+df = d3.import_example('cancer')
+html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=False)
+assert html is not None
+html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=True)
+assert html is None
+html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath='./test.html', notebook=False)
+assert html is None
+
+
+# Timeseries
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('climate')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=False)
+assert html is not None
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=True)
+assert html is None
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath='./test.html', notebook=False)
+assert html is None
+
+# Scatter
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('cancer')
+html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=False)
+assert html is not None
+html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=True)
+assert html is None
+html = d3.scatter(df['x'].values, df['y'].values, filepath='./test.html', notebook=False)
+assert html is None
+
+# Sankey
+from d3blocks import D3Blocks
+d3 = D3Blocks()
 df = d3.import_example('energy')
-# Link settings
 html = d3.sankey(df, filepath=None, notebook=False)
+assert html is not None
 html = d3.sankey(df, filepath=None, notebook=True)
+assert html is None
 html = d3.sankey(df, filepath='./test.html', notebook=False)
+assert html is None
+
+
+# Particles
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('energy')
+html = d3.particles('D3blocks', filepath=None, notebook=False)
+assert html is not None
+html = d3.particles('D3blocks', filepath=None, notebook=True)
+assert html is None
+html = d3.particles('D3blocks', filepath='test.html', notebook=False)
+assert html is None
+
+
+# Movingbubbles
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False)
+assert html is not None
+html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
+assert html is None
+html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False)
+assert html is None
+
+
+# Imageslider
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+img_before, img_after = d3.import_example('southern_nebula_internet')
+html = d3.imageslider(img_before, img_after, filepath=None, notebook=False)
+assert html is not None
+html = d3.imageslider(img_before, img_after, filepath=None, notebook=True)
+assert html is None
+html = d3.imageslider(img_before, img_after, filepath='test.html', notebook=False)
+assert html is None
+
+# Chord
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('energy')
+html = d3.chord(df, filepath=None, notebook=False)
+assert html is not None
+html = d3.chord(df, filepath=None, notebook=True)
+assert html is None
+html = d3.chord(df, filepath='test.html', notebook=False)
+assert html is None
+
+
 
 # %%
 from d3blocks import D3Blocks

@@ -14,9 +14,9 @@ import os
 import time
 import re
 try:
-    from .. utils import set_path
+    from .. utils import set_path, write_html_file
 except:
-    from utils import set_path
+    from utils import set_path, write_html_file
 
 
 # %% Set configuration properties
@@ -31,12 +31,18 @@ def set_config(config, logger=None):
     config['scale']=True
     config['colorscale']=-1
     config['background']='#000000'
+    config['notebook'] = True
     return config
 
 
 # %% Preprocessing
 def preprocessing(config, logger=None):
     """Preprocessing."""
+    filepath_was_None = False
+    if config['filepath'] is None:
+        config['filepath'] = set_path('imageslider.html')
+        filepath_was_None = True
+
     dirname, _ = os.path.split(config['filepath'])
     # Only load cv2 if requied
     # if (config['colorscale']>=0) and config['scale'] and (config['figsize'] is not None) and (config['figsize'][1] is not None):
@@ -65,7 +71,8 @@ def preprocessing(config, logger=None):
 
     config['alt_before'] = os.path.basename(config['img_before'])
     config['alt_after'] = os.path.basename(config['img_after'])
-
+    
+    if filepath_was_None: config['filepath']=None
     return config
 
 # %% Check url
@@ -99,7 +106,7 @@ def show(config, logger):
     img_before = config['img_before']
     img_after = config['img_after']
     # Write to HTML
-    write_html(img_before, img_after, config, logger)
+    return write_html(img_before, img_after, config, logger)
 
 
 def write_html(img_before, img_after, config, logger):
@@ -139,14 +146,20 @@ def write_html(img_before, img_after, config, logger):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.imageslider', package_path='d3js'))
 
     index_template = jinja_env.get_template('imageslider.html.j2')
-    index_file = Path(config['filepath'])
-    # index_file.write_text(index_template.render(content))
-    if config['overwrite'] and os.path.isfile(index_file):
-        logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-        os.remove(index_file)
-        time.sleep(0.5)
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write(index_template.render(content))
+    # index_file = Path(config['filepath'])
+    # # index_file.write_text(index_template.render(content))
+    # if config['overwrite'] and os.path.isfile(index_file):
+    #     logger.info('File already exists and will be overwritten: [%s]' %(index_file))
+    #     os.remove(index_file)
+    #     time.sleep(0.5)
+    # with open(index_file, "w", encoding="utf-8") as f:
+    #     f.write(index_template.render(content))
+
+    # Generate html content
+    html = index_template.render(content)
+    write_html_file(config, html, logger)
+    # Return html
+    return html
 
 
 # %% Scaling

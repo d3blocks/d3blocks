@@ -23,7 +23,8 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     # Store configurations
     config['chart'] ='sankey'
     config['title'] = kwargs.get('title', 'Sankey - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html')) if kwargs.get('filepath') is not None else None
+    # config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html')) if kwargs.get('filepath') is not None else None
+    config['filepath'] = set_path(kwargs.get('filepath'))
     config['figsize'] = kwargs.get('figsize', [800, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
@@ -159,8 +160,6 @@ def show(df, **kwargs):
     X = get_data_ready_for_d3(df, node_properties)
     # Write to HTML
     return write_html(X, config, logger)
-    # Return config
-     # return config
 
 
 def write_html(X, config, logger=None):
@@ -217,14 +216,6 @@ def write_html(X, config, logger=None):
     write_html_file(config, html, logger)
     # Return html
     return html
-
-    # index_file = Path(config['filepath'])
-    # if config['overwrite'] and os.path.isfile(index_file):
-    #     if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-    #     os.remove(index_file)
-    #     time.sleep(0.5)
-    # with open(index_file, "w", encoding="utf-8") as f:
-    #     f.write(index_template.render(content))
 
 
 def get_data_ready_for_d3(df, labels):

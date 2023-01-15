@@ -12,9 +12,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import set_path
+    from .. utils import set_path, write_html_file
 except:
-    from utils import set_path
+    from utils import set_path, write_html_file
 
 
 # %% Set configuration properties
@@ -32,10 +32,11 @@ def set_config(config, logger=None):
     config['spacing']=8
     config['cmap']='Turbo'
     config['background']='#000000'
+    config['notebook'] = False
     return config
 
 
-def show(text, config):
+def show(text, config, logger):
     """Build and show the graph.
 
     Parameters
@@ -52,10 +53,10 @@ def show(text, config):
 
     """
     # Write to HTML
-    write_html(text, config)
+    return write_html(text, config, logger)
 
 
-def write_html(X, config):
+def write_html(X, config, logger):
     """Write html.
 
     Parameters
@@ -89,11 +90,18 @@ def write_html(X, config):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.particles', package_path='d3js'))
 
     index_template = jinja_env.get_template('particles.html.j2')
-    index_file = Path(config['filepath'])
-    # index_file.write_text(index_template.render(content))
-    if config['overwrite'] and os.path.isfile(index_file):
-        print('File already exists and will be overwritten: [%s]' %(index_file))
-        os.remove(index_file)
-        time.sleep(0.5)
-    with open(index_file, "w", encoding="utf-8") as f:
-        f.write(index_template.render(content))
+
+    # index_file = Path(config['filepath'])
+    # # index_file.write_text(index_template.render(content))
+    # if config['overwrite'] and os.path.isfile(index_file):
+    #     print('File already exists and will be overwritten: [%s]' %(index_file))
+    #     os.remove(index_file)
+    #     time.sleep(0.5)
+    # with open(index_file, "w", encoding="utf-8") as f:
+    #     f.write(index_template.render(content))
+
+    # Generate html content
+    html = index_template.render(content)
+    write_html_file(config, html, logger)
+    # Return html
+    return html
