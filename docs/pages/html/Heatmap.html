@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.9
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -186,7 +186,9 @@ None or ‘cluster’: a clustering approach is used for coloring.</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
 <dd class="field-odd"><p>File path to save the output.
-‘c://temp//heatmap_demo.html’</p>
+Temporarily path: ‘d3blocks.html’
+Relative path: ‘./d3blocks.html’
+Absolute path: ‘c://temp//d3blocks.html’</p>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
@@ -204,6 +206,13 @@ False: Do not open browser-window.</p>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">param notebook</dt>
+<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
+False: Do not use IPython.</p>
+</dd>
+<dt class="field-even">type notebook</dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
 <dd class="field-odd"><p>True: Overwrite the html in the destination directory.

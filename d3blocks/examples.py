@@ -9,7 +9,6 @@
 # elasticgraph
 # heatmap
 
-
 # Violin
 from d3blocks import D3Blocks
 d3 = D3Blocks()

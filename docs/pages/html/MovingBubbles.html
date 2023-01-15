@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.1.9
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -239,7 +239,9 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 </dd>
 <dt class="field-odd">param filepath</dt>
 <dd class="field-odd"><p>File path to save the output.
-‘c://temp//Movingbubbles_demo.html’</p>
+Temporarily path: ‘d3blocks.html’
+Relative path: ‘./d3blocks.html’
+Absolute path: ‘c://temp//d3blocks.html’</p>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
@@ -264,6 +266,13 @@ False: Do not overwrite destination file but show warning instead.</p>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">param notebook</dt>
+<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
+False: Do not use IPython.</p>
+</dd>
+<dt class="field-even">type notebook</dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param reset_properties</dt>
 <dd class="field-odd"><p>True: Reset the node_properties at each run.
