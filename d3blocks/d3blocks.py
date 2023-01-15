@@ -1718,6 +1718,7 @@ class D3Blocks():
 
         if self.config['notebook']:
             import IPython
+            logger.debug('Display in notebook using IPython.')
             IPython.display.display(IPython.display.HTML(html))
         elif self.config['filepath'] is not None:
             # Open the webbrowser
@@ -1750,6 +1751,7 @@ class D3Blocks():
                 webbrowser.open(file_location, new=2)
             else:
                 if logger is not None: logger.info('File not found: [%s]' %(file_location))
+            logger.debug('Open browser: %s' %(file_location))
 
     @staticmethod
     def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
