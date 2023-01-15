@@ -136,12 +136,19 @@ class D3Blocks():
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
-            File path to save the output
+            File path to save the output.
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML content.
         figsize : tuple, (default: (800, 600))
             Size of the figure in the browser, [width, height].
         showfig : bool, (default: True)
             Open the window to show the particles.
-        overwrite : bool, (default: True)
+        notebook : bool
+            True: Use IPython to show chart in notebooks.
+            False: Do not use IPython.
+    overwrite : bool, (default: True)
             Overwrite the output html in the destination directory.
 
         Returns
@@ -259,7 +266,10 @@ class D3Blocks():
             'Violin Chart'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//Violin.html'
+            Temporarily path: 'Violin.html'
+            Relative path: './Violin.html'
+            Absolute path: 'c://temp//Violin.html'
+            None: Return HTML content.
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [None, None]: The width is auto-determined based on the #labels.
@@ -269,6 +279,9 @@ class D3Blocks():
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         reset_properties : bool, (default: True)
             True: Reset the node_properties at each run.
             False: Use the d3.node_properties()
@@ -427,7 +440,9 @@ class D3Blocks():
             'Scatterplot'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//Scatter_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 600]
@@ -437,6 +452,9 @@ class D3Blocks():
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         reset_properties : bool, (default: True)
             True: Reset the node_properties at each run.
             False: Use the d3.node_properties()
@@ -579,7 +597,9 @@ class D3Blocks():
             'Chord'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//Chord_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 900]
@@ -589,6 +609,9 @@ class D3Blocks():
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         reset_properties : bool, (default: True)
             True: Reset the node_properties at each run.
             False: Use the d3.node_properties()
@@ -714,13 +737,18 @@ class D3Blocks():
             'Imageslider'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//imageslider_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 900]
         showfig : bool, (default: True)
             True: Open browser-window.
             False: Do not open browser-window.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
@@ -836,7 +864,9 @@ class D3Blocks():
             'Sankey'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//Sankey_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [800, 600]
@@ -846,6 +876,9 @@ class D3Blocks():
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         reset_properties : bool, (default: True)
             True: Reset the node_properties at each run.
             False: Use the d3.node_properties()
@@ -991,7 +1024,9 @@ class D3Blocks():
             'Movingbubbles'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//Movingbubbles_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [780, 800]
@@ -1001,6 +1036,9 @@ class D3Blocks():
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         reset_properties : bool, (default: True)
             True: Reset the node_properties at each run.
             False: Use the d3.node_properties()
@@ -1119,7 +1157,9 @@ class D3Blocks():
             'Timeseries'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//Timeseries_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [1200, 500]
@@ -1129,6 +1169,9 @@ class D3Blocks():
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         reset_properties : bool, (default: True)
             True: Reset the node_properties at each run.
             False: Use the d3.node_properties()
@@ -1251,13 +1294,18 @@ class D3Blocks():
             'Heatmap'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//heatmap_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 900]
         showfig : bool, (default: True)
             True: Open browser-window.
             False: Do not open browser-window.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
@@ -1377,13 +1425,18 @@ class D3Blocks():
             'd3graph'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//d3graph_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [1500, 800]
         showfig : bool, (default: True)
             True: Open browser-window.
             False: Do not open browser-window.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
@@ -1523,7 +1576,9 @@ class D3Blocks():
             'd3graph'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            'c://temp//d3graph_demo.html'
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [None, None] # Full screen
@@ -1531,6 +1586,9 @@ class D3Blocks():
         showfig : bool, (default: True)
             True: Open browser-window.
             False: Do not open browser-window.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
@@ -1711,11 +1769,17 @@ class D3Blocks():
             Size of the figure in the browser, [height, width].
         title : String, (default: None)
             Title of the figure.
-        filepath : String
+        filepath : String, (Default: user temp directory)
             File path to save the output.
+            Temporarily path: 'd3blocks.html'
+            Relative path: './d3blocks.html'
+            Absolute path: 'c://temp//d3blocks.html'
         showfig : bool
             True: Open the browser and show chart.
             False: Do not open browser.
+        notebook : bool
+            True: Use IPython to show chart in notebooks.
+            False: Do not use IPython.
         kwargs : Various
             Other options are possible depending on the chart that is being used.
 
@@ -1755,7 +1819,6 @@ class D3Blocks():
             IPython.display.display(IPython.display.HTML(html))
         elif self.config['filepath'] is not None:
             # Open the webbrowser
-            logger.info('Display in browser.')
             self.open_browser(logger=logger)
         else:
             logger.info('Nothing to display when filepath is None and notebook is False. Return HTML.')
@@ -1786,7 +1849,7 @@ class D3Blocks():
                 webbrowser.open(file_location, new=2)
             else:
                 if logger is not None: logger.info('File not found: [%s]' %(file_location))
-            logger.debug('Open browser: %s' %(file_location))
+            logger.info('Open browser: %s' %(file_location))
 
     @staticmethod
     def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):

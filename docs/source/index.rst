@@ -9,7 +9,7 @@
 D3Blocks builts on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code.
 
 .. tip::
-	`Medium Blog: D3Blocks: The Python library to create stand-alone and interactive D3 charts. <https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7>`_
+	`Medium Blog: D3Blocks: The Python library to create stand-alone and interactive D3 charts. <https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4>`_
 
 
 .. |fig1| image:: ../figs/summary.png
