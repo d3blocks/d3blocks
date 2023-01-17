@@ -3,6 +3,21 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+import pandas as pd
+import numpy as np
+
+# %% Matrix
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))
+d3.matrix(df, filepath='c:/temp/matrix/matrix.html', cmap='interpolateGreens')
+
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('stormofswords')
+df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+d3.matrix(df, filepath='c:/temp/matrix/matrix.html', cmap='interpolateGreens', vmax=20, figsize=[1000, 800])
+
 # %% Heatmap
 from d3blocks import D3Blocks
 

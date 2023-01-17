@@ -1427,6 +1427,11 @@ class D3Blocks():
         * https://erdogant.github.io/clusteval/
 
         """
+        if len(df.columns.unique())!=len(df.columns):
+            logger.warning('[Input data should contain unique column names otherwise d3js randomly removes the non-unique ones.')
+        if len(df.index.unique())!=len(df.index):
+            logger.warning('Input data should contain unique index names otherwise d3js randomly removes the non-unique ones.')
+
         # Cleaning
         adjmat = remove_quotes(df)
         df = self.adjmat2vec(adjmat)
@@ -1441,7 +1446,128 @@ class D3Blocks():
         # Color on cluster labels
         self.node_properties = self.chart.color_on_clusterlabel(adjmat, df, self.node_properties, self.config, logger)
         # Set edge properties
-        html = self.chart.set_properties(df, self.config, self.node_properties, logger)
+        html = self.chart.set_properties_heatmap(df, self.config, self.node_properties, logger)
+        # Display the chart
+        return self.display(html)
+
+    def matrix(self,
+                df,
+                scale=False,
+                stroke='red',
+                description=None,
+                vmin=None,
+                vmax=None,
+                cmap='interpolateInferno',
+                fontsize=10,
+                title='Matrix - D3blocks',
+                figsize=[700, 500],
+                showfig=True,
+                filepath='matrix.html',
+                overwrite=True,
+                notebook=False,
+                reset_properties=True,
+                ):
+        """Matrix block.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data. The index and column names are used for the row/column naming.
+        scale : Bool, (default: True).
+            Scale data in range Scaling in range by X*(100/max(X)).
+                * True: Scale the values.
+                * False: Do not scale.
+        stroke : String, (default: 'red').
+            Color of the recangle when hovering over a cell.
+                * 'red'
+                * 'black'
+        description : String.
+            Description text of the heatmap.
+        vmax : Bool, (default: 100).
+            Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
+                * 1 : cells above value >1 are capped.
+            None : cells are colored based on the maximum value in the input data.
+        cmap : String, (default: 'interpolateInferno').
+            The colormap scheme. See references for more schmes.
+                * 'interpolateInferno'
+                * 'interpolatePRGn'
+                * 'interpolateBlues'
+                * 'interpolateGreens'
+                * 'interpolateTurbo'
+                * 'interpolateViridis'
+                * 'interpolateInferno'
+                * 'interpolateRainbow'
+                * 'interpolateSinebow'
+        fontsize : int, (default: 10).
+            Font size for the X and Y labels.
+        title : String, (default: None)
+            Title of the figure.
+                * 'Heatmap'
+        figsize : tuple
+            Size of the figure in the browser, [width, height].
+                * [800, 800]
+        showfig : bool, (default: True)
+                * True: Open browser-window.
+                * False: Do not open browser-window.
+        filepath : String, (Default: user temp directory)
+            File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
+        overwrite : bool, (default: True)
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
+        reset_properties : bool, (default: True)
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
+
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))
+        >>> #
+        >>> # Plot
+        >>> d3.matrix(df)
+        >>> #
+        >>> d3.matrix(df,
+                      vmin=1,
+                      fontsize=10,
+                      title='D3blocks Matrix',
+                      filepath='d3blocks_matrix.html',
+                      figsize=[600, 300],
+                      cmap='interpolateGreens')
+
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
+        * https://github.com/d3/d3-scale-chromatic
+
+        """
+        if len(df.columns.unique())!=len(df.columns):
+            logger.warning('Input data should contain unique column names otherwise d3js randomly removes the non-unique ones.')
+        if len(df.index.unique())!=len(df.index):
+            logger.warning('Input data should contain unique index names otherwise d3js randomly removes the non-unique ones.')
+
+        # Cleaning
+        adjmat = remove_quotes(df)
+        df = self.adjmat2vec(adjmat)
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Heatmap', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, description=description, vmax=vmax, vmin=vmin, stroke=stroke, cmap=cmap, scale=scale, fontsize=fontsize)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap='Set2')
+        # Set edge properties
+        html = self.chart.set_properties_matrix(df, self.config, self.node_properties, logger)
         # Display the chart
         return self.display(html)
 

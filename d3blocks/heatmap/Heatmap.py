@@ -9,15 +9,14 @@ License     : GPL3
 from ismember import ismember
 import colourmap
 import numpy as np
-from jinja2 import Environment, PackageLoader
 import os
 from shutil import copyfile
 from clusteval import clusteval
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file
+    from .. utils import set_path, set_labels, write_html_file
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file
+    from utils import set_path, set_labels, write_html_file
 
 
 # %% Set configuration properties
@@ -30,13 +29,23 @@ def set_config(config={}, **kwargs):
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['classlabel'] = kwargs.get('classlabel', 'cluster')
-    config['description'] = kwargs.get('description', None)
+    config['description'] = kwargs.get('description', '')
     config['vmax'] = kwargs.get('vmax', None)
+    config['vmin'] = kwargs.get('vmin', None)
     config['stroke'] = kwargs.get('stroke', 'red')
     config['notebook'] = kwargs.get('notebook', False)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['cmap'] = kwargs.get('cmap', 'inferno')
     config['cluster_params'] = kwargs.get('cluster_params', {})
+    config['scale'] = kwargs.get('scale', False)
+    config['fontsize'] = kwargs.get('fontsize', 10)
+
+    if config['description'] is None: config['description']=''
+    if config['cmap'] in ['schemeCategory10', 'schemeAccent', 'schemeDark2', 'schemePaired', 'schemePastel2', 'schemePastel1', 'schemeSet1', 'schemeSet2', 'schemeSet3', 'schemeTableau10']:
+        config['cmap_type']='scaleOrdinal'
+    else:
+        config['cmap_type']='scaleSequential'
+
     # return
     return config
 
@@ -80,7 +89,8 @@ def set_node_properties(df, **kwargs):
     # Return
     return dict_labels
 
-def set_properties(df, config, node_properties, logger=None):
+
+def set_properties_heatmap(df, config, node_properties, logger=None):
     # Rescale data
     if config['vmax'] is not None:
         df = _scale(df, vmax=config['vmax'], make_round=False, logger=logger)
@@ -95,7 +105,31 @@ def set_properties(df, config, node_properties, logger=None):
     # Return html
     return html
 
-# %%
+
+def set_properties_matrix(df, config, node_properties, logger=None):
+    # if config['figsize'][1] is None: config['figsize'][1] = 50 * df.shape[1]
+    # if config['figsize'][0] is None: config['figsize'][0] = 35 * df.shape[0]
+
+    # Rescale data
+    if config['scale']:
+        df = _scale(df, vmax=config['vmax'], make_round=True, logger=logger)
+    # Checks
+    if (not config['scale']) and (config['vmin'] is not None) and (config['vmax'] is not None):
+        logger.info('Data is not scaled. Tip: set vmin=None and vmax=None to range colors between [min, max] of your data.')
+    if config['vmin'] is None: config['vmin'] = np.min(df['weight'].values)
+    if config['vmax'] is None: config['vmax'] = np.max(df['weight'].values)
+    # Show debug message
+    logger.debug('vmin is set to: %g' %(config['vmin']))
+    logger.debug('vmax is set to: %g' %(config['vmax']))
+
+    # Prepare the data
+    json_data = get_data_ready_for_d3_matrix(df, node_properties)
+    # Create the html file
+    html = write_html_matrix(json_data, config, logger)
+    # Return html
+    return html
+
+
 def color_on_clusterlabel(adjmat, df, node_properties, config, logger):
     # Default is all cluster labels are the same
     node_properties['classlabel'] = np.zeros(node_properties.shape[0]).astype(int)
@@ -153,7 +187,6 @@ def _scale(X, vmax=100, make_round=True, logger=None):
 
     return X
 
-
 def write_html(json_data, config, logger=None):
     """Write html.
 
@@ -169,8 +202,6 @@ def write_html(json_data, config, logger=None):
     None.
 
     """
-    if config['description'] is None: config['description']=''
-
     # Check path
     dirpath, filename = None, ''
     if config['filepath'] is not None:
@@ -190,6 +221,49 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$WIDTH_DROPDOWN$', str(int(config['figsize'][0] + 200)))
     html = html.replace('$HEIGHT$', str(config['figsize'][1]))
     html = html.replace('$STROKE$', str(config['stroke']))
+    html = html.replace('$DATA_PATH$', filename)
+    html = html.replace('$DATA_COMES_HERE$', json_data)
+
+    # Write to html
+    write_html_file(config, html, logger)
+    # Return html
+    return html
+
+
+def write_html_matrix(json_data, config, logger=None):
+    # Check path
+    dirpath, filename = None, ''
+    if config['filepath'] is not None:
+        dirpath, filename = os.path.split(config['filepath'])
+
+    # Get path to files
+    d3_library = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/d3.v4.js'))
+    d3_chromatic = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/d3.scale.chromatic.v1.min.js'))
+    # Check path
+    copyfile(d3_library, os.path.join(dirpath, os.path.basename(d3_library)))
+    copyfile(d3_chromatic, os.path.join(dirpath, os.path.basename(d3_chromatic)))
+
+    # Import in the file
+    d3_script = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/matrix.html.j2'))
+    # with open(d3_script, 'r') as file: html = file.read()
+    with open(d3_script, 'r', encoding="utf8", errors='ignore') as file: html = file.read()
+
+    # Set fontsize for x-axis, y-axis
+    fontsize_x = config['fontsize']
+    fontsize_y = config['fontsize']
+
+    # Read the d3 html with script file
+    html = html.replace('$DESCRIPTION$', str(config['description']))
+    html = html.replace('$TITLE$', str(config['title']))
+    html = html.replace('$WIDTH$', str(config['figsize'][0]))
+    html = html.replace('$HEIGHT$', str(config['figsize'][1]))
+    html = html.replace('$VMIN$', str(config['vmin']))
+    html = html.replace('$VMAX$', str(config['vmax']))
+    html = html.replace('$FONTSIZE_X$', str(fontsize_x))
+    html = html.replace('$FONTSIZE_Y$', str(fontsize_y))
+    html = html.replace('$STROKE$', str(config['stroke']))
+    html = html.replace('$CMAP$', str(config['cmap']))
+    html = html.replace('$CMAP_TYPE$', str(config['cmap_type']))
     html = html.replace('$DATA_PATH$', filename)
     html = html.replace('$DATA_COMES_HERE$', json_data)
 
@@ -263,4 +337,29 @@ def get_data_ready_for_d3(df, node_properties):
     #   }
 
     # Check path
+    return json_data
+
+
+def get_data_ready_for_d3_matrix(df, node_properties):
+    # Convert into adj into vector
+    df = df.rename(columns={'source': 'variable', 'target': 'group', 'weight': 'value'})
+
+    # Embed the Data in the HTML. Note that the embedding is an important stap te prevent security issues by the browsers.
+    # Most (if not all) browser do not accept to read a file using d3.csv or so. It then requires security-by-passes, but thats not the way to go.
+    # An alternative is use local-host and CORS but then the approach is not user-friendly coz setting up this, is not so straightforward.
+    # It leaves us by embedding the data in the HTML. Thats what we are going to do here.
+    json_data = ''
+    for i in range(0, df.shape[0]):
+        newline = '{group : "' + str(df['group'].iloc[i]) + '", variable : "' + str(df['variable'].iloc[i]) + '", value : "' + str(df['value'].iloc[i]) +'"},'
+        newline = newline + '\n'
+        json_data = json_data + newline
+
+    # Read the data
+    # var data =
+    # 	[
+    # 		{"group":"A", "variable":"v1", "value":"3"},
+    # 		{"group":"A", "variable":"v2", "value":"5"},
+    # 		{"group":"B", "variable":"v1", "value":"10"},
+    # 		{"group":"B", "variable":"v2", "value":"10"}
+    # 	]
     return json_data
