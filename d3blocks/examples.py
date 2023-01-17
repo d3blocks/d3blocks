@@ -19,6 +19,7 @@ d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel='cluster', stroke='re
 html = d3.heatmap(df, filepath=None, notebook=False)
 d3.heatmap(df, notebook=True)
 
+
 # %% Notebook examples
 
 # d3graph
