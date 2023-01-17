@@ -22,6 +22,7 @@ try:
     import d3blocks.scatter.Scatter as Scatter
     import d3blocks.violin.Violin as Violin
     import d3blocks.particles.Particles as Particles
+    import d3blocks.heatmap.Heatmap as Heatmap
     from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
 except:
     # ###################### DEBUG ONLY ###################
@@ -33,12 +34,16 @@ except:
     import scatter.Scatter as Scatter
     import violin.Violin as Violin
     import particles.Particles as Particles
+    import heatmap.Heatmap as Heatmap
     from utils import remove_quotes, convert_dataframe_dict, set_path
     # #####################################################
 
 from elasticgraph import Elasticgraph
 import d3graph as d3network
 from d3heatmap import d3heatmap
+from clusteval import clusteval
+import colourmap
+from ismember import ismember
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]:  # get rid of existing old handlers
@@ -443,6 +448,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 600]
@@ -600,6 +606,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 900]
@@ -740,6 +747,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [900, 900]
@@ -867,6 +875,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [800, 600]
@@ -936,7 +945,7 @@ class D3Blocks():
         # Cleaning
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
-        self.chart = set_chart_func('sankey', logger)
+        self.chart = set_chart_func('Sankey', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook)
         # Set default label properties
@@ -1027,6 +1036,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [780, 800]
@@ -1160,6 +1170,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [1200, 500]
@@ -1242,131 +1253,239 @@ class D3Blocks():
         self.set_edge_properties(df, dt_format=self.config['dt_format'], datetime=self.config['datetime'], logger=logger)
         # Create the plot
         html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
-        # Open the webbrowser
-        # self.open_browser(logger=logger)
         # Display the chart
         return self.display(html)
 
     def heatmap(self,
                 df,
-                color='cluster',
-                vmax=None,
-                stroke='red',
-                fontsize=10,
-                title='Heatmap - D3blocks',
-                description='',
+                classlabel='cluster',
+                cmap='Set2',
                 filepath='heatmap.html',
+                title='Heatmap - D3blocks',
+                stroke='red',
+                description=None,
+                vmax=None,
                 figsize=[720, 720],
                 showfig=True,
+                overwrite=True,
                 notebook=False,
-                overwrite=True):
+                reset_properties=True,
+                ):
         """Heatmap block.
 
         Description
         -----------
-        heatmap is a module in d3blocks to create interactive heatmaps.
-        The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
-        In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
-        create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
-        and then Pythonized.
+        heatmap is a Python package to create interactive heatmaps based on d3js.
+        The heatmap allows interactive clustering where the cluster coloring can be customized.
+        Clusters are colored and within each cluster the color is incremental based on the value.
+        Adjacency matrix must be symetric.
 
         Parameters
         ----------
         df : pd.DataFrame()
-            Input data is an adjacency matrix for which the columns and rows are the names of the variables.
-        color : Numpy array (default: 'cluster')
-            Should be in the same order as the columns and of the input dataframe
-            None or 'cluster': a clustering approach is used for coloring.
-        vmax : Bool, (default: 100).
-            Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
-                * 1 : cells above value >1 are capped.
-                * None : cells are colored based on the maximum value in the input data.
+            Input data. The index and column names are used for the row/column naming.
+        classlabel : str or list
+            'cluster': colors are based on clustering
+            'label': colors are based on the presence of unique labels
+            [1,2,1,..]: colors are based on the input classlabels
         stroke : String, (default: 'red').
             Color of the recangle when hovering over a cell.
                 * 'red'
                 * 'black'
-        fontsize : int, (default: 14)
-            Fontsize of the states.
         description : String, (default: 'Heatmap description')
             Description text of the heatmap.
+        vmax : Bool, (default: 100).
+            Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
+                * 1 : cells above value >1 are capped.
+                * None : cells are colored based on the maximum value in the input data.
+        cmap : String, (default: 'Set1')
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
         title : String, (default: None)
             Title of the figure.
-            'Heatmap'
+            'Timeseries'
         filepath : String, (Default: user temp directory)
             File path to save the output.
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [900, 900]
+            [1200, 500]
         showfig : bool, (default: True)
             True: Open browser-window.
             False: Do not open browser-window.
-        notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
         overwrite : bool, (default: True)
             True: Overwrite the html in the destination directory.
             False: Do not overwrite destination file but show warning instead.
-
-        Returns
-        -------
-        d3.node_properties: DataFrame of dictionary
-             Contains properties of the unique input label/nodes/samples.
-        d3.edge_properties: DataFrame of dictionary
-             Contains properties of the unique input edges/links.
-        d3.config: dictionary
-             Contains configuration properties.
+        notebook : bool
+            True: Use IPython to show chart in notebook.
+            False: Do not use IPython.
+        reset_properties : bool, (default: True)
+            True: Reset the node_properties at each run.
+            False: Use the d3.node_properties()
 
         Examples
         --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>> #
-        >>> # Import example
-        >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
+        >>> # Load example data
+        >>> df = d3.import_example('energy')
+        >>> df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         >>> #
-        >>> d3.heatmap(df, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
+        >>> # Plot
+        >>> d3.heatmap(df)
         >>> #
 
         References
         ----------
-        * Github: https://github.com/erdogant/d3heatmap
-        * Documentation: https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
+        * https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
 
         """
         # Cleaning
-        self._clean(clean_config=False)
-
-        # Set configs
-        self.config['chart'] ='heatmap'
-        self.config['title'] = title
-        self.config['description'] = description
-        self.config['filepath'] = set_path(filepath)
-        self.config['figsize'] = figsize
-        self.config['showfig'] = showfig
-        self.config['overwrite'] = overwrite
-        self.config['vmax'] = vmax
-        self.config['stroke'] = stroke
-        self.config['notebook'] = notebook
-
-        # Copy of data
-        df = df.copy()
-        # Convert vector to adjmat
-        adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
-        # Create heatmap chart
-        d3heatmap.heatmap(adjmat,
-                          color=color,
-                          vmax=self.config['vmax'],
-                          stroke=self.config['stroke'],
-                          width=self.config['figsize'][0], height=self.config['figsize'][1],
-                          path=self.config['filepath'],
-                          title=title,
-                          description=self.config['description'],
-                          showfig=self.config['showfig'])
+        adjmat = remove_quotes(df)
+        df = self.adjmat2vec(adjmat)
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Heatmap', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, classlabel=classlabel, description=description, vmax=vmax, stroke=stroke, cmap=cmap)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=self.config['cmap'])
+        # Color on cluster labels
+        self.node_properties = self.chart.color_on_clusterlabel(adjmat, df, self.node_properties, self.config, logger)
+        # Set edge properties
+        html = self.chart.set_properties(df, self.config, self.node_properties, logger)
         # Display the chart
-        # return self.display(html)
+        return self.display(html)
+
+    # def heatmap(self,
+    #             df,
+    #             color='cluster',
+    #             vmax=None,
+    #             stroke='red',
+    #             fontsize=10,
+    #             title='Heatmap - D3blocks',
+    #             description='',
+    #             filepath='heatmap.html',
+    #             figsize=[720, 720],
+    #             showfig=True,
+    #             notebook=False,
+    #             overwrite=True):
+    #     """Heatmap block.
+
+    #     Description
+    #     -----------
+    #     heatmap is a module in d3blocks to create interactive heatmaps.
+    #     The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
+    #     In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
+    #     create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
+    #     and then Pythonized.
+
+    #     Parameters
+    #     ----------
+    #     df : pd.DataFrame()
+    #         Input data is an adjacency matrix for which the columns and rows are the names of the variables.
+    #     color : Numpy array (default: 'cluster')
+    #         Should be in the same order as the columns and of the input dataframe
+    #         None or 'cluster': a clustering approach is used for coloring.
+    #     vmax : Bool, (default: 100).
+    #         Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
+    #             * 1 : cells above value >1 are capped.
+    #             * None : cells are colored based on the maximum value in the input data.
+    #     stroke : String, (default: 'red').
+    #         Color of the recangle when hovering over a cell.
+    #             * 'red'
+    #             * 'black'
+    #     fontsize : int, (default: 14)
+    #         Fontsize of the states.
+    #     description : String, (default: 'Heatmap description')
+    #         Description text of the heatmap.
+    #     title : String, (default: None)
+    #         Title of the figure.
+    #         'Heatmap'
+    #     filepath : String, (Default: user temp directory)
+    #         File path to save the output.
+    #         Temporarily path: 'd3blocks.html'
+    #         Relative path: './d3blocks.html'
+    #         Absolute path: 'c://temp//d3blocks.html'
+    #         None: Return HTML
+    #     figsize : tuple
+    #         Size of the figure in the browser, [width, height].
+    #         [900, 900]
+    #     showfig : bool, (default: True)
+    #         True: Open browser-window.
+    #         False: Do not open browser-window.
+    #     notebook : bool
+    #         True: Use IPython to show chart in notebook.
+    #         False: Do not use IPython.
+    #     overwrite : bool, (default: True)
+    #         True: Overwrite the html in the destination directory.
+    #         False: Do not overwrite destination file but show warning instead.
+
+    #     Returns
+    #     -------
+    #     d3.node_properties: DataFrame of dictionary
+    #          Contains properties of the unique input label/nodes/samples.
+    #     d3.edge_properties: DataFrame of dictionary
+    #          Contains properties of the unique input edges/links.
+    #     d3.config: dictionary
+    #          Contains configuration properties.
+
+    #     Examples
+    #     --------
+    #     >>> # Initialize
+    #     >>> d3 = D3Blocks()
+    #     >>> #
+    #     >>> # Import example
+    #     >>> df = d3.import_example('energy') # 'bigbang', 'stormofswords'
+    #     >>> #
+    #     >>> d3.heatmap(df, showfig=True, figsize=[400, 400], title='', filepath='heatmap.html')
+    #     >>> #
+
+    #     References
+    #     ----------
+    #     * Github: https://github.com/erdogant/d3heatmap
+    #     * Documentation: https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
+
+    #     """
+    #     # Cleaning
+    #     self._clean(clean_config=False)
+
+    #     # Set configs
+    #     self.config['chart'] ='heatmap'
+    #     self.config['title'] = title
+    #     self.config['description'] = description
+    #     self.config['filepath'] = set_path(filepath)
+    #     self.config['figsize'] = figsize
+    #     self.config['showfig'] = showfig
+    #     self.config['overwrite'] = overwrite
+    #     self.config['vmax'] = vmax
+    #     self.config['stroke'] = stroke
+    #     self.config['notebook'] = notebook
+
+    #     # Copy of data
+    #     df = df.copy()
+    #     # Convert vector to adjmat
+    #     adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
+    #     # Create heatmap chart
+    #     d3heatmap.heatmap(adjmat,
+    #                       color=color,
+    #                       vmax=self.config['vmax'],
+    #                       stroke=self.config['stroke'],
+    #                       width=self.config['figsize'][0], height=self.config['figsize'][1],
+    #                       path=self.config['filepath'],
+    #                       title=title,
+    #                       description=self.config['description'],
+    #                       showfig=self.config['showfig'])
+    #     # Display the chart
+    #     # return self.display(html)
 
     def d3graph(self,
                 df,
@@ -1428,6 +1547,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [1500, 800]
@@ -1579,6 +1699,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
             [None, None] # Full screen
@@ -1774,6 +1895,7 @@ class D3Blocks():
             Temporarily path: 'd3blocks.html'
             Relative path: './d3blocks.html'
             Absolute path: 'c://temp//d3blocks.html'
+            None: Return HTML
         showfig : bool
             True: Open the browser and show chart.
             False: Do not open browser.
@@ -1824,18 +1946,6 @@ class D3Blocks():
             logger.info('Nothing to display when filepath is None and notebook is False. Return HTML.')
             return html
 
-    def _clean(self, clean_config=True, logger=None):
-        """Clean previous results to ensure correct working."""
-        if logger is not None: logger.info('Cleaning edge_properties and config parameters..')
-        if hasattr(self, 'G'): del self.G
-        if hasattr(self, 'edge_properties'): del self.edge_properties
-        if clean_config and hasattr(self, 'config'):
-            # Remove all configurations except for the chart, frame and path
-            chart = self.config.get('chart', None)
-            frame = self.config.get('frame', True)
-            curpath = self.config.get('curpath', os.path.dirname(os.path.abspath(__file__)))
-            self.config = {'chart': chart, 'frame': frame, 'curpath': curpath, 'notebook': False}
-
     # Open the webbrowser
     def open_browser(self, sleep=0.2, logger=None):
         """Open browser to show chart."""
@@ -1850,6 +1960,18 @@ class D3Blocks():
             else:
                 if logger is not None: logger.info('File not found: [%s]' %(file_location))
             logger.info('Open browser: %s' %(file_location))
+
+    def _clean(self, clean_config=True, logger=None):
+        """Clean previous results to ensure correct working."""
+        if logger is not None: logger.info('Cleaning edge_properties and config parameters..')
+        if hasattr(self, 'G'): del self.G
+        if hasattr(self, 'edge_properties'): del self.edge_properties
+        if clean_config and hasattr(self, 'config'):
+            # Remove all configurations except for the chart, frame and path
+            chart = self.config.get('chart', None)
+            frame = self.config.get('frame', True)
+            curpath = self.config.get('curpath', os.path.dirname(os.path.abspath(__file__)))
+            self.config = {'chart': chart, 'frame': frame, 'curpath': curpath, 'notebook': False}
 
     @staticmethod
     def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
@@ -2215,7 +2337,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

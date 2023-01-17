@@ -3,6 +3,22 @@
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
 
+# %% Heatmap
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+# df = d3.import_example('energy')
+df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
+d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel=[1,1,1,2,2,2,3])
+d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel='cluster', stroke='red', vmax=1, figsize=(400, 400))
+html = d3.heatmap(df, filepath=None, notebook=False)
+d3.heatmap(df, notebook=True)
+
 # %% Notebook examples
 
 # d3graph
