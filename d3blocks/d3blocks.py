@@ -1265,6 +1265,12 @@ class D3Blocks():
                 stroke='red',
                 description=None,
                 vmax=None,
+                cluster_params = {'cluster': 'agglomerative',
+                                  'evaluate': 'silhouette',
+                                  'metric': 'euclidean',
+                                  'linkage': 'ward',
+                                  'min_clust': 2,
+                                  'max_clust': 25},
                 figsize=[720, 720],
                 showfig=True,
                 overwrite=True,
@@ -1290,14 +1296,16 @@ class D3Blocks():
             [1,2,1,..]: colors are based on the input classlabels
         stroke : String, (default: 'red').
             Color of the recangle when hovering over a cell.
-                * 'red'
-                * 'black'
+            'red'
+            'black'
         description : String, (default: 'Heatmap description')
             Description text of the heatmap.
         vmax : Bool, (default: 100).
             Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
-                * 1 : cells above value >1 are capped.
-                * None : cells are colored based on the maximum value in the input data.
+            1 : cells above value >1 are capped.
+            None : cells are colored based on the maximum value in the input data.
+        cluster_params : dict (defaults)
+            Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
             'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
@@ -1335,6 +1343,7 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
+        >>> df = d3.import_example('stormofswords')
         >>> df = d3.import_example('energy')
         >>> df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         >>> #
@@ -1345,6 +1354,7 @@ class D3Blocks():
         References
         ----------
         * https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
+        * https://erdogant.github.io/clusteval/
 
         """
         # Cleaning
@@ -1354,7 +1364,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Heatmap', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, classlabel=classlabel, description=description, vmax=vmax, stroke=stroke, cmap=cmap)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, classlabel=classlabel, description=description, vmax=vmax, stroke=stroke, cmap=cmap, cluster_params=cluster_params)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])

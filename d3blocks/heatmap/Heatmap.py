@@ -36,6 +36,7 @@ def set_config(config={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['cmap'] = kwargs.get('cmap', 'inferno')
+    config['cluster_params'] = kwargs.get('cluster_params', {})
     # return
     return config
 
@@ -117,7 +118,7 @@ def color_on_clusterlabel(adjmat, df, node_properties, config, logger):
 
     if config['classlabel']=='cluster':
         # Cluster the nodes
-        ce = clusteval()
+        ce = clusteval(**config['cluster_params'])
         results = ce.fit(adjmat.values)
         Iloc, idx = ismember(node_properties['label'].values, adjmat.index.values)
         if np.any(~Iloc):
