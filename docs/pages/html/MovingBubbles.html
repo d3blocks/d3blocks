@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -66,7 +66,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">MovingBubbles</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
 </ul>
@@ -124,10 +123,7 @@
 <p class="admonition-title">Tip</p>
 <p><a class="reference external" href="https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226">D3Blocks: How to Create Storytelling Moving Bubbles Charts in d3js with Python.</a></p>
 </div>
-<hr class="docutils" />
 <span class="target" id="module-d3blocks.d3blocks.D3Blocks.movingbubbles"></span><p>MovingBubbles block.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The MovingBubbles provides insights into when one action follows the other across time. It can help to
 understand the movements of entities, and whether clusters occur at specific time points and state(s).
 It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
@@ -172,13 +168,24 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param dt_format</dt>
-<dd class="field-odd"><p>‘%d-%m-%Y %H:%M:%S’.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Date time format.</dt><dd><ul class="simple">
+<li><p>‘%d-%m-%Y %H:%M:%S’.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type dt_format</dt>
 <dd class="field-even"><p>str</p>
 </dd>
 <dt class="field-odd">param dampler</dt>
-<dd class="field-odd"><p>Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Movement of samples. A smaller number is slower/smoother movement.</dt><dd><ul class="simple">
+<li><p>0.1: min</p></li>
+<li><p>10: max</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type dampler</dt>
 <dd class="field-even"><p>float, (default: 1)</p>
@@ -190,16 +197,25 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dd class="field-even"><p>int, (default: 14)</p>
 </dd>
 <dt class="field-odd">param reset_time</dt>
-<dd class="field-odd"><p>‘day’  : Every 24h de the day start over again.
-‘year’ : Every 365 days the year starts over again.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Reset the time after this period.</dt><dd><ul class="simple">
+<li><p>‘day’  : Every 24h de the day start over again.</p></li>
+<li><p>‘year’ : Every 365 days the year starts over again.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type reset_time</dt>
 <dd class="field-even"><p>String, (default: ‘day’)</p>
 </dd>
 <dt class="field-odd">param standardize</dt>
-<dd class="field-odd"><p>Method to standardize the data.
-None: standardize over the entire timeframe. Sample_ids are dependent to each other.
-‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Method to standardize the data.</dt><dd><ul class="simple">
+<li><p>None: standardize over the entire timeframe. Sample_ids are dependent to each other.</p></li>
+<li><p>‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type standardize</dt>
 <dd class="field-even"><p>str. (default: None)</p>
@@ -225,60 +241,84 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <dd class="field-even"><p>dict, (default: None)</p>
 </dd>
 <dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
+<li><p>‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type cmap</dt>
 <dd class="field-even"><p>String, (default: ‘Set1’)</p>
 </dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Movingbubbles’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Title of the figure.</dt><dd><ul class="simple">
+<li><p>‘Movingbubbles’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p>
+<dd class="field-odd"><dl class="simple">
+<dt>File path to save the output.</dt><dd><ul class="simple">
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[780, 800]</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+<li><p>[780, 800]</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param notebook</dt>
-<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type notebook</dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
 </dd>
 <dt class="field-even">type reset_properties</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
@@ -333,7 +373,6 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html">https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html</a></p></li>
 </ul>
-</section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input data is a dataframe that should contain the columns datatime, sample_id and state.

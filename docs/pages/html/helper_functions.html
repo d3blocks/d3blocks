@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -75,10 +75,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vec2adjmat</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
@@ -146,8 +143,12 @@
 <dd class="field-even"><p>bool, optional</p>
 </dd>
 <dt class="field-odd">param aggfunc</dt>
-<dd class="field-odd"><p>Aggregate function in case multiple values exists for the same relationship.
-‘sum’ (default)</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Aggregate function in case multiple values exists for the same relationship.</dt><dd><ul class="simple">
+<li><p>‘sum’ (default)</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type aggfunc</dt>
 <dd class="field-even"><p>str, optional</p>
@@ -211,25 +212,28 @@
 <section id="module-d3blocks.d3blocks.D3Blocks.import_example">
 <span id="examples"></span><h1>Examples<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.import_example" title="Permalink to this heading"></a></h1>
 <p>Import example dataset from github source.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>Import one of the few datasets from github source or specify your own download url link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param data</dt>
-<dd class="field-odd"><p>“movingbubbles”
-“random_time”
-“timeseries”
-“energy”
-“stormofswords”
-“bigbang”
-“southern_nebula”
-“southern_nebula_internet”
-“cancer”
-“breast_cancer”
-“iris”
-“occupancy”
-“climate”
-“mnist”</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Example datasets:</dt><dd><ul class="simple">
+<li><p>“movingbubbles”</p></li>
+<li><p>“random_time”</p></li>
+<li><p>“timeseries”</p></li>
+<li><p>“energy”</p></li>
+<li><p>“stormofswords”</p></li>
+<li><p>“bigbang”</p></li>
+<li><p>“southern_nebula”</p></li>
+<li><p>“southern_nebula_internet”</p></li>
+<li><p>“cancer”</p></li>
+<li><p>“breast_cancer”</p></li>
+<li><p>“iris”</p></li>
+<li><p>“occupancy”</p></li>
+<li><p>“climate”</p></li>
+<li><p>“mnist”</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type data</dt>
 <dd class="field-even"><p>str</p>
@@ -247,13 +251,23 @@
 <dd class="field-even"><p>int, (default: 100).</p>
 </dd>
 <dt class="field-odd">param date_start</dt>
-<dd class="field-odd"><p>“17-12-1903 00:00:00” : start date</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Start date.</dt><dd><ul class="simple">
+<li><p>“17-12-1903 00:00:00” : start date</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type date_start</dt>
 <dd class="field-even"><p>str, (default: None)</p>
 </dd>
 <dt class="field-odd">param date_stop</dt>
-<dd class="field-odd"><p>“17-12-1903 23:59:59” : Stop date</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Stop date.</dt><dd><ul class="simple">
+<li><p>“17-12-1903 23:59:59” : Stop date</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type date_stop</dt>
 <dd class="field-even"><p>str, (default: None)</p>
@@ -265,7 +279,6 @@
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 </dl>
-</section>
 <hr>
 <center>
         <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>

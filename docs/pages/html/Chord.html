@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -61,7 +61,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Chord</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
 </ul>
@@ -121,106 +120,139 @@
   <section id="module-d3blocks.d3blocks.D3Blocks.chord">
 <span id="chord"></span><h1>Chord<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.chord" title="Permalink to this heading"></a></h1>
 <p>Chord block.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>A chord represents flows or connections between several entities or nodes.
 Each entity is represented by a fragment on the outer part of the circular layout.
 Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the following columns:
-‘source’
-‘target’
-‘weight’
-‘color’ (optional)
-‘opacity’  (optional)</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul class="simple">
+<li><p>“source”</p></li>
+<li><p>“target”</p></li>
+<li><p>“weight”</p></li>
+<li><p>“color” (optional)</p></li>
+<li><p>“opacity” (optional)</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 <dt class="field-odd">param color</dt>
-<dd class="field-odd"><p>Link colors in Hex notation. Should be the same size as input DataFrame.
-* ‘source’: Color edges/links similar to that of source-color node.
-* ‘target’: Color edges/links similar to that of target-color node.
-* ‘source-target’: Color edges/link based on unique source-target edges using the colormap.
-* ‘#ffffff’: All links have the same hex color.
-* [‘#000000’, ‘#ffffff’,…]: Define per link.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Link colors in Hex notation. Should be the same size as input DataFrame.</dt><dd><ul class="simple">
+<li><p>“source” : Color edges/links similar to that of source-color node.</p></li>
+<li><p>“target” : Color edges/links similar to that of target-color node.</p></li>
+<li><p>“source-target” : Color edges/link based on unique source-target edges using the colormap.</p></li>
+<li><p>“#ffffff” : All links have the same hex color.</p></li>
+<li><p>[“#000000”, “#ffffff”,…] : Define per link.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type color</dt>
 <dd class="field-even"><p>(default: ‘source’)</p>
 </dd>
 <dt class="field-odd">param opacity</dt>
-<dd class="field-odd"><p>Link Opacity. Should be the same size as input DataFrame.
-* ‘source’: Opacity of edges/links similar to that of source-opacity node.
-* ‘target’: Opacity of edges/links similar to that of target-opacity node.
-* 0.8: All links have the same opacity.
-* [0.1, 0.75,…]: Set opacity per edge/link.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Link Opacity. Should be the same size as input DataFrame.</dt><dd><ul class="simple">
+<li><p>‘source’: Opacity of edges/links similar to that of source-opacity node.</p></li>
+<li><p>‘target’: Opacity of edges/links similar to that of target-opacity node.</p></li>
+<li><p>0.8: All links have the same opacity.</p></li>
+<li><p>[0.1, 0.75,…]: Set opacity per edge/link.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type opacity</dt>
 <dd class="field-even"><p>(default: ‘source’)</p>
 </dd>
 <dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize.</p>
+<dd class="field-odd"><p>The Fontsize.</p>
 </dd>
 <dt class="field-even">type fontsize</dt>
 <dd class="field-even"><p>int, (default: 8)</p>
 </dd>
 <dt class="field-odd">param cmap</dt>
-<dd class="field-odd"><p>colormap is only used in case color=None.
-All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>colormap is only used in case color=None. All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
+<li><p>‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type cmap</dt>
 <dd class="field-even"><p>String, (default: ‘tab20’)</p>
 </dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Chord’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Title of the figure.</dt><dd><ul class="simple">
+<li><p>‘Chord’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p>
+<dd class="field-odd"><dl class="simple">
+<dt>File path to save the output.</dt><dd><ul class="simple">
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 900]</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+<li><p>[900, 900]</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param notebook</dt>
-<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type notebook</dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param reset_properties</dt>
-<dd class="field-odd"><p>True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
 </dd>
 <dt class="field-even">type reset_properties</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
@@ -285,7 +317,6 @@ False: Use the d3.node_properties()</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Chord.html">https://d3blocks.github.io/d3blocks/pages/html/Chord.html</a></p></li>
 </ul>
-</section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>

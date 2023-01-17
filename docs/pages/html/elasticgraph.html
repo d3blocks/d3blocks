@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -63,7 +63,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Elasticgraph</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default">Default</a></li>
@@ -130,8 +129,6 @@
 </div>
 <hr class="docutils" />
 <span class="target" id="module-d3blocks.d3blocks.D3Blocks.elasticgraph"></span><p>D3 Elasticgraph block.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
 the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
 dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
@@ -144,18 +141,26 @@ interactive and stand alone. For demonstration purposes, the “bigbang”, “e
 be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul class="simple">
+<li><p>‘source’</p></li>
+<li><p>‘target’</p></li>
+<li><p>‘weight’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 <dt class="field-odd">param group</dt>
-<dd class="field-odd"><p>Grouping (and coloring) of the nodes.
-* ‘cluster’ : Colours are based on the community distance clusters.
-* None: All nodes will have the same color (auto generated).</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Grouping (and coloring) of the nodes.</dt><dd><ul class="simple">
+<li><p>‘cluster’ : Colours are based on the community distance clusters.</p></li>
+<li><p>None: All nodes will have the same color (auto generated).</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type group</dt>
 <dd class="field-even"><p>list of strings (default: ‘cluster’)</p>
@@ -191,47 +196,65 @@ be used.</p>
 <dd class="field-even"><p>bool, (default: False)</p>
 </dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘d3graph’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Title of the figure.</dt><dd><ul class="simple">
+<li><p>‘elasticgraph’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p>
+<dd class="field-odd"><dl class="simple">
+<dt>File path to save the output.</dt><dd><ul class="simple">
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[None, None] # Full screen
-[1500, 800]</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+<li><p>[None, None] # Full screen</p></li>
+<li><p>[1500, 800]</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param notebook</dt>
-<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type notebook</dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
@@ -279,7 +302,6 @@ False: Do not overwrite destination file but show warning instead.</p>
 <li><p>Blog: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
 <li><p>Gitlab : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph">https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph</a></p></li>
 </ul>
-</section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>

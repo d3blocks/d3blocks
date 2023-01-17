@@ -12,9 +12,6 @@ Input Data
 
 The input dataset are two images.
 
-.. code:: python
-
-
 .. |fig_m1| image:: ./figs/southern_nebula_before.jpg
 .. |fig_m2| image:: ./figs/southern_nebula_after.jpg
 

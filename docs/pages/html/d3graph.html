@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -62,7 +62,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">D3graph</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default">Default</a></li>
@@ -135,8 +134,6 @@
 </div>
 <hr class="docutils" />
 <span class="target" id="module-d3blocks.d3blocks.D3Blocks.d3graph"></span><p>d3graph block.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>d3graph is integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
 The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
 dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
@@ -147,30 +144,42 @@ on the weights. To explore the network, and the strength of the edges more exten
 interactive and stand alone. For demonstration purposes, the “energy” and “stormofswords” dataset can be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul class="simple">
+<li><p>‘source’</p></li>
+<li><p>‘target’</p></li>
+<li><p>‘weight’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 <dt class="field-odd">param color</dt>
-<dd class="field-odd"><p>Color of the node.
-* ‘cluster’ : Colours are based on the community distance clusters.
-* None: All nodes will have the same color (auto generated).
-* [‘#000000’]: All nodes will have the same hex color.
-* [‘#377eb8’,’#ffffff’,’#000000’,…]: Hex colors are directly used.
-* [‘A’]: All nodes will have hte same color. Color is generated on CMAP and the unique labels.
-* [‘A’,’A’,’B’,…]:  Colors are generated using cmap and the unique labels accordingly colored.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Color of the node.</dt><dd><ul class="simple">
+<li><p>‘cluster’ : Colours are based on the community distance clusters.</p></li>
+<li><p>None: All nodes will have the same color (auto generated).</p></li>
+<li><p>[‘#000000’]: All nodes will have the same hex color.</p></li>
+<li><p>[‘#377eb8’,’#ffffff’,’#000000’,…]: Hex colors are directly used.</p></li>
+<li><p>[‘A’]: All nodes will have hte same color. Color is generated on CMAP and the unique labels.</p></li>
+<li><p>[‘A’,’A’,’B’,…]:  Colors are generated using cmap and the unique labels accordingly colored.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type color</dt>
 <dd class="field-even"><p>list of strings (default: ‘#000080’)</p>
 </dd>
 <dt class="field-odd">param size</dt>
-<dd class="field-odd"><p>Size of the nodes.
-* 10: all nodes sizes are set to 10
-* [10, 5, 3, 1, …]: Specify node sizes</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the nodes.</dt><dd><ul class="simple">
+<li><p>10: all nodes sizes are set to 10</p></li>
+<li><p>[10, 5, 3, 1, …]: Specify node sizes</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type size</dt>
 <dd class="field-even"><p>array of integers (default: 5)</p>
@@ -194,46 +203,64 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 <dd class="field-even"><p>typle [min: int, max: int]:, (default: [None, None])</p>
 </dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘d3graph’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Title of the figure.</dt><dd><ul class="simple">
+<li><p>‘d3graph’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p>
+<dd class="field-odd"><dl class="simple">
+<dt>File path to save the output.</dt><dd><ul class="simple">
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[1500, 800]</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+<li><p>[1500, 800]</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param notebook</dt>
-<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type notebook</dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
@@ -286,7 +313,6 @@ False: Do not overwrite destination file but show warning instead.</p>
 <li><p>Github : <a class="reference external" href="https://github.com/erdogant/d3graph">https://github.com/erdogant/d3graph</a></p></li>
 <li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
 </ul>
-</section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>

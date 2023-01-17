@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -133,10 +133,13 @@ False: Return in dictionary.</p></li>
 </dl>
 <p class="rubric">References</p>
 <ul class="simple">
-<li><p>Blog - D3Blocks: <a class="reference external" href="https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4">https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4</a></p></li>
-<li><p>Blog - D3Graph: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
-<li><p>Github: <a class="reference external" href="https://github.com/d3blocks/d3blocks">https://github.com/d3blocks/d3blocks</a></p></li>
-<li><p>Documentation: <a class="reference external" href="https://d3blocks.github.io/d3blocks/">https://d3blocks.github.io/d3blocks/</a></p></li>
+<li><p>Github : <a class="reference external" href="https://github.com/d3blocks/d3blocks">https://github.com/d3blocks/d3blocks</a></p></li>
+<li><p>Docs: <a class="reference external" href="https://d3blocks.github.io/d3blocks/">https://d3blocks.github.io/d3blocks/</a></p></li>
+<li><p>D3Blocks: <a class="reference external" href="https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4">https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4</a></p></li>
+<li><p>D3Graph: <a class="reference external" href="https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7">https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7</a></p></li>
+<li><p>Scatter: <a class="reference external" href="https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046">https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046</a></p></li>
+<li><p>Sankey: <a class="reference external" href="https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43">https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43</a></p></li>
+<li><p>Movingbubbles: <a class="reference external" href="https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226">https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226</a></p></li>
 </ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.adjmat2vec">
@@ -181,44 +184,90 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’
-‘color’ (optional)
-‘opacity’  (optional)</p></li>
-<li><p><strong>color</strong> (<em>(</em><em>default: 'source'</em><em>)</em>) – Link colors in Hex notation. Should be the same size as input DataFrame.
-* ‘source’: Color edges/links similar to that of source-color node.
-* ‘target’: Color edges/links similar to that of target-color node.
-* ‘source-target’: Color edges/link based on unique source-target edges using the colormap.
-* ‘#ffffff’: All links have the same hex color.
-* [‘#000000’, ‘#ffffff’,…]: Define per link.</p></li>
-<li><p><strong>opacity</strong> (<em>(</em><em>default: 'source'</em><em>)</em>) – Link Opacity. Should be the same size as input DataFrame.
-* ‘source’: Opacity of edges/links similar to that of source-opacity node.
-* ‘target’: Opacity of edges/links similar to that of target-opacity node.
-* 0.8: All links have the same opacity.
-* [0.1, 0.75,…]: Set opacity per edge/link.</p></li>
-<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 8</em><em>)</em>) – Fontsize.</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'tab20'</em><em>)</em>) – colormap is only used in case color=None.
-All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Chord’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[900, 900]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>”source”</p></li>
+<li><p>”target”</p></li>
+<li><p>”weight”</p></li>
+<li><p>”color” (optional)</p></li>
+<li><p>”opacity” (optional)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>color</strong> (<em>(</em><em>default: 'source'</em><em>)</em>) – <dl class="simple">
+<dt>Link colors in Hex notation. Should be the same size as input DataFrame.</dt><dd><ul>
+<li><p>”source” : Color edges/links similar to that of source-color node.</p></li>
+<li><p>”target” : Color edges/links similar to that of target-color node.</p></li>
+<li><p>”source-target” : Color edges/link based on unique source-target edges using the colormap.</p></li>
+<li><p>”#ffffff” : All links have the same hex color.</p></li>
+<li><p>[“#000000”, “#ffffff”,…] : Define per link.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>opacity</strong> (<em>(</em><em>default: 'source'</em><em>)</em>) – <dl class="simple">
+<dt>Link Opacity. Should be the same size as input DataFrame.</dt><dd><ul>
+<li><p>’source’: Opacity of edges/links similar to that of source-opacity node.</p></li>
+<li><p>’target’: Opacity of edges/links similar to that of target-opacity node.</p></li>
+<li><p>0.8: All links have the same opacity.</p></li>
+<li><p>[0.1, 0.75,…]: Set opacity per edge/link.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 8</em><em>)</em>) – The Fontsize.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'tab20'</em><em>)</em>) – <dl class="simple">
+<dt>colormap is only used in case color=None. All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Chord’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[900, 900]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -299,38 +348,77 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p></li>
-<li><p><strong>color</strong> (<em>list of strings</em><em> (</em><em>default: '#000080'</em><em>)</em>) – Color of the node.
-* ‘cluster’ : Colours are based on the community distance clusters.
-* None: All nodes will have the same color (auto generated).
-* [‘#000000’]: All nodes will have the same hex color.
-* [‘#377eb8’,’#ffffff’,’#000000’,…]: Hex colors are directly used.
-* [‘A’]: All nodes will have hte same color. Color is generated on CMAP and the unique labels.
-* [‘A’,’A’,’B’,…]:  Colors are generated using cmap and the unique labels accordingly colored.</p></li>
-<li><p><strong>size</strong> (<em>array of integers</em><em> (</em><em>default: 5</em><em>)</em>) – Size of the nodes.
-* 10: all nodes sizes are set to 10
-* [10, 5, 3, 1, …]: Specify node sizes</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>color</strong> (<em>list of strings</em><em> (</em><em>default: '#000080'</em><em>)</em>) – <dl class="simple">
+<dt>Color of the node.</dt><dd><ul>
+<li><p>’cluster’ : Colours are based on the community distance clusters.</p></li>
+<li><p>None: All nodes will have the same color (auto generated).</p></li>
+<li><p>[‘#000000’]: All nodes will have the same hex color.</p></li>
+<li><p>[‘#377eb8’,’#ffffff’,’#000000’,…]: Hex colors are directly used.</p></li>
+<li><p>[‘A’]: All nodes will have hte same color. Color is generated on CMAP and the unique labels.</p></li>
+<li><p>[‘A’,’A’,’B’,…]:  Colors are generated using cmap and the unique labels accordingly colored.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>size</strong> (<em>array of integers</em><em> (</em><em>default: 5</em><em>)</em>) – <dl class="simple">
+<dt>Size of the nodes.</dt><dd><ul>
+<li><p>10: all nodes sizes are set to 10</p></li>
+<li><p>[10, 5, 3, 1, …]: Specify node sizes</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
 <li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
 <li><p><strong>slider</strong> (<em>typle</em><em> [</em><em>min: int</em><em>, </em><em>max: int</em><em>]</em><em>:</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Slider is automatically set to the range of the edge weights.</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘d3graph’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[1500, 800]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’d3graph’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[1500, 800]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -406,34 +494,68 @@ be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p></li>
-<li><p><strong>group</strong> (<em>list of strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Grouping (and coloring) of the nodes.
-* ‘cluster’ : Colours are based on the community distance clusters.
-* None: All nodes will have the same color (auto generated).</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>group</strong> (<em>list of strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – <dl class="simple">
+<dt>Grouping (and coloring) of the nodes.</dt><dd><ul>
+<li><p>’cluster’ : Colours are based on the community distance clusters.</p></li>
+<li><p>None: All nodes will have the same color (auto generated).</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
 <li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 250</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
 <li><p><strong>size</strong> (<em>float</em><em>, </em><em>(</em><em>default: 4</em><em>)</em>) – Size of the nodes.</p></li>
 <li><p><strong>hull_offset</strong> (<em>float</em><em>, </em><em>(</em><em>default: 15</em><em>)</em>) – The higher the number the more the clusters will overlap after expanding.</p></li>
 <li><p><strong>single_click_expand</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Nodes are not expanded with a single click.</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘d3graph’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[None, None] # Full screen
-[1500, 800]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’elasticgraph’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[None, None] # Full screen</p></li>
+<li><p>[1500, 800]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -493,36 +615,84 @@ Adjacency matrix must be symetric.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data. The index and column names are used for the row/column naming.</p></li>
-<li><p><strong>classlabel</strong> (<em>str</em><em> or </em><em>list</em>) – ‘cluster’: colors are based on clustering
-‘label’: colors are based on the presence of unique labels
-[1,2,1,..]: colors are based on the input classlabels</p></li>
-<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – Color of the recangle when hovering over a cell.
-‘red’
-‘black’</p></li>
+<li><p><strong>classlabel</strong> (<em>str</em><em> or </em><em>list</em>) – <dl class="simple">
+<dt>Class label to color the clustering.</dt><dd><ul>
+<li><p>’cluster’: colors are based on clustering</p></li>
+<li><p>’label’: colors are based on the presence of unique labels</p></li>
+<li><p>[1,2,1,..]: colors are based on the input classlabels</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Color of the recangle when hovering over a cell.</dt><dd><ul>
+<li><p>’red’</p></li>
+<li><p>’black’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>description</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Heatmap description'</em><em>)</em>) – Description text of the heatmap.</p></li>
-<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
-1 : cells above value &gt;1 are capped.
-None : cells are colored based on the maximum value in the input data.</p></li>
+<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul>
+<li><p>1 : cells above value &gt;1 are capped.</p></li>
+</ul>
+</dd>
+</dl>
+<p>None : cells are colored based on the maximum value in the input data.</p>
+</p></li>
 <li><p><strong>cluster_params</strong> (<em>dict</em><em> (</em><em>defaults</em><em>)</em>) – Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Timeseries’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[800, 800]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Heatmap’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[800, 800]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -541,8 +711,10 @@ False: Use the d3.node_properties()</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example 2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
@@ -575,35 +747,67 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img_before</strong> (<em>String</em>) – absolute path to before image.</p></li>
 <li><p><strong>img_after</strong> (<em>String</em>) – absolute path to after image.</p></li>
-<li><p><strong>scale</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Scale image in range [0, 255], by img*(255/max(img))
-True: Scaling image
-False: Leave image untouched</p></li>
-<li><p><strong>colorscale</strong> (<em>int</em><em>, </em><em>default: -1</em><em> (</em><em>untouched</em><em>)</em>) – colour-scaling from opencv.
-* 0: cv2.IMREAD_GRAYSCALE
-* 1: cv2.IMREAD_COLOR
-* 2: cv2.IMREAD_ANYDEPTH
-* 8: cv2.COLOR_GRAY2RGB
-* -1: cv2.IMREAD_UNCHANGED</p></li>
+<li><p><strong>scale</strong> (<em>bool</em><em>, </em><em>default: True</em>) – <dl class="simple">
+<dt>Scale image in range [0, 255], by img*(255/max(img))</dt><dd><ul>
+<li><p>True: Scaling image</p></li>
+<li><p>False: Leave image untouched</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>colorscale</strong> (<em>int</em><em>, </em><em>default: -1</em><em> (</em><em>untouched</em><em>)</em>) – <dl class="simple">
+<dt>colour-scaling from opencv.</dt><dd><ul>
+<li><p>0: cv2.IMREAD_GRAYSCALE</p></li>
+<li><p>1: cv2.IMREAD_COLOR</p></li>
+<li><p>2: cv2.IMREAD_ANYDEPTH</p></li>
+<li><p>8: cv2.COLOR_GRAY2RGB</p></li>
+<li><p>-1: cv2.IMREAD_UNCHANGED</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>background</strong> (<em>String</em><em> (</em><em>default: '#000000'</em><em>)</em>) – Background color.</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Imageslider’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[900, 900]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Imageslider’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
+<li><p>File path to save the output.</p></li>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[900, 900]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -644,24 +848,42 @@ False: Do not overwrite destination file but show warning instead.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>str</em>) – “movingbubbles”
-“random_time”
-“timeseries”
-“energy”
-“stormofswords”
-“bigbang”
-“southern_nebula”
-“southern_nebula_internet”
-“cancer”
-“breast_cancer”
-“iris”
-“occupancy”
-“climate”
-“mnist”</p></li>
+<li><p><strong>data</strong> (<em>str</em>) – <dl class="simple">
+<dt>Example datasets:</dt><dd><ul>
+<li><p>”movingbubbles”</p></li>
+<li><p>”random_time”</p></li>
+<li><p>”timeseries”</p></li>
+<li><p>”energy”</p></li>
+<li><p>”stormofswords”</p></li>
+<li><p>”bigbang”</p></li>
+<li><p>”southern_nebula”</p></li>
+<li><p>”southern_nebula_internet”</p></li>
+<li><p>”cancer”</p></li>
+<li><p>”breast_cancer”</p></li>
+<li><p>”iris”</p></li>
+<li><p>”occupancy”</p></li>
+<li><p>”climate”</p></li>
+<li><p>”mnist”</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>n</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em><em>.</em>) – Number of events (samples).</p></li>
 <li><p><strong>c</strong> (<em>int</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – Number of classes.</p></li>
-<li><p><strong>date_start</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 00:00:00” : start date</p></li>
-<li><p><strong>date_stop</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – “17-12-1903 23:59:59” : Stop date</p></li>
+<li><p><strong>date_start</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Start date.</dt><dd><ul>
+<li><p>”17-12-1903 00:00:00” : start date</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>date_stop</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Stop date.</dt><dd><ul>
+<li><p>”17-12-1903 23:59:59” : Stop date</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -697,38 +919,94 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <li><p><strong>sample_id</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'sample_id'</em><em>)</em>) – Name of the column with the sample ids.</p></li>
 <li><p><strong>state</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'state'</em><em>)</em>) – Name of the column with the states.</p></li>
 <li><p><strong>center</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Center this category.</p></li>
-<li><p><strong>dt_format</strong> (<em>str</em>) – ‘%d-%m-%Y %H:%M:%S’.</p></li>
-<li><p><strong>dampler</strong> (<em>float</em><em>, </em><em>(</em><em>default: 1</em><em>)</em>) – Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.</p></li>
+<li><p><strong>dt_format</strong> (<em>str</em>) – <dl class="simple">
+<dt>Date time format.</dt><dd><ul>
+<li><p>’%d-%m-%Y %H:%M:%S’.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dampler</strong> (<em>float</em><em>, </em><em>(</em><em>default: 1</em><em>)</em>) – <dl class="simple">
+<dt>Movement of samples. A smaller number is slower/smoother movement.</dt><dd><ul>
+<li><p>0.1: min</p></li>
+<li><p>10: max</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the states.</p></li>
-<li><p><strong>reset_time</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'day'</em><em>)</em>) – ‘day’  : Every 24h de the day start over again.
-‘year’ : Every 365 days the year starts over again.</p></li>
-<li><p><strong>standardize</strong> (<em>str.</em><em> (</em><em>default: None</em><em>)</em>) – Method to standardize the data.
-None: standardize over the entire timeframe. Sample_ids are dependent to each other.
-‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+<li><p><strong>reset_time</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'day'</em><em>)</em>) – <dl class="simple">
+<dt>Reset the time after this period.</dt><dd><ul>
+<li><p>’day’  : Every 24h de the day start over again.</p></li>
+<li><p>’year’ : Every 365 days the year starts over again.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>standardize</strong> (<em>str.</em><em> (</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Method to standardize the data.</dt><dd><ul>
+<li><p>None: standardize over the entire timeframe. Sample_ids are dependent to each other.</p></li>
+<li><p>’samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>speed</strong> (<em>dict</em><em>, </em><em>(</em><em>default: {&quot;slow&quot;: 1000</em><em>, </em><em>&quot;medium&quot;: 200</em><em>, </em><em>&quot;fast&quot;: 50}</em><em>)</em>) – The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p></li>
 <li><p><strong>note</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – A specific note, such as project description can be put on the html page.</p></li>
 <li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – The time notes will be shown between specific time points.
 time_notes = [{“start_minute”: 1, “stop_minute”: 5, “note”: “Enter your note here and it is shown between 1 min and 5 min.”}]
 time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Movingbubbles’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[780, 800]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Movingbubbles’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[780, 800]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -792,53 +1070,60 @@ False: Use the d3.node_properties()</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.particles">
-<span class="sig-name descname"><span class="pre">particles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#000000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Particles</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'particles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.particles" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">particles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">text:</span> <span class="pre">str,</span> <span class="pre">radius:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">3,</span> <span class="pre">collision:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.05,</span> <span class="pre">fontsize:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">180,</span> <span class="pre">spacing:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">8,</span> <span class="pre">cmap:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'Turbo',</span> <span class="pre">color_background:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#000000',</span> <span class="pre">title:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'Particles</span> <span class="pre">-</span> <span class="pre">D3blocks',</span> <span class="pre">filepath:</span> <span class="pre">(None,</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;)</span> <span class="pre">=</span> <span class="pre">'particles.html',</span> <span class="pre">figsize=[900,</span> <span class="pre">200],</span> <span class="pre">showfig:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">notebook:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">overwrite:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.particles" title="Permalink to this definition"></a></dt>
 <dd><p>Particles block.</p>
-<blockquote>
-<div><p>The particles plot is to turn any word into an interactive visualization. With a mouse-move or touch, the particle
+<p>The particles plot is to turn any word into an interactive visualization. With a mouse-move or touch, the particle
 bounce and then return to their original place. Various properties can be changed such as the bouncing,
 particle size, and colors. The original javascript is forked from Ian Johnson’s Block.</p>
-<dl class="simple">
-<dt>text<span class="classifier">string</span></dt><dd><p>String to be visualized</p>
-</dd>
-<dt>radius<span class="classifier">float (Default: 3)</span></dt><dd><p>Size of the particles.</p>
-</dd>
-<dt>collision<span class="classifier">float, (default: 0.1)</span></dt><dd><p>Response of the interaction. Higher means that more collisions are prevented.</p>
-</dd>
-<dt>fontsize<span class="classifier">int (Default: 250)</span></dt><dd><p>Text fontsize.
-When increasing: also increase width and slighly the spacing.</p>
-</dd>
-<dt>spacing<span class="classifier">int (Default: 10)</span></dt><dd><p>The number of particles that fit in the text.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – String to be visualized</p></li>
+<li><p><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 3</em><em>)</em>) – Size of the particles.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default: 0.1</em><em>)</em>) – Response of the interaction. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default: 250</em><em>)</em>) – Text fontsize.
+When increasing: also increase width and slighly the spacing.</p></li>
+<li><p><strong>spacing</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default: 10</em><em>)</em>) – The number of particles that fit in the text.
 A larger spacing reults in less particles.
-A smaller spacing reults in more particles.</p>
-</dd>
-<dt>cmap<span class="classifier">String (default: ‘Set2’)</span></dt><dd><p>Color schemes can be found here: <a class="reference external" href="https://observablehq.com/&#64;d3/color-schemes">https://observablehq.com/&#64;d3/color-schemes</a>
-‘Turbo’, ‘Rainbow’, ‘Blues’, ‘Reds’, ‘Inferno’, ‘Magma’</p>
-</dd>
-<dt>color_background<span class="classifier">String (default: ‘#000000’)</span></dt><dd><p>Background color.</p>
-</dd>
-<dt>title<span class="classifier">String, (default: None)</span></dt><dd><p>Title of the figure.</p>
-</dd>
-<dt>filepath<span class="classifier">String, (Default: user temp directory)</span></dt><dd><p>File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML content.</p>
-</dd>
-<dt>figsize<span class="classifier">tuple, (default: (800, 600))</span></dt><dd><p>Size of the figure in the browser, [width, height].</p>
-</dd>
-<dt>showfig<span class="classifier">bool, (default: True)</span></dt><dd><p>Open the window to show the particles.</p>
-</dd>
-<dt>notebook<span class="classifier">bool</span></dt><dd><p>True: Use IPython to show chart in notebooks.
-False: Do not use IPython.</p>
+A smaller spacing reults in more particles.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: 'Set2'</em><em>)</em>) – <dl class="simple">
+<dt>Color schemes can be found at the references.</dt><dd><ul>
+<li><p>’Turbo’, ‘Rainbow’, ‘Blues’, ‘Reds’, ‘Inferno’, ‘Magma’</p></li>
+</ul>
 </dd>
 </dl>
-</div></blockquote>
-<dl>
-<dt>overwrite<span class="classifier">bool, (default: True)</span></dt><dd><blockquote>
-<div><p>Overwrite the output html in the destination directory.</p>
-</div></blockquote>
-<p>None</p>
+</p></li>
+<li><p><strong>color_background</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: '#000000'</em><em>)</em>) – Background color.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML content.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>optional</em><em> (</em><em>default:</em><em> (</em><em>800</em><em>, </em><em>600</em><em>)</em><em>)</em>) – Size of the figure in the browser, [width, height].</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: True</em><em>)</em>) – Open the window to show the particles.</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em><em>, </em><em>optional</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebooks.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the output html in the destination directory.</p></li>
+<li><p>False: Do not overwrite</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
@@ -849,15 +1134,22 @@ False: Do not use IPython.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3blocks&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create customized chart</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3Blocks&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;D3Blocks.html&#39;</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">750</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span> <span class="n">color_background</span><span class="o">=</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">particles</span><span class="p">(</span><span class="s1">&#39;D3Blocks&#39;</span><span class="p">,</span>
+<span class="go">                 filepath=&#39;D3Blocks.html&#39;,</span>
+<span class="go">                 collision=0.05,</span>
+<span class="go">                 spacing=7,</span>
+<span class="go">                 figsize=[750, 150],</span>
+<span class="go">                 fontsize=130,</span>
+<span class="go">                 cmap=&#39;Turbo&#39;,</span>
+<span class="go">                 color_background=&#39;#ffffff&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+<p class="rubric">References</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Particles.html">https://d3blocks.github.io/d3blocks/pages/html/Particles.html</a></p></li>
+<li><p><a class="reference external" href="https://observablehq.com/&#64;d3/color-schemes">https://observablehq.com/&#64;d3/color-schemes</a></p></li>
 </ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -873,39 +1165,83 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’</p></li>
-<li><p><strong>link</strong> (<em>dict.</em>) – “linkColor” : “source”, “target”, “source-target”
-“linkStrokeOpacity” : 0.5
-“color_static”: ‘#0f0f0f’ or “grey”, “blue”, “red” etc</p></li>
-<li><p><strong>margin</strong> (<em>dict.</em>) – margin, in pixels
-“top” : 5
-“right” : 1
-“bottom” : 5
-“left” : 1</p></li>
-<li><p><strong>node</strong> (<em>dict.</em>) – “align” : “left”, “right”, “justify”, “center”
-“width” : 15 (width of the node rectangles)
-“padding” : 15 (vertical seperation between the nodes)
-“color” : “currentColor”, “grey”, “black”, “red”, etc</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Sankey’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[800, 600]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>link</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>Dictionary containing edge or link information.</dt><dd><ul>
+<li><p>”linkColor” : “source”, “target”, “source-target”</p></li>
+<li><p>”linkStrokeOpacity” : 0.5</p></li>
+<li><p>”color_static”: ‘#0f0f0f’ or “grey”, “blue”, “red” etc</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>margin</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>margin, in pixels.</dt><dd><ul>
+<li><p>”top” : 5</p></li>
+<li><p>”right” : 1</p></li>
+<li><p>”bottom” : 5</p></li>
+<li><p>”left” : 1</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>node</strong> (<em>dict.</em>) – <ul>
+<li><p>“align” : “left”, “right”, “justify”, “center”</p></li>
+<li><p>”width” : 15 (width of the node rectangles)</p></li>
+<li><p>”padding” : 15 (vertical seperation between the nodes)</p></li>
+<li><p>”color” : “currentColor”, “grey”, “black”, “red”, etc</p></li>
+</ul>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Sankey’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
+<li><p>File path to save the output.</p></li>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[800, 600]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -978,39 +1314,84 @@ class label.</p>
 <li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
 <li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
 <li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
-<li><p><strong>color</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – ‘#ffffff’ : All dots are get the same hex color.
-None: The same color as for c is applied.
-[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
-<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – Edgecolor of dotsize in hex colors.
-‘#000000’ : All dots are get the same hex color.
-[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
-<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Make a lineair gradient based on the density for the particular class label.
-‘#FFFFFF’</p></li>
+<li><p><strong>color</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <ul>
+<li><p>‘#ffffff’ : All dots are get the same hex color.</p></li>
+<li><p>None: The same color as for c is applied.</p></li>
+<li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
+</ul>
+</p></li>
+<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
+<dt>Edgecolor of dotsize in hex colors.</dt><dd><ul>
+<li><p>’#000000’ : All dots are get the same hex color.</p></li>
+<li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Make a lineair gradient based on the density for the particular class label.</dt><dd><ul>
+<li><p>’#FFFFFF’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>]</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
 <li><p><strong>tooltip</strong> (<em>list of labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>scale</strong> (<em>Bool</em><em>, </em><em>optional</em>) – Scale datapoints. The default is False.</p></li>
 <li><p><strong>label_radio</strong> (<em>List</em><em> [</em><em>'</em><em>(</em><em>x</em><em>, </em><em>y</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x1</em><em>, </em><em>y1</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x2</em><em>, </em><em>y2</em><em>)</em><em>'</em><em>]</em>) – The labels used for the radiobuttons.</p></li>
 <li><p><strong>set_xlim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Width of the x-axis: The default is extracted from the data with 10% spacing.</p></li>
 <li><p><strong>set_ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Height of the y-axis: The default is extracted from the data with 10% spacing.</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Scatterplot’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[900, 600]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Scatterplot’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[900, 600]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1037,14 +1418,51 @@ False: Use the d3.node_properties()</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">&#39; &lt;br /&gt; Survival: &#39;</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">tooltip</span><span class="o">=</span><span class="n">tooltip</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;scatter_demo.html&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;tab20&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tSNE&#39;</span><span class="p">,</span> <span class="s1">&#39;PCA&#39;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">tooltip</span><span class="o">=</span><span class="n">tooltip</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;scatter_transitions2.html&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;tab20&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tSNE&#39;</span><span class="p">,</span> <span class="s1">&#39;PCA&#39;</span><span class="p">,</span> <span class="s1">&#39;PCA_reverse&#39;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">tooltip</span><span class="o">=</span><span class="n">tooltip</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;scatter_transitions3.html&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;tab20&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">               df[&#39;y&#39;].values,</span>
+<span class="go">               size=size,</span>
+<span class="go">               color=df.index.values,</span>
+<span class="go">               stroke=&#39;#000000&#39;,</span>
+<span class="go">               opacity=0.4,</span>
+<span class="go">               tooltip=tooltip,</span>
+<span class="go">               filepath=&#39;scatter_demo.html&#39;,</span>
+<span class="go">               cmap=&#39;tab20&#39;)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">               df[&#39;y&#39;].values,</span>
+<span class="go">               x1=df[&#39;PC1&#39;].values,</span>
+<span class="go">               y1=df[&#39;PC2&#39;].values,</span>
+<span class="go">               label_radio=[&#39;tSNE&#39;, &#39;PCA&#39;],</span>
+<span class="go">               scale=True,</span>
+<span class="go">               size=size,</span>
+<span class="go">               color=df.index.values,</span>
+<span class="go">               stroke=&#39;#000000&#39;,</span>
+<span class="go">               opacity=0.4,</span>
+<span class="go">               tooltip=tooltip,</span>
+<span class="go">               filepath=&#39;scatter_transitions2.html&#39;,</span>
+<span class="go">               cmap=&#39;tab20&#39;)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">               df[&#39;y&#39;].values,</span>
+<span class="go">               x1=df[&#39;PC1&#39;].values,</span>
+<span class="go">               y1=df[&#39;PC2&#39;].values,</span>
+<span class="go">               x2=df[&#39;PC2&#39;].values,</span>
+<span class="go">               y2=df[&#39;PC1&#39;].values,</span>
+<span class="go">               label_radio=[&#39;tSNE&#39;, &#39;PCA&#39;, &#39;PCA_reverse&#39;],</span>
+<span class="go">               scale=True,</span>
+<span class="go">               size=size,</span>
+<span class="go">               color=df.index.values,</span>
+<span class="go">               stroke=&#39;#000000&#39;,</span>
+<span class="go">               opacity=0.4,</span>
+<span class="go">               tooltip=tooltip,</span>
+<span class="go">               filepath=&#39;scatter_transitions3.html&#39;,</span>
+<span class="go">               cmap=&#39;tab20&#39;)</span>
 </pre></div>
 </div>
 <p class="rubric">Examples</p>
@@ -1058,7 +1476,15 @@ False: Use the d3.node_properties()</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;cancer&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tSNE&#39;</span><span class="p">,</span><span class="s1">&#39;PCA&#39;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">tooltip</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">&#39; &lt;br /&gt; Survival: &#39;</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">                           df[&#39;y&#39;].values,</span>
+<span class="go">                           x1=df[&#39;PC1&#39;].values,</span>
+<span class="go">                           y1=df[&#39;PC2&#39;].values,</span>
+<span class="go">                           label_radio=[&#39;tSNE&#39;,&#39;PCA&#39;],</span>
+<span class="go">                           size=df[&#39;survival_months&#39;].fillna(1).values / 10,</span>
+<span class="go">                           color=df.index.values,</span>
+<span class="go">                           tooltip=df[&#39;labels&#39;].values + &#39; &lt;br /&gt; Survival: &#39; + df[&#39;survival_months&#39;].astype(str).str[0:4].values,</span>
+<span class="go">                           scale=True)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1097,27 +1523,47 @@ edge properties for the scatter chart are those described in the scatter functio
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the following columns:
-‘source’
-‘target’
-‘weight’
-‘color’ (optional)
-‘opacity’  (optional)</p></li>
-<li><p><strong>color</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Link colors in Hex notation. Should be the same size as input DataFrame.
-* None : ‘cmap’ is used to create colors.
-* ‘source’: Color edges/links similar to that of source-color node.
-* ‘target’: Color edges/links similar to that of target-color node.
-* ‘source-target’: Color edges/link based on unique source-target edges using the colormap.
-* ‘#ffffff’: All links have the same hex color.
-* [‘#000000’, ‘#ffffff’,…]: Define per link.</p></li>
-<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0..1</em><em>] </em><em>(</em><em>default: None</em><em>)</em>) – Link Opacity. Should be the same size as input DataFrame.
-* ‘source’: Opacity of edges/links similar to that of source-opacity node.
-* ‘target’: Opacity of edges/links similar to that of target-opacity node.
-* 0.8: All links have the same opacity.
-* [0.1, 0.75,…]: Set opacity per edge/link.</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'tab20'</em><em>)</em>) – colormap is only used in case color=None.
-All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
+<li><p>’color’ (optional)</p></li>
+<li><p>’opacity’  (optional)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>color</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>Link colors in Hex notation. Should be the same size as input DataFrame.</dt><dd><ul>
+<li><p>None : ‘cmap’ is used to create colors.</p></li>
+<li><p>’source’: Color edges/links similar to that of source-color node.</p></li>
+<li><p>’target’: Color edges/links similar to that of target-color node.</p></li>
+<li><p>’source-target’: Color edges/link based on unique source-target edges using the colormap.</p></li>
+<li><p>’#ffffff’: All links have the same hex color.</p></li>
+<li><p>[‘#000000’, ‘#ffffff’,…]: Define per link.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0..1</em><em>] </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Link Opacity. Should be the same size as input DataFrame.</dt><dd><ul>
+<li><p>’source’: Opacity of edges/links similar to that of source-opacity node.</p></li>
+<li><p>’target’: Opacity of edges/links similar to that of target-opacity node.</p></li>
+<li><p>0.8: All links have the same opacity.</p></li>
+<li><p>[0.1, 0.75,…]: Set opacity per edge/link.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'tab20'</em><em>)</em>) – <p>colormap is only used in case color=None.
+All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</p>
+<blockquote>
+<div><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+</ul>
+</div></blockquote>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1132,8 +1578,13 @@ All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
 <dd><p>Set label properties.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>labels</strong> (<em>array-like</em><em> (</em><em>default: None</em><em>)</em>) – The unique names of the nodes/labels.
-* In case of pd.DataFrame, the ‘source’ and ‘target’ columns are used.</p>
+<dd class="field-odd"><p><strong>labels</strong> (<em>array-like</em><em> (</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>The unique names of the nodes/labels.</dt><dd><ul class="simple">
+<li><p>In case of pd.DataFrame, the ‘source’ and ‘target’ columns are used.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>labels</strong> – Dictionary containing class information.</p>
@@ -1153,15 +1604,26 @@ All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [height, width].</p></li>
 <li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em>) – True: Open the browser and show chart.
-False: Do not open browser.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebooks.
-False: Do not use IPython.</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em>) – <ul>
+<li><p>True: Open the browser and show chart.</p></li>
+<li><p>False: Do not open browser.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebooks.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
 <li><p><strong>kwargs</strong> (<em>Various</em>) – Other options are possible depending on the chart that is being used.</p></li>
 </ul>
 </dd>
@@ -1184,30 +1646,71 @@ in a single chart.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data containing the columns “datetime” together with the names of the timeseries to plot.</p></li>
 <li><p><strong>datetime</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Column name that contains the datetime.</p></li>
-<li><p><strong>dt_format</strong> (<em>str</em>) – ‘%d-%m-%Y %H:%M:%S’.</p></li>
-<li><p><strong>sort_on_date</strong> (<em>Bool</em><em> (</em><em>default: True</em><em>)</em>) – True: Sort on datetime.
-False: Do not change the input order.</p></li>
+<li><p><strong>dt_format</strong> (<em>str</em>) – <dl class="simple">
+<dt>Date time format.</dt><dd><ul>
+<li><p>’%d-%m-%Y %H:%M:%S’.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>sort_on_date</strong> (<em>Bool</em><em> (</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Sort on datetime.</p></li>
+<li><p>False: Do not change the input order.</p></li>
+</ul>
+</p></li>
 <li><p><strong>whitelist</strong> (<em>str</em><em>, </em><em>optional</em>) – Keep only columns containing this (sub)string (case insensitive)</p></li>
 <li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the fonts in the circle.</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Timeseries’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[1200, 500]</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Timeseries’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[1200, 500]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1275,8 +1778,13 @@ False: Use the d3.node_properties()</p></li>
 <li><p><strong>target</strong> (<em>list</em>) – The target node.</p></li>
 <li><p><strong>weight</strong> (<em>list of int</em>) – The Weights between the source-target values</p></li>
 <li><p><strong>symmetric</strong> (<em>bool</em><em>, </em><em>optional</em>) – Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.</p></li>
-<li><p><strong>aggfunc</strong> (<em>str</em><em>, </em><em>optional</em>) – Aggregate function in case multiple values exists for the same relationship.
-‘sum’ (default)</p></li>
+<li><p><strong>aggfunc</strong> (<em>str</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>Aggregate function in case multiple values exists for the same relationship.</dt><dd><ul>
+<li><p>’sum’ (default)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1315,37 +1823,87 @@ input parameters for the Violin plot that can help to create the most insightful
 <li><p><strong>x</strong> (<em>list of String</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the class labels for each datapoint in y.</p></li>
 <li><p><strong>y</strong> (<em>list of float</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the values for the samples.</p></li>
 <li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
-<li><p><strong>color</strong> (<em>list/array of hex colors with same size as y</em>) – ‘#002147’ : All dots/nodes are get the same hex color.
-None: The colors are generated on value using the colormap specified in cmap.
-[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p></li>
-<li><p><strong>x_order</strong> (<em>list of String</em><em> (</em><em>default: None</em><em>)</em>) – The order of the class labels on the x-axis.
-[“setosa”, “versicolor”, “virginica”]</p></li>
+<li><p><strong>color</strong> (<em>list/array of hex colors with same size as y</em>) – <ul>
+<li><p>‘#002147’ : All dots/nodes are get the same hex color.</p></li>
+<li><p>None: The colors are generated on value using the colormap specified in cmap.</p></li>
+<li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p></li>
+</ul>
+</p></li>
+<li><p><strong>x_order</strong> (<em>list of String</em><em> (</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>The order of the class labels on the x-axis.</dt><dd><ul>
+<li><p>[“setosa”, “versicolor”, “virginica”]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>] </em><em>(</em><em>default: 0.6</em><em>)</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
-<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – Edgecolor of dot in hex colors.
-‘#000000’ : Edge colors are all black.</p></li>
+<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
+<dt>Edgecolor of dot in hex colors.</dt><dd><ul>
+<li><p>’#000000’ : Edge colors are all black.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>tooltip</strong> (<em>list of labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
-<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
-‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>bins</strong> (<em>Int</em><em> (</em><em>default: 50</em><em>)</em>) – The bin size is the ‘resolution’ of the violin plot.</p></li>
-<li><p><strong>ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Limit the width of the y-axis [min, max].
-[None, None] : The width is determined based on the min-max value range.</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Violin Chart’</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
-Temporarily path: ‘Violin.html’
-Relative path: ‘./Violin.html’
-Absolute path: ‘c://temp//Violin.html’
-None: Return HTML content.</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[None, None]: The width is auto-determined based on the #labels.</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
-False: Do not open browser-window.</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
-False: Use the d3.node_properties()</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – <dl class="simple">
+<dt>Limit the width of the y-axis [min, max].</dt><dd><ul>
+<li><p>[None, None] : The width is determined based on the min-max value range.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Violin Chart’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘Violin.html’</p></li>
+<li><p>Relative path: ‘./Violin.html’</p></li>
+<li><p>Absolute path: ‘c://temp//Violin.html’</p></li>
+<li><p>None: Return HTML content.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[None, None]: The width is auto-determined based on the #labels.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1426,7 +1984,7 @@ False: Use the d3.node_properties()</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.set_chart_func">
 <span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">set_chart_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.set_chart_func" title="Permalink to this definition"></a></dt>
-<dd><p>Library compatibiliy checks.</p>
+<dd><p>Library compatibility checks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>chart function as Object.</p>

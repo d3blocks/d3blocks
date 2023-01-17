@@ -72,10 +72,13 @@ class D3Blocks():
 
     References
     ----------
-    * Blog - D3Blocks: https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
-    * Blog - D3Graph: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
-    * Github: https://github.com/d3blocks/d3blocks
-    * Documentation: https://d3blocks.github.io/d3blocks/
+    * Github : https://github.com/d3blocks/d3blocks
+    * Docs: https://d3blocks.github.io/d3blocks/
+    * D3Blocks: https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
+    * D3Graph: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
+    * Scatter: https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046
+    * Sankey: https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43
+    * Movingbubbles: https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226
 
     """
 
@@ -97,68 +100,67 @@ class D3Blocks():
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
 
     def particles(self,
-                  text,
-                  radius=3,
-                  collision=0.05,
-                  fontsize=180,
-                  spacing=8,
-                  cmap='Turbo',
-                  color_background='#000000',
-                  title='Particles - D3blocks',
-                  filepath='particles.html',
+                  text: str,
+                  radius: int = 3,
+                  collision: float = 0.05,
+                  fontsize: int = 180,
+                  spacing: int = 8,
+                  cmap: str = 'Turbo',
+                  color_background: str = '#000000',
+                  title: str = 'Particles - D3blocks',
+                  filepath: (None, str) = 'particles.html',
                   figsize=[900, 200],
-                  showfig=True,
-                  notebook=False,
-                  overwrite=True):
+                  showfig: bool = True,
+                  notebook: bool = False,
+                  overwrite: bool = True):
         """Particles block.
 
-        Description
-        -----------
         The particles plot is to turn any word into an interactive visualization. With a mouse-move or touch, the particle
         bounce and then return to their original place. Various properties can be changed such as the bouncing,
         particle size, and colors. The original javascript is forked from Ian Johnson's Block.
 
         Parameters
         ----------
-        text : string
+        text : str
             String to be visualized
-        radius : float (Default: 3)
+        radius : float, optional (default: 3)
             Size of the particles.
-        collision : float, (default: 0.1)
+        collision : float, optional (default: 0.1)
             Response of the interaction. Higher means that more collisions are prevented.
-        fontsize : int (Default: 250)
+        fontsize : int, optional (default: 250)
             Text fontsize.
             When increasing: also increase width and slighly the spacing.
-        spacing : int (Default: 10)
+        spacing : int, optional (default: 10)
             The number of particles that fit in the text.
             A larger spacing reults in less particles.
             A smaller spacing reults in more particles.
-        cmap : String (default: 'Set2')
-            Color schemes can be found here: https://observablehq.com/@d3/color-schemes
-            'Turbo', 'Rainbow', 'Blues', 'Reds', 'Inferno', 'Magma'
-        color_background : String (default: '#000000')
+        cmap : str, optional (default: 'Set2')
+            Color schemes can be found at the references.
+                * 'Turbo', 'Rainbow', 'Blues', 'Reds', 'Inferno', 'Magma'
+        color_background : str, optional (default: '#000000')
             Background color.
-        title : String, (default: None)
+        title : str, optional (default: None)
             Title of the figure.
-        filepath : String, (Default: user temp directory)
+        filepath : str, optional (default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML content.
-        figsize : tuple, (default: (800, 600))
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML content.
+        figsize : tuple, optional (default: (800, 600))
             Size of the figure in the browser, [width, height].
-        showfig : bool, (default: True)
+        showfig : bool, optional (default: True)
             Open the window to show the particles.
-        notebook : bool
-            True: Use IPython to show chart in notebooks.
-            False: Do not use IPython.
-    overwrite : bool, (default: True)
-            Overwrite the output html in the destination directory.
+        notebook : bool, optional
+                * True: Use IPython to show chart in notebooks.
+                * False: Do not use IPython.
+        overwrite : bool, optional (default: True)
+                * True: Overwrite the output html in the destination directory.
+                * False: Do not overwrite
 
         Returns
         -------
-        None
+        None.
 
         Examples
         --------
@@ -172,12 +174,20 @@ class D3Blocks():
         >>> d3.particles('D3blocks')
         >>> #
         >>> # Create customized chart
-        >>> d3.particles('D3Blocks', filepath='D3Blocks.html', collision=0.05, spacing=7, figsize=[750, 150], fontsize=130, cmap='Turbo', color_background='#ffffff')
+        >>> d3.particles('D3Blocks',
+                         filepath='D3Blocks.html',
+                         collision=0.05,
+                         spacing=7,
+                         figsize=[750, 150],
+                         fontsize=130,
+                         cmap='Turbo',
+                         color_background='#ffffff')
         >>> #
 
         References
         ----------
         * https://d3blocks.github.io/d3blocks/pages/html/Particles.html
+        * https://observablehq.com/@d3/color-schemes
 
         """
         # Cleaning
@@ -201,8 +211,6 @@ class D3Blocks():
 
         # Create the plot
         html = Particles.show(text, self.config, logger)
-        # Open the webbrowser
-        # self.open_browser(logger=logger)
         # Display the chart
         return self.display(html)
 
@@ -227,8 +235,6 @@ class D3Blocks():
                reset_properties=True):
         """Violin block.
 
-        Description
-        -----------
         The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
         It is an alternative to the boxplot and brings insights into large datasets where the boxplot could hide a part
         of the information. The original javascript code is forked from D3.js graph gallery but brought alive by
@@ -245,58 +251,60 @@ class D3Blocks():
         size: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
         color: list/array of hex colors with same size as y
-            '#002147' : All dots/nodes are get the same hex color.
-            None: The colors are generated on value using the colormap specified in cmap.
-            ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
+                * '#002147' : All dots/nodes are get the same hex color.
+                * None: The colors are generated on value using the colormap specified in cmap.
+                * ['#000000', '#ffffff',...]: list/array of hex colors with same size as y.
         x_order : list of String (default: None)
             The order of the class labels on the x-axis.
-            ["setosa", "versicolor", "virginica"]
+                * ["setosa", "versicolor", "virginica"]
         opacity: float or list/array [0-1] (default: 0.6)
             Opacity of the dot. Shoud be same size as (x,y)
         stroke: list/array of hex colors with same size as (x,y)
             Edgecolor of dot in hex colors.
-            '#000000' : Edge colors are all black.
+                * '#000000' : Edge colors are all black.
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
         cmap : String, (default: 'inferno')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
         bins : Int (default: 50)
             The bin size is the 'resolution' of the violin plot.
         ylim : tuple, (default: [None, None])
             Limit the width of the y-axis [min, max].
-            [None, None] : The width is determined based on the min-max value range.
+                *  [None, None] : The width is determined based on the min-max value range.
         title : String, (default: None)
             Title of the figure.
-            'Violin Chart'
+                * 'Violin Chart'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'Violin.html'
-            Relative path: './Violin.html'
-            Absolute path: 'c://temp//Violin.html'
-            None: Return HTML content.
+                * Temporarily path: 'Violin.html'
+                * Relative path: './Violin.html'
+                * Absolute path: 'c://temp//Violin.html'
+                * None: Return HTML content.
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [None, None]: The width is auto-determined based on the #labels.
+                * [None, None]: The width is auto-determined based on the #labels.
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Returns
         -------
          d3.node_properties: DataFrame of dictionary
              Contains properties of the unique input label/nodes/samples.
+
         d3.edge_properties: DataFrame of dictionary
              Contains properties of the unique input edges/links.
+
         d3.config: dictionary
              Contains configuration properties.
 
@@ -390,8 +398,6 @@ class D3Blocks():
                 ):
         """Scatterplot block.
 
-        Description
-        -----------
         The scatter plot is perhaps the most well-known chart to plot x, and y coordinates. Basic charts are very
         useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
         sample-wise colored and used to detect relationships between (groups of) variables.
@@ -415,23 +421,23 @@ class D3Blocks():
         size: list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
         color: list/array of hex colors with same size as (x,y)
-            '#ffffff' : All dots are get the same hex color.
-            None: The same color as for c is applied.
-            ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+                * '#ffffff' : All dots are get the same hex color.
+                * None: The same color as for c is applied.
+                * ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
         stroke: list/array of hex colors with same size as (x,y)
             Edgecolor of dotsize in hex colors.
-            '#000000' : All dots are get the same hex color.
-            ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
+                * '#000000' : All dots are get the same hex color.
+                * ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
         c_gradient : String, (default: None)
             Make a lineair gradient based on the density for the particular class label.
-            '#FFFFFF'
+                * '#FFFFFF'
         opacity: float or list/array [0-1]
             Opacity of the dot. Shoud be same size as (x,y)
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
         cmap : String, (default: 'inferno')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
         scale: Bool, optional
             Scale datapoints. The default is False.
         label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
@@ -442,35 +448,37 @@ class D3Blocks():
             Height of the y-axis: The default is extracted from the data with 10% spacing.
         title : String, (default: None)
             Title of the figure.
-            'Scatterplot'
+                * 'Scatterplot'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [900, 600]
+                * [900, 600]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Returns
         -------
         d3.node_properties: DataFrame of dictionary
              Contains properties of the unique input label/nodes/samples.
+
         d3.edge_properties: DataFrame of dictionary
              Contains properties of the unique input edges/links.
+
         d3.config: dictionary
              Contains configuration properties.
 
@@ -490,14 +498,51 @@ class D3Blocks():
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> #
         >>> # Scatter plot
-        >>> d3.scatter(df['x'].values, df['y'].values, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_demo.html', cmap='tab20')
-        >>> #
+        >>> d3.scatter(df['x'].values,
+                       df['y'].values,
+                       size=size,
+                       color=df.index.values,
+                       stroke='#000000',
+                       opacity=0.4,
+                       tooltip=tooltip,
+                       filepath='scatter_demo.html',
+                       cmap='tab20')
+
+        Examples
+        --------
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE', 'PCA'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions2.html', cmap='tab20')
-        >>> #
+        >>> d3.scatter(df['x'].values,
+                       df['y'].values,
+                       x1=df['PC1'].values,
+                       y1=df['PC2'].values,
+                       label_radio=['tSNE', 'PCA'],
+                       scale=True,
+                       size=size,
+                       color=df.index.values,
+                       stroke='#000000',
+                       opacity=0.4,
+                       tooltip=tooltip,
+                       filepath='scatter_transitions2.html',
+                       cmap='tab20')
+
+        Examples
+        --------
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, x2=df['PC2'].values, y2=df['PC1'].values, label_radio=['tSNE', 'PCA', 'PCA_reverse'], scale=True, size=size, color=df.index.values, stroke='#000000', opacity=0.4, tooltip=tooltip, filepath='scatter_transitions3.html', cmap='tab20')
-        >>> #
+        >>> d3.scatter(df['x'].values,
+                       df['y'].values,
+                       x1=df['PC1'].values,
+                       y1=df['PC2'].values,
+                       x2=df['PC2'].values,
+                       y2=df['PC1'].values,
+                       label_radio=['tSNE', 'PCA', 'PCA_reverse'],
+                       scale=True,
+                       size=size,
+                       color=df.index.values,
+                       stroke='#000000',
+                       opacity=0.4,
+                       tooltip=tooltip,
+                       filepath='scatter_transitions3.html',
+                       cmap='tab20')
 
         Examples
         --------
@@ -511,7 +556,15 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Set properties
-        >>> d3.set_edge_properties(df['x'].values, df['y'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
+        >>> d3.set_edge_properties(df['x'].values,
+                                   df['y'].values,
+                                   x1=df['PC1'].values,
+                                   y1=df['PC2'].values,
+                                   label_radio=['tSNE','PCA'],
+                                   size=df['survival_months'].fillna(1).values / 10,
+                                   color=df.index.values,
+                                   tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                                   scale=True)
         >>> #
         >>> # Show the chart
         >>> d3.show()
@@ -564,8 +617,6 @@ class D3Blocks():
               ):
         """Chord block.
 
-        Description
-        -----------
         A chord represents flows or connections between several entities or nodes.
         Each entity is represented by a fragment on the outer part of the circular layout.
         Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.
@@ -574,61 +625,62 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-            'source'
-            'target'
-            'weight'
-            'color' (optional)
-            'opacity'  (optional)
+                * "source"
+                * "target"
+                * "weight"
+                * "color" (optional)
+                * "opacity" (optional)
         color: (default: 'source')
             Link colors in Hex notation. Should be the same size as input DataFrame.
-            * 'source': Color edges/links similar to that of source-color node.
-            * 'target': Color edges/links similar to that of target-color node.
-            * 'source-target': Color edges/link based on unique source-target edges using the colormap.
-            * '#ffffff': All links have the same hex color.
-            * ['#000000', '#ffffff',...]: Define per link.
+                * "source" : Color edges/links similar to that of source-color node.
+                * "target" : Color edges/links similar to that of target-color node.
+                * "source-target" : Color edges/link based on unique source-target edges using the colormap.
+                * "#ffffff" : All links have the same hex color.
+                * ["#000000", "#ffffff",...] : Define per link.
         opacity: (default: 'source')
             Link Opacity. Should be the same size as input DataFrame.
-            * 'source': Opacity of edges/links similar to that of source-opacity node.
-            * 'target': Opacity of edges/links similar to that of target-opacity node.
-            * 0.8: All links have the same opacity.
-            * [0.1, 0.75,...]: Set opacity per edge/link.
+                * 'source': Opacity of edges/links similar to that of source-opacity node.
+                * 'target': Opacity of edges/links similar to that of target-opacity node.
+                * 0.8: All links have the same opacity.
+                * [0.1, 0.75,...]: Set opacity per edge/link.
         fontsize : int, (default: 8)
-            Fontsize.
+            The Fontsize.
         cmap : String, (default: 'tab20')
-            colormap is only used in case color=None.
-            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+            colormap is only used in case color=None. All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
         title : String, (default: None)
             Title of the figure.
-            'Chord'
+                * 'Chord'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [900, 900]
+                * [900, 900]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Returns
         -------
         d3.node_properties: DataFrame of dictionary
-             Contains properties of the unique input label/nodes/samples.
+            Contains properties of the unique input label/nodes/samples.
+
         d3.edge_properties: DataFrame of dictionary
              Contains properties of the unique input edges/links.
+
         d3.config: dictionary
              Contains configuration properties.
 
@@ -713,8 +765,6 @@ class D3Blocks():
                     overwrite=True):
         """Imageslider Block.
 
-        Description
-        -----------
         The imageslider allows comparison of two images. This is useful in case there is a before and after state.
         For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
         Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
@@ -728,42 +778,42 @@ class D3Blocks():
             absolute path to after image.
         scale : bool, default: True
             Scale image in range [0, 255], by img*(255/max(img))
-            True: Scaling image
-            False: Leave image untouched
+                * True: Scaling image
+                * False: Leave image untouched
         colorscale : int, default: -1 (untouched)
             colour-scaling from opencv.
-            * 0: cv2.IMREAD_GRAYSCALE
-            * 1: cv2.IMREAD_COLOR
-            * 2: cv2.IMREAD_ANYDEPTH
-            * 8: cv2.COLOR_GRAY2RGB
-            * -1: cv2.IMREAD_UNCHANGED
+                * 0: cv2.IMREAD_GRAYSCALE
+                * 1: cv2.IMREAD_COLOR
+                * 2: cv2.IMREAD_ANYDEPTH
+                * 8: cv2.COLOR_GRAY2RGB
+                * -1: cv2.IMREAD_UNCHANGED
         background : String (default: '#000000')
             Background color.
         title : String, (default: None)
             Title of the figure.
-            'Imageslider'
+                * 'Imageslider'
         filepath : String, (Default: user temp directory)
-            File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [900, 900]
+                * [900, 900]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
 
         Returns
         -------
-        None
+        None.
 
         Examples
         --------
@@ -836,8 +886,6 @@ class D3Blocks():
                ):
         """Sankey block.
 
-        Description
-        -----------
         A Sankey chart is a visualization to depict a flow from one set of values to another.
         The nodes in this case are represented as the rectangle boxes, and the flow or arrows are the links.
         The width of the arrow is proportional to the flow rate. Sankeys are best used when you want to show
@@ -849,55 +897,58 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-            'source'
-            'target'
-            'weight'
+                * 'source'
+                * 'target'
+                * 'weight'
         link : dict.
-            "linkColor" : "source", "target", "source-target"
-            "linkStrokeOpacity" : 0.5
-            "color_static": '#0f0f0f' or "grey", "blue", "red" etc
+            Dictionary containing edge or link information.
+                * "linkColor" : "source", "target", "source-target"
+                * "linkStrokeOpacity" : 0.5
+                * "color_static": '#0f0f0f' or "grey", "blue", "red" etc
         margin : dict.
-            margin, in pixels
-            "top" : 5
-            "right" : 1
-            "bottom" : 5
-            "left" : 1
+            margin, in pixels.
+                * "top" : 5
+                * "right" : 1
+                * "bottom" : 5
+                * "left" : 1
         node : dict.
-            "align" : "left", "right", "justify", "center"
-            "width" : 15 (width of the node rectangles)
-            "padding" : 15 (vertical seperation between the nodes)
-            "color" : "currentColor", "grey", "black", "red", etc
+                * "align" : "left", "right", "justify", "center"
+                * "width" : 15 (width of the node rectangles)
+                * "padding" : 15 (vertical seperation between the nodes)
+                * "color" : "currentColor", "grey", "black", "red", etc
         title : String, (default: None)
             Title of the figure.
-            'Sankey'
+                * 'Sankey'
         filepath : String, (Default: user temp directory)
-            File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [800, 600]
+                * [800, 600]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Returns
         -------
         d3.node_properties: DataFrame of dictionary
              Contains properties of the unique input label/nodes/samples.
+
         d3.edge_properties: DataFrame of dictionary
              Contains properties of the unique input edges/links.
+
         d3.config: dictionary
              Contains configuration properties.
 
@@ -981,8 +1032,6 @@ class D3Blocks():
                       ):
         """MovingBubbles block.
 
-        Description
-        -----------
         The MovingBubbles provides insights into when one action follows the other across time. It can help to
         understand the movements of entities, and whether clusters occur at specific time points and state(s).
         It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
@@ -1005,18 +1054,22 @@ class D3Blocks():
         center : String, (default: None)
             Center this category.
         dt_format : str
-            '%d-%m-%Y %H:%M:%S'.
+            Date time format.
+                * '%d-%m-%Y %H:%M:%S'.
         dampler : float, (default: 1)
-            Movement of sample: [0.1 - 10]. A smaller number is slower/smoother movement.
+            Movement of samples. A smaller number is slower/smoother movement.
+                * 0.1: min
+                * 10: max
         fontsize : int, (default: 14)
             Fontsize of the states.
         reset_time : String, (default: 'day')
-            'day'  : Every 24h de the day start over again.
-            'year' : Every 365 days the year starts over again.
+            Reset the time after this period.
+                * 'day'  : Every 24h de the day start over again.
+                * 'year' : Every 365 days the year starts over again.
         standardize : str. (default: None)
             Method to standardize the data.
-            None: standardize over the entire timeframe. Sample_ids are dependent to each other.
-            'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
+                * None: standardize over the entire timeframe. Sample_ids are dependent to each other.
+                * 'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
         speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50})
             The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
         note : str, (default: None)
@@ -1027,38 +1080,40 @@ class D3Blocks():
             time_notes.append[{"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."}]
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv', 'inferno'
         title : String, (default: None)
             Title of the figure.
-            'Movingbubbles'
+                * 'Movingbubbles'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [780, 800]
+                * [780, 800]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Returns
         -------
         d3.node_properties: DataFrame of dictionary
              Contains properties of the unique input label/nodes/samples.
+
         d3.edge_properties: DataFrame of dictionary
              Contains properties of the unique input edges/links.
+
         d3.config: dictionary
              Contains configuration properties.
 
@@ -1137,8 +1192,6 @@ class D3Blocks():
                    ):
         """Timeseries block.
 
-        Description
-        -----------
         The TimeSeries can be used in case a date-time element is available, and where the time-wise values
         directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
         brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
@@ -1151,48 +1204,52 @@ class D3Blocks():
         datetime : str, (default: None)
             Column name that contains the datetime.
         dt_format : str
-            '%d-%m-%Y %H:%M:%S'.
+            Date time format.
+                * '%d-%m-%Y %H:%M:%S'.
         sort_on_date : Bool (default: True)
-            True: Sort on datetime.
-            False: Do not change the input order.
+            Sort on date.
+                * True: Sort on datetime.
+                * False: Do not change the input order.
         whitelist : str, optional
             Keep only columns containing this (sub)string (case insensitive)
         fontsize : int, (default: 14)
             Fontsize of the fonts in the circle.
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv', 'inferno'
         title : String, (default: None)
             Title of the figure.
-            'Timeseries'
+                * 'Timeseries'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [1200, 500]
+                * [1200, 500]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Returns
         -------
         d3.node_properties: DataFrame of dictionary
              Contains properties of the unique input label/nodes/samples.
+
         d3.edge_properties: DataFrame of dictionary
              Contains properties of the unique input edges/links.
+
         d3.config: dictionary
              Contains configuration properties.
 
@@ -1279,8 +1336,6 @@ class D3Blocks():
                 ):
         """Heatmap block.
 
-        Description
-        -----------
         heatmap is a Python package to create interactive heatmaps based on d3js.
         The heatmap allows interactive clustering where the cluster coloring can be customized.
         Clusters are colored and within each cluster the color is incremental based on the value.
@@ -1291,48 +1346,49 @@ class D3Blocks():
         df : pd.DataFrame()
             Input data. The index and column names are used for the row/column naming.
         classlabel : str or list
-            'cluster': colors are based on clustering
-            'label': colors are based on the presence of unique labels
-            [1,2,1,..]: colors are based on the input classlabels
+            Class label to color the clustering.
+                * 'cluster': colors are based on clustering
+                * 'label': colors are based on the presence of unique labels
+                * [1,2,1,..]: colors are based on the input classlabels
         stroke : String, (default: 'red').
             Color of the recangle when hovering over a cell.
-            'red'
-            'black'
+                * 'red'
+                * 'black'
         description : String, (default: 'Heatmap description')
             Description text of the heatmap.
         vmax : Bool, (default: 100).
             Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
-            1 : cells above value >1 are capped.
+                * 1 : cells above value >1 are capped.
             None : cells are colored based on the maximum value in the input data.
         cluster_params : dict (defaults)
             Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv','inferno'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv', 'inferno'
         title : String, (default: None)
             Title of the figure.
-            'Timeseries'
+                * 'Heatmap'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [800, 800]
+                * [800, 800]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         reset_properties : bool, (default: True)
-            True: Reset the node_properties at each run.
-            False: Use the d3.node_properties()
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
 
         Examples
         --------
@@ -1350,7 +1406,9 @@ class D3Blocks():
         >>> d3.heatmap(df)
         >>> #
         >>> #
-        >>> # Example 2
+
+        Examples
+        --------
         >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
@@ -1403,8 +1461,6 @@ class D3Blocks():
                 overwrite=True):
         """d3graph block.
 
-        Description
-        -----------
         d3graph is integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
         The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
         dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
@@ -1418,21 +1474,21 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-            'source'
-            'target'
-            'weight'
+                * 'source'
+                * 'target'
+                * 'weight'
         color : list of strings (default: '#000080')
             Color of the node.
-            * 'cluster' : Colours are based on the community distance clusters.
-            * None: All nodes will have the same color (auto generated).
-            * ['#000000']: All nodes will have the same hex color.
-            * ['#377eb8','#ffffff','#000000',...]: Hex colors are directly used.
-            * ['A']: All nodes will have hte same color. Color is generated on CMAP and the unique labels.
-            * ['A','A','B',...]:  Colors are generated using cmap and the unique labels accordingly colored.
+                * 'cluster' : Colours are based on the community distance clusters.
+                * None: All nodes will have the same color (auto generated).
+                * ['#000000']: All nodes will have the same hex color.
+                * ['#377eb8','#ffffff','#000000',...]: Hex colors are directly used.
+                * ['A']: All nodes will have hte same color. Color is generated on CMAP and the unique labels.
+                * ['A','A','B',...]:  Colors are generated using cmap and the unique labels accordingly colored.
         size : array of integers (default: 5)
             Size of the nodes.
-            * 10: all nodes sizes are set to 10
-            * [10, 5, 3, 1, ...]: Specify node sizes
+                * 10: all nodes sizes are set to 10
+                * [10, 5, 3, 1, ...]: Specify node sizes
         collision : float, (default: 0.5)
             Response of the network. Higher means that more collisions are prevented.
         charge : int, (default: 400)
@@ -1441,25 +1497,25 @@ class D3Blocks():
             Slider is automatically set to the range of the edge weights.
         title : String, (default: None)
             Title of the figure.
-            'd3graph'
+                * 'd3graph'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [1500, 800]
+                * [1500, 800]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
 
         Returns
         -------
@@ -1557,8 +1613,6 @@ class D3Blocks():
                   overwrite=True):
         """D3 Elasticgraph block.
 
-        Description
-        -----------
         Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
         the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
         dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
@@ -1574,13 +1628,13 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-            'source'
-            'target'
-            'weight'
+                * 'source'
+                * 'target'
+                * 'weight'
         group : list of strings (default: 'cluster')
             Grouping (and coloring) of the nodes.
-            * 'cluster' : Colours are based on the community distance clusters.
-            * None: All nodes will have the same color (auto generated).
+                * 'cluster' : Colours are based on the community distance clusters.
+                * None: All nodes will have the same color (auto generated).
         collision : float, (default: 0.5)
             Response of the network. Higher means that more collisions are prevented.
         charge : int, (default: 250)
@@ -1593,26 +1647,26 @@ class D3Blocks():
             Nodes are not expanded with a single click.
         title : String, (default: None)
             Title of the figure.
-            'd3graph'
+                * 'elasticgraph'
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-            [None, None] # Full screen
-            [1500, 800]
+                * [None, None] # Full screen
+                * [1500, 800]
         showfig : bool, (default: True)
-            True: Open browser-window.
-            False: Do not open browser-window.
+                * True: Open browser-window.
+                * False: Do not open browser-window.
         notebook : bool
-            True: Use IPython to show chart in notebook.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
         overwrite : bool, (default: True)
-            True: Overwrite the html in the destination directory.
-            False: Do not overwrite destination file but show warning instead.
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
 
         Returns
         -------
@@ -1693,8 +1747,6 @@ class D3Blocks():
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
 
-        Description
-        -----------
         The input for edge properties are the arguments that are inherited from the chart-function. As an example, the
         edge properties for the scatter chart are those described in the scatter function.
 
@@ -1702,29 +1754,29 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-            'source'
-            'target'
-            'weight'
-            'color' (optional)
-            'opacity'  (optional)
+                * 'source'
+                * 'target'
+                * 'weight'
+                * 'color' (optional)
+                * 'opacity'  (optional)
         color : Union[float, List[float]], optional
             Link colors in Hex notation. Should be the same size as input DataFrame.
-            * None : 'cmap' is used to create colors.
-            * 'source': Color edges/links similar to that of source-color node.
-            * 'target': Color edges/links similar to that of target-color node.
-            * 'source-target': Color edges/link based on unique source-target edges using the colormap.
-            * '#ffffff': All links have the same hex color.
-            * ['#000000', '#ffffff',...]: Define per link.
+                * None : 'cmap' is used to create colors.
+                * 'source': Color edges/links similar to that of source-color node.
+                * 'target': Color edges/links similar to that of target-color node.
+                * 'source-target': Color edges/link based on unique source-target edges using the colormap.
+                * '#ffffff': All links have the same hex color.
+                * ['#000000', '#ffffff',...]: Define per link.
         opacity: float or list/array [0..1] (default: None)
             Link Opacity. Should be the same size as input DataFrame.
-            * 'source': Opacity of edges/links similar to that of source-opacity node.
-            * 'target': Opacity of edges/links similar to that of target-opacity node.
-            * 0.8: All links have the same opacity.
-            * [0.1, 0.75,...]: Set opacity per edge/link.
+                * 'source': Opacity of edges/links similar to that of source-opacity node.
+                * 'target': Opacity of edges/links similar to that of target-opacity node.
+                * 0.8: All links have the same opacity.
+                * [0.1, 0.75,...]: Set opacity per edge/link.
         cmap : String, (default: 'tab20')
             colormap is only used in case color=None.
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-            'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
 
         Returns
         -------
@@ -1757,7 +1809,7 @@ class D3Blocks():
         ----------
         labels : array-like (default: None)
             The unique names of the nodes/labels.
-            * In case of pd.DataFrame, the 'source' and 'target' columns are used.
+                * In case of pd.DataFrame, the 'source' and 'target' columns are used.
 
         Returns
         -------
@@ -1792,16 +1844,16 @@ class D3Blocks():
             Title of the figure.
         filepath : String, (Default: user temp directory)
             File path to save the output.
-            Temporarily path: 'd3blocks.html'
-            Relative path: './d3blocks.html'
-            Absolute path: 'c://temp//d3blocks.html'
-            None: Return HTML
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
         showfig : bool
-            True: Open the browser and show chart.
-            False: Do not open browser.
+                * True: Open the browser and show chart.
+                * False: Do not open browser.
         notebook : bool
-            True: Use IPython to show chart in notebooks.
-            False: Do not use IPython.
+                * True: Use IPython to show chart in notebooks.
+                * False: Do not use IPython.
         kwargs : Various
             Other options are possible depending on the chart that is being used.
 
@@ -1889,7 +1941,7 @@ class D3Blocks():
             Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
         aggfunc : str, optional
             Aggregate function in case multiple values exists for the same relationship.
-            'sum' (default)
+                * 'sum' (default)
 
         Returns
         -------
@@ -1946,35 +1998,36 @@ class D3Blocks():
     def import_example(self, data, n=10000, c=300, date_start="17-12-1903 00:00:00", date_stop="17-12-1903 23:59:59"):
         """Import example dataset from github source.
 
-        Description
-        -----------
         Import one of the few datasets from github source or specify your own download url link.
 
         Parameters
         ----------
         data : str
-            "movingbubbles"
-            "random_time"
-            "timeseries"
-            "energy"
-            "stormofswords"
-            "bigbang"
-            "southern_nebula"
-            "southern_nebula_internet"
-            "cancer"
-            "breast_cancer"
-            "iris"
-            "occupancy"
-            "climate"
-            "mnist"
+            Example datasets:
+                * "movingbubbles"
+                * "random_time"
+                * "timeseries"
+                * "energy"
+                * "stormofswords"
+                * "bigbang"
+                * "southern_nebula"
+                * "southern_nebula_internet"
+                * "cancer"
+                * "breast_cancer"
+                * "iris"
+                * "occupancy"
+                * "climate"
+                * "mnist"
         n : int, (default: 1000).
             Number of events (samples).
         c : int, (default: 100).
             Number of classes.
         date_start : str, (default: None)
-            "17-12-1903 00:00:00" : start date
+            Start date.
+                * "17-12-1903 00:00:00" : start date
         date_stop : str, (default: None)
-            "17-12-1903 23:59:59" : Stop date
+            Stop date.
+                * "17-12-1903 23:59:59" : Stop date
 
         Returns
         -------
@@ -1989,37 +2042,37 @@ class D3Blocks():
 def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):
     """Import example dataset from github source.
 
-    Description
-    -----------
     Import one of the few datasets from github source or specify your own download url link.
 
     Parameters
     ----------
     data : str
         Name of datasets
-        * movingbubbles
-        * random_time
-        * timeseries
-        * energy
-        * stormofswords
-        * bigbang
-        * southern_nebul
-        * southern_nebula_internet
-        * unsplash
-        * cancer
-        * breast_cancer
-        * iris
-        * occupancy
-        * climate
-        * "mnist"
-        n : int, (default: 1000).
-            Number of events (samples).
-        c : int, (default: 100).
-            Number of classes.
+            * movingbubbles
+            * random_time
+            * timeseries
+            * energy
+            * stormofswords
+            * bigbang
+            * southern_nebul
+            * southern_nebula_internet
+            * unsplash
+            * cancer
+            * breast_cancer
+            * iris
+            * occupancy
+            * climate
+            * "mnist"
+    n : int, (default: 1000).
+        Number of events (samples).
+    c : int, (default: 100).
+        Number of classes.
     date_start : str, (default: None)
-        "17-12-1903 00:00:00" : start date
+        Start date.
+            * "17-12-1903 00:00:00" : start date
     date_stop : str, (default: None)
-        "17-12-1903 23:59:59" : Stop date
+        Stop date.
+            * "17-12-1903 23:59:59" : Stop date
 
     Returns
     -------
@@ -2142,8 +2195,6 @@ def random_date(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
 def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True):
     """Get a time at a proportion of a range of two formatted times.
 
-    Description
-    -----------
     start and end should be strings specifying times formatted in the
     given format (strftime-style), giving an interval [start, end].
     prop specifies how a proportion of the interval to be taken after
@@ -2226,7 +2277,7 @@ def disable_tqdm():
 
 # %% Do checks
 def set_chart_func(chart=None, logger=None):
-    """Library compatibiliy checks.
+    """Library compatibility checks.
 
     Returns
     -------

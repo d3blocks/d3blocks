@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.1
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -67,7 +67,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Imageslider</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
 </ul>
@@ -121,8 +120,6 @@
   <section id="module-d3blocks.d3blocks.D3Blocks.imageslider">
 <span id="imageslider"></span><h1>Imageslider<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.imageslider" title="Permalink to this heading"></a></h1>
 <p>Imageslider Block.</p>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>The imageslider allows comparison of two images. This is useful in case there is a before and after state.
 For demonstration purposes, the example can be loaded from the Southern Nebula image that is taken with the
 Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
@@ -141,20 +138,28 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <dd class="field-even"><p>String</p>
 </dd>
 <dt class="field-odd">param scale</dt>
-<dd class="field-odd"><p>Scale image in range [0, 255], by img*(255/max(img))
-True: Scaling image
-False: Leave image untouched</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Scale image in range [0, 255], by img*(255/max(img))</dt><dd><ul class="simple">
+<li><p>True: Scaling image</p></li>
+<li><p>False: Leave image untouched</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type scale</dt>
 <dd class="field-even"><p>bool, default: True</p>
 </dd>
 <dt class="field-odd">param colorscale</dt>
-<dd class="field-odd"><p>colour-scaling from opencv.
-* 0: cv2.IMREAD_GRAYSCALE
-* 1: cv2.IMREAD_COLOR
-* 2: cv2.IMREAD_ANYDEPTH
-* 8: cv2.COLOR_GRAY2RGB
-* -1: cv2.IMREAD_UNCHANGED</p>
+<dd class="field-odd"><dl class="simple">
+<dt>colour-scaling from opencv.</dt><dd><ul class="simple">
+<li><p>0: cv2.IMREAD_GRAYSCALE</p></li>
+<li><p>1: cv2.IMREAD_COLOR</p></li>
+<li><p>2: cv2.IMREAD_ANYDEPTH</p></li>
+<li><p>8: cv2.COLOR_GRAY2RGB</p></li>
+<li><p>-1: cv2.IMREAD_UNCHANGED</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type colorscale</dt>
 <dd class="field-even"><p>int, default: -1 (untouched)</p>
@@ -166,52 +171,68 @@ False: Leave image untouched</p>
 <dd class="field-even"><p>String (default: ‘#000000’)</p>
 </dd>
 <dt class="field-odd">param title</dt>
-<dd class="field-odd"><p>Title of the figure.
-‘Imageslider’</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Title of the figure.</dt><dd><ul class="simple">
+<li><p>‘Imageslider’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><p>File path to save the output.
-Temporarily path: ‘d3blocks.html’
-Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’
-None: Return HTML</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>File path to save the output.</p></li>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
-<dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 900]</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+<li><p>[900, 900]</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
 <dt class="field-odd">param showfig</dt>
-<dd class="field-odd"><p>True: Open browser-window.
-False: Do not open browser-window.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">param notebook</dt>
-<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type notebook</dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 <dt class="field-odd">param overwrite</dt>
-<dd class="field-odd"><p>True: Overwrite the html in the destination directory.
-False: Do not overwrite destination file but show warning instead.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
 </dd>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 <dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p>None</p>
+<dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -242,7 +263,6 @@ False: Do not overwrite destination file but show warning instead.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html">https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html</a></p></li>
 </ul>
-</section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
 <p>The input dataset are two images.</p>
