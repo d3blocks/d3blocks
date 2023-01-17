@@ -6,3 +6,4 @@ include d3blocks/sankey/d3js/*
 include d3blocks/scatter/d3js/*
 include d3blocks/timeseries/d3js/*
 include d3blocks/violin/d3js/*
+include d3blocks/heatmap/d3js/*

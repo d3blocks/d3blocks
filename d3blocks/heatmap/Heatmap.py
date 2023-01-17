@@ -80,7 +80,6 @@ def set_node_properties(df, **kwargs):
     # Return
     return dict_labels
 
-
 def set_properties(df, config, node_properties, logger=None):
     # Rescale data
     if config['vmax'] is not None:
@@ -88,7 +87,7 @@ def set_properties(df, config, node_properties, logger=None):
     if config['vmax'] is None:
         config['vmax'] = np.max(df['weight'].values)
         logger.debug('Set vmax: %.0g.' %(config['vmax']))
-    
+
     # Prepare the data
     json_data = get_data_ready_for_d3(df, node_properties)
     # Create the html file
@@ -96,21 +95,6 @@ def set_properties(df, config, node_properties, logger=None):
     # Return html
     return html
 
-    # Write to file
-    # with open(config['filepath'], 'w', encoding="utf8", errors='ignore') as file: file.write(html)
-    # Open browser with heatmap
-    # import webbrowser
-
-    # if config['showfig']: webbrowser.open(config['filepath'], new=1)
-
-    # Return
-    # out = {}
-    # out['filename'] = filename
-    # out['dirpath'] = dirpath
-    # out['path'] = path
-    # out['csv'] = PATHNAME_TO_CSV
-    # return html
-    
 # %%
 def color_on_clusterlabel(adjmat, df, node_properties, config, logger):
     # Default is all cluster labels are the same
@@ -193,8 +177,8 @@ def write_html(json_data, config, logger=None):
         dirpath, filename = os.path.split(config['filepath'])
 
     # Get path to files
-    d3_library = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/d3.v2.min.js'))
-    d3_script = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/d3heatmap.html'))
+    # d3_library = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/d3.v2.min.js'))
+    d3_script = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/heatmap.html.j2'))
 
     # Import in the file
     with open(d3_script, 'r', encoding="utf8", errors='ignore') as file: html = file.read()
