@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.0
+                1.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -207,7 +207,8 @@ All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [900, 900]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
@@ -320,7 +321,8 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [1500, 800]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
@@ -421,7 +423,8 @@ be used.</p>
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [None, None] # Full screen
 [1500, 800]</p></li>
@@ -480,77 +483,82 @@ False: Do not overwrite destination file but show warning instead.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.heatmap">
-<span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heatmap.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[720,</span> <span class="pre">720]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heatmap.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'cluster':</span> <span class="pre">'agglomerative',</span> <span class="pre">'evaluate':</span> <span class="pre">'silhouette',</span> <span class="pre">'linkage':</span> <span class="pre">'ward',</span> <span class="pre">'max_clust':</span> <span class="pre">25,</span> <span class="pre">'metric':</span> <span class="pre">'euclidean',</span> <span class="pre">'min_clust':</span> <span class="pre">2}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[720,</span> <span class="pre">720]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.heatmap" title="Permalink to this definition"></a></dt>
 <dd><p>Heatmap block.</p>
-<p>heatmap is a module in d3blocks to create interactive heatmaps.
-The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
-In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
-create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
-and then Pythonized.</p>
+<p>heatmap is a Python package to create interactive heatmaps based on d3js.
+The heatmap allows interactive clustering where the cluster coloring can be customized.
+Clusters are colored and within each cluster the color is incremental based on the value.
+Adjacency matrix must be symetric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data is an adjacency matrix for which the columns and rows are the names of the variables.</p></li>
-<li><p><strong>color</strong> (<em>Numpy array</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – Should be in the same order as the columns and of the input dataframe
-None or ‘cluster’: a clustering approach is used for coloring.</p></li>
-<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – <dl class="simple">
-<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul>
-<li><p>1 : cells above value &gt;1 are capped.</p></li>
-<li><p>None : cells are colored based on the maximum value in the input data.</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – <dl class="simple">
-<dt>Color of the recangle when hovering over a cell.</dt><dd><ul>
-<li><p>’red’</p></li>
-<li><p>’black’</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the states.</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data. The index and column names are used for the row/column naming.</p></li>
+<li><p><strong>classlabel</strong> (<em>str</em><em> or </em><em>list</em>) – ‘cluster’: colors are based on clustering
+‘label’: colors are based on the presence of unique labels
+[1,2,1,..]: colors are based on the input classlabels</p></li>
+<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – Color of the recangle when hovering over a cell.
+‘red’
+‘black’</p></li>
 <li><p><strong>description</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Heatmap description'</em><em>)</em>) – Description text of the heatmap.</p></li>
+<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
+1 : cells above value &gt;1 are capped.
+None : cells are colored based on the maximum value in the input data.</p></li>
+<li><p><strong>cluster_params</strong> (<em>dict</em><em> (</em><em>defaults</em><em>)</em>) – Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p></li>
 <li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Title of the figure.
-‘Heatmap’</p></li>
+‘Timeseries’</p></li>
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
-[900, 900]</p></li>
+[800, 800]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
 False: Do not open browser-window.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p></li>
 <li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Overwrite the html in the destination directory.
 False: Do not overwrite destination file but show warning instead.</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebook.
+False: Do not use IPython.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
-<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
-<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
-</ul>
-</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>  <span class="c1"># &#39;energy&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;heatmap.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;bigbang&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">classlabel</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
 <ul class="simple">
-<li><p>Github: <a class="reference external" href="https://github.com/erdogant/d3heatmap">https://github.com/erdogant/d3heatmap</a></p></li>
-<li><p>Documentation: <a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
+<li><p><a class="reference external" href="https://erdogant.github.io/clusteval/">https://erdogant.github.io/clusteval/</a></p></li>
 </ul>
 </dd></dl>
 
@@ -582,7 +590,8 @@ False: Leave image untouched</p></li>
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [900, 900]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
@@ -708,7 +717,8 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [780, 800]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
@@ -884,7 +894,8 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [800, 600]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
@@ -988,7 +999,8 @@ None: The same color as for c is applied.
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [900, 600]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.
@@ -1144,7 +1156,8 @@ All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em>) – True: Open the browser and show chart.
 False: Do not open browser.</p></li>
 <li><p><strong>notebook</strong> (<em>bool</em>) – True: Use IPython to show chart in notebooks.
@@ -1183,7 +1196,8 @@ False: Do not change the input order.</p></li>
 <li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p></li>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – Size of the figure in the browser, [width, height].
 [1200, 500]</p></li>
 <li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Open browser-window.

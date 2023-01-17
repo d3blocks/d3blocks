@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.0
+                1.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -123,54 +123,32 @@
 <p>Heatmap block.</p>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
-<p>heatmap is a module in d3blocks to create interactive heatmaps.
-The heatmap is utilized from the d3heatmap library which creates heatmaps from an (adjacency) matrix.
-In the following example, we load the energy dataset, reformat the data into an adjacency matrix, and then
-create the heatmap. The heatmap can be clustered interactively. The javascript code is forked from Mike Bostock
-and then Pythonized.</p>
+<p>heatmap is a Python package to create interactive heatmaps based on d3js.
+The heatmap allows interactive clustering where the cluster coloring can be customized.
+Clusters are colored and within each cluster the color is incremental based on the value.
+Adjacency matrix must be symetric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data is an adjacency matrix for which the columns and rows are the names of the variables.</p>
+<dd class="field-odd"><p>Input data. The index and column names are used for the row/column naming.</p>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param color</dt>
-<dd class="field-odd"><p>Should be in the same order as the columns and of the input dataframe
-None or ‘cluster’: a clustering approach is used for coloring.</p>
+<dt class="field-odd">param classlabel</dt>
+<dd class="field-odd"><p>‘cluster’: colors are based on clustering
+‘label’: colors are based on the presence of unique labels
+[1,2,1,..]: colors are based on the input classlabels</p>
 </dd>
-<dt class="field-even">type color</dt>
-<dd class="field-even"><p>Numpy array (default: ‘cluster’)</p>
-</dd>
-<dt class="field-odd">param vmax</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul class="simple">
-<li><p>1 : cells above value &gt;1 are capped.</p></li>
-<li><p>None : cells are colored based on the maximum value in the input data.</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">type vmax</dt>
-<dd class="field-even"><p>Bool, (default: 100).</p>
+<dt class="field-even">type classlabel</dt>
+<dd class="field-even"><p>str or list</p>
 </dd>
 <dt class="field-odd">param stroke</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Color of the recangle when hovering over a cell.</dt><dd><ul class="simple">
-<li><p>‘red’</p></li>
-<li><p>‘black’</p></li>
-</ul>
-</dd>
-</dl>
+<dd class="field-odd"><p>Color of the recangle when hovering over a cell.
+‘red’
+‘black’</p>
 </dd>
 <dt class="field-even">type stroke</dt>
 <dd class="field-even"><p>String, (default: ‘red’).</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize of the states.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int, (default: 14)</p>
 </dd>
 <dt class="field-odd">param description</dt>
 <dd class="field-odd"><p>Description text of the heatmap.</p>
@@ -178,9 +156,30 @@ None or ‘cluster’: a clustering approach is used for coloring.</p>
 <dt class="field-even">type description</dt>
 <dd class="field-even"><p>String, (default: ‘Heatmap description’)</p>
 </dd>
+<dt class="field-odd">param vmax</dt>
+<dd class="field-odd"><p>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
+1 : cells above value &gt;1 are capped.
+None : cells are colored based on the maximum value in the input data.</p>
+</dd>
+<dt class="field-even">type vmax</dt>
+<dd class="field-even"><p>Bool, (default: 100).</p>
+</dd>
+<dt class="field-odd">param cluster_params</dt>
+<dd class="field-odd"><p>Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.</p>
+</dd>
+<dt class="field-even">type cluster_params</dt>
+<dd class="field-even"><p>dict (defaults)</p>
+</dd>
+<dt class="field-odd">param cmap</dt>
+<dd class="field-odd"><p>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’
+‘Set1’,’Set2’,’rainbow’,’bwr’,’binary’,’seismic’,’Blues’,’Reds’,’Pastel1’,’Paired’,’twilight’,’hsv’,’inferno’</p>
+</dd>
+<dt class="field-even">type cmap</dt>
+<dd class="field-even"><p>String, (default: ‘Set1’)</p>
+</dd>
 <dt class="field-odd">param title</dt>
 <dd class="field-odd"><p>Title of the figure.
-‘Heatmap’</p>
+‘Timeseries’</p>
 </dd>
 <dt class="field-even">type title</dt>
 <dd class="field-even"><p>String, (default: None)</p>
@@ -189,14 +188,15 @@ None or ‘cluster’: a clustering approach is used for coloring.</p>
 <dd class="field-odd"><p>File path to save the output.
 Temporarily path: ‘d3blocks.html’
 Relative path: ‘./d3blocks.html’
-Absolute path: ‘c://temp//d3blocks.html’</p>
+Absolute path: ‘c://temp//d3blocks.html’
+None: Return HTML</p>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
 <dt class="field-odd">param figsize</dt>
 <dd class="field-odd"><p>Size of the figure in the browser, [width, height].
-[900, 900]</p>
+[800, 800]</p>
 </dd>
 <dt class="field-even">type figsize</dt>
 <dd class="field-even"><p>tuple</p>
@@ -208,13 +208,6 @@ False: Do not open browser-window.</p>
 <dt class="field-even">type showfig</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
-<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
-False: Do not use IPython.</p>
-</dd>
-<dt class="field-even">type notebook</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
 <dt class="field-odd">param overwrite</dt>
 <dd class="field-odd"><p>True: Overwrite the html in the destination directory.
 False: Do not overwrite destination file but show warning instead.</p>
@@ -222,29 +215,54 @@ False: Do not overwrite destination file but show warning instead.</p>
 <dt class="field-even">type overwrite</dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
-<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
-<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
-</ul>
+<dt class="field-odd">param notebook</dt>
+<dd class="field-odd"><p>True: Use IPython to show chart in notebook.
+False: Do not use IPython.</p>
+</dd>
+<dt class="field-even">type notebook</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+<dt class="field-odd">param reset_properties</dt>
+<dd class="field-odd"><p>True: Reset the node_properties at each run.
+False: Use the d3.node_properties()</p>
+</dd>
+<dt class="field-even">type reset_properties</dt>
+<dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>  <span class="c1"># &#39;energy&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;heatmap.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Example 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;bigbang&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">classlabel</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
 <ul class="simple">
-<li><p>Github: <a class="reference external" href="https://github.com/erdogant/d3heatmap">https://github.com/erdogant/d3heatmap</a></p></li>
-<li><p>Documentation: <a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
+<li><p><a class="reference external" href="https://erdogant.github.io/clusteval/">https://erdogant.github.io/clusteval/</a></p></li>
 </ul>
 </section>
 <section id="input-data">
