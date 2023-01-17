@@ -1343,12 +1343,24 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example('stormofswords')
-        >>> df = d3.import_example('energy')
+        >>> df = d3.import_example('stormofswords')  # 'energy'
         >>> df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         >>> #
         >>> # Plot
         >>> d3.heatmap(df)
+        >>> #
+        >>> #
+        >>> # Example 2
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('bigbang')
+        >>> df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+        >>> #
+        >>> # Plot
+        >>> d3.heatmap(df, classlabel=[1,1,1,2,2,2,3])
         >>> #
 
         References

@@ -23,7 +23,6 @@ d3.heatmap(df, notebook=True)
 
 # d3graph
 # elasticgraph
-# heatmap
 
 # Violin
 from d3blocks import D3Blocks
@@ -976,13 +975,12 @@ d3 = D3Blocks()
 # df = d3.import_example('bigbang')
 # df = d3.import_example('stormofswords')
 df = d3.import_example('energy')
-# adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-# df = d3.adjmat2vec(df)
+df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 # from sklearn.preprocessing import StandardScaler
 # X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
 # X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
 
-d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
+d3.heatmap(df, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
 
 
 # %%
