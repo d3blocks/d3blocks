@@ -264,6 +264,13 @@ def remove_quotes(df):
     if isinstance(df, pd.DataFrame):
         Iloc = df.dtypes==object
         df.loc[:, Iloc] = df.loc[:, Iloc].apply(lambda s: s.str.replace("'", ""))
+        try:
+            if not pd.api.types.is_numeric_dtype(df.index):
+                df.columns = np.array(list(map(lambda x: x.replace("'", ""), df.columns)))
+            if not pd.api.types.is_numeric_dtype(df.index):
+                df.index = np.array(list(map(lambda x: x.replace("'", ""), df.index)))
+        except:
+            pass
         return df
     else:
         return np.array(list(map(lambda x: x.replace("'", ""), df)))
@@ -314,7 +321,7 @@ def write_html_file(config, html, logger):
     """
 
     index_file = config['filepath']
-    if index_file and (not config['notebook']):
+    if index_file:
 
         if config['overwrite'] and os.path.isfile(index_file):
             if (logger is not None): logger.info('File already exists and will be overwritten: [%s]' %(index_file))
