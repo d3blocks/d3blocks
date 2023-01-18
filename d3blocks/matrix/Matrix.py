@@ -9,7 +9,7 @@ License     : GPL3
 import colourmap
 import numpy as np
 import os
-from jinja2 import Environment, PackageLoader
+# from jinja2 import Environment, PackageLoader
 from shutil import copyfile
 try:
     from .. utils import set_path, set_labels, write_html_file
