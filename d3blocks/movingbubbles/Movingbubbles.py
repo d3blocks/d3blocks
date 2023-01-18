@@ -40,7 +40,7 @@ def set_config(config={}, **kwargs):
     config['center'] = kwargs.get('center', None)
     config['damper'] = kwargs.get('damper', 1)
     config['fontsize'] = kwargs.get('fontsize', 14)
-    config['reset_time'] = kwargs.get('reset_time', 'day')
+    config['timedelta'] = kwargs.get('timedelta', 'minutes')
     config['standardize'] = kwargs.get('standardize', None)
     config['speed'] = kwargs.get('speed', {"slow": 1000, "medium": 200, "fast": 50})
     config['note'] = kwargs.get('note', None)
@@ -163,7 +163,7 @@ def set_edge_properties(df, **kwargs):
     if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
         if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
         # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
-        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format)
+        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, logger=logger)
     else:
         raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
     return df
@@ -199,11 +199,13 @@ def show(df, **kwargs):
     if config['center'] is None:
         # config['center'] = [*labels.keys()][0]
         config['center'] = ""
+
     # Extract minutes and days
-    if config['reset_time']=='day':
-        # df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
+    if config['timedelta']=='days':
         df['time_in_state'] = df['delta'].dt.seconds.astype(int)
-    elif config['reset_time']=='year':
+    elif config['timedelta']=='minutes':
+        df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
+    elif config['timedelta']=='years':
         df['time_in_state'] = df['delta'].dt.days.astype(int)
 
     # Transform dataframe into input form for d3
@@ -311,7 +313,7 @@ def write_html(X, config, logger=None):
     return html
 
 
-def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S'):
+def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', logger=None):
     """Standardize time per sample_id.
 
     Parameters
@@ -343,7 +345,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 
     # Check datetime format
     if not isinstance(df[datetime][0], dt.date):
-        print('[D3Blocks]> Set datetime format to [%s]' %(dt_format))
+        if logger is not None: logger.info('Set datetime format to [%s]' %(dt_format))
         df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
 
     # Initialize empty delta
@@ -351,10 +353,12 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     # Initialize empty datetime_norm
     df['datetime_norm'] = df[datetime] - df[datetime]
     # Set a default start point.
-    timenow = dt.datetime.strptime('01-01-1980 00:00:00', dt_format)
+    # timenow = dt.datetime.strptime('01-01-1980 00:00:00', dt_format)
+    timenow = dt.datetime.strptime(dt.datetime.now().strftime(dt_format), dt_format)
+    timenow = timenow.replace(year=1980, month=1, day=1, hour=0, minute=0, second=0)
 
     if method=='samplewise':
-        print('[D3Blocks]> Standardize method: [%s]' %(method))
+        if logger is not None: logger.info('Standardize method: [%s]' %(method))
         df = df.sort_values(by=[sample_id, datetime])
         df.reset_index(drop=True, inplace=True)
         # Standardize per unique sample id.

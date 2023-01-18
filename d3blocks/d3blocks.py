@@ -41,9 +41,6 @@ import utils
 
 from elasticgraph import Elasticgraph
 import d3graph as d3network
-from clusteval import clusteval
-import colourmap
-from ismember import ismember
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]:  # get rid of existing old handlers
@@ -1016,7 +1013,7 @@ class D3Blocks():
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
                       damper=1,
                       fontsize=14,
-                      reset_time='day',
+                      timedelta='minutes',
                       standardize=None,
                       speed={"slow": 1000, "medium": 200, "fast": 50},
                       figsize=[780, 800],
@@ -1062,10 +1059,11 @@ class D3Blocks():
                 * 10: max
         fontsize : int, (default: 14)
             Fontsize of the states.
-        reset_time : String, (default: 'day')
-            Reset the time after this period.
-                * 'day'  : Every 24h de the day start over again.
-                * 'year' : Every 365 days the year starts over again.
+        timedelta : String, (default: 'minutes')
+            The time delta between states. Increase to days or years when the gaps between states become large.
+                * 'minutes'
+                * 'days'
+                * 'years'
         standardize : str. (default: None)
             Method to standardize the data.
                 * None: standardize over the entire timeframe. Sample_ids are dependent to each other.
@@ -1076,11 +1074,16 @@ class D3Blocks():
             A specific note, such as project description can be put on the html page.
         time_notes : dict, (default: None)
             The time notes will be shown between specific time points.
-            time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "Enter your note here and it is shown between 1 min and 5 min."}]
+                * time_notes = [{"start_minute": 1,
+                               "stop_minute": 5,
+                               "note": "Enter your note here and it is shown between 1 min and 5 min."}]
             time_notes.append[{"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."}]
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-                * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv', 'inferno'
+                * 'Set1', 'Set2'
+                * 'rainbow', 'bwr', 'binary', 'seismic'
+                * 'Blues', 'Reds', 'Pastel1', 'Paired'
+                * 'twilight', 'hsv', 'inferno'
         title : String, (default: None)
             Title of the figure.
                 * 'Movingbubbles'
@@ -1165,7 +1168,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_time=reset_time, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)

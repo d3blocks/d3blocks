@@ -2,9 +2,53 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
-
 import pandas as pd
 import numpy as np
+
+
+# %% 
+df = pd.read_csv(r'D:\REPOS\d3blocks\d3blocks\data\test_AL.csv')
+
+# Notes that are shown between two time points.
+time_notes = [{"start_minute": 1, "stop_minute": 10, "note": "The first 10 minutes start in the state Regarder la TV."}]
+time_notes.append({"start_minute": 11, "stop_minute": 360, "note": "Then we stay in this state up to 12:00"})
+time_notes.append({"start_minute": 361, "stop_minute": 390, "note": "Finally the Consulter de l actualite happens and is up to 13:30."})
+time_notes.append({"start_minute": 391 , "stop_minute": 450, "note": "aaaand we go back to the first state.."})
+
+
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+d3.movingbubbles(df,
+                 standardize=None,
+                 dt_format='%Y-%m-%d %H:%M:%S',
+                 time_notes=time_notes,
+                 title='d3blocks_movingbubbles',
+                 speed={"slow": 1000,
+                        "medium": 200,
+                        "fast": 20},
+                 )
+
+df1 = d3.edge_properties
+d3.edge_properties['time_in_state'].cumsum()
+
+# %% 
+
+df = pd.read_csv(r'D:\REPOS\d3blocks\d3blocks\data\test_3_AL.csv')
+
+
+d3.movingbubbles(df,
+                 standardize='samplewise',
+                 dt_format='%Y-%m-%d %H:%M:%S',
+                 time_notes=time_notes,
+                 title='d3blocks_movingbubbles',
+                 cmap='Set2',
+                 speed={"slow": 1000,
+                        "medium": 200,
+                        "fast": 20},
+                 )
+
+df1 = d3.edge_properties
+
 
 # %% Matrix
 from d3blocks import D3Blocks
@@ -1155,7 +1199,7 @@ d3.movingbubbles(df,
                  center=None,
                  damper=1,
                  standardize=None,
-                 reset_time='day',
+                 timedelta='day',
                  speed={"slow": 500, "medium": 200, "fast": 100},
                  figsize=(780, 800),
                  note=None,
