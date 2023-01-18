@@ -38,7 +38,6 @@ from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
 
 from elasticgraph import Elasticgraph
 import d3graph as d3network
-from d3heatmap import d3heatmap
 from clusteval import clusteval
 import colourmap
 from ismember import ismember

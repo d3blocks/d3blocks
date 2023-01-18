@@ -21,8 +21,9 @@ class Testd3blocks(unittest.TestCase):
         d3 = D3Blocks()
         # Import example
         df = d3.import_example('energy')
+        df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         # Create the heatmap
-        d3.heatmap(df, showfig=True, stroke='red', vmax=10, figsize=(700,700))
+        d3.heatmap(df, stroke='red', vmax=10, figsize=(700,700))
 
 
     def test_sankey(self):

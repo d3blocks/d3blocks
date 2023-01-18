@@ -174,7 +174,7 @@ def _scale(X, vmax=100, make_round=True, logger=None):
         Scaled image.
 
     """
-    logger.info('[d3heatmap] >Scaling image between [min-100]')
+    logger.info('Scaling image between [min-100]')
     try:
         # Normalizing between 0-100
         # X = X - X.min()
@@ -183,7 +183,7 @@ def _scale(X, vmax=100, make_round=True, logger=None):
         if make_round:
             X = np.round(X)
     except:
-        logger.debug('[d3heatmap] >Warning: Scaling not possible.')
+        logger.debug('Warning: Scaling not possible.')
 
     return X
 

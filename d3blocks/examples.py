@@ -996,7 +996,7 @@ df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=Tr
 # X_scaled = StandardScaler(with_mean=True, with_std=False).fit_transform(adjmat)
 # X_scaled = pd.DataFrame(data=X_scaled, columns=adjmat.columns, index=adjmat.index.values)
 
-d3.heatmap(df, stroke='red', vmax=10, figsize=(700,700), title='d3heatmap')
+d3.heatmap(df, stroke='red', vmax=10, figsize=(700,700), title='heatmap')
 
 
 # %%
