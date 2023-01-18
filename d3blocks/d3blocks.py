@@ -13,30 +13,28 @@ import random
 import time
 from typing import List, Union, Tuple
 
-try:
-    import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-    import d3blocks.timeseries.Timeseries as Timeseries
-    import d3blocks.sankey.Sankey as Sankey
-    import d3blocks.imageslider.Imageslider as Imageslider
-    import d3blocks.chord.Chord as Chord
-    import d3blocks.scatter.Scatter as Scatter
-    import d3blocks.violin.Violin as Violin
-    import d3blocks.particles.Particles as Particles
-    import d3blocks.heatmap.Heatmap as Heatmap
-    from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
-except:
-    # ###################### DEBUG ONLY ###################
-    import movingbubbles.Movingbubbles as Movingbubbles
-    import timeseries.Timeseries as Timeseries
-    import sankey.Sankey as Sankey
-    import imageslider.Imageslider as Imageslider
-    import chord.Chord as Chord
-    import scatter.Scatter as Scatter
-    import violin.Violin as Violin
-    import particles.Particles as Particles
-    import heatmap.Heatmap as Heatmap
-    from utils import remove_quotes, convert_dataframe_dict, set_path
-    # #####################################################
+import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+import d3blocks.timeseries.Timeseries as Timeseries
+import d3blocks.sankey.Sankey as Sankey
+import d3blocks.imageslider.Imageslider as Imageslider
+import d3blocks.chord.Chord as Chord
+import d3blocks.scatter.Scatter as Scatter
+import d3blocks.violin.Violin as Violin
+import d3blocks.particles.Particles as Particles
+import d3blocks.heatmap.Heatmap as Heatmap
+from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
+# ###################### DEBUG ONLY ###################
+# import movingbubbles.Movingbubbles as Movingbubbles
+# import timeseries.Timeseries as Timeseries
+# import sankey.Sankey as Sankey
+# import imageslider.Imageslider as Imageslider
+# import chord.Chord as Chord
+# import scatter.Scatter as Scatter
+# import violin.Violin as Violin
+# import particles.Particles as Particles
+# import heatmap.Heatmap as Heatmap
+# from utils import remove_quotes, convert_dataframe_dict, set_path
+# #####################################################
 
 from elasticgraph import Elasticgraph
 import d3graph as d3network
