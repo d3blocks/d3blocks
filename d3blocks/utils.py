@@ -17,6 +17,43 @@ import tempfile
 from pathlib import Path
 import time
 
+
+# %% Scaling
+def scale(X, vmax=100, make_round=True, logger=None):
+    """Scale data.
+
+    Description
+    -----------
+    Scaling in range by X*(100/max(X))
+
+    Parameters
+    ----------
+    X : array-like
+        Input image data.
+    verbose : int (default : 3)
+        Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.
+
+    Returns
+    -------
+    df : array-like
+        Scaled image.
+
+    """
+    if vmax is not None:
+        logger.info('Scaling image between [min-%s]' %(vmax))
+        try:
+            # Normalizing between 0-100
+            # X = X - X.min()
+            X = X / X.max().max()
+            X = X * vmax
+            if make_round:
+                X = np.round(X)
+        except:
+            logger.debug('Warning: Scaling not possible.')
+
+    return X
+
+
 # %% Get unique labels
 def set_labels(df, col_labels=None, logger=None):
     """Set unique labels."""

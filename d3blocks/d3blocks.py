@@ -13,27 +13,30 @@ import random
 import time
 from typing import List, Union, Tuple
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
-import d3blocks.heatmap.Heatmap as Heatmap
-from d3blocks.utils import remove_quotes, convert_dataframe_dict, set_path
+# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+# import d3blocks.sankey.Sankey as Sankey
+# import d3blocks.imageslider.Imageslider as Imageslider
+# import d3blocks.chord.Chord as Chord
+# import d3blocks.scatter.Scatter as Scatter
+# import d3blocks.violin.Violin as Violin
+# import d3blocks.particles.Particles as Particles
+# import d3blocks.heatmap.Heatmap as Heatmap
+# import d3blocks.matrix.Matrix as Matrix
+# import d3blocks.utils as utils
+
 # ###################### DEBUG ONLY ###################
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
-# import heatmap.Heatmap as Heatmap
-# from utils import remove_quotes, convert_dataframe_dict, set_path
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
+import chord.Chord as Chord
+import scatter.Scatter as Scatter
+import violin.Violin as Violin
+import particles.Particles as Particles
+import heatmap.Heatmap as Heatmap
+import matrix.Matrix as Matrix
+import utils
 # #####################################################
 
 from elasticgraph import Elasticgraph
@@ -192,7 +195,7 @@ class D3Blocks():
 
         # Set config
         self.config['chart'] ='Particles'
-        self.config['filepath'] = set_path(filepath)
+        self.config['filepath'] = utils.set_path(filepath)
         self.config['title'] = title
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
@@ -850,7 +853,7 @@ class D3Blocks():
         self.config['scale'] = scale
         self.config['colorscale'] = colorscale
         self.config['background'] = background
-        self.config['filepath'] = set_path(filepath)
+        self.config['filepath'] = utils.set_path(filepath)
         self.config['title'] = title
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
@@ -1430,7 +1433,7 @@ class D3Blocks():
             logger.warning('Input data should contain unique index names otherwise d3js randomly removes the non-unique ones.')
 
         # Cleaning
-        adjmat = remove_quotes(df)
+        adjmat = utils.remove_quotes(df)
         df = self.adjmat2vec(adjmat)
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
@@ -1443,7 +1446,7 @@ class D3Blocks():
         # Color on cluster labels
         self.node_properties = self.chart.color_on_clusterlabel(adjmat, df, self.node_properties, self.config, logger)
         # Set edge properties
-        html = self.chart.set_properties_heatmap(df, self.config, self.node_properties, logger)
+        html = self.chart.set_properties(df, self.config, self.node_properties, logger)
         # Display the chart
         return self.display(html)
 
@@ -1552,19 +1555,22 @@ class D3Blocks():
         if len(df.index.unique())!=len(df.index):
             logger.warning('Input data should contain unique index names otherwise d3js randomly removes the non-unique ones.')
 
+        adjmat = df.copy()
         # Cleaning
-        adjmat = remove_quotes(df)
+        adjmat = utils.remove_quotes(df)
+        # Rescale data
+        if scale: adjmat = utils.scale(adjmat, vmax=vmax, make_round=True, logger=logger)
         df = self.adjmat2vec(adjmat)
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
-        self.chart = set_chart_func('Heatmap', logger)
+        self.chart = set_chart_func('Matrix', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, description=description, vmax=vmax, vmin=vmin, stroke=stroke, cmap=cmap, scale=scale, fontsize=fontsize)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap='Set2')
         # Set edge properties
-        html = self.chart.set_properties_matrix(df, self.config, self.node_properties, logger)
+        html = self.chart.set_properties(df, self.config, self.node_properties, logger)
         # Display the chart
         return self.display(html)
 
@@ -1695,7 +1701,7 @@ class D3Blocks():
         # Set configs
         self.config['chart'] ='network'
         self.config['title'] = title
-        self.config['filepath'] = set_path(filepath)
+        self.config['filepath'] = utils.set_path(filepath)
         self.config['figsize'] = figsize
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
@@ -1707,7 +1713,7 @@ class D3Blocks():
         # Copy of data
         df = df.copy()
         # Remvove quotes from source-target labels
-        df = remove_quotes(df)
+        df = utils.remove_quotes(df)
         # Initialize network graph
         self.D3graph = d3network.d3graph(collision=collision, charge=charge, slider=slider)
         # Convert vector to adjmat
@@ -1841,7 +1847,7 @@ class D3Blocks():
         # Set configs
         self.config['chart'] ='elasticgraphh'
         self.config['title'] = title
-        self.config['filepath'] = set_path(filepath)
+        self.config['filepath'] = utils.set_path(filepath)
         self.config['figsize'] = figsize
         self.config['showfig'] = showfig
         self.config['overwrite'] = overwrite
@@ -1855,7 +1861,7 @@ class D3Blocks():
         # Copy of data
         df = df.copy()
         # Remvove quotes from source-target labels
-        df = remove_quotes(df)
+        df = utils.remove_quotes(df)
         # Initialize network d3-elasticgraph-network
         self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand)
         # Convert vector to adjmat
@@ -1920,7 +1926,7 @@ class D3Blocks():
             df = self.chart.set_edge_properties(*args, config=self.config, node_properties=self.node_properties, **kwargs)
 
         # Convert to frame/dictionary
-        self.edge_properties = convert_dataframe_dict(df, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
+        self.edge_properties = utils.convert_dataframe_dict(df, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
 
         # Store and return
         logger.info('Edge properties are set.')
@@ -1947,7 +1953,7 @@ class D3Blocks():
             raise Exception(logger.error('You need to specify the chart during initialization. Hint: d3 = D3Blocks(chart="movingbubbles")'))
 
         # Convert to frame
-        self.node_properties = convert_dataframe_dict(labels, frame=self.config['frame'], logger=logger)
+        self.node_properties = utils.convert_dataframe_dict(labels, frame=self.config['frame'], logger=logger)
         if self.node_properties is not None: logger.info('Node properties are set.')
 
     def set_config(self):
@@ -2411,7 +2417,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))
