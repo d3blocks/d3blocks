@@ -5,6 +5,23 @@
 import pandas as pd
 import numpy as np
 
+# %%
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(chart='Sankey', frame=True)
+df = d3.import_example(data='energy')
+d3.set_node_properties(df)
+d3.set_edge_properties(df, color='target', opacity='target')
+d3.show()
+
+
+d3 = D3Blocks()
+df = d3.import_example(data='energy')
+d3.sankey(df, filepath='sankey.html', link={"color":"source-target"})
+d3.show()
+
+
+
 
 # %% 
 df = pd.read_csv(r'D:\REPOS\d3blocks\d3blocks\data\test_AL.csv')
@@ -145,7 +162,7 @@ assert html is None
 # Movingbubbles
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False)
 assert html is not None
 html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
