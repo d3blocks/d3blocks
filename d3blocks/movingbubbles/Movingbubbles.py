@@ -202,11 +202,11 @@ def show(df, **kwargs):
         config['center'] = ""
 
     # Extract minutes and days
-    if config['timedelta']=='days':
+    if config['timedelta']=='seconds':
         df['time_in_state'] = df['delta'].dt.seconds.astype(int)
     elif config['timedelta']=='minutes':
         df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
-    elif config['timedelta']=='years':
+    elif config['timedelta']=='days':
         df['time_in_state'] = df['delta'].dt.days.astype(int)
 
     # Transform dataframe into input form for d3

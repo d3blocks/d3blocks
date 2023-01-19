@@ -1060,10 +1060,10 @@ class D3Blocks():
         fontsize : int, (default: 14)
             Fontsize of the states.
         timedelta : String, (default: 'minutes')
-            The time delta between states. Increase to days or years when the gaps between states become large.
+            The time delta between states. Change accordingly.
+                * 'seconds'
                 * 'minutes'
                 * 'days'
-                * 'years'
         standardize : str. (default: None)
             Method to standardize the data.
                 * None: standardize over the entire timeframe. Sample_ids are dependent to each other.

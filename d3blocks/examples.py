@@ -1393,17 +1393,32 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 
 df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df1['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:05', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25']
+df1['datetime'] = ['01-01-2000 00:00:00',
+                   '01-01-2000 00:05:00',
+                   '01-01-2000 00:10:00',
+                   '01-01-2000 00:15:00',
+                   '01-01-2000 00:20:00',
+                   '01-01-2000 00:25:00']
 df1['sample_id'] = [1, 1, 1, 1, 1, 1]
 df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df2['datetime'] = ['01-01-2000 00:00:00', '01-01-2000 00:00:10', '01-01-2000 00:00:15', '01-01-2000 00:00:20', '01-01-2000 00:00:25', '01-01-2000 00:00:30']
+df2['datetime'] = ['01-01-2000 00:00:00',
+                   '01-01-2000 00:10:00',
+                   '01-01-2000 00:15:00',
+                   '01-01-2000 00:20:00',
+                   '01-01-2000 00:25:00',
+                   '01-01-2000 00:30:00']
 df2['sample_id'] = [2, 2, 2, 2, 2, 2]
 df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
 df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
-df3['datetime'] = ['12-12-2000 00:00:00', '12-12-2000 00:00:15', '12-12-2000 00:00:20', '12-12-2000 00:00:25', '12-12-2000 00:00:30', '12-12-2000 00:00:35']
+df3['datetime'] = ['12-12-2000 00:00:00',
+                   '12-12-2000 00:15:00',
+                   '12-12-2000 00:20:00',
+                   '12-12-2000 00:25:00',
+                   '12-12-2000 00:30:00',
+                   '12-12-2000 00:35:00']
 df3['sample_id'] = [3, 3, 3, 3, 3, 3]
 df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 
@@ -1413,23 +1428,23 @@ df = pd.concat([df1, df2, df3], axis=0)
 print(df)
 #               datetime  sample_id     state
 # 0  01-01-2000 00:00:00          1      home
-# 1  01-01-2000 00:00:05          1    school
-# 2  01-01-2000 00:00:10          1      work
-# 3  01-01-2000 00:00:15          1    eating
-# 4  01-01-2000 00:00:20          1    coffee
-# 5  01-01-2000 00:00:25          1  sleeping
+# 1  01-01-2000 00:05:00          1    school
+# 2  01-01-2000 00:10:00          1      work
+# 3  01-01-2000 00:15:00          1    eating
+# 4  01-01-2000 00:20:00          1    coffee
+# 5  01-01-2000 00:25:00          1  sleeping
 # 0  01-01-2000 00:00:00          2      home
-# 1  01-01-2000 00:00:10          2    school
-# 2  01-01-2000 00:00:15          2      work
-# 3  01-01-2000 00:00:20          2    eating
-# 4  01-01-2000 00:00:25          2    coffee
-# 5  01-01-2000 00:00:30          2  sleeping
+# 1  01-01-2000 00:10:00          2    school
+# 2  01-01-2000 00:15:00          2      work
+# 3  01-01-2000 00:20:00          2    eating
+# 4  01-01-2000 00:25:00          2    coffee
+# 5  01-01-2000 00:30:00          2  sleeping
 # 0  12-12-2000 00:00:00          3      home
-# 1  12-12-2000 00:00:15          3    school
-# 2  12-12-2000 00:00:20          3      work
-# 3  12-12-2000 00:00:25          3    eating
-# 4  12-12-2000 00:00:30          3    coffee
-# 5  12-12-2000 00:00:35          3  sleeping
+# 1  12-12-2000 00:15:00          3    school
+# 2  12-12-2000 00:20:00          3      work
+# 3  12-12-2000 00:25:00          3    eating
+# 4  12-12-2000 00:30:00          3    coffee
+# 5  12-12-2000 00:35:00          3  sleeping
 
 # standardize the time per sample id and make the starting-point the same
 # df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
@@ -1444,8 +1459,9 @@ time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first ent
 time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
 
 # Make the moving bubbles
-df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
-
+d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', timedelta='minutes', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath=r'c:\temp\movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+    
+df1=d3.edge_properties
 
 # %% Movingbubbles - Create random dataset
 from d3blocks import D3Blocks
