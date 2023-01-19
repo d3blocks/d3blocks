@@ -25,10 +25,9 @@ except:
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
     logger = kwargs.get('logger', None)
-    if logger is not None: logger.info('Set config to defaults.')
     config['chart'] ='Scatter'
     config['title'] = kwargs.get('title', 'scatter - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'scatter.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'scatter.html'), logger)
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['figsize'] = kwargs.get('figsize', [900, 600])

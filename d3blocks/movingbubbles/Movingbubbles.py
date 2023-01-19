@@ -28,9 +28,10 @@ except:
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration settings."""
+    logger = kwargs.get('logger', None)
     config['chart'] ='movingbubbles'
     config['title'] = kwargs.get('title', 'Movingbubbles - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'movingbubbles.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'movingbubbles.html'), logger)
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['figsize'] = kwargs.get('figsize', [780, 800])

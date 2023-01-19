@@ -20,10 +20,11 @@ except:
 # %% Set configuration properties
 def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     """Set the default configuration setting."""
+    logger = kwargs.get('logger', None)
     # Store configurations
     config['chart'] ='sankey'
     config['title'] = kwargs.get('title', 'Sankey - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'), logger)
     config['figsize'] = kwargs.get('figsize', [800, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)

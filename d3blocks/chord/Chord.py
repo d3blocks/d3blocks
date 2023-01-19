@@ -23,9 +23,10 @@ except:
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
+    logger = kwargs.get('logger', None)
     config['chart'] ='Chord'
     config['title'] = kwargs.get('title', 'Chord - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath'), 'chord.html')
+    config['filepath'] = set_path(kwargs.get('filepath', 'chord.html'), logger)
     config['figsize'] = kwargs.get('figsize', [900, 900])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)

@@ -23,9 +23,10 @@ except:
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration settings."""
+    logger = kwargs.get('logger', None)
     config['chart'] ='violin'
     config['title'] = kwargs.get('title', 'Violin - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'violin.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'violin.html'), logger)
     config['figsize'] = kwargs.get('figsize', [None, None])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)

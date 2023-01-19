@@ -23,9 +23,10 @@ except:
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
+    logger = kwargs.get('logger', None)
     config['chart'] ='timeseries'
     config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'), logger)
     config['figsize'] = kwargs.get('figsize', [1200, 500])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)

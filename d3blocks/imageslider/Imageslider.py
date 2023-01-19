@@ -20,19 +20,19 @@ except:
 
 
 # %% Set configuration properties
-def set_config(config, logger=None):
-    """Set the general configuration setting."""
-    config['chart'] ='imageslider'
-    config['title']='Imageslider - D3blocks',
-    config['filepath'] = set_path('imageslider.html')
-    config['showfig']=True
-    config['overwrite']=True
-    config['figsize']=[None, None]
-    config['scale']=True
-    config['colorscale']=-1
-    config['background']='#000000'
-    config['notebook'] = True
-    return config
+# def set_config(config, logger=None):
+#     """Set the general configuration setting."""
+#     config['chart'] ='imageslider'
+#     config['title']='Imageslider - D3blocks',
+#     config['filepath'] = set_path('imageslider.html')
+#     config['showfig']=True
+#     config['overwrite']=True
+#     config['figsize']=[None, None]
+#     config['scale']=True
+#     config['colorscale']=-1
+#     config['background']='#000000'
+#     config['notebook'] = True
+#     return config
 
 
 # %% Preprocessing

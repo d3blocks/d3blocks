@@ -49,7 +49,7 @@ def scale(X, vmax=100, make_round=True, logger=None):
             if make_round:
                 X = np.round(X)
         except:
-            logger.debug('Warning: Scaling not possible.')
+            logger.warning('Scaling not possible.')
 
     return X
 
@@ -128,7 +128,7 @@ def set_path(filepath='d3blocks.html', logger=None):
         os.mkdir(dirname)
 
     filepath = os.path.abspath(os.path.join(dirname, filename))
-    if logger is not None: logger.debug("filepath is set to [%s]" %(filepath))
+    if logger is not None: logger.info("filepath is set to [%s]" %(filepath))
     # Return
     return Path(filepath)
 
