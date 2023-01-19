@@ -65,14 +65,11 @@ var sched_objs = [],
 	curr_minute = 0;
 
 var act_codes = {{ ACT_CODES }};
-
 var act_counts = {{ ACT_COUNTS }};
-
 var speeds = {{ SPEED }};
-
 var time_notes = {{ TIME_NOTES }};
-
 var notes_index = 0;
+var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
 
 
 var center_act = {{ CENTER }},
@@ -115,14 +112,14 @@ data.forEach(function(d) {
 
 
 // A node for each person's schedule
-var nodes = sched_objs.map(function(o,i) {
+var nodes = sched_objs.map(function(o, i) {
 	var act = o[0].act;
 	act_counts[act] += 1;
 	var init_x = foci[act].x + Math.random();
 	var init_y = foci[act].y + Math.random();
 	return {
 		act: act,
-		radius: 3,
+		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
 		x: init_x,
 		y: init_y,
 		color: color(act),
@@ -350,12 +347,10 @@ d3.selectAll(".togglebutton")
 
 
 function color(activity) {
-
 	var colorByActivity = {{ COLORBYACTIVITY }}
-
 	return colorByActivity[activity];
-	
 }
+
 
 
 

@@ -126,13 +126,16 @@ def set_node_properties(labels, **kwargs):
 
 
 # %% Set Edge properties
-def set_edge_properties(df, **kwargs):
+def set_edge_properties(df, size=4, **kwargs):
     """Set the edge properties for the Movingbubbles block.
 
     Parameters
     ----------
     df : Input data, pd.DataFrame()
         Input data.
+    size: dict. {'sample_id': size}
+        Specify the sample_id as key with a node size. The default node size is set to 4.
+            * size = {0: 10, 5: 20}
     datetime : str, (default: 'datetime')
         Name of the column with the datetime.
     sample_id : str, (default: 'sample_id')
@@ -167,6 +170,19 @@ def set_edge_properties(df, **kwargs):
         df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, logger=logger)
     else:
         raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
+
+
+    # Node size is set to default.
+    if isinstance(size, dict):
+        # add new column to df with node size for the specified sample_id
+        if logger is not None: logger.info('Processing the specified in node sizes in dictionary..')
+        df['size'] = 4
+        for key in size.keys():
+            df['size'].loc[df[sample_id]==key]=size.get(key)
+    if not np.any(np.isin(df.columns, 'size')):
+        df['size'] = size
+        if logger is not None: logger.info('Set all nodes to size: %d' %(size))
+
     return df
 
     
@@ -224,9 +240,15 @@ def show(df, **kwargs):
         # Make one big happy list
         X = [tmplist] + X
 
+    # Node size in the same order as the uiid
+    nodedict = dict(zip(df['sample_id'], df['size']))
+    config['node_size'] = list(map(lambda x: nodedict.get(x), uiid))
+
     # Set color codes for the d3js
     df_labels = pd.DataFrame(labels).T
     config['colorByActivity'] = dict(df_labels[['id', 'color']].values.astype(str))
+    # config['node_size'] = dict(zip(df_labels['id'].astype(str), df_labels['size']))
+    # config['node_size'] = dict(zip(df['sample_id'], [4]*df.shape[0]))
 
     # Create the description for the numerical codes
     act_codes = []
@@ -282,6 +304,7 @@ def write_html(X, config, logger=None):
         'CENTER': '"' + config['center'] + '"',
         'FONTSIZE': str(config['fontsize']) + 'px',
         'COLORBYACTIVITY': config['colorByActivity'],
+        'NODE_SIZE': config['node_size'],
         'ACT_CODES': config['act_codes'],
         'ACT_COUNTS': config['act_counts'],
         'SPEED': config['speed'],
@@ -298,14 +321,6 @@ def write_html(X, config, logger=None):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.movingbubbles', package_path='d3js'))
 
     index_template = jinja_env.get_template('movingbubbles.html.j2')
-    # index_file = Path(config['filepath'])
-    # # index_file.write_text(index_template.render(content))
-    # if config['overwrite'] and os.path.isfile(index_file):
-    #     if logger is not None: logger.info('File already exists and will be overwritten: [%s]' %(index_file))
-    #     os.remove(index_file)
-    #     time.sleep(0.5)
-    # with open(index_file, "w", encoding="utf-8") as f:
-    #     f.write(index_template.render(content))
 
     # Generate html content
     html = index_template.render(content)

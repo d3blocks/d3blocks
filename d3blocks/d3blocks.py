@@ -415,7 +415,7 @@ class D3Blocks():
             Third set of 1d coordinates x-axis.
         y2 : numpy array
             Third set of 1d coordinates y-axis.
-        size: list/array of with same size as (x,y). Can be of type str or int.
+        size: list/array of with same size as (x,y).
             Size of the samples.
         color: list/array of hex colors with same size as (x,y)
                 * '#ffffff' : All dots are get the same hex color.
@@ -1010,6 +1010,7 @@ class D3Blocks():
                       sample_id='sample_id',
                       state='state',
                       center=None,
+                      size=5,
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
                       damper=1,
                       fontsize=14,
@@ -1050,6 +1051,10 @@ class D3Blocks():
             Name of the column with the states.
         center : String, (default: None)
             Center this category.
+        size: int or dictionary. (default: 5)
+            Size of the nodes.
+                * 5: set all nodes this this size
+                * {'0': 4, '1': 10, '2': 5, ..}: Specify per node the size.
         dt_format : str
             Date time format.
                 * '%d-%m-%Y %H:%M:%S'.
@@ -1173,7 +1178,7 @@ class D3Blocks():
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
         # Set edge properties
-        self.set_edge_properties(df, state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
+        self.set_edge_properties(df, state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
         return self.show()
 
