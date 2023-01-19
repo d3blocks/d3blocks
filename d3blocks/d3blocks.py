@@ -13,30 +13,30 @@ import random
 import time
 from typing import List, Union, Tuple
 
-# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-# import d3blocks.timeseries.Timeseries as Timeseries
-# import d3blocks.sankey.Sankey as Sankey
-# import d3blocks.imageslider.Imageslider as Imageslider
-# import d3blocks.chord.Chord as Chord
-# import d3blocks.scatter.Scatter as Scatter
-# import d3blocks.violin.Violin as Violin
-# import d3blocks.particles.Particles as Particles
-# import d3blocks.heatmap.Heatmap as Heatmap
-# import d3blocks.matrix.Matrix as Matrix
-# import d3blocks.utils as utils
+import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+import d3blocks.timeseries.Timeseries as Timeseries
+import d3blocks.sankey.Sankey as Sankey
+import d3blocks.imageslider.Imageslider as Imageslider
+import d3blocks.chord.Chord as Chord
+import d3blocks.scatter.Scatter as Scatter
+import d3blocks.violin.Violin as Violin
+import d3blocks.particles.Particles as Particles
+import d3blocks.heatmap.Heatmap as Heatmap
+import d3blocks.matrix.Matrix as Matrix
+import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
-import movingbubbles.Movingbubbles as Movingbubbles
-import timeseries.Timeseries as Timeseries
-import sankey.Sankey as Sankey
-import imageslider.Imageslider as Imageslider
-import chord.Chord as Chord
-import scatter.Scatter as Scatter
-import violin.Violin as Violin
-import particles.Particles as Particles
-import heatmap.Heatmap as Heatmap
-import matrix.Matrix as Matrix
-import utils
+# import movingbubbles.Movingbubbles as Movingbubbles
+# import timeseries.Timeseries as Timeseries
+# import sankey.Sankey as Sankey
+# import imageslider.Imageslider as Imageslider
+# import chord.Chord as Chord
+# import scatter.Scatter as Scatter
+# import violin.Violin as Violin
+# import particles.Particles as Particles
+# import heatmap.Heatmap as Heatmap
+# import matrix.Matrix as Matrix
+# import utils
 # #####################################################
 
 from elasticgraph import Elasticgraph
