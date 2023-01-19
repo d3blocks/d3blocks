@@ -5,6 +5,46 @@
 import pandas as pd
 import numpy as np
 
+# %% Moving bubbles
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(chart='movingbubbles', frame=False)
+# Import example
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+
+# Add node size and adjust for some sample_ids
+# df['size']=4
+# df['size'][df['sample_id']==1]=20
+# df['size'][df['sample_id']==3]=40
+
+size = {1: 20, 3: 40}
+
+# Node properties
+d3.set_node_properties(labels=df['state'])
+# d3.node_properties
+d3.node_properties.get('Sleeping')['color'] = '#000000'
+# d3.node_properties
+d3.set_edge_properties(df, size=size)
+# d3.edge_properties
+# Show
+d3.show(filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.', showfig=True)
+
+# or
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(frame=False)
+# Import example
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+
+# Set node size for specifiek sample_id
+size = {17: 20, 8: 40}
+
+# Show
+d3.movingbubbles(df, size=size, filepath='c://temp/movingbubbles.html')
+d3.movingbubbles(df, size=size, reset_properties=False, cmap='tab20', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
+
+
 # %%
 from d3blocks import D3Blocks
 
@@ -1458,9 +1498,14 @@ time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first enti
 time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
 time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
 
+
+df['size']=4
+df['size'][df['sample_id']==1]=10
+df['size'][df['sample_id']==3]=40
+
 # Make the moving bubbles
 d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', timedelta='minutes', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath=r'c:\temp\movingbubbles.html', cmap='Set2_r', standardize='samplewise')
-    
+
 df1=d3.edge_properties
 
 # %% Movingbubbles - Create random dataset
