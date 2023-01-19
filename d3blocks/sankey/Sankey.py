@@ -23,8 +23,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     # Store configurations
     config['chart'] ='sankey'
     config['title'] = kwargs.get('title', 'Sankey - D3blocks')
-    # config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html')) if kwargs.get('filepath') is not None else None
-    config['filepath'] = set_path(kwargs.get('filepath'))
+    config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'))
     config['figsize'] = kwargs.get('figsize', [800, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)

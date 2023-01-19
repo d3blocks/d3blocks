@@ -24,7 +24,7 @@ def set_config(config, logger=None):
     """Set the general configuration setting."""
     config['chart'] ='imageslider'
     config['title']='Imageslider - D3blocks',
-    config['filepath']=set_path('imageslider.html')
+    config['filepath'] = set_path('imageslider.html')
     config['showfig']=True
     config['overwrite']=True
     config['figsize']=[None, None]

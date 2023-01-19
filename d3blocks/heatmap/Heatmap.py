@@ -24,7 +24,7 @@ def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
     config['chart'] ='Heatmap'
     config['title'] = kwargs.get('title', 'Heatmap - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath'))
+    config['filepath'] = set_path(kwargs.get('filepath'), 'heatmap.html')
     config['figsize'] = kwargs.get('figsize', [720, 720])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
