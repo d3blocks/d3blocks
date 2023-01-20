@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.2
+                1.2.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -136,7 +136,7 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <li><p>Sample_id column: A sample can have multiple states at various time points but can not have two states at exactly the same point in time.</p></li>
 </ul>
 </div></blockquote>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">param df</dt>
 <dd class="field-odd"><p>Input data.</p>
 </dd>
@@ -167,6 +167,42 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dt class="field-even">type center</dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
+<dt class="field-odd">param size</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Size the nodes by specifying per sample_id the size.</dt><dd><ul class="simple">
+<li><p>5: set all nodes this this size</p></li>
+<li><p>{‘0’: 4, ‘1’: 10, ‘2’: 5, ..}: Specify size for each sample_id</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type size</dt>
+<dd class="field-even"><p>int or dictionary. (default: 5) or {sample_id i: size}</p>
+</dd>
+<dt class="field-odd">param color</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Color the nodes by specifying per sample_id the color.</dt><dd><ul class="simple">
+<li><p>‘#000FFF’: set all nodes to this color.</p></li>
+<li><p>{‘0’: ‘#808080’, ‘1’: ‘#FFF000’, ‘3’: ‘#000000’, ..}: Specify color for each sample_id</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type color</dt>
+<dd class="field-even"><p>int or dictionary. (default: ‘#808080’) or {sample_id i: hex-color}</p>
+</dd>
+<dt class="field-odd">param color_method</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Coloring of the nodes.</dt><dd><ul class="simple">
+<li><p>‘state’: Use the colors defined per state as (d3.node_properties).</p></li>
+<li><p>‘node’: Use the colors defined in the dataframe (d3.edge_properties).</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type color_method</dt>
+<dd class="field-even"><p>str</p>
+</dd>
 <dt class="field-odd">param dt_format</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Date time format.</dt><dd><ul class="simple">
@@ -178,7 +214,7 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dt class="field-even">type dt_format</dt>
 <dd class="field-even"><p>str</p>
 </dd>
-<dt class="field-odd">param dampler</dt>
+<dt class="field-odd">param damper</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Movement of samples. A smaller number is slower/smoother movement.</dt><dd><ul class="simple">
 <li><p>0.1: min</p></li>
@@ -187,7 +223,7 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type dampler</dt>
+<dt class="field-even">type damper</dt>
 <dd class="field-even"><p>float, (default: 1)</p>
 </dd>
 <dt class="field-odd">param fontsize</dt>
@@ -196,23 +232,26 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dt class="field-even">type fontsize</dt>
 <dd class="field-even"><p>int, (default: 14)</p>
 </dd>
-<dt class="field-odd">param reset_time</dt>
+<dt class="field-odd">param timedelta</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>Reset the time after this period.</dt><dd><ul class="simple">
-<li><p>‘day’  : Every 24h de the day start over again.</p></li>
-<li><p>‘year’ : Every 365 days the year starts over again.</p></li>
+<dt>The time delta between states. Change accordingly.</dt><dd><ul class="simple">
+<li><p>‘seconds’</p></li>
+<li><p>‘minutes’</p></li>
+<li><p>‘days’</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type reset_time</dt>
-<dd class="field-even"><p>String, (default: ‘day’)</p>
+<dt class="field-even">type timedelta</dt>
+<dd class="field-even"><p>String, (default: ‘minutes’)</p>
 </dd>
 <dt class="field-odd">param standardize</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Method to standardize the data.</dt><dd><ul class="simple">
 <li><p>None: standardize over the entire timeframe. Sample_ids are dependent to each other.</p></li>
-<li><p>‘samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+<li><p>‘samplewise’: Standardize per sample_id by substracting the minimum time per sample_id.</p></li>
+<li><p>‘relative’: Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.</p></li>
+<li><p>‘minimum’: Movements are relative to the minimum time in the dataset.</p></li>
 </ul>
 </dd>
 </dl>
@@ -227,15 +266,29 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <dd class="field-even"><p>dict, (default: {“slow”: 1000, “medium”: 200, “fast”: 50})</p>
 </dd>
 <dt class="field-odd">param note</dt>
-<dd class="field-odd"><p>A specific note, such as project description can be put on the html page.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>A specific note, such as project description can be put on the html page.</dt><dd><ul class="simple">
+<li><p>None: Default text will be provided about the simulation, and states.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type note</dt>
 <dd class="field-even"><p>str, (default: None)</p>
 </dd>
 <dt class="field-odd">param time_notes</dt>
-<dd class="field-odd"><p>The time notes will be shown between specific time points.
-time_notes = [{“start_minute”: 1, “stop_minute”: 5, “note”: “Enter your note here and it is shown between 1 min and 5 min.”}]
-time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p>
+<dd class="field-odd"><dl class="simple">
+<dt>The time notes will be shown between specific time points.</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>time_notes = [{“start_minute”: 1,</dt><dd><p>“stop_minute”: 5,
+“note”: “Enter your note here and it is shown between 1 min and 5 min.”}]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p>
 </dd>
 <dt class="field-even">type time_notes</dt>
 <dd class="field-even"><p>dict, (default: None)</p>
@@ -243,7 +296,10 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <dt class="field-odd">param cmap</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
-<li><p>‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+<li><p>‘Set1’, ‘Set2’</p></li>
+<li><p>‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’</p></li>
+<li><p>‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’</p></li>
+<li><p>‘twilight’, ‘hsv’, ‘inferno’</p></li>
 </ul>
 </dd>
 </dl>
@@ -356,7 +412,7 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;1-1-2000 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;1-1-2000 23:59:59&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties: provide the states</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Coloring the states.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Color the sleeping state black</span>
@@ -367,6 +423,24 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Movingbubbles with adjusted configurations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;movingbubbles&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;1-1-2000 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;1-1-2000 23:59:59&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Specify the colors and node sizes for the specific sample_id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">40</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;#000FFF&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">movingbubbles</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>

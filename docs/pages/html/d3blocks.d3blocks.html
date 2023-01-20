@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.2
+                1.2.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -896,8 +896,130 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.matrix">
+<span class="sig-name descname"><span class="pre">matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'interpolateInferno'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Matrix</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[700,</span> <span class="pre">500]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'matrix.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Matrix block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – Input data. The index and column names are used for the row/column naming.</p></li>
+<li><p><strong>scale</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Scale data in range Scaling in range by X*(100/max(X)).</dt><dd><ul>
+<li><p>True: Scale the values.</p></li>
+<li><p>False: Do not scale.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>stroke</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'red'</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Color of the recangle when hovering over a cell.</dt><dd><ul>
+<li><p>’red’</p></li>
+<li><p>’black’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>description</strong> (<em>String.</em>) – Description text of the heatmap.</p></li>
+<li><p><strong>vmax</strong> (<em>Bool</em><em>, </em><em>(</em><em>default: 100</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul>
+<li><p>1 : cells above value &gt;1 are capped.</p></li>
+</ul>
+</dd>
+</dl>
+<p>None : cells are colored based on the maximum value in the input data.</p>
+</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'interpolateInferno'</em><em>)</em><em>.</em>) – <dl class="simple">
+<dt>The colormap scheme. See references for more schmes.</dt><dd><ul>
+<li><p>’interpolateInferno’</p></li>
+<li><p>’interpolatePRGn’</p></li>
+<li><p>’interpolateBlues’</p></li>
+<li><p>’interpolateGreens’</p></li>
+<li><p>’interpolateTurbo’</p></li>
+<li><p>’interpolateViridis’</p></li>
+<li><p>’interpolateInferno’</p></li>
+<li><p>’interpolateRainbow’</p></li>
+<li><p>’interpolateSinebow’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 10</em><em>)</em><em>.</em>) – Font size for the X and Y labels.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Heatmap’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[800, 800]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">20</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+<span class="go">              vmin=1,</span>
+<span class="go">              fontsize=10,</span>
+<span class="go">              title=&#39;D3blocks Matrix&#39;,</span>
+<span class="go">              filepath=&#39;d3blocks_matrix.html&#39;,</span>
+<span class="go">              figsize=[600, 300],</span>
+<span class="go">              cmap=&#39;interpolateGreens&#39;)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html">https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html</a></p></li>
+<li><p><a class="reference external" href="https://github.com/d3/d3-scale-chromatic">https://github.com/d3/d3-scale-chromatic</a></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.movingbubbles">
-<span class="sig-name descname"><span class="pre">movingbubbles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sample_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'state'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%d-%m-%Y</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'day'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standardize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'fast':</span> <span class="pre">50,</span> <span class="pre">'medium':</span> <span class="pre">200,</span> <span class="pre">'slow':</span> <span class="pre">1000}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[780,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Movingbubbles</span> <span class="pre">-</span> <span class="pre">D3Blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'movingbubbles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.movingbubbles" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">movingbubbles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sample_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'state'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#808080'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Set1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'state'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'%d-%m-%Y</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timedelta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'minutes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standardize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'samplewise'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'fast':</span> <span class="pre">50,</span> <span class="pre">'medium':</span> <span class="pre">200,</span> <span class="pre">'slow':</span> <span class="pre">1000}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[780,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Movingbubbles</span> <span class="pre">-</span> <span class="pre">D3Blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'movingbubbles.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.movingbubbles" title="Permalink to this definition"></a></dt>
 <dd><p>MovingBubbles block.</p>
 <p>The MovingBubbles provides insights into when one action follows the other across time. It can help to
 understand the movements of entities, and whether clusters occur at specific time points and state(s).
@@ -919,6 +1041,30 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <li><p><strong>sample_id</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'sample_id'</em><em>)</em>) – Name of the column with the sample ids.</p></li>
 <li><p><strong>state</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'state'</em><em>)</em>) – Name of the column with the states.</p></li>
 <li><p><strong>center</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Center this category.</p></li>
+<li><p><strong>size</strong> (<em>int</em><em> or </em><em>dictionary.</em><em> (</em><em>default: 5</em><em>) or </em><em>{sample_id i: size}</em>) – <dl class="simple">
+<dt>Size the nodes by specifying per sample_id the size.</dt><dd><ul>
+<li><p>5: set all nodes this this size</p></li>
+<li><p>{‘0’: 4, ‘1’: 10, ‘2’: 5, ..}: Specify size for each sample_id</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>color</strong> (<em>int</em><em> or </em><em>dictionary.</em><em> (</em><em>default: '#808080'</em><em>) or </em><em>{sample_id i: hex-color}</em>) – <dl class="simple">
+<dt>Color the nodes by specifying per sample_id the color.</dt><dd><ul>
+<li><p>’#000FFF’: set all nodes to this color.</p></li>
+<li><p>{‘0’: ‘#808080’, ‘1’: ‘#FFF000’, ‘3’: ‘#000000’, ..}: Specify color for each sample_id</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>color_method</strong> (<em>str</em>) – <dl class="simple">
+<dt>Coloring of the nodes.</dt><dd><ul>
+<li><p>’state’: Use the colors defined per state as (d3.node_properties).</p></li>
+<li><p>’node’: Use the colors defined in the dataframe (d3.edge_properties).</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>dt_format</strong> (<em>str</em>) – <dl class="simple">
 <dt>Date time format.</dt><dd><ul>
 <li><p>’%d-%m-%Y %H:%M:%S’.</p></li>
@@ -926,7 +1072,7 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </p></li>
-<li><p><strong>dampler</strong> (<em>float</em><em>, </em><em>(</em><em>default: 1</em><em>)</em>) – <dl class="simple">
+<li><p><strong>damper</strong> (<em>float</em><em>, </em><em>(</em><em>default: 1</em><em>)</em>) – <dl class="simple">
 <dt>Movement of samples. A smaller number is slower/smoother movement.</dt><dd><ul>
 <li><p>0.1: min</p></li>
 <li><p>10: max</p></li>
@@ -935,10 +1081,11 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dl>
 </p></li>
 <li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the states.</p></li>
-<li><p><strong>reset_time</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'day'</em><em>)</em>) – <dl class="simple">
-<dt>Reset the time after this period.</dt><dd><ul>
-<li><p>’day’  : Every 24h de the day start over again.</p></li>
-<li><p>’year’ : Every 365 days the year starts over again.</p></li>
+<li><p><strong>timedelta</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'minutes'</em><em>)</em>) – <dl class="simple">
+<dt>The time delta between states. Change accordingly.</dt><dd><ul>
+<li><p>’seconds’</p></li>
+<li><p>’minutes’</p></li>
+<li><p>’days’</p></li>
 </ul>
 </dd>
 </dl>
@@ -946,19 +1093,40 @@ a randomized dataset with various states. The input dataset should contain 3 col
 <li><p><strong>standardize</strong> (<em>str.</em><em> (</em><em>default: None</em><em>)</em>) – <dl class="simple">
 <dt>Method to standardize the data.</dt><dd><ul>
 <li><p>None: standardize over the entire timeframe. Sample_ids are dependent to each other.</p></li>
-<li><p>’samplewise’: Standardize per sample_id. Thus the sample_ids are independent of each other.</p></li>
+<li><p>’samplewise’: Standardize per sample_id by substracting the minimum time per sample_id.</p></li>
+<li><p>’relative’: Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.</p></li>
+<li><p>’minimum’: Movements are relative to the minimum time in the dataset.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>speed</strong> (<em>dict</em><em>, </em><em>(</em><em>default: {&quot;slow&quot;: 1000</em><em>, </em><em>&quot;medium&quot;: 200</em><em>, </em><em>&quot;fast&quot;: 50}</em><em>)</em>) – The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p></li>
-<li><p><strong>note</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – A specific note, such as project description can be put on the html page.</p></li>
-<li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – The time notes will be shown between specific time points.
-time_notes = [{“start_minute”: 1, “stop_minute”: 5, “note”: “Enter your note here and it is shown between 1 min and 5 min.”}]
-time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p></li>
+<li><p><strong>note</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>A specific note, such as project description can be put on the html page.</dt><dd><ul>
+<li><p>None: Default text will be provided about the simulation, and states.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>The time notes will be shown between specific time points.</dt><dd><ul>
+<li><dl class="simple">
+<dt>time_notes = [{“start_minute”: 1,</dt><dd><p>”stop_minute”: 5,
+“note”: “Enter your note here and it is shown between 1 min and 5 min.”}]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p>
+</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+<li><p>’Set1’, ‘Set2’</p></li>
+<li><p>’rainbow’, ‘bwr’, ‘binary’, ‘seismic’</p></li>
+<li><p>’Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’</p></li>
+<li><p>’twilight’, ‘hsv’, ‘inferno’</p></li>
 </ul>
 </dd>
 </dl>
@@ -1043,7 +1211,7 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;1-1-2000 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;1-1-2000 23:59:59&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties: provide the states</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Coloring the states.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Color the sleeping state black</span>
@@ -1054,6 +1222,24 @@ time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Movingbubbles with adjusted configurations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;movingbubbles&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;random_time&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">date_start</span><span class="o">=</span><span class="s2">&quot;1-1-2000 00:10:05&quot;</span><span class="p">,</span> <span class="n">date_stop</span><span class="o">=</span><span class="s2">&quot;1-1-2000 23:59:59&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Specify the colors and node sizes for the specific sample_id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">40</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;#000FFF&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">movingbubbles</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -1313,7 +1499,7 @@ class label.</p>
 <li><p><strong>y1</strong> (<em>numpy array</em>) – Second set of 1d coordinates y-axis.</p></li>
 <li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
 <li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
-<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>.</em>) – Size of the samples.</p></li>
 <li><p><strong>color</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <ul>
 <li><p>‘#ffffff’ : All dots are get the same hex color.</p></li>
 <li><p>None: The same color as for c is applied.</p></li>
@@ -1653,10 +1839,13 @@ in a single chart.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>sort_on_date</strong> (<em>Bool</em><em> (</em><em>default: True</em><em>)</em>) – <ul>
+<li><p><strong>sort_on_date</strong> (<em>Bool</em><em> (</em><em>default: True</em><em>)</em>) – <dl class="simple">
+<dt>Sort on date.</dt><dd><ul>
 <li><p>True: Sort on datetime.</p></li>
 <li><p>False: Do not change the input order.</p></li>
 </ul>
+</dd>
+</dl>
 </p></li>
 <li><p><strong>whitelist</strong> (<em>str</em><em>, </em><em>optional</em>) – Keep only columns containing this (sub)string (case insensitive)</p></li>
 <li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the fonts in the circle.</p></li>
