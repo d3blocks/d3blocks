@@ -13,30 +13,30 @@ import random
 import time
 from typing import List, Union, Tuple
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
-import d3blocks.heatmap.Heatmap as Heatmap
-import d3blocks.matrix.Matrix as Matrix
-import d3blocks.utils as utils
+# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+# import d3blocks.sankey.Sankey as Sankey
+# import d3blocks.imageslider.Imageslider as Imageslider
+# import d3blocks.chord.Chord as Chord
+# import d3blocks.scatter.Scatter as Scatter
+# import d3blocks.violin.Violin as Violin
+# import d3blocks.particles.Particles as Particles
+# import d3blocks.heatmap.Heatmap as Heatmap
+# import d3blocks.matrix.Matrix as Matrix
+# import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
-# import heatmap.Heatmap as Heatmap
-# import matrix.Matrix as Matrix
-# import utils
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
+import chord.Chord as Chord
+import scatter.Scatter as Scatter
+import violin.Violin as Violin
+import particles.Particles as Particles
+import heatmap.Heatmap as Heatmap
+import matrix.Matrix as Matrix
+import utils
 # #####################################################
 
 from elasticgraph import Elasticgraph
@@ -1186,12 +1186,12 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
         # Set edge properties
-        self.set_edge_properties(df, state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
+        self.set_edge_properties(df, timedelta=self.config['timedelta'], state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, color=color, standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
         return self.show()
 

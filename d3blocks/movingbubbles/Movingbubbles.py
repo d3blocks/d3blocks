@@ -126,7 +126,7 @@ def set_node_properties(labels, **kwargs):
 
 
 # %% Set Edge properties
-def set_edge_properties(df, size=4, **kwargs):
+def set_edge_properties(df, **kwargs):
     """Set the edge properties for the Movingbubbles block.
 
     Parameters
@@ -159,6 +159,9 @@ def set_edge_properties(df, size=4, **kwargs):
     sample_id = kwargs.get('sample_id', 'sample_id')
     state = kwargs.get('state', 'state')
     method = kwargs.get('standardize', None)
+    timedelta = kwargs.get('timedelta', None)
+    size = kwargs.get('size', 4)
+    color = kwargs.get('color', '#808080')
     dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     logger = kwargs.get('logger', None)
     df = df.copy()
@@ -167,18 +170,42 @@ def set_edge_properties(df, size=4, **kwargs):
     if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
         if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
         # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
-        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, logger=logger)
+        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta, logger=logger)
     else:
         raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
 
+    # Set size per node. Note that sizes are still constant per node!
+    df = _set_nodesize(df, sample_id, size, logger)
+    # Colol per node
+    df = _set_nodecolor(df, sample_id, color, logger)
+    return df
 
+def _set_nodecolor(df, sample_id, color, logger):
+    # Node color is set to default.
+    if isinstance(color, dict):
+        # add new column to df with node color for the specified sample_id
+        if logger is not None: logger.info('Processing the specified in node colors in dictionary..')
+        df['color'] = '#808080'
+        for key in color.keys():
+            df.loc[df[sample_id]==key, 'color'] = color.get(key)
+
+    # If the color column not exists, create one with default color
+    if not np.any(np.isin(df.columns, 'color')):
+        df['color'] = color
+        if logger is not None: logger.info('Set all nodes to color: %s' %(color))
+
+    return df
+
+def _set_nodesize(df, sample_id, size, logger):
     # Node size is set to default.
     if isinstance(size, dict):
         # add new column to df with node size for the specified sample_id
         if logger is not None: logger.info('Processing the specified in node sizes in dictionary..')
         df['size'] = 4
         for key in size.keys():
-            df['size'].loc[df[sample_id]==key]=size.get(key)
+            df.loc[df[sample_id]==key, 'size'] = size.get(key)
+
+    # If the size column not exists, create one with default size
     if not np.any(np.isin(df.columns, 'size')):
         df['size'] = size
         if logger is not None: logger.info('Set all nodes to size: %d' %(size))
@@ -230,6 +257,7 @@ def show(df, **kwargs):
     sid = np.array(list(map(lambda x: labels.get(x)['id'], df[config['columns']['state']].values)))
     uiid = np.unique(df['sample_id'])
     for i in uiid:
+        # Combine the sample_id with its time in state
         Iloc=df['sample_id']==i
         tmplist=str(list(zip(sid[Iloc], df['time_in_state'].loc[Iloc].values)))
         tmplist=tmplist.replace('(', '')
@@ -243,6 +271,10 @@ def show(df, **kwargs):
     # Node size in the same order as the uiid
     nodedict = dict(zip(df['sample_id'], df['size']))
     config['node_size'] = list(map(lambda x: nodedict.get(x), uiid))
+
+    # Node color in the same order as the uiid
+    nodedict = dict(zip(df['sample_id'], df['color']))
+    config['node_color'] = list(map(lambda x: nodedict.get(x), uiid))
 
     # Set color codes for the d3js
     df_labels = pd.DataFrame(labels).T
@@ -267,7 +299,13 @@ def show(df, **kwargs):
 
     datestart = df[config['columns']['datetime']].iloc[0]
     datestop = df[config['columns']['datetime']].iloc[-1]
-    config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
+    
+    if config['note'] is None:
+        config['note'] = "This is a simulation of multiple states and samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>."
+        config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
+
+    if config['time_notes'] is None:
+        config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
     # Convert to json format
     config['time_notes'] = json.dumps(config['time_notes'])
 
@@ -296,6 +334,11 @@ def write_html(X, config, logger=None):
     zero_to_hour = "0" if config['start_hour']<10 else ""
     zero_to_min = "0" if config['start_minute']<10 else ""
 
+    # Set the selectionbox correctly on the form
+    config['color_method'] = config['color_method'].upper()
+    SELECTED_STATE = {'STATE': '', 'NODE': ''}
+    SELECTED_STATE[config['color_method']] = 'selected="selected"'
+
     content = {
         'json_data': X,
         'TITLE': config['title'],
@@ -304,13 +347,19 @@ def write_html(X, config, logger=None):
         'CENTER': '"' + config['center'] + '"',
         'FONTSIZE': str(config['fontsize']) + 'px',
         'COLORBYACTIVITY': config['colorByActivity'],
+
         'NODE_SIZE': config['node_size'],
+        'NODE_COLOR': config['node_color'],
+        'COLOR_STATE_SELECTED': SELECTED_STATE['STATE'],
+        'COLOR_NODE_SELECTED': SELECTED_STATE['NODE'],
+
         'ACT_CODES': config['act_codes'],
         'ACT_COUNTS': config['act_counts'],
         'SPEED': config['speed'],
         'DAMPER': config['damper'],
         'NOTE': config['note'],
         'TIME_NOTES': config['time_notes'],
+        'COLOR_METHOD': config['color_method'],
         'START_HOUR_MIN': config['start_hour'] + (config['start_minute'] / 60),
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
     }

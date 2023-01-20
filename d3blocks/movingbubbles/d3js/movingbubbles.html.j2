@@ -11,22 +11,16 @@ Licensed    : GPL3
 <title>{{ TITLE }}</title>
 
 <style>
-    {% include "style.css" %}
-    body {
-        font-size: {{ FONTSIZE }};
-    }
-</style>
+{% include "style.css" %}
+    body { font-size: {{ FONTSIZE }}; }
+.node { stroke-width: 1.5px; }
 
+</style>
 </head>
 
+
 <meta charset="utf-8">
-<style>
 
-.node {
-  stroke-width: 1.5px;
-}
-
-</style>
 <body>
     <div id="main-wrapper">
     <div id="sidebar">
@@ -39,15 +33,27 @@ Licensed    : GPL3
         <div class="clr"></div>
     </div>
 
+
     <div id="note"></div>
+
         <div id="cite">
-        {{ NOTE }}
-    </div>
+            {{ NOTE }}
+        </div>
 
     </div>
-        <div id="chart"></div>
-        <div class="clr"></div>
+
+    <div id="chart"></div>
+
+    <b>Color method:</b>
+    	<select id="ColorOptions" onchange="link_color_changed(this.value)">
+    	  <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
+    	  <option value="NODE" {{ COLOR_NODE_SELECTED }}>Node</option>
+    </select>
+    
+    <div class="clr"></div>
     </div>
+
+
 
 <script>
 
@@ -64,12 +70,27 @@ var width = {{ WIDTH }},
 var sched_objs = [],
 	curr_minute = 0;
 
+// STATE PROPERTIES
 var act_codes = {{ ACT_CODES }};
 var act_counts = {{ ACT_COUNTS }};
 var speeds = {{ SPEED }};
 var time_notes = {{ TIME_NOTES }};
 var notes_index = 0;
+var colorByActivity = {{ COLORBYACTIVITY }} // array of the colors per state
+
+// NODE PROPERTIES
 var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
+var node_color = {{ NODE_COLOR }}; //array of color values, one for each node
+var color_method = "{{ COLOR_METHOD }}"; //Nodes can be colored based on "STATE" or "NODE"
+
+// DATA. The nodes are comma seperated and within each node, the pattern is: ["sample_id 1, time_in_state 1, ..", "sample_id 2, time_in_state 1, ..", ..]
+data = {{ json_data }}
+
+// color_method selection changes. Listen if changes are made (onchange=link_color_changed())
+function link_color_changed(linkColor_value) {
+    console.log(linkColor_value)
+    color_method = linkColor_value
+}
 
 
 var center_act = {{ CENTER }},
@@ -94,10 +115,6 @@ var svg = d3.select("#chart").append("svg")
     .attr("height", height);
 
 
-// Load data and let's do it.
-data = {{ json_data }}
-
-
 data.forEach(function(d) {
 	var day_array = d.split(",");
 	var activities = [];
@@ -119,10 +136,12 @@ var nodes = sched_objs.map(function(o, i) {
 	var init_y = foci[act].y + Math.random();
 	return {
 		act: act,
-		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
 		x: init_x,
 		y: init_y,
-		color: color(act),
+		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
+		//color: color(act),
+		//color: node_color[i],
+        color: (color_method === "STATE" ? color(act) : node_color[i]),
 		moves: 0,
 		next_move_time: o[0].duration,
 		sched: o,
@@ -279,7 +298,15 @@ function tick(e) {
 	//} else {
 	//	var damper = 1;
 	//}
-	o.color = color(curr_act);
+
+	if (color_method === "STATE") {
+		o.color = color(curr_act);
+	} else {
+		o.color = node_color[i];
+	}
+	// console.log(color_method)
+    // console.log(o.color)
+
 	o.y += (foci[curr_act].y - o.y) * k * damper;
 	o.x += (foci[curr_act].x - o.x) * k * damper;
   });
@@ -347,7 +374,7 @@ d3.selectAll(".togglebutton")
 
 
 function color(activity) {
-	var colorByActivity = {{ COLORBYACTIVITY }}
+	//var colorByActivity = {{ COLORBYACTIVITY }}
 	return colorByActivity[activity];
 }
 
