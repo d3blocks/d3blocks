@@ -51,11 +51,7 @@ def set_config(config={}, **kwargs):
     config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     config['columns'] = kwargs.get('columns', {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']})
     config['notebook'] = kwargs.get('notebook', False)
-
-    if config['time_notes'] is None:
-        config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
-    if config['note'] is None:
-        config['note']=("This is a simulation of multiple states and samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>.")
+    config['color_method'] = kwargs.get('color_method', "STATE")
 
     return config
 
@@ -378,7 +374,7 @@ def write_html(X, config, logger=None):
     return html
 
 
-def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', logger=None):
+def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', minimum_time='minutes', logger=None):
     """Standardize time per sample_id.
 
     Parameters
@@ -416,11 +412,10 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     # Initialize empty delta
     df['delta'] = df[datetime] - df[datetime]
     # Initialize empty datetime_norm
-    df['datetime_norm'] = df[datetime] - df[datetime]
+    # df['datetime_norm'] = df[datetime] - df[datetime]
     # Set a default start point.
-    # timenow = dt.datetime.strptime('01-01-1980 00:00:00', dt_format)
-    timenow = dt.datetime.strptime(dt.datetime.now().strftime(dt_format), dt_format)
-    timenow = timenow.replace(year=1980, month=1, day=1, hour=0, minute=0, second=0)
+    # timenow = dt.datetime.strptime(dt.datetime.now().strftime(dt_format), dt_format)
+    # timenow = timenow.replace(year=1980, month=1, day=1, hour=0, minute=0, second=0)
 
     if method=='samplewise':
         if logger is not None: logger.info('Standardize method: [%s]' %(method))
@@ -435,26 +430,55 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
             timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
             df.loc[Iloc, 'delta'] = timedelta
             # Standardize time per unique sample. Each sample will start at timenow.
-            df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
-    else:
+            # df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
+    elif method=='relative':
         df = df.sort_values(by=[datetime])
         df.reset_index(drop=True, inplace=True)
-        timedelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        df['delta'] = timedelta
-        df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
 
+        # Note: The first state per sample_id is depended on the prevous state.
+        # timedelta = df[datetime]-df[datetime]
+        tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
+        # timedelta.loc[1:] = tmpdelta.values
+        df['delta'] = tmpdelta
+        # tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
+        # timedelta.loc[1:] = tmpdelta.values
+        # df['delta'] = timedelta
+
+        # Note: Last state per sample_id should always be ending and thus 0
+        uisample_id = df['sample_id'].unique()
+        getidx = []
+        for sid in uisample_id:
+            getidx.append(df[[sample_id, datetime]].loc[df[sample_id]==sid].sort_values(by=[datetime]).index[-1])
+        df.loc[getidx, 'delta']=np.nan
+        # df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
+    elif method=='minimum':
+        df['delta'] = df['datetime'] - df['datetime'].min()
+
+
+    # if NaT is found, set it to 0
     Iloc = df['delta'].isna()
     if np.any(Iloc):
         df.loc[Iloc, 'delta'] = df[datetime].iloc[0] - df[datetime].iloc[0]
 
     # Set datetime
-    df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format, errors='ignore')
+    # df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format, errors='ignore')
     # Sort on datetime
     df = df.sort_values(by=[datetime])
     df.reset_index(drop=True, inplace=True)
+
+    # Zero time causes a total halt of movements. Prevent by adding a minimum time.
+    zerotime=df['delta'][0] - df['delta'][0]
+    Iloc = df['delta']==zerotime
+    if np.any(Iloc):
+        if minimum_time=='minutes':
+            df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(seconds=60)
+        elif minimum_time=='days':
+            df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(days=1)
+        else:
+            df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(seconds=1)
+
     # Return
     return df
-
 
 def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):
     """Generate random time data.

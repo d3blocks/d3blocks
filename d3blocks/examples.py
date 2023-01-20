@@ -5,6 +5,111 @@
 import pandas as pd
 import numpy as np
 
+# %% Movingbubbles - Make manual dataset to test the working
+
+# This is an example to demonstrate standardize='samplewise'.
+# 
+
+import pandas as pd
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+df1 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df1['datetime'] = ['01-01-2000 00:00:00',
+                   '01-01-2000 00:05:00',
+                   '01-01-2000 00:10:00',
+                   '01-01-2000 00:15:00',
+                   '01-01-2000 00:20:00',
+                   '01-01-2000 00:25:00']
+df1['sample_id'] = [1, 1, 1, 1, 1, 1]
+df1['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df2 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df2['datetime'] = ['01-01-2000 00:00:00',
+                   '01-01-2000 00:10:00',
+                   '01-01-2000 00:15:00',
+                   '01-01-2000 00:20:00',
+                   '01-01-2000 00:25:00',
+                   '01-01-2000 00:30:00']
+df2['sample_id'] = [2, 2, 2, 2, 2, 2]
+df2['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+df3 = pd.DataFrame(columns=['datetime', 'sample_id', 'state'])
+df3['datetime'] = ['01-01-2000 01:00:00',
+                   '01-01-2000 01:15:00',
+                   '01-01-2000 01:20:00',
+                   '01-01-2000 01:25:00',
+                   '01-01-2000 01:30:00',
+                   '01-01-2000 01:35:00']
+df3['sample_id'] = [3, 3, 3, 3, 3, 3]
+df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
+
+# Concatenate the dataframes
+df = pd.concat([df1, df2, df3], axis=0)
+
+print(df)
+#               datetime  sample_id     state
+# 0  01-01-2000 00:00:00          1      home
+# 1  01-01-2000 00:05:00          1    school
+# 2  01-01-2000 00:10:00          1      work
+# 3  01-01-2000 00:15:00          1    eating
+# 4  01-01-2000 00:20:00          1    coffee
+# 5  01-01-2000 00:25:00          1  sleeping
+# 
+# 0  01-01-2000 00:00:00          2      home
+# 1  01-01-2000 00:10:00          2    school
+# 2  01-01-2000 00:15:00          2      work
+# 3  01-01-2000 00:20:00          2    eating
+# 4  01-01-2000 00:25:00          2    coffee
+# 5  01-01-2000 00:30:00          2  sleeping
+# 
+# 0  12-12-2000 00:00:00          3      home
+# 1  12-12-2000 00:15:00          3    school
+# 2  12-12-2000 00:20:00          3      work
+# 3  12-12-2000 00:25:00          3    eating
+# 4  12-12-2000 00:30:00          3    coffee
+# 5  12-12-2000 00:35:00          3  sleeping
+
+# standardize the time per sample id and make the starting-point the same
+# df = d3.standardize(df, sample_id='sample_id', datetime='datetime')
+
+# # Compute delta (this is automatically done if not seen in datafame available)
+# df = d3.compute_time_delta(df, sample_id='sample_id', datetime='datetime', state='state')
+
+# Notes that are shown between two time points.
+time_notes = [{"start_minute": 1, "stop_minute": 5, "note": "In the first 5 minutes, nothing will happen and every entity is waiting in it's current state."}]
+time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "The first entity will move to school. The rest is still at home."})
+time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first entity will move to work and the second entity to school. There is still one at home."})
+time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
+
+
+# df['size']=4
+# df['size'][df['sample_id']==1]=10
+# df['size'][df['sample_id']==3]=40
+size = {1: 60, 2: 40, 3: 10}
+color = {1: '#000000', 2: '#000FFF', 3: '#FFF000'}
+
+# Make the moving bubbles
+d3.movingbubbles(df, 
+                 datetime='datetime',
+                 state='state',
+                 sample_id='sample_id',
+                 size=size,
+                 color=color,
+                 color_method='node',
+                 timedelta='minutes',
+                 speed={"slow": 1000, "medium": 200, "fast": 10},
+                 time_notes=time_notes,
+                 filepath=r'c:\temp\movingbubbles.html',
+                 cmap='Set2',
+                  # standardize='minimum',
+                   # standardize='samplewise',
+                   standardize='relative',
+                 )
+
+df1=d3.edge_properties
+
+
 # %% Moving bubbles
 from d3blocks import D3Blocks
 # Initialize
@@ -17,18 +122,26 @@ df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:
 # df['size'][df['sample_id']==1]=20
 # df['size'][df['sample_id']==3]=40
 
-size = {1: 20, 3: 40}
+# size = {1: 20, 3: 40}
+# color = {1: '#000000', 3: '#000FFF'}
+size = {1: 20}
+color = {1: '#FF0000'}
 
 # Node properties
 d3.set_node_properties(labels=df['state'])
 # d3.node_properties
 d3.node_properties.get('Sleeping')['color'] = '#000000'
 # d3.node_properties
-d3.set_edge_properties(df, size=size)
+d3.set_edge_properties(df, size=size, color=color)
 # d3.edge_properties
 # Show
-d3.show(filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.', showfig=True)
+d3.show(color_method='node', filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.')
+d3.show(standardize='samplewise', color_method='node', filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.')
+d3.show(standardize='sequential', color_method='node', filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.')
 
+
+
+df1 = d3.edge_properties
 # or
 
 from d3blocks import D3Blocks
@@ -37,12 +150,12 @@ d3 = D3Blocks(frame=False)
 # Import example
 df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 
+# Show with size=5
+d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html')
+
 # Set node size for specifiek sample_id
 size = {17: 20, 8: 40}
-
-# Show
 d3.movingbubbles(df, size=size, filepath='c://temp/movingbubbles.html')
-d3.movingbubbles(df, size=size, reset_properties=False, cmap='tab20', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='c://temp/movingbubbles1.html')
 
 
 # %%
@@ -76,7 +189,7 @@ time_notes.append({"start_minute": 391 , "stop_minute": 450, "note": "aaaand we 
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 d3.movingbubbles(df,
-                 standardize=None,
+                 standardize='sequential',
                  dt_format='%Y-%m-%d %H:%M:%S',
                  time_notes=time_notes,
                  title='d3blocks_movingbubbles',
@@ -92,13 +205,18 @@ d3.edge_properties['time_in_state'].cumsum()
 
 df = pd.read_csv(r'D:\REPOS\d3blocks\d3blocks\data\test_3_AL.csv')
 
+size={2386: 20, 10197: 10}
+color={2386: '#FF0000'}
 
 d3.movingbubbles(df,
                  standardize='samplewise',
+                 size=size,
+                 color=color,
+                 color_method='node',
                  dt_format='%Y-%m-%d %H:%M:%S',
-                 time_notes=time_notes,
                  title='d3blocks_movingbubbles',
-                 cmap='Set2',
+                 cmap='Set1',
+                 timedelta='minutes',
                  speed={"slow": 1000,
                         "medium": 200,
                         "fast": 20},
@@ -106,6 +224,8 @@ d3.movingbubbles(df,
 
 df1 = d3.edge_properties
 
+for i, _ in enumerate(df1.index):
+    df1['sample_id'].iloc[i]
 
 # %% Matrix
 from d3blocks import D3Blocks
@@ -1428,6 +1548,10 @@ d3.sankey(df, filepath='sankey_ex3.html', figsize=(1800, 900), node={"align": "l
 # d3.movingbubbles(X, filepath='c://temp/movingbubbles_original.html', center='Traveling')
 
 # %% Movingbubbles - Make manual dataset to test the working
+
+# This is an example to demonstrate standardize='samplewise'.
+# 
+
 import pandas as pd
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -1499,12 +1623,27 @@ time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first ent
 time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
 
 
-df['size']=4
-df['size'][df['sample_id']==1]=10
-df['size'][df['sample_id']==3]=40
+# df['size']=4
+# df['size'][df['sample_id']==1]=10
+# df['size'][df['sample_id']==3]=40
+size = {1: 10, 2: 5, 3: 20}
+color = {1: '#000000', 2: '#000FFF', 3: '#FFF000'}
 
 # Make the moving bubbles
-d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', timedelta='minutes', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath=r'c:\temp\movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+d3.movingbubbles(df, 
+                 datetime='datetime',
+                 state='state',
+                 sample_id='sample_id',
+                 size=size,
+                 color=color,
+                 color_method='node',
+                 timedelta='minutes',
+                 speed={"slow": 1000, "medium": 200, "fast": 10},
+                 time_notes=time_notes,
+                 filepath=r'c:\temp\movingbubbles.html',
+                 cmap='Set2',
+                 standardize='samplewise',
+                 )
 
 df1=d3.edge_properties
 
