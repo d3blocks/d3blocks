@@ -1006,27 +1006,29 @@ class D3Blocks():
 
     def movingbubbles(self,
                       df,
-                      datetime='datetime',
-                      sample_id='sample_id',
-                      state='state',
-                      center=None,
+                      datetime: str = 'datetime',
+                      sample_id: str = 'sample_id',
+                      state: str = 'state',
+                      center: str = None,
                       size=5,
+                      color='#808080',
+                      cmap: str = 'Set1',
+                      color_method: str = 'state',
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
-                      damper=1,
-                      fontsize=14,
-                      timedelta='minutes',
-                      standardize=None,
-                      speed={"slow": 1000, "medium": 200, "fast": 50},
-                      figsize=[780, 800],
-                      note=None,
-                      time_notes=None,
-                      cmap='Set1',
-                      title='Movingbubbles - D3Blocks',
-                      filepath='movingbubbles.html',
-                      showfig=True,
-                      overwrite=True,
-                      notebook=False,
-                      reset_properties=True,
+                      damper: float = 1,
+                      fontsize: int = 14,
+                      timedelta: str = 'minutes',
+                      standardize: str = 'samplewise',
+                      speed: dict = {"slow": 1000, "medium": 200, "fast": 50},
+                      figsize: tuple = [780, 800],
+                      note: str = None,
+                      time_notes: str = None,
+                      title: str = 'Movingbubbles - D3Blocks',
+                      filepath: str = 'movingbubbles.html',
+                      showfig: bool = True,
+                      overwrite: bool = True,
+                      notebook: bool = False,
+                      reset_properties: bool = True,
                       ):
         """MovingBubbles block.
 
@@ -1051,14 +1053,22 @@ class D3Blocks():
             Name of the column with the states.
         center : String, (default: None)
             Center this category.
-        size: int or dictionary. (default: 5)
-            Size of the nodes.
+        size: int or dictionary. (default: 5) or {sample_id i: size}
+            Size the nodes by specifying per sample_id the size.
                 * 5: set all nodes this this size
-                * {'0': 4, '1': 10, '2': 5, ..}: Specify per node the size.
+                * {'0': 4, '1': 10, '2': 5, ..}: Specify size for each sample_id
+        color: int or dictionary. (default: '#808080') or {sample_id i: hex-color}
+            Color the nodes by specifying per sample_id the color.
+                * '#000FFF': set all nodes to this color.
+                * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: Specify color for each sample_id
+        color_method : str
+            Coloring of the nodes.
+                * 'state': Use the colors defined per state as (d3.node_properties).
+                * 'node': Use the colors defined in the dataframe (d3.edge_properties).
         dt_format : str
             Date time format.
                 * '%d-%m-%Y %H:%M:%S'.
-        dampler : float, (default: 1)
+        damper : float, (default: 1)
             Movement of samples. A smaller number is slower/smoother movement.
                 * 0.1: min
                 * 10: max
@@ -1072,11 +1082,14 @@ class D3Blocks():
         standardize : str. (default: None)
             Method to standardize the data.
                 * None: standardize over the entire timeframe. Sample_ids are dependent to each other.
-                * 'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
+                * 'samplewise': Standardize per sample_id by substracting the minimum time per sample_id.
+                * 'relative': Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.
+                * 'minimum': Movements are relative to the minimum time in the dataset. 
         speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50})
             The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
         note : str, (default: None)
             A specific note, such as project description can be put on the html page.
+                * None: Default text will be provided about the simulation, and states.
         time_notes : dict, (default: None)
             The time notes will be shown between specific time points.
                 * time_notes = [{"start_minute": 1,
