@@ -13,30 +13,30 @@ import random
 import time
 from typing import List, Union, Tuple
 
-# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-# import d3blocks.timeseries.Timeseries as Timeseries
-# import d3blocks.sankey.Sankey as Sankey
-# import d3blocks.imageslider.Imageslider as Imageslider
-# import d3blocks.chord.Chord as Chord
-# import d3blocks.scatter.Scatter as Scatter
-# import d3blocks.violin.Violin as Violin
-# import d3blocks.particles.Particles as Particles
-# import d3blocks.heatmap.Heatmap as Heatmap
-# import d3blocks.matrix.Matrix as Matrix
-# import d3blocks.utils as utils
+import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+import d3blocks.timeseries.Timeseries as Timeseries
+import d3blocks.sankey.Sankey as Sankey
+import d3blocks.imageslider.Imageslider as Imageslider
+import d3blocks.chord.Chord as Chord
+import d3blocks.scatter.Scatter as Scatter
+import d3blocks.violin.Violin as Violin
+import d3blocks.particles.Particles as Particles
+import d3blocks.heatmap.Heatmap as Heatmap
+import d3blocks.matrix.Matrix as Matrix
+import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
-import movingbubbles.Movingbubbles as Movingbubbles
-import timeseries.Timeseries as Timeseries
-import sankey.Sankey as Sankey
-import imageslider.Imageslider as Imageslider
-import chord.Chord as Chord
-import scatter.Scatter as Scatter
-import violin.Violin as Violin
-import particles.Particles as Particles
-import heatmap.Heatmap as Heatmap
-import matrix.Matrix as Matrix
-import utils
+# import movingbubbles.Movingbubbles as Movingbubbles
+# import timeseries.Timeseries as Timeseries
+# import sankey.Sankey as Sankey
+# import imageslider.Imageslider as Imageslider
+# import chord.Chord as Chord
+# import scatter.Scatter as Scatter
+# import violin.Violin as Violin
+# import particles.Particles as Particles
+# import heatmap.Heatmap as Heatmap
+# import matrix.Matrix as Matrix
+# import utils
 # #####################################################
 
 from elasticgraph import Elasticgraph
@@ -1084,7 +1084,7 @@ class D3Blocks():
                 * None: standardize over the entire timeframe. Sample_ids are dependent to each other.
                 * 'samplewise': Standardize per sample_id by substracting the minimum time per sample_id.
                 * 'relative': Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.
-                * 'minimum': Movements are relative to the minimum time in the dataset. 
+                * 'minimum': Movements are relative to the minimum time in the dataset.
         speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50})
             The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
         note : str, (default: None)
@@ -1164,7 +1164,7 @@ class D3Blocks():
         >>> # Import example
         >>> df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
         >>> #
-        >>> # Node properties: provide the states
+        >>> # Coloring the states.
         >>> d3.set_node_properties(df['state'])
         >>> print(d3.node_properties)
         >>> # Color the sleeping state black
@@ -1175,6 +1175,24 @@ class D3Blocks():
         >>> #
         >>> # Show
         >>> d3.show(title='Movingbubbles with adjusted configurations')
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks(chart='movingbubbles')
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+        >>> #
+        >>> # Specify the colors and node sizes for the specific sample_id
+        >>> size = {1: 20, 3: 40}
+        >>> color = {1: '#FF0000', 3: '#000FFF'}
+        >>> #
+        >>> # Show
+        >>> d3.movingbubbles(df, color=color, size=size)
 
         References
         ----------
