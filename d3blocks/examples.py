@@ -102,9 +102,9 @@ d3.movingbubbles(df,
                  time_notes=time_notes,
                  filepath=r'c:\temp\movingbubbles.html',
                  cmap='Set2',
-                  # standardize='minimum',
-                   # standardize='samplewise',
-                   standardize='relative',
+                 # standardize='minimum',
+                  standardize='samplewise',
+                 # standardize='relative',
                  )
 
 df1=d3.edge_properties
