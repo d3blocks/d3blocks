@@ -1011,7 +1011,7 @@ class D3Blocks():
                       state: str = 'state',
                       center: str = None,
                       size=5,
-                      color='#808080',
+                      color=None,
                       cmap: str = 'Set1',
                       color_method: str = 'state',
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
@@ -1061,6 +1061,7 @@ class D3Blocks():
             Color the nodes by specifying per sample_id the color.
                 * '#000FFF': set all nodes to this color.
                 * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: Specify color for each sample_id
+                * None: Colors are based on sample_id using the cmap.
         color_method : str
             Coloring of the nodes.
                 * 'state': Use the colors defined per state as (d3.node_properties).

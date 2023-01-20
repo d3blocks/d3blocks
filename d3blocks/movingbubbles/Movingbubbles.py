@@ -157,7 +157,8 @@ def set_edge_properties(df, **kwargs):
     method = kwargs.get('standardize', None)
     timedelta = kwargs.get('timedelta', None)
     size = kwargs.get('size', 4)
-    color = kwargs.get('color', '#808080')
+    color = kwargs.get('color', None)
+    cmap = kwargs.get('cmap', 'Set1')
     dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     logger = kwargs.get('logger', None)
     df = df.copy()
@@ -173,10 +174,10 @@ def set_edge_properties(df, **kwargs):
     # Set size per node. Note that sizes are still constant per node!
     df = _set_nodesize(df, sample_id, size, logger)
     # Colol per node
-    df = _set_nodecolor(df, sample_id, color, logger)
+    df = _set_nodecolor(df, sample_id, color, cmap, logger)
     return df
 
-def _set_nodecolor(df, sample_id, color, logger):
+def _set_nodecolor(df, sample_id, color, cmap, logger):
     # Node color is set to default.
     if isinstance(color, dict):
         # add new column to df with node color for the specified sample_id
@@ -185,12 +186,16 @@ def _set_nodecolor(df, sample_id, color, logger):
         for key in color.keys():
             df.loc[df[sample_id]==key, 'color'] = color.get(key)
 
+    if color is None:
+        df['color'] = colourmap.fromlist(df['sample_id'], cmap=cmap, scheme='hex')[0]
+
     # If the color column not exists, create one with default color
     if not np.any(np.isin(df.columns, 'color')):
         df['color'] = color
         if logger is not None: logger.info('Set all nodes to color: %s' %(color))
 
     return df
+
 
 def _set_nodesize(df, sample_id, size, logger):
     # Node size is set to default.
@@ -208,7 +213,7 @@ def _set_nodesize(df, sample_id, size, logger):
 
     return df
 
-    
+
 def show(df, **kwargs):
     """Build and show the graph.
 
