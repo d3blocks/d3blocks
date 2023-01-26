@@ -185,7 +185,6 @@ var label = svg.selectAll("text")
 	
 label.append("tspan")
 	.attr("x", function() { return d3.select(this.parentNode).attr("x"); })
-	// .attr("dy", "1.3em")
 	.attr("text-anchor", "middle")
 	.text(function(d) {
 		return d.short;
