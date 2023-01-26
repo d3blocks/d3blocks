@@ -542,8 +542,8 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
         
     # Set a random time-point at multiple occasion at the same time.
-    df['datetime'] = pd.to_datetime(df['datetime'])  # pylint: disable=invalid-name
-    df = df.sort_values(by="datetime")
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df = df.sort_values(by="datetime")  # pylint: disable=invalid-name
     df.dropna(inplace=True)
     df.reset_index(inplace=True, drop=True)
 
