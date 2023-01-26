@@ -7,16 +7,20 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 
 """
-import colourmap
-import numpy as np
-import pandas as pd
 import datetime as dt
 import re
-from tqdm import tqdm
-from jinja2 import Environment, PackageLoader
 import json
 import random
 import time
+
+import numpy as np
+import pandas as pd
+
+from tqdm import tqdm
+from jinja2 import Environment, PackageLoader
+
+import colourmap
+
 try:
     from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file
 except:
