@@ -245,7 +245,6 @@ function timer() {
 	d3.select("#current_time").text(minutesToTime(true_minute));
 	
 	// Update notes
-	// var true_minute = curr_minute % 1440;
 	if (true_minute == time_notes[notes_index].start_minute) {
 		d3.select("#note")
 			.style("top", "0px")
