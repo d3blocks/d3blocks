@@ -160,7 +160,6 @@ var circle = svg.selectAll("circle")
   .enter().append("circle")
 	.attr("r", function(d) { return d.radius; })
 	.style("fill", function(d) { return d.color; });
-	// .call(force.drag);
 
 // Activity labels
 var label = svg.selectAll("text")
