@@ -23,7 +23,7 @@ import colourmap
 
 try:
     from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file
-except:
+except ImportError:
     from utils import convert_dataframe_dict, set_path, update_config, write_html_file
 
 
@@ -367,7 +367,7 @@ def write_html(X, config, logger=None):  # pylint: disable=invalid-name
 
     try:
         jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
-    except:
+    except ValueError:
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.movingbubbles', package_path='d3js'))
 
     index_template = jinja_env.get_template('movingbubbles.html.j2')
