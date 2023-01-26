@@ -526,7 +526,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
         # Get random idx based pdf
         df['sample_id'].iloc[i] = sample_id
         idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
-        if (location_types[idx]==df['state'].iloc[i-1]):
+        if (location_types[idx]==df['state'].iloc[i-1]):  # pylint: disable=superfluous-parens
             idx = np.mod(idx+1, len(location_types))
 
         df['state'].iloc[i] = location_types[idx]
