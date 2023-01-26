@@ -68,9 +68,6 @@ def set_labels(labels, logger=None):
     indexes = np.unique(labels, return_index=True)[1]
     uilabels = [labels[index] for index in sorted(indexes)]
 
-    # Preprocessing
-    # uilabels = pre_processing(uilabels)
-
     # Return
     return uilabels
 
@@ -164,14 +161,13 @@ def set_edge_properties(df, **kwargs):
     # Compute delta
     if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
         if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
-        # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
         df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta, logger=logger)
     else:
         raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
 
     # Set size per node. Note that sizes are still constant per node!
     df = _set_nodesize(df, sample_id, size, logger)
-    # Colol per node
+    # Color per node
     df = _set_nodecolor(df, sample_id, color, cmap, logger)
     return df
 
@@ -235,12 +231,10 @@ def show(df, **kwargs):
 
     # Convert dict/frame.
     labels = convert_dataframe_dict(labels, frame=False)
-    # df = convert_dataframe_dict(df, frame=True)
 
     if not np.any(df.columns=='delta'):
         raise Exception('Column "delta" is missing in dataFrame of type datetime.')
     if config['center'] is None:
-        # config['center'] = [*labels.keys()][0]
         config['center'] = ""
 
     # Extract minutes and days
@@ -278,8 +272,6 @@ def show(df, **kwargs):
     # Set color codes for the d3js
     df_labels = pd.DataFrame(labels).T
     config['colorByActivity'] = dict(df_labels[['id', 'color']].values.astype(str))
-    # config['node_size'] = dict(zip(df_labels['id'].astype(str), df_labels['size']))
-    # config['node_size'] = dict(zip(df['sample_id'], [4]*df.shape[0]))
 
     # Create the description for the numerical codes
     act_codes = []
@@ -414,11 +406,6 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 
     # Initialize empty delta
     df['delta'] = df[datetime] - df[datetime]
-    # Initialize empty datetime_norm
-    # df['datetime_norm'] = df[datetime] - df[datetime]
-    # Set a default start point.
-    # timenow = dt.datetime.strptime(dt.datetime.now().strftime(dt_format), dt_format)
-    # timenow = timenow.replace(year=1980, month=1, day=1, hour=0, minute=0, second=0)
 
     if method=='samplewise':
         if logger is not None: logger.info('Standardize method: [%s]' %(method))
@@ -432,20 +419,13 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
             # Timedelta
             timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
             df.loc[Iloc, 'delta'] = timedelta
-            # Standardize time per unique sample. Each sample will start at timenow.
-            # df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
     elif method=='relative':
         df = df.sort_values(by=[datetime])
         df.reset_index(drop=True, inplace=True)
 
         # Note: The first state per sample_id is depended on the prevous state.
-        # timedelta = df[datetime]-df[datetime]
         tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        # timedelta.loc[1:] = tmpdelta.values
         df['delta'] = tmpdelta
-        # tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        # timedelta.loc[1:] = tmpdelta.values
-        # df['delta'] = timedelta
 
         # Note: Last state per sample_id should always be ending and thus 0
         uisample_id = df['sample_id'].unique()
@@ -453,7 +433,6 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
         for sid in uisample_id:
             getidx.append(df[[sample_id, datetime]].loc[df[sample_id]==sid].sort_values(by=[datetime]).index[-1])
         df.loc[getidx, 'delta']=np.nan
-        # df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
     elif method=='minimum':
         df['delta'] = df['datetime'] - df['datetime'].min()
 
@@ -463,8 +442,6 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     if np.any(Iloc):
         df.loc[Iloc, 'delta'] = df[datetime].iloc[0] - df[datetime].iloc[0]
 
-    # Set datetime
-    # df['datetime_norm'] = pd.to_datetime(df['datetime_norm'], format=dt_format, errors='ignore')
     # Sort on datetime
     df = df.sort_values(by=[datetime])
     df.reset_index(drop=True, inplace=True)
@@ -513,8 +490,6 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     # Create empty dataframe
     df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
     location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Work', 'Eating', 'Bored']
-    # Take random few columns
-    # location_types = location_types[0:random.randint(2, len(location_types))]
     # Always add the column Travel
     location_types = location_types + ['Travel']
     # Set the probability of selecting a certain state
@@ -525,7 +500,6 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     idx_middle=np.where(np.array(location_types)=='Travel')[0][0]
     i=0
     while i <= df.shape[0]-3:
-    # for i in tqdm(range(0, df.shape[0])):
         # A specific sample always contains 3 states. The start-state, the travel-state and the end-state.
 
         # Get the particular sample-id
@@ -567,11 +541,11 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
         
     # Set a random time-point at multiple occasion at the same time.
-    # df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df.sort_values(by="datetime")
     df.dropna(inplace=True)
     df.reset_index(inplace=True, drop=True)
+
     return df
 
 
