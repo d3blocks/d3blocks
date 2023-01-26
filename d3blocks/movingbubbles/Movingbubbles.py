@@ -570,10 +570,10 @@ def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True
     stime = time.mktime(time.strptime(start, dt_format))
     etime = time.mktime(time.strptime(end, dt_format))
     ptime = stime + prop * (etime - stime)
+
     if strftime:
         return time.strftime(dt_format, time.localtime(ptime))
-    else:
-        return time.localtime(ptime)
+    return time.localtime(ptime)
 
 
 def import_example(filepath):
