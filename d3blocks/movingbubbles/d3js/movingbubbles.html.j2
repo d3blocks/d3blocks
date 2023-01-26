@@ -139,8 +139,6 @@ var nodes = sched_objs.map(function(o, i) {
 		x: init_x,
 		y: init_y,
 		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
-		//color: color(act),
-		//color: node_color[i],
         color: (color_method === "STATE" ? color(act) : node_color[i]),
 		moves: 0,
 		next_move_time: o[0].duration,
