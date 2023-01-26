@@ -118,7 +118,7 @@ def set_node_properties(labels, **kwargs):
 
 
 # %% Set Edge properties
-def set_edge_properties(df, **kwargs):
+def set_edge_properties(df, **kwargs):  # pylint: disable=invalid-name
     """Set the edge properties for the Movingbubbles block.
 
     Parameters
@@ -172,7 +172,7 @@ def set_edge_properties(df, **kwargs):
     df = _set_nodecolor(df, sample_id, color, cmap, logger)
     return df
 
-def _set_nodecolor(df, sample_id, color, cmap, logger):
+def _set_nodecolor(df, sample_id, color, cmap, logger):  # pylint: disable=invalid-name
     # Node color is set to default.
     if isinstance(color, dict):
         # add new column to df with node color for the specified sample_id
@@ -192,7 +192,7 @@ def _set_nodecolor(df, sample_id, color, cmap, logger):
     return df
 
 
-def _set_nodesize(df, sample_id, size, logger):
+def _set_nodesize(df, sample_id, size, logger):  # pylint: disable=invalid-name
     # Node size is set to default.
     if isinstance(size, dict):
         # add new column to df with node size for the specified sample_id
@@ -209,7 +209,7 @@ def _set_nodesize(df, sample_id, size, logger):
     return df
 
 
-def show(df, **kwargs):
+def show(df, **kwargs):  # pylint: disable=invalid-name
     """Build and show the graph.
 
     df : pd.DataFrame()
@@ -247,12 +247,12 @@ def show(df, **kwargs):
         df['time_in_state'] = df['delta'].dt.days.astype(int)
 
     # Transform dataframe into input form for d3
-    X = []
+    X = []  # pylint: disable=invalid-name
     sid = np.array(list(map(lambda x: labels.get(x)['id'], df[config['columns']['state']].values)))
     uiid = np.unique(df['sample_id'])
     for i in uiid:
         # Combine the sample_id with its time in state
-        Iloc=df['sample_id']==i
+        Iloc=df['sample_id']==i  # pylint: disable=invalid-name
         tmplist=str(list(zip(sid[Iloc], df['time_in_state'].loc[Iloc].values)))
         tmplist=tmplist.replace('(', '')
         tmplist=tmplist.replace(')', '')
@@ -260,7 +260,7 @@ def show(df, **kwargs):
         tmplist=tmplist.replace(']', '')
         tmplist=tmplist.replace(' ', '')
         # Make one big happy list
-        X = [tmplist] + X
+        X = [tmplist] + X  # pylint: disable=invalid-name
 
     # Node size in the same order as the uiid
     nodedict = dict(zip(df['sample_id'], df['size']))
@@ -305,7 +305,7 @@ def show(df, **kwargs):
     return write_html(X, config, logger)
 
 
-def write_html(X, config, logger=None):
+def write_html(X, config, logger=None):  # pylint: disable=invalid-name
     """Write html.
 
     Parameters
@@ -328,7 +328,7 @@ def write_html(X, config, logger=None):
 
     # Set the selectionbox correctly on the form
     config['color_method'] = config['color_method'].upper()
-    SELECTED_STATE = {'STATE': '', 'NODE': ''}
+    SELECTED_STATE = {'STATE': '', 'NODE': ''}  # pylint: disable=invalid-name
     SELECTED_STATE[config['color_method']] = 'selected="selected"'
 
     content = {
@@ -370,7 +370,7 @@ def write_html(X, config, logger=None):
     return html
 
 
-def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', minimum_time='minutes', logger=None):
+def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', minimum_time='minutes', logger=None):  # pylint: disable=invalid-name
     """Standardize time per sample_id.
 
     Parameters
@@ -413,9 +413,9 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
         df = df.sort_values(by=[sample_id, datetime])
         df.reset_index(drop=True, inplace=True)
         # Standardize per unique sample id.
-        for s in tqdm(uis):
+        for s in tqdm(uis):  # pylint: disable=invalid-name
             # Get data for specific sample-id
-            Iloc = df[sample_id]==s
+            Iloc = df[sample_id]==s  # pylint: disable=invalid-name
             dfs = df.loc[Iloc, :]
             # Timedelta
             timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
@@ -439,7 +439,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 
 
     # if NaT is found, set it to 0
-    Iloc = df['delta'].isna()
+    Iloc = df['delta'].isna()  # pylint: disable=invalid-name
     if np.any(Iloc):
         df.loc[Iloc, 'delta'] = df[datetime].iloc[0] - df[datetime].iloc[0]
 
@@ -449,7 +449,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 
     # Zero time causes a total halt of movements. Prevent by adding a minimum time.
     zerotime=df['delta'][0] - df['delta'][0]
-    Iloc = df['delta']==zerotime
+    Iloc = df['delta']==zerotime  # pylint: disable=invalid-name
     if np.any(Iloc):
         if minimum_time=='minutes':
             df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(seconds=60)
@@ -461,7 +461,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     # Return
     return df
 
-def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):
+def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):  # pylint: disable=invalid-name
     """Generate random time data.
 
     Parameters
@@ -489,7 +489,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
         logger.info('Date start is set to %s' %(date_stop))
 
     # Create empty dataframe
-    df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))
+    df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))  # pylint: disable=invalid-name
     location_types = ['Home', 'Hospital', 'Bed', 'Sport', 'Sleeping', 'Sick', 'Work', 'Eating', 'Bored']
     # Always add the column Travel
     location_types = location_types + ['Travel']
@@ -542,7 +542,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
         
     # Set a random time-point at multiple occasion at the same time.
-    df['datetime'] = pd.to_datetime(df['datetime'])
+    df['datetime'] = pd.to_datetime(df['datetime'])  # pylint: disable=invalid-name
     df = df.sort_values(by="datetime")
     df.dropna(inplace=True)
     df.reset_index(inplace=True, drop=True)
@@ -575,7 +575,7 @@ def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True
 def import_example(filepath):
     print('Reading %s' %(filepath))
     lines = []
-    with open(filepath) as f:
+    with open(filepath, encoding="utf8") as f:  # pylint: disable=invalid-name
         for line in tqdm(f):
             # Remove patterns
             line = re.sub('[\n]', '', line)
