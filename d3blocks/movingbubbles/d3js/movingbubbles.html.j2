@@ -286,20 +286,12 @@ function tick(e) {
 	
 	// Make sleep more sluggish moving.
 	var damper = {{ DAMPER }};
-	
-	//if (curr_act == "0") {
-	//	var damper = 0.6;
-	//} else {
-	//	var damper = 1;
-	//}
 
 	if (color_method === "STATE") {
 		o.color = color(curr_act);
 	} else {
 		o.color = node_color[i];
 	}
-	// console.log(color_method)
-    // console.log(o.color)
 
 	o.y += (foci[curr_act].y - o.y) * k * damper;
 	o.x += (foci[curr_act].x - o.x) * k * damper;
