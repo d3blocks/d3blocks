@@ -30,7 +30,7 @@ except:
 # %% Set configuration properties
 def set_config(config=None, **kwargs):
     config = config or {}
-    """Set the default configuration settings."""
+    # Set the default configuration settings.
     logger = kwargs.get('logger', None)
     config['chart'] ='movingbubbles'
     config['title'] = kwargs.get('title', 'Movingbubbles - D3blocks')
@@ -106,7 +106,8 @@ def set_node_properties(labels, **kwargs):
     # Center should be at the very end of the list for d3!
     if center is not None:
         center_label = uilabels.pop(uilabels.index(center))
-        if logger is not None: logger.info('Set the center state at: [%s]' %(center))
+        if logger is not None:
+            logger.info('Set the center state at: [%s]' %(center))  # pylint: disable=consider-using-f-string
         uilabels.append(center_label)
 
     # Create unique label/node colors
@@ -165,10 +166,12 @@ def set_edge_properties(df, **kwargs):  # pylint: disable=invalid-name
 
     # Compute delta
     if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-        if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
+        if logger is not None:
+            logger.info('Standardizing input dataframe using method: [%s].' %(method))  # pylint: disable=consider-using-f-string
         df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta, logger=logger)
     else:
-        raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
+        message = f"Cannot find the specified columns in the dataframe: 'state', 'datetime', or 'sample_id': {df.columns.tolist()}"
+        raise Exception(message)
 
     # Set size per node. Note that sizes are still constant per node!
     df = _set_nodesize(df, sample_id, size, logger)
@@ -191,7 +194,8 @@ def _set_nodecolor(df, sample_id, color, cmap, logger):  # pylint: disable=inval
     # If the color column not exists, create one with default color
     if not np.any(np.isin(df.columns, 'color')):
         df['color'] = color
-        if logger is not None: logger.info('Set all nodes to color: %s' %(color))
+        if logger is not None:
+            logger.info('Set all nodes to color: %s' %(color))  # pylint: disable=consider-using-f-string
 
     return df
 
@@ -208,7 +212,8 @@ def _set_nodesize(df, sample_id, size, logger):  # pylint: disable=invalid-name
     # If the size column not exists, create one with default size
     if not np.any(np.isin(df.columns, 'size')):
         df['size'] = size
-        if logger is not None: logger.info('Set all nodes to size: %d' %(size))
+        if logger is not None:
+            logger.info('Set all nodes to size: %d' %(size))  # pylint: disable=consider-using-f-string
 
     return df
 
@@ -406,19 +411,21 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
 
     # Check datetime format
     if not isinstance(df[datetime][0], dt.date):
-        if logger is not None: logger.info('Set datetime format to [%s]' %(dt_format))
+        if logger is not None:
+            logger.info('Set datetime format to [%s]' %(dt_format))  # pylint: disable=consider-using-f-string
         df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
 
     # Initialize empty delta
     df['delta'] = df[datetime] - df[datetime]
 
     if method=='samplewise':
-        if logger is not None: logger.info('Standardize method: [%s]' %(method))
+        if logger is not None:
+            logger.info('Standardize method: [%s]' %(method))  # pylint: disable=consider-using-f-string
         df = df.sort_values(by=[sample_id, datetime])
         df.reset_index(drop=True, inplace=True)
         # Standardize per unique sample id.
         for s in tqdm(uis):  # pylint: disable=invalid-name
-            # Get data for specific sample-id
+            # Get data for specific sample-idOB
             Iloc = df[sample_id]==s  # pylint: disable=invalid-name
             dfs = df.loc[Iloc, :]
             # Timedelta
@@ -487,10 +494,10 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
     """
     if date_start is None:
         date_start="17-12-1903 00:00:00"
-        logger.info('Date start is set to %s' %(date_start))
+        logger.info('Date start is set to %s' %(date_start))  # pylint: disable=consider-using-f-string
     if date_stop is None:
         date_stop="17-12-1913 23:59:59"
-        logger.info('Date start is set to %s' %(date_stop))
+        logger.info('Date start is set to %s' %(date_stop))  # pylint: disable=consider-using-f-string
 
     # Create empty dataframe
     df = pd.DataFrame(columns=['datetime', 'sample_id', 'state'], data=np.array([[None, None, None]] * n))  # pylint: disable=invalid-name
@@ -577,7 +584,7 @@ def str_time_prop(start, end, prop, dt_format='%d-%m-%Y %H:%M:%S', strftime=True
 
 
 def import_example(filepath):
-    print('Reading %s' %(filepath))
+    print(f'Reading {filepath}')
     lines = []
     with open(filepath, encoding="utf8") as f:  # pylint: disable=invalid-name
         for line in tqdm(f):
