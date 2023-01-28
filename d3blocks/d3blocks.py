@@ -49,7 +49,7 @@ console = logging.StreamHandler()
 formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
 console.setFormatter(formatter)
 logger.addHandler(console)
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class D3Blocks():
