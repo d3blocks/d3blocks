@@ -5,6 +5,24 @@
 import pandas as pd
 import numpy as np
 
+
+# %%
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(verbose=10)
+# Import example
+df = d3.import_example('energy')
+html = d3.chord(df, filepath=None, notebook=True)
+
+# Link settings
+# d3.chord(df, filepath=None, color='target', showfig=False)
+# html = d3.chord(df, filepath=None, showfig=True)
+
+
+d3.chord(df, filepath=r'c:\temp\chord\chord.html', color='target', notebook=False)
+
+
 # %% Movingbubbles - Make manual dataset to test the working
 
 # This is an example to demonstrate standardize='samplewise'.
