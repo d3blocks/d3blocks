@@ -23,7 +23,6 @@ setuptools.setup(
                        'ismember>=1.0.1',
                        'scikit-learn',
                        'elasticgraph>=0.1.2',
-                       'clusteval',
                        ],
      python_requires='>=3',
      name='d3blocks',
