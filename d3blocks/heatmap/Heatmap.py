@@ -11,7 +11,6 @@ import colourmap
 import numpy as np
 import os
 from shutil import copyfile
-from clusteval import clusteval
 
 try:
     from .. utils import set_path, set_labels, write_html_file
@@ -108,11 +107,24 @@ def set_properties(df, config, node_properties, logger=None):
 
 
 def color_on_clusterlabel(adjmat, df, node_properties, config, logger):
+    """Color in clusterlabel.
+
+    Returns
+    -------
+    node_properties : array-like
+        Node properties.
+
+    """
     # Default is all cluster labels are the same
     node_properties['classlabel'] = np.zeros(node_properties.shape[0]).astype(int)
 
     if config['classlabel']=='cluster':
         # Cluster the nodes
+        try:
+            from clusteval import clusteval
+        except:
+            raise Exception('clusteval needs to be pip installed first. Tip: pip install clusteval')
+        # Initialize
         ce = clusteval(**config['cluster_params'])
         results = ce.fit(adjmat.values)
         Iloc, idx = ismember(node_properties['label'].values, adjmat.index.values)
