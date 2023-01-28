@@ -1445,11 +1445,9 @@ class D3Blocks():
         >>> # Plot
         >>> d3.heatmap(df)
         >>> #
-        >>> #
 
         Examples
         --------
-        >>> #
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>> #
