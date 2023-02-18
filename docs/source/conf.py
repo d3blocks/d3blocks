@@ -17,28 +17,26 @@ import sys
 sys.path.insert(0, os.path.abspath('../../'))
 import d3blocks
 
-############## EMBED AND CONVERT ADDITIONAL INFORMATION FOR SHPINX PAGES ##############
-
-# Import PDF from directory in rst files
-#embed_in_rst(currpath, 'pdf', '.pdf', "Additional Information", 'Additional_Information.rst')
-
-# Import notebooks in HTML format
-#convert_ipynb_to_html(currpath, 'notebooks', '.ipynb')
-#embed_in_rst(currpath, 'notebooks', '.html', "Notebook", 'notebook.rst')
+currpath = os.path.dirname(__file__)
+sys.path.insert(0, os.path.abspath('./'))
+from helper import *
 
 ########################################################################################
-
 # -- Download rst file -----------------------------------------------------
-try:
-	from urllib.request import urlretrieve
-	sponsor_url_rst = 'https://erdogant.github.io/docs/rst/sponsor.rst'
-	sponsor_file = "sponsor.rst"
-	if os.path.isfile(sponsor_file):
-		os.remove(sponsor_file)
-		print('Update sponsor rst file.')
-	urlretrieve (sponsor_url_rst, sponsor_file)
-except:
-	print('Downloading sponsor.rst file failed.')
+download_file('https://erdogant.github.io/docs/rst/sponsor.rst', "sponsor.rst")
+download_file('https://erdogant.github.io/docs/rst/add_carbon.add', "add_carbon.add")
+download_file('https://erdogant.github.io/docs/rst/add_top.add', "add_top.add")
+download_file('https://erdogant.github.io/docs/rst/add_bottom.add', "add_bottom.add")
+########################################################################################
+add_includes_to_rst_files()
+########################################################################################
+# Import PDF from directory in rst files
+# embed_in_rst(currpath, 'pdf', '.pdf', "Additional Information", 'Additional_Information.rst')
+########################################################################################
+# Import notebooks in HTML format
+# convert_ipynb_to_html(currpath, 'notebooks', '.ipynb')
+# embed_in_rst(currpath, 'notebooks', '.html', "Notebook", 'notebook.rst')
+########################################################################################
 
 # -- Project information -----------------------------------------------------
 

@@ -1,3 +1,5 @@
+.. include:: add_top.add
+
 Sankey
 #############
 
@@ -41,11 +43,4 @@ Charts
    <iframe src="https://erdogant.github.io\docs\d3blocks\sankey.html" height="600px" width="775px", frameBorder="0"></iframe>
 
 
-.. raw:: html
-
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
-
+.. include:: add_bottom.add

@@ -1,3 +1,5 @@
+.. include:: add_top.add
+
 D3graph
 #############
 
@@ -66,11 +68,7 @@ Change Edge properties
    <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="775px" width="775px", frameBorder="0"></iframe>
 
 
-.. raw:: html
 
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
 
+
+.. include:: add_bottom.add

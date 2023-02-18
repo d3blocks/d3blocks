@@ -1,3 +1,5 @@
+.. include:: add_top.add
+
 Sponsor
 ############
 
@@ -37,11 +39,6 @@ Colab Notebook
 
 .. _Colab notebook: https://colab.research.google.com/github/d3blocks/d3blocks/blob/master/notebooks/d3blocks.ipynb
 
-.. raw:: html
 
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
 
+.. include:: add_bottom.add

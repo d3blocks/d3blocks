@@ -1,3 +1,5 @@
+.. include:: add_top.add
+
 Summary
 ###########
 Python has become one the most popular programming languages to analyze and visualize your data. Visualizing can be the key to success in projects because it can reveal hidden insights in the data, and improve understanding. The best way to understand and explain the data is by making it interactive. Despite many visualization packages being available in Python, it remains challenging to create beautiful, stand-alone, and interactive charts that can also work outside your own machine. D3Blocks is a framework to create stand-alone, interactive charts. There is no need to install anything else than Python to create D3 charts, and after creating the chart, you only need a regular (internet) browser to plot the graphs. Sharing and publishing becomes thus super easy.
@@ -23,11 +25,4 @@ Each graph created by D3Blocks is entirely encapsulated into a single HTML file 
 
 
 
-
-.. raw:: html
-
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
+.. include:: add_bottom.add

@@ -1,0 +1,10 @@
+.. raw:: html
+
+	<hr>
+	<center>
+		<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
+		<!-- Show an image ad -->
+		<!-- <div data-ea-publisher="erdogantgithubio" data-ea-type="image"></div> -->
+		<div data-ea-publisher="erdogantgithubio" data-ea-type="image" data-ea-style="stickybox"></div>
+	</center>
+	<hr>

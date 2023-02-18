@@ -1,3 +1,5 @@
+.. include:: add_top.add
+
 The D3Blocks library also contains various helper functions to get the data in the right shape for the desired chart.
 
 vec2adjmat
@@ -26,11 +28,4 @@ Examples
 
 
 
-.. raw:: html
-
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
-
+.. include:: add_bottom.add

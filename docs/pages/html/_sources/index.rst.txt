@@ -1,10 +1,15 @@
+
+|python| |pypi| |docs| |stars| |LOC| |downloads_month| |downloads_total| |license| |forks| |open issues| |project status| |medium| |colab| |repo-size| |donate|
+
+.. include:: add_top.add
+
+
 .. raw:: html
 
    <iframe src="https://erdogant.github.io\docs\d3blocks\D3Blocks_white.html" height="170px" width="700px", frameBorder="0"></iframe>
 
 -------------------------------------
 
-|python| |pypi| |docs| |LOC| |downloads_month| |downloads_total| |license| |forks| |open issues| |project status| |medium| |donate|
 
 D3Blocks builts on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code.
 
@@ -22,7 +27,18 @@ D3Blocks builts on the graphics of D3 Javascript to create the most visually att
    +----------+
 
 
--------------------------------------
+-----------------------------------
+
+.. note::
+	**Your ❤️ is important to keep maintaining this package.** You can `support <https://d3blocks.github.io/d3blocks/pages/html/Documentation.html>`_ in various ways, have a look at the `sponser page <https://erdogant.github.io/d3blocks/pages/html/Documentation.html>`_.
+	Report bugs, issues and feature extensions at `github <https://github.com/d3blocks/d3blocks/>`_ page.
+
+	.. code-block:: console
+
+	   pip install d3blocks
+
+-----------------------------------
+
 
 Contents
 ========
@@ -81,14 +97,17 @@ Indices and tables
 * :ref:`search`
 
 
-.. raw:: html
+.. |repo-size| image:: https://img.shields.io/github/repo-size/erdogant/d3blocks
+    :alt: repo-size
+    :target: https://img.shields.io/github/repo-size/erdogant/d3blocks
 
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
+.. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+    :alt: Colab example
+    :target: https://erdogant.github.io/d3blocks/pages/html/Documentation.html#colab-notebook
 
+.. |stars| image:: https://img.shields.io/github/stars/erdogant/d3blocks
+    :alt: Stars
+    :target: https://img.shields.io/github/stars/erdogant/d3blocks
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/d3blocks.svg
     :alt: |Python
@@ -138,3 +157,5 @@ Indices and tables
     :alt: donate
     :target: https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#
 
+
+.. include:: add_bottom.add

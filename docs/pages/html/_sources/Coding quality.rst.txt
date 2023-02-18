@@ -1,6 +1,5 @@
-.. _code_directive:
+.. include:: add_top.add
 
--------------------------------------
 
 Coding quality
 '''''''''''''''''''''
@@ -64,10 +63,6 @@ Developing software with low(er) technical dept may take extra development time,
 * Higher security
 
 
-.. raw:: html
 
-	<hr>
-	<center>
-		<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEADP27U&placement=erdogantgithubio" id="_carbonads_js"></script>
-	</center>
-	<hr>
+
+.. include:: add_bottom.add

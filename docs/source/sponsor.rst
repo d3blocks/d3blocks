@@ -1,5 +1,5 @@
 .. tip::
-	If you ❤️ this project, you can help in various ways.
+	You can support this project in various ways ❤️
 
 	* Become a `Sponsor <https://github.com/sponsors/erdogant?o=esb/>`_!
 	* `Buy <https://www.buymeacoffee.com/erdogant>`_ me a coffee! I ❤️ coffee :)
