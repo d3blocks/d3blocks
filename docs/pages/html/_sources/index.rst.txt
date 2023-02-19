@@ -30,7 +30,7 @@ D3Blocks builts on the graphics of D3 Javascript to create the most visually att
 -----------------------------------
 
 .. note::
-	**Your ❤️ is important to keep maintaining this package.** You can `support <https://d3blocks.github.io/d3blocks/pages/html/Documentation.html>`_ in various ways, have a look at the `sponser page <https://erdogant.github.io/d3blocks/pages/html/Documentation.html>`_.
+	**Your ❤️ is important to keep maintaining this package.** You can `support <https://d3blocks.github.io/d3blocks/pages/html/Documentation.html>`_ in various ways, have a look at the `sponser page <https://d3blocks.github.io/d3blocks/pages/html/Documentation.html>`_.
 	Report bugs, issues and feature extensions at `github <https://github.com/d3blocks/d3blocks/>`_ page.
 
 	.. code-block:: console
