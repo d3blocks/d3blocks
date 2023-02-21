@@ -1,5 +1,3 @@
-.. include:: add_top.add
-
 D3graph
 #############
 

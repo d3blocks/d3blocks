@@ -14,21 +14,33 @@ def download_file(url_rst, filename):
         print('Downloading %s failed.' %(url_rst))
 
 # %% Include ADD to rst files
-def add_includes_to_rst_files():
+def add_includes_to_rst_files(top=True, bottom=True):
     skipfiles = ['sponsor.rst']
     for file_path in glob("*.rst"):
         if not np.isin(file_path, skipfiles):
             with open(file_path, "r+") as file:
                 contents = file.read()
-                if ".. include:: add_top.add" not in contents:
+                if top and ".. include:: add_top.add" not in contents:
                     file.seek(0)
                     file.write(".. include:: add_top.add\n\n" + contents)
                     print('Top Add included >%s' %(file_path))
+                elif (not top) and ".. include:: add_top.add" in contents:
+                    contents = contents.replace(".. include:: add_top.add\n\n", "")
+                    print('Remove Top Add>%s' %(file_path))
+                    file.seek(0)
+                    file.truncate()
+                    file.write(contents)
 
-                if ".. include:: add_bottom.add" not in contents:
+                if bottom and ".. include:: add_bottom.add" not in contents:
                     file.seek(0, 2)
                     file.write("\n\n.. include:: add_bottom.add")
                     print('Bottom Add included >%s' %(file_path))
+                elif (not bottom) and ".. include:: add_bottom.add" in contents:
+                    contents = contents.replace(".. include:: add_bottom.add\n\n", "")
+                    print('Remove Bottom Add>%s' %(file_path))
+                    file.seek(0)
+                    file.truncate()
+                    file.write(contents)
 
 # %% ADD TO REST
 def adds_in_rst(filehandle):

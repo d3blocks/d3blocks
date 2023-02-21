@@ -17,6 +17,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -83,7 +84,40 @@
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks"><code class="docutils literal notranslate"><span class="pre">D3Blocks</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.adjmat2vec"><code class="docutils literal notranslate"><span class="pre">D3Blocks.adjmat2vec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.chord"><code class="docutils literal notranslate"><span class="pre">D3Blocks.chord()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.d3graph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.d3graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.display"><code class="docutils literal notranslate"><span class="pre">D3Blocks.display()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.elasticgraph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.elasticgraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.heatmap"><code class="docutils literal notranslate"><span class="pre">D3Blocks.heatmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.imageslider"><code class="docutils literal notranslate"><span class="pre">D3Blocks.imageslider()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.import_example"><code class="docutils literal notranslate"><span class="pre">D3Blocks.import_example()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.matrix"><code class="docutils literal notranslate"><span class="pre">D3Blocks.matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.movingbubbles"><code class="docutils literal notranslate"><span class="pre">D3Blocks.movingbubbles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.open_browser"><code class="docutils literal notranslate"><span class="pre">D3Blocks.open_browser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.particles"><code class="docutils literal notranslate"><span class="pre">D3Blocks.particles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.sankey"><code class="docutils literal notranslate"><span class="pre">D3Blocks.sankey()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.scatter"><code class="docutils literal notranslate"><span class="pre">D3Blocks.scatter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.set_config"><code class="docutils literal notranslate"><span class="pre">D3Blocks.set_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.set_edge_properties"><code class="docutils literal notranslate"><span class="pre">D3Blocks.set_edge_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.set_node_properties"><code class="docutils literal notranslate"><span class="pre">D3Blocks.set_node_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.show"><code class="docutils literal notranslate"><span class="pre">D3Blocks.show()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.timeseries"><code class="docutils literal notranslate"><span class="pre">D3Blocks.timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.vec2adjmat"><code class="docutils literal notranslate"><span class="pre">D3Blocks.vec2adjmat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.violin"><code class="docutils literal notranslate"><span class="pre">D3Blocks.violin()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.disable_tqdm"><code class="docutils literal notranslate"><span class="pre">disable_tqdm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.random_date"><code class="docutils literal notranslate"><span class="pre">random_date()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.set_chart_func"><code class="docutils literal notranslate"><span class="pre">set_chart_func()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.set_logger"><code class="docutils literal notranslate"><span class="pre">set_logger()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.str_time_prop"><code class="docutils literal notranslate"><span class="pre">str_time_prop()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.unzip"><code class="docutils literal notranslate"><span class="pre">unzip()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.wget"><code class="docutils literal notranslate"><span class="pre">wget()</span></code></a></li>
+</ul>
+</li>
 </ul>
 
     <a href= "genindex.html">Index</a>
@@ -112,13 +146,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <hr>
-<center>
-        <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
-        <div data-ea-publisher="erdogantgithubio" data-ea-type="text"></div>
-        <!-- <div data-ea-publisher="erdogantgithubio" data-ea-type="text" data-ea-style="fixedfooter"></div> -->
-</center>
-<hr><section id="module-d3blocks.d3blocks">
+  <section id="module-d3blocks.d3blocks">
 <span id="api-references"></span><h1>API References<a class="headerlink" href="#module-d3blocks.d3blocks" title="Permalink to this heading"></a></h1>
 <p>d3blocks library.</p>
 <dl class="py class">
@@ -363,7 +391,7 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </p></li>
-<li><p><strong>color</strong> (<em>list of strings</em><em> (</em><em>default: '#000080'</em><em>)</em>) – <dl class="simple">
+<li><p><strong>color</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: '#000080'</em><em>)</em>) – <dl class="simple">
 <dt>Color of the node.</dt><dd><ul>
 <li><p>’cluster’ : Colours are based on the community distance clusters.</p></li>
 <li><p>None: All nodes will have the same color (auto generated).</p></li>
@@ -375,7 +403,7 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </p></li>
-<li><p><strong>size</strong> (<em>array of integers</em><em> (</em><em>default: 5</em><em>)</em>) – <dl class="simple">
+<li><p><strong>size</strong> (<em>array</em><em> of </em><em>integers</em><em> (</em><em>default: 5</em><em>)</em>) – <dl class="simple">
 <dt>Size of the nodes.</dt><dd><ul>
 <li><p>10: all nodes sizes are set to 10</p></li>
 <li><p>[10, 5, 3, 1, …]: Specify node sizes</p></li>
@@ -509,7 +537,7 @@ be used.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>group</strong> (<em>list of strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – <dl class="simple">
+<li><p><strong>group</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – <dl class="simple">
 <dt>Grouping (and coloring) of the nodes.</dt><dd><ul>
 <li><p>’cluster’ : Colours are based on the community distance clusters.</p></li>
 <li><p>None: All nodes will have the same color (auto generated).</p></li>
@@ -1504,14 +1532,14 @@ class label.</p>
 <li><p><strong>y1</strong> (<em>numpy array</em>) – Second set of 1d coordinates y-axis.</p></li>
 <li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
 <li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
-<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>.</em>) – Size of the samples.</p></li>
-<li><p><strong>color</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <ul>
+<li><p><strong>size</strong> (<em>list/array</em><em> of </em><em>with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>.</em>) – Size of the samples.</p></li>
+<li><p><strong>color</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <ul>
 <li><p>‘#ffffff’ : All dots are get the same hex color.</p></li>
 <li><p>None: The same color as for c is applied.</p></li>
 <li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
 </ul>
 </p></li>
-<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
+<li><p><strong>stroke</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
 <dt>Edgecolor of dotsize in hex colors.</dt><dd><ul>
 <li><p>’#000000’ : All dots are get the same hex color.</p></li>
 <li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
@@ -1527,7 +1555,7 @@ class label.</p>
 </dl>
 </p></li>
 <li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>]</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
-<li><p><strong>tooltip</strong> (<em>list of labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>tooltip</strong> (<em>list</em><em> of </em><em>labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
 <li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
@@ -1970,7 +1998,7 @@ in a single chart.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>list</em>) – The source node.</p></li>
 <li><p><strong>target</strong> (<em>list</em>) – The target node.</p></li>
-<li><p><strong>weight</strong> (<em>list of int</em>) – The Weights between the source-target values</p></li>
+<li><p><strong>weight</strong> (<em>list</em><em> of </em><em>int</em>) – The Weights between the source-target values</p></li>
 <li><p><strong>symmetric</strong> (<em>bool</em><em>, </em><em>optional</em>) – Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.</p></li>
 <li><p><strong>aggfunc</strong> (<em>str</em><em>, </em><em>optional</em>) – <dl class="simple">
 <dt>Aggregate function in case multiple values exists for the same relationship.</dt><dd><ul>
@@ -2014,16 +2042,16 @@ input parameters for the Violin plot that can help to create the most insightful
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>list of String</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the class labels for each datapoint in y.</p></li>
-<li><p><strong>y</strong> (<em>list of float</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the values for the samples.</p></li>
-<li><p><strong>size</strong> (<em>list/array of with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be of type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
-<li><p><strong>color</strong> (<em>list/array of hex colors with same size as y</em>) – <ul>
+<li><p><strong>x</strong> (<em>list</em><em> of </em><em>String</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the class labels for each datapoint in y.</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> of </em><em>float</em><em> or </em><em>numpy array.</em>) – This 1d-vector contains the values for the samples.</p></li>
+<li><p><strong>size</strong> (<em>list/array</em><em> of </em><em>with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>. Can be</em><em> of </em><em>type str</em><em> or </em><em>int.</em>) – Size of the samples.</p></li>
+<li><p><strong>color</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as y</em>) – <ul>
 <li><p>‘#002147’ : All dots/nodes are get the same hex color.</p></li>
 <li><p>None: The colors are generated on value using the colormap specified in cmap.</p></li>
 <li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as y.</p></li>
 </ul>
 </p></li>
-<li><p><strong>x_order</strong> (<em>list of String</em><em> (</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<li><p><strong>x_order</strong> (<em>list</em><em> of </em><em>String</em><em> (</em><em>default: None</em><em>)</em>) – <dl class="simple">
 <dt>The order of the class labels on the x-axis.</dt><dd><ul>
 <li><p>[“setosa”, “versicolor”, “virginica”]</p></li>
 </ul>
@@ -2031,14 +2059,14 @@ input parameters for the Violin plot that can help to create the most insightful
 </dl>
 </p></li>
 <li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>] </em><em>(</em><em>default: 0.6</em><em>)</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
-<li><p><strong>stroke</strong> (<em>list/array of hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
+<li><p><strong>stroke</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
 <dt>Edgecolor of dot in hex colors.</dt><dd><ul>
 <li><p>’#000000’ : Edge colors are all black.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tooltip</strong> (<em>list of labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>tooltip</strong> (<em>list</em><em> of </em><em>labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
 <li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>

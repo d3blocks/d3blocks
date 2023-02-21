@@ -1,5 +1,3 @@
-.. include:: add_top.add
-
 Install from Pypi (pip)
 ########################
 
