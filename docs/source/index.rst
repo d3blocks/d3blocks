@@ -147,7 +147,7 @@ Indices and tables
     :alt: Project Status
     :target: http://www.repostatus.org/#active
 
-.. |medium| image:: https://img.shields.io/badge/Medium-Blog-green.svg
+.. |medium| image:: https://img.shields.io/badge/Medium-Blog-black.svg
     :alt: Medium Blog
     :target: https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog
 
