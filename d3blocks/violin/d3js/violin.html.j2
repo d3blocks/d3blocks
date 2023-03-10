@@ -131,12 +131,14 @@ window.addEventListener('DOMContentLoaded', function () {
     // Three function that change the tooltip when user hover / move / leave a cell
     var mouseover = function(d) {
     Tooltip
-      .style("opacity", 1);
+      .style("opacity", 1)
+      .style("font-size", d.fontsize+"px"); // Set font size of the tooltip
     
     // Increases size of the dot with 0.5
     d3.select(this)
       .style("r",  d.size + (0.5*d.size))
-      .style("opacity", 0.8);
+      .style("opacity", 0.8)
+      ;
     }
     
     var mousemove = function(d) {

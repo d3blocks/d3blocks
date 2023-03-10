@@ -5,6 +5,49 @@
 import pandas as pd
 import numpy as np
 
+# %% VIOLIN - EXAMPLE
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example dataset
+df = d3.import_example('cancer')
+
+# Set some input variables.
+tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+fontsize = df['survival_months'].values/10
+
+# Create the chart
+d3.violin(x=df['labels'].values,
+          y=df['age'].values,
+          fontsize=fontsize,
+          tooltip=tooltip,
+          bins=50,
+          size=df['survival_months'].values/10,
+          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
+          filepath=r'c:\temp\violine.html', figsize=[900, None])
+
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(chart='Violin', frame=True)
+# Import example
+df = d3.import_example('cancer')
+# Edge properties
+tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+d3.set_edge_properties(x=df['labels'].values,
+                        y=df['age'].values,
+                        fontsize=16,
+                        tooltip=tooltip,
+                        size=df['survival_months'].values/10,
+                        x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
+                        filepath='violine_demo.html')
+# d3.edge_properties
+d3.show(filepath='c://temp//violin1.html')
+
+
+
 
 # %%
 from d3blocks import D3Blocks

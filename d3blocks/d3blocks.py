@@ -221,6 +221,7 @@ class D3Blocks():
                stroke='#000000',
                tooltip=None,
                cmap='inferno',
+               fontsize=12,
                bins=50,
                ylim=[None, None],
                title='Violin - D3blocks',
@@ -264,6 +265,8 @@ class D3Blocks():
         cmap : String, (default: 'inferno')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
                 * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
+        fontsize : int, optional (default: 12)
+            Text fontsize.
         bins : Int (default: 50)
             The bin size is the 'resolution' of the violin plot.
         ylim : tuple, (default: [None, None])
@@ -315,11 +318,14 @@ class D3Blocks():
         >>> #
         >>> # Import example dataset
         >>> df = d3.import_example('cancer')
+        >>> #
         >>> # Set some input variables.
         >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+        >>> fontsize = df['age'].values
+        >>> # fontsize = 16  # Set one fontsize for all nodes
         >>> #
         >>> # Create the chart
-        >>> d3.violin(x=df['labels'].values, y=df['age'].values, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
+        >>> d3.violin(x=df['labels'].values, y=df['age'].values, fontsize=fontsize, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
         >>> #
 
         Examples
@@ -340,6 +346,7 @@ class D3Blocks():
         >>> d3.edge_properties.loc[0,'size']=50
         >>> d3.edge_properties.loc[0,'color']='#000000'
         >>> d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
+        >>> d3.edge_properties.loc[0,'fontsize']=30
         >>> #
         >>> # Configuration can be changed too.
         >>> print(d3.config)
@@ -357,9 +364,9 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Violin', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, logger=logger)
         # Remvove quotes from source-target node_properties
-        self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], logger=logger)
+        self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], fontsize=self.config['fontsize'], logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(np.unique(self.edge_properties['x'].values), cmap=self.config['cmap'])

@@ -30,6 +30,7 @@ def set_config(config={}, **kwargs):
     config['figsize'] = kwargs.get('figsize', [None, None])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
+    config['fontsize'] = kwargs.get('fontsize', 12)
     config['bins'] = kwargs.get('bins', 20)
     config['cmap'] = kwargs.get('cmap', 'inferno')
     config['ylim'] = kwargs.get('ylim', [None, None])
@@ -91,6 +92,8 @@ def set_edge_properties(*args, **kwargs):
     cmap : String, (default: 'inferno')
         All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
         'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
+    fontsize : int, optional (default: 12)
+        Text fontsize.
 
     Returns
     -------
@@ -110,20 +113,35 @@ def set_edge_properties(*args, **kwargs):
     opacity = kwargs.get('opacity', 0.8)
     tooltip = kwargs.get('tooltip', '')
     cmap = kwargs.get('cmap', 'inferno')
+    fontsize = kwargs.get('fontsize', 12)
     x_order = kwargs.get('x_order', None)
     logger = kwargs.get('logger', None)
 
     # Make checks
     if len(x)!=len(y): raise Exception(logger.error('input parameter "x" should be of size of "y".'))
     if size is None: raise Exception(logger.error('input parameter "size" should have value >0.'))
-    if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
     if stroke is None: raise Exception(logger.error('input parameter "stroke" should have hex value.'))
-    if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
     if opacity is None: raise Exception(logger.error('input parameter "opacity" should have value in range [0..1].'))
+
+    if isinstance(stroke, (list, np.ndarray)) and (len(stroke)!=len(x)): raise Exception(logger.error('input parameter "stroke" should be of same size of (x, y).'))
+    if isinstance(size, (list, np.ndarray)) and (len(size)!=len(x)): raise Exception(logger.error('input parameter "s" should be of same size of (x, y).'))
     if isinstance(opacity, (list, np.ndarray)) and (len(opacity)!=len(x)): raise Exception(logger.error('input parameter "opacity" should be of same size of (x, y).'))
+    if isinstance(fontsize, (list, np.ndarray)) and (len(fontsize)!=len(x)): raise Exception(logger.error('input parameter "fontsize" should be of same size of (x, y).'))
+
+    # Set fontsize to a minimum of 0
+    if isinstance(fontsize, (list, np.ndarray)):
+        fontsize=np.array(fontsize)
+        fontsize[np.isnan(fontsize)] = 0
+        fontsize = np.maximum(fontsize, 0)
+        fontsize = fontsize.astype(int)
+    # Set size to a minimum of 1
+    if isinstance(size, (list, np.ndarray)):
+        size = np.array(size)
+        size[np.isnan(size)] = 0
+        size = np.maximum(size, 0)
 
     # Convert to dataframe
-    df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': size, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip})
+    df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': size, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip, 'fontsize': fontsize})
 
     # Remove NaN values
     Irem = df['y'].isna()
@@ -276,6 +294,6 @@ def get_data_ready_for_d3(df):
     """
     df['y']=df['y'].astype(str)
     # Set x, y
-    X = df[['x', 'y', 'color', 'size', 'stroke', 'opacity', 'tooltip']].to_json(orient='records')
+    X = df[['x', 'y', 'color', 'size', 'stroke', 'opacity', 'tooltip', 'fontsize']].to_json(orient='records')
     # Return
     return X
