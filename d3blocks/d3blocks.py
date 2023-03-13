@@ -2569,10 +2569,51 @@ def unzip(path_to_zip, ext=''):
 
 
 # %%
-def set_logger(verbose=20):
-    """Set the logger for verbosity messages."""
-    logger.setLevel(verbose)
+def set_logger(verbose: [str, int] = 'info'):
+    """Set the logger for verbosity messages.
 
+    Parameters
+    ----------
+    verbose : [str, int], default is 'info' or 20
+        Set the verbose messages using string or integer values.
+            * 0, 60, None, 'silent', 'off', 'no']: No message.
+            * 10, 'debug': Messages from debug level and higher.
+            * 20, 'info': Messages from info level and higher.
+            * 30, 'warning': Messages from warning level and higher.
+            * 50, 'critical': Messages from critical level and higher.
+
+    Returns
+    -------
+    None.
+
+    Examples
+    --------
+    >>> # Set the logger to warning
+    >>> set_logger(verbose='warning')
+    >>>
+    >>> # Test with different messages
+    >>> logger.debug("Hello debug")
+    >>> logger.info("Hello info")
+    >>> logger.warning("Hello warning")
+    >>> logger.critical("Hello critical")
+    >>>
+    """
+    # Set 0 and None as no messages.
+    if (verbose==0) or (verbose is None):
+        verbose=60
+    # Convert str to levels
+    if isinstance(verbose, str):
+        levels = {'silent': 60,
+                  'off': 60,
+                  'no': 60,
+                  'debug': 10,
+                  'info': 20,
+                  'warning': 30,
+                  'critical': 50}
+        verbose = levels[verbose]
+
+    # Show examples
+    logger.setLevel(verbose)
 
 # %%
 def disable_tqdm():
