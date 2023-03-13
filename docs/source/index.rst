@@ -70,6 +70,7 @@ Contents
    Scatter
    Violin
    Particles
+   Treemap
 
 .. toctree::
    :maxdepth: 1

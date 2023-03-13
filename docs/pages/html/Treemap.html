@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timeseries &mdash; d3blocks d3blocks documentation</title>
+  <title>Treemap &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Chord" href="Chord.html" />
-    <link rel="prev" title="Install from Pypi (pip)" href="Installation.html" /> 
+    <link rel="next" title="vec2adjmat" href="helper_functions.html" />
+    <link rel="prev" title="Particles" href="Particles.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,11 +60,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Timeseries</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
@@ -75,7 +71,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Scatter.html">Scatter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Treemap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
@@ -109,9 +109,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Timeseries</li>
+      <li>Treemap</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/Timeseries.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/Treemap.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -119,76 +119,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-d3blocks.d3blocks.D3Blocks.timeseries">
-<span id="timeseries"></span><h1>Timeseries<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.timeseries" title="Permalink to this heading"></a></h1>
-<p>Timeseries block.</p>
-<p>The TimeSeries can be used in case a date-time element is available, and where the time-wise values
-directly follow up with each other. The TimeSeries block supports enabling/disabling columns of interest,
-brushing and zooming to quickly focus on regions of interest or plot specific features, such as stocks together
-in a single chart.</p>
+  <section id="treemap">
+<h1>Treemap<a class="headerlink" href="#treemap" title="Permalink to this heading"></a></h1>
+<hr class="docutils" />
+<span class="target" id="module-d3blocks.d3blocks.D3Blocks.treemap"></span><p>Treemap block.</p>
+<p>A Treemap chart is a visualization to hierarchically show the data as a set of nested rectangles.
+For demonstration purposes, the “energy” and “stormofswords” dataset can be used.
+The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df</dt>
-<dd class="field-odd"><p>Input data containing the columns “datetime” together with the names of the timeseries to plot.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul class="simple">
+<li><p>‘source’</p></li>
+<li><p>‘target’</p></li>
+<li><p>‘weight’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type df</dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param datetime</dt>
-<dd class="field-odd"><p>Column name that contains the datetime.</p>
-</dd>
-<dt class="field-even">type datetime</dt>
-<dd class="field-even"><p>str, (default: None)</p>
-</dd>
-<dt class="field-odd">param dt_format</dt>
+<dt class="field-odd">param margin</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>Date time format.</dt><dd><ul class="simple">
-<li><p>‘%d-%m-%Y %H:%M:%S’.</p></li>
+<dt>margin, in pixels.</dt><dd><ul class="simple">
+<li><p>{“top”: 40, “right”: 10, “bottom”: 10, “left”: 10}</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type dt_format</dt>
-<dd class="field-even"><p>str</p>
+<dt class="field-even">type margin</dt>
+<dd class="field-even"><p>dict.</p>
 </dd>
-<dt class="field-odd">param sort_on_date</dt>
+<dt class="field-odd">param border</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>Sort on date.</dt><dd><ul class="simple">
-<li><p>True: Sort on datetime.</p></li>
-<li><p>False: Do not change the input order.</p></li>
+<dt>border properties.</dt><dd><ul class="simple">
+<li><p>{‘type’: ‘solid’, ‘color’: ‘#FFFFFF’, ‘width’: 1}</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type sort_on_date</dt>
-<dd class="field-even"><p>Bool (default: True)</p>
+<dt class="field-even">type border</dt>
+<dd class="field-even"><p>dict.</p>
 </dd>
-<dt class="field-odd">param whitelist</dt>
-<dd class="field-odd"><p>Keep only columns containing this (sub)string (case insensitive)</p>
-</dd>
-<dt class="field-even">type whitelist</dt>
-<dd class="field-even"><p>str, optional</p>
-</dd>
-<dt class="field-odd">param fontsize</dt>
-<dd class="field-odd"><p>Fontsize of the fonts in the circle.</p>
-</dd>
-<dt class="field-even">type fontsize</dt>
-<dd class="field-even"><p>int, (default: 14)</p>
-</dd>
-<dt class="field-odd">param cmap</dt>
+<dt class="field-odd">param font</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
-<li><p>‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+<dt>font properties.</dt><dd><ul class="simple">
+<li><p>{‘size’: 10, ‘type’:’sans-serif’, ‘position’: ‘absolute’}</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type cmap</dt>
-<dd class="field-even"><p>String, (default: ‘Set1’)</p>
+<dt class="field-even">type font</dt>
+<dd class="field-even"><p>dict.</p>
 </dd>
 <dt class="field-odd">param title</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
-<li><p>‘Timeseries’</p></li>
+<li><p>‘Treemap’</p></li>
 </ul>
 </dd>
 </dl>
@@ -197,15 +185,13 @@ in a single chart.</p>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
 <dt class="field-odd">param filepath</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>File path to save the output.</dt><dd><ul class="simple">
+<dd class="field-odd"><ul class="simple">
+<li><p>File path to save the output.</p></li>
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
 <li><p>Relative path: ‘./d3blocks.html’</p></li>
 <li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
 <li><p>None: Return HTML</p></li>
 </ul>
-</dd>
-</dl>
 </dd>
 <dt class="field-even">type filepath</dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
@@ -213,7 +199,8 @@ in a single chart.</p>
 <dt class="field-odd">param figsize</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
-<li><p>[1200, 500]</p></li>
+<li><p>[1000, 600]</p></li>
+<li><p>[None, None]: Use the screen resolution.</p></li>
 </ul>
 </dd>
 </dl>
@@ -266,18 +253,17 @@ in a single chart.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;climate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">dt_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">850</span><span class="p">,</span> <span class="mi">500</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">treemap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
@@ -286,47 +272,51 @@ in a single chart.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Timeseries&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Treemap&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;climate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wind_speed&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">dt_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Timeseries with adjusted configurations&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html">https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html</a></p></li>
+<li><p>Mike Bostock; <a class="reference external" href="http://bl.ocks.org/mbostock/4063582">http://bl.ocks.org/mbostock/4063582</a></p></li>
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Treemap.html">https://d3blocks.github.io/d3blocks/pages/html/Treemap.html</a></p></li>
 </ul>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
-<p>The input dataset is a DataFrame for which the index column is the datetime, and the columns are plotted with their column name.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#            Adj Close                      ...    Volume</span>
-<span class="c1">#                 AAPL      AMZN      META  ...      META      TSLA      TWTR</span>
-<span class="c1"># Date                                      ...</span>
-<span class="c1"># 2018-12-31  1.000000  1.000000  1.000000  ...  1.000000  1.000000  1.000000</span>
-<span class="c1"># 2019-01-02  1.001141  1.024741  1.035014  ...  1.142979  1.849896  0.942329</span>
-<span class="c1"># 2019-01-03  0.901420  0.998875  1.004958  ...  0.922543  1.105184  1.192595</span>
-<span class="c1"># 2019-01-04  0.939901  1.048882  1.052330  ...  1.177736  1.173238  1.465577</span>
-<span class="c1"># 2019-01-07  0.937809  1.084915  1.053093  ...  0.815799  1.198166  1.246811</span>
+<p>The input dataset is a DataFrame that is hierarchically ordered from left to right.
+The number can be 3 levels and the column weight is obligatory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
+<span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
+<span class="c1"># 1            Bio-conversion            Liquid    0.597</span>
+<span class="c1"># 2            Bio-conversion            Losses   26.862</span>
+<span class="c1"># 3            Bio-conversion             Solid  280.322</span>
+<span class="c1"># 4            Bio-conversion               Gas   81.144</span>
+<span class="c1"># ..                      ...               ...      ...</span>
+<span class="c1"># 63       Thermal generation  District heating   79.329</span>
+<span class="c1"># 64                    Tidal  Electricity grid    9.452</span>
+<span class="c1"># 65  UK land based bioenergy    Bio-conversion  182.010</span>
+<span class="c1"># 66                     Wave  Electricity grid   19.013</span>
+<span class="c1"># 67                     Wind  Electricity grid  289.366</span>
 
-<span class="c1"># [5 rows x 30 columns]</span>
+<span class="c1"># [68 rows x 3 columns]</span>
 </pre></div>
 </div>
 </section>
-<section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
-<iframe src="https://erdogant.github.io\docs\d3blocks\timeseries.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
+<section id="charts">
+<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading"></a></h2>
+<iframe src="https://erdogant.github.io\docs\d3blocks\treemap.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
         <!-- Show an image ad -->
@@ -340,8 +330,8 @@ in a single chart.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Installation.html" class="btn btn-neutral float-left" title="Install from Pypi (pip)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Chord.html" class="btn btn-neutral float-right" title="Chord" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Particles.html" class="btn btn-neutral float-left" title="Particles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="helper_functions.html" class="btn btn-neutral float-right" title="vec2adjmat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

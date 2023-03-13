@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> d3blocks
           </a>
               <div class="version">
-                1.2.8
+                1.2.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Scatter.html">Scatter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
@@ -105,6 +106,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.set_node_properties"><code class="docutils literal notranslate"><span class="pre">D3Blocks.set_node_properties()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.show"><code class="docutils literal notranslate"><span class="pre">D3Blocks.show()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.timeseries"><code class="docutils literal notranslate"><span class="pre">D3Blocks.timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.treemap"><code class="docutils literal notranslate"><span class="pre">D3Blocks.treemap()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.vec2adjmat"><code class="docutils literal notranslate"><span class="pre">D3Blocks.vec2adjmat()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.violin"><code class="docutils literal notranslate"><span class="pre">D3Blocks.violin()</span></code></a></li>
 </ul>
@@ -896,6 +898,7 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <li><p>”occupancy”</p></li>
 <li><p>”climate”</p></li>
 <li><p>”mnist”</p></li>
+<li><p>”animals”</p></li>
 </ul>
 </dd>
 </dl>
@@ -1990,6 +1993,143 @@ in a single chart.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.treemap">
+<span class="sig-name descname"><span class="pre">treemap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'bottom':</span> <span class="pre">10,</span> <span class="pre">'left':</span> <span class="pre">10,</span> <span class="pre">'right':</span> <span class="pre">10,</span> <span class="pre">'top':</span> <span class="pre">40}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'#FFFFFF',</span> <span class="pre">'type':</span> <span class="pre">'solid',</span> <span class="pre">'width':</span> <span class="pre">1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'position':</span> <span class="pre">'absolute',</span> <span class="pre">'size':</span> <span class="pre">10,</span> <span class="pre">'type':</span> <span class="pre">'sans-serif'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Treemap</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'treemap.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[1000,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.treemap" title="Permalink to this definition"></a></dt>
+<dd><p>Treemap block.</p>
+<p>A Treemap chart is a visualization to hierarchically show the data as a set of nested rectangles.
+For demonstration purposes, the “energy” and “stormofswords” dataset can be used.
+The javascript code is forked from Mike Bostock and then Pythonized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>margin</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>margin, in pixels.</dt><dd><ul>
+<li><p>{“top”: 40, “right”: 10, “bottom”: 10, “left”: 10}</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>border</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>border properties.</dt><dd><ul>
+<li><p>{‘type’: ‘solid’, ‘color’: ‘#FFFFFF’, ‘width’: 1}</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>font</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>font properties.</dt><dd><ul>
+<li><p>{‘size’: 10, ‘type’:’sans-serif’, ‘position’: ‘absolute’}</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Treemap’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
+<li><p>File path to save the output.</p></li>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[1000, 600]</p></li>
+<li><p>[None, None]: Use the screen resolution.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">treemap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Treemap&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Mike Bostock; <a class="reference external" href="http://bl.ocks.org/mbostock/4063582">http://bl.ocks.org/mbostock/4063582</a></p></li>
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Treemap.html">https://d3blocks.github.io/d3blocks/pages/html/Treemap.html</a></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.vec2adjmat">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vec2adjmat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggfunc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.vec2adjmat" title="Permalink to this definition"></a></dt>
 <dd><p>Convert source and target into adjacency matrix.</p>
@@ -2221,8 +2361,38 @@ input parameters for the Violin plot that can help to create the most insightful
 
 <dl class="py function">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.set_logger">
-<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">set_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.set_logger" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">d3blocks.d3blocks.</span></span><span class="sig-name descname"><span class="pre">set_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose:</span> <span class="pre">[&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;class</span> <span class="pre">'int'&gt;]</span> <span class="pre">=</span> <span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.set_logger" title="Permalink to this definition"></a></dt>
 <dd><p>Set the logger for verbosity messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>default is 'info'</em><em> or </em><em>20</em>) – <dl class="simple">
+<dt>Set the verbose messages using string or integer values.</dt><dd><ul class="simple">
+<li><p>0, 60, None, ‘silent’, ‘off’, ‘no’]: No message.</p></li>
+<li><p>10, ‘debug’: Messages from debug level and higher.</p></li>
+<li><p>20, ‘info’: Messages from info level and higher.</p></li>
+<li><p>30, ‘warning’: Messages from warning level and higher.</p></li>
+<li><p>50, ‘critical’: Messages from critical level and higher.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set the logger to warning</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">set_logger</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;warning&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Test with different messages</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Hello debug&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello info&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Hello warning&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Hello critical&quot;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
