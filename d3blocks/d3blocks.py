@@ -1943,9 +1943,8 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-                * 'source'
-                * 'target'
-                * 'weight'
+                * 'source', 'target', 'weight'
+                * 'level0', 'level1', 'level2', 'weight'
         margin : dict.
             margin, in pixels.
                 * {"top": 40, "right": 10, "bottom": 10, "left": 10}
@@ -2002,6 +2001,7 @@ class D3Blocks():
         >>> #
         >>> # Load example data
         >>> df = d3.import_example('energy')
+        >>> df = d3.import_example('animals')
         >>> #
         >>> # Plot
         >>> d3.treemap(df)

@@ -130,9 +130,8 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dt class="field-odd">param df</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Input data containing the following columns:</dt><dd><ul class="simple">
-<li><p>‘source’</p></li>
-<li><p>‘target’</p></li>
-<li><p>‘weight’</p></li>
+<li><p>‘source’, ‘target’, ‘weight’</p></li>
+<li><p>‘level0’, ‘level1’, ‘level2’, ‘weight’</p></li>
 </ul>
 </dd>
 </dl>
@@ -261,6 +260,7 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;animals&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">treemap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -311,6 +311,15 @@ The number can be 3 levels and the column weight is obligatory.</p>
 <span class="c1"># 67                     Wind  Electricity grid  289.366</span>
 
 <span class="c1"># [68 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>Three levels and the column weight.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#    group1  group2 group3  weight</span>
+<span class="c1"># 0  Animal  Mammal    Fox   35000</span>
+<span class="c1"># 1  Animal  Mammal   Lion   25000</span>
+<span class="c1"># 2  Animal    Fish    Cod   10000</span>
+<span class="c1"># 3   Plant    Tree    Oak    1500</span>
+<span class="c1"># 4  Animal    Fish    Ape    1750</span>
 </pre></div>
 </div>
 </section>

@@ -2004,9 +2004,8 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
 <dt>Input data containing the following columns:</dt><dd><ul>
-<li><p>’source’</p></li>
-<li><p>’target’</p></li>
-<li><p>’weight’</p></li>
+<li><p>’source’, ‘target’, ‘weight’</p></li>
+<li><p>’level0’, ‘level1’, ‘level2’, ‘weight’</p></li>
 </ul>
 </dd>
 </dl>
@@ -2095,6 +2094,7 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;animals&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">treemap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
