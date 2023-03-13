@@ -1,0 +1,101 @@
+<!--
+Library     : d3blocks
+Author      : E.Taskesen
+Mail        : erdogant@gmail.com
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
+-->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ TITLE }}</title>
+</head>
+
+<style>
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: {{ WIDTH }}px;
+}
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.node {
+  border: {{ bordertype }} {{ borderwidth }}px {{ bordercolor }};
+  font: {{ fontsize }}px {{ fonttype }};
+  position: {{ fontposition }};
+  line-height: 12px;
+  overflow: hidden;
+  text-indent: 2px;
+}
+</style>
+<form>
+  <label><input type="radio" name="mode" value="size" checked> Size</label>
+  <label><input type="radio" name="mode" value="count"> Count</label>
+</form>
+
+<script>
+	{% include "d3.v4.min.js" %}
+</script>
+
+<script>
+'use strict';
+
+const margin = {top: {{ marginTop }}, right: {{ marginRight }}, bottom: {{ marginBottom }}, left: {{ marginLeft }}},
+      width = {{ WIDTH }} - margin.left - margin.right,
+      height = {{ HEIGHT }} - margin.top - margin.bottom,
+      color = d3.scaleOrdinal().range(d3.schemeCategory20c);
+
+const treemap = d3.treemap().size([width, height]);
+
+const div = d3.select("body").append("div")
+    .style("position", "relative")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+    // d3.json("https://erdogant.github.io/datasets/flare.json", function(error, data) {
+    //  if (error) throw error;
+	const data = {{ json_data }}
+
+  const root = d3.hierarchy(data, (d) => d.children)
+    .sum((d) => d.size);
+
+  const tree = treemap(root);
+
+  const node = div.datum(root).selectAll(".node")
+      .data(tree.leaves())
+    .enter().append("div")
+      .attr("class", "node")
+      .style("left", (d) => d.x0 + "px")
+      .style("top", (d) => d.y0 + "px")
+      .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
+      .style("height", (d) => Math.max(0, d.y1 - d.y0  - 1) + "px")
+      .style("background", (d) => color(d.parent.data.name))
+      .text((d) => d.data.name);
+
+  d3.selectAll("input").on("change", function change() {
+    const value = this.value === "count"
+        ? (d) => { return d.size ? 1 : 0;}
+        : (d) => { return d.size; };
+
+    const newRoot = d3.hierarchy(data, (d) => d.children)
+      .sum(value);
+
+    node.data(treemap(newRoot).leaves())
+      .transition()
+        .duration(1500)
+        .style("left", (d) => d.x0 + "px")
+        .style("top", (d) => d.y0 + "px")
+        .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
+        .style("height", (d) => Math.max(0, d.y1 - d.y0  - 1) + "px")
+  });
+
+</script>
