@@ -2,6 +2,9 @@
 # 
 # 1.    Treemap
 #       https://bl.ocks.org/ganezasan/52fced34d2182483995f0ca3960fe228
+#       https://observablehq.com/@d3/zoomable-icicle
+#       https://observablehq.com/@d3/zoomable-sunburst
+#       https://www.jasondavies.com/coffee-wheel/
 # 
 # 2.    Map.
 #       https://d3-graph-gallery.com/graph/bubblemap_buttonControl.html
