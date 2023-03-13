@@ -36,7 +36,7 @@ Charts
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\treemap.html" height="600px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.Treemap_energy.html" height="600px" width="775px", frameBorder="0"></iframe>
 
 
 .. include:: add_bottom.add
