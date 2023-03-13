@@ -16,6 +16,97 @@ import os
 import tempfile
 from pathlib import Path
 import time
+import json
+
+
+# %% Convert to Flare format
+def vec2flare(df, logger=None):
+    """Convert to Flare format.
+
+    Converting any one-to-one relationship dataframe to a flare format.
+    The dataframe contains categorical-ish columns, in order of hierarchy from left to right.
+    The column weight contains a number (float or integer).
+    Returns A json flare file suitable for plotting starburst chart in D3
+
+
+    Parameters
+    ----------
+    df : DataFrame
+        DataFrame containing 2 or more columns.
+    logger : logging.Logger, optional
+        A logger object to output log messages (optional)
+
+    Returns
+    -------
+    flare : dictionary
+        dictionary in flare format.
+
+    References
+    ----------
+    * https://stackoverflow.com/questions/59946453/creating-a-flare-json-to-be-used-in-d3-from-pandas-dataframe/65333978#65333978
+    * https://github.com/andrewheekin/csv2flare.json/blob/master/csv2flare.json.py
+    * https://medium.com/swlh/from-pandas-to-d3-json-and-starburst-charts-44279db32436
+    * https://github.com/justinhchae/p2d3/blob/main/p2d3/pandas_to_d3.py
+    * https://medium.com/swlh/from-pandas-to-d3-json-and-starburst-charts-44279db32436
+
+    """
+    # check if 'weight' is the last column
+    if df.columns[-1].lower() != 'weight':
+        # remove 'weight' column
+        value_col = df.pop('weight')
+        # add 'weight' column as the last column
+        df.insert(len(df.columns), 'weight', value_col)
+
+    flare = {'name': "flare", 'children': []}
+    # iterate through dataframe values
+    for row in df.values:
+        level0 = row[0]
+        level1 = row[1]
+
+        if df.shape[1]==3:
+            weight = row[-1]
+            d = {'name': level0, 'children': [{'name': level1, 'size': weight}]}
+        elif df.shape[1]==4:
+            level2 = row[2]
+            weight = row[-1]
+            d = {'name': level0, 'children': [{'name': level1, 'children': [{'name': level2, 'size': weight}]}]}
+        # elif df.shape[1]==5:
+        #     level2, level3 = row[2], row[3]
+        #     weight = row[-1]
+        #     d = {'name': level0, 'children': [{'name': level1, 'children': [{'name': level2, 'children': [{'name': level3, 'size': weight}]}]}]}
+        # elif df.shape[1]==6:
+        #     level2, level3, level4 = row[2], row[3], row[4]
+        #     weight = row[-1]
+        #     d = {'name': level0, 'children': [{'name': level1, 'children': [{'name': level2, 'children': [{'name': level3, 'children': [{'name': level4, 'size': weight}]}]}]}]}
+
+        # initialize key lists
+        key0, key1 = [], []
+
+        # iterate through first level node names
+        for i in flare['children']:
+            key0.append(i['name'])
+
+            # iterate through next level node names
+            key1 = []
+            for _, v in i.items():
+                if isinstance(v, list):
+                    for x in v:
+                        key1.append(x['name'])
+
+        # add the full path of data if the root is not in key0
+        if level0 not in key0:
+            flare['children'].append(d)
+        elif level1 not in key1:
+            # if the root exists, then append to its children
+            # if level1 not in key1:
+            flare['children'][key0.index(level0)]['children'].append(d)
+        else:
+            # if the root exists, then append to its children
+            d = {'name': level2, 'size': weight}
+            flare['children'][key0.index(level0)]['children'][key1.index(level1)]['children'].append(d)
+
+    if logger is not None: logger.debug(json.dumps(flare, indent=2))
+    return flare
 
 
 # %% Scaling
@@ -172,7 +263,7 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
 def create_unique_dataframe(X, logger=None):
     # Check whether labels are unique
     if isinstance(X, pd.DataFrame):
-        Iloc = ismember(X.columns, ['source','target','weight'])[0]
+        Iloc = ismember(X.columns, ['source', 'target', 'weight'])[0]
         X = X.loc[:, Iloc]
         if 'weight' in X.columns: X['weight'] = X['weight'].astype(float)
         # Groupby values and sum the weights
@@ -258,7 +349,7 @@ def density_color(X, colors, labels):
 
 
 # %% Pre processing
-def pre_processing(df):
+def pre_processing(df, labels=['source', 'target']):
     """Pre-processing of the input dataframe.
 
     Parameters
@@ -272,8 +363,8 @@ def pre_processing(df):
     """
     # Create strings from source-target
     if isinstance(df, pd.DataFrame):
-        df['source'] = df['source'].astype(str)
-        df['target'] = df['target'].astype(str)
+        for col in labels:
+            df[col] = df[col].astype(str)
     else:
         if isinstance(df, list):
             df = np.array(df)

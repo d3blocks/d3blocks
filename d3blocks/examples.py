@@ -5,6 +5,35 @@
 import pandas as pd
 import numpy as np
 
+# %%
+
+# example data with three levels and a single value field
+data = {'group1': ['Animal', 'Animal', 'Animal', 'Plant', 'Animal'],
+        'group2': ['Mammal', 'Mammal', 'Fish', 'Tree', 'Fish'],
+        'group3': ['Fox',    'Lion',   'Cod',  'Oak',  'Ape'],
+        'weight': [35000, 25000, 10000, 1500, 1750]}
+
+df = pd.DataFrame.from_dict(data)
+
+
+# df = d3.import_example('bigbang')
+# df1 = df.groupby(['source', 'target'])['weight'].sum()
+# df1 = df1.reset_index()
+
+
+# %% Treemap
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(verbose='debug')
+# Import example
+# df = d3.import_example('energy')
+# df = d3.import_example('stormofswords')
+# df = d3.import_example('bigbang')
+# Create treemap
+html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html')
+# html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html', figsize=[1400, 800], font={'size':8}, border={'color': '#000000', 'width': 1})
+# html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html', figsize=[None, None], font={'size':8}, border={'color': '#000000', 'width': 1})
+
 # %% VIOLIN - EXAMPLE
 from d3blocks import D3Blocks
 
@@ -45,8 +74,6 @@ d3.set_edge_properties(x=df['labels'].values,
                         filepath='violine_demo.html')
 # d3.edge_properties
 d3.show(filepath='c://temp//violin1.html')
-
-
 
 
 # %%
@@ -318,9 +345,6 @@ d3.heatmap(df, notebook=True)
 
 
 # %% Notebook examples
-
-# d3graph
-# elasticgraph
 
 # Violin
 from d3blocks import D3Blocks

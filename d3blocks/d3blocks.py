@@ -23,6 +23,7 @@ import d3blocks.violin.Violin as Violin
 import d3blocks.particles.Particles as Particles
 import d3blocks.heatmap.Heatmap as Heatmap
 import d3blocks.matrix.Matrix as Matrix
+import d3blocks.treemap.Treemap as Treemap
 import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
@@ -36,6 +37,7 @@ import d3blocks.utils as utils
 # import particles.Particles as Particles
 # import heatmap.Heatmap as Heatmap
 # import matrix.Matrix as Matrix
+# import treemap.Treemap as Treemap
 # import utils
 # #####################################################
 
@@ -1918,6 +1920,135 @@ class D3Blocks():
         # Display the chart
         # return self.display(html)
 
+    def treemap(self,
+               df,
+               margin: dict = {"top": 40, "right": 10, "bottom": 10, "left": 10},
+               border: dict = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
+               font: dict = {'size': 10, 'type':'sans-serif', 'position': 'absolute'},
+               title: str = 'Treemap - D3blocks',
+               filepath: str = 'treemap.html',
+               figsize: Tuple[int, int] = [1000, 600],
+               showfig: bool = True,
+               overwrite: bool = True,
+               notebook: bool = False,
+               reset_properties: bool = True,
+               ):
+        """Treemap block.
+
+        A Treemap chart is a visualization to hierarchically show the data as a set of nested rectangles.
+        For example, the traffic flows from pages to other pages on your website. For demonstration purposes,
+        the "energy" and "stormofswords" dataset can be used. The javascript code is forked from Mike Bostock
+        and then Pythonized.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+                * 'source'
+                * 'target'
+                * 'weight'
+        margin : dict.
+            margin, in pixels.
+                * {"top": 40, "right": 10, "bottom": 10, "left": 10}
+        border : dict.
+            border properties.
+                * {'type': 'solid', 'color': '#FFFFFF', 'width': 1}
+        font : dict.
+            font properties.
+                * {'size': 10, 'type':'sans-serif', 'position': 'absolute'}
+        title : String, (default: None)
+            Title of the figure.
+                * 'Treemap'
+        filepath : String, (Default: user temp directory)
+                * File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
+        figsize : tuple
+            Size of the figure in the browser, [width, height].
+                * [1000, 600]
+                * [None, None]: Use the screen resolution.
+        showfig : bool, (default: True)
+                * True: Open browser-window.
+                * False: Do not open browser-window.
+        overwrite : bool, (default: True)
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
+        reset_properties : bool, (default: True)
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
+
+        Returns
+        -------
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+
+        d3.config: dictionary
+             Contains configuration properties.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Plot
+        >>> d3.treemap(df)
+        >>> #
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks(chart='Treemap', frame=True)
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Node properties
+        >>> d3.set_node_properties(df)
+        >>> print(d3.node_properties)
+        >>> #
+        >>> d3.set_edge_properties(df)
+        >>> print(d3.edge_properties)
+        >>> #
+        >>> # Show the chart
+        >>> d3.show()
+
+        References
+        ----------
+        * Mike Bostock; http://bl.ocks.org/mbostock/4063582
+        * https://d3blocks.github.io/d3blocks/pages/html/Treemap.html
+
+        """
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Treemap', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
+        # Set edge properties
+        self.set_edge_properties(df)
+        # Create the plot
+        return self.show()
+
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
 
@@ -2462,7 +2593,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))
