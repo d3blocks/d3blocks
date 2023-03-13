@@ -1936,9 +1936,8 @@ class D3Blocks():
         """Treemap block.
 
         A Treemap chart is a visualization to hierarchically show the data as a set of nested rectangles.
-        For example, the traffic flows from pages to other pages on your website. For demonstration purposes,
-        the "energy" and "stormofswords" dataset can be used. The javascript code is forked from Mike Bostock
-        and then Pythonized.
+        For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
+        The javascript code is forked from Mike Bostock and then Pythonized.
 
         Parameters
         ----------
@@ -2323,6 +2322,7 @@ class D3Blocks():
                 * "occupancy"
                 * "climate"
                 * "mnist"
+                * "animals"
         n : int, (default: 1000).
             Number of events (samples).
         c : int, (default: 100).
@@ -2368,6 +2368,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
             * occupancy
             * climate
             * "mnist"
+            * "animals"
     n : int, (default: 1000).
         Number of events (samples).
     c : int, (default: 100).
@@ -2442,6 +2443,14 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
     elif data=='mnist':
         url='https://erdogant.github.io/datasets/mnist.zip'
         sep=';'
+    elif data=='animals':
+        # example data with three levels and a single value field
+        data = {'group1': ['Animal', 'Animal', 'Animal', 'Plant', 'Animal'],
+                'group2': ['Mammal', 'Mammal', 'Fish', 'Tree', 'Fish'],
+                'group3': ['Fox',    'Lion',   'Cod',  'Oak',  'Ape'],
+                'weight': [35000, 25000, 10000, 1500, 1750]}
+        df = pd.DataFrame.from_dict(data)
+        return df
 
     if url is None:
         logger.info('Nothing to download.')

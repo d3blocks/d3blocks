@@ -5,17 +5,6 @@
 import pandas as pd
 import numpy as np
 
-# %%
-
-# example data with three levels and a single value field
-data = {'group1': ['Animal', 'Animal', 'Animal', 'Plant', 'Animal'],
-        'group2': ['Mammal', 'Mammal', 'Fish', 'Tree', 'Fish'],
-        'group3': ['Fox',    'Lion',   'Cod',  'Oak',  'Ape'],
-        'weight': [35000, 25000, 10000, 1500, 1750]}
-
-df = pd.DataFrame.from_dict(data)
-
-
 # df = d3.import_example('bigbang')
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
@@ -26,6 +15,7 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks(verbose='debug')
 # Import example
+df = d3.import_example('animals')
 # df = d3.import_example('energy')
 # df = d3.import_example('stormofswords')
 # df = d3.import_example('bigbang')
