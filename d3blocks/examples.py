@@ -9,14 +9,33 @@ import numpy as np
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
+# %% Fontsize in violin map
+# Import example dataset
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example('cancer')
+
+# Create the chart
+d3.violin(x=df['labels'].values,
+          y=df['age'].values,
+          tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values,
+          bins=50,
+          fontsize_axis=10,
+          fontsize=10,
+          size=df['survival_months'].values/10,
+          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
+          filepath=r'c:\temp\violine.html', figsize=[900, None])
 
 # %% Treemap
 from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks(verbose='debug')
 # Import example
-df = d3.import_example('animals')
-# df = d3.import_example('energy')
+# df = d3.import_example('animals')
+df = d3.import_example('energy')
 # df = d3.import_example('stormofswords')
 # df = d3.import_example('bigbang')
 # Create treemap
