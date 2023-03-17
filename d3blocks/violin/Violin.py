@@ -37,6 +37,8 @@ def set_config(config={}, **kwargs):
     config['x_order'] = kwargs.get('x_order', None)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
+    config['fontsize_axis'] = '"' + str(kwargs.get('fontsize_axis', 12)) + 'px"'
+
     # Return
     return config
 
@@ -257,6 +259,7 @@ def write_html(X, config, logger=None):
         'MAX_Y': config['ylim'][1],
         'X_ORDER': config['x_order'],
         'BINS': config['bins'],
+        'FONTSIZE_AXIS': config['fontsize_axis'],
         'WIDTH_FIG': config['figsize'][0],
         'HEIGHT_FIG': config['figsize'][1],
         'MOUSEOVER': config['mouseover'],

@@ -265,11 +265,13 @@ class D3Blocks():
                 * '#000000' : Edge colors are all black.
         tooltip: list of labels with same size as (x,y)
             labels of the samples.
+        fontsize : int or list of labels with the same size as (x, y), optional (default: 12)
+            Text fontsize for the tooltip.
+        fontsize_axis : int, optional (default: 12)
+            Text fontsize for the x-axis and y-axis.
         cmap : String, (default: 'inferno')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
                 * 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
-        fontsize : int, optional (default: 12)
-            Text fontsize.
         bins : Int (default: 50)
             The bin size is the 'resolution' of the violin plot.
         ylim : tuple, (default: [None, None])
@@ -367,7 +369,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Violin', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, logger=logger)
         # Remvove quotes from source-target node_properties
         self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], fontsize=self.config['fontsize'], logger=logger)
         # Set default label properties

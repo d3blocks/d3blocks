@@ -56,7 +56,9 @@ window.addEventListener('DOMContentLoaded', function () {
     var y = d3.scaleLinear()
       .domain([{{MIN_Y}}, {{MAX_Y}}])          // Note that here the Y scale is set manually
       .range([height, 0])
-    svg.append("g").call( d3.axisLeft(y) )
+    svg.append("g")
+      .style("font-size", {{FONTSIZE_AXIS}})
+      .call(d3.axisLeft(y))
     
     // Build and Show the X scale. It is a band scale like for a boxplot: each group has an dedicated RANGE on the axis. This range has a length of x.bandwidth
     var x = d3.scaleBand()
@@ -65,6 +67,7 @@ window.addEventListener('DOMContentLoaded', function () {
       .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
+	  .style("font-size", {{FONTSIZE_AXIS}})
       .call(d3.axisBottom(x))
     
     // Features of the histogram
