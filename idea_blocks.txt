@@ -1,7 +1,7 @@
 # NEW BLOCKS
 # 
 # 1.    Treemap
-#       https://bl.ocks.org/ganezasan/52fced34d2182483995f0ca3960fe228
+# [x]   https://bl.ocks.org/ganezasan/52fced34d2182483995f0ca3960fe228
 #       https://observablehq.com/@d3/zoomable-icicle
 #       https://observablehq.com/@d3/zoomable-sunburst
 #       https://www.jasondavies.com/coffee-wheel/
