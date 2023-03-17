@@ -48,6 +48,7 @@ def vec2flare(df, logger=None):
     * https://medium.com/swlh/from-pandas-to-d3-json-and-starburst-charts-44279db32436
     * https://github.com/justinhchae/p2d3/blob/main/p2d3/pandas_to_d3.py
     * https://medium.com/swlh/from-pandas-to-d3-json-and-starburst-charts-44279db32436
+    * https://stackoverflow.com/questions/11088303/how-to-convert-to-d3s-json-format/11089330#11089330
 
     """
     # check if 'weight' is the last column
