@@ -8,3 +8,4 @@ include d3blocks/timeseries/d3js/*
 include d3blocks/violin/d3js/*
 include d3blocks/heatmap/d3js/*
 include d3blocks/matrix/d3js/*
+include d3blocks/treemap/d3js/*
