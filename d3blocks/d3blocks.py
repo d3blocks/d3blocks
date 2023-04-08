@@ -385,6 +385,7 @@ class D3Blocks():
                 y1=None,
                 x2=None,
                 y2=None,
+                jitter=None,
                 size=3,
                 color='#002147',
                 c_gradient=None,
@@ -427,6 +428,8 @@ class D3Blocks():
             Third set of 1d coordinates x-axis.
         y2 : numpy array
             Third set of 1d coordinates y-axis.
+        jitter : float, default: None
+            Add jitter to data points as random normal data. Values of 0.01 is usually good for one-hot data seperation.
         size: list/array of with same size as (x,y).
             Size of the samples.
         color: list/array of hex colors with same size as (x,y)
@@ -600,7 +603,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Scatter', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, jitter=jitter, logger=logger)
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger)
         # Set node properties

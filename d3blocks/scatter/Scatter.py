@@ -39,6 +39,7 @@ def set_config(config={}, **kwargs):
     config['color_background'] = kwargs.get('color_background', '#ffffff')
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
+    config['jitter'] = kwargs.get('jitter', None)
     # Return
     return config
 
@@ -127,6 +128,7 @@ def set_edge_properties(*args, **kwargs):
     x2 = kwargs.get('x2', None)
     y2 = kwargs.get('y2', None)
 
+    jitter = kwargs.get('jitter', None)
     size = kwargs.get('size', 5)
     color = kwargs.get('color', '#69b3a2')
     stroke = kwargs.get('stroke', '#000000')
@@ -148,6 +150,15 @@ def set_edge_properties(*args, **kwargs):
     if (y1 is None): y1 = np.zeros_like(x) * np.nan
     if (x2 is None): x2 = np.zeros_like(x) * np.nan
     if (y2 is None): y2 = np.zeros_like(x) * np.nan
+
+    # Add jitter
+    if jitter is not None:
+        x = x + np.random.normal(0, jitter, size=len(x))
+        if y is not None: y = y + np.random.normal(0, jitter, size=len(y))
+        if x1 is not None: x1 = x1 + np.random.normal(0, jitter, size=len(x1))
+        if x2 is not None: x2 = x2 + np.random.normal(0, jitter, size=len(x2))
+        if y1 is not None: y1 = y1 + np.random.normal(0, jitter, size=len(y1))
+        if y2 is not None: y2 = y2 + np.random.normal(0, jitter, size=len(y2))
 
     # Combine into array
     X = np.c_[x, y]
