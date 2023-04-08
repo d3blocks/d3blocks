@@ -289,7 +289,7 @@ def set_colors(X, c, cmap, c_gradient=None):
     if isinstance(c, str): c = np.repeat(c, X.shape[0])
 
     # Check whether the input is hex colors.
-    hexok = np.all(list(map(lambda x: (x[0]=='#') and (len(x)==7), c)))
+    hexok = np.all(list(map(lambda x: ( (len(str(x))>0)) and (str(x[0])=='#') and (len(x)==7), c)))
 
     if hexok:
         # Input is hex-colors thus we do not need to touch the colors.
