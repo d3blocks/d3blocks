@@ -2,12 +2,27 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 
 # df = d3.import_example('bigbang')
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
+
+# %% Treemap
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(verbose='info')
+# Import example
+# df = d3.import_example('animals')
+df = d3.import_example('energy')
+# df = d3.import_example('stormofswords')
+# df = d3.import_example('bigbang')
+# Create treemap
+html = d3.treemap(df, notebook=False, filepath=None)
+# html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html', figsize=[1400, 800], font={'size':8}, border={'color': '#000000', 'width': 1})
+# html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html', figsize=[None, None], font={'size':8}, border={'color': '#000000', 'width': 1})
+
 
 # %% Fontsize in violin map
 # Import example dataset

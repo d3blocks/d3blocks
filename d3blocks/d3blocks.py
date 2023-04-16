@@ -26,6 +26,9 @@ import d3blocks.matrix.Matrix as Matrix
 import d3blocks.treemap.Treemap as Treemap
 import d3blocks.utils as utils
 
+from elasticgraph import Elasticgraph
+import d3graph as d3network
+
 # ###################### DEBUG ONLY ###################
 # import movingbubbles.Movingbubbles as Movingbubbles
 # import timeseries.Timeseries as Timeseries
@@ -40,9 +43,6 @@ import d3blocks.utils as utils
 # import treemap.Treemap as Treemap
 # import utils
 # #####################################################
-
-from elasticgraph import Elasticgraph
-import d3graph as d3network
 
 logger = logging.getLogger('')
 for handler in logger.handlers[:]:  # get rid of existing old handlers
