@@ -44,19 +44,6 @@ d3.violin(x=df['labels'].values,
           x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
           filepath=r'c:\temp\violine.html', figsize=[900, None])
 
-# %% Treemap
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks(verbose='debug')
-# Import example
-# df = d3.import_example('animals')
-df = d3.import_example('energy')
-# df = d3.import_example('stormofswords')
-# df = d3.import_example('bigbang')
-# Create treemap
-html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html')
-# html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html', figsize=[1400, 800], font={'size':8}, border={'color': '#000000', 'width': 1})
-# html = d3.treemap(df, notebook=False, filepath=r'c:\temp\treemap.html', figsize=[None, None], font={'size':8}, border={'color': '#000000', 'width': 1})
 
 # %% VIOLIN - EXAMPLE
 from d3blocks import D3Blocks
