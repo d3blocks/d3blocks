@@ -15,6 +15,7 @@ rm -rf d3blocks/particles/__pycache__
 rm -rf d3blocks/violin/__pycache__
 rm -rf d3blocks/heatmap/__pycache__
 rm -rf d3blocks/matrix/__pycache__
+rm -rf d3blocks/treemap/__pycache__
 rm -rf d3blocks/.pylint.d
 rm -rf tests/__pycache__
 rm -rf d3blocks/utils/__pycache__
