@@ -9,6 +9,15 @@
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
+# %%
+# group by source and target, and count occurrences
+counts = dfnew.groupby(['source', 'target']).count()
+# add weight column with count values
+counts['weight'] = counts['weight']
+# reset index to make columns from groupby into columns of the dataframe
+counts = counts.reset_index()
+
+
 # %% Treemap
 from d3blocks import D3Blocks
 # Initialize
@@ -345,8 +354,8 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 # Import example
 # df = d3.import_example('bigbang')
-# df = d3.import_example('stormofswords')
-df = d3.import_example('energy')
+df = d3.import_example('stormofswords')
+# df = d3.import_example('energy')
 df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 
 # d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel=[1,1,1,2,2,2,3])
@@ -653,7 +662,9 @@ d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True, charge=400)
 
 # Set clusters
 d3.D3graph.set_node_properties(color='cluster')
+d3.D3graph.edge_properties['UK_land_based_bioenergy', 'Bio-conversion']['label'] = 'test'
 d3.D3graph.show()
+
 
 d3.D3graph.set_node_properties(color='#000000')
 d3.D3graph.show()
