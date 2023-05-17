@@ -156,6 +156,7 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$CMAP$', str(config['cmap']))
     html = html.replace('$CMAP_TYPE$', str(config['cmap_type']))
     html = html.replace('$DATA_PATH$', filename)
+    html = html.replace('$SUPPORT$', config['support'])
     html = html.replace('$DATA_COMES_HERE$', json_data)
     # html = html.replace('src="d3.v4.js"', d3_library)
     # html = html.replace('src="d3.scale.chromatic.v1.min.js"', d3_chromatic)

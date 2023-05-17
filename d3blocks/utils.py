@@ -262,6 +262,21 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
 
 # %% Create unique dataframe and update weights
 def create_unique_dataframe(X, logger=None):
+    """Combine source-target into adjacency matrix with updated weights.
+
+    Parameters
+    ----------
+    X : DataFrame
+        Data frame containing the columns [source, target, weight].
+    logger : Object, optional
+        Logger object. The default is None.
+
+    Returns
+    -------
+    X : pd.DataFrame
+        Unique adjacency matrix containing with index as source and columns as target labels. Weights are in the matrix.
+
+    """
     # Check whether labels are unique
     if isinstance(X, pd.DataFrame):
         Iloc = ismember(X.columns, ['source', 'target', 'weight'])[0]
@@ -448,7 +463,6 @@ def write_html_file(config, html, logger):
     -------
     None
     """
-
     index_file = config['filepath']
     if index_file:
 
@@ -459,3 +473,15 @@ def write_html_file(config, html, logger):
 
         with open(index_file, "w", encoding="utf-8") as f:
             f.write(html)
+
+
+def get_support(support):
+    script=''
+    if isinstance(support, bool) and (not support): support = None
+    if isinstance(support, bool) and support: support = 'text'
+    if support is not None:
+        script="<script async src='https://media.ethicalads.io/media/client/ethicalads.min.js'></script>"
+        script = script + '\n' + "<div data-ea-publisher='erdogantgithubio' data-ea-type='{TYPE}' data-ea-style='stickybox'></div>".replace('{TYPE}', support)
+
+    # Return
+    return script

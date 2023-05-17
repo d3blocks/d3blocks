@@ -338,6 +338,7 @@ def write_html(X, config, logger=None):
         'MOUSEOVER': config['mouseover'],
         'MOUSEMOVE': config['mousemove'],
         'MOUSELEAVE': config['mouseleave'],
+        'SUPPORT': config['support'],
     }
 
     try:

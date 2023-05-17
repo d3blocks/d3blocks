@@ -64,6 +64,12 @@ class D3Blocks():
         False: Return in dictionary.
     verbose : int, optional
         Verbose message. The default is 20.
+    support : String, (default: True)
+            This library is free of use and lets keep it this way! Support the project. It will cost you nothing.
+            * True: I support this project! It is even better when you occasionally click on the ethical add.
+            * 'text': I support this project with a text add.
+            * 'image': I support this project with an image add.
+            * False: I want to support in a different manner: https://d3blocks.github.io/d3blocks/pages/html/Documentation.html
 
     Returns
     -------
@@ -81,7 +87,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, chart: str = None, frame: bool = True, verbose: int = 20):
+    def __init__(self, chart: str = None, frame: bool = True, verbose: int = 20, support='text'):
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
@@ -96,6 +102,7 @@ class D3Blocks():
         # Initialize empty config
         self.config['chart'] = chart
         self.config['frame'] = frame
+        self.config['support'] = utils.get_support(support)
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
 
     def particles(self,
@@ -2232,8 +2239,9 @@ class D3Blocks():
             # Remove all configurations except for the chart, frame and path
             chart = self.config.get('chart', None)
             frame = self.config.get('frame', True)
+            support = self.config.get('support', 'text')
             curpath = self.config.get('curpath', os.path.dirname(os.path.abspath(__file__)))
-            self.config = {'chart': chart, 'frame': frame, 'curpath': curpath, 'notebook': False}
+            self.config = {'chart': chart, 'frame': frame, 'curpath': curpath, 'notebook': False, 'support': support}
 
     @staticmethod
     def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):

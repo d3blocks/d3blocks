@@ -10,12 +10,50 @@
 # df1 = df1.reset_index()
 
 # %%
+import pandas as pd
+import numpy as np
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(verbose=10, support='text')
+
+# Import example
+df = d3.import_example('energy')
+html = d3.chord(df)
+
+# Import example
+df = d3.import_example('stormofswords')
+df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+d3.heatmap(df, classlabel='cluster', stroke='red', vmax=1)
+
+df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))
+d3.matrix(df, cmap='interpolateGreens')
+
+df = d3.import_example('energy')
+html = d3.particles('D3blocks')
+
+df = d3.import_example(data='energy')
+d3.sankey(df, link={"color":"source-target"})
+
+df = d3.import_example('cancer')
+html = d3.scatter(df['x'].values, df['y'].values)
+
+df = d3.import_example('climate')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
+
+df = d3.import_example('energy')
+html = d3.treemap(df)
+
+df = d3.import_example('cancer')
+html = d3.violin(x=df['labels'].values, y=df['age'].values)
+
+# %%
 # group by source and target, and count occurrences
-counts = dfnew.groupby(['source', 'target']).count()
+# counts = dfnew.groupby(['source', 'target']).count()
 # add weight column with count values
-counts['weight'] = counts['weight']
+# counts['weight'] = counts['weight']
 # reset index to make columns from groupby into columns of the dataframe
-counts = counts.reset_index()
+# counts = counts.reset_index()
 
 
 # %% Treemap
@@ -336,6 +374,8 @@ for i, _ in enumerate(df1.index):
     df1['sample_id'].iloc[i]
 
 # %% Matrix
+import pandas as pd
+import numpy as np
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))

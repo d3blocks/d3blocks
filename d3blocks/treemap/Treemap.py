@@ -167,6 +167,7 @@ def write_html(X, config, logger=None):
         'marginRight': config['margin']['right'],
         'marginBottom': config['margin']['bottom'],
         'marginLeft': config['margin']['left'],
+        'SUPPORT': config['support'],
     }
 
     try:

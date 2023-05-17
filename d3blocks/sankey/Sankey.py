@@ -202,6 +202,8 @@ def write_html(X, config, logger=None):
         'node_width': config['node']['width'],
         'node_padding': config['node']['padding'],
         'node_stroke_color': config['node']['color'],
+
+        'SUPPORT': config['support'],
     }
 
     try:

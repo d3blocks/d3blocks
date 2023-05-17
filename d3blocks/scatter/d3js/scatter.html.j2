@@ -8,10 +8,11 @@ License     : GPL3
 
 <!doctype html>
 <html lang="en">
-<svg width="{{ WIDTH }}" height="{{ HEIGHT }}"></svg>
 <head>
     <meta charset="UTF-8">
     <title>{{ TITLE }}</title>
+
+    {{ SUPPORT }}
 
     <style>
       body { background: {{ COLOR_BACKGROUND }} }
@@ -19,6 +20,8 @@ License     : GPL3
 
 </head>
 <body>
+
+<svg width="{{ WIDTH }}" height="{{ HEIGHT }}"></svg>
 
 <script>
 	{% include "d3.v4.min.js" %}

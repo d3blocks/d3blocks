@@ -209,6 +209,8 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$HEIGHT$', str(config['figsize'][1]))
     html = html.replace('$STROKE$', str(config['stroke']))
     html = html.replace('$DATA_PATH$', filename)
+    html = html.replace('$SUPPORT$', config['support'])
+
     html = html.replace('$DATA_COMES_HERE$', json_data)
 
     # Write to html

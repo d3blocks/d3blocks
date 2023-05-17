@@ -261,6 +261,7 @@ def write_html(X, config, logger=None):
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
         'FONTSIZE': config['fontsize'],
+        'SUPPORT': config['support'],
     }
 
     try:

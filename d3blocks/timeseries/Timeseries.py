@@ -249,6 +249,7 @@ def write_html(X, config, logger=None):
         'DT_FORMAT': config['dt_format_js'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
+        'SUPPORT': config['support'],
     }
 
     try:
