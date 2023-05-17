@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Imageslider &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -108,8 +109,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Imageslider</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Imageslider</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Imageslider.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -127,19 +128,19 @@ For demonstration purposes, the example can be loaded from the Southern Nebula i
 Hubble telescope, and can be easily compared to that of the newest telescope. The javascript code is forked
 from JohnEdChristensen and then Pythonized to easily make comparisons between images.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param img_before</dt>
+<dt class="field-odd">param img_before<span class="colon">:</span></dt>
 <dd class="field-odd"><p>absolute path to before image.</p>
 </dd>
-<dt class="field-even">type img_before</dt>
+<dt class="field-even">type img_before<span class="colon">:</span></dt>
 <dd class="field-even"><p>String</p>
 </dd>
-<dt class="field-odd">param img_after</dt>
+<dt class="field-odd">param img_after<span class="colon">:</span></dt>
 <dd class="field-odd"><p>absolute path to after image.</p>
 </dd>
-<dt class="field-even">type img_after</dt>
+<dt class="field-even">type img_after<span class="colon">:</span></dt>
 <dd class="field-even"><p>String</p>
 </dd>
-<dt class="field-odd">param scale</dt>
+<dt class="field-odd">param scale<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Scale image in range [0, 255], by img*(255/max(img))</dt><dd><ul class="simple">
 <li><p>True: Scaling image</p></li>
@@ -148,10 +149,10 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type scale</dt>
+<dt class="field-even">type scale<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, default: True</p>
 </dd>
-<dt class="field-odd">param colorscale</dt>
+<dt class="field-odd">param colorscale<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>colour-scaling from opencv.</dt><dd><ul class="simple">
 <li><p>0: cv2.IMREAD_GRAYSCALE</p></li>
@@ -163,16 +164,16 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type colorscale</dt>
+<dt class="field-even">type colorscale<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, default: -1 (untouched)</p>
 </dd>
-<dt class="field-odd">param background</dt>
+<dt class="field-odd">param background<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Background color.</p>
 </dd>
-<dt class="field-even">type background</dt>
+<dt class="field-even">type background<span class="colon">:</span></dt>
 <dd class="field-even"><p>String (default: ‘#000000’)</p>
 </dd>
-<dt class="field-odd">param title</dt>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
 <li><p>‘Imageslider’</p></li>
@@ -180,10 +181,10 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type title</dt>
+<dt class="field-even">type title<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
+<dt class="field-odd">param filepath<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>File path to save the output.</p></li>
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
@@ -192,10 +193,10 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <li><p>None: Return HTML</p></li>
 </ul>
 </dd>
-<dt class="field-even">type filepath</dt>
+<dt class="field-even">type filepath<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
-<dt class="field-odd">param figsize</dt>
+<dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
 <li><p>[900, 900]</p></li>
@@ -203,37 +204,37 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type figsize</dt>
+<dt class="field-even">type figsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
+<dt class="field-odd">param showfig<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type showfig</dt>
+<dt class="field-even">type showfig<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
+<dt class="field-odd">param notebook<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type notebook</dt>
+<dt class="field-even">type notebook<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
-<dt class="field-odd">param overwrite</dt>
+<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type overwrite</dt>
+<dt class="field-even">type overwrite<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">rtype</dt>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
@@ -270,10 +271,6 @@ from JohnEdChristensen and then Pythonized to easily make comparisons between im
 <p>The input dataset are two images.</p>
 <table class="docutils align-center" id="id1">
 <caption><span class="caption-text">Two images with different resolution from the Southern Nebula.</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><img alt="fig_m1" src="_images/southern_nebula_before.jpg" /></p></td>
 <td><p><img alt="fig_m2" src="_images/southern_nebula_after.jpg" /></p></td>

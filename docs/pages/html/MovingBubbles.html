@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MovingBubbles &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -108,8 +109,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>MovingBubbles</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MovingBubbles</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/MovingBubbles.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -139,37 +140,37 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </ul>
 </div></blockquote>
 <dl class="field-list">
-<dt class="field-odd">param df</dt>
+<dt class="field-odd">param df<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Input data.</p>
 </dd>
-<dt class="field-even">type df</dt>
+<dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>Input data, pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param datetime</dt>
+<dt class="field-odd">param datetime<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Name of the column with the datetime.</p>
 </dd>
-<dt class="field-even">type datetime</dt>
+<dt class="field-even">type datetime<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, (default: ‘datetime’)</p>
 </dd>
-<dt class="field-odd">param sample_id</dt>
+<dt class="field-odd">param sample_id<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Name of the column with the sample ids.</p>
 </dd>
-<dt class="field-even">type sample_id</dt>
+<dt class="field-even">type sample_id<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, (default: ‘sample_id’)</p>
 </dd>
-<dt class="field-odd">param state</dt>
+<dt class="field-odd">param state<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Name of the column with the states.</p>
 </dd>
-<dt class="field-even">type state</dt>
+<dt class="field-even">type state<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, (default: ‘state’)</p>
 </dd>
-<dt class="field-odd">param center</dt>
+<dt class="field-odd">param center<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Center this category.</p>
 </dd>
-<dt class="field-even">type center</dt>
+<dt class="field-even">type center<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
-<dt class="field-odd">param size</dt>
+<dt class="field-odd">param size<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size the nodes by specifying per sample_id the size.</dt><dd><ul class="simple">
 <li><p>5: set all nodes this this size</p></li>
@@ -178,10 +179,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type size</dt>
+<dt class="field-even">type size<span class="colon">:</span></dt>
 <dd class="field-even"><p>int or dictionary. (default: 5) or {sample_id i: size}</p>
 </dd>
-<dt class="field-odd">param color</dt>
+<dt class="field-odd">param color<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Color the nodes by specifying per sample_id the color.</dt><dd><ul class="simple">
 <li><p>‘#000FFF’: set all nodes to this color.</p></li>
@@ -191,10 +192,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type color</dt>
+<dt class="field-even">type color<span class="colon">:</span></dt>
 <dd class="field-even"><p>int or dictionary. (default: ‘#808080’) or {sample_id i: hex-color}</p>
 </dd>
-<dt class="field-odd">param color_method</dt>
+<dt class="field-odd">param color_method<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Coloring of the nodes.</dt><dd><ul class="simple">
 <li><p>‘state’: Use the colors defined per state as (d3.node_properties).</p></li>
@@ -203,10 +204,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type color_method</dt>
+<dt class="field-even">type color_method<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
 </dd>
-<dt class="field-odd">param dt_format</dt>
+<dt class="field-odd">param dt_format<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Date time format.</dt><dd><ul class="simple">
 <li><p>‘%d-%m-%Y %H:%M:%S’.</p></li>
@@ -214,10 +215,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type dt_format</dt>
+<dt class="field-even">type dt_format<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
 </dd>
-<dt class="field-odd">param damper</dt>
+<dt class="field-odd">param damper<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Movement of samples. A smaller number is slower/smoother movement.</dt><dd><ul class="simple">
 <li><p>0.1: min</p></li>
@@ -226,16 +227,16 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type damper</dt>
+<dt class="field-even">type damper<span class="colon">:</span></dt>
 <dd class="field-even"><p>float, (default: 1)</p>
 </dd>
-<dt class="field-odd">param fontsize</dt>
+<dt class="field-odd">param fontsize<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Fontsize of the states.</p>
 </dd>
-<dt class="field-even">type fontsize</dt>
+<dt class="field-even">type fontsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 14)</p>
 </dd>
-<dt class="field-odd">param timedelta</dt>
+<dt class="field-odd">param timedelta<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>The time delta between states. Change accordingly.</dt><dd><ul class="simple">
 <li><p>‘seconds’</p></li>
@@ -245,10 +246,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type timedelta</dt>
+<dt class="field-even">type timedelta<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘minutes’)</p>
 </dd>
-<dt class="field-odd">param standardize</dt>
+<dt class="field-odd">param standardize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Method to standardize the data.</dt><dd><ul class="simple">
 <li><p>None: standardize over the entire timeframe. Sample_ids are dependent to each other.</p></li>
@@ -259,16 +260,16 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type standardize</dt>
+<dt class="field-even">type standardize<span class="colon">:</span></dt>
 <dd class="field-even"><p>str. (default: None)</p>
 </dd>
-<dt class="field-odd">param speed</dt>
+<dt class="field-odd">param speed<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.</p>
 </dd>
-<dt class="field-even">type speed</dt>
+<dt class="field-even">type speed<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict, (default: {“slow”: 1000, “medium”: 200, “fast”: 50})</p>
 </dd>
-<dt class="field-odd">param note</dt>
+<dt class="field-odd">param note<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>A specific note, such as project description can be put on the html page.</dt><dd><ul class="simple">
 <li><p>None: Default text will be provided about the simulation, and states.</p></li>
@@ -276,10 +277,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type note</dt>
+<dt class="field-even">type note<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, (default: None)</p>
 </dd>
-<dt class="field-odd">param time_notes</dt>
+<dt class="field-odd">param time_notes<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>The time notes will be shown between specific time points.</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -293,10 +294,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dl>
 <p>time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p>
 </dd>
-<dt class="field-even">type time_notes</dt>
+<dt class="field-even">type time_notes<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict, (default: None)</p>
 </dd>
-<dt class="field-odd">param cmap</dt>
+<dt class="field-odd">param cmap<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
 <li><p>‘Set1’, ‘Set2’</p></li>
@@ -307,10 +308,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type cmap</dt>
+<dt class="field-even">type cmap<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘Set1’)</p>
 </dd>
-<dt class="field-odd">param title</dt>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
 <li><p>‘Movingbubbles’</p></li>
@@ -318,10 +319,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type title</dt>
+<dt class="field-even">type title<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
+<dt class="field-odd">param filepath<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>File path to save the output.</dt><dd><ul class="simple">
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
@@ -332,10 +333,10 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type filepath</dt>
+<dt class="field-even">type filepath<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
-<dt class="field-odd">param figsize</dt>
+<dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
 <li><p>[780, 800]</p></li>
@@ -343,46 +344,46 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type figsize</dt>
+<dt class="field-even">type figsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
+<dt class="field-odd">param showfig<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type showfig</dt>
+<dt class="field-even">type showfig<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param overwrite</dt>
+<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type overwrite</dt>
+<dt class="field-even">type overwrite<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
+<dt class="field-odd">param notebook<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type notebook</dt>
+<dt class="field-even">type notebook<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
-<dt class="field-odd">param reset_properties</dt>
+<dt class="field-odd">param reset_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Reset the node_properties at each run.</p></li>
 <li><p>False: Use the d3.node_properties()</p></li>
 </ul>
 </dd>
-<dt class="field-even">type reset_properties</dt>
+<dt class="field-even">type reset_properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>

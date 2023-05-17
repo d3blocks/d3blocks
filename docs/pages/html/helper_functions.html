@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>vec2adjmat &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -104,8 +105,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>vec2adjmat</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">vec2adjmat</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/helper_functions.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -120,31 +121,31 @@
 <span id="vec2adjmat"></span><h1>vec2adjmat<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.vec2adjmat" title="Permalink to this heading"></a></h1>
 <p>Convert source and target into adjacency matrix.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param source</dt>
+<dt class="field-odd">param source<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The source node.</p>
 </dd>
-<dt class="field-even">type source</dt>
+<dt class="field-even">type source<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
-<dt class="field-odd">param target</dt>
+<dt class="field-odd">param target<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The target node.</p>
 </dd>
-<dt class="field-even">type target</dt>
+<dt class="field-even">type target<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
-<dt class="field-odd">param weight</dt>
+<dt class="field-odd">param weight<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The Weights between the source-target values</p>
 </dd>
-<dt class="field-even">type weight</dt>
+<dt class="field-even">type weight<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of int</p>
 </dd>
-<dt class="field-odd">param symmetric</dt>
+<dt class="field-odd">param symmetric<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.</p>
 </dd>
-<dt class="field-even">type symmetric</dt>
+<dt class="field-even">type symmetric<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, optional</p>
 </dd>
-<dt class="field-odd">param aggfunc</dt>
+<dt class="field-odd">param aggfunc<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Aggregate function in case multiple values exists for the same relationship.</dt><dd><ul class="simple">
 <li><p>‘sum’ (default)</p></li>
@@ -152,13 +153,13 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type aggfunc</dt>
+<dt class="field-even">type aggfunc<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, optional</p>
 </dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>adjacency matrix.</p>
 </dd>
-<dt class="field-even">rtype</dt>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -178,22 +179,22 @@
 <span id="adjmat2vec"></span><h1>adjmat2vec<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.adjmat2vec" title="Permalink to this heading"></a></h1>
 <p>Convert adjacency matrix into vector with source and target.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param adjmat</dt>
+<dt class="field-odd">param adjmat<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Adjacency matrix.</p>
 </dd>
-<dt class="field-even">type adjmat</dt>
+<dt class="field-even">type adjmat<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param min_weight</dt>
+<dt class="field-odd">param min_weight<span class="colon">:</span></dt>
 <dd class="field-odd"><p>edges are returned with a minimum weight.</p>
 </dd>
-<dt class="field-even">type min_weight</dt>
+<dt class="field-even">type min_weight<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>nodes that are connected based on source and target</p>
 </dd>
-<dt class="field-even">rtype</dt>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 </dl>
@@ -216,7 +217,7 @@
 <p>Import example dataset from github source.</p>
 <p>Import one of the few datasets from github source or specify your own download url link.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param data</dt>
+<dt class="field-odd">param data<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Example datasets:</dt><dd><ul class="simple">
 <li><p>“movingbubbles”</p></li>
@@ -238,22 +239,22 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type data</dt>
+<dt class="field-even">type data<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
 </dd>
-<dt class="field-odd">param n</dt>
+<dt class="field-odd">param n<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Number of events (samples).</p>
 </dd>
-<dt class="field-even">type n</dt>
+<dt class="field-even">type n<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 1000).</p>
 </dd>
-<dt class="field-odd">param c</dt>
+<dt class="field-odd">param c<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Number of classes.</p>
 </dd>
-<dt class="field-even">type c</dt>
+<dt class="field-even">type c<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 100).</p>
 </dd>
-<dt class="field-odd">param date_start</dt>
+<dt class="field-odd">param date_start<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Start date.</dt><dd><ul class="simple">
 <li><p>“17-12-1903 00:00:00” : start date</p></li>
@@ -261,10 +262,10 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type date_start</dt>
+<dt class="field-even">type date_start<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, (default: None)</p>
 </dd>
-<dt class="field-odd">param date_stop</dt>
+<dt class="field-odd">param date_stop<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Stop date.</dt><dd><ul class="simple">
 <li><p>“17-12-1903 23:59:59” : Stop date</p></li>
@@ -272,13 +273,13 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type date_stop</dt>
+<dt class="field-even">type date_stop<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, (default: None)</p>
 </dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dataset containing mixed features.</p>
 </dd>
-<dt class="field-even">rtype</dt>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 </dl>

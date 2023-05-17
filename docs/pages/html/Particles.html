@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Particles &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -108,8 +109,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Particles</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Particles</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Particles.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -126,40 +127,40 @@
 bounce and then return to their original place. Various properties can be changed such as the bouncing,
 particle size, and colors. The original javascript is forked from Ian Johnson’s Block.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param text</dt>
+<dt class="field-odd">param text<span class="colon">:</span></dt>
 <dd class="field-odd"><p>String to be visualized</p>
 </dd>
-<dt class="field-even">type text</dt>
+<dt class="field-even">type text<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
 </dd>
-<dt class="field-odd">param radius</dt>
+<dt class="field-odd">param radius<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Size of the particles.</p>
 </dd>
-<dt class="field-even">type radius</dt>
+<dt class="field-even">type radius<span class="colon">:</span></dt>
 <dd class="field-even"><p>float, optional (default: 3)</p>
 </dd>
-<dt class="field-odd">param collision</dt>
+<dt class="field-odd">param collision<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Response of the interaction. Higher means that more collisions are prevented.</p>
 </dd>
-<dt class="field-even">type collision</dt>
+<dt class="field-even">type collision<span class="colon">:</span></dt>
 <dd class="field-even"><p>float, optional (default: 0.1)</p>
 </dd>
-<dt class="field-odd">param fontsize</dt>
+<dt class="field-odd">param fontsize<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Text fontsize.
 When increasing: also increase width and slighly the spacing.</p>
 </dd>
-<dt class="field-even">type fontsize</dt>
+<dt class="field-even">type fontsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, optional (default: 250)</p>
 </dd>
-<dt class="field-odd">param spacing</dt>
+<dt class="field-odd">param spacing<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The number of particles that fit in the text.
 A larger spacing reults in less particles.
 A smaller spacing reults in more particles.</p>
 </dd>
-<dt class="field-even">type spacing</dt>
+<dt class="field-even">type spacing<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, optional (default: 10)</p>
 </dd>
-<dt class="field-odd">param cmap</dt>
+<dt class="field-odd">param cmap<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Color schemes can be found at the references.</dt><dd><ul class="simple">
 <li><p>‘Turbo’, ‘Rainbow’, ‘Blues’, ‘Reds’, ‘Inferno’, ‘Magma’</p></li>
@@ -167,22 +168,22 @@ A smaller spacing reults in more particles.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type cmap</dt>
+<dt class="field-even">type cmap<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, optional (default: ‘Set2’)</p>
 </dd>
-<dt class="field-odd">param color_background</dt>
+<dt class="field-odd">param color_background<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Background color.</p>
 </dd>
-<dt class="field-even">type color_background</dt>
+<dt class="field-even">type color_background<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, optional (default: ‘#000000’)</p>
 </dd>
-<dt class="field-odd">param title</dt>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Title of the figure.</p>
 </dd>
-<dt class="field-even">type title</dt>
+<dt class="field-even">type title<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, optional (default: None)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
+<dt class="field-odd">param filepath<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>File path to save the output.</dt><dd><ul class="simple">
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
@@ -193,40 +194,40 @@ A smaller spacing reults in more particles.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type filepath</dt>
+<dt class="field-even">type filepath<span class="colon">:</span></dt>
 <dd class="field-even"><p>str, optional (default: user temp directory)</p>
 </dd>
-<dt class="field-odd">param figsize</dt>
+<dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Size of the figure in the browser, [width, height].</p>
 </dd>
-<dt class="field-even">type figsize</dt>
+<dt class="field-even">type figsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple, optional (default: (800, 600))</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
+<dt class="field-odd">param showfig<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Open the window to show the particles.</p>
 </dd>
-<dt class="field-even">type showfig</dt>
+<dt class="field-even">type showfig<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, optional (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
+<dt class="field-odd">param notebook<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Use IPython to show chart in notebooks.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type notebook</dt>
+<dt class="field-even">type notebook<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, optional</p>
 </dd>
-<dt class="field-odd">param overwrite</dt>
+<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Overwrite the output html in the destination directory.</p></li>
 <li><p>False: Do not overwrite</p></li>
 </ul>
 </dd>
-<dt class="field-even">type overwrite</dt>
+<dt class="field-even">type overwrite<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, optional (default: True)</p>
 </dd>
-<dt class="field-odd">rtype</dt>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None.</p>
 </dd>
 </dl>

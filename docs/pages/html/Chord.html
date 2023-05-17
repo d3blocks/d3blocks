@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chord &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -108,8 +109,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Chord</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Chord</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Chord.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -126,7 +127,7 @@
 Each entity is represented by a fragment on the outer part of the circular layout.
 Then, arcs are drawn between each entity. The size of the arc is proportional to the importance of the flow.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
+<dt class="field-odd">param df<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Input data containing the following columns:</dt><dd><ul class="simple">
 <li><p>“source”</p></li>
@@ -138,10 +139,10 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type df</dt>
+<dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param color</dt>
+<dt class="field-odd">param color<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Link colors in Hex notation. Should be the same size as input DataFrame.</dt><dd><ul class="simple">
 <li><p>“source” : Color edges/links similar to that of source-color node.</p></li>
@@ -153,10 +154,10 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type color</dt>
+<dt class="field-even">type color<span class="colon">:</span></dt>
 <dd class="field-even"><p>(default: ‘source’)</p>
 </dd>
-<dt class="field-odd">param opacity</dt>
+<dt class="field-odd">param opacity<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Link Opacity. Should be the same size as input DataFrame.</dt><dd><ul class="simple">
 <li><p>‘source’: Opacity of edges/links similar to that of source-opacity node.</p></li>
@@ -167,16 +168,16 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type opacity</dt>
+<dt class="field-even">type opacity<span class="colon">:</span></dt>
 <dd class="field-even"><p>(default: ‘source’)</p>
 </dd>
-<dt class="field-odd">param fontsize</dt>
+<dt class="field-odd">param fontsize<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The Fontsize.</p>
 </dd>
-<dt class="field-even">type fontsize</dt>
+<dt class="field-even">type fontsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 8)</p>
 </dd>
-<dt class="field-odd">param cmap</dt>
+<dt class="field-odd">param cmap<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>colormap is only used in case color=None. All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
 <li><p>‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
@@ -184,10 +185,10 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type cmap</dt>
+<dt class="field-even">type cmap<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘tab20’)</p>
 </dd>
-<dt class="field-odd">param title</dt>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
 <li><p>‘Chord’</p></li>
@@ -195,10 +196,10 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type title</dt>
+<dt class="field-even">type title<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
+<dt class="field-odd">param filepath<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>File path to save the output.</dt><dd><ul class="simple">
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
@@ -209,10 +210,10 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type filepath</dt>
+<dt class="field-even">type filepath<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
-<dt class="field-odd">param figsize</dt>
+<dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
 <li><p>[900, 900]</p></li>
@@ -220,46 +221,46 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type figsize</dt>
+<dt class="field-even">type figsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
+<dt class="field-odd">param showfig<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type showfig</dt>
+<dt class="field-even">type showfig<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param overwrite</dt>
+<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type overwrite</dt>
+<dt class="field-even">type overwrite<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
+<dt class="field-odd">param notebook<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type notebook</dt>
+<dt class="field-even">type notebook<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
-<dt class="field-odd">param reset_properties</dt>
+<dt class="field-odd">param reset_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Reset the node_properties at each run.</p></li>
 <li><p>False: Use the d3.node_properties()</p></li>
 </ul>
 </dd>
-<dt class="field-even">type reset_properties</dt>
+<dt class="field-even">type reset_properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">returns</dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>

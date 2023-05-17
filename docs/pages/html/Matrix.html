@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Matrix &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -28,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -102,8 +103,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Matrix</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Matrix</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Matrix.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -117,13 +118,13 @@
 <span id="matrix"></span><h1>Matrix<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.matrix" title="Permalink to this heading"></a></h1>
 <p>Matrix block.</p>
 <dl class="field-list">
-<dt class="field-odd">param df</dt>
+<dt class="field-odd">param df<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Input data. The index and column names are used for the row/column naming.</p>
 </dd>
-<dt class="field-even">type df</dt>
+<dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param scale</dt>
+<dt class="field-odd">param scale<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Scale data in range Scaling in range by X*(100/max(X)).</dt><dd><ul class="simple">
 <li><p>True: Scale the values.</p></li>
@@ -132,10 +133,10 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type scale</dt>
+<dt class="field-even">type scale<span class="colon">:</span></dt>
 <dd class="field-even"><p>Bool, (default: True).</p>
 </dd>
-<dt class="field-odd">param stroke</dt>
+<dt class="field-odd">param stroke<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Color of the recangle when hovering over a cell.</dt><dd><ul class="simple">
 <li><p>‘red’</p></li>
@@ -144,16 +145,16 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type stroke</dt>
+<dt class="field-even">type stroke<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘red’).</p>
 </dd>
-<dt class="field-odd">param description</dt>
+<dt class="field-odd">param description<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Description text of the heatmap.</p>
 </dd>
-<dt class="field-even">type description</dt>
+<dt class="field-even">type description<span class="colon">:</span></dt>
 <dd class="field-even"><p>String.</p>
 </dd>
-<dt class="field-odd">param vmax</dt>
+<dt class="field-odd">param vmax<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul class="simple">
 <li><p>1 : cells above value &gt;1 are capped.</p></li>
@@ -162,10 +163,10 @@
 </dl>
 <p>None : cells are colored based on the maximum value in the input data.</p>
 </dd>
-<dt class="field-even">type vmax</dt>
+<dt class="field-even">type vmax<span class="colon">:</span></dt>
 <dd class="field-even"><p>Bool, (default: 100).</p>
 </dd>
-<dt class="field-odd">param cmap</dt>
+<dt class="field-odd">param cmap<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>The colormap scheme. See references for more schmes.</dt><dd><ul class="simple">
 <li><p>‘interpolateInferno’</p></li>
@@ -181,16 +182,16 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type cmap</dt>
+<dt class="field-even">type cmap<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘interpolateInferno’).</p>
 </dd>
-<dt class="field-odd">param fontsize</dt>
+<dt class="field-odd">param fontsize<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Font size for the X and Y labels.</p>
 </dd>
-<dt class="field-even">type fontsize</dt>
+<dt class="field-even">type fontsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 10).</p>
 </dd>
-<dt class="field-odd">param title</dt>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
 <li><p>‘Heatmap’</p></li>
@@ -198,10 +199,10 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type title</dt>
+<dt class="field-even">type title<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
-<dt class="field-odd">param figsize</dt>
+<dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
 <li><p>[800, 800]</p></li>
@@ -209,19 +210,19 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type figsize</dt>
+<dt class="field-even">type figsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
+<dt class="field-odd">param showfig<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type showfig</dt>
+<dt class="field-even">type showfig<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
+<dt class="field-odd">param filepath<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>File path to save the output.</dt><dd><ul class="simple">
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
@@ -232,34 +233,34 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type filepath</dt>
+<dt class="field-even">type filepath<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
-<dt class="field-odd">param overwrite</dt>
+<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type overwrite</dt>
+<dt class="field-even">type overwrite<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
+<dt class="field-odd">param notebook<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type notebook</dt>
+<dt class="field-even">type notebook<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
-<dt class="field-odd">param reset_properties</dt>
+<dt class="field-odd">param reset_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Reset the node_properties at each run.</p></li>
 <li><p>False: Use the d3.node_properties()</p></li>
 </ul>
 </dd>
-<dt class="field-even">type reset_properties</dt>
+<dt class="field-even">type reset_properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
 </dl>

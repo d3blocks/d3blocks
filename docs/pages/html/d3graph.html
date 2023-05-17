@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>D3graph &mdash; d3blocks d3blocks documentation</title>
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> d3blocks
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
           </a>
               <div class="version">
-                1.2.10
+                1.2.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -113,8 +114,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>D3graph</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">D3graph</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/d3graph.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -145,7 +146,7 @@ on the weights. To explore the network, and the strength of the edges more exten
 (located at the top) can break the network based on the edge weights. The ouput is a html file that is
 interactive and stand alone. For demonstration purposes, the “energy” and “stormofswords” dataset can be used.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df</dt>
+<dt class="field-odd">param df<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Input data containing the following columns:</dt><dd><ul class="simple">
 <li><p>‘source’</p></li>
@@ -155,10 +156,10 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type df</dt>
+<dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param color</dt>
+<dt class="field-odd">param color<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Color of the node.</dt><dd><ul class="simple">
 <li><p>‘cluster’ : Colours are based on the community distance clusters.</p></li>
@@ -171,10 +172,10 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type color</dt>
+<dt class="field-even">type color<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of strings (default: ‘#000080’)</p>
 </dd>
-<dt class="field-odd">param size</dt>
+<dt class="field-odd">param size<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the nodes.</dt><dd><ul class="simple">
 <li><p>10: all nodes sizes are set to 10</p></li>
@@ -183,28 +184,28 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type size</dt>
+<dt class="field-even">type size<span class="colon">:</span></dt>
 <dd class="field-even"><p>array of integers (default: 5)</p>
 </dd>
-<dt class="field-odd">param collision</dt>
+<dt class="field-odd">param collision<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Response of the network. Higher means that more collisions are prevented.</p>
 </dd>
-<dt class="field-even">type collision</dt>
+<dt class="field-even">type collision<span class="colon">:</span></dt>
 <dd class="field-even"><p>float, (default: 0.5)</p>
 </dd>
-<dt class="field-odd">param charge</dt>
+<dt class="field-odd">param charge<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p>
 </dd>
-<dt class="field-even">type charge</dt>
+<dt class="field-even">type charge<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 400)</p>
 </dd>
-<dt class="field-odd">param slider</dt>
+<dt class="field-odd">param slider<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Slider is automatically set to the range of the edge weights.</p>
 </dd>
-<dt class="field-even">type slider</dt>
+<dt class="field-even">type slider<span class="colon">:</span></dt>
 <dd class="field-even"><p>typle [min: int, max: int]:, (default: [None, None])</p>
 </dd>
-<dt class="field-odd">param title</dt>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
 <li><p>‘d3graph’</p></li>
@@ -212,10 +213,10 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type title</dt>
+<dt class="field-even">type title<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: None)</p>
 </dd>
-<dt class="field-odd">param filepath</dt>
+<dt class="field-odd">param filepath<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>File path to save the output.</dt><dd><ul class="simple">
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
@@ -226,10 +227,10 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type filepath</dt>
+<dt class="field-even">type filepath<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (Default: user temp directory)</p>
 </dd>
-<dt class="field-odd">param figsize</dt>
+<dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
 <li><p>[1500, 800]</p></li>
@@ -237,37 +238,37 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type figsize</dt>
+<dt class="field-even">type figsize<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple</p>
 </dd>
-<dt class="field-odd">param showfig</dt>
+<dt class="field-odd">param showfig<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type showfig</dt>
+<dt class="field-even">type showfig<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">param notebook</dt>
+<dt class="field-odd">param notebook<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type notebook</dt>
+<dt class="field-even">type notebook<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
-<dt class="field-odd">param overwrite</dt>
+<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
 </dd>
-<dt class="field-even">type overwrite</dt>
+<dt class="field-even">type overwrite<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
-<dt class="field-odd">rtype</dt>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
