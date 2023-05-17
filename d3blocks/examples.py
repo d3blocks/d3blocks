@@ -698,7 +698,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Plot
-d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True, charge=400)
+d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True, charge=400, support=True)
 
 # Set clusters
 d3.D3graph.set_node_properties(color='cluster')

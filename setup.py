@@ -18,7 +18,7 @@ setuptools.setup(
                        'tqdm',
                        'colourmap>=1.1.10',
                        'jinja2',
-                       'd3graph>=2.3.6',
+                       'd3graph>=2.4.6',
                        'requests',
                        'ismember>=1.0.1',
                        'scikit-learn',

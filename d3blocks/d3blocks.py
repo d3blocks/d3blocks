@@ -1647,6 +1647,7 @@ class D3Blocks():
                 slider=[None, None],
                 notebook=False,
                 showfig=True,
+                support='text',
                 overwrite=True):
         """d3graph block.
 
@@ -1775,7 +1776,7 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
         # Initialize network graph
-        self.D3graph = d3network.d3graph(collision=collision, charge=charge, slider=slider)
+        self.D3graph = d3network.d3graph(collision=collision, charge=charge, slider=slider, support=support)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
