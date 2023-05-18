@@ -94,17 +94,17 @@ Indices and tables
 * :ref:`search`
 
 
-.. |repo-size| image:: https://img.shields.io/github/repo-size/erdogant/d3blocks
+.. |repo-size| image:: https://img.shields.io/github/repo-size/d3blocks/d3blocks
     :alt: repo-size
-    :target: https://img.shields.io/github/repo-size/erdogant/d3blocks
+    :target: https://img.shields.io/github/repo-size/d3blocks/d3blocks
 
 .. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
     :alt: Colab example
-    :target: https://erdogant.github.io/d3blocks/pages/html/Documentation.html#colab-notebook
+    :target: https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#colab-notebook
 
-.. |stars| image:: https://img.shields.io/github/stars/erdogant/d3blocks
+.. |stars| image:: https://img.shields.io/github/stars/d3blocks/d3blocks
     :alt: Stars
-    :target: https://img.shields.io/github/stars/erdogant/d3blocks
+    :target: https://img.shields.io/github/stars/d3blocks/d3blocks
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/d3blocks.svg
     :alt: |Python
