@@ -1,17 +1,21 @@
 from d3blocks.d3blocks import D3Blocks
 
+from d3blocks.utils import (
+    normalize,
+    )
+
 __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
-__version__ = '1.2.12'
+__version__ = '1.2.13'
 
 # module level doc-string
 __doc__ = """
 d3blocks
 =====================================================================
 
-Description
------------
 d3blocks is for the creation of stand-alone and interactive d3 graphs.
+Create interactive, stand-alone, and visually attractive charts that are built on the graphics of d3 javascript (d3js)
+but configurable with Python.
 
 References
 ----------

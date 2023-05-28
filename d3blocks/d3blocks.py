@@ -12,6 +12,8 @@ import webbrowser
 import random
 import time
 from typing import List, Union, Tuple
+from elasticgraph import Elasticgraph
+import d3graph as d3network
 
 import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
 import d3blocks.timeseries.Timeseries as Timeseries
@@ -25,9 +27,6 @@ import d3blocks.heatmap.Heatmap as Heatmap
 import d3blocks.matrix.Matrix as Matrix
 import d3blocks.treemap.Treemap as Treemap
 import d3blocks.utils as utils
-
-from elasticgraph import Elasticgraph
-import d3graph as d3network
 
 # ###################### DEBUG ONLY ###################
 # import movingbubbles.Movingbubbles as Movingbubbles
@@ -395,7 +394,7 @@ class D3Blocks():
                 jitter=None,
                 size=3,
                 color='#002147',
-                c_gradient=None,
+                c_gradient='opaque',
                 opacity=0.8,
                 stroke='#ffffff',
                 tooltip=None,
@@ -447,9 +446,11 @@ class D3Blocks():
             Edgecolor of dotsize in hex colors.
                 * '#000000' : All dots are get the same hex color.
                 * ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
-        c_gradient : String, (default: None)
-            Make a lineair gradient based on the density for the particular class label.
-                * '#FFFFFF'
+        c_gradient : String, (default: 'opaque')
+            Hex color to make a lineair gradient using the density.
+                * None: Do not use gradient.
+                * opaque: Towards the edges the points become more transparant. This will stress the dense areas and make scatter plot tidy.
+                * '#FFFFFF': Towards the edges it smooths into this color
         opacity: float or list/array [0-1]
             Opacity of the dot. Shoud be same size as (x,y)
         tooltip: list of labels with same size as (x,y)

@@ -172,17 +172,28 @@ def set_edge_properties(*args, **kwargs):
         X = _scale_xy(X)
         X1 = _scale_xy(X1)
         X2 = _scale_xy(X2)
+
     # In case only one (s)ize is defined. Set all points to this size.
     if isinstance(size, (int, float)): size = np.repeat(size, X.shape[0])
     if np.any(size<0):
         if logger is not None: logger.info('[%.0d] sizes are <0 and set to 0.' %(np.sum(size<0)))
         size[size<0]=0
+
     # In case None tooltip is defined. Set all points to this tooltip.
     if tooltip is None: tooltip = np.repeat('', X.shape[0])
+
+    # Set colors
+    color, labels = set_colors(X, color, cmap, c_gradient=c_gradient)
+
     # In case only one opacity is defined. Set all points to this size.
     if isinstance(opacity, (int, float)): opacity = np.repeat(opacity, X.shape[0])
-    # colors
-    color, labels = set_colors(X, color, cmap, c_gradient=c_gradient)
+    if (c_gradient is not None):
+        if logger is not None: logger.info('Set opacity based on the data density.')
+        import colourmap
+        c_rgb = colourmap.gradient_on_density_color(X, colourmap.hex2rgb(color), labels, opaque_type='per_class')
+        opacity = c_rgb[:, 3]
+        # c_hex = c_rgb[:, 0:3]
+
     # In case stroke is None: use same colors as for c.
     if stroke is None:
         stroke = color
