@@ -17,6 +17,69 @@ import tempfile
 from pathlib import Path
 import time
 import json
+from typing import List, Union, Tuple
+
+
+# %% Normalize.
+def normalize(X, minscale: Union[int, float] = 0.5, maxscale: Union[int, float] = 4, scaler: str = 'zscore'):
+    # Instead of Min-Max scaling, that shrinks any distribution in the [0, 1] interval, scaling the variables to
+    # Z-scores is better. Min-Max Scaling is too sensitive to outlier observations and generates unseen problems,
+
+    # Set sizes to 0 if not available
+    X[np.isinf(X)]=0
+    X[np.isnan(X)]=0
+
+    # out-of-scale datapoints.
+    if scaler == 'zscore' and len(np.unique(X)) > 3:
+        X = (X.flatten() - np.mean(X)) / np.std(X)
+        X = X + (minscale - np.min(X))
+    elif scaler == 'minmax':
+        try:
+            from sklearn.preprocessing import MinMaxScaler
+        except:
+            raise Exception('sklearn needs to be pip installed first. Try: pip install scikit-learn')
+        # scaling
+        X = MinMaxScaler(feature_range=(minscale, maxscale)).fit_transform(X).flatten()
+    else:
+        X = X.ravel()
+    # Max digits is 4
+    X = np.array(list(map(lambda x: round(x, 4), X)))
+
+    return X
+
+
+# %% Normalize between [0-1]
+def normalize_between_0_and_1(X):
+    x_min, x_max = np.min(X, 0), np.max(X, 0)
+    out = (X - x_min) / (x_max - x_min)
+    out[np.isnan(out)]=1
+    return out
+
+
+# %% Jitter
+def jitter_func(x, jitter=0.01):
+    """Add jitter to data.
+
+    Noise is generated from random normal distribution and added to the data.
+
+    Parameters
+    ----------
+    x : numpy array
+        input data.
+    jitter : float, optional
+        Strength of generated noise. The default is 0.01.
+
+    Returns
+    -------
+    x : array-like
+        Data including noise.
+
+    """
+    if jitter is None or jitter is False: jitter=0
+    if jitter is True: jitter=0.01
+    if jitter>0 and x is not None:
+        x = x + np.random.normal(0, jitter, size=len(x))
+    return x
 
 
 # %% Convert to Flare format
