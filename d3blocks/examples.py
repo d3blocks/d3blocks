@@ -10,6 +10,13 @@
 # df1 = df1.reset_index()
 
 # %%
+# Scatter
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('cancer')
+html = d3.scatter(df['x'].values, df['y'].values, c_gradient='opaque', color=df['labels'].values, stroke='#000000')
+
+# %%
 import pandas as pd
 import numpy as np
 from d3blocks import D3Blocks

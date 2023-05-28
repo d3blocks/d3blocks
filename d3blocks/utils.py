@@ -177,8 +177,6 @@ def vec2flare(df, logger=None):
 def scale(X, vmax=100, make_round=True, logger=None):
     """Scale data.
 
-    Description
-    -----------
     Scaling in range by X*(100/max(X))
 
     Parameters
@@ -355,8 +353,6 @@ def create_unique_dataframe(X, logger=None):
 def set_colors(X, c, cmap, c_gradient=None):
     """Set colors for in various blocks.
 
-    Description
-    -----------
     Given the size of input data X, and the class labels, return the hex colors.
     This optional is possible in the following blocks:
         * scatter
@@ -367,7 +363,7 @@ def set_colors(X, c, cmap, c_gradient=None):
     if isinstance(c, str): c = np.repeat(c, X.shape[0])
 
     # Check whether the input is hex colors.
-    hexok = np.all(list(map(lambda x: ( (len(str(x))>0)) and (str(x[0])=='#') and (len(x)==7), c)))
+    hexok = np.all(list(map(lambda x: ((len(str(x))>0)) and (str(x[0])=='#') and (len(x)==7), c)))
 
     if hexok:
         # Input is hex-colors thus we do not need to touch the colors.
@@ -376,7 +372,7 @@ def set_colors(X, c, cmap, c_gradient=None):
     else:
         # The input are string-labels and not colors. Lets convert to hex-colors.
         labels = c
-        c_hex, _ = colourmap.fromlist(c, cmap=cmap, method='matplotlib', gradient=c_gradient, scheme='hex', verbose=0)
+        c_hex, _ = colourmap.fromlist(c, cmap=cmap, scheme='hex', method='matplotlib', gradient=c_gradient, verbose=0)
 
     if (c_gradient is not None):
         c_hex = density_color(X, c_hex, c)
