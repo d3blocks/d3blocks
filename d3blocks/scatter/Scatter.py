@@ -16,9 +16,9 @@ import os
 import time
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func
 
 
 # %% Set configuration properties
@@ -152,13 +152,23 @@ def set_edge_properties(*args, **kwargs):
     if (y2 is None): y2 = np.zeros_like(x) * np.nan
 
     # Add jitter
-    if jitter is not None:
-        x = x + np.random.normal(0, jitter, size=len(x))
-        if y is not None: y = y + np.random.normal(0, jitter, size=len(y))
-        if x1 is not None: x1 = x1 + np.random.normal(0, jitter, size=len(x1))
-        if x2 is not None: x2 = x2 + np.random.normal(0, jitter, size=len(x2))
-        if y1 is not None: y1 = y1 + np.random.normal(0, jitter, size=len(y1))
-        if y2 is not None: y2 = y2 + np.random.normal(0, jitter, size=len(y2))
+    x = jitter_func(x, jitter=jitter)
+    y = jitter_func(y, jitter=jitter)
+    x1 = jitter_func(x1, jitter=jitter)
+    y1 = jitter_func(y1, jitter=jitter)
+    x2 = jitter_func(x2, jitter=jitter)
+    y2 = jitter_func(y2, jitter=jitter)
+
+    # if jitter is None or jitter is False: jitter=0
+    # if jitter is True: jitter=0.01
+    # if jitter>0:
+    #     if logger is not None: logger.info('Add jitter [%g] to xy-coordinates.' %(jitter))
+    #     x = x + np.random.normal(0, jitter, size=len(x))
+    #     if y is not None: y = y + np.random.normal(0, jitter, size=len(y))
+    #     if x1 is not None: x1 = x1 + np.random.normal(0, jitter, size=len(x1))
+    #     if x2 is not None: x2 = x2 + np.random.normal(0, jitter, size=len(x2))
+    #     if y1 is not None: y1 = y1 + np.random.normal(0, jitter, size=len(y1))
+    #     if y2 is not None: y2 = y2 + np.random.normal(0, jitter, size=len(y2))
 
     # Combine into array
     X = np.c_[x, y]
