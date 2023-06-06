@@ -413,7 +413,7 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     uis = df[sample_id].unique()
 
     # Check datetime format
-    if not isinstance(df[datetime][0], dt.date):
+    if not isinstance(df[datetime].iloc[0], dt.date):
         if logger is not None: logger.info('Set datetime format to [%s]' %(dt_format))
         df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
 
