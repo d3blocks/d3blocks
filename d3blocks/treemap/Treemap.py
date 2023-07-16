@@ -126,7 +126,6 @@ def show(df, **kwargs):
     df.reset_index(inplace=True, drop=True)
 
     # Create the data from the input of javascript
-    # X = get_data_ready_for_d3(df)
     X = vec2flare(df, logger=logger)
 
     # Write to HTML
@@ -182,54 +181,3 @@ def write_html(X, config, logger=None):
     write_html_file(config, html, logger)
     # Return html
     return html
-
-
-def get_data_ready_for_d3_simple(df):
-    # https://github.com/andrewheekin/csv2flare.json/blob/master/csv2flare.json.py
-    # start a new flare.json document
-    d = dict()
-    d = {"name":"flare", "children": []}
-    
-    for line in df.values:
-        the_parent = line[0]
-        the_child = line[1]
-        child_size = line[2]
-    
-        # make a list of keys
-        keys_list = []
-        for item in d['children']:
-            keys_list.append(item['name'])
-    
-        # if 'the_parent' is NOT a key in the flare.json yet, append it
-        if not the_parent in keys_list:
-            d['children'].append({"name":the_parent, "children":[{"name":the_child, "size":child_size}]})
-    
-        # if 'the_parent' IS a key in the flare.json, add a new child to it
-        else:
-            d['children'][keys_list.index(the_parent)]['children'].append({"name":the_child, "size":child_size})
-    
-    return d
-
-
-# def get_data_ready_for_d3_v3(df, labels):
-#     data = {"name": "data", "children": []}
-#     source_nodes = list(set(df['source']))
-#     target_nodes = list(set(df['target']))
-#     nodes = sorted(list(set(source_nodes + target_nodes)))
-
-#     for node in nodes:
-#         children = []
-#         node_df = df[(df['source'] == node) | (df['target'] == node)]
-#         node_sources = list(set(node_df['source']))
-#         node_targets = list(set(node_df['target']))
-#         node_children = sorted(list(set(node_sources + node_targets)))
-
-#         for child in node_children:
-#             child_df = node_df[(node_df['source'] == child) | (node_df['target'] == child)]
-#             child_weight = sum(child_df['weight'])
-#             children.append({"name": child, "size": child_weight})
-
-#         data['children'].append({"name": node, "children": children})
-
-#     # Return
-#     return data
