@@ -26,6 +26,7 @@ import d3blocks.particles.Particles as Particles
 import d3blocks.heatmap.Heatmap as Heatmap
 import d3blocks.matrix.Matrix as Matrix
 import d3blocks.treemap.Treemap as Treemap
+import d3blocks.tree.Tree as Tree
 import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
@@ -40,6 +41,7 @@ import d3blocks.utils as utils
 # import heatmap.Heatmap as Heatmap
 # import matrix.Matrix as Matrix
 # import treemap.Treemap as Treemap
+# import tree.Tree as Tree
 # import utils
 # #####################################################
 
@@ -1935,6 +1937,45 @@ class D3Blocks():
         # Display the chart
         # return self.display(html)
 
+    def tree(self,
+               df,
+               hierarchy = [1, 2, 3, 4, 5],
+               margin: dict = {"top": 20, "right": 60, "bottom": 20, "left": 44.05},
+               font: dict = {'size': 10},
+               title: str = 'Tree - D3blocks',
+               filepath: str = 'tree.html',
+               figsize: Tuple[int, int] = [960, 700],
+               showfig: bool = True,
+               overwrite: bool = True,
+               notebook: bool = False,
+               reset_properties: bool = True,
+               ):
+        """Tree block.
+
+        A Tree chart is a visualization to hierarchically show the data.
+        For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
+        The javascript code is forked from d3js and inspired by Shiny and then Pythonized.
+
+        References
+        ----------
+        * https://d3js.org/d3-hierarchy/tree
+        * https://d3blocks.github.io/d3blocks/pages/html/Tree.html
+
+        """
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Tree', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, logger=logger)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
+        # Set edge properties
+        self.set_edge_properties(df)
+        # Create the plot
+        return self.show()
+
     def treemap(self,
                df,
                margin: dict = {"top": 40, "right": 10, "bottom": 10, "left": 10},
@@ -2659,7 +2700,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

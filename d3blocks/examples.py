@@ -9,6 +9,99 @@
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
+# %% Tree example
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(verbose='info', chart='tree', frame=False)
+
+# Import example
+# df = d3.import_example('animals')
+df = d3.import_example('energy')
+
+d3.set_node_properties(df)
+d3.node_properties
+d3.node_properties.get('Bio-conversion')['size'] = 30
+d3.node_properties.get('Bio-conversion')['color'] = '#000000'
+d3.node_properties.get('Bio-conversion')['tooltip'] = '<br>Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
+
+d3.node_properties.get('Losses')['color'] = '#000000'
+d3.node_properties.get('Losses')['size'] = 20
+
+# [{"name":"Claudette",
+#   "fill":"#0F0F0F",
+#   "SizeOfNode":8.6,
+#   "tooltip":"Claudette<br>Title: Director<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
+
+        
+d3.set_edge_properties(df, color='target', opacity='target')
+d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8])
+
+# df = d3.import_example('stormofswords')
+# df = d3.import_example('bigbang')
+# Create tree
+# html = d3.tree(df, filepath=r'c:\temp\tree.html', hierarchy=[1, 2, 3, 4, 5, 6, 7, 8])
+
+# %% Issue
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example(data='energy')
+
+d3.d3graph(df, filepath='d3graph.html', showfig=False)
+
+# Set edge properties
+d3.D3graph.set_edge_properties(minmax_distance=[50, 100])
+d3.D3graph.set_node_properties(color='cluster')
+
+# Plot
+d3.D3graph.show()
+
+# %%
+import pypickle
+import pandas as pd
+df = pypickle.load(r'D:/REPOS/aeroplus/aeroplus/data/maintenance.pkl')
+df.columns.values[0] = df.columns[0].replace('\xa0', ' ')
+df.rename(columns={'Date': 'datetime', 'Reported by': 'sample_id', 'Aircraft': 'state'}, inplace=True)
+
+df['state']
+df['number'] = df['state'].str.extract(r'^(\d+)')
+df['state'] = df['state'].str.replace(r'^\d+\s+', '', regex=True)
+df['datetime'] = pd.to_datetime(df['datetime'])
+
+df.drop(labels=['Note', '', 'number', 'Status'], axis=1, inplace=True)
+# print(df)
+
+
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(frame=False)
+# Import example
+# df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+
+# Show with size=5
+d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html')
+
+
+# %% d3graph
+import pandas as pd
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = pd.read_csv(r'C:\temp\rules_sample_38.csv')
+df.rename(columns={'antecedents': 'source', 'consequents': 'target', 'lift': 'weight'}, inplace=True)
+
+# Set edge properties
+d3.D3graph.set_edge_properties(minmax_distance=[50, 100])
+
+# Plot
+d3.d3graph(df, filepath='c:/temp/d3graph.html')
+
+
 # %%
 # Scatter
 from d3blocks import D3Blocks

@@ -82,6 +82,57 @@ def jitter_func(x, jitter=0.01):
     return x
 
 
+def vec2flare_v2(df, node_properties=None, logger=None):
+    # Create the dataframe
+    # data = {
+    #     'source': ['Klaas', 'Klaas', 'Bill', 'Bill', 'Bill', 'Ana', 'Ana'],
+    #     'target': ['Bill', 'Ana', 'Claudette', 'Danny', 'Erika', 'Bill', 'Larry'],
+    #     'weight': [1, 1, 1, 1, 1, 1, 1]
+    # }
+    # df = pd.DataFrame(data)
+    
+    # Function to recursively build the nested structure
+    def build_node(df, name, node_properties=None):
+        if node_properties.get(name, None) is None:
+            color="#D33F6A"
+            size=10
+            tooltip=name
+        else:
+            color=node_properties.get(name)['color']
+            size=node_properties.get(name)['size']
+            tooltip=node_properties.get(name)['tooltip']
+
+        node = {}
+        node['name'] = name
+        node['fill'] = color
+        node['SizeOfNode'] = size
+        node['tooltip'] = tooltip
+
+        children = []
+        sub_df = df[df['source'] == name]
+        for _, row in sub_df.iterrows():
+            child = build_node(df, row['target'], node_properties)
+            children.append(child)
+    
+        if children:
+            node['children'] = children
+    
+        return node
+    
+    # Get the unique source names
+    uinames = df['source'].unique()
+    
+    # Build the tree structure
+    tree = []
+    for uiname in uinames:
+        node = build_node(df, uiname, node_properties)
+        tree.append(node)
+    
+    # Convert the tree structure to JSON
+    json_data = json.dumps(tree[0], indent=4)
+    return json_data
+    
+
 # %% Convert to Flare format
 def vec2flare(df, logger=None):
     """Convert to Flare format.
