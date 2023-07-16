@@ -15,10 +15,13 @@
 #       Mogelijkheid tot 3d plot maken
 #       https://vasturiano.github.io/3d-force-graph/example/text-links/
 # 
-# 4.    Delaunay plot
+# 4.    Network graph in over time.
+#       https://github.com/dianaow/d3-network-time
+$
+# 5.    Delaunay plot
 #       https://observablehq.com/@observablehq/plot-delaunay
 # 
-# 5.    Scatterplot in 3D.
+# 6.    Scatterplot in 3D.
 #       Mogelijkheid tot 3d plot maken
 #       d3blocks\demo\scatter_3d\scatter_3d.html
 # 
@@ -55,7 +58,7 @@
 # [x]   color gradient op class labels.
 # [ ]   Zwart (of kleur optioneel) Axis lijnen toevoegen: https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
 # [ ]   Lichtgrijs Grid toevoegen (optioneel maken).
-# [ ]   Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2). https://stackoverflow.com/questions/38595719/javascript-d3-js-multiple-transitions-of-points-on-a-scatter-plot
+# [x]   Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2). https://stackoverflow.com/questions/38595719/javascript-d3-js-multiple-transitions-of-points-on-a-scatter-plot
 # [ ]   Selectiebox toevoegen zoals: http://pancancer-map.ewi.tudelft.nl/
 # 
 # 5.    Heatmap
@@ -68,7 +71,7 @@
 # 
 # 6.    Network
 #       https://bl.ocks.org/GerHobbelt/3104394
-#      http://bl.ocks.org/GerHobbelt/3071239
+#       http://bl.ocks.org/GerHobbelt/3071239
 # 
 #
 
