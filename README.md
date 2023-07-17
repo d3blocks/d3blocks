@@ -72,6 +72,7 @@ d3 = D3Blocks()
 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
+| [Tree](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)                | ``` d3.tree()  ```           | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
 |                                                                                    |                              |                                                                                                                                      |
 
 -------------------------------------------------------------------------
