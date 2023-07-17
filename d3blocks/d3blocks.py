@@ -189,7 +189,6 @@ class D3Blocks():
                          fontsize=130,
                          cmap='Turbo',
                          color_background='#ffffff')
-        >>> #
 
         References
         ----------
@@ -1790,20 +1789,20 @@ class D3Blocks():
         # return self.display(html)
 
     def elasticgraph(self,
-                  df,
-                  scaler='zscore',
-                  group='cluster',
-                  title='Elasticgraph - D3blocks',
-                  filepath='Elasticgraph.html',
-                  figsize=[None, None],
-                  collision=0.5,
-                  charge=250,
-                  size=4,
-                  hull_offset=15,
-                  single_click_expand=False,
-                  notebook=False,
-                  showfig=False,
-                  overwrite=True):
+                     df,
+                     scaler='zscore',
+                     group='cluster',
+                     title='Elasticgraph - D3blocks',
+                     filepath='Elasticgraph.html',
+                     figsize=[None, None],
+                     collision=0.5,
+                     charge=250,
+                     size=4,
+                     hull_offset=15,
+                     single_click_expand=False,
+                     notebook=False,
+                     showfig=False,
+                     overwrite=True):
         """D3 Elasticgraph block.
 
         Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
@@ -2104,18 +2103,18 @@ class D3Blocks():
         return self.show()
 
     def treemap(self,
-               df,
-               margin: dict = {"top": 40, "right": 10, "bottom": 10, "left": 10},
-               border: dict = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
-               font: dict = {'size': 10, 'type':'sans-serif', 'position': 'absolute'},
-               title: str = 'Treemap - D3blocks',
-               filepath: str = 'treemap.html',
-               figsize: Tuple[int, int] = [1000, 600],
-               showfig: bool = True,
-               overwrite: bool = True,
-               notebook: bool = False,
-               reset_properties: bool = True,
-               ):
+                df,
+                margin: dict = {"top": 40, "right": 10, "bottom": 10, "left": 10},
+                border: dict = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
+                font: dict = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
+                title: str = 'Treemap - D3blocks',
+                filepath: str = 'treemap.html',
+                figsize: Tuple[int, int] = [1000, 600],
+                showfig: bool = True,
+                overwrite: bool = True,
+                notebook: bool = False,
+                reset_properties: bool = True,
+                ):
         """Treemap block.
 
         A Treemap chart is a visualization to hierarchically show the data as a set of nested rectangles.
