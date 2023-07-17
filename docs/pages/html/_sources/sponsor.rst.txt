@@ -6,6 +6,7 @@
 	* `Donate <https://erdogant.github.io/donate/?currency=USD&amount=1000>`_ in Bitcoin.
 	* Follow me on medium! Go to my `medium profile <https://erdogant.medium.com/>`_ and press *follow*.
 	* **Star** this repo at the github page.
+	* You can also buy a digital educational product over `here <https://erdogant.gumroad.com/>`_.
 	* Other contributions can be in the form of feature requests, idea discussions, reporting bugs, opening pull requests.
 
 	Cheers Mate.

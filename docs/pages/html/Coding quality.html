@@ -12,6 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -34,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.2.12
+                1.2.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -73,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
@@ -130,29 +133,29 @@ Such conventions are helpfull to improve the quality, make the code cleaner and 
 <h2>library<a class="headerlink" href="#library" title="Permalink to this heading"></a></h2>
 <p>The file structure of the generated package looks like:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>path/to/d3blocks/
-├── .editorconfig
-├── .gitignore
-├── .pre-commit-config.yml
-├── .prospector.yml
-├── CHANGELOG.rst
-├── docs
-│   ├── conf.py
-│   ├── index.rst
-│   └── ...
-├── LICENSE
-├── MANIFEST.in
-├── NOTICE
-├── d3blocks
-│   ├── __init__.py
-│   ├── __version__.py
-│   └── d3blocks.py
-├── README.md
-├── requirements.txt
-├── setup.cfg
-├── setup.py
-└── tests
-    ├── __init__.py
-    └── test_d3blocks.py
+├──<span class="w"> </span>.editorconfig
+├──<span class="w"> </span>.gitignore
+├──<span class="w"> </span>.pre-commit-config.yml
+├──<span class="w"> </span>.prospector.yml
+├──<span class="w"> </span>CHANGELOG.rst
+├──<span class="w"> </span>docs
+│<span class="w">   </span>├──<span class="w"> </span>conf.py
+│<span class="w">   </span>├──<span class="w"> </span>index.rst
+│<span class="w">   </span>└──<span class="w"> </span>...
+├──<span class="w"> </span>LICENSE
+├──<span class="w"> </span>MANIFEST.in
+├──<span class="w"> </span>NOTICE
+├──<span class="w"> </span>d3blocks
+│<span class="w">   </span>├──<span class="w"> </span>__init__.py
+│<span class="w">   </span>├──<span class="w"> </span>__version__.py
+│<span class="w">   </span>└──<span class="w"> </span>d3blocks.py
+├──<span class="w"> </span>README.md
+├──<span class="w"> </span>requirements.txt
+├──<span class="w"> </span>setup.cfg
+├──<span class="w"> </span>setup.py
+└──<span class="w"> </span>tests
+<span class="w">    </span>├──<span class="w"> </span>__init__.py
+<span class="w">    </span>└──<span class="w"> </span>test_d3blocks.py
 </pre></div>
 </div>
 </section>

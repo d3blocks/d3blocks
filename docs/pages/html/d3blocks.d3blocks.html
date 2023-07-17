@@ -12,6 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -33,7 +35,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.2.12
+                1.2.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -72,6 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
@@ -107,6 +110,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.set_node_properties"><code class="docutils literal notranslate"><span class="pre">D3Blocks.set_node_properties()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.show"><code class="docutils literal notranslate"><span class="pre">D3Blocks.show()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.timeseries"><code class="docutils literal notranslate"><span class="pre">D3Blocks.timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.tree"><code class="docutils literal notranslate"><span class="pre">D3Blocks.tree()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.treemap"><code class="docutils literal notranslate"><span class="pre">D3Blocks.treemap()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.vec2adjmat"><code class="docutils literal notranslate"><span class="pre">D3Blocks.vec2adjmat()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.violin"><code class="docutils literal notranslate"><span class="pre">D3Blocks.violin()</span></code></a></li>
@@ -261,7 +265,7 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 8</em><em>)</em>) – The Fontsize.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'tab20'</em><em>)</em>) – <dl class="simple">
 <dt>colormap is only used in case color=None. All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
 </ul>
 </dd>
 </dl>
@@ -686,7 +690,7 @@ Adjacency matrix must be symetric.</p>
 <li><p><strong>cluster_params</strong> (<em>dict</em><em> (</em><em>defaults</em><em>)</em>) – Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
 </ul>
 </dd>
 </dl>
@@ -1165,7 +1169,7 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’</p></li>
 <li><p>’rainbow’, ‘bwr’, ‘binary’, ‘seismic’</p></li>
 <li><p>’Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’</p></li>
 <li><p>’twilight’, ‘hsv’, ‘inferno’</p></li>
@@ -1370,7 +1374,6 @@ A smaller spacing reults in more particles.</p></li>
 <span class="go">                 fontsize=130,</span>
 <span class="go">                 cmap=&#39;Turbo&#39;,</span>
 <span class="go">                 color_background=&#39;#ffffff&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -1525,7 +1528,7 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.scatter">
-<span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_radio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['(x,</span> <span class="pre">y)',</span> <span class="pre">'(x1,</span> <span class="pre">y1)',</span> <span class="pre">'(x2,</span> <span class="pre">y2)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'opaque'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_radio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['(x,</span> <span class="pre">y)',</span> <span class="pre">'(x1,</span> <span class="pre">y1)',</span> <span class="pre">'(x2,</span> <span class="pre">y2)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Permalink to this definition"></a></dt>
 <dd><p>Scatterplot block.</p>
 <p>The scatter plot is perhaps the most well-known chart to plot x, and y coordinates. Basic charts are very
 useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
@@ -1557,9 +1560,11 @@ class label.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
-<dt>Make a lineair gradient based on the density for the particular class label.</dt><dd><ul>
-<li><p>’#FFFFFF’</p></li>
+<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'opaque'</em><em>)</em>) – <dl class="simple">
+<dt>Hex color to make a lineair gradient using the density.</dt><dd><ul>
+<li><p>None: Do not use gradient.</p></li>
+<li><p>opaque: Towards the edges the points become more transparant. This will stress the dense areas and make scatter plot tidy.</p></li>
+<li><p>’#FFFFFF’: Towards the edges it smooths into this color</p></li>
 </ul>
 </dd>
 </dl>
@@ -1568,7 +1573,7 @@ class label.</p>
 <li><p><strong>tooltip</strong> (<em>list</em><em> of </em><em>labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
 </ul>
 </dd>
 </dl>
@@ -1789,7 +1794,7 @@ edge properties for the scatter chart are those described in the scatter functio
 All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</p>
 <blockquote>
 <div><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
 </ul>
 </div></blockquote>
 </p></li>
@@ -1894,7 +1899,7 @@ in a single chart.</p>
 <li><p><strong>fontsize</strong> (<em>int</em><em>, </em><em>(</em><em>default: 14</em><em>)</em>) – Fontsize of the fonts in the circle.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
 </ul>
 </dd>
 </dl>
@@ -1996,6 +2001,176 @@ in a single chart.</p>
 <p class="rubric">References</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html">https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html</a></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.tree">
+<span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'bottom':</span> <span class="pre">20,</span> <span class="pre">'left':</span> <span class="pre">44.05,</span> <span class="pre">'right':</span> <span class="pre">60,</span> <span class="pre">'top':</span> <span class="pre">20}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'size':</span> <span class="pre">10}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Tree</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tree.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[960,</span> <span class="pre">700]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.tree" title="Permalink to this definition"></a></dt>
+<dd><p>Tree block.</p>
+<p>A Tree chart is a visualization to hierarchically show the data.
+For demonstration purposes, the “energy” dataset can be used.
+The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Pythonized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’, ‘target’, ‘weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>hierarchy</strong> (<em>list</em>) – Expand or substract the hierarchical structure. No information is lossed. The eight branches are shown by default.
+* [1, 2, 3, 4, 5, 6, 7, 8]</p></li>
+<li><p><strong>margin</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>margin, in pixels.</dt><dd><ul>
+<li><p>{“top”: 40, “right”: 10, “bottom”: 10, “left”: 10}</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>font</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>font properties.</dt><dd><ul>
+<li><p>{‘size’: 10}</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Treemap’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
+<li><p>File path to save the output.</p></li>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[1000, 600]</p></li>
+<li><p>[None, None]: Use the screen resolution.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">tree</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="n">chart</span><span class="o">=</span><span class="s1">&#39;tree&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set specific properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#000000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;tooltip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Title: P Operations&lt;br&gt;&lt;img src=&quot;https://source.unsplash.com/collection/385548/150x100&quot;&gt;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#00FFFF&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;opacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties for Losses</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#FF0000&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">)[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">)[</span><span class="s1">&#39;tooltip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties for Agriculture</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#00FFFF&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#89CFF0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;opacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set edge properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;c:   emp     ree.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;tree&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d3js.org/d3-hierarchy/tree">https://d3js.org/d3-hierarchy/tree</a></p></li>
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Tree.html">https://d3blocks.github.io/d3blocks/pages/html/Tree.html</a></p></li>
 </ul>
 </dd></dl>
 
@@ -2218,7 +2393,7 @@ input parameters for the Violin plot that can help to create the most insightful
 <li><p><strong>fontsize_axis</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default: 12</em><em>)</em>) – Text fontsize for the x-axis and y-axis.</p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
-<li><p>’Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
 </ul>
 </dd>
 </dl>
@@ -2392,13 +2567,13 @@ input parameters for the Violin plot that can help to create the most insightful
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set the logger to warning</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">set_logger</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;warning&#39;</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Test with different messages</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Hello debug&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello info&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Hello warning&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Hello critical&quot;</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 </pre></div>
 </div>
 </dd></dl>

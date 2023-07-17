@@ -69,6 +69,7 @@ Contents
    Violin
    Particles
    Treemap
+   Tree
 
 .. toctree::
    :maxdepth: 1
