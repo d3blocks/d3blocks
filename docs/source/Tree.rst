@@ -1,9 +1,9 @@
-Treemap
+Tree
 #############
 
 -------------------------
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.treemap
+.. automodule:: d3blocks.d3blocks.D3Blocks.tree
     :members:
     :undoc-members:
 
@@ -32,24 +32,12 @@ The number can be 3 levels and the column weight is obligatory.
 	# [68 rows x 3 columns]
 
 
-Three levels and the column weight.
-
-.. code:: python
-
-	#    group1  group2 group3  weight
-	# 0  Animal  Mammal    Fox   35000
-	# 1  Animal  Mammal   Lion   25000
-	# 2  Animal    Fish    Cod   10000
-	# 3   Plant    Tree    Oak    1500
-	# 4  Animal    Fish    Ape    1750
-
-
 Charts
 ************
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\Treemap_energy.html" height="600px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\Tree_energy.html" height="600px" width="775px", frameBorder="0"></iframe>
 
 
 .. include:: add_bottom.add
