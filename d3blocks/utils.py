@@ -82,7 +82,7 @@ def jitter_func(x, jitter=0.01):
     return x
 
 
-def vec2flare_v2(df, node_properties=None, logger=None):
+def vec2flare_v2(df, node_properties=None, chart=None, logger=None):
     # Create the dataframe
     # data = {
     #     'source': ['Klaas', 'Klaas', 'Bill', 'Bill', 'Bill', 'Ana', 'Ana'],
@@ -97,16 +97,35 @@ def vec2flare_v2(df, node_properties=None, logger=None):
             color="#D33F6A"
             size=10
             tooltip=name
+            node_opacity = 0.95
+            edge_size = 1
+            edge_color = '#000000'
         else:
             color=node_properties.get(name)['color']
             size=node_properties.get(name)['size']
-            tooltip=node_properties.get(name)['tooltip']
+            edge_size=node_properties.get(name)['edge_size']
+            edge_color=node_properties.get(name)['edge_color']
+            node_opacity=node_properties.get(name)['opacity']
+            
+            # Correct for tooltip
+            if node_properties.get(name)['tooltip']==node_properties.get(name)['label']:
+                # Prevent showing the name twice
+                tooltip= node_properties.get(name)['tooltip']
+            elif node_properties.get(name)['tooltip']=='':
+                # In case empty, leave it empty
+                tooltip = node_properties.get(name)['tooltip']
+            else:
+                # Otherwise, append the name to the tooltip
+                tooltip=name + '<br>' + node_properties.get(name)['tooltip']
 
         node = {}
         node['name'] = name
-        node['fill'] = color
-        node['SizeOfNode'] = size
+        node['node_color'] = color
+        node['node_size'] = size
         node['tooltip'] = tooltip
+        node['edge_size'] = edge_size
+        node['edge_color'] = edge_color
+        node['node_opacity'] = node_opacity
 
         children = []
         sub_df = df[df['source'] == name]

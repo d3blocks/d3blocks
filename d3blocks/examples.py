@@ -9,37 +9,50 @@
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
-# %% Tree example
+# %% Tree with custom properties
+
+# Load library
 from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks(verbose='info', chart='tree', frame=False)
-
 # Import example
-# df = d3.import_example('animals')
 df = d3.import_example('energy')
-
+# Set node properties
 d3.set_node_properties(df)
-d3.node_properties
+# d3.node_properties
+# Set specific properties
 d3.node_properties.get('Bio-conversion')['size'] = 30
 d3.node_properties.get('Bio-conversion')['color'] = '#000000'
-d3.node_properties.get('Bio-conversion')['tooltip'] = '<br>Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
+d3.node_properties.get('Bio-conversion')['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
+d3.node_properties.get('Bio-conversion')['edge_color'] = '#00FFFF'
+d3.node_properties.get('Bio-conversion')['edge_size'] = 5
+d3.node_properties.get('Bio-conversion')['opacity'] = 0.4
+# Set properties for Losses
+d3.node_properties.get('Losses')['color'] = '#FF0000'
+d3.node_properties.get('Losses')['size'] = 15
+d3.node_properties.get('Losses')['tooltip'] = ''
+# Set properties for Agriculture
+d3.node_properties.get('Agriculture')['color'] = '#00FFFF'
+d3.node_properties.get('Agriculture')['size'] = 5
+d3.node_properties.get('Agriculture')['edge_color'] = '#89CFF0'
+d3.node_properties.get('Agriculture')['edge_size'] = 3
+d3.node_properties.get('Agriculture')['opacity'] = 0.7
 
-d3.node_properties.get('Losses')['color'] = '#000000'
-d3.node_properties.get('Losses')['size'] = 20
+# Set edge properties
+d3.set_edge_properties(df)
 
-# [{"name":"Claudette",
-#   "fill":"#0F0F0F",
-#   "SizeOfNode":8.6,
-#   "tooltip":"Claudette<br>Title: Director<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
+# Show chart
+d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
 
-        
-d3.set_edge_properties(df, color='target', opacity='target')
-d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8])
-
-# df = d3.import_example('stormofswords')
-# df = d3.import_example('bigbang')
+# %% Tree with defaults
+# Import library
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(verbose='info', chart='tree')
+# Import example
+df = d3.import_example('energy')
 # Create tree
-# html = d3.tree(df, filepath=r'c:\temp\tree.html', hierarchy=[1, 2, 3, 4, 5, 6, 7, 8])
+html = d3.tree(df, filepath=r'c:\temp\tree.html', hierarchy=[1, 2, 3, 4, 5, 6, 7, 8])
 
 # %% Issue
 from d3blocks import D3Blocks

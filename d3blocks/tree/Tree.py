@@ -88,7 +88,14 @@ def set_node_properties(df, **kwargs):
 
     dict_labels = {}
     for i, label in enumerate(uilabels):
-        dict_labels[label] = {'id': i, 'label': label, 'color': '#D33F6A', 'size': 10, 'tooltip': label}
+        dict_labels[label] = {'id': i,
+                              'label': label,
+                              'color': '#D33F6A',
+                              'size': 10,
+                              'tooltip': label,
+                              'edge_size': 1,
+                              'edge_color': '#000000',
+                              'opacity': 0.95}
 
     # Return
     return dict_labels
@@ -127,35 +134,10 @@ def show(df, **kwargs):
     df.reset_index(inplace=True, drop=True)
 
     # Create the data from the input of javascript
-    # X = vec2flare(df, logger=logger)
     X = vec2flare_v2(df, node_properties, logger=logger)
-
+    # Make it a string because the javascript is sensetive to quote differences.
     X = str(X)
-    X = X.replace("'",'"')
-                    
-    # X = 	{"name":"Ana","fill":"#D33F6A","SizeOfNode":24.05,"tooltip":"Ana<br>Title: President<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 		[
-    # 			{"name":"Bill","fill":"#D33F6A","SizeOfNode":11.11,"tooltip":"Bill<br>Title: VP Operations<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    			
-    # 				[{"name":"Claudette","fill":"#0F0F0F","SizeOfNode":8.6,"tooltip":"Claudette<br>Title: Director<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 					[{"name":"Fred","fill":"#0F0F0F","SizeOfNode":7.02,"tooltip":"Fred<br>Title: Manager<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 					[{"name":"Ida","fill":"#0F0F0F","SizeOfNode":4.97,"tooltip":"Ida<br>Title: Operator<br><img src='https://source.unsplash.com/collection/385548/150x100'>"},
-    # 						{"name":"Joaquin","fill":"#D33F6A","SizeOfNode":4.97,"tooltip":"Joaquin<br>Title: Operator<br><img src='https://source.unsplash.com/collection/385548/150x100'>"}]},
-    # 						{"name":"Grace","fill":"#D33F6A","SizeOfNode":4.97,"tooltip":"Grace<br>Title: Manager<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 							[{"name":"Kate","fill":"#D33F6A","SizeOfNode":4.97,"tooltip":"Kate<br>Title: Associate<br><img src='https://source.unsplash.com/collection/385548/150x100'>"}]}]},
-    # 				{"name":"Danny","fill":"#D33F6A","SizeOfNode":14.97,"tooltip":"Danny<br>Title: Director<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 					[{"name":"Henri","fill":"Jr Scientist","SizeOfNode":4.97,"tooltip":"Henri<br>Title: Jr Scientist<br><img src='https://source.unsplash.com/collection/385548/150x100'>"}]},
-    # 					{"name":"Erika","fill":"Scientist","SizeOfNode":4.97,"tooltip":"Erika<br>Title: Scientist<br><img src='https://source.unsplash.com/collection/385548/150x100'>"}]},
-
-    # 			{"name":"Larry","fill":"#0F0F0F","SizeOfNode":8.6,"tooltip":"Larry<br>Title: VP Finance<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 				[{"name":"Mindy","fill":"#D33F6A","SizeOfNode":4.97,"tooltip":"Mindy<br>Title: Analyst<br><img src='https://source.unsplash.com/collection/385548/150x100'>"},
-
-    # 				{"name":"Nicholas","fill":"#D33F6A","SizeOfNode":7.02,"tooltip":"Nicholas<br>Title: Director<br><img src='https://source.unsplash.com/collection/385548/150x100'>","children":
-    # 					[{"name":"Odette","fill":"#D33F6A","SizeOfNode":4.97,"tooltip":"Odette<br>Title: Accountant<br><img src='https://source.unsplash.com/collection/385548/150x100'>"},
-    # 					{"name":"Peter","fill":"#D33F6A","SizeOfNode":4.97,"tooltip":"Peter<br>Title: Accountant<br><img src='https://source.unsplash.com/collection/385548/150x100'>"}]}]}
-    # 		]
-    # 	}
-
+    X = X.replace("'", '"')
 
     # Write to HTML
     return write_html(X, config, logger)

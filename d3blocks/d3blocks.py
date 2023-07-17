@@ -1938,23 +1938,150 @@ class D3Blocks():
         # return self.display(html)
 
     def tree(self,
-               df,
-               hierarchy = [1, 2, 3, 4, 5],
-               margin: dict = {"top": 20, "right": 60, "bottom": 20, "left": 44.05},
-               font: dict = {'size': 10},
-               title: str = 'Tree - D3blocks',
-               filepath: str = 'tree.html',
-               figsize: Tuple[int, int] = [960, 700],
-               showfig: bool = True,
-               overwrite: bool = True,
-               notebook: bool = False,
-               reset_properties: bool = True,
-               ):
+             df,
+             hierarchy = [1, 2, 3, 4, 5, 6, 7, 8],
+             margin: dict = {"top": 20, "right": 60, "bottom": 20, "left": 44.05},
+             font: dict = {'size': 10},
+             title: str = 'Tree - D3blocks',
+             filepath: str = 'tree.html',
+             figsize: Tuple[int, int] = [960, 700],
+             showfig: bool = True,
+             overwrite: bool = True,
+             notebook: bool = False,
+             reset_properties: bool = True,
+             ):
         """Tree block.
 
         A Tree chart is a visualization to hierarchically show the data.
-        For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
-        The javascript code is forked from d3js and inspired by Shiny and then Pythonized.
+        For demonstration purposes, the "energy" dataset can be used.
+        The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Pythonized.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+                * 'source', 'target', 'weight'
+        hierarchy : list
+            Expand or substract the hierarchical structure. No information is lossed. The eight branches are shown by default.
+            * [1, 2, 3, 4, 5, 6, 7, 8]
+        margin : dict.
+            margin, in pixels.
+                * {"top": 40, "right": 10, "bottom": 10, "left": 10}
+        font : dict.
+            font properties.
+                * {'size': 10}
+        title : String, (default: None)
+            Title of the figure.
+                * 'Treemap'
+        filepath : String, (Default: user temp directory)
+                * File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
+        figsize : tuple
+            Size of the figure in the browser, [width, height].
+                * [1000, 600]
+                * [None, None]: Use the screen resolution.
+        showfig : bool, (default: True)
+                * True: Open browser-window.
+                * False: Do not open browser-window.
+        overwrite : bool, (default: True)
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
+        reset_properties : bool, (default: True)
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
+
+        Returns
+        -------
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+
+        d3.config: dictionary
+             Contains configuration properties.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Plot
+        >>> d3.tree(df)
+        >>> #
+
+        Examples
+        --------
+        >>> # Load library
+        >>> from d3blocks import D3Blocks
+        >>>
+        >>> # Initialize
+        >>> d3 = D3Blocks(verbose='info', chart='tree', frame=False)
+        >>>
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>>
+        >>> # Set node properties
+        >>> d3.set_node_properties(df)
+        >>>
+        >>> # Set specific properties
+        >>> d3.node_properties.get('Bio-conversion')['size'] = 30
+        >>> d3.node_properties.get('Bio-conversion')['color'] = '#000000'
+        >>> d3.node_properties.get('Bio-conversion')['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
+        >>> d3.node_properties.get('Bio-conversion')['edge_color'] = '#00FFFF'
+        >>> d3.node_properties.get('Bio-conversion')['edge_size'] = 5
+        >>> d3.node_properties.get('Bio-conversion')['opacity'] = 0.4
+        >>>
+        >>> # Set properties for Losses
+        >>> d3.node_properties.get('Losses')['color'] = '#FF0000'
+        >>> d3.node_properties.get('Losses')['size'] = 15
+        >>> d3.node_properties.get('Losses')['tooltip'] = ''
+        >>>
+        >>> # Set properties for Agriculture
+        >>> d3.node_properties.get('Agriculture')['color'] = '#00FFFF'
+        >>> d3.node_properties.get('Agriculture')['size'] = 5
+        >>> d3.node_properties.get('Agriculture')['edge_color'] = '#89CFF0'
+        >>> d3.node_properties.get('Agriculture')['edge_size'] = 3
+        >>> d3.node_properties.get('Agriculture')['opacity'] = 0.7
+        >>>
+        >>> # Set edge properties
+        >>> d3.set_edge_properties(df)
+        >>>
+        >>> # Show chart
+        >>> d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks(chart='tree', frame=True)
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Node properties
+        >>> d3.set_node_properties(df)
+        >>> print(d3.node_properties)
+        >>> #
+        >>> d3.set_edge_properties(df)
+        >>> print(d3.edge_properties)
+        >>> #
+        >>> # Show the chart
+        >>> d3.show()
 
         References
         ----------
