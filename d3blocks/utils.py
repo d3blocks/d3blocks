@@ -106,7 +106,7 @@ def vec2flare_v2(df, node_properties=None, chart=None, logger=None):
             edge_size=node_properties.get(name)['edge_size']
             edge_color=node_properties.get(name)['edge_color']
             node_opacity=node_properties.get(name)['opacity']
-            
+
             # Correct for tooltip
             if node_properties.get(name)['tooltip']==node_properties.get(name)['label']:
                 # Prevent showing the name twice

@@ -2669,8 +2669,8 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         df = pd.read_csv(csvfile)
         # df.rename(columns={'weight':'value'}, inplace=True)
     elif data=='southern_nebula':
-        img_before = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_before.jpg')
-        img_after = os.path.join(os.path.split(csvfile)[0], 'southern_nebula_after.jpg')
+        img_before = os.path.join(os.path.split(csvfile)[0], 'southern_nebula', 'southern_nebula_before.jpg')
+        img_after = os.path.join(os.path.split(csvfile)[0], 'southern_nebula', 'southern_nebula_after.jpg')
         return img_before, img_after
     elif data=='cancer':
         df = pd.read_csv(PATH_TO_DATA, sep=',')

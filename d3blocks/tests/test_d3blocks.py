@@ -8,9 +8,6 @@ try:
 except:
     raise ImportError('cv2 must be installed manually. Try to: <pip install opencv-python>')
 
-
-        
-
 class Testd3blocks(unittest.TestCase):
 
     def test_instantiate_d3blocks_no_args(self) -> None:
@@ -150,11 +147,11 @@ class Testd3blocks(unittest.TestCase):
 
         d3 = D3Blocks()
         df = d3.import_example('climate')
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=False)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=False)
         assert html is not None
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=True)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=True)
         assert html is None
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath='./test.html', notebook=False)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath='./test.html', notebook=False)
         assert html is None
         
 
@@ -268,7 +265,81 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.particles('D3blocks', filepath='test.html', notebook=False)
         assert html is None
-        
+
+    def test_treemap(self):
+        # Load d3blocks
+        from d3blocks import D3Blocks
+        # Initialize
+        d3 = D3Blocks()
+        # Load example data
+        df = d3.import_example('energy')
+        # df = d3.import_example('animals')
+        # Plot
+        d3.treemap(df)
+
+        # Load d3blocks
+        from d3blocks import D3Blocks
+        # Initialize
+        d3 = D3Blocks(chart='Treemap', frame=True)
+        # Import example
+        df = d3.import_example('energy')
+        # Node properties
+        d3.set_node_properties(df)
+        d3.set_edge_properties(df)
+        # Show the chart
+        d3.show()
+
+    def test_tree(self):
+        # Load d3blocks
+        from d3blocks import D3Blocks
+        # Initialize
+        d3 = D3Blocks()
+        # Load example data
+        df = d3.import_example('energy')
+        # Plot
+        d3.tree(df)
+
+        # Load library
+        from d3blocks import D3Blocks
+        # Initialize
+        d3 = D3Blocks(verbose='info', chart='tree', frame=False)
+        # Import example
+        df = d3.import_example('energy')
+        # Set node properties
+        d3.set_node_properties(df)
+        # Set specific properties
+        d3.node_properties.get('Bio-conversion')['size'] = 30
+        d3.node_properties.get('Bio-conversion')['color'] = '#000000'
+        d3.node_properties.get('Bio-conversion')['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
+        d3.node_properties.get('Bio-conversion')['edge_color'] = '#00FFFF'
+        d3.node_properties.get('Bio-conversion')['edge_size'] = 5
+        d3.node_properties.get('Bio-conversion')['opacity'] = 0.4
+        # Set properties for Losses
+        d3.node_properties.get('Losses')['color'] = '#FF0000'
+        d3.node_properties.get('Losses')['size'] = 15
+        d3.node_properties.get('Losses')['tooltip'] = ''
+        # Set properties for Agriculture
+        d3.node_properties.get('Agriculture')['color'] = '#00FFFF'
+        d3.node_properties.get('Agriculture')['size'] = 5
+        d3.node_properties.get('Agriculture')['edge_color'] = '#89CFF0'
+        d3.node_properties.get('Agriculture')['edge_size'] = 3
+        d3.node_properties.get('Agriculture')['opacity'] = 0.7
+        # Set edge properties
+        d3.set_edge_properties(df)
+        # Show chart
+        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
+
+        # Load d3blocks
+        from d3blocks import D3Blocks
+        # Initialize
+        d3 = D3Blocks(chart='tree', frame=True)
+        # Import example
+        df = d3.import_example('energy')
+        # Node properties
+        d3.set_node_properties(df)
+        d3.set_edge_properties(df)
+        # Show the chart
+        d3.show()
 
     def test_movingbubbles(self):
         # Set color scheme
@@ -286,7 +357,6 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False)
         assert html is None
-        
 
     def test_html(self):
         # Violin
@@ -299,8 +369,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath='./test.html', notebook=False, showfig=False)
         assert html is None
-        
-        
+
         # Timeseries
         from d3blocks import D3Blocks
         d3 = D3Blocks()
@@ -311,7 +380,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath='./test.html', notebook=False, showfig=False)
         assert html is None
-        
+
         # Scatter
         from d3blocks import D3Blocks
         d3 = D3Blocks()
@@ -322,7 +391,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.scatter(df['x'].values, df['y'].values, filepath='./test.html', notebook=False, showfig=False)
         assert html is None
-        
+
         # Sankey
         from d3blocks import D3Blocks
         d3 = D3Blocks()
@@ -333,8 +402,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.sankey(df, filepath='./test.html', notebook=False, showfig=False)
         assert html is None
-        
-        
+
         # Particles
         from d3blocks import D3Blocks
         d3 = D3Blocks()
@@ -345,8 +413,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.particles('D3blocks', filepath='test.html', notebook=False, showfig=False)
         assert html is None
-        
-        
+
         # Movingbubbles
         from d3blocks import D3Blocks
         d3 = D3Blocks()
@@ -357,9 +424,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False, showfig=False)
         assert html is None
-        
-        
-        # Imageslider
+
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         img_before, img_after = d3.import_example('southern_nebula_internet')
@@ -369,7 +434,7 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.imageslider(img_before, img_after, filepath='test.html', notebook=False, showfig=False)
         assert html is None
-        
+
         # Chord
         from d3blocks import D3Blocks
         d3 = D3Blocks()
@@ -380,4 +445,25 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.chord(df, filepath='test.html', notebook=False, showfig=False)
         assert html is None
-        
+
+        # treemap
+        from d3blocks import D3Blocks
+        d3 = D3Blocks()
+        df = d3.import_example('energy')
+        html = d3.treemap(df, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.treemap(df, filepath=None, notebook=True)
+        assert html is None
+        html = d3.treemap(df, filepath='test.html', notebook=False, showfig=False)
+        assert html is None
+
+        # Tree
+        from d3blocks import D3Blocks
+        d3 = D3Blocks()
+        df = d3.import_example('energy')
+        html = d3.tree(df, filepath=None, notebook=False)
+        assert html is not None
+        html = d3.tree(df, filepath=None, notebook=True)
+        assert html is None
+        html = d3.tree(df, filepath='test.html', notebook=False, showfig=False)
+        assert html is None
