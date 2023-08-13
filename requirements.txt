@@ -8,3 +8,4 @@ colourmap>="1.1.10"
 ismember>=1.0.1
 scikit-learn
 elasticgraph
+datazets
