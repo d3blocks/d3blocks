@@ -185,11 +185,15 @@ def set_colors(df, **kwargs):
         node_properties['classlabel'] = results['labx'].astype(int)
         # # Create node colors
         node_properties['color'] = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
-    elif isinstance(config['color'], str) and config['color']=='label':
-        logger.info('Colors are based on the labels.')
-        uiy = np.unique(node_properties['label'])
-        node_properties['classlabel'] = ismember(node_properties['label'].values, uiy)[1]
-        node_properties['color'] = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
+    elif isinstance(config['color'], (list, np.ndarray)):
+        if np.all(list(map(colourmap.is_hex_color, config['color']))):
+            logger.info('Colors are based on the input hex colors.')
+            node_properties['color'] = config['color']
+            node_properties['classlabel'] = ismember(config['color'], np.unique(config['color']))[1]
+        else:
+            logger.info('Colors are based on the labels.')
+            node_properties['classlabel'] = ismember(config['color'], np.unique(config['color']))[1]
+            node_properties['color'] = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
 
     return node_properties
 

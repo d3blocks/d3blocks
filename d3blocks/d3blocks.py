@@ -1392,8 +1392,8 @@ class D3Blocks():
                 cluster_params = {'cluster': 'agglomerative',
                                   'evaluate': 'silhouette',
                                   'metric': 'euclidean',
-                                  'linkage': 'ward',
-                                  'min_clust': 2,
+                                  'linkage': 'complete',
+                                  'min_clust': 3,
                                   'max_clust': 25,
                                   'normalize': False},
                 figsize=[720, 720],
@@ -1472,10 +1472,29 @@ class D3Blocks():
         >>> #
         >>> # Load example data
         >>> df = d3.import_example('stormofswords')  # 'energy'
-        >>> df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         >>> #
         >>> # Plot
         >>> d3.heatmap(df)
+        >>> #
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('stormofswords')
+        >>> #
+        >>> # Change cluster parameters
+        >>> d3.heatmap(df, cluster_params={'evaluate':'dbindex',
+        >>>                                'metric':'hamming',
+        >>>                                'linkage':'complete',
+        >>>                                'normalize': False,
+        >>>                                'min_clust': 3,
+        >>>                                'max_clust': 15})
         >>> #
 
         Examples
@@ -1485,11 +1504,14 @@ class D3Blocks():
         >>> #
         >>> # Load example data
         >>> df = d3.import_example('bigbang')
-        >>> df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         >>> #
-        >>> # Plot
-        >>> d3.heatmap(df, classlabel=[1,1,1,2,2,2,3])
+        >>> # Plot and color on label
+        >>> d3.heatmap(df, color=[1,1,1,2,2,2,3])
+        >>> d3.node_properties
         >>> #
+        >>> # Plot and specify the hex color
+        >>> d3.heatmap(df, color=['#FFF000', '#FFF000', '#FFF000', '#000FFF' , '#000FFF', '#000FFF', '#000FFF'])
+        >>> d3.node_properties
 
         References
         ----------
