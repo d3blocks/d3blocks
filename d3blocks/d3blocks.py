@@ -1389,7 +1389,6 @@ class D3Blocks():
                 fontsize=10,
                 fontsize_mouseover=18,
                 description=None,
-                vmax='auto',
                 cluster_params = {'cluster': 'agglomerative',
                                   'evaluate': 'silhouette',
                                   'metric': 'euclidean',

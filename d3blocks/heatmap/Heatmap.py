@@ -29,8 +29,6 @@ def set_config(config={}, **kwargs):
     config['overwrite'] = kwargs.get('overwrite', True)
     config['color'] = kwargs.get('color', 'cluster')
     config['description'] = kwargs.get('description', '')
-    # config['vmax'] = kwargs.get('vmax', 'auto')
-    # config['vmin'] = kwargs.get('vmin', None)
     config['stroke'] = kwargs.get('stroke', 'red')
     config['notebook'] = kwargs.get('notebook', False)
     config['reset_properties'] = kwargs.get('reset_properties', True)
@@ -59,22 +57,9 @@ def show(df, **kwargs):
     config = update_config(kwargs, logger)
     config = config.copy()
 
-    # Compute very roughly the vmax based on mean with the standard deviation
-    # if (config['vmax']=='auto') and (df.get('weight', None) is not None):
-    #     config['vmax'] = np.mean(df['weight']) + np.std(df['weight'])
-
     # Rescale data
     if df.get('weight', None) is not None:
-        # df['weight'] = scale(df['weight'], vmin=config['vmin'], vmax=config['vmax'], make_round=False, logger=logger)
         df['weight'] = normalize(df['weight'].values, scaler=config['scaler'])
-        # logger.info('Color range [vmax] is set to [%g]' %(config['vmax']))
-
-    # if (config['vmax']=='auto') and (df.get('weight', None) is not None):
-    #     config['vmax'] = np.mean(df['weight']) + np.std(df['weight'])
-    # elif (config['vmax'] is None) and (df.get('weight', None) is not None):
-    #     config['vmax'] = np.mean(df['weight'].values)
-    # elif (config['vmax'] is None):
-    #     config['vmax']=1
 
     # Prepare the data
     json_data = get_data_ready_for_d3(df, node_properties)
@@ -205,52 +190,8 @@ def set_colors(df, **kwargs):
         uiy = np.unique(node_properties['label'])
         node_properties['classlabel'] = ismember(node_properties['label'].values, uiy)[1]
         node_properties['color'] = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
-    # if isinstance(config['color'], (list, np.ndarray)):
-    #     # Check whether hex colors are valid
-    #     logger.info('Colors are custom specified.')
-    #     if np.all(list(map(colourmap.is_hex_color, config['color']))):
-    #         node_properties['color'] = config['color']
-    #     else:
-    #         logger.info('Converting to colors with cmap=%s' %(config['cmap']))
-    #         node_properties['color'] = colourmap.fromlist(config['color'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
-    #         node_properties['classlabel'] = config['color']
 
     return node_properties
-
-# %% Scaling
-# def _scale(X, vmax=100, vmin=None, make_round=True, logger=None):
-#     """Scale data.
-
-#     Scaling in range by X*(100/max(X))
-
-#     Parameters
-#     ----------
-#     X : array-like
-#         Input image data.
-#     verbose : int (default : 3)
-#         Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.
-
-#     Returns
-#     -------
-#     df : array-like
-#         Scaled image.
-
-#     """
-#     if X is not None:
-#         logger.info('Scaling image between [min-100]')
-#         try:
-#             # Normalizing between 0-100
-#             # X = X - X.min()
-#             X = X / X.max().max()
-#             X = X * vmax
-#             if make_round:
-#                 X = np.round(X)
-#             if vmin is not None:
-#                 X = X + vmin
-#         except:
-#             logger.debug('Warning: Scaling not possible.')
-
-#     return X
 
 
 def write_html(json_data, config, logger=None):
