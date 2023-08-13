@@ -1380,6 +1380,7 @@ class D3Blocks():
 
     def heatmap(self,
                 df,
+                scaler='zscore',
                 color='cluster',
                 cmap='Set2',
                 filepath='heatmap.html',
@@ -1388,14 +1389,14 @@ class D3Blocks():
                 fontsize=10,
                 fontsize_mouseover=18,
                 description=None,
-                vmax=None,
+                vmax='auto',
                 cluster_params = {'cluster': 'agglomerative',
                                   'evaluate': 'silhouette',
                                   'metric': 'euclidean',
                                   'linkage': 'ward',
                                   'min_clust': 2,
                                   'max_clust': 25,
-                                  'normalize': True},
+                                  'normalize': False},
                 figsize=[720, 720],
                 showfig=True,
                 overwrite=True,
@@ -1413,6 +1414,11 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data. The index and column names are used for the row/column naming.
+        scaler : str, (default: 'zscore')
+            Scale the edge-width using the following scaler:
+            'zscore' : Scale values to Z-scores.
+            'minmax' : The sklearn scaler will shrink the distribution between minmax.
+            None : No scaler is used.
         color : str or list
             Class label to color the clustering.
                 * 'cluster': colors are based on clustering
