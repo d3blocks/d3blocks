@@ -613,6 +613,9 @@ def remove_quotes(df):
                 df.columns = np.array(list(map(lambda x: x.replace("'", ""), df.columns)))
             if not pd.api.types.is_numeric_dtype(df.index):
                 df.index = np.array(list(map(lambda x: x.replace("'", ""), df.index)))
+            if np.all(np.isin(['source', 'target'], df.columns.values)):
+                df['source'] = list(map(lambda x: x.replace("'", ""), df['source']))
+                df['target'] = list(map(lambda x: x.replace("'", ""), df['target']))
         except:
             pass
         return df
