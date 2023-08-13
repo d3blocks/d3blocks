@@ -110,6 +110,7 @@ def normalize(X, minscale: Union[int, float] = 0.5, maxscale: Union[int, float] 
         except:
             raise Exception('sklearn needs to be pip installed first. Try: pip install scikit-learn')
         # scaling
+        if len(X.shape)<=1: X = X.reshape(-1, 1)
         X = MinMaxScaler(feature_range=(minscale, maxscale)).fit_transform(X).flatten()
     else:
         X = X.ravel()
