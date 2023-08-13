@@ -2784,6 +2784,11 @@ def unzip(path_to_zip, ext=''):
 
 
 # %%
+def get_logger():
+    return logger.getEffectiveLevel()
+
+
+# %%
 def set_logger(verbose: [str, int] = 'info'):
     """Set the logger for verbosity messages.
 
@@ -2833,7 +2838,7 @@ def set_logger(verbose: [str, int] = 'info'):
 # %%
 def disable_tqdm():
     """Set the logger for verbosity messages."""
-    return (True if (logger.getEffectiveLevel()>=30) else False)
+    return (True if (get_logger()>=30) else False)
 
 
 # %% Do checks
