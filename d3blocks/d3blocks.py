@@ -1433,10 +1433,6 @@ class D3Blocks():
             The fontsize of the columns and rows with mouse-over
         description : String, (default: 'Heatmap description')
             Description text of the heatmap.
-        vmax : Bool, (default: 100).
-            Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
-                * 1 : cells above value >1 are capped.
-            None : cells are colored based on the maximum value in the input data.
         cluster_params : dict (defaults)
             Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.
         cmap : String, (default: 'Set1')
