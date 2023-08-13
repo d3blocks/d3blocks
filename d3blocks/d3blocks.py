@@ -1505,7 +1505,6 @@ class D3Blocks():
         df = utils.remove_quotes(df)
         # Convert to source-target
         if not np.all(np.isin(['source', 'target'], df.columns.values)):
-            # adjmat = df.copy()
             df = self.adjmat2vec(df)
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
@@ -1517,12 +1516,8 @@ class D3Blocks():
             self.set_node_properties(df, cmap=self.config['cmap'])
         # Color on cluster labels
         self.chart.set_colors(df, node_properties=self.node_properties, config=self.config, logger=logger)
-
         # Set edge properties
         self.edge_properties = self.chart.set_edge_properties(df, config=self.config, logger=logger)
-        # html = self.chart.set_properties(df, self.config, self.node_properties, logger)
-        # Display the chart
-        # return self.display(html)
         # Create the plot
         return self.show()
 
