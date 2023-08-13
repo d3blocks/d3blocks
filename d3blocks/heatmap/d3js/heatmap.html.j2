@@ -251,7 +251,7 @@ n){return arguments.length?(t=+n,e):t},e.translate=function(t){return arguments.
 
 <script>
 
-var margin = {top: 80, right: 0, bottom: 10, left: 80},
+var margin = {top: 120, right: 0, bottom: 10, left: 150},
     width = $WIDTH$,
     height = $HEIGHT$;
 
@@ -371,19 +371,44 @@ var data =
         .attr("width", x.rangeBand())
         .attr("height", x.rangeBand())
         .style("fill-opacity", function(d) { return z(d.z); })
-        .style("fill", function(d) { return nodes[d.x].cluster == nodes[d.y].cluster ? c(nodes[d.x].cluster) : null; })
+		.style("fill", function(d) {
+			var sourceCluster = data.nodes[d.x].cluster;
+			var targetCluster = data.nodes[d.y].cluster;
+			return sourceCluster == targetCluster ? data.nodes[d.x].color : null;
+			})
+//        .style("fill", function(d) { return nodes[d.x].cluster == nodes[d.y].cluster ? c(nodes[d.x].cluster) : null; })
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
   }
 
-  function mouseover(p) {
-    d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
-    d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
-  }
+//  function mouseover(p) {
+//    d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
+//    d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
+//  }
 
-  function mouseout() {
-    d3.selectAll("text").classed("active", false);
-  }
+    function mouseover(p) {
+        d3.selectAll(".row text")
+            .classed("active", function(d, i) { return i == p.y; })
+            .style("font-size", function(d, i) { return i == p.y ? "$FONTSIZE_MOUSEOVER$px" : "$FONTSIZE$px"; }) // Adjust the font sizes as needed
+    	    .style("opacity", function(d, i) { return i === p.y ? 1 : 0.3; }) // Set opacity to 0 for non-selected elements
+        	;
+        d3.selectAll(".column text")
+            .classed("active", function(d, i) { return i == p.x; })
+            .style("font-size", function(d, i) { return i == p.x ? "$FONTSIZE_MOUSEOVER$px" : "$FONTSIZE$px"; }) // Adjust the font sizes as needed
+    	    .style("opacity", function(d, i) { return i === p.x ? 1 : 0.3; }) // Set opacity to 0 for non-selected elements
+            ;
+        }
+
+
+function mouseout() {
+  d3.selectAll(".row text, .column text")
+    .classed("active", false) // Remove the active class
+    .style("font-size", "$FONTSIZE$px") // Reset font size to default
+//    .style("fill", "black") // Reset fill color to black
+    .style("background-color", "transparent") // Reset background color to transparent
+    .style("opacity", 1); // Reset opacity to 1
+}
+
 
   d3.select("#order").on("change", function() {
     clearTimeout(timeout);

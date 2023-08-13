@@ -1379,11 +1379,13 @@ class D3Blocks():
 
     def heatmap(self,
                 df,
-                classlabel='cluster',
+                color='cluster',
                 cmap='Set2',
                 filepath='heatmap.html',
                 title='Heatmap - D3blocks',
                 stroke='red',
+                fontsize=10,
+                fontsize_mouseover=18,
                 description=None,
                 vmax=None,
                 cluster_params = {'cluster': 'agglomerative',
@@ -1391,7 +1393,8 @@ class D3Blocks():
                                   'metric': 'euclidean',
                                   'linkage': 'ward',
                                   'min_clust': 2,
-                                  'max_clust': 25},
+                                  'max_clust': 25,
+                                  'normalize': True},
                 figsize=[720, 720],
                 showfig=True,
                 overwrite=True,
@@ -1409,15 +1412,18 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data. The index and column names are used for the row/column naming.
-        classlabel : str or list
+        color : str or list
             Class label to color the clustering.
                 * 'cluster': colors are based on clustering
                 * 'label': colors are based on the presence of unique labels
-                * [1,2,1,..]: colors are based on the input classlabels
         stroke : String, (default: 'red').
             Color of the recangle when hovering over a cell.
                 * 'red'
                 * 'black'
+        fontsize : int, (default: 10)
+            The fontsize of the columns and rows
+        fontsize_mouseover : int, (default: 10)
+            The fontsize of the columns and rows with mouse-over
         description : String, (default: 'Heatmap description')
             Description text of the heatmap.
         vmax : Bool, (default: 100).
@@ -1495,22 +1501,29 @@ class D3Blocks():
             logger.warning('Input data should contain unique index names otherwise d3js randomly removes the non-unique ones.')
 
         # Cleaning
-        adjmat = utils.remove_quotes(df)
-        df = self.adjmat2vec(adjmat)
+        df = utils.remove_quotes(df)
+        # Convert to source-target
+        if not np.all(np.isin(['source', 'target'], df.columns.values)):
+            # adjmat = df.copy()
+            df = self.adjmat2vec(df)
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
         self.chart = set_chart_func('Heatmap', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, classlabel=classlabel, description=description, vmax=vmax, stroke=stroke, cmap=cmap, cluster_params=cluster_params, logger=logger)
+        self.config = self.chart.set_config(fontsize=fontsize, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, vmax=vmax, stroke=stroke, cmap=cmap, cluster_params=cluster_params, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])
         # Color on cluster labels
-        self.node_properties = self.chart.color_on_clusterlabel(adjmat, df, self.node_properties, self.config, logger)
+        self.chart.set_colors(df, node_properties=self.node_properties, config=self.config, logger=logger)
+
         # Set edge properties
-        html = self.chart.set_properties(df, self.config, self.node_properties, logger)
+        self.edge_properties = self.chart.set_edge_properties(df, config=self.config, logger=logger)
+        # html = self.chart.set_properties(df, self.config, self.node_properties, logger)
         # Display the chart
-        return self.display(html)
+        # return self.display(html)
+        # Create the plot
+        return self.show()
 
     def matrix(self,
                 df,
@@ -1681,6 +1694,11 @@ class D3Blocks():
             Size of the nodes.
                 * 10: all nodes sizes are set to 10
                 * [10, 5, 3, 1, ...]: Specify node sizes
+        scaler : str, (default: 'zscore')
+            Scale the edge-width using the following scaler:
+            'zscore' : Scale values to Z-scores.
+            'minmax' : The sklearn scaler will shrink the distribution between minmax.
+            None : No scaler is used.
         collision : float, (default: 0.5)
             Response of the network. Higher means that more collisions are prevented.
         charge : int, (default: 400)
