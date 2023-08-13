@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.2.13
+                1.3.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -130,24 +130,32 @@
 The heatmap allows interactive clustering where the cluster coloring can be customized.
 Clusters are colored and within each cluster the color is incremental based on the value.
 Adjacency matrix must be symetric.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">param df<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Input data. The index and column names are used for the row/column naming.</p>
 </dd>
 <dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param classlabel<span class="colon">:</span></dt>
+<dt class="field-odd">param scaler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Scale the edge-width using the following scaler:
+‘zscore’ : Scale values to Z-scores.
+‘minmax’ : The sklearn scaler will shrink the distribution between minmax.
+None : No scaler is used.</p>
+</dd>
+<dt class="field-even">type scaler<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, (default: ‘zscore’)</p>
+</dd>
+<dt class="field-odd">param color<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Class label to color the clustering.</dt><dd><ul class="simple">
 <li><p>‘cluster’: colors are based on clustering</p></li>
 <li><p>‘label’: colors are based on the presence of unique labels</p></li>
-<li><p>[1,2,1,..]: colors are based on the input classlabels</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type classlabel<span class="colon">:</span></dt>
+<dt class="field-even">type color<span class="colon">:</span></dt>
 <dd class="field-even"><p>str or list</p>
 </dd>
 <dt class="field-odd">param stroke<span class="colon">:</span></dt>
@@ -162,23 +170,23 @@ Adjacency matrix must be symetric.</p>
 <dt class="field-even">type stroke<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘red’).</p>
 </dd>
+<dt class="field-odd">param fontsize<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The fontsize of the columns and rows</p>
+</dd>
+<dt class="field-even">type fontsize<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, (default: 10)</p>
+</dd>
+<dt class="field-odd">param fontsize_mouseover<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The fontsize of the columns and rows with mouse-over</p>
+</dd>
+<dt class="field-even">type fontsize_mouseover<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, (default: 10)</p>
+</dd>
 <dt class="field-odd">param description<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Description text of the heatmap.</p>
 </dd>
 <dt class="field-even">type description<span class="colon">:</span></dt>
 <dd class="field-even"><p>String, (default: ‘Heatmap description’)</p>
-</dd>
-<dt class="field-odd">param vmax<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Range of colors starting with maximum value. Increasing this value will color the cells more discrete.</dt><dd><ul class="simple">
-<li><p>1 : cells above value &gt;1 are capped.</p></li>
-</ul>
-</dd>
-</dl>
-<p>None : cells are colored based on the maximum value in the input data.</p>
-</dd>
-<dt class="field-even">type vmax<span class="colon">:</span></dt>
-<dd class="field-even"><p>Bool, (default: 100).</p>
 </dd>
 <dt class="field-odd">param cluster_params<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Parameters for clustering the data and using the cluster labels to color the heatmap. See references for more information.</p>
@@ -279,10 +287,29 @@ Adjacency matrix must be symetric.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>  <span class="c1"># &#39;energy&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change cluster parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cluster_params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;evaluate&#39;</span><span class="p">:</span><span class="s1">&#39;dbindex&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                               <span class="s1">&#39;metric&#39;</span><span class="p">:</span><span class="s1">&#39;hamming&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                               <span class="s1">&#39;linkage&#39;</span><span class="p">:</span><span class="s1">&#39;complete&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                               <span class="s1">&#39;normalize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                               <span class="s1">&#39;min_clust&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                               <span class="s1">&#39;max_clust&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
@@ -292,11 +319,14 @@ Adjacency matrix must be symetric.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;bigbang&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">vec2adjmat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">classlabel</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot and color on label</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot and specify the hex color</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;#FFF000&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFF000&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFF000&#39;</span><span class="p">,</span> <span class="s1">&#39;#000FFF&#39;</span> <span class="p">,</span> <span class="s1">&#39;#000FFF&#39;</span><span class="p">,</span> <span class="s1">&#39;#000FFF&#39;</span><span class="p">,</span> <span class="s1">&#39;#000FFF&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
