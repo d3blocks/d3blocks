@@ -2500,10 +2500,10 @@ class D3Blocks():
         """
         return d3network.adjmat2vec(df, min_weight=min_weight)
 
-    def import_example(self, data, n=10000, c=300, date_start="17-12-1903 00:00:00", date_stop="17-12-1903 23:59:59"):
+    def import_example(self, data, n=10000, c=300, date_start="17-12-1903 00:00:00", date_stop="17-12-1903 23:59:59", overwrite=False):
         """Import example dataset from github source.
 
-        Import one of the few datasets from github source or specify your own download url link.
+        Import one of the few datasets from github sourcek.
 
         Parameters
         ----------
@@ -2512,18 +2512,19 @@ class D3Blocks():
                 * "movingbubbles"
                 * "random_time"
                 * "timeseries"
+                * "bigbang"
+                * "southern_nebula_internet"
+                * "climate"
+                * "mnist"
+                * "animals"
+            Datazets:
                 * "energy"
                 * "stormofswords"
-                * "bigbang"
                 * "southern_nebula"
-                * "southern_nebula_internet"
                 * "cancer"
                 * "breast_cancer"
                 * "iris"
                 * "occupancy"
-                * "climate"
-                * "mnist"
-                * "animals"
         n : int, (default: 1000).
             Number of events (samples).
         c : int, (default: 100).
@@ -2541,35 +2542,38 @@ class D3Blocks():
             Dataset containing mixed features.
 
         """
-        return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format='%d-%m-%Y %H:%M:%S', logger=logger)
+        if np.isin(data, ['animals', 'mnist', 'movingbubbles', 'random_time', 'timeseries', 'bigbang', 'southern_nebula_internet', 'climate']):
+            return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format='%d-%m-%Y %H:%M:%S', logger=logger)
+        else:
+            return dz.get(data=data, verbose=get_logger(), overwrite=overwrite)
 
 
 # %% Import example dataset from github.
 def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_format='%d-%m-%Y %H:%M:%S', logger=None):
     """Import example dataset from github source.
 
-    Import one of the few datasets from github source or specify your own download url link.
+    Import one of the few datasets from github source.
 
     Parameters
     ----------
     data : str
-        Name of datasets
-            * movingbubbles
-            * random_time
-            * timeseries
-            * energy
-            * stormofswords
-            * bigbang
-            * southern_nebul
-            * southern_nebula_internet
-            * unsplash
-            * cancer
-            * breast_cancer
-            * iris
-            * occupancy
-            * climate
+        Example datasets:
+            * "movingbubbles"
+            * "random_time"
+            * "timeseries"
+            * "bigbang"
+            * "southern_nebula_internet"
+            * "climate"
             * "mnist"
             * "animals"
+        Datazets:
+            * "energy"
+            * "stormofswords"
+            * "southern_nebula"
+            * "cancer"
+            * "breast_cancer"
+            * "iris"
+            * "occupancy"
     n : int, (default: 1000).
         Number of events (samples).
     c : int, (default: 100).
@@ -2589,6 +2593,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
     """
     ext = '.csv'
     sep=','
+    url=None
 
     if data=='movingbubbles':
         url='https://erdogant.github.io/datasets/movingbubbles.zip'
@@ -2598,26 +2603,26 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
         df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)), dt_format=dt_format)
         return df
-    elif data=='energy':
+    # elif data=='energy':
         # Sankey demo
-        url='https://erdogant.github.io/datasets/energy_source_target_value.zip'
-    elif data=='stormofswords':
+        # url='https://erdogant.github.io/datasets/energy_source_target_value.zip'
+    # elif data=='stormofswords':
         # Sankey demo
-        url='https://erdogant.github.io/datasets/stormofswords.zip'
+        # url='https://erdogant.github.io/datasets/stormofswords.zip'
     elif data=='bigbang':
         # Initialize
         d3model = d3network.d3graph()
         df = d3model.import_example('bigbang')[0]
         return d3network.adjmat2vec(df)
-    elif data=='southern_nebula':
-        # Image slider demo
-        url='https://erdogant.github.io/datasets/southern_nebula.zip'
-        ext='.jpg'
-    elif data=='southern_nebula':
-        # Image slider demo
-        before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
-        after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
-        return before, after
+    # elif data=='southern_nebula':
+    #     # Image slider demo
+    #     url='https://erdogant.github.io/datasets/southern_nebula.zip'
+    #     ext='.jpg'
+    # elif data=='southern_nebula':
+    #     # Image slider demo
+    #     before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
+    #     after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
+    #     return before, after
     elif data=='southern_nebula_internet':
         # Image slider demo
         before = 'https://erdogant.github.io/datasets/images/southern_nebula_before.jpg'
@@ -2628,17 +2633,17 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
         after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
         return before, after
-    elif data=='cancer':
-        url='https://erdogant.github.io/datasets/cancer_dataset.zip'
-    elif data=='iris':
-        url='https://erdogant.github.io/datasets/iris_dataset.zip'
-        sep=';'
-    elif data=='breast_cancer':
-        url='https://erdogant.github.io/datasets/breast_cancer_dataset.zip'
-        sep=';'
-    elif data=='occupancy':
-        url='https://erdogant.github.io/datasets/UCI_Occupancy_Detection.zip'
-        sep=','
+    # elif data=='cancer':
+        # url='https://erdogant.github.io/datasets/cancer_dataset.zip'
+    # elif data=='iris':
+        # url='https://erdogant.github.io/datasets/iris_dataset.zip'
+        # sep=';'
+    # elif data=='breast_cancer':
+        # url='https://erdogant.github.io/datasets/breast_cancer_dataset.zip'
+        # sep=';'
+    # elif data=='occupancy':
+        # url='https://erdogant.github.io/datasets/UCI_Occupancy_Detection.zip'
+        # sep=','
     elif data=='climate':
         url='https://erdogant.github.io/datasets/kaggle_daily_delhi_climate_test.zip'
     elif data=='mnist':

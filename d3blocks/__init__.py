@@ -1,4 +1,5 @@
 from d3blocks.d3blocks import D3Blocks
+from datazets import get as import_example
 
 from d3blocks.utils import (
     normalize,
