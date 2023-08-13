@@ -18,6 +18,77 @@ from pathlib import Path
 import time
 import json
 from typing import List, Union, Tuple
+import d3graph as d3network
+
+
+def adjmat2vec(df, min_weight=1):
+    """Convert adjacency matrix into vector with source and target.
+
+    Parameters
+    ----------
+    adjmat : pd.DataFrame()
+        Adjacency matrix.
+
+    min_weight : float
+        edges are returned with a minimum weight.
+
+    Returns
+    -------
+    pd.DataFrame()
+        nodes that are connected based on source and target
+
+    Examples
+    --------
+    >>> # Initialize
+    >>> d3 = D3Blocks()
+    >>> #
+    >>> # Load example
+    >>> df = d3.import_example('energy')
+    >>> Convert into adjmat
+    >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
+    >>> #
+    >>> # Convert back to vector
+    >>> vector = d3.adjmat2vec(adjmat)
+
+    """
+    return d3network.adjmat2vec(df, min_weight=min_weight)
+
+
+def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
+    """Convert source and target into adjacency matrix.
+
+    Parameters
+    ----------
+    source : list
+        The source node.
+    target : list
+        The target node.
+    weight : list of int
+        The Weights between the source-target values
+    symmetric : bool, optional
+        Make the adjacency matrix symmetric with the same number of rows as columns. The default is True.
+    aggfunc : str, optional
+        Aggregate function in case multiple values exists for the same relationship.
+            * 'sum' (default)
+
+    Returns
+    -------
+    pd.DataFrame
+        adjacency matrix.
+
+    Examples
+    --------
+    >>> # Initialize
+    >>> d3 = D3Blocks()
+    >>> #
+    >>> # Load example
+    >>> df = d3.import_example('energy')
+    >>> #
+    >>> # Convert to adjmat
+    >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
+
+    """
+    return d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
 
 
 # %% Normalize.

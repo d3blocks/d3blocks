@@ -2466,7 +2466,8 @@ class D3Blocks():
         >>> adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
 
         """
-        return d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
+        # return d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
+        return utils.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
 
     @staticmethod
     def adjmat2vec(df, min_weight=1):
