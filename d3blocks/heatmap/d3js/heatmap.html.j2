@@ -182,7 +182,7 @@ body > pre {
 }
 
 svg {
-  font: 10px sans-serif;
+  font: $FONTSIZE$px sans-serif;
 }
 
 .axis path, .axis line {
@@ -365,7 +365,7 @@ var data =
   function row(row) {
     var cell = d3.select(this).selectAll(".cell")
         .data(row.filter(function(d) { return d.z; }))
-      .enter().append("rect")
+        .enter().append("rect")
         .attr("class", "cell")
         .attr("x", function(d) { return x(d.x); })
         .attr("width", x.rangeBand())
@@ -380,11 +380,6 @@ var data =
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
   }
-
-//  function mouseover(p) {
-//    d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
-//    d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
-//  }
 
     function mouseover(p) {
         d3.selectAll(".row text")
