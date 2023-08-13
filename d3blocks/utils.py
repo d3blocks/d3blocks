@@ -99,6 +99,7 @@ def normalize(X, minscale: Union[int, float] = 0.5, maxscale: Union[int, float] 
     # Set sizes to 0 if not available
     X[np.isinf(X)]=0
     X[np.isnan(X)]=0
+    if minscale is None: minscale=0.5
 
     # out-of-scale datapoints.
     if scaler == 'zscore' and len(np.unique(X)) > 3:
@@ -316,7 +317,7 @@ def vec2flare(df, logger=None):
 
 
 # %% Scaling
-def scale(X, vmax=100, make_round=True, logger=None):
+def scale(X, vmax=100, vmin=None, make_round=True, logger=None):
     """Scale data.
 
     Scaling in range by X*(100/max(X))
@@ -334,7 +335,7 @@ def scale(X, vmax=100, make_round=True, logger=None):
         Scaled image.
 
     """
-    if vmax is not None:
+    if (vmax is not None) and (X is not None):
         logger.info('Scaling image between [min-%s]' %(vmax))
         try:
             # Normalizing between 0-100
@@ -343,6 +344,8 @@ def scale(X, vmax=100, make_round=True, logger=None):
             X = X * vmax
             if make_round:
                 X = np.round(X)
+            if vmin is not None:
+                X = X + vmin
         except:
             logger.warning('Scaling not possible.')
 
