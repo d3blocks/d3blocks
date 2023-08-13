@@ -12,9 +12,9 @@ import numpy as np
 import os
 
 try:
-    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat
+    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize
 except:
-    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat
+    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize
 
 
 # %% Set configuration properties
@@ -29,8 +29,8 @@ def set_config(config={}, **kwargs):
     config['overwrite'] = kwargs.get('overwrite', True)
     config['color'] = kwargs.get('color', 'cluster')
     config['description'] = kwargs.get('description', '')
-    config['vmax'] = kwargs.get('vmax', None)
-    config['vmin'] = kwargs.get('vmin', None)
+    # config['vmax'] = kwargs.get('vmax', 'auto')
+    # config['vmin'] = kwargs.get('vmin', None)
     config['stroke'] = kwargs.get('stroke', 'red')
     config['notebook'] = kwargs.get('notebook', False)
     config['reset_properties'] = kwargs.get('reset_properties', True)
@@ -39,6 +39,7 @@ def set_config(config={}, **kwargs):
     config['scale'] = kwargs.get('scale', False)
     config['fontsize'] = kwargs.get('fontsize', 10)
     config['fontsize_mouseover'] = kwargs.get('fontsize_mouseover', config['fontsize'] + 8)
+    config['scaler'] = kwargs.get('scaler', 'zscore')
 
     if config['description'] is None: config['description']=''
     if config['cmap'] in ['schemeCategory10', 'schemeAccent', 'schemeDark2', 'schemePaired', 'schemePastel2', 'schemePastel1', 'schemeSet1', 'schemeSet2', 'schemeSet3', 'schemeTableau10']:
@@ -57,14 +58,23 @@ def show(df, **kwargs):
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
     config = config.copy()
-    # html = get_html(df, config, node_properties, logger)
+
+    # Compute very roughly the vmax based on mean with the standard deviation
+    # if (config['vmax']=='auto') and (df.get('weight', None) is not None):
+    #     config['vmax'] = np.mean(df['weight']) + np.std(df['weight'])
 
     # Rescale data
-    if config['vmax'] is not None:
-        df = _scale(df, vmax=config['vmax'], make_round=False, logger=logger)
-    if config['vmax'] is None:
-        config['vmax'] = np.max(df['weight'].values)
-        logger.debug('Set vmax: %.0g.' %(config['vmax']))
+    if df.get('weight', None) is not None:
+        # df['weight'] = scale(df['weight'], vmin=config['vmin'], vmax=config['vmax'], make_round=False, logger=logger)
+        df['weight'] = normalize(df['weight'].values, scaler=config['scaler'])
+        # logger.info('Color range [vmax] is set to [%g]' %(config['vmax']))
+
+    # if (config['vmax']=='auto') and (df.get('weight', None) is not None):
+    #     config['vmax'] = np.mean(df['weight']) + np.std(df['weight'])
+    # elif (config['vmax'] is None) and (df.get('weight', None) is not None):
+    #     config['vmax'] = np.mean(df['weight'].values)
+    # elif (config['vmax'] is None):
+    #     config['vmax']=1
 
     # Prepare the data
     json_data = get_data_ready_for_d3(df, node_properties)
@@ -126,7 +136,6 @@ def set_node_properties(df, **kwargs):
         Dictionary containing the label properties.
 
     """
-    cmap = kwargs.get('cmap')
     logger = kwargs.get('logger', None)
     col_labels = kwargs.get('labels', ['source', 'target'])
 
@@ -134,6 +143,7 @@ def set_node_properties(df, **kwargs):
     uilabels = set_labels(df, col_labels=col_labels, logger=logger)
 
     # Create unique label/node colors
+    # cmap = kwargs.get('cmap')
     # colors = colourmap.generate(len(uilabels), cmap=cmap, scheme='hex', verbose=0)
 
     # Make dict
@@ -143,22 +153,6 @@ def set_node_properties(df, **kwargs):
         dict_labels[label] = {'id': i, 'label': label, 'color': '#000000'}
     # Return
     return dict_labels
-
-
-# def get_html(df, config, node_properties, logger=None):
-    # # Rescale data
-    # if config['vmax'] is not None:
-    #     df = _scale(df, vmax=config['vmax'], make_round=False, logger=logger)
-    # if config['vmax'] is None:
-    #     config['vmax'] = np.max(df['weight'].values)
-    #     logger.debug('Set vmax: %.0g.' %(config['vmax']))
-
-    # # Prepare the data
-    # json_data = get_data_ready_for_d3(df, node_properties)
-    # # Create the html file
-    # html = write_html(json_data, config, logger)
-    # # Return html
-    # return html
 
 
 def set_colors(df, **kwargs):
@@ -175,6 +169,9 @@ def set_colors(df, **kwargs):
     node_properties = kwargs.get('node_properties')
 
     # d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
+    if df.get('weight', None) is not None:
+        df = df.copy()
+        df['weight'] = normalize(df['weight'].values, scaler=config['scaler'])
     adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=df.get('weight', None).values, symmetric=True)
 
     # Default is all cluster labels are the same
@@ -188,11 +185,11 @@ def set_colors(df, **kwargs):
         except:
             raise Exception('clusteval needs to be pip installed first. Tip: pip install clusteval')
         # Initialize
-        # plot_param = config['cluster_params'].get('plot', False)
         plot_param = config['cluster_params'].pop('plot', False)
         ce = clusteval(**config['cluster_params'])
         results = ce.fit(adjmat.values)
         if plot_param: ce.plot()
+        logger.info('[%d] clusters detected' %(len(np.unique(results['labx']))))
 
         # uilabx = np.unique(results['labx'])
         Iloc, idx = ismember(node_properties['label'].values, adjmat.index.values)
@@ -221,36 +218,40 @@ def set_colors(df, **kwargs):
     return node_properties
 
 # %% Scaling
-def _scale(X, vmax=100, make_round=True, logger=None):
-    """Scale data.
+# def _scale(X, vmax=100, vmin=None, make_round=True, logger=None):
+#     """Scale data.
 
-    Scaling in range by X*(100/max(X))
+#     Scaling in range by X*(100/max(X))
 
-    Parameters
-    ----------
-    X : array-like
-        Input image data.
-    verbose : int (default : 3)
-        Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.
+#     Parameters
+#     ----------
+#     X : array-like
+#         Input image data.
+#     verbose : int (default : 3)
+#         Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.
 
-    Returns
-    -------
-    df : array-like
-        Scaled image.
+#     Returns
+#     -------
+#     df : array-like
+#         Scaled image.
 
-    """
-    logger.info('Scaling image between [min-100]')
-    try:
-        # Normalizing between 0-100
-        # X = X - X.min()
-        X = X / X.max().max()
-        X = X * vmax
-        if make_round:
-            X = np.round(X)
-    except:
-        logger.debug('Warning: Scaling not possible.')
+#     """
+#     if X is not None:
+#         logger.info('Scaling image between [min-100]')
+#         try:
+#             # Normalizing between 0-100
+#             # X = X - X.min()
+#             X = X / X.max().max()
+#             X = X * vmax
+#             if make_round:
+#                 X = np.round(X)
+#             if vmin is not None:
+#                 X = X + vmin
+#         except:
+#             logger.debug('Warning: Scaling not possible.')
 
-    return X
+#     return X
+
 
 def write_html(json_data, config, logger=None):
     """Write html.
@@ -300,8 +301,6 @@ def write_html(json_data, config, logger=None):
 def get_data_ready_for_d3(df, node_properties):
     """Convert the source-target data into d3 compatible data.
 
-    Description
-    -----------
     Embed the Data in the HTML. Note that the embedding is an important stap te prevent security issues by the browsers.
     Most (if not all) browser do not accept to read a file using d3.csv or so. It then requires security-by-passes, but thats not the way to go.
     An alternative is use local-host and CORS but then the approach is not user-friendly coz setting up this, is not so straightforward.
