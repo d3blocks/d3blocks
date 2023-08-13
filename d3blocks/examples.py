@@ -9,24 +9,114 @@
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
+# Initialize
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+#
+# Load example data
+df = d3.import_example('bigbang')
+#
+# Plot
+d3.heatmap(df, color=[1,1,1,2,2,2,2], cmap='Set1')
+d3.node_properties
+
+# Color on hex
+d3.heatmap(df, color=['#FFF000', '#FFF000', '#FFF000', '#000FFF' , '#000FFF', '#000FFF', '#000FFF'])
+d3.node_properties
+
+# %%
+# Load library
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Load stormofswords data sets
+df = d3.import_example(data='stormofswords')
+
+# Create network graph
+d3.d3graph(df, charge=800, collision=2, showfig=True)
+# d3.elasticgraph(df, charge=800, collision=2, scaler='zscore')
+# Extract the node colors from the network graph.
+node_colors = d3.D3graph.node_properties
+
+# Initialize
+d3 = D3Blocks()
+# Create the heatmap but do not show it yet because we first need to adjust the colors
+d3.heatmap(df, showfig=False)
+# Update the colors of the network graph to be consistent with the colors
+d3.node_properties
+
+for i, label in enumerate(d3.node_properties['label']):
+    if node_colors.get(label) is not None:
+        d3.node_properties['color'].iloc[i] = node_colors.get(label)['color']
+
+d3.show(showfig=True, figsize=[600, 600], filepath='c:/temp/heatmap.html', fontsize=10, scaler='zscore')
+
+# Initialize
+d3 = D3Blocks()
+# Create sankey graph
+d3.sankey(df, filepath='c:/temp/sankey.html', showfig=True)
+
+
+# %%
+# d3.heatmap(df, color='cluster', showfig=True, cluster_params = {'min_clust': 5, 'max_clust': 25, 'normalize': True}, cmap='Set2')
+# d3.heatmap(df, color=[0, 0, 0, 1, 1, 1, 2, 2, 2], showfig=True, filepath='c:/temp/heatmap.html')
+
+# Load library
+from d3blocks import D3Blocks
+# Initialize
+# df = d3.import_example('energy')
+# df = d3.import_example('stormofswords')
+# df = d3.import_example('bigbang')
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+# df = d3.import_example('bigbang')
+# df = d3.import_example('stormofswords')
+df = d3.import_example('energy')
+adjmat = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
+# d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel=[1,1,1,2,2,2,3])
+d3.heatmap(adjmat, filepath='c:/temp/heatmap.html', classlabel='cluster', stroke='red', figsize=(600, 600),
+           cluster_params={'min_clust': 8, 'max_clust': 25, 'normalize': True, 'plot':True})
+
+d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True)
+# Transform DataFrame to dictionary
+# label_color_dict = d3.node_properties[['label', 'color']].set_index('label')['color'].to_dict()
+
+d3.chord(df, filepath='c:/temp/chord.html', showfig=True)
+
+d3.sankey(df, filepath='c:/temp/sankey.html', showfig=True)
+# d3 = D3Blocks(chart='Sankey', frame=True)
+# d3.set_node_properties(df)
+# d3.node_properties
+# d3.set_edge_properties(df, color='target', opacity='target')
+# d3.edge_properties
+# d3.show()
+
+
+
 # %% Tree with custom properties
 
 # Load library
 from d3blocks import D3Blocks
 # Initialize
-d3 = D3Blocks(verbose='info', chart='tree', frame=False)
+d3 = D3Blocks(chart='tree', frame=False)
 # Import example
 df = d3.import_example('energy')
+
 # Set node properties
 d3.set_node_properties(df)
-# d3.node_properties
+
 # Set specific properties
-d3.node_properties.get('Bio-conversion')['size'] = 30
-d3.node_properties.get('Bio-conversion')['color'] = '#000000'
-d3.node_properties.get('Bio-conversion')['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
-d3.node_properties.get('Bio-conversion')['edge_color'] = '#00FFFF'
-d3.node_properties.get('Bio-conversion')['edge_size'] = 5
-d3.node_properties.get('Bio-conversion')['opacity'] = 0.4
+d3.node_properties['Bio-conversion']['size'] = 30
+d3.node_properties['Bio-conversion']['color'] = '#000000'
+d3.node_properties['Bio-conversion']['edge_color'] = '#00FFFF'
+d3.node_properties['Bio-conversion']['edge_size'] = 5
+d3.node_properties['Bio-conversion']['opacity'] = 0.4
+d3.node_properties['Bio-conversion']['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
+
 # Set properties for Losses
 d3.node_properties.get('Losses')['color'] = '#FF0000'
 d3.node_properties.get('Losses')['size'] = 15
