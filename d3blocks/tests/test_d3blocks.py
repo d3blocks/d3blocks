@@ -9,6 +9,57 @@ except:
     raise ImportError('cv2 must be installed manually. Try to: <pip install opencv-python>')
 
 class Testd3blocks(unittest.TestCase):
+    def test_medium_blog_chart_comparison(self) -> None:
+        # Source node names
+        source = ['Penny', 'Penny', 'Amy', 'Bernadette', 'Bernadette', 'Sheldon', 'Sheldon', 'Sheldon', 'Rajesh']
+        # Target node names
+        target = ['Leonard', 'Amy', 'Bernadette', 'Rajesh', 'Howard', 'Howard', 'Leonard', 'Amy', 'Penny']
+        # Edge Weights
+        weight = [5, 3, 2, 2, 5, 2, 3, 5, 2]
+
+        # Import and Initialize
+        from d3blocks import D3Blocks
+        d3 = D3Blocks()
+        # Convert
+        adjmat = d3.vec2adjmat(source, target, weight)
+        # Print
+        print(adjmat)
+
+        # Load library
+        from d3blocks import D3Blocks
+
+        # Initialize
+        d3 = D3Blocks()
+        # Load stormofswords data sets
+        df = d3.import_example(data='stormofswords')
+
+        # Create network graph
+        # Initialize
+        d3 = D3Blocks()
+        # Network graph
+        d3.d3graph(df, charge=800, collision=2, showfig=True)
+        # d3.elasticgraph(df, charge=800, collision=2, scaler='zscore')
+        # Extract the node colors from the network graph.
+        node_colors = d3.D3graph.node_properties
+
+        # Heatmap
+        # Initialize
+        d3 = D3Blocks()
+        # Create the heatmap but do not show it yet because we first need to adjust the colors
+        d3.heatmap(df, showfig=False)
+        # Update the colors of the network graph to be consistent with the colors
+        d3.node_properties
+
+        for i, label in enumerate(d3.node_properties['label']):
+            if node_colors.get(label) is not None:
+                d3.node_properties['color'].iloc[i] = node_colors.get(label)['color']
+
+        d3.show(showfig=True, figsize=[600, 600], fontsize=8, scaler='zscore')
+
+        # Initialize
+        d3 = D3Blocks()
+        # Create sankey graph
+        d3.sankey(df, showfig=True)
 
     def test_instantiate_d3blocks_no_args(self) -> None:
         """Test instantiation works with defaults"""
@@ -23,8 +74,7 @@ class Testd3blocks(unittest.TestCase):
         df = d3.import_example('energy')
         df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         # Create the heatmap
-        d3.heatmap(df, stroke='red', vmax=10, figsize=(700,700))
-
+        d3.heatmap(df, stroke='red', vmax=10, figsize=(700, 700))
 
     def test_matrix(self):
         # Initialize
@@ -33,8 +83,7 @@ class Testd3blocks(unittest.TestCase):
         df = d3.import_example('energy')
         df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
         # Create the heatmap
-        d3.matrix(df, stroke='red', vmax=10, figsize=(700,700), cmap='interpolateGreens')
-
+        d3.matrix(df, stroke='red', vmax=10, figsize=(700, 700), cmap='interpolateGreens')
 
     def test_sankey(self):
         # Initialize
