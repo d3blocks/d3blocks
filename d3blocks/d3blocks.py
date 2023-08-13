@@ -14,35 +14,36 @@ import time
 from typing import List, Union, Tuple
 from elasticgraph import Elasticgraph
 import d3graph as d3network
+import datazets as dz
 
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
-import d3blocks.heatmap.Heatmap as Heatmap
-import d3blocks.matrix.Matrix as Matrix
-import d3blocks.treemap.Treemap as Treemap
-import d3blocks.tree.Tree as Tree
-import d3blocks.utils as utils
+# import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+# import d3blocks.timeseries.Timeseries as Timeseries
+# import d3blocks.sankey.Sankey as Sankey
+# import d3blocks.imageslider.Imageslider as Imageslider
+# import d3blocks.chord.Chord as Chord
+# import d3blocks.scatter.Scatter as Scatter
+# import d3blocks.violin.Violin as Violin
+# import d3blocks.particles.Particles as Particles
+# import d3blocks.heatmap.Heatmap as Heatmap
+# import d3blocks.matrix.Matrix as Matrix
+# import d3blocks.treemap.Treemap as Treemap
+# import d3blocks.tree.Tree as Tree
+# import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
-# import heatmap.Heatmap as Heatmap
-# import matrix.Matrix as Matrix
-# import treemap.Treemap as Treemap
-# import tree.Tree as Tree
-# import utils
+import movingbubbles.Movingbubbles as Movingbubbles
+import timeseries.Timeseries as Timeseries
+import sankey.Sankey as Sankey
+import imageslider.Imageslider as Imageslider
+import chord.Chord as Chord
+import scatter.Scatter as Scatter
+import violin.Violin as Violin
+import particles.Particles as Particles
+import heatmap.Heatmap as Heatmap
+import matrix.Matrix as Matrix
+import treemap.Treemap as Treemap
+import tree.Tree as Tree
+import utils
 # #####################################################
 
 logger = logging.getLogger('')
@@ -1812,14 +1813,14 @@ class D3Blocks():
                      group='cluster',
                      title='Elasticgraph - D3blocks',
                      filepath='Elasticgraph.html',
-                     figsize=[None, None],
+                     figsize=[1500, 800],
                      collision=0.5,
                      charge=250,
                      size=4,
                      hull_offset=15,
                      single_click_expand=False,
                      notebook=False,
-                     showfig=False,
+                     showfig=True,
                      overwrite=True):
         """D3 Elasticgraph block.
 
@@ -1957,7 +1958,7 @@ class D3Blocks():
     def tree(self,
              df,
              hierarchy = [1, 2, 3, 4, 5, 6, 7, 8],
-             margin: dict = {"top": 20, "right": 60, "bottom": 20, "left": 44.05},
+             margin: dict = {"top": 20, "right": 80, "bottom": 20, "left": 60},
              font: dict = {'size': 10},
              title: str = 'Tree - D3blocks',
              filepath: str = 'tree.html',
