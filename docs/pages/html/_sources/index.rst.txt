@@ -10,7 +10,7 @@
 
    <iframe src="https://erdogant.github.io\docs\d3blocks\D3Blocks_white.html" height="170px" width="700px", frameBorder="0"></iframe>
 
-D3Blocks builts on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code.
+D3Blocks builds on the graphics of D3 Javascript to create the most visually attractive and useful charts with only a few lines of Python code.
 
 
 .. |fig1| image:: ../figs/summary.png

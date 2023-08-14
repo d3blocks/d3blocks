@@ -23,7 +23,7 @@
 
 -------------------------------------------------------------------------
 
-D3Blocks builts on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
+D3Blocks builds on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
 The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. 
 
 <p align="center">
