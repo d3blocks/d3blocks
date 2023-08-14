@@ -5,7 +5,7 @@ jinja2
 requests
 d3graph>="2.4.6"
 colourmap>="1.1.10"
-ismember>=1.0.1
+ismember>="1.0.1"
+datazets>="0.1.7"
 scikit-learn
 elasticgraph
-datazets

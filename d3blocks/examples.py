@@ -9,6 +9,13 @@
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('energy')
+d3.heatmap(df)
+
+# %%
+
 # Initialize
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -31,7 +38,7 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 # Load stormofswords data sets
-df = d3.import_example(data='stormofswords')
+df = d3.import_example(data='energy')
 
 # Create network graph
 d3.d3graph(df, charge=800, collision=2, showfig=True)
