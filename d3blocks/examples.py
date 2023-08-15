@@ -24,8 +24,8 @@ html = d3.circlepacking(df,
                       overwrite=True,
                       )
 
-# html = d3.tree(df, filepath='c://temp//tree.html')
-# html = d3.treemap(df, filepath='c://temp//treemap.html')
+html = d3.tree(df, filepath='c://temp//tree.html')
+html = d3.treemap(df, filepath='c://temp//treemap.html')
 
 
 # %%
