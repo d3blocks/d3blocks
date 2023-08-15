@@ -12,6 +12,7 @@ Input Data
 ************
 
 The input dataset is a DataFrame that is hierarchically ordered from left to right. 
+The number can be 3 levels and the column weight is obligatory.
 
 .. code:: python
 
@@ -30,7 +31,14 @@ The input dataset is a DataFrame that is hierarchically ordered from left to rig
 
 	# [68 rows x 3 columns]
 
+.. code:: python
 
+	#    group1  group2 group3  weight
+	# 0  Animal  Mammal    Fox   35000
+	# 1  Animal  Mammal   Lion   25000
+	# 2  Animal    Fish    Cod   10000
+	# 3   Plant    Tree    Oak    1500
+	# 4  Animal    Fish    Ape    1750
 
 Charts
 ************
