@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
@@ -93,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks"><code class="docutils literal notranslate"><span class="pre">D3Blocks</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.adjmat2vec"><code class="docutils literal notranslate"><span class="pre">D3Blocks.adjmat2vec()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.chord"><code class="docutils literal notranslate"><span class="pre">D3Blocks.chord()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.circlepacking"><code class="docutils literal notranslate"><span class="pre">D3Blocks.circlepacking()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.d3graph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.d3graph()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.display"><code class="docutils literal notranslate"><span class="pre">D3Blocks.display()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.elasticgraph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.elasticgraph()</span></code></a></li>
@@ -378,6 +380,153 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Chord.html">https://d3blocks.github.io/d3blocks/pages/html/Chord.html</a></p></li>
 </ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.circlepacking">
+<span class="sig-name descname"><span class="pre">circlepacking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">850</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'#FFFFFF',</span> <span class="pre">'fill':</span> <span class="pre">'#FFFFFF',</span> <span class="pre">'padding':</span> <span class="pre">2,</span> <span class="pre">'width':</span> <span class="pre">1.5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'size':</span> <span class="pre">11,</span> <span class="pre">'type':</span> <span class="pre">'sans-serif'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Circlepacking</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Circlepacking.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.circlepacking" title="Permalink to this definition"></a></dt>
+<dd><p>Circlepacking block.</p>
+<p>The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
+For demonstration purposes, the “energy” and “stormofswords” dataset can be used.
+The javascript code is forked from Mike Bostock and then Pythonized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’, ‘target’, ‘weight’</p></li>
+<li><p>’level0’, ‘level1’, ‘level2’, ‘weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>diameter</strong> (<em>int</em><em> (</em><em>default: 850</em><em>)</em>) – Size of the circle.</p></li>
+<li><p><strong>speed</strong> (<em>int</em><em> (</em><em>default: 750</em><em>)</em>) – Speed in ms to zoom in/out</p></li>
+<li><p><strong>zoom</strong> (<em>int</em><em> (</em><em>default: 20</em><em>)</em>) – Strenght of zooming. The larger the value, the less zoom-interaction.</p></li>
+<li><p><strong>border</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>border properties.</dt><dd><ul>
+<li><p>{‘color’: ‘#FFFFFF’, ‘width’: 1.5, ‘fill’: ‘#FFFFFF’, “padding”: 2}</p></li>
+<li><p>border color: color for the circles</p></li>
+<li><p>width: width for the circles</p></li>
+<li><p>fill: fill color for the circles</p></li>
+<li><p>padding: size of the circles</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>font</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>font properties.</dt><dd><ul>
+<li><p>{‘size’: 10, ‘type’:’sans-serif’}</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Circlepacking’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
+<li><p>File path to save the output.</p></li>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Reset the node_properties at each run.</p></li>
+<li><p>False: Use the d3.node_properties()</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;animals&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">circlepacking</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Circlepacking&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">circlepacking</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">speed</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">zoom</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">diameter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;c://temp//circlepacking.html&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">border</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">

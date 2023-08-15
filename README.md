@@ -33,10 +33,10 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 </p>
 
 -------------------------------------------------------------------------
-#### Blogs
 
-See here an overview for all the blogs 
-[![here](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog)
+#### See [here](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog) an overview for all the blogs 
+
+-------------------------------------------------------------------------
 
 
 #### Installation (Pypi)

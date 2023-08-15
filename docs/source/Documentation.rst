@@ -18,7 +18,7 @@ Medium Blog
 
 	#. `Get the Most Out of Your Scatterplot by Making It Interactive Using D3js and Python. <https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046>`_
 
-	#. `Maximize your Insights By Choosing The Best Chart; Network, Heatmap, or Sankey?. <https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16>`_
+	#. `Maximize your Insights By Choosing The Best Chart; Network, Heatmap, or Sankey? <https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16>`_
 
 
 Github
