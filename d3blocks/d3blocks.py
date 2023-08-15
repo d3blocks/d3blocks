@@ -27,6 +27,7 @@ import d3blocks.particles.Particles as Particles
 import d3blocks.heatmap.Heatmap as Heatmap
 import d3blocks.matrix.Matrix as Matrix
 import d3blocks.treemap.Treemap as Treemap
+import d3blocks.treepacking.Treepacking as Treepacking
 import d3blocks.tree.Tree as Tree
 import d3blocks.utils as utils
 
@@ -42,6 +43,7 @@ import d3blocks.utils as utils
 # import heatmap.Heatmap as Heatmap
 # import matrix.Matrix as Matrix
 # import treemap.Treemap as Treemap
+# import treepacking.Treepacking as Treepacking
 # import tree.Tree as Tree
 # import utils
 # #####################################################
@@ -2267,6 +2269,135 @@ class D3Blocks():
         # Create the plot
         return self.show()
 
+    def treepacking(self,
+                df,
+                diameter: int = 850,
+                zoom : int = 20,
+                border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
+                font: dict = {'size': 11, 'type': 'sans-serif'},
+                title: str = 'Treepacking - D3blocks',
+                filepath: str = 'Treepacking.html',
+                showfig: bool = True,
+                overwrite: bool = True,
+                notebook: bool = False,
+                reset_properties: bool = True,
+                ):
+        """Treepacking block.
+
+        A Treepacking chart is a visualization to hierarchically show the data as a set of nested rectangles.
+        For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
+        The javascript code is forked from Mike Bostock and then Pythonized.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+                * 'source', 'target', 'weight'
+                * 'level0', 'level1', 'level2', 'weight'
+        diameter : int (default: 850)
+            Size of the circle.
+        zoom : int (default: 20)
+            Strenght of zooming. The larger the value, the less zoom-interaction.
+        border : dict.
+            border properties.
+                * {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2}
+                * border color: color for the circles
+                * width: width for the circles
+                * fill: fill color for the circles
+                * padding: size of the circles
+        font : dict.
+            font properties.
+                * {'size': 10, 'type':'sans-serif'}
+        title : String, (default: None)
+            Title of the figure.
+                * 'Treepacking'
+        filepath : String, (Default: user temp directory)
+                * File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
+        showfig : bool, (default: True)
+                * True: Open browser-window.
+                * False: Do not open browser-window.
+        overwrite : bool, (default: True)
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
+        reset_properties : bool, (default: True)
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
+
+        Returns
+        -------
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+
+        d3.config: dictionary
+             Contains configuration properties.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('energy')
+        >>> df = d3.import_example('animals')
+        >>> #
+        >>> # Plot
+        >>> d3.treepacking(df)
+        >>> #
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks(chart='Treepacking', frame=True)
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Node properties
+        >>> d3.set_node_properties(df)
+        >>> print(d3.node_properties)
+        >>> #
+        >>> d3.set_edge_properties(df)
+        >>> print(d3.edge_properties)
+        >>> #
+        >>> # Show the chart
+        >>> d3.show()
+
+        References
+        ----------
+        * Mike Bostock; http://bl.ocks.org/mbostock/4063582
+        * https://d3blocks.github.io/d3blocks/pages/html/Treepacking.html
+
+        """
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Treepacking', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=[None, None], diameter=diameter, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
+        # Set edge properties
+        self.set_edge_properties(df)
+        # Create the plot
+        return self.show()
+
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
 
@@ -2874,7 +3005,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Treepacking']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

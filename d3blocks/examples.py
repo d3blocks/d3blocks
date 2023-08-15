@@ -9,6 +9,22 @@
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
 
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('energy')
+html = d3.treepacking(df,
+                      zoom=20,
+                      diameter=1000,
+                      filepath='c://temp//treepacking.html',
+                      border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
+                      )
+
+html = d3.tree(df, filepath='c://temp//tree.html', )
+html = d3.treemap(df, filepath='c://temp//treemap.html', )
+
+
+# %%
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
