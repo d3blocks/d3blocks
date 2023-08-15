@@ -33,6 +33,11 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 </p>
 
 -------------------------------------------------------------------------
+#### Blogs
+
+See here an overview for all the blogs 
+[![here](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog)
+
 
 #### Installation (Pypi)
 ```bash
@@ -65,7 +70,7 @@ d3 = D3Blocks()
 |  3  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43)           |
 |  4  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226)    |
 |  5  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046)       |
-|  6  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
+|  6  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16) |
 |  7  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
 |  8  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
 |  9  | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
