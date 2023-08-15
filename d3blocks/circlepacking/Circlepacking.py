@@ -1,4 +1,4 @@
-"""Treepacking block.
+"""Circlepacking block.
 
 Library     : d3blocks
 Author      : E.Taskesen
@@ -20,9 +20,9 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     """Set the default configuration setting."""
     logger = kwargs.get('logger', None)
     # Store configurations
-    config['chart'] ='treepacking'
-    config['title'] = kwargs.get('title', 'Treepacking - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'treepacking.html'), logger)
+    config['chart'] ='circlepacking'
+    config['title'] = kwargs.get('title', 'Circlepacking - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'circlepacking.html'), logger)
     config['figsize'] = kwargs.get('figsize', [1000, 600])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
@@ -173,9 +173,9 @@ def write_html(X, config, logger=None):
     try:
         jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
     except:
-        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.treepacking', package_path='d3js'))
+        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.circlepacking', package_path='d3js'))
 
-    index_template = jinja_env.get_template('treepacking.html.j2')
+    index_template = jinja_env.get_template('circlepacking.html.j2')
 
     # Generate html content
     html = index_template.render(content)

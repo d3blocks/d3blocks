@@ -27,7 +27,7 @@ import d3blocks.particles.Particles as Particles
 import d3blocks.heatmap.Heatmap as Heatmap
 import d3blocks.matrix.Matrix as Matrix
 import d3blocks.treemap.Treemap as Treemap
-import d3blocks.treepacking.Treepacking as Treepacking
+import d3blocks.circlepacking.Circlepacking as Circlepacking
 import d3blocks.tree.Tree as Tree
 import d3blocks.utils as utils
 
@@ -43,7 +43,7 @@ import d3blocks.utils as utils
 # import heatmap.Heatmap as Heatmap
 # import matrix.Matrix as Matrix
 # import treemap.Treemap as Treemap
-# import treepacking.Treepacking as Treepacking
+# import circlepacking.Circlepacking as Circlepacking
 # import tree.Tree as Tree
 # import utils
 # #####################################################
@@ -2269,23 +2269,23 @@ class D3Blocks():
         # Create the plot
         return self.show()
 
-    def treepacking(self,
+    def circlepacking(self,
                 df,
                 diameter: int = 850,
                 speed: int = 750,
                 zoom : int = 20,
                 border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
                 font: dict = {'size': 11, 'type': 'sans-serif'},
-                title: str = 'Treepacking - D3blocks',
-                filepath: str = 'Treepacking.html',
+                title: str = 'Circlepacking - D3blocks',
+                filepath: str = 'Circlepacking.html',
                 showfig: bool = True,
                 overwrite: bool = True,
                 notebook: bool = False,
                 reset_properties: bool = True,
                 ):
-        """Treepacking block.
+        """Circlepacking block.
 
-        The Treepacking chart is a visualization to hierarchically show the data as a set of nested circles.
+        The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
         For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
         The javascript code is forked from Mike Bostock and then Pythonized.
 
@@ -2313,7 +2313,7 @@ class D3Blocks():
                 * {'size': 10, 'type':'sans-serif'}
         title : String, (default: None)
             Title of the figure.
-                * 'Treepacking'
+                * 'Circlepacking'
         filepath : String, (Default: user temp directory)
                 * File path to save the output.
                 * Temporarily path: 'd3blocks.html'
@@ -2357,7 +2357,7 @@ class D3Blocks():
         >>> df = d3.import_example('animals')
         >>> #
         >>> # Plot
-        >>> d3.treepacking(df)
+        >>> d3.circlepacking(df)
         >>> #
 
         Examples
@@ -2366,7 +2366,7 @@ class D3Blocks():
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
-        >>> d3 = D3Blocks(chart='Treepacking', frame=True)
+        >>> d3 = D3Blocks(chart='Circlepacking', frame=True)
         >>> #
         >>> # Import example
         >>> df = d3.import_example('energy')
@@ -2385,7 +2385,7 @@ class D3Blocks():
         # Cleaning
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
-        self.chart = set_chart_func('Treepacking', logger)
+        self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=[None, None], diameter=diameter, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Set default label properties
@@ -3003,7 +3003,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Treepacking']):
+        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))
