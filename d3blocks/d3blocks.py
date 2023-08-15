@@ -2272,6 +2272,7 @@ class D3Blocks():
     def treepacking(self,
                 df,
                 diameter: int = 850,
+                speed: int = 750,
                 zoom : int = 20,
                 border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
                 font: dict = {'size': 11, 'type': 'sans-serif'},
@@ -2284,7 +2285,7 @@ class D3Blocks():
                 ):
         """Treepacking block.
 
-        A Treepacking chart is a visualization to hierarchically show the data as a set of nested rectangles.
+        The Treepacking chart is a visualization to hierarchically show the data as a set of nested circles.
         For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
         The javascript code is forked from Mike Bostock and then Pythonized.
 
@@ -2296,6 +2297,8 @@ class D3Blocks():
                 * 'level0', 'level1', 'level2', 'weight'
         diameter : int (default: 850)
             Size of the circle.
+        speed : int (default: 750)
+            Speed in ms to zoom in/out
         zoom : int (default: 20)
             Strenght of zooming. The larger the value, the less zoom-interaction.
         border : dict.
@@ -2378,18 +2381,13 @@ class D3Blocks():
         >>> # Show the chart
         >>> d3.show()
 
-        References
-        ----------
-        * Mike Bostock; http://bl.ocks.org/mbostock/4063582
-        * https://d3blocks.github.io/d3blocks/pages/html/Treepacking.html
-
         """
         # Cleaning
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
         self.chart = set_chart_func('Treepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=[None, None], diameter=diameter, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=[None, None], diameter=diameter, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))

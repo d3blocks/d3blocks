@@ -28,6 +28,7 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
     config['diameter'] = kwargs.get('diameter', 850)
+    config['speed'] = kwargs.get('speed', 750)
     config['zoom'] = kwargs.get('zoom', 20)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['font'] = {**{'size': 10, 'type': 'sans-serif'}, **font}
@@ -157,6 +158,7 @@ def write_html(X, config, logger=None):
         'TITLE': config['title'],
         'WIDTH': width,
         'DIAMETER': config['diameter'],
+        'SPEED': config['speed'],
         'HEIGHT': height,
         'bordercolor': config['border']['color'],
         'borderwidth': config['border']['width'],

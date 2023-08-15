@@ -14,14 +14,16 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
 html = d3.treepacking(df,
+                      speed=1500,
                       zoom=20,
                       diameter=1000,
                       filepath='c://temp//treepacking.html',
                       border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
+                      overwrite=False,
                       )
 
-html = d3.tree(df, filepath='c://temp//tree.html', )
-html = d3.treemap(df, filepath='c://temp//treemap.html', )
+# html = d3.tree(df, filepath='c://temp//tree.html')
+# html = d3.treemap(df, filepath='c://temp//treemap.html')
 
 
 # %%

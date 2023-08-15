@@ -37,6 +37,7 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 	.meter-background { fill: #DFEAFD; }
 	.meter-foreground { fill: #2E7AF9; }
 
+
   </style>
 
 
@@ -47,8 +48,11 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 
 <body>
   <div id="chart-container"></div>
+      <svg id="chart-svg"></svg>
+
 
   <script>
+
 
 var margin = {{ zoom }},
 		padding = {{ borderpadding }},
@@ -107,7 +111,7 @@ function zoom(d) {
 		focus = d;
 
 		var transition = d3.transition()
-				.duration(d3.event.altKey ? 7500 : 750)
+				.duration(d3.event.altKey ? 7500 : {{ SPEED }})
 				.tween("zoom", function(d) {
 						var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
 						return function(t) {
