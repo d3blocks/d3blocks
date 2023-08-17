@@ -1673,13 +1673,15 @@ class D3Blocks():
     def d3graph(self,
                 df,
                 color='cluster',
-                size=10,
+                size='degree',
+                opacity='degree',
                 scaler='zscore',
                 title='D3graph - D3blocks',
                 filepath='d3graph.html',
                 figsize=[1500, 800],
                 collision=0.5,
                 charge=400,
+                cmap='Set1',
                 slider=[None, None],
                 notebook=False,
                 showfig=True,
@@ -1713,8 +1715,16 @@ class D3Blocks():
                 * ['A','A','B',...]:  Colors are generated using cmap and the unique labels accordingly colored.
         size : array of integers (default: 5)
             Size of the nodes.
+                * 'degree' opacity is based on the centrality measure.
                 * 10: all nodes sizes are set to 10
                 * [10, 5, 3, 1, ...]: Specify node sizes
+        opacity : list of floats (default: 'degree')
+            Set the opacity of the node [0-1] where 0=transparant and 1=no transparancy.
+                * None: Colors are inhereted from the initialization
+                * 'degree' opacity is based on the centrality measure.
+                * 0.99: All nodes will get this transparancy
+                * ['0.4, 0.1, 0.3,...]
+                * ['A','A','B',...]:  Opacity is generated using cmap and according to the unique labels.
         scaler : str, (default: 'zscore')
             Scale the edge-width using the following scaler:
             'zscore' : Scale values to Z-scores.
@@ -1724,6 +1734,9 @@ class D3Blocks():
             Response of the network. Higher means that more collisions are prevented.
         charge : int, (default: 400)
             Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.
+        cmap : String, (default: 'Set1')
+            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
+                * 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv', 'inferno'
         slider : typle [min: int, max: int]:, (default: [None, None])
             Slider is automatically set to the range of the edge weights.
         title : String, (default: None)
@@ -1821,7 +1834,7 @@ class D3Blocks():
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
-        self.D3graph.graph(adjmat, color=color, size=size, scaler=scaler)
+        self.D3graph.graph(adjmat, color=color, size=size, opacity=opacity, scaler=scaler, cmap=cmap)
         # Open the webbrowser
         self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
         # Display the chart

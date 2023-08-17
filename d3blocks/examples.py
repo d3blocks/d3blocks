@@ -10,10 +10,43 @@
 # df1 = df1.reset_index()
 
 # %%
+# Load library
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Load stormofswords data sets
+df = d3.import_example(data='energy')
+
+# Create the network graph
+d3.d3graph(df, showfig=True)
+# Extract the node colors from the network graph.
+node_colors = d3.D3graph.node_properties
+
+# %%
+
+# Load library
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+# Load energy data sets
+df = d3.import_example(data='energy')
+
+# Create the network graph
+d3.d3graph(df, charge=800, collision=2, showfig=True)
+# Extract the node colors from the network graph.
+node_colors = d3.D3graph.node_properties
+
+# %%
+
+# https://observablehq.com/@d3/zoomable-circle-packing
+# https://observablehq.com/@mkfreeman/baby-name-circle-packing
+
+import pandas as pd
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
-html = d3.circlepacking(df, filepath='c://temp//tree.html')
+df = pd.DataFrame({'source': ['A','A','B'], 'target': ['C','D','E'], 'weight': [1,1,1]})
+html = d3.circlepacking(df, filepath='c://temp//circlepacking.html')
 
 html = d3.circlepacking(df,
                       speed=1500,
