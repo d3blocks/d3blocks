@@ -239,18 +239,18 @@ class Testd3blocks(unittest.TestCase):
         # import example
         df = d3.import_example('cancer')
         # Setup the tooltip
-        tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+        tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         # Set the size
         size = df['survival_months'].fillna(1).values / 10
         # Scatter
-        d3.scatter(df['x'].values,        # tSNE x-coordinates
-                   df['y'].values,        # tSNE y-coordinates
+        d3.scatter(df['tsneX'].values,        # tSNE x-coordinates
+                   df['tsneY'].values,        # tSNE y-coordinates
                    x1=df['PC1'].values,   # PC1 x-coordinates
                    y1=df['PC2'].values,   # PC2 y-coordinates
                    scale=True,            # Scale the 
                    label_radio=['tSNE', 'PCA'],
                    size=size,             # Size
-                   color=df['labels'].values, # List with hex colors or strings
+                   color=df['labx'].values, # List with hex colors or strings
                    stroke='#000000',      # Edge color
                    opacity=0.4,           # Opacity
                    tooltip=tooltip,       # Tooltip
@@ -259,11 +259,11 @@ class Testd3blocks(unittest.TestCase):
 
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=False)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=False)
         assert html is not None
-        html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=True)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=True)
         assert html is None
-        html = d3.scatter(df['x'].values, df['y'].values, filepath='./test.html', notebook=False)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath='./test.html', notebook=False)
         assert html is None
 
 
@@ -273,9 +273,9 @@ class Testd3blocks(unittest.TestCase):
         # import example
         df = d3.import_example('cancer')
         # Tooltip
-        tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+        tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
         # Make the plot
-        d3.violin(x=df['labels'].values, # class labels on the x axis
+        d3.violin(x=df['labx'].values, # class labels on the x axis
                   y=df['age'].values,    # Age
                   tooltip=tooltip,       # Tooltip for hovering
                   bins=50,               # Bins used for the histogram
@@ -287,11 +287,11 @@ class Testd3blocks(unittest.TestCase):
         # Violin
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=False)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=False)
         assert html is not None
-        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=True)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=True)
         assert html is None
-        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath='./test.html', notebook=False)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath='./test.html', notebook=False)
         assert html is None
 
     def test_particles(self):
@@ -407,33 +407,33 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=False)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=False)
         assert html is not None
-        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath=None, notebook=True)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=True)
         assert html is None
-        html = d3.violin(x=df['labels'].values, y=df['age'].values, filepath='./test.html', notebook=False, showfig=False)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath='./test.html', notebook=False, showfig=False)
         assert html is None
 
         # Timeseries
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('climate')
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=False)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=False)
         assert html is not None
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=None, notebook=True)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=True)
         assert html is None
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath='./test.html', notebook=False, showfig=False)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath='./test.html', notebook=False, showfig=False)
         assert html is None
 
         # Scatter
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=False)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=False)
         assert html is not None
-        html = d3.scatter(df['x'].values, df['y'].values, filepath=None, notebook=True)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=True)
         assert html is None
-        html = d3.scatter(df['x'].values, df['y'].values, filepath='./test.html', notebook=False, showfig=False)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath='./test.html', notebook=False, showfig=False)
         assert html is None
 
         # Sankey
