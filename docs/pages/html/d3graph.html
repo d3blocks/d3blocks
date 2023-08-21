@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.3.1
+                1.3.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -182,6 +182,7 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 <dt class="field-odd">param size<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the nodes.</dt><dd><ul class="simple">
+<li><p>‘degree’ opacity is based on the centrality measure.</p></li>
 <li><p>10: all nodes sizes are set to 10</p></li>
 <li><p>[10, 5, 3, 1, …]: Specify node sizes</p></li>
 </ul>
@@ -190,6 +191,21 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </dd>
 <dt class="field-even">type size<span class="colon">:</span></dt>
 <dd class="field-even"><p>array of integers (default: 5)</p>
+</dd>
+<dt class="field-odd">param opacity<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Set the opacity of the node [0-1] where 0=transparant and 1=no transparancy.</dt><dd><ul class="simple">
+<li><p>None: Colors are inhereted from the initialization</p></li>
+<li><p>‘degree’ opacity is based on the centrality measure.</p></li>
+<li><p>0.99: All nodes will get this transparancy</p></li>
+<li><p>[‘0.4, 0.1, 0.3,…]</p></li>
+<li><p>[‘A’,’A’,’B’,…]:  Opacity is generated using cmap and according to the unique labels.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type opacity<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of floats (default: ‘degree’)</p>
 </dd>
 <dt class="field-odd">param scaler<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Scale the edge-width using the following scaler:
@@ -211,6 +227,17 @@ None : No scaler is used.</p>
 </dd>
 <dt class="field-even">type charge<span class="colon">:</span></dt>
 <dd class="field-even"><p>int, (default: 400)</p>
+</dd>
+<dt class="field-odd">param cmap<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
+<li><p>‘tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type cmap<span class="colon">:</span></dt>
+<dd class="field-even"><p>String, (default: ‘Set1’)</p>
 </dd>
 <dt class="field-odd">param slider<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Slider is automatically set to the range of the edge weights.</p>

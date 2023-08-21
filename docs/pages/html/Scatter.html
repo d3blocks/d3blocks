@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.3.1
+                1.3.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -365,13 +365,13 @@ class label.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set size and tooltip</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="mi">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">&#39; &lt;br /&gt; Survival: &#39;</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;labx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">&#39; &lt;br /&gt; Survival: &#39;</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">               df[&#39;y&#39;].values,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">               df[&#39;tsneY&#39;].values,</span>
 <span class="go">               size=size,</span>
-<span class="go">               color=df.index.values,</span>
+<span class="go">               color=df[&#39;labx&#39;].values,</span>
 <span class="go">               stroke=&#39;#000000&#39;,</span>
 <span class="go">               opacity=0.4,</span>
 <span class="go">               tooltip=tooltip,</span>
@@ -381,14 +381,14 @@ class label.</p>
 </div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">               df[&#39;y&#39;].values,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">               df[&#39;tsneY&#39;].values,</span>
 <span class="go">               x1=df[&#39;PC1&#39;].values,</span>
 <span class="go">               y1=df[&#39;PC2&#39;].values,</span>
 <span class="go">               label_radio=[&#39;tSNE&#39;, &#39;PCA&#39;],</span>
 <span class="go">               scale=True,</span>
 <span class="go">               size=size,</span>
-<span class="go">               color=df.index.values,</span>
+<span class="go">               color=df[&#39;labx&#39;].values,</span>
 <span class="go">               stroke=&#39;#000000&#39;,</span>
 <span class="go">               opacity=0.4,</span>
 <span class="go">               tooltip=tooltip,</span>
@@ -398,8 +398,8 @@ class label.</p>
 </div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">               df[&#39;y&#39;].values,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">               df[&#39;tsneY&#39;].values,</span>
 <span class="go">               x1=df[&#39;PC1&#39;].values,</span>
 <span class="go">               y1=df[&#39;PC2&#39;].values,</span>
 <span class="go">               x2=df[&#39;PC2&#39;].values,</span>
@@ -407,7 +407,7 @@ class label.</p>
 <span class="go">               label_radio=[&#39;tSNE&#39;, &#39;PCA&#39;, &#39;PCA_reverse&#39;],</span>
 <span class="go">               scale=True,</span>
 <span class="go">               size=size,</span>
-<span class="go">               color=df.index.values,</span>
+<span class="go">               color=df[&#39;labx&#39;].values,</span>
 <span class="go">               stroke=&#39;#000000&#39;,</span>
 <span class="go">               opacity=0.4,</span>
 <span class="go">               tooltip=tooltip,</span>
@@ -426,14 +426,14 @@ class label.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;cancer&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">                           df[&#39;y&#39;].values,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">                           df[&#39;tsneY&#39;].values,</span>
 <span class="go">                           x1=df[&#39;PC1&#39;].values,</span>
 <span class="go">                           y1=df[&#39;PC2&#39;].values,</span>
 <span class="go">                           label_radio=[&#39;tSNE&#39;,&#39;PCA&#39;],</span>
 <span class="go">                           size=df[&#39;survival_months&#39;].fillna(1).values / 10,</span>
-<span class="go">                           color=df.index.values,</span>
-<span class="go">                           tooltip=df[&#39;labels&#39;].values + &#39; &lt;br /&gt; Survival: &#39; + df[&#39;survival_months&#39;].astype(str).str[0:4].values,</span>
+<span class="go">                           color=df[&#39;labx&#39;].values,</span>
+<span class="go">                           tooltip=df[&#39;labx&#39;].values + &#39; &lt;br /&gt; Survival: &#39; + df[&#39;survival_months&#39;].astype(str).str[0:4].values,</span>
 <span class="go">                           scale=True)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
