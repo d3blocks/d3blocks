@@ -17,7 +17,6 @@ import tempfile
 from pathlib import Path
 import time
 import json
-from typing import Union
 import d3graph as d3network
 from collections import defaultdict
 
@@ -116,7 +115,10 @@ def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
 
 
 # %% Normalize.
-def normalize(X, minscale: Union[int, float] = 0.5, maxscale: Union[int, float] = 4, scaler: str = 'zscore'):
+def normalize(X,
+              minscale: tuple[int | float] = 0.5,
+              maxscale: tuple[int | float] = 4,
+              scaler: str = 'zscore'):
     # Instead of Min-Max scaling, that shrinks any distribution in the [0, 1] interval, scaling the variables to
     # Z-scores is better. Min-Max Scaling is too sensitive to outlier observations and generates unseen problems,
 
