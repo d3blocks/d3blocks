@@ -8,6 +8,20 @@
 # df = d3.import_example('bigbang')
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('bigbang')
+# html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html')
+# html = d3.sankey(df)
+
+html = d3.circlepacking(df,
+                        speed = 750,
+                        border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
+                        font = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
+                        filepath='c://temp//circlepacking.html',
+                      )
 
 # %%
 # Load library
@@ -18,21 +32,7 @@ d3 = D3Blocks()
 df = d3.import_example(data='energy')
 
 # Create the network graph
-d3.d3graph(df, showfig=True)
-# Extract the node colors from the network graph.
-node_colors = d3.D3graph.node_properties
-
-# %%
-
-# Load library
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks()
-# Load energy data sets
-df = d3.import_example(data='energy')
-
-# Create the network graph
-d3.d3graph(df, charge=800, collision=2, showfig=True)
+d3.d3graph(df, cmap='Set2')
 # Extract the node colors from the network graph.
 node_colors = d3.D3graph.node_properties
 
@@ -45,8 +45,8 @@ import pandas as pd
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
-df = pd.DataFrame({'source': ['A','A','B'], 'target': ['C','D','E'], 'weight': [1,1,1]})
-html = d3.circlepacking(df, filepath='c://temp//circlepacking.html')
+# df = pd.DataFrame({'source': ['A','A','B'], 'target': ['C','D','E'], 'weight': [1,1,1]})
+html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', showfig=False)
 
 html = d3.circlepacking(df,
                       speed=1500,
@@ -64,8 +64,9 @@ html = d3.treemap(df, filepath='c://temp//treemap.html')
 # %%
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-df = d3.import_example('energy')
-d3.heatmap(df)
+df = d3.import_example('bigbang')
+d3.d3graph(df)
+d3.circlepacking(df, filepath='c:/temp/circlepacking.html')
 
 # %%
 

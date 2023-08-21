@@ -8,13 +8,10 @@ License     : GPL3
 """
 import numpy as np
 from jinja2 import Environment, PackageLoader
-from pathlib import Path
-import os
-import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file, is_circular
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file, is_circular
 
 
 # %% Set configuration properties
@@ -158,6 +155,9 @@ def show(df, **kwargs):
 
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)
+    # Check whether dataframe is circular
+    if is_circular(df):
+        logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
     # Write to HTML
     return write_html(X, config, logger)
 
