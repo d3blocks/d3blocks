@@ -1057,7 +1057,7 @@ class D3Blocks():
                       notebook: bool = False,
                       reset_properties: bool = True,
                       ):
-        """MovingBubbles block.
+        """Movingbubbles block.
 
         The MovingBubbles provides insights into when one action follows the other across time. It can help to
         understand the movements of entities, and whether clusters occur at specific time points and state(s).
@@ -1547,22 +1547,22 @@ class D3Blocks():
         return self.show()
 
     def matrix(self,
-                df,
-                scale=False,
-                stroke='red',
-                description=None,
-                vmin=None,
-                vmax=None,
-                cmap='interpolateInferno',
-                fontsize=10,
-                title='Matrix - D3blocks',
-                figsize=[700, 500],
-                showfig=True,
-                filepath='matrix.html',
-                overwrite=True,
-                notebook=False,
-                reset_properties=True,
-                ):
+               df,
+               scale=False,
+               stroke='red',
+               description=None,
+               vmin=None,
+               vmax=None,
+               cmap='interpolateInferno',
+               fontsize=10,
+               title='Matrix - D3blocks',
+               figsize=[700, 500],
+               showfig=True,
+               filepath='matrix.html',
+               overwrite=True,
+               notebook=False,
+               reset_properties=True,
+               ):
         """Matrix block.
 
         Parameters
@@ -2836,7 +2836,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         # example data with three levels and a single value field
         data = {'group1': ['Animal', 'Animal', 'Animal', 'Plant', 'Animal'],
                 'group2': ['Mammal', 'Mammal', 'Fish', 'Tree', 'Fish'],
-                'group3': ['Fox',    'Lion',   'Cod',  'Oak',  'Ape'],
+                'group3': ['Fox', 'Lion', 'Cod', 'Oak', 'Ape'],
                 'weight': [35000, 25000, 10000, 1500, 1750]}
         df = pd.DataFrame.from_dict(data)
         return df
@@ -2968,6 +2968,7 @@ def unzip(path_to_zip, ext=''):
 
 # %%
 def get_logger():
+    """Get logger status."""
     return logger.getEffectiveLevel()
 
 
@@ -3017,6 +3018,7 @@ def set_logger(verbose: [str, int] = 'info'):
 
     # Show examples
     logger.setLevel(verbose)
+
 
 # %%
 def disable_tqdm():
