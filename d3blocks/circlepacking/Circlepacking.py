@@ -10,9 +10,9 @@ import json
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular
 
 
 # %% Set configuration properties
@@ -23,16 +23,14 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['chart'] ='circlepacking'
     config['title'] = kwargs.get('title', 'Circlepacking - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'circlepacking.html'), logger)
-    config['figsize'] = kwargs.get('figsize', [1000, 600])
+    config['figsize'] = kwargs.get('figsize', [800, 1200])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
-    config['diameter'] = kwargs.get('diameter', 850)
-    config['speed'] = kwargs.get('speed', 750)
-    config['zoom'] = kwargs.get('zoom', 20)
+    config['speed'] = kwargs.get('speed', 1000)
     config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['font'] = {**{'size': 10, 'type': 'sans-serif'}, **font}
-    config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2}, **border}
+    config['font'] = {**{'size': 10, 'color': '#000000', 'type': 'sans-serif'}, **font}
+    config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     # return
     return config
@@ -128,10 +126,24 @@ def show(df, **kwargs):
     df.reset_index(inplace=True, drop=True)
 
     # Create the data from the input of javascript
-    X = vec2flare(df, logger=logger)
+    # X = vec2flare(df, logger=logger)
+    X = convert_to_links_format(df, logger=logger)
+
+    # Check whether dataframe is circular
+    if is_circular(df):
+        logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
 
     # Write to HTML
     return write_html(X, config, logger)
+
+
+def convert_to_links_format(df, logger):
+    logger.debug("Setting up data for d3js..")
+    links = []
+    for index, row in df.iterrows():
+        link = {"source": row['source'], "target": row['target']}
+        links.append(link)
+    return links
 
 
 def write_html(X, config, logger=None):
@@ -157,16 +169,16 @@ def write_html(X, config, logger=None):
         'json_data': X,
         'TITLE': config['title'],
         'WIDTH': width,
-        'DIAMETER': config['diameter'],
-        'SPEED': config['speed'],
         'HEIGHT': height,
+        'SPEED': config['speed'],
         'bordercolor': config['border']['color'],
         'borderwidth': config['border']['width'],
         'borderfill': config['border']['fill'],
         'borderpadding': config['border']['padding'],
         'fontsize': config['font']['size'],
+        'fontcolor': config['font']['color'],
         'fonttype': config['font']['type'],
-        'zoom': config['zoom'],
+        'fontoutlinecolor': config['font']['outlinecolor'],
         'SUPPORT': config['support'],
     }
 

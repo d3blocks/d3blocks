@@ -6,155 +6,219 @@ Github      : https://github.com/d3blocks/d3blocks
 Licensed    : GPL3
 Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 -->
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="UTF-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>{{ TITLE }}</title>
+      <script>
+    	  {% include "d3.v6.min.js" %}
+      </script>
 
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ TITLE }}</title>
-
-	<script>
-    	{% include "d3.min.js" %}
-	</script>
-
-  <style>
-
-	/* Add your custom styles here */
-
-	.node { cursor: pointer; }
-	.node:hover { stroke: {{ bordercolor }}; stroke-width: {{ borderwidth }}px; }
-	.node--leaf { fill: {{ borderfill }}; }
-	.label {
-			font: {{ fontsize }}px {{ fonttype }};
-			text-anchor: middle;
-			text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
-			}
-	.label,
-	.node--root,
-	.node--leaf { pointer-events: none; }
-	.meter-background { fill: #DFEAFD; }
-	.meter-foreground { fill: #2E7AF9; }
-
-
-  </style>
-
+      <script>
+    	  {% include "lodash.min.js" %}
+      </script>
 
 	{{ SUPPORT }}
 
-</head>
+	</head>
+	<body>
+
+	  
+	  <script>
+		  const height = {{ WIDTH }};
+		  const width = {{ HEIGHT }};
+		  const lineHeight = 40
+
+		pack = data => d3.pack()
+			.size([width, height])
+			.padding({{ borderpadding }})
+		  (d3.hierarchy(data)
+			.sum(d => d.value)
+			.sort((a, b) => b.value - a.value))
+
+		color = d3.scaleLinear()
+			.domain([0, 5])
+			.range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
+			.interpolate(d3.interpolateHcl)
+
+		function buildTree(nodes, links) {
+		  // https://stackoverflow.com/a/68209716
+		  const map = new Map(nodes.map((o) => [o.name, { ...o, children: [] }]));
+		  for (let { source, target } of links)
+			map.get(source).children.push(map.get(target));
+		  return map;
+		}
 
 
-<body>
-  <div id="chart-container"></div>
-      <svg id="chart-svg"></svg>
-
-
-  <script>
-
-
-var margin = {{ zoom }},
-		padding = {{ borderpadding }},
-		diameter = {{ DIAMETER }},
 		
-		root = flareData();
+		// Define chart
+		function createChart() {
+        // Replace the data import
+        const links = {{ json_data }} ;
 
-var color = d3.scale.linear()
-		.domain([0, depthCount(root)])
-		.range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
-		.interpolate(d3.interpolateHcl);
+		// Generate nodes from links
+		const nodes = _.uniq(links.flatMap((x) => [x.source, x.target])).map((name) => ({ name, value: 1 }));
+		const tree = buildTree(nodes, links);
+		const data = Array.from(buildTree(nodes, links).values())[0];
 
-var pack = d3.layout.pack()
-		.padding(padding)
-		.size([diameter, diameter])
-		.value(function(d) { return 100; }), //return d.size;
-		arc = d3.svg.arc().innerRadius(0),
-		pie = d3.layout.pie;
 
-var svg = d3.select("body").append("svg")
-		.attr("width", diameter)
-		.attr("height", diameter)
+	function chart(data) {
+
+	  const root = pack(data);
+	  let focus = root;
+	  let view;
+	  let transitioning = false;
+	  let delay = 1000
+
+	  const svg = d3
+		.create("svg")
+		.attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
+		.style("display", "block")
+		.style("margin", "0 -14px")
+		.style("background", color(0))
+		.style("cursor", "pointer")
+		.on("mousemove", function (event, d) {
+		  if (transitioning || event.target.tagName != "svg") return;
+		  zoom(event, root);
+		});
+
+	  const node = svg
 		.append("g")
-		.attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+		.selectAll("circle")
+		.data(root.descendants().slice(1))
+		.join("circle")
+		.attr("fill", (d) => (d.children ? color(d.depth) : "{{ borderfill }}"))
+		.attr("pointer-events", (d) => (!d.children ? "none" : null))
+		.on("mouseover", function (event, d) { d3.select(this).attr("stroke", "{{ bordercolor }}").attr("stroke-width", "{{ borderwidth }}"); })
+		.on("mouseout", function (event, d) { d3.select(this).attr("stroke", null).attr("stroke-width", null); })
+		.on("click", function (event, d) {
+			if (transitioning || focus === d) return;
+			event.stopPropagation();
+			zoom(event, d);
+		});
+//		.on("mousemove", function (event, d) {
+//		  if (transitioning || focus === d) return;
+//		  event.stopPropagation();
+//		  zoom(event, d);
+//		});
 
-var focus = root,
-		nodes = pack.nodes(root),
-		//nodes = svg.selectAll("g.node")
-		//.data(pack.nodes(root)),
-		view;
+	  const textOutlineColor = "{{ fontoutlinecolor }}"; /* white outline */
+	  const textOutlineRadius = 0.6; /* width of outline in pixels */
+	  const label = svg
+		.append("g")
+		.style("font", "{{ fontsize }}px {{ fonttype }}")
+		.style("fill", "{{ fontcolor }}")
+		.style("text-shadow", () => {
+		  const n = Math.ceil(
+			2 * Math.PI * textOutlineRadius
+		  ); /* number of shadows */
+		  let str = "";
+		  for (
+			let i = 0;
+			i < n;
+			i++ /* append shadows in n evenly distributed directions */
+		  ) {
+			const theta = (2 * Math.PI * i) / n;
+			str +=
+			  textOutlineRadius * Math.cos(theta) +
+			  "px " +
+			  textOutlineRadius * Math.sin(theta) +
+			  "px 0 " +
+			  textOutlineColor +
+			  (i == n - 1 ? "" : ",");
+		  }
+		  return str;
+		})
+		// .attr("stroke", "white")
+		// .attr("stroke-width", 0.3)
+		// .attr("stroke-linejoin", "round")
+		.attr("pointer-events", "none")
+		.attr("text-anchor", "middle")
+		.selectAll("text")
+		.data(root.descendants())
+		.join("text")
+		.attr("font-weight", 900)
+		.style("fill-opacity", (d) => (d.parent === root ? 1 : 0))
+		.style("display", (d) => (d.parent === root ? "inline" : "none"))
+		.text((d) => d.data.name);
 
-var circle = svg.selectAll("circle")
-		.data(nodes)
-		.enter().append("circle")
-		.attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
-		.style("fill", function(d) { return d.children ? color(d.depth) : null; })
-		.on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
+	  //console.log(root)
+	  zoomTo([root.x, root.y, root.r * 2]);
 
-var text = svg.selectAll("text")
-		.data(nodes)
-		.enter().append("text")
-		.attr("class", "label")
-		.style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
-		.style("display", function(d) { return d.parent === root ? null : "none"; })
-		.text(function(d) { return d.name; });
+	  function zoomTo(v) {
+//	  console.log(v)
+		const k = height / v[2];
 
-var node = svg.selectAll("circle,text");
+		view = v;
 
-d3.select("body")
-		.on("click", function() { zoom(root); });
+		label.attr(
+		  "transform",
+		  (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
+		);
+		node.attr(
+		  "transform",
+		  (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
+		);
+		node.attr("r", (d) => d.r * k);
+	  }
 
-zoomTo([root.x, root.y, root.r * 2 + margin]);
+	  function zoom(event, d) {
+		event.stopPropagation();
+		const focus0 = focus;
 
-function zoom(d) {
-		var focus0 = focus;
 		focus = d;
 
-		var transition = d3.transition()
-				.duration(d3.event.altKey ? 7500 : {{ SPEED }})
-				.tween("zoom", function(d) {
-						var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
-						return function(t) {
-								zoomTo(i(t));
-						};
-				});
+		const transition = svg
+		  .transition()
+		  .duration({{ SPEED }})
+		  .tween("zoom", (d) => {
+			const i = d3.interpolateZoom(view, [
+			  focus.x,
+			  focus.y,
+			  focus.r * 2 + 15
+			]);
+			return (t) => zoomTo(i(t));
+		  });
 
-		transition.selectAll("text")
-				.filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
-				.style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
-				.each("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
-				.each("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
-}
+		label
+		  .filter(function (d) {
+			return d.parent === focus || this.style.display === "inline";
+		  })
+		  .transition(transition)
+		  .style("fill-opacity", (d) => (d.parent === focus ? 1 : 0))
+		  .on("start", function (d) {
+			transitioning = true;
+			if (d.parent === focus) {
+			  this.style.display = "inline";
+			}
+		  })
+		  .on("end", function (d) {
+			// transitioning = false;
+			setTimeout(() => {
+			  transitioning = false;
+			}, delay);
+			if (d.parent !== focus) {
+			  this.style.display = "none";
+			}
+		  });
+	  }
 
-function zoomTo(v) {
-		var k = diameter / v[2];
-		view = v;
-		node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
-		circle.attr("r", function(d) { return d.r * k; });
-}
+	  return svg.node();
+	}
 
+		//	  console.log(data)
+		// Call the chart function to create and append the SVG
+		const svgNode = chart(data);
+		// Append the generated SVG node to the body
+		document.body.appendChild(svgNode);
+		}
 
-/**
- * Counts JSON graph depth
- * @param {object} branch
- * @return {Number} object graph depth
- */
-function depthCount(branch) {
-		if (!branch.children) { return 1; }
-		return 1 + d3.max(branch.children.map(depthCount));
-}
+		// Call the createChart function to execute the chart creation logic
+		createChart();
 
-d3.select(self.frameElement).style("height", diameter + "px");
+	  </script>
+	</body>
+	</html>
 
-
-/*********************************************************************/
-
-function flareData() { return {{ json_data }} }
-
-
-  </script>
-
-
-
-</body>
-</html>

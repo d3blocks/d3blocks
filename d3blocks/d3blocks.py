@@ -88,6 +88,7 @@ class D3Blocks():
     * Scatter: https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046
     * Sankey: https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43
     * Movingbubbles: https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226
+    * Comparison of Sankey, D3graph and Heatmap: https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16
 
     """
 
@@ -2284,13 +2285,12 @@ class D3Blocks():
 
     def circlepacking(self,
                 df,
-                diameter: int = 850,
                 speed: int = 750,
-                zoom : int = 20,
-                border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
-                font: dict = {'size': 11, 'type': 'sans-serif'},
+                border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
+                font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
                 title: str = 'Circlepacking - D3blocks',
                 filepath: str = 'Circlepacking.html',
+                figsize: Tuple[int, int] = [1080, 1920],
                 showfig: bool = True,
                 overwrite: bool = True,
                 notebook: bool = False,
@@ -2308,8 +2308,6 @@ class D3Blocks():
             Input data containing the following columns:
                 * 'source', 'target', 'weight'
                 * 'level0', 'level1', 'level2', 'weight'
-        diameter : int (default: 850)
-            Size of the circle.
         speed : int (default: 750)
             Speed in ms to zoom in/out
         zoom : int (default: 20)
@@ -2323,7 +2321,7 @@ class D3Blocks():
                 * padding: size of the circles
         font : dict.
             font properties.
-                * {'size': 10, 'type':'sans-serif'}
+                * {'size': 20, 'type':'sans-serif'}
         title : String, (default: None)
             Title of the figure.
                 * 'Circlepacking'
@@ -2333,6 +2331,10 @@ class D3Blocks():
                 * Relative path: './d3blocks.html'
                 * Absolute path: 'c://temp//d3blocks.html'
                 * None: Return HTML
+        figsize : tuple
+            Size of the figure in the browser, [width, height].
+                * [1000, 1200]
+                * [None, None]: Use the screen resolution.
         showfig : bool, (default: True)
                 * True: Open browser-window.
                 * False: Do not open browser-window.
@@ -2408,7 +2410,6 @@ class D3Blocks():
         >>> html = d3.circlepacking(df,
         >>>                         speed=1500,
         >>>                         zoom=20,
-        >>>                         diameter=1000,
         >>>                         filepath='c://temp//circlepacking.html',
         >>>                         border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
         >>>                         overwrite=True,
@@ -2422,7 +2423,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=[None, None], diameter=diameter, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
@@ -2726,7 +2727,7 @@ class D3Blocks():
             Dataset containing mixed features.
 
         """
-        if np.isin(data, ['animals', 'mnist', 'movingbubbles', 'random_time', 'timeseries', 'bigbang', 'southern_nebula_internet', 'climate']):
+        if np.isin(data, ['animals', 'mnist', 'movingbubbles', 'random_time', 'timeseries', 'southern_nebula_internet', 'climate']):
             return _import_example(data=data, n=n, c=c, date_start=date_start, date_stop=date_stop, dt_format='%d-%m-%Y %H:%M:%S', logger=logger)
         else:
             return dz.get(data=data, verbose=get_logger(), overwrite=overwrite)
@@ -2751,6 +2752,7 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
             * "mnist"
             * "animals"
         Datazets:
+            * "bigbang"
             * "energy"
             * "stormofswords"
             * "southern_nebula"

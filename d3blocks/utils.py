@@ -17,8 +17,32 @@ import tempfile
 from pathlib import Path
 import time
 import json
-from typing import List, Union, Tuple
+from typing import Union
 import d3graph as d3network
+from collections import defaultdict
+
+
+def is_circular(df):
+    graph = defaultdict(list)
+    for _, row in df.iterrows():
+        graph[row['source']].append(row['target'])
+
+    visited = set()
+    path = set()
+
+    def visit(vertex):
+        visited.add(vertex)
+        path.add(vertex)
+        for neighbour in graph[vertex]:
+            if neighbour not in visited:
+                if visit(neighbour):
+                    return True
+            elif neighbour in path:
+                return True
+        path.remove(vertex)
+        return False
+
+    return any(visit(v) for v in list(graph))  # Create a list of the dictionary keys
 
 
 def adjmat2vec(df, min_weight=1):
