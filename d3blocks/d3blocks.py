@@ -11,7 +11,6 @@ import zipfile
 import webbrowser
 import random
 import time
-from typing import List, Union, Tuple
 from elasticgraph import Elasticgraph
 import d3graph as d3network
 import datazets as dz
@@ -1990,18 +1989,17 @@ class D3Blocks():
         # return self.display(html)
 
     def tree(self,
-             df,
-             hierarchy = [1, 2, 3, 4, 5, 6, 7, 8],
-             margin: dict = {"top": 20, "right": 80, "bottom": 20, "left": 60},
-             font: dict = {'size': 10},
+             df: pd.DataFrame,
+             hierarchy: list[int] = [1, 2, 3, 4, 5, 6, 7, 8],
+             margin: dict[str, int] = {"top": 20, "right": 80, "bottom": 20, "left": 60},
+             font: dict[str, tuple[int, str]] = {'size': 10},
              title: str = 'Tree - D3blocks',
-             filepath: str = 'tree.html',
-             figsize: Tuple[int, int] = [960, 700],
+             filepath: str | None = 'tree.html',
+             figsize: tuple[int | None, int | None] = [960, 700],
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
-             reset_properties: bool = True,
-             ):
+             reset_properties: bool = True):
         """Tree block.
 
         A Tree chart is a visualization to hierarchically show the data.
@@ -2156,18 +2154,17 @@ class D3Blocks():
         return self.show()
 
     def treemap(self,
-                df,
-                margin: dict = {"top": 40, "right": 10, "bottom": 10, "left": 10},
-                border: dict = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
-                font: dict = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
+                df: pd.DataFrame,
+                margin: dict[str, int] = {"top": 40, "right": 10, "bottom": 10, "left": 10},
+                border: dict[str, tuple[str, int]] = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
+                font: dict[str, tuple[int, str]] = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
                 title: str = 'Treemap - D3blocks',
                 filepath: str = 'treemap.html',
-                figsize: Tuple[int, int] = [1000, 600],
+                figsize: tuple[int | None, int | None] = [1000, 600],
                 showfig: bool = True,
                 overwrite: bool = True,
                 notebook: bool = False,
-                reset_properties: bool = True,
-                ):
+                reset_properties: bool = True):
         """Treemap block.
 
         A Treemap chart is a visualization to hierarchically show the data as a set of nested rectangles.
@@ -2284,18 +2281,18 @@ class D3Blocks():
         return self.show()
 
     def circlepacking(self,
-                df,
-                speed: int = 750,
-                border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
-                font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
-                title: str = 'Circlepacking - D3blocks',
-                filepath: str = 'Circlepacking.html',
-                figsize: Tuple[int, int] = [1080, 1920],
-                showfig: bool = True,
-                overwrite: bool = True,
-                notebook: bool = False,
-                reset_properties: bool = True,
-                ):
+                      df,
+                      speed: int = 750,
+                      border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
+                      font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
+                      title: str = 'Circlepacking - D3blocks',
+                      filepath: str = 'Circlepacking.html',
+                      figsize: tuple[int | None, int | None] = [1080, 1920],
+                      showfig: bool = True,
+                      overwrite: bool = True,
+                      notebook: bool = False,
+                      reset_properties: bool = True,
+                      ):
         """Circlepacking block.
 
         The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
