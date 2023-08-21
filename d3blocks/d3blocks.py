@@ -335,12 +335,12 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Set some input variables.
-        >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+        >>> tooltip = df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
         >>> fontsize = df['age'].values
         >>> # fontsize = 16  # Set one fontsize for all nodes
         >>> #
         >>> # Create the chart
-        >>> d3.violin(x=df['labels'].values, y=df['age'].values, fontsize=fontsize, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
+        >>> d3.violin(x=df['labx'].values, y=df['age'].values, fontsize=fontsize, tooltip=tooltip, bins=50, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], filepath='violine.html', figsize=[900, None])
         >>> #
 
         Examples
@@ -355,7 +355,7 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Set the properties by providing the labels
-        >>> d3.set_edge_properties(x=df['labels'].values, y=df['age'].values, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'])
+        >>> d3.set_edge_properties(x=df['labx'].values, y=df['age'].values, size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'])
         >>> #
         >>> # Set specific node properties.
         >>> d3.edge_properties.loc[0,'size']=50
@@ -519,13 +519,13 @@ class D3Blocks():
         >>> #
         >>> # Set size and tooltip
         >>> size = df['survival_months'].fillna(1).values / 20
-        >>> tooltip = df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+        >>> tooltip = df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> #
         >>> # Scatter plot
-        >>> d3.scatter(df['x'].values,
-                       df['y'].values,
+        >>> d3.scatter(df['tsneX'].values,
+                       df['tsneY'].values,
                        size=size,
-                       color=df.index.values,
+                       color=df['labx'].values,
                        stroke='#000000',
                        opacity=0.4,
                        tooltip=tooltip,
@@ -535,14 +535,14 @@ class D3Blocks():
         Examples
         --------
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values,
-                       df['y'].values,
+        >>> d3.scatter(df['tsneX'].values,
+                       df['tsneY'].values,
                        x1=df['PC1'].values,
                        y1=df['PC2'].values,
                        label_radio=['tSNE', 'PCA'],
                        scale=True,
                        size=size,
-                       color=df.index.values,
+                       color=df['labx'].values,
                        stroke='#000000',
                        opacity=0.4,
                        tooltip=tooltip,
@@ -552,8 +552,8 @@ class D3Blocks():
         Examples
         --------
         >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['x'].values,
-                       df['y'].values,
+        >>> d3.scatter(df['tsneX'].values,
+                       df['tsneY'].values,
                        x1=df['PC1'].values,
                        y1=df['PC2'].values,
                        x2=df['PC2'].values,
@@ -561,7 +561,7 @@ class D3Blocks():
                        label_radio=['tSNE', 'PCA', 'PCA_reverse'],
                        scale=True,
                        size=size,
-                       color=df.index.values,
+                       color=df['labx'].values,
                        stroke='#000000',
                        opacity=0.4,
                        tooltip=tooltip,
@@ -580,14 +580,14 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> #
         >>> # Set properties
-        >>> d3.set_edge_properties(df['x'].values,
-                                   df['y'].values,
+        >>> d3.set_edge_properties(df['tsneX'].values,
+                                   df['tsneY'].values,
                                    x1=df['PC1'].values,
                                    y1=df['PC2'].values,
                                    label_radio=['tSNE','PCA'],
                                    size=df['survival_months'].fillna(1).values / 10,
-                                   color=df.index.values,
-                                   tooltip=df['labels'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                                   color=df['labx'].values,
+                                   tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
                                    scale=True)
         >>> #
         >>> # Show the chart
@@ -2880,8 +2880,8 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         return img_before, img_after
     elif data=='cancer':
         df = pd.read_csv(PATH_TO_DATA, sep=',')
-        df.rename(columns={'tsneX': 'x', 'tsneY': 'y', 'labx': 'labels'}, inplace=True)
-        df.set_index(df['labels'], inplace=True)
+        # df.rename(columns={'tsneX': 'x', 'tsneY': 'y', 'labx': 'labels'}, inplace=True)
+        # df.set_index(df['labels'], inplace=True)
     else:
         df = pd.read_csv(PATH_TO_DATA, sep=sep)
 
