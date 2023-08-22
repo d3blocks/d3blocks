@@ -1023,6 +1023,8 @@ class D3Blocks():
         self.chart = set_chart_func('Sankey', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        # Cleaning of data
+        df = utils.pre_processing(df, clean_source_target=True)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])
@@ -2145,6 +2147,8 @@ class D3Blocks():
         self.chart = set_chart_func('Tree', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, logger=logger)
+        # Cleaning of data
+        df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
@@ -2272,6 +2276,8 @@ class D3Blocks():
         self.chart = set_chart_func('Treemap', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        # Cleaning of data
+        df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
@@ -2420,7 +2426,9 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        # Cleaning of data
+        df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))

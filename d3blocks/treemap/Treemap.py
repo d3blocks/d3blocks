@@ -6,7 +6,6 @@ Mail        : erdogant@gmail.com
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
-import json
 from jinja2 import Environment, PackageLoader
 
 try:
@@ -59,7 +58,7 @@ def set_edge_properties(df, **kwargs):
     # node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
     df = df.copy()
-    df = pre_processing(df, labels=df.columns.values[:-1].astype(str))
+    df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
     # Create unique dataframe, udpate weights
     # df = create_unique_dataframe(df, logger=logger)
     return df

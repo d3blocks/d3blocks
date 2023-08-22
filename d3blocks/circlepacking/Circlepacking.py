@@ -56,12 +56,9 @@ def set_edge_properties(df, **kwargs):
         DataFrame.
 
     """
-    # node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
     df = df.copy()
-    df = pre_processing(df, labels=df.columns.values[:-1].astype(str))
-    # Create unique dataframe, udpate weights
-    # df = create_unique_dataframe(df, logger=logger)
+    df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
     return df
 
 

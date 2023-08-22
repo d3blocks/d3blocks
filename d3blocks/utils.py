@@ -595,7 +595,7 @@ def density_color(X, colors, labels):
 
 
 # %% Pre processing
-def pre_processing(df, labels=['source', 'target']):
+def pre_processing(df, labels=['source', 'target'], clean_source_target=False, logger=None):
     """Pre-processing of the input dataframe.
 
     Parameters
@@ -609,8 +609,13 @@ def pre_processing(df, labels=['source', 'target']):
     """
     # Create strings from source-target
     if isinstance(df, pd.DataFrame):
-        for col in labels:
-            df[col] = df[col].astype(str)
+        # Add weights if not exists
+        if (df.get('source', None) is not None) and (df.get('target', None) is not None) and (df.get('weight', None) is None):
+            if logger is not None: logger.info('Create new column with [weights]=1')
+            df['weight']=1
+
+        for label in labels:
+            df[label] = df[label].astype(str)
     else:
         if isinstance(df, list):
             df = np.array(df)
@@ -618,7 +623,8 @@ def pre_processing(df, labels=['source', 'target']):
 
     # Remove quotes and special chars
     df = remove_quotes(df)
-    df = remove_special_chars(df)
+    df = remove_special_chars(df, clean_source_target=clean_source_target)
+    df = trim_spaces(df)
     return df
 
 
@@ -654,7 +660,18 @@ def remove_quotes(df):
 
 
 # %% Remove special characters from column names
-def remove_special_chars(df):
+def trim_spaces(df):
+    """Trim spaces at the start and end of strings in the 'source' and 'target' columns."""
+    if isinstance(df, pd.DataFrame):
+        if df.get('source', None) is not None:
+            df['source'] = df['source'].str.strip()
+        if df.get('target', None) is not None:
+            df['target'] = df['target'].str.strip()
+    return df
+
+
+# %% Remove special characters from column names
+def remove_special_chars(df, clean_source_target=False):
     """Remove special characters.
 
     Parameters
@@ -667,11 +684,22 @@ def remove_special_chars(df):
 
     """
     if isinstance(df, pd.DataFrame):
-        df.columns = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.columns.values.astype(str)))
-        df.index = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.index.values.astype(str)))
-        return df
-    else:
-        return df
+        df.columns = clean_text(df.columns.values.astype(str))
+        df.index = clean_text(df.index.values.astype(str))
+        # df.columns = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.columns.values.astype(str)))
+        # df.index = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.index.values.astype(str)))
+
+    if isinstance(df, pd.DataFrame) and clean_source_target:
+        if df.get('source', None) is not None:
+            df['source'] = clean_text(df['source'].values.astype(str))
+        if df.get('target', None) is not None:
+            df['target'] = clean_text(df['target'].values.astype(str))
+
+    return df
+
+# %% Remove special characters from column names
+def clean_text(X):
+    return list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), X))
 
 def write_html_file(config, html, logger):
     """Write html file.
