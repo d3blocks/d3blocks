@@ -1049,7 +1049,7 @@ class D3Blocks():
                       timedelta: str = 'minutes',
                       standardize: str = 'samplewise',
                       speed: dict = {"slow": 1000, "medium": 200, "fast": 50},
-                      figsize: tuple = [780, 800],
+                      figsize: tuple[int | None, int | None] = [700, 800],
                       note: str = None,
                       time_notes: str = None,
                       title: str = 'Movingbubbles - D3Blocks',
@@ -1400,7 +1400,7 @@ class D3Blocks():
                                   'min_clust': 3,
                                   'max_clust': 25,
                                   'normalize': False},
-                figsize=[720, 720],
+                figsize: tuple[int | None, int | None] = [720, 720],
                 showfig=True,
                 overwrite=True,
                 notebook=False,
@@ -2288,12 +2288,13 @@ class D3Blocks():
 
     def circlepacking(self,
                       df,
+                      zoom: str = 'click',
                       speed: int = 750,
                       border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
                       font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
                       title: str = 'Circlepacking - D3blocks',
                       filepath: str = 'Circlepacking.html',
-                      figsize: tuple[int | None, int | None] = [1080, 1920],
+                      figsize: tuple[int|None, int|None] = [900, 1920],
                       showfig: bool = True,
                       overwrite: bool = True,
                       notebook: bool = False,
@@ -2313,8 +2314,10 @@ class D3Blocks():
                 * 'level0', 'level1', 'level2', 'weight'
         speed : int (default: 750)
             Speed in ms to zoom in/out
-        zoom : int (default: 20)
-            Strenght of zooming. The larger the value, the less zoom-interaction.
+        zoom : str (default: "click")
+            Zooming method.
+                * 'click'
+                * 'mouseover'
         border : dict.
             border properties.
                 * {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2}
@@ -2412,7 +2415,7 @@ class D3Blocks():
         >>> #
         >>> html = d3.circlepacking(df,
         >>>                         speed=1500,
-        >>>                         zoom=20,
+        >>>                         zoom='mouseover',
         >>>                         filepath='c://temp//circlepacking.html',
         >>>                         border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
         >>>                         overwrite=True,
