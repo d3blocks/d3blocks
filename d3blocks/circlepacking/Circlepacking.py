@@ -6,7 +6,6 @@ Mail        : erdogant@gmail.com
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
-import json
 from jinja2 import Environment, PackageLoader
 
 try:
@@ -23,13 +22,14 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['chart'] ='circlepacking'
     config['title'] = kwargs.get('title', 'Circlepacking - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'circlepacking.html'), logger)
-    config['figsize'] = kwargs.get('figsize', [800, 1200])
+    config['figsize'] = kwargs.get('figsize', [900, 1920])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
-    config['speed'] = kwargs.get('speed', 1000)
+    config['speed'] = kwargs.get('speed', 750)
+    config['zoom'] = kwargs.get('zoom', 'click')
     config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['font'] = {**{'size': 10, 'color': '#000000', 'type': 'sans-serif'}, **font}
+    config['font'] = {**{'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'}, **font}
     config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     # return
@@ -168,6 +168,7 @@ def write_html(X, config, logger=None):
         'WIDTH': width,
         'HEIGHT': height,
         'SPEED': config['speed'],
+        'ZOOM': config['zoom'],
         'bordercolor': config['border']['color'],
         'borderwidth': config['border']['width'],
         'borderfill': config['border']['fill'],

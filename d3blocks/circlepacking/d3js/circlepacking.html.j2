@@ -93,16 +93,11 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 		.attr("pointer-events", (d) => (!d.children ? "none" : null))
 		.on("mouseover", function (event, d) { d3.select(this).attr("stroke", "{{ bordercolor }}").attr("stroke-width", "{{ borderwidth }}"); })
 		.on("mouseout", function (event, d) { d3.select(this).attr("stroke", null).attr("stroke-width", null); })
-		.on("click", function (event, d) {
+		.on("{{ ZOOM }}", function (event, d) {
 			if (transitioning || focus === d) return;
 			event.stopPropagation();
 			zoom(event, d);
 		});
-//		.on("mousemove", function (event, d) {
-//		  if (transitioning || focus === d) return;
-//		  event.stopPropagation();
-//		  zoom(event, d);
-//		});
 
 	  const textOutlineColor = "{{ fontoutlinecolor }}"; /* white outline */
 	  const textOutlineRadius = 0.6; /* width of outline in pixels */
