@@ -2288,6 +2288,7 @@ class D3Blocks():
 
     def circlepacking(self,
                       df,
+                      size='sum',
                       zoom: str = 'click',
                       speed: int = 750,
                       border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
@@ -2312,6 +2313,10 @@ class D3Blocks():
             Input data containing the following columns:
                 * 'source', 'target', 'weight'
                 * 'level0', 'level1', 'level2', 'weight'
+        size : str (default: "sum")
+            Size of the nodes can automatically be set in with:
+                * 'sum' : This is the sum of the weights for the edges
+                * 'constant' : All nodes are set to 1
         speed : int (default: 750)
             Speed in ms to zoom in/out
         zoom : str (default: "click")
@@ -2429,12 +2434,12 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Cleaning of data
         df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str), size=self.config['size'])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
