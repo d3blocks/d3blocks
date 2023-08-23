@@ -52,14 +52,15 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 		}
 
 
-		
 		// Define chart
 		function createChart() {
         // Replace the data import
         const links = {{ json_data }} ;
+        const node_properties = {{ json_nodes }} ;
 
 		// Generate nodes from links
-		const nodes = _.uniq(links.flatMap((x) => [x.source, x.target])).map((name) => ({ name, value: 1 }));
+		// const nodes = _.uniq(links.flatMap((x) => [x.source, x.target])).map((name) => ({ name, value: 1 }));
+		const nodes = _.uniq(links.flatMap((x) => [x.source, x.target])).map((name) => ({ name, value: Math.max(1, node_properties[name].value) })); // Use the actual value from node_properties 
 		const tree = buildTree(nodes, links);
 		const data = Array.from(buildTree(nodes, links).values())[0];
 

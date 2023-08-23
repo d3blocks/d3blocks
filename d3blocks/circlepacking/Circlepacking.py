@@ -28,6 +28,7 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['cmap'] = kwargs.get('cmap', 'Set1')
     config['speed'] = kwargs.get('speed', 750)
     config['zoom'] = kwargs.get('zoom', 'click')
+    config['size'] = kwargs.get('size', 'sum')
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['font'] = {**{'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'}, **font}
     config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5}, **border}
@@ -81,11 +82,20 @@ def set_node_properties(df, **kwargs):
     # Get unique label
     col_labels = kwargs.get('labels', ['source', 'target'])
     logger = kwargs.get('logger', None)
+    size = kwargs.get('size')
     uilabels = set_labels(df, col_labels=col_labels, logger=logger)
 
     dict_labels = {}
     for i, label in enumerate(uilabels):
-        dict_labels[label] = {'id': i, 'label': label}
+        if size=='sum':
+            if df.loc[df['source']==label].empty:
+                weight = df.loc[df['target']==label]['weight'].sum()
+            else:
+                weight = df.loc[df['source']==label]['weight'].sum()
+        else:
+            weight = 1
+        # Store
+        dict_labels[label] = {'id': i, 'label': label, 'value': weight}
     # Return
     return dict_labels
 
@@ -110,7 +120,7 @@ def show(df, **kwargs):
 
     """
     df = df.copy()
-    node_properties = kwargs.get('node_properties')
+    node_properties = kwargs.get('node_properties', None)
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
     config = config.copy()
@@ -131,19 +141,19 @@ def show(df, **kwargs):
         logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
 
     # Write to HTML
-    return write_html(X, config, logger)
+    return write_html(X, config, node_properties, logger)
 
 
 def convert_to_links_format(df, logger):
     logger.debug("Setting up data for d3js..")
     links = []
     for index, row in df.iterrows():
-        link = {"source": row['source'], "target": row['target']}
+        link = {"source": row['source'], "target": row['target'], "value": row['weight']}
         links.append(link)
     return links
 
 
-def write_html(X, config, logger=None):
+def write_html(X, config, node_properties, logger=None):
     """Write html.
 
     Parameters
@@ -164,6 +174,7 @@ def write_html(X, config, logger=None):
 
     content = {
         'json_data': X,
+        'json_nodes': node_properties,
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
