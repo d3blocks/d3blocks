@@ -342,6 +342,44 @@ def vec2flare(df, logger=None):
     return flare
 
 
+# %% Convert the flare into soure-target dataframe
+def convert_flare2source_target(filepath):
+    """Convert data set into source-target-weights.
+
+    Parameters
+    ----------
+    filepath : str
+        Path to filename containing data.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe containing source,target,weights with the relationships.
+
+    """
+    def parse_node(node, parent=None):
+        results = []
+        name = node['name']
+        if 'value' in node:
+            results.append((parent, name, node['value']))
+        if 'children' in node:
+            for child in node['children']:
+                results.extend(parse_node(child, parent=name))
+        return results
+
+    with open(filepath) as f:
+        data = json.load(f)
+
+    parsed_data = parse_node(data)
+
+    # with open(filepath+'.csv', 'w') as f:
+    #     for line in parsed_data:
+    #         f.write(';'.join(str(x) for x in line) + '\n')
+
+    df = pd.DataFrame(parsed_data, columns=['source', 'target', 'weight'])
+    return df
+
+
 # %% Scaling
 def scale(X, vmax=100, vmin=None, make_round=True, logger=None):
     """Scale data.
@@ -556,8 +594,6 @@ def set_colors(X, c, cmap, c_gradient=None):
 def density_color(X, colors, labels):
     """Determine the density.
 
-    Description
-    -----------
     Given (x,y) coordinates, determine the density. This optional is possible in the following blocks:
         * scatter.
 
@@ -697,9 +733,11 @@ def remove_special_chars(df, clean_source_target=False):
 
     return df
 
+
 # %% Remove special characters from column names
 def clean_text(X):
     return list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), X))
+
 
 def write_html_file(config, html, logger):
     """Write html file.

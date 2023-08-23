@@ -1,8 +1,11 @@
 from d3blocks.d3blocks import D3Blocks
 from datazets import get as import_example
-
 from d3blocks.utils import (
     normalize,
+    scale,
+    adjmat2vec,
+    vec2adjmat,
+    convert_flare2source_target,
     )
 
 __author__ = 'Erdogan Taskesen, Oliver Verver'
