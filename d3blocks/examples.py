@@ -5,6 +5,36 @@
 # import pandas as pd
 # import numpy as np
 
+# from d3blocks import D3Blocks, convert_flare2source_target
+# filepath=r'c:\\Users\\playground\\Downloads\\flare-2 (2).json'
+# df = convert_flare2source_target(filepath)
+# df['weight']=1
+# df=df.iloc[0:10:]
+
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('energy')
+html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html', size='constant')
+d3.node_properties
+
+# html = d3.treemap(df)
+html = d3.tree(df)
+# html = d3.sankey(df)
+
+# %%
+import pandas as pd
+df = pd.read_csv(r'D:\GITLAB\DATA\organogram.csv', sep=';')
+# df['weight']=1
+# df = df.loc[0:5]
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+# df = d3.import_example('energy')
+html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
+# html = d3.treemap(df, filepath='c://temp//treemap.html')
+# html = d3.tree(df, filepath='c://temp//tree.html')
+# html = d3.sankey(df)
+
+# %%
 # df = d3.import_example('bigbang')
 # df1 = df.groupby(['source', 'target'])['weight'].sum()
 # df1 = df1.reset_index()
@@ -14,14 +44,15 @@ d3 = D3Blocks()
 # Load example data
 df = d3.import_example('energy')
 # html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html')
-html = d3.tree(df)
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
 
-html = d3.circlepacking(df,
-                        speed = 750,
-                        border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
-                        font = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
-                        filepath='c://temp//circlepacking.html',
-                      )
+# html = d3.circlepacking(df,
+#                         speed = 750,
+#                         border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
+#                         font = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
+#                         filepath='c://temp//circlepacking.html',
+#                       )
+
 
 # %%
 # Load library
