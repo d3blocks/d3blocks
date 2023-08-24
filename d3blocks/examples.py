@@ -5,16 +5,16 @@
 # import pandas as pd
 # import numpy as np
 
-# from d3blocks import D3Blocks, convert_flare2source_target
-# filepath=r'c:\\Users\\playground\\Downloads\\flare-2 (2).json'
-# df = convert_flare2source_target(filepath)
+from d3blocks import D3Blocks, convert_flare2source_target
+filepath=r'c:\\Users\\playground\\Downloads\\flare-2 (2).json'
+df = convert_flare2source_target(filepath)
 # df['weight']=1
 # df=df.iloc[0:10:]
 
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
-html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html', size='constant')
+html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', size='sum')
 d3.node_properties
 
 # html = d3.treemap(df)
