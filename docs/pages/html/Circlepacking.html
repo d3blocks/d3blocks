@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.3.2
+                1.3.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -144,6 +144,18 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
+<dt class="field-odd">param size<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Size of the nodes can automatically be set in with:</dt><dd><ul class="simple">
+<li><p>‘sum’ : This is the sum of the weights for the edges</p></li>
+<li><p>‘constant’ : All nodes are set to 1</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type size<span class="colon">:</span></dt>
+<dd class="field-even"><p>str (default: “sum”)</p>
+</dd>
 <dt class="field-odd">param speed<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Speed in ms to zoom in/out</p>
 </dd>
@@ -151,10 +163,16 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dd class="field-even"><p>int (default: 750)</p>
 </dd>
 <dt class="field-odd">param zoom<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Strenght of zooming. The larger the value, the less zoom-interaction.</p>
+<dd class="field-odd"><dl class="simple">
+<dt>Zooming method.</dt><dd><ul class="simple">
+<li><p>‘click’</p></li>
+<li><p>‘mouseover’</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt class="field-even">type zoom<span class="colon">:</span></dt>
-<dd class="field-even"><p>int (default: 20)</p>
+<dd class="field-even"><p>str (default: “click”)</p>
 </dd>
 <dt class="field-odd">param border<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -310,7 +328,7 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">circlepacking</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                        <span class="n">speed</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">zoom</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">zoom</span><span class="o">=</span><span class="s1">&#39;mouseover&#39;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                        <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;c://temp//circlepacking.html&#39;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                        <span class="n">border</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span> <span class="s1">&#39;fill&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
 <span class="gp">&gt;&gt;&gt; </span>                        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -338,14 +356,6 @@ The number can be 3 levels and the column weight is obligatory.</p>
 <span class="c1"># 67                     Wind  Electricity grid  289.366</span>
 
 <span class="c1"># [68 rows x 3 columns]</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#    group1  group2 group3  weight</span>
-<span class="c1"># 0  Animal  Mammal    Fox   35000</span>
-<span class="c1"># 1  Animal  Mammal   Lion   25000</span>
-<span class="c1"># 2  Animal    Fish    Cod   10000</span>
-<span class="c1"># 3   Plant    Tree    Oak    1500</span>
-<span class="c1"># 4  Animal    Fish    Ape    1750</span>
 </pre></div>
 </div>
 </section>
