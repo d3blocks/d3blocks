@@ -91,7 +91,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, chart: str = None, frame: bool = True, verbose: int = 20, support='text'):
+    def __init__(self, chart: str = None, frame: bool = True, verbose: int = 20, support: str = 'text') -> None:
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
@@ -118,8 +118,8 @@ class D3Blocks():
                   cmap: str = 'Turbo',
                   color_background: str = '#000000',
                   title: str = 'Particles - D3blocks',
-                  filepath: (None, str) = 'particles.html',
-                  figsize=[900, 200],
+                  filepath: str = 'particles.html',
+                  figsize = [900, 200],
                   showfig: bool = True,
                   notebook: bool = False,
                   overwrite: bool = True):
@@ -226,24 +226,24 @@ class D3Blocks():
     def violin(self,
                x,
                y,
-               size=5,
-               color=None,
-               x_order=None,
-               opacity=0.6,
-               stroke='#000000',
-               tooltip=None,
-               fontsize=12,
-               fontsize_axis=12,
-               cmap='inferno',
-               bins=50,
-               ylim=[None, None],
-               title='Violin - D3blocks',
-               filepath='violin.html',
-               figsize: tuple[int | None, int | None] = [None, None],
-               showfig=True,
-               overwrite=True,
-               notebook=False,
-               reset_properties=True):
+               size = 5,
+               color = None,
+               x_order = None,
+               opacity = 0.6,
+               stroke = '#000000',
+               tooltip = None,
+               fontsize = 12,
+               fontsize_axis: int = 12,
+               cmap: str = 'inferno',
+               bins: int = 50,
+               ylim = [None, None],
+               title: str = 'Violin - D3blocks',
+               filepath = 'violin.html',
+               figsize = [None, None],
+               showfig: bool = True,
+               overwrite: bool = True,
+               notebook: bool = False,
+               reset_properties: bool = True):
         """Violin block.
 
         The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
@@ -410,8 +410,8 @@ class D3Blocks():
                 ylim=[None, None],
                 title='Scatter - D3blocks',
                 filepath='scatter.html',
-                figsize: tuple[int | None, int | None] = [900, 600],
-                showfig=True,
+                figsize = [900, 600],
+                showfig = True,
                 overwrite=True,
                 notebook=False,
                 reset_properties=True,
@@ -783,7 +783,7 @@ class D3Blocks():
                     background='#000000',
                     title='Imageslider - D3blocks',
                     filepath='imageslider.html',
-                    figsize: tuple[int | None, int | None] = [None, None],
+                    figsize = [None, None],
                     showfig=True,
                     notebook=False,
                     overwrite=True):
@@ -902,7 +902,7 @@ class D3Blocks():
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                title='Sankey - D3blocks',
                filepath='sankey.html',
-               figsize: tuple[int | None, int | None] = [800, 600],
+               figsize = [800, 600],
                showfig=True,
                overwrite=True,
                notebook=False,
@@ -1049,7 +1049,7 @@ class D3Blocks():
                       timedelta: str = 'minutes',
                       standardize: str = 'samplewise',
                       speed: dict = {"slow": 1000, "medium": 200, "fast": 50},
-                      figsize: tuple[int | None, int | None] = [700, 800],
+                      figsize = [700, 800],
                       note: str = None,
                       time_notes: str = None,
                       title: str = 'Movingbubbles - D3Blocks',
@@ -1400,7 +1400,7 @@ class D3Blocks():
                                   'min_clust': 3,
                                   'max_clust': 25,
                                   'normalize': False},
-                figsize: tuple[int | None, int | None] = [720, 720],
+                figsize=[720, 720],
                 showfig=True,
                 overwrite=True,
                 notebook=False,
@@ -1558,7 +1558,7 @@ class D3Blocks():
                cmap='interpolateInferno',
                fontsize=10,
                title='Matrix - D3blocks',
-               figsize: tuple[int | None, int | None] = [700, 500],
+               figsize=[700, 500],
                showfig=True,
                filepath='matrix.html',
                overwrite=True,
@@ -1992,12 +1992,12 @@ class D3Blocks():
 
     def tree(self,
              df: pd.DataFrame,
-             hierarchy: list[int] = [1, 2, 3, 4, 5, 6, 7, 8],
-             margin: dict[str, int] = {"top": 20, "right": 80, "bottom": 20, "left": 60},
-             font: dict[str, tuple[int, str]] = {'size': 10},
+             hierarchy = [1, 2, 3, 4, 5, 6, 7, 8],
+             margin = {"top": 20, "right": 80, "bottom": 20, "left": 60},
+             font = {'size': 10},
              title: str = 'Tree - D3blocks',
              filepath: str = 'tree.html',
-             figsize: tuple[int, int] = [960, 700],
+             figsize = [960, 700],
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
@@ -2159,12 +2159,12 @@ class D3Blocks():
 
     def treemap(self,
                 df: pd.DataFrame,
-                margin: dict[str, int] = {"top": 40, "right": 10, "bottom": 10, "left": 10},
-                border: dict[str, tuple[str, int]] = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
-                font: dict[str, tuple[int, str]] = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
+                margin = {"top": 40, "right": 10, "bottom": 10, "left": 10},
+                border = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
+                font = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
                 title: str = 'Treemap - D3blocks',
                 filepath: str = 'treemap.html',
-                figsize: tuple[int, int] = [1000, 600],
+                figsize = [1000, 600],
                 showfig: bool = True,
                 overwrite: bool = True,
                 notebook: bool = False,
@@ -2288,14 +2288,14 @@ class D3Blocks():
 
     def circlepacking(self,
                       df,
-                      size='sum',
+                      size: str ='sum',
                       zoom: str = 'click',
                       speed: int = 750,
-                      border: dict = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
+                      border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
                       font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
                       title: str = 'Circlepacking - D3blocks',
                       filepath: str = 'Circlepacking.html',
-                      figsize: tuple[int|None, int|None] = [900, 1920],
+                      figsize = [900, 1920],
                       showfig: bool = True,
                       overwrite: bool = True,
                       notebook: bool = False,
@@ -3062,3 +3062,4 @@ def set_chart_func(chart=None, logger=None):
             chart = None
 
     return chart
+

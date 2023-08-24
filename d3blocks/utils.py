@@ -115,10 +115,7 @@ def vec2adjmat(source, target, weight=None, symmetric=True, aggfunc='sum'):
 
 
 # %% Normalize.
-def normalize(X,
-              minscale: tuple[int | float] = 0.5,
-              maxscale: tuple[int | float] = 4,
-              scaler: str = 'zscore'):
+def normalize(X, minscale = 0.5, maxscale = 4, scaler: str = 'zscore'):
     # Instead of Min-Max scaling, that shrinks any distribution in the [0, 1] interval, scaling the variables to
     # Z-scores is better. Min-Max Scaling is too sensitive to outlier observations and generates unseen problems,
 
@@ -231,25 +228,25 @@ def vec2flare_v2(df, node_properties=None, chart=None, logger=None):
         for _, row in sub_df.iterrows():
             child = build_node(df, row['target'], node_properties)
             children.append(child)
-    
+
         if children:
             node['children'] = children
-    
+
         return node
-    
+
     # Get the unique source names
     uinames = df['source'].unique()
-    
+
     # Build the tree structure
     tree = []
     for uiname in uinames:
         node = build_node(df, uiname, node_properties)
         tree.append(node)
-    
+
     # Convert the tree structure to JSON
     json_data = json.dumps(tree[0], indent=4)
     return json_data
-    
+
 
 # %% Convert to Flare format
 def vec2flare(df, logger=None):
