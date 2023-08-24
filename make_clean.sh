@@ -16,6 +16,8 @@ rm -rf d3blocks/violin/__pycache__
 rm -rf d3blocks/heatmap/__pycache__
 rm -rf d3blocks/matrix/__pycache__
 rm -rf d3blocks/treemap/__pycache__
+rm -rf d3blocks/tree/__pycache__
+rm -rf d3blocks/circlepacking/__pycache__
 rm -rf d3blocks/.pylint.d
 rm -rf tests/__pycache__
 rm -rf d3blocks/utils/__pycache__
@@ -23,6 +25,8 @@ rm -rf .pylint.d
 rm -rf d3blocks/data/*.zip
 rm -rf d3blocks/data/*.csv
 rm -rf d3blocks/data/*.jpg
+rm -rf d3blocks/data/southern_nebula/*
+rm -rf d3blocks/data/southern_nebula/
 rm -rf d3blocks/d3blocks/*.html
 rm -rf *.js
 rm -rf *.html
