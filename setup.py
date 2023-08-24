@@ -16,7 +16,7 @@ setuptools.setup(
      install_requires=['numpy',
                        'colourmap>=1.1.10',
                        'datazets>=0.1.7',
-                       'd3graph>=2.4.6',
+                       'd3graph>=2.4.10',
                        'elasticgraph>=0.1.2',
                        'ismember>=1.0.1',
                        'pandas',
