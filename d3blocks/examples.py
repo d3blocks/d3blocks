@@ -5,6 +5,14 @@
 # import pandas as pd
 # import numpy as np
 
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = {'Netherlands', 'France'}
+html = d3.maps(df, filepath='c://temp//maps.html')
+
+
+# %%
 from d3blocks import D3Blocks, convert_flare2source_target
 filepath=r'c:\\Users\\playground\\Downloads\\flare-2 (2).json'
 df = convert_flare2source_target(filepath)

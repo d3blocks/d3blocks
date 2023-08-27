@@ -1,4 +1,4 @@
-"""Circlepacking block.
+"""Maps block.
 
 Library     : d3blocks
 Author      : E.Taskesen
@@ -9,29 +9,26 @@ License     : GPL3
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file
 
 
 # %% Set configuration properties
-def set_config(config={}, margin={}, font={}, border={}, **kwargs):
+def set_config(config={}, border={}, **kwargs):
     """Set the default configuration setting."""
     logger = kwargs.get('logger', None)
     # Store configurations
-    config['chart'] ='circlepacking'
-    config['title'] = kwargs.get('title', 'Circlepacking - D3blocks')
-    config['filepath'] = set_path(kwargs.get('filepath', 'circlepacking.html'), logger)
-    config['figsize'] = kwargs.get('figsize', [900, 1920])
+    config['chart'] ='maps'
+    config['title'] = kwargs.get('title', 'Maps - D3blocks')
+    config['filepath'] = set_path(kwargs.get('filepath', 'maps.html'), logger)
+    config['figsize'] = kwargs.get('figsize', [None, None])
+    if config['figsize'] is None: config['figsize'] = [None, None]
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
-    config['speed'] = kwargs.get('speed', 750)
-    config['zoom'] = kwargs.get('zoom', 'click')
-    config['size'] = kwargs.get('size', 'sum')
     config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['font'] = {**{'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'}, **font}
-    config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5}, **border}
+    config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF'}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     # return
     return config
@@ -58,8 +55,8 @@ def set_edge_properties(df, **kwargs):
 
     """
     logger = kwargs.get('logger', None)
-    df = df.copy()
-    df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+    # df = df.copy()
+    # df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
     return df
 
 
@@ -133,12 +130,7 @@ def show(df, **kwargs):
     df.reset_index(inplace=True, drop=True)
 
     # Create the data from the input of javascript
-    # X = vec2flare(df, logger=logger)
     X = convert_to_links_format(df, logger=logger)
-
-    # Check whether dataframe is circular
-    if is_circular(df):
-        logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
 
     # Write to HTML
     return write_html(X, config, node_properties, logger)
@@ -178,25 +170,18 @@ def write_html(X, config, node_properties, logger=None):
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
-        'SPEED': config['speed'],
-        'ZOOM': config['zoom'],
         'bordercolor': config['border']['color'],
         'borderwidth': config['border']['width'],
         'borderfill': config['border']['fill'],
-        'borderpadding': config['border']['padding'],
-        'fontsize': config['font']['size'],
-        'fontcolor': config['font']['color'],
-        'fonttype': config['font']['type'],
-        'fontoutlinecolor': config['font']['outlinecolor'],
         'SUPPORT': config['support'],
     }
 
     try:
         jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
     except:
-        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.circlepacking', package_path='d3js'))
+        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.maps', package_path='d3js'))
 
-    index_template = jinja_env.get_template('circlepacking.html.j2')
+    index_template = jinja_env.get_template('maps.html.j2')
 
     # Generate html content
     html = index_template.render(content)

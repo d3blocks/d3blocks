@@ -28,6 +28,7 @@ import d3blocks.matrix.Matrix as Matrix
 import d3blocks.treemap.Treemap as Treemap
 import d3blocks.circlepacking.Circlepacking as Circlepacking
 import d3blocks.tree.Tree as Tree
+import d3blocks.maps.Maps as Maps
 import d3blocks.utils as utils
 
 # ###################### DEBUG ONLY ###################
@@ -44,6 +45,7 @@ import d3blocks.utils as utils
 # import treemap.Treemap as Treemap
 # import circlepacking.Circlepacking as Circlepacking
 # import tree.Tree as Tree
+# import maps.Maps as Maps
 # import utils
 # #####################################################
 
@@ -2445,6 +2447,161 @@ class D3Blocks():
         # Create the plot
         return self.show()
 
+    def maps(self,
+                      df,
+                      border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF'},
+                      title: str = 'Maps - D3blocks',
+                      filepath: str = 'maps.html',
+                      figsize = None,
+                      showfig: bool = True,
+                      overwrite: bool = True,
+                      notebook: bool = False,
+                      reset_properties: bool = True,
+                      ):
+        """Circlepacking block.
+
+        The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
+        For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
+        The javascript code is forked from Mike Bostock and then Pythonized.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+                * 'source', 'target', 'weight'
+                * 'level0', 'level1', 'level2', 'weight'
+        size : str (default: "sum")
+            Size of the nodes can automatically be set in with:
+                * 'sum' : This is the sum of the weights for the edges
+                * 'constant' : All nodes are set to 1
+        speed : int (default: 750)
+            Speed in ms to zoom in/out
+        zoom : str (default: "click")
+            Zooming method.
+                * 'click'
+                * 'mouseover'
+        border : dict.
+            border properties.
+                * {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2}
+                * border color: color for the circles
+                * width: width for the circles
+                * fill: fill color for the circles
+                * padding: size of the circles
+        font : dict.
+            font properties.
+                * {'size': 20, 'type':'sans-serif'}
+        title : String, (default: None)
+            Title of the figure.
+                * 'Circlepacking'
+        filepath : String, (Default: user temp directory)
+                * File path to save the output.
+                * Temporarily path: 'd3blocks.html'
+                * Relative path: './d3blocks.html'
+                * Absolute path: 'c://temp//d3blocks.html'
+                * None: Return HTML
+        figsize : tuple
+            Size of the figure in the browser, [width, height].
+                * [1000, 1200]
+                * [None, None]: Use the screen resolution.
+        showfig : bool, (default: True)
+                * True: Open browser-window.
+                * False: Do not open browser-window.
+        overwrite : bool, (default: True)
+                * True: Overwrite the html in the destination directory.
+                * False: Do not overwrite destination file but show warning instead.
+        notebook : bool
+                * True: Use IPython to show chart in notebook.
+                * False: Do not use IPython.
+        reset_properties : bool, (default: True)
+                * True: Reset the node_properties at each run.
+                * False: Use the d3.node_properties()
+
+        Returns
+        -------
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+
+        d3.config: dictionary
+             Contains configuration properties.
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('energy')
+        >>> df = d3.import_example('animals')
+        >>> #
+        >>> # Plot
+        >>> d3.circlepacking(df)
+        >>> #
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks(chart='Circlepacking', frame=True)
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Node properties
+        >>> d3.set_node_properties(df)
+        >>> print(d3.node_properties)
+        >>> #
+        >>> d3.set_edge_properties(df)
+        >>> print(d3.edge_properties)
+        >>> #
+        >>> # Show the chart
+        >>> d3.show()
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> html = d3.circlepacking(df,
+        >>>                         speed=1500,
+        >>>                         zoom='mouseover',
+        >>>                         filepath='c://temp//circlepacking.html',
+        >>>                         border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
+        >>>                         overwrite=True,
+        >>>                         )
+        >>> #
+        >>> # Show the chart
+        >>> d3.show()
+        """
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Maps', logger)
+        # Store properties
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        # Cleaning of data
+        df = utils.pre_processing(df, logger=logger)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, cmap=self.config['cmap'])
+        # Set edge properties
+        self.set_edge_properties(df)
+        # Create the plot
+        return self.show()
+
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
 
@@ -3055,7 +3212,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking']):
+        if np.isin(chart, ['Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

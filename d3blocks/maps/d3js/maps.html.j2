@@ -1,0 +1,256 @@
+<!--
+Library     : d3blocks
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_template.html
+-->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v6.js"></script>
+
+<!-- Create an element where the map will take place -->
+<!-- <svg id="my_dataviz" width="1630" height="2350"></svg> -->
+<svg id="my_dataviz"></svg>
+
+<script>
+
+
+// The svg
+const svg = d3.select("svg"),
+    //width = +svg.attr("width"),
+    //height = +svg.attr("height");
+    width = window.innerWidth * 0.9,
+    height = window.innerHeight  * 0.9;
+
+
+//Promise.all([
+//d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
+//d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_gpsLocSurfer.csv")
+//]).then(function (initialize) {
+  Promise.all([
+  d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
+  Promise.resolve([
+    {'homelat': '-82.9', 'homelon': '135', 'homecontinent': 'Antarctica', 'n': '4'},
+    {'homelat': '-54.8', 'homelon': '-68.3', 'homecontinent': 'South America', 'n': '4'},
+    {'homelat': '-53.8', 'homelon': '-67.7', 'homecontinent': 'South America', 'n': '1'},
+    {'homelat': '-53.2', 'homelon': '-70.9', 'homecontinent': 'NA', 'n': '2'},
+    {'homelat': '-52.4', 'homelon': '-71', 'homecontinent': 'South America', 'n': '2'},
+    {'homelat': '-51.7', 'homelon': '-72.5', 'homecontinent': 'South America', 'n': '2'},
+    {'homelat': '-51.6', 'homelon': '-69.2', 'homecontinent': 'South America', 'n': '4'},
+    {'homelat': '-51.6', 'homelon': '-69.2', 'homecontinent': 'NA', 'n': '1'},
+    {'homelat': '-49.7', 'homelon': '178.8', 'homecontinent': 'NA', 'n': '1'},
+    {'homelat': '-47.8', 'homelon': '-65.9', 'homecontinent': 'NA', 'n': '2'},
+    {'homelat': '-46.5', 'homelon': '-71.6', 'homecontinent': 'South America', 'n': '2'},
+    {'homelat': '-41.6', 'homelon': '147.1', 'homecontinent': 'Australia', 'n': '10'},
+    {'homelat': '52.1326', 'homelon': '5.2913', 'homecontinent': 'Europe', 'n': '12'},
+  ])
+]).then(function (initialize) {
+    // Filter data
+    //initialize[0].features = initialize[0].features.filter( d => d.properties.name=="France")
+
+    let dataGeo = initialize[0]
+    let data = initialize[1]
+
+	console.log(initialize)
+  //	console.log(data)
+
+// Calculate the bounding box of France
+let bounds = d3.geoBounds(initialize[0]);
+//console.log(bounds)
+// Calculate the width and height based on the bounding box
+//let width = bounds[1][0] - bounds[0][0];
+//let height = bounds[1][1] - bounds[0][1];
+
+// Calculate the center of France
+let center = [
+  (bounds[0][0] + bounds[1][0]) / 2,
+  (bounds[0][1] + bounds[1][1]) / 2
+];
+
+    // Set the width and height of the SVG
+svg.attr("width", width)
+   .attr("height", height);
+
+// Map and projection
+const projection = d3.geoMercator()
+    .center([0,20])                // GPS of location to zoom on
+//    .center(center)                // GPS of location to zoom on
+    .scale(200)                       // This is like the zoom
+    .translate([ width/2, height/2 ])
+
+  // Create a color scale
+  const color = d3.scaleOrdinal()
+    .domain(data.map(d => d.homecontinent))
+    .range(d3.schemePaired);
+
+  // Add a scale for bubble size
+  const valueExtent = d3.extent(data, d => +d.n)
+  const size = d3.scaleSqrt()
+    .domain(valueExtent)  // What's in the data
+    .range([ 1, 50])  // Size in pixel
+
+  // Draw the map
+  svg.append("g")
+      .selectAll("path")
+      .data(dataGeo.features)
+      .join("path")
+        .attr("fill", "#b8b8b8")
+        .attr("d", d3.geoPath()
+            .projection(projection)
+        )
+      .style("stroke", "none")
+      .style("opacity", .3)
+
+
+// Filter the GeoJSON data to get only France
+let allCountries = dataGeo.features.map(d => d.properties.name);
+//let allCountries = ["France", "Netherlands"]
+let countries = dataGeo.features.filter(d => allCountries.includes(d.properties.name));
+
+let countryColors = {}; // Create an empty object to hold country-color pairs
+const colors = d3.scaleOrdinal(d3.schemeCategory10);
+// Assign a color to each country
+allCountries.forEach((country, i) => { countryColors[country] = colors(i); });
+//console.log(countryColors)
+
+// Create a geoPath generator
+let pathGenerator = d3.geoPath().projection(projection);
+// Create a dashed line for each country
+countries.forEach(country => {
+  console.log(countryColors[country])
+  svg.append("path")
+    .attr("d", pathGenerator(country))
+    .attr("fill", countryColors[country.properties.name])
+    // .attr("stroke", countryColors[country.properties.name]) // Use the color from countryColors
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "5,5");  // This creates a dashed line
+});
+
+
+
+    // Define the zoom behavior
+    const zoom = d3.zoom()
+    .scaleExtent([1, 100]) // This control how much you can unzoom (x1) and zoom (x100)
+    .on("zoom", function(event) {
+        svg.selectAll('path') // To prevent stroke width from scaling
+           .attr('transform', event.transform);
+        svg.selectAll('circle')
+           .attr('transform', event.transform);
+    });
+
+  // Apply the zoom behavior to the svg
+  svg.call(zoom);
+
+
+    // create a tooltip
+    const Tooltip = d3.select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0.5)
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "2px")
+      .style("border-radius", "5px")
+      .style("padding", "5px")
+      .style("position", "absolute");
+
+    // Three function that change the tooltip when user hover / move / leave a cell
+    const mouseover = function(event, d) { Tooltip.style("opacity", 1) }
+    var mousemove = function(event, d) {
+	//console.log(d)
+      Tooltip
+        .html(d.homecontinent + "<br>" + "long: " + d.homelon + "<br>" + "lat: " + d.homelat)
+        .style("left", (event.x) + "px")
+        .style("top", (event.y) + "px")
+        //.style("left", (d3.pointer(event)[0]+10) + "px")
+        //.style("top", (d3.pointer(event)[1]) + "px")
+    }
+    var mouseleave = function(event, d) { Tooltip.style("opacity", 0) }
+
+  // Add circles:
+  svg
+    .selectAll("myCircles")
+    .data(data.sort((a,b) => +b.n - +a.n))
+    .join("circle")
+      .attr("cx", d => projection([+d.homelon, +d.homelat])[0])
+      .attr("cy", d => projection([+d.homelon, +d.homelat])[1])
+      .attr("r", d => size(+d.n))
+      .style("fill", d => color(d.homecontinent))
+      .attr("stroke", d=> {if (d.n>2000) {return "black"} else {return "none"}  })
+      .attr("stroke-width", 1)
+      .attr("fill-opacity", .4)
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave)
+
+
+
+  // Add title and explanation
+//  svg
+//    .append("text")
+//      .attr("text-anchor", "end")
+//      .style("fill", "black")
+//      .attr("x", width - 10)
+//      .attr("y", height - 30)
+//      .attr("width", 90)
+//      .html("WHERE SURFERS LIVE")
+//      .style("font-size", 14)
+
+
+  // --------------- //
+  // ADD LEGEND //
+  // --------------- //
+
+// Add legend: circles
+// Get the min, mean, and max values of 'n' in the data
+const nExtent = d3.extent(data, d => +d.n);
+const nMean = d3.mean(data, d => +d.n);
+
+// Create an array with these values
+const valuesToShow = [nExtent[0], nMean, nExtent[1]];
+//const valuesToShow = [100,4000,15000]
+const xCircle = 40
+const xLabel = 90
+svg
+  .selectAll("legend")
+  .data(valuesToShow)
+  .join("circle")
+    .attr("cx", xCircle)
+    .attr("cy", d => height - 100)
+    .attr("r", d => size(Math.sqrt(d)))
+    .style("fill", "none")
+    .attr("stroke", "black")
+
+// Add legend: segments
+svg
+  .selectAll("legend")
+  .data(valuesToShow)
+  .join("line")
+    .attr('x1', d => xCircle + size(Math.sqrt(d)))
+    .attr('x2', xLabel)
+    .attr('y1', (d, i) =>  height - 100 + size(Math.sqrt(d))) // separate segments by 30 pixels
+    .attr('y2', (d, i) =>  height - 100 + size(Math.sqrt(d))) // separate segments by 30 pixels
+    .attr('stroke', 'black')
+    .style('stroke-dasharray', ('2,2'))
+
+// Add legend: labels
+svg
+  .selectAll("legend")
+  .data(valuesToShow)
+  .join("text")
+    .attr('x', xLabel)
+    .attr('y', (d, i) =>  height - 100 + size(Math.sqrt(d))) // separate labels by 30 pixels
+    .text(d => d.toFixed(1)) // round the legend value on 1 decimal
+    .style("font-size", 10)
+    .attr('alignment-baseline', 'middle')
+
+
+
+
+  })
+
+</script>
+
