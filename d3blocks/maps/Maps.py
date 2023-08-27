@@ -7,6 +7,8 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 from jinja2 import Environment, PackageLoader
+import pandas as pd
+import numpy as np
 
 try:
     from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file
@@ -15,7 +17,7 @@ except:
 
 
 # %% Set configuration properties
-def set_config(config={}, border={}, **kwargs):
+def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
     logger = kwargs.get('logger', None)
     # Store configurations
@@ -28,23 +30,18 @@ def set_config(config={}, border={}, **kwargs):
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
     config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF'}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     # return
     return config
 
 
 # %% Set Edge properties
-def set_edge_properties(df, **kwargs):
+def set_edge_properties(X, **kwargs):
     """Set the edge properties.
 
     Parameters
     ----------
     df : pd.DataFrame()
-        Input data containing the following columns:
-        'source'
-        'target'
-        'weight'
     logger : Object, (default: None)
         Logger.
 
@@ -55,8 +52,40 @@ def set_edge_properties(df, **kwargs):
 
     """
     logger = kwargs.get('logger', None)
-    # df = df.copy()
-    # df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+    color = '#D3D3D3'
+    opacity = 0.8
+    linewidth = 1
+    line = 'dashed'
+
+    # Add World if not exist
+    if (X is None) or (X.get('World') is None): X.update({'World': {'label': 'World', 'color': color, 'opacity': opacity, 'line': line, 'linewidth': linewidth}})
+    # Add missing values to World
+    X['World'] = {**{'label': 'World', 'color': color, 'linewidth': linewidth, 'opacity': opacity, "line": line}, **X['World']}
+
+    countries = {}
+    countries['World'] = X['World']
+
+    # If World is the only key: then retrieve all availble countries.
+    # if (isinstance(X, dict) and (X.get('World', None) is not None) and len(X.keys())==1):
+    #     world = ['Netherlands', 'France']
+    #     for key in world:
+    #         countries[key] = {'label': key,
+    #                           'color': X['World'].get('color', X['World']['color']),
+    #                           'opacity': X['World'].get('opacity', X['World']['opacity']),
+    #                           'linewidth': X['World'].get('linewidth', X['World']['linewidth']),
+    #                           'line': X['World'].get('line', X['World']['line']),
+    #                           }
+    # If countries are manually specified. Check whether all items are present. Update with World items if missing.
+    if isinstance(X, dict):
+        for key in X.keys():
+            countries[key] = {'label': key,
+                              'color': X[key].get('color', X['World']['color']),
+                              'opacity': X[key].get('opacity', X['World']['opacity']),
+                              'linewidth': X[key].get('linewidth', X['World']['linewidth']),
+                              'line': X[key].get('line', X['World']['line']),
+                              }
+
+    df = convert_dataframe_dict(countries, frame=True, logger=logger)
     return df
 
 
@@ -77,27 +106,55 @@ def set_node_properties(df, **kwargs):
 
     """
     # Get unique label
-    col_labels = kwargs.get('labels', ['source', 'target'])
     logger = kwargs.get('logger', None)
-    size = kwargs.get('size')
-    uilabels = set_labels(df, col_labels=col_labels, logger=logger)
+
+    # Get longitude
+    lon = df.get('lon', None)
+    if lon is None: lon = kwargs.get('lon')
+    # Get latitude
+    lat = df.get('lat', None)
+    if lat is None: lat = kwargs.get('lat')
+
+    # Get size
+    size = df.get('size', None)
+    if size is None: size = kwargs.get('size', None)
+    if size is None: size = np.repeat(10, len(lon))
+    if isinstance(size, (int, float)): size = [size] * len(lon)
+
+    # Get opacity
+    opacity = df.get('opacity', None)
+    if opacity is None: opacity = kwargs.get('opacity', None)
+    if opacity is None: opacity = np.repeat([0.8], len(lon))
+    if isinstance(opacity, (int, float)): opacity = [opacity] * len(lon)
+
+    # Get color
+    color = df.get('color', None)
+    if color is None: color = kwargs.get('color', None)
+    if color is None: color = np.repeat(['#0981D1'], len(lon))
+    if isinstance(color, str): color = [color] * len(lon)
+
+    # Get label
+    label = df.get('label', None)
+    if label is None: label = kwargs.get('label', None)
+    if label is None: label = np.repeat([''], len(lon))
+    if isinstance(label, (int, float, str)): label = [label] * len(lon)
 
     dict_labels = {}
-    for i, label in enumerate(uilabels):
-        if size=='sum':
-            if df.loc[df['source']==label].empty:
-                weight = df.loc[df['target']==label]['weight'].sum()
-            else:
-                weight = df.loc[df['source']==label]['weight'].sum()
-        else:
-            weight = 1
+    for i in np.arange(0, df.shape[0]):
         # Store
-        dict_labels[label] = {'id': i, 'label': label, 'value': weight}
+        dict_labels[i] = {'id': i,
+                          'lon': lon[i],
+                          'lat': lat[i],
+                          'label': label[i],
+                          'size': size[i],
+                          'color': color[i],
+                          'opacity': opacity[i],
+                          }
     # Return
     return dict_labels
 
 
-def show(df, **kwargs):
+def show(countries, **kwargs):
     """Build and show the graph.
 
     Parameters
@@ -116,36 +173,45 @@ def show(df, **kwargs):
         Dictionary containing updated configuration keys.
 
     """
-    df = df.copy()
     node_properties = kwargs.get('node_properties', None)
     logger = kwargs.get('logger', None)
     config = update_config(kwargs, logger)
     config = config.copy()
 
-    # Convert dict/frame.
-    node_properties = convert_dataframe_dict(node_properties, frame=False)
-    df = convert_dataframe_dict(df.copy(), frame=True)
-
-    # Transform dataframe into input form for d3
-    df.reset_index(inplace=True, drop=True)
-
+    # Convert node properties to dict/frame.
+    node_properties = convert_dataframe_dict(node_properties, frame=False, chart=config['chart'])
     # Create the data from the input of javascript
-    X = convert_to_links_format(df, logger=logger)
+    json_data = convert_to_json_format(node_properties, logger=logger)
+
+    # Edge properties: Transform dataframe into input form for d3
+    countries = convert_dataframe_dict(countries.copy(), frame=True)
+    countries.reset_index(inplace=True, drop=True)
+    # countries = countries.rename(columns={'index': 'label'})
+    # Create the data from the input of javascript
+    json_countries = convert_to_json_format(countries, logger=logger)
 
     # Write to HTML
-    return write_html(X, config, node_properties, logger)
+    return write_html(json_countries, json_data, config, logger)
 
 
-def convert_to_links_format(df, logger):
-    logger.debug("Setting up data for d3js..")
-    links = []
+def convert_to_json_format(df, logger):
+    logger.debug("Setting up scatter point data for map..")
+    json = []
     for index, row in df.iterrows():
-        link = {"source": row['source'], "target": row['target'], "value": row['weight']}
-        links.append(link)
-    return links
+        link = row.astype(str).to_dict()
+        json.append(link)
+    return json
+
+# def convert_to_json_format(df, logger):
+#     logger.debug("Setting up country data for map..")
+#     json = []
+#     for index, row in df.iterrows():
+#         link = row.to_dict()
+#         json.append(link)
+#     return json
 
 
-def write_html(X, config, node_properties, logger=None):
+def write_html(json_countries, json_data, config, logger=None):
     """Write html.
 
     Parameters
@@ -165,14 +231,11 @@ def write_html(X, config, node_properties, logger=None):
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
 
     content = {
-        'json_data': X,
-        'json_nodes': node_properties,
+        'json_countries': json_countries,
+        'json_data': json_data,
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
-        'bordercolor': config['border']['color'],
-        'borderwidth': config['border']['width'],
-        'borderfill': config['border']['fill'],
         'SUPPORT': config['support'],
     }
 

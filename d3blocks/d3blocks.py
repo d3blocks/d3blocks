@@ -2449,7 +2449,11 @@ class D3Blocks():
 
     def maps(self,
                       df,
-                      border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF'},
+                      size=10,
+                      color='#0981D1',
+                      opacity=0.8,
+                      label='',
+                      countries = {'World': {'color':'#D3D3D3', 'opacity': 0.8, 'line': 'dashed', 'linewidth': 1}},
                       title: str = 'Maps - D3blocks',
                       filepath: str = 'maps.html',
                       figsize = None,
@@ -2591,14 +2595,14 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Maps', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Cleaning of data
-        df = utils.pre_processing(df, logger=logger)
+        # df = utils.pre_processing(df, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'])
+            self.set_node_properties(df, cmap=self.config['cmap'], size=size, color=color, opacity=opacity, label=label)
         # Set edge properties
-        self.set_edge_properties(df)
+        self.set_edge_properties(countries)
         # Create the plot
         return self.show()
 
@@ -2652,10 +2656,12 @@ class D3Blocks():
 
         # Compute edge properties for the specified chart.
         if self.chart is not None:
-            df = self.chart.set_edge_properties(*args, config=self.config, node_properties=self.node_properties, **kwargs)
+            countries = self.chart.set_edge_properties(*args, config=self.config, node_properties=self.node_properties, **kwargs)
 
         # Convert to frame/dictionary
-        self.edge_properties = utils.convert_dataframe_dict(df, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
+        # self.edge_properties = utils.convert_dataframe_dict(countries, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
+        self.edge_properties = countries
+        
 
         # Store and return
         logger.info('Edge properties are set.')

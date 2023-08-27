@@ -510,11 +510,13 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
     """
     if (chart is not None) and np.any(np.isin(chart.lower(), ['movingbubbles', 'timeseries'])):
         return X
-    elif (chart is not None) and (chart=='scatter'):
+    elif (chart is not None) and np.any(np.isin(chart.lower(), ['scatter'])):
         return pd.DataFrame(X).T
+    elif (chart is not None) and np.any(np.isin(chart.lower(), ['maps'])):
+        return pd.DataFrame(X)
 
     if isinstance(X, dict) and frame:
-        if logger is not None: logger.info('Convert to Frame.')
+        if logger is not None: logger.info('Convert to DataFrame.')
         X = pd.DataFrame.from_dict(X, orient='index').reset_index(drop=True)
     elif isinstance(X, pd.DataFrame) and not frame:
         if logger is not None: logger.info('Convert to Dictionary.')
