@@ -18,6 +18,7 @@ html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cma
 html = d3.maps(df,
                color=df['label'].values, 
                filepath='c://temp//maps.html',
+               cmap='Set2',
                countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
                             'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'none', 'linewidth': 1},
                             'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
@@ -42,19 +43,11 @@ df = d3.import_example('surfspots', overwrite=True)
 d3.set_node_properties(df)
 d3.node_properties
 
-# Set specific properties
-# d3.node_properties['Bio-conversion']['size'] = 30
-# d3.node_properties['Bio-conversion']['color'] = '#000000'
-# d3.node_properties['Bio-conversion']['edge_color'] = '#00FFFF'
-# d3.node_properties['Bio-conversion']['edge_size'] = 5
-# d3.node_properties['Bio-conversion']['opacity'] = 0.4
-# d3.node_properties['Bio-conversion']['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
-
 # Set edge properties
-d3.set_edge_properties({'South America': {'color':'#000000', 'opacity': 0.8, 'line': 'dashed'},
+d3.set_edge_properties({'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
                         'Netherlands': {'color': '#000FFF', 'line': 'dashed'},
-                         })
-                        
+                        })
+d3.edge_properties
 
 # Show chart
 d3.show(filepath=r'c:\temp\maps.html')

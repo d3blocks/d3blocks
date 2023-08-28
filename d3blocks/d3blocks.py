@@ -2573,24 +2573,28 @@ class D3Blocks():
 
         Examples
         --------
-        >>> # Load d3blocks
+        >>> # Load library
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
-        >>> d3 = D3Blocks(chart='Circlepacking', frame=True)
+        >>> d3 = D3Blocks(chart='maps', frame=False)
         >>> #
         >>> # Import example
-        >>> df = d3.import_example('energy')
+        >>> df = d3.import_example('surfspots', overwrite=True)
         >>> #
-        >>> # Node properties
+        >>> # Set node properties
         >>> d3.set_node_properties(df)
-        >>> print(d3.node_properties)
+        >>> d3.node_properties
         >>> #
-        >>> d3.set_edge_properties(df)
-        >>> print(d3.edge_properties)
+        >>> # Set edge properties
+        >>> d3.set_edge_properties({'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
+        >>>                         'Netherlands': {'color': '#000FFF', 'line': 'dashed'},
+        >>>                         })
+        >>> d3.edge_properties
         >>> #
-        >>> # Show the chart
+        >>> # Show chart
         >>> d3.show()
+        >>> #
 
         """
         # Cleaning

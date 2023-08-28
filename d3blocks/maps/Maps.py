@@ -143,7 +143,7 @@ def set_node_properties(df, **kwargs):
     dict_labels = {}
     for i in np.arange(0, df.shape[0]):
         # Store
-        dict_labels[i] = {'id': i,
+        dict_labels[i] = {
                           'lon': lon[i],
                           'lat': lat[i],
                           'label': label[i],
@@ -187,7 +187,6 @@ def show(countries, **kwargs):
     # Edge properties: Transform dataframe into input form for d3
     countries = convert_dataframe_dict(countries.copy(), frame=True)
     countries.reset_index(inplace=True, drop=True)
-    # countries = countries.rename(columns={'index': 'label'})
     # Create the data from the input of javascript
     json_countries = convert_to_json_format(countries, logger=logger)
 
@@ -202,14 +201,6 @@ def convert_to_json_format(df, logger):
         link = row.astype(str).to_dict()
         json.append(link)
     return json
-
-# def convert_to_json_format(df, logger):
-#     logger.debug("Setting up country data for map..")
-#     json = []
-#     for index, row in df.iterrows():
-#         link = row.to_dict()
-#         json.append(link)
-#     return json
 
 
 def write_html(json_countries, json_data, config, logger=None):
