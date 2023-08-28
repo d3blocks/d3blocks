@@ -10,21 +10,27 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('surfspots')
 df = df.iloc[0:100,:]
-
 # Defaults
-html = d3.maps(df, filepath='c://temp//maps.html')
+# html = d3.maps(df, filepath='c://temp//maps.html')
+html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2')
 
 # Customize a bit
-html = d3.maps(df, filepath='c://temp//maps.html', countries = {'World': {'color':'#D3D3D3', 'opacity': 0.5, 'line': 'dashed', 'linewidth': 1},
-                                                                'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'dashed', 'linewidth': 1},
-                                                                'France': {'opacity': 1, 'line': 'dashed', 'linewidth': 2},
-                                                                })
+html = d3.maps(df,
+               color=df['label'].values, 
+               filepath='c://temp//maps.html',
+               countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
+                            'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'none', 'linewidth': 1},
+                            'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
+                            'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
+                            })
 # Few countries
-html = d3.maps(df, filepath='c://temp//maps.html', countries = {'Netherlands': {'color': '#000FFF', 'opacity': 0.8, 'line': 'dashed', 'linewidth': 1},
-                                                                'Australia': {'opacity': 1, 'line': 'dashed', 'linewidth': 1},
-                                                                })
+html = d3.maps(df,
+               filepath='c://temp//maps.html',
+               countries = {'Netherlands': {'color': '#000FFF', 'opacity': 0.8, 'line': 'dashed', 'linewidth': 1},
+                            'Australia': {'opacity': 1, 'line': 'dashed', 'linewidth': 1},
+                            })
 
-
+# %%
 # Load library
 from d3blocks import D3Blocks
 # Initialize
