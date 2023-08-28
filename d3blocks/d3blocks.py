@@ -2448,52 +2448,57 @@ class D3Blocks():
         return self.show()
 
     def maps(self,
-                      df,
-                      size=10,
-                      color='#0981D1',
-                      opacity=0.8,
-                      label='',
-                      countries = {'World': {'color':'#D3D3D3', 'opacity': 0.8, 'line': 'dashed', 'linewidth': 1}},
-                      title: str = 'Maps - D3blocks',
-                      filepath: str = 'maps.html',
-                      figsize = None,
-                      showfig: bool = True,
-                      overwrite: bool = True,
-                      notebook: bool = False,
-                      reset_properties: bool = True,
-                      ):
-        """Circlepacking block.
+             df,
+             size=10,
+             color='#0981D1',
+             opacity=0.8,
+             label='',
+             countries = {'World': {'color':'#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
+                          'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5}},
+             cmap='Set2',
+             title: str = 'Maps - D3blocks',
+             filepath: str = 'maps.html',
+             figsize = None,
+             showfig: bool = True,
+             overwrite: bool = True,
+             notebook: bool = False,
+             reset_properties: bool = True,
+             ):
+        """Maps block.
 
-        The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
-        For demonstration purposes, the "energy" and "stormofswords" dataset can be used.
+        The Maps chart is a visualization to plot the World and color and mark countries together with circles for highlighs.
+        For demonstration purposes, the "surfspots" can be used.
         The javascript code is forked from Mike Bostock and then Pythonized.
 
         Parameters
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
-                * 'source', 'target', 'weight'
-                * 'level0', 'level1', 'level2', 'weight'
-        size : str (default: "sum")
-            Size of the nodes can automatically be set in with:
-                * 'sum' : This is the sum of the weights for the edges
-                * 'constant' : All nodes are set to 1
-        speed : int (default: 750)
-            Speed in ms to zoom in/out
-        zoom : str (default: "click")
-            Zooming method.
-                * 'click'
-                * 'mouseover'
-        border : dict.
-            border properties.
-                * {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2}
-                * border color: color for the circles
-                * width: width for the circles
-                * fill: fill color for the circles
-                * padding: size of the circles
-        font : dict.
-            font properties.
-                * {'size': 20, 'type':'sans-serif'}
+                * 'lon', 'lat', 'label', 'size', 'opacity'
+        size : str (default: 10)
+            Size of the nodes:
+                * 10 : Same size for all scatter points
+                * [10, 4, 30, ..]
+        color : str (default: '#0981D1')
+            Hex color of the scatter points:
+                * '#0981D1': Same color for all scatter points
+                * ['Netherlands', 'Australia', 'Austrialia', ..]
+                * ['#000FFF', '#000000', '#000000', ..]
+        opacity : str (default: 0.8)
+            Opacity of the scatter points:
+                * 0.8 : Same opacity for all scatter points
+                * [0.8, 0.6, ..]
+        label : str (default: '')
+            Label of the scatter points:
+                * '' : Same label for all scatter points
+                * ['Amsterdam', 'New York', ..]
+        countries : dict.
+            border properties of the countries. The world are the properties of the entire map. Each country can be changed accordingly.
+                * {'World': {'color':'#D3D3D3', 'opacity': 0.3, 'line': 'none', 'linewidth': 1}},
+                * color: color for the country
+                * opacity: opacity of the country
+                * line: ['dashed', 'none'], line of the country
+                * linewidth: width of the line
         title : String, (default: None)
             Title of the figure.
                 * 'Circlepacking'
@@ -2506,7 +2511,7 @@ class D3Blocks():
         figsize : tuple
             Size of the figure in the browser, [width, height].
                 * [1000, 1200]
-                * [None, None]: Use the screen resolution.
+                * None or [None, None]: Use the screen resolution.
         showfig : bool, (default: True)
                 * True: Open browser-window.
                 * False: Do not open browser-window.
@@ -2540,12 +2545,31 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example('energy')
-        >>> df = d3.import_example('animals')
+        >>> df = d3.import_example('surfspots')
         >>> #
         >>> # Plot
-        >>> d3.circlepacking(df)
+        >>> d3.maps(df)
         >>> #
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('surfspots')
+        >>> #
+        >>> # Plot
+        >>> d3.maps(df, color=df['label'].values, cmap='Set2')
+        >>> #
+        >>> html = d3.maps(df, color=df['label'].values, countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
+        >>>                                                                 'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'none', 'linewidth': 1},
+        >>>                                                                 'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
+        >>>                                                                 'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
+        >>>                                                                 })
 
         Examples
         --------
@@ -2595,7 +2619,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Maps', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, cmap=cmap, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Cleaning of data
         # df = utils.pre_processing(df, logger=logger)
         # Set default label properties
