@@ -88,6 +88,7 @@ Contents
    Treemap
    Tree
    Circlepacking
+   Maps
 
 .. toctree::
    :maxdepth: 1

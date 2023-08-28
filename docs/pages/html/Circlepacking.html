@@ -12,15 +12,15 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=6837f5c9"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="vec2adjmat" href="helper_functions.html" />
+    <link rel="next" title="Maps" href="Maps.html" />
     <link rel="prev" title="Tree" href="Tree.html" /> 
 </head>
 
@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.3.4
+                1.3.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -81,12 +81,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Maps.html">Maps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
@@ -125,9 +126,9 @@
            <div itemprop="articleBody">
              
   <section id="circlepacking">
-<h1>circlepacking<a class="headerlink" href="#circlepacking" title="Permalink to this heading"></a></h1>
+<h1>circlepacking<a class="headerlink" href="#circlepacking" title="Link to this heading"></a></h1>
 <hr class="docutils" />
-<span class="target" id="module-d3blocks.d3blocks.D3Blocks.circlepacking"></span><p>Circlepacking block.</p>
+<p id="module-d3blocks.d3blocks.D3Blocks.circlepacking">Circlepacking block.</p>
 <p>The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
 For demonstration purposes, the “energy” and “stormofswords” dataset can be used.
 The javascript code is forked from Mike Bostock and then Pythonized.</p>
@@ -339,7 +340,7 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 </pre></div>
 </div>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset is a DataFrame that is hierarchically ordered from left to right.
 The number can be 3 levels and the column weight is obligatory.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
@@ -360,7 +361,7 @@ The number can be 3 levels and the column weight is obligatory.</p>
 </div>
 </section>
 <section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading"></a></h2>
+<h2>Charts<a class="headerlink" href="#charts" title="Link to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\circlepacking_energy.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
@@ -376,7 +377,7 @@ The number can be 3 levels and the column weight is obligatory.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Tree.html" class="btn btn-neutral float-left" title="Tree" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="helper_functions.html" class="btn btn-neutral float-right" title="vec2adjmat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Maps.html" class="btn btn-neutral float-right" title="Maps" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

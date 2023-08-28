@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tree &mdash; d3blocks d3blocks documentation</title>
+  <title>Maps &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="circlepacking" href="Circlepacking.html" />
-    <link rel="prev" title="Treemap" href="Treemap.html" /> 
+    <link rel="next" title="vec2adjmat" href="helper_functions.html" />
+    <link rel="prev" title="circlepacking" href="Circlepacking.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -75,13 +75,13 @@
 <li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tree</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Maps</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Maps.html">Maps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
@@ -115,9 +115,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Tree</li>
+      <li class="breadcrumb-item active">Maps</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/Tree.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/Maps.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -125,18 +125,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="tree">
-<h1>Tree<a class="headerlink" href="#tree" title="Link to this heading"></a></h1>
+  <section id="maps">
+<h1>Maps<a class="headerlink" href="#maps" title="Link to this heading"></a></h1>
 <hr class="docutils" />
-<p id="module-d3blocks.d3blocks.D3Blocks.tree">Tree block.</p>
-<p>A Tree chart is a visualization to hierarchically show the data.
-For demonstration purposes, the “energy” dataset can be used.
-The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Pythonized.</p>
+<p id="module-d3blocks.d3blocks.D3Blocks.maps">Maps block.</p>
+<p>The Maps chart is a visualization to plot the World and color and mark countries together with circles for highlighs.
+For demonstration purposes, the “surfspots” can be used.
+The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param df<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Input data containing the following columns:</dt><dd><ul class="simple">
-<li><p>‘source’, ‘target’, ‘weight’</p></li>
+<li><p>‘lon’, ‘lat’, ‘label’, ‘size’, ‘opacity’</p></li>
 </ul>
 </dd>
 </dl>
@@ -144,39 +144,74 @@ The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Py
 <dt class="field-even">type df<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
-<dt class="field-odd">param hierarchy<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Expand or substract the hierarchical structure. No information is lossed. The eight branches are shown by default.
-* [1, 2, 3, 4, 5, 6, 7, 8]</p>
-</dd>
-<dt class="field-even">type hierarchy<span class="colon">:</span></dt>
-<dd class="field-even"><p>list</p>
-</dd>
-<dt class="field-odd">param margin<span class="colon">:</span></dt>
+<dt class="field-odd">param size<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>margin, in pixels.</dt><dd><ul class="simple">
-<li><p>{“top”: 40, “right”: 10, “bottom”: 10, “left”: 10}</p></li>
+<dt>Size of the nodes:</dt><dd><ul class="simple">
+<li><p>10 : Same size for all scatter points</p></li>
+<li><p>[10, 4, 30, ..]</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type margin<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict.</p>
+<dt class="field-even">type size<span class="colon">:</span></dt>
+<dd class="field-even"><p>str (default: 10)</p>
 </dd>
-<dt class="field-odd">param font<span class="colon">:</span></dt>
+<dt class="field-odd">param color<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>font properties.</dt><dd><ul class="simple">
-<li><p>{‘size’: 10}</p></li>
+<dt>Hex color of the scatter points:</dt><dd><ul class="simple">
+<li><p>‘#0981D1’: Same color for all scatter points</p></li>
+<li><p>[‘Netherlands’, ‘Australia’, ‘Austrialia’, ..]</p></li>
+<li><p>[‘#000FFF’, ‘#000000’, ‘#000000’, ..]</p></li>
 </ul>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">type font<span class="colon">:</span></dt>
+<dt class="field-even">type color<span class="colon">:</span></dt>
+<dd class="field-even"><p>str (default: ‘#0981D1’)</p>
+</dd>
+<dt class="field-odd">param opacity<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Opacity of the scatter points:</dt><dd><ul class="simple">
+<li><p>0.8 : Same opacity for all scatter points</p></li>
+<li><p>[0.8, 0.6, ..]</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type opacity<span class="colon">:</span></dt>
+<dd class="field-even"><p>str (default: 0.8)</p>
+</dd>
+<dt class="field-odd">param label<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Label of the scatter points:</dt><dd><ul class="simple">
+<li><p>‘’ : Same label for all scatter points</p></li>
+<li><p>[‘Amsterdam’, ‘New York’, ..]</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type label<span class="colon">:</span></dt>
+<dd class="field-even"><p>str (default: ‘’)</p>
+</dd>
+<dt class="field-odd">param countries<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>border properties of the countries. The world are the properties of the entire map. Each country can be changed accordingly.</dt><dd><ul class="simple">
+<li><p>{‘World’: {‘color’:’#D3D3D3’, ‘opacity’: 0.3, ‘line’: ‘none’, ‘linewidth’: 1}},</p></li>
+<li><p>color: color for the country</p></li>
+<li><p>opacity: opacity of the country</p></li>
+<li><p>line: [‘dashed’, ‘none’], line of the country</p></li>
+<li><p>linewidth: width of the line</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">type countries<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict.</p>
 </dd>
 <dt class="field-odd">param title<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Title of the figure.</dt><dd><ul class="simple">
-<li><p>‘Treemap’</p></li>
+<li><p>‘Circlepacking’</p></li>
 </ul>
 </dd>
 </dl>
@@ -199,8 +234,8 @@ The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Py
 <dt class="field-odd">param figsize<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
-<li><p>[1000, 600]</p></li>
-<li><p>[None, None]: Use the screen resolution.</p></li>
+<li><p>[1000, 1200]</p></li>
+<li><p>None or [None, None]: Use the screen resolution.</p></li>
 </ul>
 </dd>
 </dl>
@@ -260,51 +295,11 @@ The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Py
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;surfspots&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">tree</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-</pre></div>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="n">chart</span><span class="o">=</span><span class="s1">&#39;tree&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set specific properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#000000&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;tooltip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Title: P Operations&lt;br&gt;&lt;img src=&quot;https://source.unsplash.com/collection/385548/150x100&quot;&gt;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#00FFFF&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Bio-conversion&#39;</span><span class="p">)[</span><span class="s1">&#39;opacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.4</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties for Losses</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#FF0000&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">)[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Losses&#39;</span><span class="p">)[</span><span class="s1">&#39;tooltip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties for Agriculture</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#00FFFF&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#89CFF0&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Agriculture&#39;</span><span class="p">)[</span><span class="s1">&#39;opacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set edge properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show chart</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;c:   emp     ree.html&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">Examples</p>
@@ -312,7 +307,27 @@ The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Py
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;tree&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;surfspots&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Set2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">countries</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;World&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="s1">&#39;#D3D3D3&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="s1">&#39;Netherlands&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#000FFF&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="s1">&#39;France&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFA500&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span> <span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="s1">&#39;Australia&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;#008000&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span> <span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="p">})</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Circlepacking&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
@@ -328,35 +343,27 @@ The javascript code is forked from Mike Bostock, inspired by R-Shiny and then Py
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="rubric">References</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://d3js.org/d3-hierarchy/tree">https://d3js.org/d3-hierarchy/tree</a></p></li>
-<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Tree.html">https://d3blocks.github.io/d3blocks/pages/html/Tree.html</a></p></li>
-</ul>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
-<p>The input dataset is a DataFrame that is hierarchically ordered from left to right.
-The number can be 3 levels and the column weight is obligatory.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
-<span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
-<span class="c1"># 1            Bio-conversion            Liquid    0.597</span>
-<span class="c1"># 2            Bio-conversion            Losses   26.862</span>
-<span class="c1"># 3            Bio-conversion             Solid  280.322</span>
-<span class="c1"># 4            Bio-conversion               Gas   81.144</span>
-<span class="c1"># ..                      ...               ...      ...</span>
-<span class="c1"># 63       Thermal generation  District heating   79.329</span>
-<span class="c1"># 64                    Tidal  Electricity grid    9.452</span>
-<span class="c1"># 65  UK land based bioenergy    Bio-conversion  182.010</span>
-<span class="c1"># 66                     Wave  Electricity grid   19.013</span>
-<span class="c1"># 67                     Wind  Electricity grid  289.366</span>
-
-<span class="c1"># [68 rows x 3 columns]</span>
+<p>The input dataset is a DataFrame that contains the lat and lon coordinates. More features can be added such as label, size opacity.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#        lat    lon          label  size</span>
+<span class="c1"># 0    -82.9  135.0     Antarctica     4</span>
+<span class="c1"># 1    -54.8  -68.3  South America     4</span>
+<span class="c1"># 2    -53.8  -67.7  South America     1</span>
+<span class="c1"># 3    -53.2  -70.9            NaN     2</span>
+<span class="c1"># 4    -52.4  -71.0  South America     2</span>
+<span class="c1">#    ...    ...            ...   ...</span>
+<span class="c1"># 9408  69.6   19.0            NaN     1</span>
+<span class="c1"># 9409  70.0   23.3         Europe     1</span>
+<span class="c1"># 9410  70.4   29.5         Europe    13</span>
+<span class="c1"># 9411  76.3 -100.1  North America     1</span>
+<span class="c1"># 9412  78.2   15.6         Europe     3</span>
 </pre></div>
 </div>
 </section>
 <section id="charts">
 <h2>Charts<a class="headerlink" href="#charts" title="Link to this heading"></a></h2>
-<iframe src="https://erdogant.github.io\docs\d3blocks\Tree_energy.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
+<iframe src="https://erdogant.github.io\docs\d3blocks\maps_surfspots.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
         <!-- Show an image ad -->
@@ -370,8 +377,8 @@ The number can be 3 levels and the column weight is obligatory.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Treemap.html" class="btn btn-neutral float-left" title="Treemap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Circlepacking.html" class="btn btn-neutral float-right" title="circlepacking" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Circlepacking.html" class="btn btn-neutral float-left" title="circlepacking" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="helper_functions.html" class="btn btn-neutral float-right" title="vec2adjmat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -12,11 +12,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=6837f5c9"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.3.4
+                1.3.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -81,12 +81,13 @@
 <li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Maps.html">Maps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
@@ -124,9 +125,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-d3blocks.d3blocks.D3Blocks.violin">
-<span id="violin"></span><h1>Violin<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.violin" title="Permalink to this heading"></a></h1>
-<p>Violin block.</p>
+  <section id="violin">
+<h1>Violin<a class="headerlink" href="#violin" title="Link to this heading"></a></h1>
+<p id="module-d3blocks.d3blocks.D3Blocks.violin">Violin block.</p>
 <p>The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
 It is an alternative to the boxplot and brings insights into large datasets where the boxplot could hide a part
 of the information. The original javascript code is forked from D3.js graph gallery but brought alive by
@@ -372,7 +373,7 @@ input parameters for the Violin plot that can help to create the most insightful
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Violin.html">https://d3blocks.github.io/d3blocks/pages/html/Violin.html</a></p></li>
 </ul>
 <section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading"></a></h2>
+<h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset are the x-coordinates and y-coordinates that needs to be specified seperately.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                 x          y   age  ... labels</span>
 <span class="c1"># labels                              ...</span>
@@ -393,7 +394,7 @@ input parameters for the Violin plot that can help to create the most insightful
 </div>
 </section>
 <section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h2>
+<h2>Chart<a class="headerlink" href="#chart" title="Link to this heading"></a></h2>
 <iframe src="https://erdogant.github.io/docs/d3blocks/violine.html" height="450px" width="750px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
