@@ -25,54 +25,31 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
 
 // The svg
 const svg = d3.select("svg"),
-    //width = +svg.attr("width"),
-    //height = +svg.attr("height");
     width = window.innerWidth * 0.9,
     height = window.innerHeight  * 0.9;
 
-
-//Promise.all([
-//d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
-//d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_gpsLocSurfer.csv")
-//]).then(function (initialize) {
-
-//  Promise.all([
-//  d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
-//]).then(function (initialize) {
-    // Filter data
-    //initialize[0].features = initialize[0].features.filter( d => d.properties.name=="France")
-
-//    let dataGeo = initialize[0]
     const dataGeo = {% include "world.geojson" %}
-
-/*    const data = [
-      {'lat': '-82.9', 'lon': '135', 'label': 'Antarctica', 'size': '4'},
-      {'lat': '-54.8', 'lon': '-68.3', 'label': 'South America', 'size': '4'},
-      {'lat': '-53.8', 'lon': '-67.7', 'label': 'South America', 'size': '1'},
-      {'lat': '-53.2', 'lon': '-70.9', 'label': 'NA', 'size': '2'},
-      {'lat': '-52.4', 'lon': '-71', 'label': 'South America', 'size': '2'},
-      {'lat': '-51.7', 'lon': '-72.5', 'label': 'South America', 'size': '2'},
-      {'lat': '-51.6', 'lon': '-69.2', 'label': 'South America', 'size': '4'},
-      {'lat': '-51.6', 'lon': '-69.2', 'label': 'NA', 'size': '1'},
-      {'lat': '-49.7', 'lon': '178.8', 'label': 'NA', 'size': '1'},
-      {'lat': '-47.8', 'lon': '-65.9', 'label': 'NA', 'size': '2'},
-      {'lat': '-46.5', 'lon': '-71.6', 'label': 'South America', 'size': '2'},
-      {'lat': '-41.6', 'lon': '147.1', 'label': 'Australia', 'size': '10'},
-      {'lat': '52.1326', 'lon': '5.2913', 'label': 'Europe', 'size': '12'},
-    ]
-*/
     const data = {{ json_data }}
-    const data_country = {{ json_countries }}
+    const data_countries = {{ json_countries }}
 
 
-  //	console.log(data)
+// Create a color map from the data_countries array
+let country_color = {};
+let country_linewidth = {};
+let country_opacity = {};
+let country_line = {};
+let country_stroke = {};
 
-// Calculate the bounding box of France
+data_countries.forEach(item => {
+  country_color[item.name] = item.color;
+  country_line[item.name] = item.line;
+  country_linewidth[item.name] = item.linewidth;
+  country_opacity[item.name] = item.opacity;
+  country_stroke[item.name] = item.stroke;
+});
+
+//	console.log(data)
 let bounds = d3.geoBounds(dataGeo);
-//console.log(bounds)
-// Calculate the width and height based on the bounding box
-//let width = bounds[1][0] - bounds[0][0];
-//let height = bounds[1][1] - bounds[0][1];
 
 // Calculate the center of France
 let center = [
@@ -93,7 +70,7 @@ const projection = d3.geoMercator()
 
   // Create a color scale
   const color = d3.scaleOrdinal()
-    .domain(data.map(d => d.label))
+    .domain(data.map(d => d.name))
     .range(d3.schemePaired);
 
   // Add a scale for bubble size
@@ -102,56 +79,37 @@ const projection = d3.geoMercator()
     .domain(valueExtent)  // What's in the data
     .range([ 1, 50])  // Size in pixel
 
-  // Draw the map
+  // Draw the entire map
   svg.append("g")
       .selectAll("path")
       .data(dataGeo.features)
       .join("path")
-        .attr("fill", "#b8b8b8")
-        .attr("d", d3.geoPath()
-            .projection(projection)
-        )
-      .style("stroke", "none")
-      .style("opacity", .3)
+        .attr("fill", country_color['World'])
+        .attr("d", d3.geoPath().projection(projection) )
+      .style("stroke", country_stroke['World'])
+      .style("opacity", country_opacity['World'])
+      .style("stroke-dasharray", country_line['World'] === 'dashed' ? "5" : "0");
 
 
-// Filter the GeoJSON data to get only France
-//let country_names = dataGeo.features.map(d => d.properties.name);
-//let country_names = ["France", "Netherlands"]
-const country_names = data_country.map(item => item.label);
+// Get all country names
+const country_names = data_countries.map(item => item.name);
+// Get the geo features for the overlapping country names (to prevent error when having typos)
 let countries = dataGeo.features.filter(d => country_names.includes(d.properties.name));
-
-//let countryColors = {}; // Create an empty object to hold country-color pairs
-//const colors = d3.scaleOrdinal(d3.schemeCategory10);
-// Assign a color to each country
-//country_names.forEach((country, i) => { countryColors[country] = colors(i); });
-//console.log(countryColors)
-
-// Create a color map from the data_country array
-let colorMap = {};
-let lineWidthMap = {};
-let opacityMap = {};
-
-data_country.forEach(item => {
-  colorMap[item.label] = item.color;
-  lineWidthMap[item.label] = item.linewidth;
-  opacityMap[item.label] = item.opacity;
-});
-
 
 
 // Create a geoPath generator
 let pathGenerator = d3.geoPath().projection(projection);
 // Create a dashed line for each country
 countries.forEach(country => {
-//  console.log(countryColors[country])
   svg.append("path")
     .attr("d", pathGenerator(country))
-    .attr("fill", colorMap[country.properties.name]) // Use the color from colorMap
-    .attr("stroke", "black")
-    .attr("stroke-width", lineWidthMap[country.properties.name]) // Use the linewidth from lineWidthMap
-    .attr("opacity", opacityMap[country.properties.name]) // Use the opacity from opacityMap
-    .attr("stroke-dasharray", "5,5");  // This creates a dashed line
+    .attr("fill", country_color[country.properties.name]) // Use the color from country_color
+    .attr("stroke", country_stroke[country.properties.name])
+    .attr("stroke-width", country_linewidth[country.properties.name]) // Use the linewidth from country_linewidth
+    .attr("opacity", country_opacity[country.properties.name]) // Use the opacity from country_opacity
+    //.attr("stroke-dasharray", "5,5");  // This creates a dashed line
+    .attr("stroke-dasharray", country_line[country.properties.name] === 'dashed' ? "5" : "0");
+
 });
 
 
@@ -185,13 +143,10 @@ countries.forEach(country => {
     // Three function that change the tooltip when user hover / move / leave a cell
     const mouseover = function(event, d) { Tooltip.style("opacity", 1) }
     var mousemove = function(event, d) {
-	//console.log(d)
       Tooltip
         .html(d.label + "<br>" + "long: " + d.lon + "<br>" + "lat: " + d.lat)
         .style("left", (event.x) + "px")
         .style("top", (event.y) + "px")
-        //.style("left", (d3.pointer(event)[0]+10) + "px")
-        //.style("top", (d3.pointer(event)[1]) + "px")
     }
     var mouseleave = function(event, d) { Tooltip.style("opacity", 0) }
 
@@ -203,7 +158,8 @@ countries.forEach(country => {
       .attr("cx", d => projection([+d.lon, +d.lat])[0])
       .attr("cy", d => projection([+d.lon, +d.lat])[1])
       .attr("r", d => size(+d.size))
-      .style("fill", d => color(d.label))
+      //.style("fill", d => color(d.label))
+      .style("fill", d => d.color)
       .attr("stroke", d=> {if (d.size>2000) {return "black"} else {return "none"}  })
       .attr("stroke-width", 1)
       .attr("fill-opacity", .4)
