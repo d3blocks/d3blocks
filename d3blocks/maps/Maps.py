@@ -7,13 +7,13 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 from jinja2 import Environment, PackageLoader
-import pandas as pd
 import numpy as np
+import colourmap as cm
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file
 
 
 # %% Set configuration properties
@@ -53,36 +53,34 @@ def set_edge_properties(X, **kwargs):
     """
     logger = kwargs.get('logger', None)
     color = '#D3D3D3'
+    opacity = 0.6
+    linewidth = 0.5
+    line = 'none'
+    stroke = '#5A5A5A'
+
+    # Add World if not exist
+    if (X is None) or (X.get('World') is None): X.update({'World': {'name': 'World', 'color': color, 'opacity': opacity, 'line': line, 'linewidth': linewidth, 'stroke': stroke}})
+    # Add missing values to World
+    X['World'] = {**{'name': 'World', 'color': color, 'linewidth': linewidth, 'opacity': opacity, "line": line, 'stroke': stroke}, **X['World']}
+
+    # Color each country and add the following missing values
     opacity = 0.8
     linewidth = 1
     line = 'dashed'
 
-    # Add World if not exist
-    if (X is None) or (X.get('World') is None): X.update({'World': {'label': 'World', 'color': color, 'opacity': opacity, 'line': line, 'linewidth': linewidth}})
-    # Add missing values to World
-    X['World'] = {**{'label': 'World', 'color': color, 'linewidth': linewidth, 'opacity': opacity, "line": line}, **X['World']}
-
+    # Create new dict
     countries = {}
+    # Add world key that is used for the properties of the entire map
     countries['World'] = X['World']
-
-    # If World is the only key: then retrieve all availble countries.
-    # if (isinstance(X, dict) and (X.get('World', None) is not None) and len(X.keys())==1):
-    #     world = ['Netherlands', 'France']
-    #     for key in world:
-    #         countries[key] = {'label': key,
-    #                           'color': X['World'].get('color', X['World']['color']),
-    #                           'opacity': X['World'].get('opacity', X['World']['opacity']),
-    #                           'linewidth': X['World'].get('linewidth', X['World']['linewidth']),
-    #                           'line': X['World'].get('line', X['World']['line']),
-    #                           }
     # If countries are manually specified. Check whether all items are present. Update with World items if missing.
     if isinstance(X, dict):
         for key in X.keys():
-            countries[key] = {'label': key,
+            countries[key] = {'name': key,
                               'color': X[key].get('color', X['World']['color']),
                               'opacity': X[key].get('opacity', X['World']['opacity']),
                               'linewidth': X[key].get('linewidth', X['World']['linewidth']),
                               'line': X[key].get('line', X['World']['line']),
+                              'stroke': X[key].get('stroke', X['World']['stroke']),
                               }
 
     df = convert_dataframe_dict(countries, frame=True, logger=logger)
@@ -107,6 +105,7 @@ def set_node_properties(df, **kwargs):
     """
     # Get unique label
     logger = kwargs.get('logger', None)
+    cmap = kwargs.get('cmap', 'Set1')
 
     # Get longitude
     lon = df.get('lon', None)
@@ -131,7 +130,9 @@ def set_node_properties(df, **kwargs):
     color = df.get('color', None)
     if color is None: color = kwargs.get('color', None)
     if color is None: color = np.repeat(['#0981D1'], len(lon))
-    if isinstance(color, str): color = [color] * len(lon)
+    if isinstance(color, str) and cm.is_hex_color(color, verbose=0): color = [color] * len(lon)
+    if isinstance(color, (np.ndarray, list)) and not np.all(list(map(lambda c: cm.is_hex_color(c, verbose=0), color))):
+        color = cm.fromlist(color.astype(str), cmap=cmap, scheme='hex')[0]
 
     # Get label
     label = df.get('label', None)
