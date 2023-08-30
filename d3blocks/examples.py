@@ -24,6 +24,7 @@ html = d3.maps(df,
                             'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
                             'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
                             })
+
 # Few countries
 html = d3.maps(df,
                filepath='c://temp//maps.html',
