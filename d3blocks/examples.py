@@ -8,7 +8,7 @@
 
 from d3blocks import D3Blocks
 
-d3 = D3Blocks(chart='Sankey', frame=False)
+d3 = D3Blocks(chart='Sankey', frame=True)
 df = d3.import_example(data='energy')
 d3.set_node_properties(df, color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#FF0000', 'Bio-conversion':'#FF0000'})
 d3.node_properties
