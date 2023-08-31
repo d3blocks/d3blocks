@@ -11,9 +11,9 @@ import numpy as np
 import colourmap as cm
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format
 
 
 # %% Set configuration properties
@@ -192,16 +192,6 @@ def show(countries, **kwargs):
 
     # Write to HTML
     return write_html(json_countries, json_data, config, logger)
-
-
-def convert_to_json_format(df, logger):
-    logger.debug("Setting up scatter point data for map..")
-    json = []
-    for index, row in df.iterrows():
-        link = row.astype(str).to_dict()
-        json.append(link)
-    return json
-
 
 def write_html(json_countries, json_data, config, logger=None):
     """Write html.
