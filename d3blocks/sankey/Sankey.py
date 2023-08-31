@@ -8,10 +8,12 @@ License     : GPL3
 """
 import numpy as np
 from jinja2 import Environment, PackageLoader
+import colourmap as cm
+
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file, is_circular
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, create_unique_dataframe, write_html_file, is_circular
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format
 
 
 # %% Set configuration properties
@@ -97,14 +99,33 @@ def set_node_properties(df, **kwargs):
         Dictionary containing the label properties.
 
     """
+    dfO = df.copy()
+    df = pre_processing(df, clean_source_target=True)
+    logger = kwargs.get('logger', None)
+    cmap = kwargs.get('cmap', 'Set1')
+
     # Get unique label
     col_labels = kwargs.get('labels', ['source', 'target'])
-    logger = kwargs.get('logger', None)
     uilabels = set_labels(df, col_labels=col_labels, logger=logger)
+
+    # Get color
+    color = df.get('color', None)
+    if color is None: color = kwargs.get('color', None)
+    if color is not None:
+        # Make same changes in the labels for the input nodes
+        labels = dict(zip(dfO['source'].values.tolist() + dfO['target'].values.tolist(), df['source'].values.tolist() + df['target'].values.tolist()))
+        keys = list(color.keys())
+        for key in keys:
+            color[labels.get(key)] = color.pop(key)
 
     dict_labels = {}
     for i, label in enumerate(uilabels):
-        dict_labels[label] = {'id': i, 'label': label}
+        getcolor = '#d3d3d3'
+        # Change color if user-defined.
+        if color is not None:
+            getcolor = color.get(label, getcolor)
+        # create dict labels
+        dict_labels[label] = {'id': i, 'label': label, 'color': getcolor}
     # Return
     return dict_labels
 
@@ -155,11 +176,15 @@ def show(df, **kwargs):
     # Check whether dataframe is circular
     if is_circular(df):
         logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
+
+    # node_properties = convert_dataframe_dict(node_properties.copy(), frame=True)
+    # X_nodes = convert_to_json_format(node_properties, logger=logger)
+    custom_colors = np.any(~np.isin(list(map(lambda x: node_properties.get(x)['color'], node_properties.keys())), '#d3d3d3'))
     # Write to HTML
-    return write_html(X, config, logger)
+    return write_html(X, config, custom_colors, logger)
 
 
-def write_html(X, config, logger=None):
+def write_html(X, config, custom_colors, logger=None):
     """Write html.
 
     Parameters
@@ -176,6 +201,8 @@ def write_html(X, config, logger=None):
     """
     content = {
         'json_data': X,
+
+        'CUSTOM_NODE_COLORS': str(custom_colors).lower(),
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
@@ -242,7 +269,7 @@ def get_data_ready_for_d3(df, labels):
     # Set the nodes
     X = '{"nodes":['
     for i in idx:
-        X = X + '{"name":"' + list_name[i] + '"},'
+        X = X + '{"name":"' + list_name[i] + '", "color":"' + labels.get(list_name[i])["color"] + '"},'
     X = X[:-1] + '],'
 
     # Set the links

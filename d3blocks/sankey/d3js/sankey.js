@@ -2201,7 +2201,22 @@
           .attr("height", d => d.y1 - d.y0)
           .attr("width", d => d.x1 - d.x0);
 
-      if (G) node.attr("fill", ({index: i}) => color(G[i]));
+        // SET THE NODE COLORS
+        let node_color = {};
+        data.nodes.forEach(item => {
+          node_color[item.name] = item.color;
+        });
+        // console.log(node_color)
+    
+      let CUSTOM_NODE_COLORS = {{ CUSTOM_NODE_COLORS }}; // Set this to true or false as needed
+
+      if (CUSTOM_NODE_COLORS) {
+          if (G) node.attr("fill", ({index: i}) => node_color[G[i]] );
+      } else {
+          if (G) node.attr("fill", ({index: i}) => color(G[i]));
+      }
+
+      
       if (Tt) node.append("title").text(({index: i}) => Tt[i]);
 
       const link = svg.append("g")

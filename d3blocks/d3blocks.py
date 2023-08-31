@@ -899,12 +899,13 @@ class D3Blocks():
 
     def sankey(self,
                df,
+               color=None,
                node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
                link={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#D3D3D3'},
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                title='Sankey - D3blocks',
                filepath='sankey.html',
-               figsize = [800, 600],
+               figsize=[800, 600],
                showfig=True,
                overwrite=True,
                notebook=False,
@@ -1026,10 +1027,10 @@ class D3Blocks():
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, logger=logger)
         # Cleaning of data
-        df = utils.pre_processing(df, clean_source_target=True)
+        # df = utils.pre_processing(df, clean_source_target=True)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'])
+            self.set_node_properties(df, cmap=self.config['cmap'], color=color)
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
@@ -2663,12 +2664,11 @@ class D3Blocks():
 
         # Compute edge properties for the specified chart.
         if self.chart is not None:
-            countries = self.chart.set_edge_properties(*args, config=self.config, node_properties=self.node_properties, **kwargs)
+            edge_properties = self.chart.set_edge_properties(*args, config=self.config, node_properties=self.node_properties, **kwargs)
 
         # Convert to frame/dictionary
-        # self.edge_properties = utils.convert_dataframe_dict(countries, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
-        self.edge_properties = countries
-        
+        # self.edge_properties = utils.convert_dataframe_dict(edge_properties, frame=self.config['frame'], chart=self.config['chart'], logger=logger)
+        self.edge_properties = edge_properties
 
         # Store and return
         logger.info('Edge properties are set.')

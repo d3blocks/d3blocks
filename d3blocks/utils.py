@@ -21,6 +21,15 @@ import d3graph as d3network
 from collections import defaultdict
 
 
+def convert_to_json_format(df, logger):
+    logger.debug("Setting up json data file..")
+    json = []
+    for index, row in df.iterrows():
+        link = row.astype(str).to_dict()
+        json.append(link)
+    return json
+
+
 def is_circular(df):
     graph = defaultdict(list)
     for _, row in df.iterrows():
