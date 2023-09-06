@@ -1491,8 +1491,8 @@ class D3Blocks():
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
 
-        Examples
-        --------
+        Example (default)
+        -----------------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -1506,8 +1506,8 @@ class D3Blocks():
         >>> d3.heatmap(df)
         >>> #
 
-        Examples
-        --------
+        Example: Adjust the clustering
+        ------------------------------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -1515,7 +1515,7 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example('stormofswords')
+        >>> df = d3.import_example('energy')
         >>> #
         >>> # Change cluster parameters
         >>> d3.heatmap(df, cluster_params={'evaluate':'dbindex',
@@ -1526,8 +1526,8 @@ class D3Blocks():
         >>>                                'max_clust': 15})
         >>> #
 
-        Examples
-        --------
+        Example: Adjust colors
+        ----------------------
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>> #
