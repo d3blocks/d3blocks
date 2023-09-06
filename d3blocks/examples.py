@@ -7,18 +7,19 @@
 
 
 from d3blocks import D3Blocks
+d3 = D3Blocks(chart='Sankey', frame=True)
+
+df = d3.import_example(data='energy')
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html', color=None)
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html', color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#7FFFD4' })
 
 d3 = D3Blocks(chart='Sankey', frame=True)
 df = d3.import_example(data='energy')
-d3.set_node_properties(df, color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#FF0000', 'Bio-conversion':'#FF0000'})
-d3.node_properties
-
+d3.set_node_properties(df, color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#7FFFD4', 'Bio-conversion':'#000000', 'Industry': '#000000'})
 d3.set_edge_properties(df, color='target', opacity='target')
 d3.show(filepath=r'c:\temp\sankey.html')
 
-df = d3.import_example(data='energy')
-html = d3.sankey(df, filepath=r'c:\temp\sankey.html', color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#FF0000' })
-html = d3.sankey(df, filepath=r'c:\temp\sankey.html', color=None)
 
 
 # %%
