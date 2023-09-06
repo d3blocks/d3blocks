@@ -60,7 +60,8 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
             chart = SankeyChart({
                 links
             }, {
-                nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+                //nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+                nodeGroup: d => d.id, // take the whole id for color
                 align: align,
                 linkColor: linkColor,
                 linkStrokeOpacity: {{ link_stroke_opacity }},
