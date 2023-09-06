@@ -266,64 +266,69 @@ dataset can be used. The javascript code is forked from Mike Bostock and then Py
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
-<li><p><em>Example (default)</em></p></li>
-<li><p><em>—————–</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Load d3blocks</em></p></li>
-<li><p><em>&gt;&gt;&gt; from d3blocks import D3Blocks</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Initialize</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3 = D3Blocks()</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Load example data</em></p></li>
-<li><p><em>&gt;&gt;&gt; df = d3.import_example(‘energy’)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Plot</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3.sankey(df)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><strong>Example</strong> (<em>Adjust node and edge properties</em>)</p></li>
-<li><p><em>—————————————-</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Load d3blocks</em></p></li>
-<li><p><em>&gt;&gt;&gt; from d3blocks import D3Blocks</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Initialize</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3 = D3Blocks(chart=’Sankey’, frame=True)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Import example</em></p></li>
-<li><p><em>&gt;&gt;&gt; df = d3.import_example(‘energy’)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Node properties</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3.set_node_properties(df)</em></p></li>
-<li><p><em>&gt;&gt;&gt; print(d3.node_properties)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3.set_edge_properties(df, color=’target’, opacity=’target’)</em></p></li>
-<li><p><em>&gt;&gt;&gt; print(d3.edge_properties)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Show the chart</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3.show()</em></p></li>
-<li><p><strong>Example</strong> (<em>Custom colors</em>)</p></li>
-<li><p><em>———————-</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Load d3blocks</em></p></li>
-<li><p><em>&gt;&gt;&gt; from d3blocks import D3Blocks</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Initialize</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3 = D3Blocks(chart=’Sankey’, frame=True)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Import example</em></p></li>
-<li><p><em>&gt;&gt;&gt; df = d3.import_example(‘energy’)</em></p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Custom color the nodes</em></p></li>
-<li><p><strong>&gt;&gt;&gt; html = d3.sankey(df.copy(), filepath=r’c</strong> (<em>empsankey.html’, color={‘Nuclear’: ‘#FF0000’, ‘Wind’:’#000000’, ‘Electricity grid’:’#FF0000’})</em>)</p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
-<li><p><em>&gt;&gt;&gt; # Alternatively</em></p></li>
-<li><p><em>&gt;&gt;&gt; d3 = D3Blocks(chart=’Sankey’, frame=True)</em></p></li>
-<li><p><em>&gt;&gt;&gt; df = d3.import_example(data=’energy’)</em></p></li>
-<li><p><strong>&gt;&gt;&gt; d3.set_node_properties(df, color={‘Nuclear’</strong> (<em>‘#FF0000’, ‘Wind’:’#FF0000’, ‘Electricity grid’:’#7FFFD4’, ‘Bio-conversion’:’#000000’, ‘Industry’: ‘#000000’})</em>)</p></li>
-<li><p><em>&gt;&gt;&gt; d3.set_edge_properties(df, color=’target’, opacity=’target’)</em></p></li>
-<li><p><strong>&gt;&gt;&gt; d3.show(filepath=r’c</strong> (<em>empsankey.html’)</em>)</p></li>
-<li><p><em>&gt;&gt;&gt; #</em></p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Adjust node and edge properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Sankey&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create Custom colors</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">d3blocks</span> <span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Sankey&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Custom color the nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;c:   emp\sankey.html&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">:</span> <span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;Wind&#39;</span><span class="p">:</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="s1">&#39;Electricity grid&#39;</span><span class="p">:</span><span class="s1">&#39;#FF0000&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Alternatively:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Sankey&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Nuclear&#39;</span><span class="p">:</span> <span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;Wind&#39;</span><span class="p">:</span><span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;Electricity grid&#39;</span><span class="p">:</span><span class="s1">&#39;#7FFFD4&#39;</span><span class="p">,</span> <span class="s1">&#39;Bio-conversion&#39;</span><span class="p">:</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="s1">&#39;Industry&#39;</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;c:       emp\sankey.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
 <p class="rubric">References</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Sankey.html">https://d3blocks.github.io/d3blocks/pages/html/Sankey.html</a></p></li>
