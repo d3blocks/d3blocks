@@ -901,7 +901,7 @@ class D3Blocks():
                df,
                color=None,
                node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
-               link={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#D3D3D3'},
+               link={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#d3d3d3'},
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
                title='Sankey - D3blocks',
                filepath='sankey.html',

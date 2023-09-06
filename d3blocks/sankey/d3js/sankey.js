@@ -2234,17 +2234,17 @@
           .attr("x2", d => d.target.x0)
           .call(gradient => gradient.append("stop")
               .attr("offset", "0%")
-              .attr("stop-color", ({source: {index: i}}) => color(G[i])))
+              .attr("stop-color", ({source: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i]) ))
           .call(gradient => gradient.append("stop")
               .attr("offset", "100%")
-              .attr("stop-color", ({target: {index: i}}) => color(G[i])));
+              .attr("stop-color", ({target: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i]) ))
 
       link.append("path")
           .attr("d", linkPath)
           .attr("stroke", linkColor === "source-target" ? ({index: i}) => `url(#${uid}-link-${i})`
-              : linkColor === "source" ? ({source: {index: i}}) => color(G[i])
-                  : linkColor === "target" ? ({target: {index: i}}) => color(G[i])
-                      : linkColor)
+              : linkColor === "source" ? ({source: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i])
+              : linkColor === "target" ? ({target: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i])
+              : linkColor)
           .attr("stroke-width", ({width}) => Math.max(1, width))
           .call(Lt ? path => path.append("title").text(({index: i}) => Lt[i]) : () => {
           });

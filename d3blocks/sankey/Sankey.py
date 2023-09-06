@@ -29,7 +29,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
     config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#D3D3D3'}, **link}
+    config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#d3d3d3'}, **link}
     config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
     config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
     config['notebook'] = kwargs.get('notebook', False)
@@ -80,7 +80,7 @@ def set_edge_properties(df, **kwargs):
     """
     logger = kwargs.get('logger', None)
     df = df.copy()
-    df = pre_processing(df, clean_source_target=True, logger=logger)
+    df = pre_processing(df.copy(), clean_source_target=True, logger=logger)
     return df
 
 
@@ -100,7 +100,7 @@ def set_node_properties(df, **kwargs):
 
     """
     dfO = df.copy()
-    df = pre_processing(df, clean_source_target=True)
+    df = pre_processing(df.copy(), clean_source_target=True)
     logger = kwargs.get('logger', None)
     cmap = kwargs.get('cmap', 'Set1')
 
@@ -179,7 +179,8 @@ def show(df, **kwargs):
 
     # node_properties = convert_dataframe_dict(node_properties.copy(), frame=True)
     # X_nodes = convert_to_json_format(node_properties, logger=logger)
-    custom_colors = np.any(~np.isin(list(map(lambda x: node_properties.get(x)['color'], node_properties.keys())), '#d3d3d3'))
+    uicolors = np.unique(list(map(lambda x: node_properties.get(x)['color'], node_properties.keys())))
+    custom_colors = np.any(~np.isin(uicolors, '#d3d3d3'))
     # Write to HTML
     return write_html(X, config, custom_colors, logger)
 
