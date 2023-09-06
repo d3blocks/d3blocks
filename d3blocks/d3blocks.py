@@ -979,8 +979,8 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Example (default)
-        -----------------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -994,9 +994,10 @@ class D3Blocks():
         >>> d3.sankey(df)
         >>> #
 
-        Example: Adjust node and edge properties
-        ----------------------------------------
-        >>> # Load d3blocks
+        Examples
+        --------
+        >>> # Adjust node and edge properties
+        >>> #
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
@@ -1015,9 +1016,10 @@ class D3Blocks():
         >>> # Show the chart
         >>> d3.show()
 
-        Example: Custom colors
-        ----------------------
-        >>> # Load d3blocks
+        Examples
+        --------
+        >>> # Create Custom colors
+        >>> #
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
@@ -1491,8 +1493,8 @@ class D3Blocks():
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
 
-        Example (default)
-        -----------------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -1506,8 +1508,8 @@ class D3Blocks():
         >>> d3.heatmap(df)
         >>> #
 
-        Example: Adjust the clustering
-        ------------------------------
+        Examples
+        --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -1526,8 +1528,8 @@ class D3Blocks():
         >>>                                'max_clust': 15})
         >>> #
 
-        Example: Adjust colors
-        ----------------------
+        Examples
+        --------
         >>> # Initialize
         >>> d3 = D3Blocks()
         >>> #
