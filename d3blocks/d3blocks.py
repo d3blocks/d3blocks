@@ -979,8 +979,8 @@ class D3Blocks():
         d3.config: dictionary
              Contains configuration properties.
 
-        Examples
-        --------
+        Example (default)
+        -----------------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -994,8 +994,8 @@ class D3Blocks():
         >>> d3.sankey(df)
         >>> #
 
-        Examples
-        --------
+        Example: Adjust node and edge properties
+        ----------------------------------------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
@@ -1015,8 +1015,8 @@ class D3Blocks():
         >>> # Show the chart
         >>> d3.show()
 
-        Examples
-        --------
+        Example: Custom colors
+        ----------------------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
         >>> #
