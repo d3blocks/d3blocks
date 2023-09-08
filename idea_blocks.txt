@@ -26,10 +26,10 @@ $
 #       d3blocks\demo\scatter_3d\scatter_3d.html
 # 
 # 
-# BUGS
+# NEW FUNCTIONALITIES AND BUGS:
 # 
 # 1.    TimeSeries
-# [x]   Getallen zijn te breed in de grafiek. Afronden op 3 decimalen oid?
+# [x]   Getallen zijn te breed in de grafiek. Afronden op 3 decimalen
 # 
 # 2.    MovingBubbles
 # [x]   Overlap van namen in de circle. Ik dacht dat we dit al opgelost hadden?
@@ -73,7 +73,17 @@ $
 #       https://bl.ocks.org/GerHobbelt/3104394
 #       http://bl.ocks.org/GerHobbelt/3071239
 # 
-#
+# 7.    Sankey
+# [x]   Custom color the nodes
+# [x]   The node colors are inherited for the edge-colors
+# 
+# 8.     Treemap
+# [x]    Create the chart to fit in D3blocks
+# 
+# 9.     maps
+# [x]    Create the chart to fit in D3blocks
+
+
 
 ### Wind
 http://bl.ocks.org/FrissAnalytics/8360ffae9194ed726f42e850eac3239e
@@ -129,9 +139,6 @@ http://www.claudiobellei.com/2017/02/04/viznetworks/
 http://www.claudiobellei.com/2017/02/04/viznetworks/vizgraph.html
 
 
-### Treemap
-https://observablehq.com/@d3/treemap
-https://bl.ocks.org/ganezasan/52fced34d2182483995f0ca3960fe228
 
 
 
