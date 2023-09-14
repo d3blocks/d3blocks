@@ -174,7 +174,7 @@ def show(df, **kwargs):
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)
     # Check whether dataframe is circular
-    if is_circular(df):
+    if is_circular(df, logger):
         logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
 
     # node_properties = convert_dataframe_dict(node_properties.copy(), frame=True)

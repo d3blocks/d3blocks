@@ -30,7 +30,12 @@ def convert_to_json_format(df, logger):
     return json
 
 
-def is_circular(df):
+def is_circular(df, logger=None):
+    iloc = df['source'].str.lower()==df['target'].str.lower()
+    if np.any(iloc):
+        if logger is not None: logger.warning('Data contains self-link that is not allowed\n%s' %(df.loc[iloc, :]))
+        return False
+
     graph = defaultdict(list)
     for _, row in df.iterrows():
         graph[row['source']].append(row['target'])

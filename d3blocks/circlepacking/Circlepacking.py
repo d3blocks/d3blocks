@@ -137,8 +137,8 @@ def show(df, **kwargs):
     X = convert_to_links_format(df, logger=logger)
 
     # Check whether dataframe is circular
-    if is_circular(df):
-        logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
+    if is_circular(df, logger):
+        logger.warning("The dataframe contains circularity or self-link which can not be handled by this chart!")
 
     # Write to HTML
     return write_html(X, config, node_properties, logger)
