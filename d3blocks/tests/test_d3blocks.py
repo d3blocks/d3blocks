@@ -55,6 +55,26 @@ class Testd3blocks(unittest.TestCase):
         d3 = D3Blocks()
         # Create sankey graph
         d3.sankey(df, showfig=True)
+        
+        d3 = D3Blocks(chart='Sankey', frame=True)
+        # Load data set
+        df = d3.import_example(data='energy')
+        
+        # Set default node properties
+        d3.set_node_properties(df)
+        
+        # Update the colors of the network graph to be consistent with the colors
+        for i, label in enumerate(d3.node_properties['label']):
+            if node_colors.get(label) is not None:
+                d3.node_properties['color'].iloc[i] = node_colors.get(label)['color']
+        
+        # The colors in the dataframe are used in the chart.
+        print(d3.node_properties)
+        # Create edge properties
+        d3.set_edge_properties(df, color='target', opacity='target')
+        # Show the chart
+        d3.show()
+        
 
     def test_instantiate_d3blocks_no_args(self) -> None:
         """Test instantiation works with defaults"""
