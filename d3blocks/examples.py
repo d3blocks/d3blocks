@@ -12,11 +12,35 @@ d3 = D3Blocks(chart='Sankey', frame=True)
 df = d3.import_example(data='energy')
 html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
 html = d3.sankey(df, filepath=r'c:\temp\sankey.html', color=None)
-html = d3.sankey(df, filepath=r'c:\temp\sankey.html', color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#7FFFD4' })
 
+# Initialize
+from d3blocks import D3Blocks
+# Sankey chart
 d3 = D3Blocks(chart='Sankey', frame=True)
+# Get example data
 df = d3.import_example(data='energy')
-d3.set_node_properties(df, color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#7FFFD4', 'Bio-conversion':'#000000', 'Industry': '#000000'})
+# Create chart
+html = d3.sankey(df,
+                 color={'Nuclear': '#FF0000',
+                        'Wind':'#FF0000',
+                        'Electricity grid':'#7FFFD4',
+                        'Bio-conversion':'#000000',
+                        'Industry': '#000000'})
+
+# Initialize
+from d3blocks import D3Blocks
+# Sankey chart
+d3 = D3Blocks(chart='Sankey', frame=True)
+# Get example data
+df = d3.import_example(data='energy')
+# Set node properties
+d3.set_node_properties(df,
+                       color={'Nuclear': '#FF0000',
+                              'Wind':'#FF0000',
+                              'Electricity grid':'#7FFFD4',
+                              'Bio-conversion':'#000000',
+                              'Industry': '#000000'})
+# Set edge properties
 d3.set_edge_properties(df, color='target', opacity='target')
 d3.show(filepath=r'c:\temp\sankey.html')
 
@@ -92,15 +116,20 @@ html = d3.tree(df)
 # %%
 import pandas as pd
 df = pd.read_csv(r'D:\GITLAB\DATA\organogram.csv', sep=';')
+df['weight'] = df.groupby(['source', 'target'])['source'].transform('count')
+df = df.drop_duplicates()
+iloc = df['source'].str.lower()==df['target'].str.lower()
+df = df.loc[~iloc,:]
+
 # df['weight']=1
 # df = df.loc[0:5]
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 # df = d3.import_example('energy')
 html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
-# html = d3.treemap(df, filepath='c://temp//treemap.html')
-# html = d3.tree(df, filepath='c://temp//tree.html')
-# html = d3.sankey(df)
+html = d3.treemap(df, filepath='c://temp//treemap.html')
+html = d3.tree(df, filepath='c://temp//tree.html')
+html = d3.sankey(df)
 
 # %%
 # df = d3.import_example('bigbang')
@@ -387,7 +416,7 @@ html = d3.chord(df)
 # Import example
 df = d3.import_example('stormofswords')
 df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-d3.heatmap(df, classlabel='cluster', stroke='red', vmax=1)
+d3.heatmap(df, color='cluster', stroke='red')
 
 df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))
 d3.matrix(df, cmap='interpolateGreens')
