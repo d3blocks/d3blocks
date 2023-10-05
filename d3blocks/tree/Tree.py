@@ -9,9 +9,9 @@ License     : GPL3
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare_v2
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare_v2, is_circular
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare_v2
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare_v2, is_circular
 
 
 # %% Set configuration properties
@@ -131,6 +131,10 @@ def show(df, **kwargs):
 
     # Transform dataframe into input form for d3
     df.reset_index(inplace=True, drop=True)
+
+    # Check whether dataframe is circular
+    if is_circular(df, logger):
+        logger.warning("The dataframe seems to be circular which can not be handled by this chart!")
 
     # Create the data from the input of javascript
     X = vec2flare_v2(df, node_properties, logger=logger)
