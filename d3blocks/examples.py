@@ -140,7 +140,7 @@ d3 = D3Blocks()
 
 # Load example data
 df = d3.import_example('energy')
-# html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html')
+html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html')
 html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
 
 # html = d3.circlepacking(df,
@@ -174,12 +174,12 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
 # df = pd.DataFrame({'source': ['A','A','B'], 'target': ['C','D','E'], 'weight': [1,1,1]})
-html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', showfig=False)
+html = d3.circlepacking(df, filepath='c://temp//circlepacking.html')
 
 html = d3.circlepacking(df,
                       speed=1500,
                       zoom=20,
-                      diameter=1000,
+                      size=1000,
                       filepath='c://temp//circlepacking.html',
                       border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
                       overwrite=True,
