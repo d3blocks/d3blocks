@@ -2168,6 +2168,8 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Tree.html
 
         """
+        # Create unique dataframe, udpate weights
+        df = utils.create_unique_dataframe(df, logger=logger)
         # Cleaning
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
