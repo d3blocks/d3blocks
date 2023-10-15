@@ -1712,6 +1712,8 @@ class D3Blocks():
                 charge=400,
                 cmap='Set1',
                 slider=[None, None],
+                set_slider=0,
+                show_slider=True,
                 notebook=False,
                 showfig=True,
                 support='text',
@@ -1768,6 +1770,12 @@ class D3Blocks():
                 * 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv', 'inferno'
         slider : typle [min: int, max: int]:, (default: [None, None])
             Slider is automatically set to the range of the edge weights.
+        set_slider : int, (default: 0)
+            0: Set the the slider with all edges connected
+            1,2,3, etc: Set slider at a threshold with that particular network state.
+        show_slider : bool, (default: True)
+            True: Slider is shown in the HTML.
+            False: Slider is not shown in the HTML.
         title : String, (default: None)
             Title of the figure.
                 * 'd3graph'
@@ -1852,6 +1860,8 @@ class D3Blocks():
         self.config['collision'] = collision
         self.config['charge'] = -abs(charge)
         self.config['slider'] = slider
+        self.config['show_slider'] = show_slider
+        self.config['set_slider'] = set_slider
         self.config['notebook'] = notebook
 
         # Copy of data
@@ -1865,7 +1875,7 @@ class D3Blocks():
         # Create default graph
         self.D3graph.graph(adjmat, color=color, size=size, opacity=opacity, scaler=scaler, cmap=cmap)
         # Open the webbrowser
-        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite, show_slider=show_slider, set_slider=set_slider)
         # Display the chart
         # return self.display(html)
 

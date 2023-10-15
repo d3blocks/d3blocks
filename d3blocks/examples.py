@@ -57,7 +57,7 @@ html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cma
 
 # Customize a bit
 html = d3.maps(df,
-               color=df['label'].values, 
+               color=df['label'].values,
                filepath='c://temp//maps.html',
                cmap='Set2',
                countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},

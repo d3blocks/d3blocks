@@ -200,7 +200,7 @@ def vec2flare_v2(df, node_properties=None, chart=None, logger=None):
     #     'weight': [1, 1, 1, 1, 1, 1, 1]
     # }
     # df = pd.DataFrame(data)
-    
+
     # Function to recursively build the nested structure
     def build_node(df, name, node_properties=None, visited=None):
         if visited is None:
