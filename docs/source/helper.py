@@ -18,7 +18,7 @@ def add_includes_to_rst_files(top=True, bottom=True):
     skipfiles = ['sponsor.rst']
     for file_path in glob("*.rst"):
         if not np.isin(file_path, skipfiles):
-            with open(file_path, "r+") as file:
+            with open(file_path, "r+", encoding='utf8') as file:
                 contents = file.read()
                 if top and ".. include:: add_top.add" not in contents:
                     file.seek(0)
