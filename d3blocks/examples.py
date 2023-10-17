@@ -5,6 +5,18 @@
 # import pandas as pd
 # import numpy as np
 
+# %% Chord ORdering of labels
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks(verbose=10)
+
+# Import example
+df = d3.import_example('energy')
+d3.chord(df, filepath=r'c:/temp/chord.html', arrowhead=-1)
+
+# %% Chord ORdering of labels
 from d3blocks import D3Blocks
 import numpy as np
 

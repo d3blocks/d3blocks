@@ -1209,7 +1209,7 @@
   }
 
   function defaultArrowheadRadius() {
-    return 10;
+    return {{ ARROWHEAD }};
   }
 
   function ribbon(headRadius) {

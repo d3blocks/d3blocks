@@ -633,6 +633,7 @@ class D3Blocks():
               opacity='source',
               ordering='ascending',
               fontsize=10,
+              arrowhead=10,
               cmap='tab20',
               title='Chord - D3blocks',
               filepath='chord.html',
@@ -678,6 +679,11 @@ class D3Blocks():
                 * ['label1', 'label2', 'label3']: Custom sort. Note that all labels shoul be included only once for the best result.
         fontsize : int, (default: 8)
             The Fontsize.
+        arrowhead : int, (default: 10)
+            The head of the arrow.
+                * -1: No arrow
+                * 10: default
+                * 50: The larger the more pointy the arrow becomes
         cmap : String, (default: 'tab20')
             colormap is only used in case color=None. All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
                 * 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
@@ -797,7 +803,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Chord', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, logger=logger)
         # Set node properties
         if reset_properties or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=cmap)

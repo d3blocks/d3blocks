@@ -31,6 +31,7 @@ def set_config(config={}, **kwargs):
     config['fontsize'] = kwargs.get('fontsize', 10)
     config['notebook'] = kwargs.get('notebook', False)
     config['ordering'] = kwargs.get('ordering', 'ascending')
+    config['arrowhead'] = kwargs.get('arrowhead', 10)
     # return
     return config
 
@@ -276,6 +277,7 @@ def write_html(X, config, logger=None):
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
         'FONTSIZE': config['fontsize'],
+        'ARROWHEAD': config['arrowhead'],
         'ORDERING': ORDERING,
         'SUPPORT': config['support'],
     }
