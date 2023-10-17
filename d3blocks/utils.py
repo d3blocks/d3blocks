@@ -21,8 +21,8 @@ import d3graph as d3network
 from collections import defaultdict
 
 
-def convert_to_json_format(df, logger):
-    logger.debug("Setting up json data file..")
+def convert_to_json_format(df, logger=None):
+    if logger is not None: logger.debug("Setting up json data file..")
     json = []
     for index, row in df.iterrows():
         link = row.astype(str).to_dict()

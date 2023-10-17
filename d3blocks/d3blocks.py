@@ -631,6 +631,7 @@ class D3Blocks():
               df,
               color='source',
               opacity='source',
+              ordering='ascending',
               fontsize=10,
               cmap='tab20',
               title='Chord - D3blocks',
@@ -669,6 +670,12 @@ class D3Blocks():
                 * 'target': Opacity of edges/links similar to that of target-opacity node.
                 * 0.8: All links have the same opacity.
                 * [0.1, 0.75,...]: Set opacity per edge/link.
+        ordering: (default: 'ascending')
+            Sort the labels.
+                * 'ascending'
+                * 'descending'
+                * '': Do not sort
+                * ['label1', 'label2', 'label3']: Custom sort. Note that all labels shoul be included only once for the best result.
         fontsize : int, (default: 8)
             The Fontsize.
         cmap : String, (default: 'tab20')
@@ -758,6 +765,28 @@ class D3Blocks():
         >>> # Show the chart
         >>> d3.show()
 
+        Examples
+        --------
+        >>> # Change the order of the labels.
+        >>> #
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Custom order of the labels
+        >>> d3.chord(df, ordering=np.sort(np.unique(df['source'].values)))
+        >>> #
+        >>> # Sort Ascending
+        >>> d3.chord(df, ordering='ascending')
+        >>> #
+        >>> # Sort Descending
+        >>> d3.chord(df, ordering='descending')
+        >>> #
+        >>> # Do not sort
+        >>> d3.chord(df, ordering='')
+
         References
         ----------
         * https://d3blocks.github.io/d3blocks/pages/html/Chord.html
@@ -768,7 +797,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Chord', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, logger=logger)
         # Set node properties
         if reset_properties or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=cmap)

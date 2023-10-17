@@ -1733,7 +1733,7 @@
   }
 
   function generateChord({data, nodes, width= 954, height = width}) {
-      const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending);
+      {{ ORDERING }}
       // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
       const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
       const node_opacity = new Map(nodes.map(n => [n.name, n.opacity]));    // GET NODE OPACITY
@@ -1755,9 +1755,16 @@
 	  }
 
       
+//      for (const {source, target, value} of data) {
+//          matrix[index.get(source)][index.get(target)] += value;
+//      }
+
       for (const {source, target, value} of data) {
-          matrix[index.get(source)][index.get(target)] += value;
-      }
+          if(index.has(source) && index.has(target)) {
+              matrix[index.get(source)][index.get(target)] += value;
+            }
+        }
+
 
       const arc = d3Arc()
           .innerRadius(innerRadius)

@@ -5,6 +5,21 @@
 # import pandas as pd
 # import numpy as np
 
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks(verbose=10, support='text')
+
+# Import example
+df = d3.import_example('energy')
+d3.chord(df, filepath=r'c:/temp/chord.html', ordering=np.sort(np.unique(df['source'].values)))
+d3.chord(df, filepath=r'c:/temp/chord.html', ordering=['Bio-conversion', 'Liquid','Tidal', 'Electricity grid'])
+d3.chord(df, filepath=r'c:/temp/chord.html', ordering='ascending')
+d3.chord(df, filepath=r'c:/temp/chord.html', ordering='descending')
+
+
+# %%
 
 from d3blocks import D3Blocks
 d3 = D3Blocks(chart='Sankey', frame=True)
@@ -411,7 +426,8 @@ d3 = D3Blocks(verbose=10, support='text')
 
 # Import example
 df = d3.import_example('energy')
-html = d3.chord(df)
+html = d3.chord(df, filepath=r'c:/temp/chord.html')
+
 
 # Import example
 df = d3.import_example('stormofswords')
