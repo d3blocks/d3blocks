@@ -124,6 +124,7 @@ class D3Blocks():
                   figsize = [900, 200],
                   showfig: bool = True,
                   notebook: bool = False,
+                  save_button: bool = False,
                   overwrite: bool = True):
         """Particles block.
 
@@ -166,6 +167,9 @@ class D3Blocks():
         notebook : bool, optional
                 * True: Use IPython to show chart in notebooks.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         overwrite : bool, optional (default: True)
                 * True: Overwrite the output html in the destination directory.
                 * False: Do not overwrite
@@ -218,6 +222,7 @@ class D3Blocks():
         self.config['fontsize'] = '"' + str(fontsize) + 'px"'
         self.config['spacing'] = spacing
         self.config['notebook'] = notebook
+        self.config['save_button'] = save_button
         self.chart = eval('Particles')
 
         # Create the plot
@@ -245,6 +250,7 @@ class D3Blocks():
                showfig: bool = True,
                overwrite: bool = True,
                notebook: bool = False,
+               save_button: bool = True,
                reset_properties: bool = True):
         """Violin block.
 
@@ -310,6 +316,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -381,7 +390,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Violin', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, save_button=save_button, logger=logger)
         # Remvove quotes from source-target node_properties
         self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], fontsize=self.config['fontsize'], logger=logger)
         # Set default label properties
@@ -416,6 +425,7 @@ class D3Blocks():
                 showfig = True,
                 overwrite=True,
                 notebook=False,
+                save_button: bool = True,
                 reset_properties=True,
                 ):
         """Scatterplot block.
@@ -493,6 +503,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -617,7 +630,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Scatter', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, jitter=jitter, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, jitter=jitter, save_button=save_button, logger=logger)
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger)
         # Set node properties
@@ -641,6 +654,7 @@ class D3Blocks():
               showfig=True,
               overwrite=True,
               notebook=False,
+              save_button=True,
               reset_properties=True,
               ):
         """Chord block.
@@ -708,6 +722,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -803,7 +820,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Chord', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, save_button=save_button, logger=logger)
         # Set node properties
         if reset_properties or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=cmap)
@@ -920,6 +937,7 @@ class D3Blocks():
         self.config['overwrite'] = overwrite
         self.config['notebook'] = notebook
         self.config['figsize'] = figsize
+        self.config['save_button'] = False
         self.chart = eval('Imageslider')
         # if self.config['filepath'] is None: raise Exception('filepath can not be None.')
 
@@ -944,6 +962,7 @@ class D3Blocks():
                showfig=True,
                overwrite=True,
                notebook=False,
+               save_button: bool = True,
                reset_properties=True,
                ):
         """Sankey block.
@@ -999,6 +1018,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1084,7 +1106,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Sankey', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
         # Cleaning of data
         # df = utils.pre_processing(df, clean_source_target=True)
         # Set default label properties
@@ -1119,6 +1141,7 @@ class D3Blocks():
                       showfig: bool = True,
                       overwrite: bool = True,
                       notebook: bool = False,
+                      save_button: bool = True,
                       reset_properties: bool = True,
                       ):
         """Movingbubbles block.
@@ -1215,6 +1238,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1296,7 +1322,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
@@ -1319,6 +1345,7 @@ class D3Blocks():
                    showfig=True,
                    overwrite=True,
                    notebook=False,
+                   save_button: bool = True,
                    reset_properties=True,
                    ):
         """Timeseries block.
@@ -1369,6 +1396,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1433,7 +1463,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df.columns.values, cmap=self.config['cmap'], whitelist=self.config['whitelist'], datetime=self.config['datetime'])
@@ -1466,6 +1496,7 @@ class D3Blocks():
                 showfig=True,
                 overwrite=True,
                 notebook=False,
+                save_button: bool = True,
                 reset_properties=True,
                 ):
         """Heatmap block.
@@ -1524,6 +1555,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1599,7 +1633,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Heatmap', logger)
         # Store properties
-        self.config = self.chart.set_config(scaler=scaler, fontsize=fontsize, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, stroke=stroke, cmap=cmap, cluster_params=cluster_params, logger=logger)
+        self.config = self.chart.set_config(scaler=scaler, fontsize=fontsize, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, stroke=stroke, cmap=cmap, cluster_params=cluster_params, save_button=save_button, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])
@@ -1625,6 +1659,7 @@ class D3Blocks():
                filepath='matrix.html',
                overwrite=True,
                notebook=False,
+               save_button: bool = True,
                reset_properties=True,
                ):
         """Matrix block.
@@ -1681,6 +1716,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1725,7 +1763,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Matrix', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, description=description, vmax=vmax, vmin=vmin, stroke=stroke, cmap=cmap, scale=scale, fontsize=fontsize, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, description=description, vmax=vmax, vmin=vmin, stroke=stroke, cmap=cmap, scale=scale, fontsize=fontsize, save_button=save_button, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap='Set2')
@@ -1752,6 +1790,7 @@ class D3Blocks():
                 notebook=False,
                 showfig=True,
                 support='text',
+                save_button: bool = True,
                 overwrite=True):
         """d3graph block.
 
@@ -1829,6 +1868,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         overwrite : bool, (default: True)
                 * True: Overwrite the html in the destination directory.
                 * False: Do not overwrite destination file but show warning instead.
@@ -1928,6 +1970,7 @@ class D3Blocks():
                      single_click_expand=False,
                      notebook=False,
                      showfig=True,
+                     save_button: bool = True,
                      overwrite=True):
         """D3 Elasticgraph block.
 
@@ -1982,6 +2025,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         overwrite : bool, (default: True)
                 * True: Overwrite the html in the destination directory.
                 * False: Do not overwrite destination file but show warning instead.
@@ -2073,6 +2119,7 @@ class D3Blocks():
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
+             save_button: bool = True,
              reset_properties: bool = True):
         """Tree block.
 
@@ -2116,6 +2163,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2220,7 +2270,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Tree', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, save_button=save_button, logger=logger)
         # Cleaning of data
         df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
@@ -2286,6 +2336,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2349,7 +2402,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Treemap', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=False, logger=logger)
         # Cleaning of data
         df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
@@ -2373,6 +2426,7 @@ class D3Blocks():
                       showfig: bool = True,
                       overwrite: bool = True,
                       notebook: bool = False,
+                      save_button: bool = True,
                       reset_properties: bool = True,
                       ):
         """Circlepacking block.
@@ -2429,6 +2483,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2508,7 +2565,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
         # Cleaning of data
         df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
         # Set default label properties
@@ -2534,6 +2591,7 @@ class D3Blocks():
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
+             save_button: bool = True,
              reset_properties: bool = True,
              ):
         """Maps block.
@@ -2593,6 +2651,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        save_button : bool, (default: True)
+                * True: Save button is shown in the HTML to save the image in svg.
+                * False: No save button is shown in the HTML.
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2674,7 +2735,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Maps', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, cmap=cmap, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, logger=logger)
+        self.config = self.chart.set_config(config=self.config, cmap=cmap, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
         # Cleaning of data
         # df = utils.pre_processing(df, logger=logger)
         # Set default label properties
