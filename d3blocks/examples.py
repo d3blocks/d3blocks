@@ -2,8 +2,95 @@
 # import d3blocks
 # print(dir(d3blocks))
 # print(d3blocks.__version__)
-# import pandas as pd
-# import numpy as np
+import pandas as pd
+import numpy as np
+
+# %% Save functionality
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Violin
+df = d3.import_example('cancer')
+html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin1.html')
+html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin2.html', save_button=False)
+html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin3.html', save_button=True)
+
+# Treemap
+df = d3.import_example(data='energy')
+html = d3.treemap(df, filepath=r'c:\temp\treemap1.html')
+
+# Tree
+df = d3.import_example(data='energy')
+html = d3.tree(df)
+html = d3.tree(df, save_button=False)
+html = d3.tree(df, save_button=True)
+
+# Timeseries
+df = d3.import_example('climate')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=r'c:\temp\timeseries1.html')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=r'c:\temp\timeseries1.html', save_button=False)
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=r'c:\temp\timeseries1.html', save_button=True)
+
+# Scatter
+df = d3.import_example('cancer')
+html = d3.scatter(df['tsneX'].values, df['tsneY'].values, c_gradient='opaque', color=df['labx'].values, stroke='#000000')
+html = d3.scatter(df['tsneX'].values, df['tsneY'].values, c_gradient='opaque', color=df['labx'].values, stroke='#000000', save_button=False)
+html = d3.scatter(df['tsneX'].values, df['tsneY'].values, c_gradient='opaque', color=df['labx'].values, stroke='#000000', save_button=True)
+
+# Sankey
+df = d3.import_example(data='energy')
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html', save_button=False)
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html', save_button=True)
+
+# particles
+df = d3.import_example('energy')
+html = d3.particles('D3blocks')
+html = d3.particles('D3blocks', save_button=False)
+html = d3.particles('D3blocks', save_button=True)
+
+# MOVINGBUBBLES
+# df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html')
+d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html', save_button=False)
+d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html', save_button=True)
+
+# maps
+df = d3.import_example('surfspots')
+df = df.iloc[0:100,:]
+html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2')
+html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2', save_button=False)
+html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2', save_button=True)
+
+
+# Imageslider
+img_before, img_after = d3.import_example('southern_nebula_internet')
+html = d3.imageslider(img_before, img_after, filepath=r'c:/temp/imageslider2.html')
+
+# Matrix
+df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))
+d3.matrix(df, cmap='interpolateGreens')
+d3.matrix(df, cmap='interpolateGreens', save_button=False)
+d3.matrix(df, cmap='interpolateGreens', save_button=True)
+
+# Heatmap
+df = d3.import_example('bigbang')
+d3.heatmap(df, filepath=r'c:/temp/chord1.html', color=[1,1,1,2,2,2,2], cmap='Set1')
+d3.heatmap(df, filepath=r'c:/temp/chord2.html', color=[1,1,1,2,2,2,2], cmap='Set1', save_button=False)
+d3.heatmap(df, filepath=r'c:/temp/chord3.html', color=[1,1,1,2,2,2,2], cmap='Set1', save_button=True)
+
+# Chord
+df = d3.import_example('energy')
+d3.chord(df, filepath=r'c:/temp/chord1.html')
+d3.chord(df, filepath=r'c:/temp/chord1.html', save_button=False)
+d3.chord(df, filepath=r'c:/temp/chord2.html', save_button=True)
+
+# Circlepacking
+html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html')
+html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html', save_button=False)
+html = d3.circlepacking(df, filepath='c://temp//circlepacking2.html', save_button=True)
+
 
 # %% Chord ORdering of labels
 from d3blocks import D3Blocks
@@ -14,7 +101,7 @@ d3 = D3Blocks(verbose=10)
 
 # Import example
 df = d3.import_example('energy')
-d3.chord(df, filepath=r'c:/temp/chord.html', arrowhead=-1)
+d3.chord(df, filepath=r'c:/temp/chord.html', arrowhead=-1, save_button=False)
 
 # %% Chord ORdering of labels
 from d3blocks import D3Blocks
@@ -167,7 +254,7 @@ d3 = D3Blocks()
 
 # Load example data
 df = d3.import_example('energy')
-html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html')
+html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html', save_button=True)
 html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
 
 # html = d3.circlepacking(df,
@@ -983,16 +1070,16 @@ d3 = D3Blocks()
 # Load example data
 df = d3.import_example('mnist')
 
-size=np.random.randint(0, 8, df.shape[0])
-opacity=np.random.randint(0, 8, df.shape[0])/10
-tooltip = df['tsneY'].values.astype(str)
+size = np.random.randint(0, 8, df.shape[0])
+opacity = np.random.randint(0, 8, df.shape[0])/10
+tooltip = df['y'].values.astype(str)
 
 # Set all propreties
 d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
            df['PC2'].values,                   # PC2 y-coordinates
            x1=df['tsne_1'].values,             # tSNE x-coordinates
            y1=df['tsne_2'].values,             # tSNE y-coordinates
-           color=df['tsneY'].values.astype(str),   # Hex-colors or classlabels
+           color=df['tsne_2'].values.astype(str),   # Hex-colors or classlabels
            tooltip=tooltip,                    # Tooltip
            size=size,                          # Node size
            opacity=opacity,                    # Opacity
