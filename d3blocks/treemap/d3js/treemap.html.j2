@@ -15,6 +15,15 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
     {{ SUPPORT }}
 </head>
 
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <br>
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
+
+
 <style>
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -50,6 +59,7 @@ form {
 <script>
 	{% include "d3.v4.min.js" %}
 </script>
+
 
 <script>
 'use strict';
@@ -104,5 +114,8 @@ const div = d3.select("body").append("div")
         .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
         .style("height", (d) => Math.max(0, d.y1 - d.y0  - 1) + "px")
   });
+
+
+{{ SAVE_TO_SVG_SCRIPT }}
 
 </script>
