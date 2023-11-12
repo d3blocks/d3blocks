@@ -23,6 +23,14 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 	{{ SUPPORT }}
 
 	</head>
+
+    <!-- Create save button -->
+    {{ SAVE_BUTTON_START }}
+        <div style="max-width:{{ HEIGHT }}px;">
+            <center><button id="saveButton">Save</button></center>
+        </div>
+    {{ SAVE_BUTTON_STOP }}
+
 	<body>
 
 	  
@@ -204,6 +212,10 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 	  return svg.node();
 	}
 
+
+        {{ SAVE_TO_SVG_SCRIPT }}
+
+
 		//	  console.log(data)
 		// Call the chart function to create and append the SVG
 		const svgNode = chart(data);
@@ -212,7 +224,7 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 		}
 
 		// Call the createChart function to execute the chart creation logic
-		createChart();
+		createChart();    
 
 	  </script>
 	</body>
