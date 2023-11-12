@@ -21,6 +21,30 @@ import d3graph as d3network
 from collections import defaultdict
 
 
+def include_save_to_svg_script(save_button=False, title='d3graph_chart'):
+    javascript_code = ""
+    show_save_button = ['<!--', '-->']
+
+    if save_button:
+        javascript_code = """
+        // SAVE CHART TO SVG
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var svgData = document.querySelector('svg').outerHTML;
+            var blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = '{{ title }}.svg';
+            link.click();
+        });
+        """
+        javascript_code = javascript_code.replace("{{ title }}", title)
+        show_save_button = ['', '']
+
+    # Replace the title
+    return javascript_code, show_save_button
+
+
 def convert_to_json_format(df, logger=None):
     if logger is not None: logger.debug("Setting up json data file..")
     json = []
