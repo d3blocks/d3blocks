@@ -19,6 +19,15 @@ License     : GPL3
     </style>
 
 </head>
+
+<!-- Create save button -->
+<div style="max-width:{{ WIDTH }}px;">
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+    <center><button id="saveButton">Save</button>
+{{ SAVE_BUTTON_STOP }}
+</div>
+
 <body>
 
 <svg width="{{ WIDTH }}" height="{{ HEIGHT }}"></svg>
@@ -29,9 +38,13 @@ License     : GPL3
 
 
 <form>
-	<input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
-	<input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
-	<input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
+    <div style="max-width:{{ WIDTH }}px;">
+        <center>
+        	<input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
+        	<input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
+        	<input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
+        </center>
+    </div>
 </form>
 
 
@@ -218,6 +231,7 @@ function zoom() {
 
 }
 
+{{ SAVE_TO_SVG_SCRIPT }}
 
 </script>
 </body>
