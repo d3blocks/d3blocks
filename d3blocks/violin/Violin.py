@@ -15,9 +15,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -38,7 +38,7 @@ def set_config(config={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
     config['fontsize_axis'] = '"' + str(kwargs.get('fontsize_axis', 12)) + 'px"'
-
+    config['save_button'] = kwargs.get('save_button', True)
     # Return
     return config
 
@@ -250,6 +250,8 @@ def write_html(X, config, logger=None):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     content = {
         'json_data': X,
         'TITLE': config['title'],
@@ -266,6 +268,9 @@ def write_html(X, config, logger=None):
         'MOUSEMOVE': config['mousemove'],
         'MOUSELEAVE': config['mouseleave'],
         'SUPPORT': config['support'],
+        'SAVE_TO_SVG_SCRIPT': save_script,
+        'SAVE_BUTTON_START': show_save_button[0],
+        'SAVE_BUTTON_STOP': show_save_button[1],
     }
 
     try:

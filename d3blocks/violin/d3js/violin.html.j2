@@ -17,6 +17,14 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 </head>
 <body>
 
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
+
+
 <script>
 {% include "d3.v4.min.js" %}
 {% include "d3-scale-chromatic.v1.min.js" %}
@@ -45,8 +53,8 @@ var svg = d3.select("#my_dataviz")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-//    .call(d3.behavior.zoom().on("zoom", function () { svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")") }))
-//    .on("dblclick.zoom", null)
+    .call(d3.zoom().on("zoom", function () { svg.attr("transform", d3.event.transform) }))
+    .on("dblclick.zoom", null)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -185,5 +193,7 @@ window.addEventListener('DOMContentLoaded', function () {
         {{ MOUSELEAVE }}
 
 })
+
+{{ SAVE_TO_SVG_SCRIPT }}
 
 </script>
