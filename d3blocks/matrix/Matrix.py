@@ -12,9 +12,9 @@ import os
 # from jinja2 import Environment, PackageLoader
 from shutil import copyfile
 try:
-    from .. utils import set_path, set_labels, write_html_file
+    from .. utils import set_path, set_labels, write_html_file, include_save_to_svg_script
 except:
-    from utils import set_path, set_labels, write_html_file
+    from utils import set_path, set_labels, write_html_file, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -38,6 +38,7 @@ def set_config(config={}, **kwargs):
     config['cluster_params'] = kwargs.get('cluster_params', {})
     config['scale'] = kwargs.get('scale', False)
     config['fontsize'] = kwargs.get('fontsize', 10)
+    config['save_button'] = kwargs.get('save_button', True)
 
     if config['description'] is None: config['description']=''
     if config['cmap'] in ['schemeCategory10', 'schemeAccent', 'schemeDark2', 'schemePaired', 'schemePastel2', 'schemePastel1', 'schemeSet1', 'schemeSet2', 'schemeSet3', 'schemeTableau10']:
@@ -121,6 +122,9 @@ def write_html(json_data, config, logger=None):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+
     # Check path
     dirpath, filename = None, ''
     if config['filepath'] is not None:
@@ -157,6 +161,9 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$CMAP_TYPE$', str(config['cmap_type']))
     html = html.replace('$DATA_PATH$', filename)
     html = html.replace('$SUPPORT$', config['support'])
+    html = html.replace('$SAVE_TO_SVG_SCRIPT$', save_script)
+    html = html.replace('$SAVE_BUTTON_START$', show_save_button[0])
+    html = html.replace('$SAVE_BUTTON_STOP$', show_save_button[1])
     html = html.replace('$DATA_COMES_HERE$', json_data)
     # html = html.replace('src="d3.v4.js"', d3_library)
     # html = html.replace('src="d3.scale.chromatic.v1.min.js"', d3_chromatic)
