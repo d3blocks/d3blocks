@@ -20,7 +20,6 @@ Licensed    : GPL3
 </style>
 </head>
 
-
 <meta charset="utf-8">
 
 <body>
@@ -35,6 +34,19 @@ Licensed    : GPL3
         <div class="clr"></div>
     </div>
 
+    <b>Color on:</b>
+    	<select id="ColorOptions" onchange="link_color_changed(this.value)">
+    	  <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
+    	  <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
+    </select>
+
+    <!-- Create save button -->
+    {{ SAVE_BUTTON_START }}
+        <br><br>
+        <b>Save Chart:</b>
+            <button id="saveButton">Save</button>
+    {{ SAVE_BUTTON_STOP }}
+
 
     <div id="note"></div>
 
@@ -46,12 +58,6 @@ Licensed    : GPL3
 
     <div id="chart"></div>
 
-    <b>Color method:</b>
-    	<select id="ColorOptions" onchange="link_color_changed(this.value)">
-    	  <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
-    	  <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
-    </select>
-    
     <div class="clr"></div>
     </div>
 
@@ -440,7 +446,7 @@ function minutesToTime(m) {
 //	return hh + ":" + mm + ampm
 //}
 
-			
+{{ SAVE_TO_SVG_SCRIPT }}
 
 
 </script>

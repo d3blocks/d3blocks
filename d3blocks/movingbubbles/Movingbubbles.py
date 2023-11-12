@@ -20,9 +20,9 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -52,6 +52,7 @@ def set_config(config={}, **kwargs):
     config['columns'] = kwargs.get('columns', {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']})
     config['notebook'] = kwargs.get('notebook', False)
     config['color_method'] = kwargs.get('color_method', "STATE")
+    config['save_button'] = kwargs.get('save_button', True)
 
     return config
 
@@ -332,6 +333,10 @@ def write_html(X, config, logger=None):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+
+    # Set time
     zero_to_hour = "0" if config['start_hour']<10 else ""
     zero_to_min = "0" if config['start_minute']<10 else ""
 
@@ -365,6 +370,9 @@ def write_html(X, config, logger=None):
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
 
         'SUPPORT': config['support'],
+        'SAVE_TO_SVG_SCRIPT': save_script,
+        'SAVE_BUTTON_START': show_save_button[0],
+        'SAVE_BUTTON_STOP': show_save_button[1],
 
     }
 
