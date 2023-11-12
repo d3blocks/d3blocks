@@ -214,10 +214,10 @@ def write_html(json_data, config, logger=None):
     None.
 
     """
-    # Check path
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
 
+    # Check path
     dirpath, filename = None, ''
     if config['filepath'] is not None:
         dirpath, filename = os.path.split(config['filepath'])
@@ -238,11 +238,9 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$FONTSIZE_MOUSEOVER$', str(config['fontsize_mouseover']))
     html = html.replace('$DATA_PATH$', filename)
     html = html.replace('$SUPPORT$', config['support'])
-
     html = html.replace('$SAVE_TO_SVG_SCRIPT$', save_script)
     html = html.replace('$SAVE_BUTTON_START$', show_save_button[0])
     html = html.replace('$SAVE_BUTTON_STOP$', show_save_button[1])
-
     html = html.replace('$DATA_COMES_HERE$', json_data)
 
     # Write to html
