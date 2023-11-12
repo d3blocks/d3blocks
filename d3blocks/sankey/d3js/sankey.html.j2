@@ -16,6 +16,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     {{ SUPPORT }}
 
 </head>
+
 <body>
 
     <form>
@@ -34,6 +35,13 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     	  <option value="justify" {{ align_select_justify }}>Justify</option>
     	  <option value="center" {{ align_select_center }}>Center</option>
     	</select>
+
+    <!-- Create save button -->
+    {{ SAVE_BUTTON_START }}
+            <button id="saveButton">Save</button>
+    {{ SAVE_BUTTON_STOP }}
+
+
     </form>
     <br>
 
@@ -101,6 +109,8 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
             align = align_value
             drawchart();
         }
+
+    {{ SAVE_TO_SVG_SCRIPT }}
 
     </script>
 

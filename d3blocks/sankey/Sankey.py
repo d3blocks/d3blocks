@@ -11,9 +11,9 @@ from jinja2 import Environment, PackageLoader
 import colourmap as cm
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -33,6 +33,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
     config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
     config['notebook'] = kwargs.get('notebook', False)
+    config['save_button'] = kwargs.get('save_button', True)
     # return
     return config
 
@@ -200,6 +201,8 @@ def write_html(X, config, custom_colors, logger=None):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     content = {
         'json_data': X,
 
@@ -228,6 +231,9 @@ def write_html(X, config, custom_colors, logger=None):
         'node_padding': config['node']['padding'],
         'node_stroke_color': config['node']['color'],
 
+        'SAVE_TO_SVG_SCRIPT': save_script,
+        'SAVE_BUTTON_START': show_save_button[0],
+        'SAVE_BUTTON_STOP': show_save_button[1],
         'SUPPORT': config['support'],
     }
 
