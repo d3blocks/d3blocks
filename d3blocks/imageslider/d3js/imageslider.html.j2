@@ -30,6 +30,19 @@ Forked      : JohnEdChristensen; https://github.com/JohnEdChristensen/WebbCompar
 
 		<title> {{ TITLE }} </title>
     </head>
+
+    <!-- Create save button -->
+    {{ SAVE_BUTTON_START }}
+        <div style="max-width:{{ WIDTH }}px;">
+            <center><button id="saveButton">Save</button></center>
+        </div>
+    {{ SAVE_BUTTON_STOP }}
+
+
+	<script>
+        {{ SAVE_TO_SVG_SCRIPT }}
+	</script>
+
     
     <body>
         <div class="main" style="max-width: {{ WIDTH }}px;">
@@ -58,13 +71,12 @@ Forked      : JohnEdChristensen; https://github.com/JohnEdChristensen/WebbCompar
 
         </div>
 
-	
+    </body>
+
 	<script>
 	   {% include "jquery-2.1.1.js" %}
 	   {% include "main.js" %}
 	</script>
-       
-    </body>
     
 </html>
 
