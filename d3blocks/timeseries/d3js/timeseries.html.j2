@@ -12,17 +12,22 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 <head>
 <meta charset="utf-8">
 <title>{{ TITLE }}</title>
+
 {{ SUPPORT }}
 
 <style>
     {% include "style.css" %}
-
-    body {
-      font: {{ FONTSIZE }} sans-serif;
-    }
-
+    body {font: {{ FONTSIZE }} sans-serif; }
 </style>
 </head>
+
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
+
 <body>
 
 <script>
@@ -39,6 +44,8 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
           DT_FORMAT: "{{ DT_FORMAT }}"
       });
     })
+
+{{ SAVE_TO_SVG_SCRIPT }}
 
 </script>
 
