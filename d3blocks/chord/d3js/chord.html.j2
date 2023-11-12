@@ -15,6 +15,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
 </head>
 <body>
 
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
 
 <script>
 	{% include "chord.js" %}
@@ -37,6 +43,10 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
             height: {{ HEIGHT }},
         });
     });
+
+
+    {{ SAVE_TO_SVG_SCRIPT }}
+
 
 </script>
 <div id="chart"></div>

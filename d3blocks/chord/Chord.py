@@ -12,9 +12,9 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -32,6 +32,7 @@ def set_config(config={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['ordering'] = kwargs.get('ordering', 'ascending')
     config['arrowhead'] = kwargs.get('arrowhead', 10)
+    config['save_button'] = kwargs.get('save_button', True)
     # return
     return config
 
@@ -255,6 +256,7 @@ def write_html(X, config, logger=None):
     None.
 
     """
+    show_save_button = ['', ''] if config['save_button'] else ['<!--', '-->']
     ORDERING = ''
     if isinstance(config['ordering'], str) and config['ordering']=='ascending':
         ORDERING = 'const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending)'
@@ -280,6 +282,9 @@ def write_html(X, config, logger=None):
         'ARROWHEAD': config['arrowhead'],
         'ORDERING': ORDERING,
         'SUPPORT': config['support'],
+        'SAVE_TO_SVG_SCRIPT': include_save_to_svg_script(title=config['title']),
+        'SAVE_BUTTON_START': show_save_button[0],
+        'SAVE_BUTTON_STOP': show_save_button[1],
     }
 
     try:
