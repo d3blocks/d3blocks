@@ -11,9 +11,9 @@ import numpy as np
 import colourmap as cm
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -31,6 +31,7 @@ def set_config(config={}, **kwargs):
     config['cmap'] = kwargs.get('cmap', 'Set1')
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
+    config['save_button'] = kwargs.get('save_button', True)
     # return
     return config
 
@@ -208,6 +209,8 @@ def write_html(json_countries, json_data, config, logger=None):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     # Set width and height to screen resolution if None.
     width = 'window.screen.width' if config['figsize'][0] is None else config['figsize'][0]
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
@@ -219,6 +222,9 @@ def write_html(json_countries, json_data, config, logger=None):
         'WIDTH': width,
         'HEIGHT': height,
         'SUPPORT': config['support'],
+        'SAVE_TO_SVG_SCRIPT': save_script,
+        'SAVE_BUTTON_START': show_save_button[0],
+        'SAVE_BUTTON_STOP': show_save_button[1],
     }
 
     try:

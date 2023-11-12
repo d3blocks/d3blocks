@@ -15,6 +15,13 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
 
 </head>
 
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
+
 
 <!-- Create an element where the map will take place -->
 <!-- <svg id="my_dataviz" width="1630" height="2350"></svg> -->
@@ -229,6 +236,7 @@ svg
     .attr('alignment-baseline', 'middle')
 
 
+{{ SAVE_TO_SVG_SCRIPT }}
 
 </script>
 
