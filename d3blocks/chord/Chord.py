@@ -256,7 +256,8 @@ def write_html(X, config, logger=None):
     None.
 
     """
-    show_save_button = ['', ''] if config['save_button'] else ['<!--', '-->']
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     ORDERING = ''
     if isinstance(config['ordering'], str) and config['ordering']=='ascending':
         ORDERING = 'const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending)'
@@ -282,7 +283,7 @@ def write_html(X, config, logger=None):
         'ARROWHEAD': config['arrowhead'],
         'ORDERING': ORDERING,
         'SUPPORT': config['support'],
-        'SAVE_TO_SVG_SCRIPT': include_save_to_svg_script(title=config['title']),
+        'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
     }
