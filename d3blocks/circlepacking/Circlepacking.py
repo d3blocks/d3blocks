@@ -169,8 +169,9 @@ def write_html(X, config, node_properties, logger=None):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     # Set width and height to screen resolution if None.
-    show_save_button = ['', ''] if config['save_button'] else ['<!--', '-->']
     width = 'window.screen.width' if config['figsize'][0] is None else config['figsize'][0]
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
 
@@ -191,7 +192,7 @@ def write_html(X, config, node_properties, logger=None):
         'fonttype': config['font']['type'],
         'fontoutlinecolor': config['font']['outlinecolor'],
         'SUPPORT': config['support'],
-        'SAVE_TO_SVG_SCRIPT': include_save_to_svg_script(title=config['title']),
+        'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
     }
