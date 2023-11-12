@@ -21,6 +21,15 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     </style>
 
 </head>
+
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
+
+
 <body>
 
 <script>
@@ -211,6 +220,9 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     	var d = imageData.data;
     	return [ d[i], d[i+1], d[i+2], d[i+3] ];
     }
+
+
+{{ SAVE_TO_SVG_SCRIPT }}
 
 </script>
 

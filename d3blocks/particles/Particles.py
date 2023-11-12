@@ -12,9 +12,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import set_path, write_html_file
+    from .. utils import set_path, write_html_file, include_save_to_svg_script
 except:
-    from utils import set_path, write_html_file
+    from utils import set_path, write_html_file, include_save_to_svg_script
 
 
 def show(text, config, logger):
@@ -52,6 +52,9 @@ def write_html(X, config, logger):
     None.
 
     """
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+
     content = {
         'json_data': X,
         'TITLE': config['title'],
@@ -64,6 +67,9 @@ def write_html(X, config, logger):
         'SPACING': config['spacing'],
         'CMAP': config['cmap'],
         'SUPPORT': config['support'],
+        'SAVE_TO_SVG_SCRIPT': save_script,
+        'SAVE_BUTTON_START': show_save_button[0],
+        'SAVE_BUTTON_STOP': show_save_button[1],
     }
 
     try:
@@ -72,15 +78,6 @@ def write_html(X, config, logger):
         jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.particles', package_path='d3js'))
 
     index_template = jinja_env.get_template('particles.html.j2')
-
-    # index_file = Path(config['filepath'])
-    # # index_file.write_text(index_template.render(content))
-    # if config['overwrite'] and os.path.isfile(index_file):
-    #     print('File already exists and will be overwritten: [%s]' %(index_file))
-    #     os.remove(index_file)
-    #     time.sleep(0.5)
-    # with open(index_file, "w", encoding="utf-8") as f:
-    #     f.write(index_template.render(content))
 
     # Generate html content
     html = index_template.render(content)
