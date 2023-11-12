@@ -13,7 +13,6 @@ $SUPPORT$
 <title>"$TITLE$"</title>
 <style>
 
-
 .d3heatmap body {
   background: #fcfcfa;
   color: #333;
@@ -246,6 +245,13 @@ n){return arguments.length?(t=+n,e):t},e.translate=function(t){return arguments.
   <option value="cluster">by Clustering</option>
 </select>
 
+<!-- Create save button -->
+$SAVE_BUTTON_START$
+<div style="max-width:$WIDTH$px;">
+    <center><button id="saveButton">Save</button></center>
+</div>
+$SAVE_BUTTON_STOP$
+
 <p>Use the drop-down menu to reorder the matrix and explore the data.
 </aside>
 
@@ -437,6 +443,8 @@ function mouseout() {
   }, 5000);
 
 //});
+
+    $SAVE_TO_SVG_SCRIPT$
 
 </script>
 

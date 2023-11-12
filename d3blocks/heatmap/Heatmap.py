@@ -12,9 +12,9 @@ import numpy as np
 import os
 
 try:
-    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize
+    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script
 except:
-    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize
+    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -38,6 +38,7 @@ def set_config(config={}, **kwargs):
     config['fontsize'] = kwargs.get('fontsize', 10)
     config['fontsize_mouseover'] = kwargs.get('fontsize_mouseover', config['fontsize'] + 8)
     config['scaler'] = kwargs.get('scaler', 'zscore')
+    config['save_button'] = kwargs.get('save_button', True)
 
     if config['description'] is None: config['description']=''
     if config['cmap'] in ['schemeCategory10', 'schemeAccent', 'schemeDark2', 'schemePaired', 'schemePastel2', 'schemePastel1', 'schemeSet1', 'schemeSet2', 'schemeSet3', 'schemeTableau10']:
@@ -214,6 +215,9 @@ def write_html(json_data, config, logger=None):
 
     """
     # Check path
+    # Save button
+    save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+
     dirpath, filename = None, ''
     if config['filepath'] is not None:
         dirpath, filename = os.path.split(config['filepath'])
@@ -234,6 +238,10 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$FONTSIZE_MOUSEOVER$', str(config['fontsize_mouseover']))
     html = html.replace('$DATA_PATH$', filename)
     html = html.replace('$SUPPORT$', config['support'])
+
+    html = html.replace('$SAVE_TO_SVG_SCRIPT$', save_script)
+    html = html.replace('$SAVE_BUTTON_START$', show_save_button[0])
+    html = html.replace('$SAVE_BUTTON_STOP$', show_save_button[1])
 
     html = html.replace('$DATA_COMES_HERE$', json_data)
 
