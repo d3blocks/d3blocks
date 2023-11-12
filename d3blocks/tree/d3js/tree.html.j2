@@ -16,6 +16,14 @@ Forked      : https://d3js.org/d3-hierarchy/tree
 <title>{{ TITLE }}</title>
 {{ SUPPORT }}
 
+<!-- Create save button -->
+{{ SAVE_BUTTON_START }}
+    <div style="max-width:{{ WIDTH }}px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+{{ SAVE_BUTTON_STOP }}
+
+
 <style>body{background-color:white;}</style>
 
 {% include "d3.tree.js" %}
@@ -387,6 +395,11 @@ function separationFun(a, b) {
             {"viewer": {"width": 450,"height": 350,"padding": 0,"fill": true},
             "browser": {"width": {{ WIDTH }},"height": {{ HEIGHT }},"padding": 40,"fill": false}}
 </script>
+
+<script>
+{{ SAVE_TO_SVG_SCRIPT }}
+</script>
+
 
 </body>
 </html>
