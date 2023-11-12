@@ -36,7 +36,7 @@
             d3blocks
           </a>
               <div class="version">
-                1.4.6
+                1.4.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -69,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Matrix.html">Matrix</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Scatter.html">Scatter</a></li>
@@ -84,6 +85,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vec2adjmat</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#saving-charts">Saving Charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
@@ -291,6 +293,13 @@
 <dd class="field-even"><p>pd.DataFrame()</p>
 </dd>
 </dl>
+</section>
+<section id="saving-charts">
+<h1>Saving Charts<a class="headerlink" href="#saving-charts" title="Link to this heading"></a></h1>
+<p>Each d3block contains saving functionality to save your chart to a SVG image.
+The save functionality can be enabled by setting the <code class="docutils literal notranslate"><span class="pre">`save_button=True`</span></code> parameter.
+After setting the save_button parameter, the output HTML will contain a save button that can be used accordingly.
+In case you do not need the save button, disable it with <code class="docutils literal notranslate"><span class="pre">`save_button=False`</span></code>.</p>
 <hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>

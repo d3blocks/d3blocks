@@ -50,6 +50,9 @@ D3Blocks builds on the graphics of D3 Javascript to create the most visually att
 
 	#. `Maximize your Insights By Choosing The Best Chart; Network, Heatmap, or Sankey? <https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16>`_
 
+	#. `Create and Explore the Landscape of Roles and Salaries in Data Science <https://towardsdatascience.com/create-and-explore-the-landscape-of-roles-and-salaries-in-data-science-926092f616ca>`_
+
+
 -----------------------------------
 
 
@@ -80,6 +83,7 @@ Contents
    elasticgraph
    Sankey
    Heatmap
+   Matrix
    MovingBubbles
    Imageslider
    Scatter

@@ -25,5 +25,12 @@ Examples
     :undoc-members:
 
 
+Saving Charts
+#############
+
+Each d3block contains saving functionality to save your chart to a SVG image.
+The save functionality can be enabled by setting the ```save_button=True``` parameter.
+After setting the save_button parameter, the output HTML will contain a save button that can be used accordingly.
+In case you do not need the save button, disable it with ```save_button=False```.
 
 .. include:: add_bottom.add

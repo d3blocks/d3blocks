@@ -1738,9 +1738,10 @@ class D3Blocks():
                       vmin=1,
                       fontsize=10,
                       title='D3blocks Matrix',
-                      filepath='d3blocks_matrix.html',
                       figsize=[600, 300],
-                      cmap='interpolateGreens')
+                      cmap='interpolateGreens',
+                      filepath='matrix.html',
+                      )
 
         References
         ----------
