@@ -28,9 +28,10 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['fontsize'] = kwargs.get('fontsize', 10)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#d3d3d3'}, **link}
-    config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
+    config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor", 'fontsize': config['fontsize']}, **node}
     config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
@@ -126,7 +127,7 @@ def set_node_properties(df, **kwargs):
         if color is not None:
             getcolor = color.get(label, getcolor)
         # create dict labels
-        dict_labels[label] = {'id': i, 'label': label, 'color': getcolor}
+        dict_labels[label] = {'id': i, 'label': label, 'color': getcolor, 'fontsize': kwargs['node']['fontsize']}
     # Return
     return dict_labels
 
@@ -230,6 +231,7 @@ def write_html(X, config, custom_colors, logger=None):
         'node_width': config['node']['width'],
         'node_padding': config['node']['padding'],
         'node_stroke_color': config['node']['color'],
+        'fontsize': config['fontsize'],
 
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
@@ -276,7 +278,7 @@ def get_data_ready_for_d3(df, labels):
     # Set the nodes
     X = '{"nodes":['
     for i in idx:
-        X = X + '{"name":"' + list_name[i] + '", "color":"' + labels.get(list_name[i])["color"] + '"},'
+        X = X + '{"name":"' + list_name[i] + '", "color":"' + labels.get(list_name[i])["color"] + '", "fontsize":"' + str(labels.get(list_name[i])["fontsize"]) + '"},'
     X = X[:-1] + '],'
 
     # Set the links

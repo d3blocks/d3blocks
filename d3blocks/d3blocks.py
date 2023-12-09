@@ -956,6 +956,7 @@ class D3Blocks():
                node={"align": "justify", "width": 15, "padding": 15, "color": "currentColor"},
                link={"color": "source-target", "stroke_opacity": 0.5, 'color_static': '#d3d3d3'},
                margin={"top": 5, "right": 1, "bottom": 5, "left": 1},
+               fontsize: int = 10,
                title='Sankey - D3blocks',
                filepath='sankey.html',
                figsize=[800, 600],
@@ -986,6 +987,8 @@ class D3Blocks():
                 * "linkColor" : "source", "target", "source-target"
                 * "linkStrokeOpacity" : 0.5
                 * "color_static": '#0f0f0f' or "grey", "blue", "red" etc
+        fontsize: int.
+            Fontsize of the text: default: 10
         margin : dict.
             margin, in pixels.
                 * "top" : 5
@@ -1106,12 +1109,12 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Sankey', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=save_button, fontsize=fontsize, logger=logger)
         # Cleaning of data
         # df = utils.pre_processing(df, clean_source_target=True)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'], color=color)
+            self.set_node_properties(df, cmap=self.config['cmap'], color=color, fontsize=self.config['fontsize'], node=self.config['node'])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot

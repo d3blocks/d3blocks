@@ -2251,7 +2251,7 @@
 
       if (Tl) svg.append("g")
           .attr("font-family", "sans-serif")
-          .attr("font-size", 10)
+          .attr("font-size", {{ fontsize }})
           .selectAll("text")
           .data(nodes)
           .join("text")

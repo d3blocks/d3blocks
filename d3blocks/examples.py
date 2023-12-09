@@ -5,6 +5,16 @@
 import pandas as pd
 import numpy as np
 
+# %% issue 45
+# https://github.com/d3blocks/d3blocks/issues/45
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Sankey
+df = d3.import_example(data='energy')
+html = d3.sankey(df, filepath=r'c:\temp\sankey.html', fontsize=12)
+
+
 # %% Save functionality
 from d3blocks import D3Blocks
 d3 = D3Blocks()
