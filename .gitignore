@@ -11,6 +11,7 @@ d3blocks/data
 demo/
 libraries/
 ppt/
+.pypirc
 
 # Distribution / packaging
 .Python
