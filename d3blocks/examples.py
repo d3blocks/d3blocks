@@ -5,6 +5,64 @@
 import pandas as pd
 import numpy as np
 
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Sankey
+sankey_table = d3.import_example(data='energy')
+# Sort the Sankey table by 'source'
+sankey_table.sort_values(by='source', inplace=True)
+
+# Create a D3Blocks Sankey chart
+d3 = D3Blocks(chart='Sankey', frame=True)
+d3.config['figsize'] = [1200, 800]
+d3.config['fontsize'] = 10
+
+# Node properties
+sankey_table['source'] = sankey_table['source'].astype(str)
+sankey_table['target'] = sankey_table['target'].astype(str)
+sankey_table['weight'] = sankey_table['weight'].astype(str)
+d3.set_node_properties(sankey_table)
+
+# Edge properties
+d3.set_edge_properties(sankey_table, color='target', opacity='target')
+d3.show()
+
+# %%
+
+# Initialize
+from d3blocks import D3Blocks
+# Sankey chart
+d3 = D3Blocks(chart='Sankey', frame=True)
+# Get example data
+df = d3.import_example(data='energy')
+# Create chart
+html = d3.sankey(df,
+                 fontsize=20,
+                 color={'Nuclear': '#FF0000',
+                        'Wind':'#FF0000',
+                        'Electricity grid':'#7FFFD4',
+                        'Bio-conversion':'#000000',
+                        'Industry': '#000000'},
+                 filepath=r'c:/temp/sankey.html'
+                 )
+
+
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Sankey
+df = d3.import_example(data='energy')
+html = d3.sankey(df, fontsize=20)
+
+d3.node_properties
+
+# %%
+
+
+
 # %% issue 45
 # https://github.com/d3blocks/d3blocks/issues/45
 # from d3blocks import D3Blocks

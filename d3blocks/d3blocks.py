@@ -982,13 +982,17 @@ class D3Blocks():
                 * 'source'
                 * 'target'
                 * 'weight'
+        color : dict or None.
+            Dictionary containing node with color information.
+                color={'Nuclear': '#FF0000', 'Wind':'#FF0000'}
         link : dict.
             Dictionary containing edge or link information.
                 * "linkColor" : "source", "target", "source-target"
                 * "linkStrokeOpacity" : 0.5
                 * "color_static": '#0f0f0f' or "grey", "blue", "red" etc
-        fontsize: int.
-            Fontsize of the text: default: 10
+        fontsize: int or dict.
+                * 10 : All nodes get this fontsize
+                * {'Nuclear': 10, 'Wind': 20}
         margin : dict.
             margin, in pixels.
                 * "top" : 5
@@ -2825,6 +2829,8 @@ class D3Blocks():
 
         """
         # Make dict with properties
+        if self.config['chart']=='Sankey' and hasattr(self, 'config') and kwargs.get('fontsize', None) is None:
+            kwargs['fontsize'] = self.config['fontsize']
         if self.chart is not None:
             labels = self.chart.set_node_properties(*args, **kwargs)
         else:

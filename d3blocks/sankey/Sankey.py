@@ -28,13 +28,13 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')
-    config['fontsize'] = kwargs.get('fontsize', 10)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['link'] = {**{"color": "source-target", "stroke_opacity": 0.5, "color_static": '#d3d3d3'}, **link}
-    config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor", 'fontsize': config['fontsize']}, **node}
+    config['node'] = {**{"align": "justify", "width": 15, "padding": 15, "color": "currentColor"}, **node}
     config['margin'] = {**{"top": 5, "right": 1, "bottom": 5, "left": 1}, **margin}
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
+    config['fontsize'] = kwargs.get('fontsize', 10)
     # return
     return config
 
@@ -120,14 +120,26 @@ def set_node_properties(df, **kwargs):
         for key in keys:
             color[labels.get(key)] = color.pop(key)
 
+    # Get fontsize
+    # fontsize = df.get('fontsize', None)
+    # if fontsize is None: fontsize = kwargs.get('fontsize', None)
+    # if (fontsize is not None) and (not isinstance(fontsize, int)):
+    #     # Make same changes in the labels for the input nodes
+    #     labels = dict(zip(dfO['source'].values.tolist() + dfO['target'].values.tolist(), df['source'].values.tolist() + df['target'].values.tolist()))
+    #     keys = list(fontsize.keys())
+    #     for key in keys:
+    #         fontsize[labels.get(key)] = fontsize.pop(key)
+    fontsize = kwargs.get('fontsize', 10)
+
+    # Store in final dict
     dict_labels = {}
     for i, label in enumerate(uilabels):
         getcolor = '#d3d3d3'
         # Change color if user-defined.
-        if color is not None:
-            getcolor = color.get(label, getcolor)
+        if color is not None: getcolor = color.get(label, getcolor)
+        # getfontsize = fontsize.get(label, getfontsize)
         # create dict labels
-        dict_labels[label] = {'id': i, 'label': label, 'color': getcolor, 'fontsize': kwargs['node']['fontsize']}
+        dict_labels[label] = {'id': i, 'label': label, 'color': getcolor, 'fontsize': fontsize}
     # Return
     return dict_labels
 
@@ -172,6 +184,9 @@ def show(df, **kwargs):
     # Set align selection correct on the form
     config['align_select'] = {'left': '', 'right': '', 'justify': '', 'center': ''}
     config['align_select'][config['node']['align']] = 'selected="selected"'
+
+    # Update the fontsize
+    config['fontsize'] = kwargs['node_properties']['fontsize'][0]
 
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)
@@ -231,7 +246,7 @@ def write_html(X, config, custom_colors, logger=None):
         'node_width': config['node']['width'],
         'node_padding': config['node']['padding'],
         'node_stroke_color': config['node']['color'],
-        'fontsize': config['fontsize'],
+        'font_size': config['fontsize'],
 
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],

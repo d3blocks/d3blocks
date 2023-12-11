@@ -2201,6 +2201,15 @@
           .attr("height", d => d.y1 - d.y0)
           .attr("width", d => d.x1 - d.x0);
 
+        // CREATE DICT WITH THE LABEL AND FONTSIZE
+        /*
+        let font_size = {};
+        data.nodes.forEach(item => {
+          font_size[item.name] = item.fontsize;
+        });
+        */
+        // console.log(font_size)
+
         // SET THE NODE COLORS
         let node_color = {};
         data.nodes.forEach(item => {
@@ -2248,10 +2257,17 @@
           .attr("stroke-width", ({width}) => Math.max(1, width))
           .call(Lt ? path => path.append("title").text(({index: i}) => Lt[i]) : () => {
           });
-
+    
+        // console.log(font_size)
       if (Tl) svg.append("g")
           .attr("font-family", "sans-serif")
-          .attr("font-size", {{ fontsize }})
+          .attr("font-size", {{ font_size }})
+          //.attr("font-size", (d, i) => data.nodes[i].fontsize)
+          //.attr("font-size", (d, i) => {
+          //    console.log(data.nodes[i].fontsize);
+          //    return data.nodes[i].fontsize;
+          //})
+          // .attr("font-size", (d, i) => font_size[G[i]])
           .selectAll("text")
           .data(nodes)
           .join("text")
