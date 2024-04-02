@@ -19,7 +19,7 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     """Set the default configuration setting."""
     logger = kwargs.get('logger', None)
     # Store configurations
-    config['chart'] ='treemap'
+    config['chart'] = 'treemap'
     config['title'] = kwargs.get('title', 'Treemap - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'treemap.html'), logger)
     config['figsize'] = kwargs.get('figsize', [1000, 600])
@@ -88,7 +88,8 @@ def set_node_properties(df, **kwargs):
 
     dict_labels = {}
     for i, label in enumerate(uilabels):
-        dict_labels[label] = {'id': i, 'label': label}
+        # dict_labels[label] = {'id': i, 'label': label, 'tooltip': ''}
+        dict_labels[label] = {'tooltip': ''}
     # Return
     return dict_labels
 
@@ -129,10 +130,10 @@ def show(df, **kwargs):
     X = vec2flare(df, logger=logger)
 
     # Write to HTML
-    return write_html(X, config, logger)
+    return write_html(X, node_properties, config, logger)
 
 
-def write_html(X, config, logger=None):
+def write_html(X, node_properties, config, logger=None):
     """Write html.
 
     Parameters
@@ -155,6 +156,7 @@ def write_html(X, config, logger=None):
 
     content = {
         'json_data': X,
+        'node_properties': node_properties,
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
