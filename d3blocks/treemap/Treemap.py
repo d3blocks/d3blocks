@@ -89,7 +89,7 @@ def set_node_properties(df, **kwargs):
     dict_labels = {}
     for i, label in enumerate(uilabels):
         # dict_labels[label] = {'id': i, 'label': label, 'tooltip': ''}
-        dict_labels[label] = {'tooltip': ''}
+        dict_labels[label] = {'label': label, 'tooltip': ''}
     # Return
     return dict_labels
 

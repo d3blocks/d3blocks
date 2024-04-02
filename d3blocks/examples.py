@@ -5,6 +5,29 @@
 import pandas as pd
 import numpy as np
 
+# %% issue 45
+# https://github.com/d3blocks/d3blocks/issues/45
+# Treemap
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks(chart='treemap', frame=False)
+# Import example
+df = d3.import_example('energy')
+
+# Set node properties
+d3.set_node_properties(df)
+
+# Set specific properties
+d3.node_properties['Bio-conversion']['tooltip'] = 'Title: Bio conversion Operations'
+d3.node_properties.get('Losses')['tooltip'] = 'losses tooltip'
+
+# Set edge properties
+d3.set_edge_properties(df)
+
+# Show chart
+d3.show(filepath=r'c:\temp\treemap.html')
+
+
 # %%
 # Load d3blocks
 from d3blocks import D3Blocks
@@ -96,34 +119,6 @@ d3.node_properties
 
 
 
-# %% issue 45
-# https://github.com/d3blocks/d3blocks/issues/45
-# from d3blocks import D3Blocks
-# d3 = D3Blocks()
-# Treemap
-# df = d3.import_example(data='energy')
-# html = d3.treemap(df, filepath=r'c:\temp\treemap1.html')
-
-
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks(chart='treemap', frame=False)
-# Import example
-df = d3.import_example('energy')
-
-# Set node properties
-d3.set_node_properties(df)
-
-# Set specific properties
-d3.node_properties['Bio-conversion']['tooltip'] = 'Title: P Operations<br><img src="https://source.unsplash.com/collection/385548/150x100">'
-# Set properties for Losses
-d3.node_properties.get('Losses')['tooltip'] = ''
-
-# Set edge properties
-d3.set_edge_properties(df)
-
-# Show chart
-d3.show(filepath=r'c:\temp\treemap.html')
 
 # %% issue 45
 # https://github.com/d3blocks/d3blocks/issues/45

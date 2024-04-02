@@ -344,12 +344,15 @@ class Testd3blocks(unittest.TestCase):
         # Load d3blocks
         from d3blocks import D3Blocks
         # Initialize
-        d3 = D3Blocks(chart='Treemap', frame=True)
+        d3 = D3Blocks(chart='Treemap', frame=False)
         # Import example
         df = d3.import_example('energy')
         # Node properties
         d3.set_node_properties(df)
         d3.set_edge_properties(df)
+        # Set specific properties
+        d3.node_properties['Bio-conversion']['tooltip'] = 'Title: Bio conversion Operations'
+        d3.node_properties.get('Losses')['tooltip'] = 'losses tooltip'
         # Show the chart
         d3.show()
 

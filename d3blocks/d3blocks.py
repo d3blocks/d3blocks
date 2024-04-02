@@ -1093,14 +1093,14 @@ class D3Blocks():
         >>> df = d3.import_example('energy')
         >>> #
         >>> # Custom color the nodes
-        >>> html = d3.sankey(df.copy(), filepath=r'c:\temp\sankey.html', color={'Nuclear': '#FF0000', 'Wind':'#000000', 'Electricity grid':'#FF0000'})
+        >>> html = d3.sankey(df.copy(), filepath=r'c://temp//sankey.html', color={'Nuclear': '#FF0000', 'Wind':'#000000', 'Electricity grid':'#FF0000'})
         >>> #
         >>> # Alternatively:
         >>> d3 = D3Blocks(chart='Sankey', frame=True)
         >>> df = d3.import_example(data='energy')
         >>> d3.set_node_properties(df, color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#7FFFD4', 'Bio-conversion':'#000000', 'Industry': '#000000'})
         >>> d3.set_edge_properties(df, color='target', opacity='target')
-        >>> d3.show(filepath=r'c:\temp\sankey.html')
+        >>> d3.show(filepath=r'c://temp//sankey.html')
         >>> #
 
         References
@@ -2242,7 +2242,7 @@ class D3Blocks():
         >>> d3.set_edge_properties(df)
         >>>
         >>> # Show chart
-        >>> d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
+        >>> d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c://temp//tree.html')
 
         Examples
         --------
@@ -2398,6 +2398,30 @@ class D3Blocks():
         >>> #
         >>> # Show the chart
         >>> d3.show()
+
+        Examples
+        --------
+        >>> # Add tooltip
+        >>> #
+        >>> # Intialize Treemap
+        >>> from d3blocks import D3Blocks
+        >>> d3 = D3Blocks(chart='treemap', frame=False)
+        >>> #
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Set node properties
+        >>> d3.set_node_properties(df)
+        >>> #
+        >>> # Set tooltip for specific nodes
+        >>> d3.node_properties['Bio-conversion']['tooltip'] = 'Title: Bio conversion Operations'
+        >>> d3.node_properties.get('Losses')['tooltip'] = 'losses tooltip'
+        >>> #
+        >>> # Set edge properties
+        >>> d3.set_edge_properties(df)
+        >>> #
+        >>> # Show chart
+        >>> d3.show(filepath=r'c://temp//treemap.html')
 
         References
         ----------
