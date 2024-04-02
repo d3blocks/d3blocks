@@ -781,9 +781,9 @@ class D3Blocks():
         >>> #
         >>> d3.show()
         >>> # Make edits to highlight the Nuclear Edge
-        >>> d3.edge_properties.get(('Nuclear', 'Thermal generation'))['color']='#ff0000'
-        >>> d3.edge_properties.get(('Nuclear', 'Thermal generation'))['opacity']=0.8
-        >>> d3.edge_properties.get(('Nuclear', 'Thermal generation'))['weight']=1000
+        >>> d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'color'] = '#ff0000'
+        >>> d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'opacity'] = 0.8
+        >>> d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'weight'] = 1000
         >>> #
         >>> # Show the chart
         >>> d3.show()
