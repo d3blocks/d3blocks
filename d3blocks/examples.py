@@ -5,8 +5,8 @@
 import pandas as pd
 import numpy as np
 
-# %% issue 45
-# https://github.com/d3blocks/d3blocks/issues/45
+# %% issue 49
+# https://github.com/d3blocks/d3blocks/issues/49
 # Treemap
 from d3blocks import D3Blocks
 # Initialize
@@ -114,10 +114,6 @@ df = d3.import_example(data='energy')
 html = d3.sankey(df, fontsize=20)
 
 d3.node_properties
-
-# %%
-
-
 
 
 # %% issue 45

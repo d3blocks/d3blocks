@@ -3138,26 +3138,11 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         df = pd.DataFrame(np.random.randint(0, n, size=(n, 6)), columns=list('ABCDEF'))
         df['datetime'] = list(map(lambda x: random_date(date_start, date_stop, random.random(), dt_format=dt_format), range(0, n)), dt_format=dt_format)
         return df
-    # elif data=='energy':
-        # Sankey demo
-        # url='https://erdogant.github.io/datasets/energy_source_target_value.zip'
-    # elif data=='stormofswords':
-        # Sankey demo
-        # url='https://erdogant.github.io/datasets/stormofswords.zip'
     elif data=='bigbang':
         # Initialize
         d3model = d3network.d3graph()
         df = d3model.import_example('bigbang')[0]
         return d3network.adjmat2vec(df)
-    # elif data=='southern_nebula':
-    #     # Image slider demo
-    #     url='https://erdogant.github.io/datasets/southern_nebula.zip'
-    #     ext='.jpg'
-    # elif data=='southern_nebula':
-    #     # Image slider demo
-    #     before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
-    #     after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
-    #     return before, after
     elif data=='southern_nebula_internet':
         # Image slider demo
         before = 'https://erdogant.github.io/datasets/images/southern_nebula_before.jpg'
@@ -3168,17 +3153,6 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
         before = 'https://erdogant.github.io/datasets/images/unsplash_before.jpg'
         after = 'https://erdogant.github.io/datasets/images/unsplash_after.jpg'
         return before, after
-    # elif data=='cancer':
-        # url='https://erdogant.github.io/datasets/cancer_dataset.zip'
-    # elif data=='iris':
-        # url='https://erdogant.github.io/datasets/iris_dataset.zip'
-        # sep=';'
-    # elif data=='breast_cancer':
-        # url='https://erdogant.github.io/datasets/breast_cancer_dataset.zip'
-        # sep=';'
-    # elif data=='occupancy':
-        # url='https://erdogant.github.io/datasets/UCI_Occupancy_Detection.zip'
-        # sep=','
     elif data=='climate':
         url='https://erdogant.github.io/datasets/kaggle_daily_delhi_climate_test.zip'
     elif data=='mnist':
