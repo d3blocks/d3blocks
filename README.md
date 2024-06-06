@@ -54,7 +54,7 @@ pip install -U .
 
 #### Import d3blocks package
 ```python
-from d3blocks import d3blocks
+from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 ```
