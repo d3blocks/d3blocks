@@ -547,38 +547,37 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
         # Set the start state:
         # Get random idx based pdf
-        df['sample_id'].iloc[i] = sample_id
+        df.loc[i, 'sample_id'] = sample_id
         idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
         if (state_prev is not None) and (idx==state_prev['state']):
             idx = np.mod(idx+1, len(location_types))
-        df['state'].iloc[i] = location_types[idx]
-        df['datetime'].iloc[i] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
+        df.loc[i, 'state'] = location_types[idx]
+        df.loc[i, 'datetime'] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
         i = i + 1
 
         # The travel-state:
-        df['sample_id'].iloc[i] = sample_id
-        df['state'].iloc[i] = location_types[idx_middle]
-        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
+        df.loc[i, 'sample_id'] = sample_id
+        df.loc[i, 'state'] = location_types[idx_middle]
+        df.loc[i, 'datetime'] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
         i = i + 1
 
         # Set the end state:
         # Get random idx based pdf
-        df['sample_id'].iloc[i] = sample_id
+        df.loc[i, 'sample_id'] = sample_id
         idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
         if (location_types[idx]==df['state'].iloc[i-1]):
             idx = np.mod(idx+1, len(location_types))
 
-        df['state'].iloc[i] = location_types[idx]
-        df['datetime'].iloc[i] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
+        df.loc[i, 'state'] = location_types[idx]
+        df.loc[i, 'datetime'] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
         i = i + 1
 
         # Store the last state
         state_mem[sample_id] = {'state':idx}
-        
+
         # Rotate pdf list
         # pdf.insert(0, pdf.pop())
 
-        
     # Set a random time-point at multiple occasion at the same time.
     # df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
     df['datetime'] = pd.to_datetime(df['datetime'])
