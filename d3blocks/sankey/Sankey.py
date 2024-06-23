@@ -186,7 +186,8 @@ def show(df, **kwargs):
     config['align_select'][config['node']['align']] = 'selected="selected"'
 
     # Update the fontsize
-    config['fontsize'] = kwargs['node_properties']['fontsize'][0]
+    # config['fontsize'] = kwargs['node_properties']['fontsize'][0]
+    config['fontsize'] = kwargs['config']['fontsize']
 
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)

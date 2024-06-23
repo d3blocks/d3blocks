@@ -1,3 +1,16 @@
+# %% Issue 45
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+d3=D3Blocks(chart='Sankey', frame = False, support = False)
+# Sankey
+df = d3.import_example(data='energy')
+
+d3.set_node_properties(df, ordering = "ascending")
+d3.set_edge_properties(df, color='target', opacity='target', ordering = "ascending")
+filename =  f"test.html"
+d3.show(filepath = filename)
+
+
 # %%
 # import d3blocks
 # print(dir(d3blocks))
@@ -61,6 +74,7 @@ d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_pr
 # Show the chart
 d3.show()
 
+
 # %%
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -73,7 +87,7 @@ sankey_table.sort_values(by='source', inplace=True)
 # Create a D3Blocks Sankey chart
 d3 = D3Blocks(chart='Sankey', frame=True)
 d3.config['figsize'] = [1200, 800]
-d3.config['fontsize'] = 10
+d3.config['fontsize'] = 20
 
 # Node properties
 sankey_table['source'] = sankey_table['source'].astype(str)
