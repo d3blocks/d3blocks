@@ -1,3 +1,11 @@
+# MOVINGBUBBLES
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+# df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html')
+
+
 # %% Issue 45
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -187,6 +195,8 @@ html = d3.particles('D3blocks', save_button=False)
 html = d3.particles('D3blocks', save_button=True)
 
 # MOVINGBUBBLES
+from d3blocks import D3Blocks
+d3 = D3Blocks()
 # df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html')
@@ -888,7 +898,7 @@ d3.movingbubbles(df,
                  color=color,
                  color_method='node',
                  timedelta='minutes',
-                 speed={"slow": 1000, "medium": 100, "fast": 10},
+                 speed={"stop": 0, "slow": 1000, "medium": 100, "fast": 10},
                  time_notes=time_notes,
                  filepath=r'c:\temp\movingbubbles.html',
                  cmap='Set2',

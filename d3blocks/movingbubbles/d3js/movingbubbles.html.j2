@@ -28,7 +28,8 @@ Licensed    : GPL3
     <div id="current_time">{{ START_TIME }}</div>
     
     <div id="speed">
-        <div class="togglebutton slow current" data-val="slow">Slow</div>
+        <!-- <div class="togglebutton stop" data-val="stop">Stop</div> -->
+        <div class="togglebutton slow" data-val="slow">Slow</div>
         <div class="togglebutton medium" data-val="medium">Medium</div>
         <div class="togglebutton fast" data-val="fast">Fast</div>
         <div class="clr"></div>
@@ -361,18 +362,26 @@ function collide(alpha) {
 d3.selectAll(".togglebutton")
   .on("click", function() {
 	if (d3.select(this).attr("data-val") == "slow") {
+		d3.select(".stop").classed("current", false);
 		d3.select(".slow").classed("current", true);
 		d3.select(".medium").classed("current", false);
 		d3.select(".fast").classed("current", false);
 	} else if (d3.select(this).attr("data-val") == "medium") {
+		d3.select(".stop").classed("current", false);
 		d3.select(".slow").classed("current", false);
 		d3.select(".medium").classed("current", true);
 		d3.select(".fast").classed("current", false);
-	} 
-	else {
+	} else if (d3.select(this).attr("data-val") == "fast") {
+		d3.select(".stop").classed("current", false);
 		d3.select(".slow").classed("current", false);
 		d3.select(".medium").classed("current", false);
 		d3.select(".fast").classed("current", true);
+	} 
+	else {
+		d3.select(".stop").classed("current", true);
+		d3.select(".slow").classed("current", false);
+		d3.select(".medium").classed("current", false);
+		d3.select(".fast").classed("current", false);
 	}
 	
 	USER_SPEED = d3.select(this).attr("data-val");
@@ -422,29 +431,6 @@ function minutesToTime(m) {
 	
 	return hh + ":" + mm
 }
-
-//function minutesToTime(m) {
-//	var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
-//	var hh = Math.floor(minutes / 60);
-//	var ampm;
-//	if (hh > 12) {
-//		hh = hh - 12;
-//		ampm = "pm";
-//	} else if (hh == 12) {
-//		ampm = "pm";
-//	} else if (hh == 0) {
-//		hh = 12;
-//		ampm = "am";
-//	} else {
-//		ampm = "am";
-//	}
-//	var mm = minutes % 60;
-//	if (mm < 10) {
-//		mm = "0" + mm;
-//	}
-//	
-//	return hh + ":" + mm + ampm
-//}
 
 {{ SAVE_TO_SVG_SCRIPT }}
 

@@ -1207,7 +1207,7 @@ class D3Blocks():
                 * 'samplewise': Standardize per sample_id by substracting the minimum time per sample_id.
                 * 'relative': Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.
                 * 'minimum': Movements are relative to the minimum time in the dataset.
-        speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50})
+        speed : dict, (default: {"stop": 100000, "slow": 1000, "medium": 200, "fast": 50})
             The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
         note : str, (default: None)
             A specific note, such as project description can be put on the html page.
@@ -1275,7 +1275,7 @@ class D3Blocks():
         >>> df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
         >>> #
         >>> # Plot
-        >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+        >>> d3.movingbubbles(df, speed={"stop": 100000, "slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
         >>> #
 
         Examples
