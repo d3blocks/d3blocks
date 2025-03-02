@@ -70,7 +70,7 @@ class D3Blocks():
     verbose : int, optional
         Verbose message. The default is 20.
     support : String, (default: True)
-            This library is free of use and lets keep it this way! Support the project. It will cost you nothing.
+            This library is free of use and lets keep it this way! Support the project and set it to True.
             * True: I support this project! It is even better when you occasionally click on the ethical add.
             * 'text': I support this project with a text add.
             * 'image': I support this project with an image add.
