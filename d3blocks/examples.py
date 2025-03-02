@@ -1,3 +1,27 @@
+# %% issue 48
+# https://github.com/d3blocks/d3blocks/issues/48
+import pandas as pd
+# Load library
+from d3blocks import D3Blocks
+
+df = pd.read_csv(r'C:\temp\sample1.csv')
+
+# Initialize
+d3 = D3Blocks(chart='tree', frame=False)
+# Import example
+df = d3.import_example('energy')
+
+# Set node properties
+d3.set_node_properties(df)
+# Set node properties
+d3.set_edge_properties(df)
+
+# Show chart
+d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
+d3.show(filepath=r'c:\temp\tree.html', margin = {"top": 20, "right": 80, "bottom": 20, "left": 60})
+
+
+#%%
 # MOVINGBUBBLES
 from d3blocks import D3Blocks
 d3 = D3Blocks()
