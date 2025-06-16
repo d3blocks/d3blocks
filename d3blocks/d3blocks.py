@@ -49,13 +49,15 @@ import d3blocks.utils as utils
 # import utils
 # #####################################################
 
-logger = logging.getLogger('')
-for handler in logger.handlers[:]:  # get rid of existing old handlers
-    logger.removeHandler(handler)
-console = logging.StreamHandler()
-formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
-console.setFormatter(formatter)
-logger.addHandler(console)
+# logger = logging.getLogger('')
+# for handler in logger.handlers[:]:  # get rid of existing old handlers
+#     logger.removeHandler(handler)
+# console = logging.StreamHandler()
+# formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
+# console.setFormatter(formatter)
+# logger.addHandler(console)
+# logger = logging.getLogger(__name__)
+
 logger = logging.getLogger(__name__)
 
 

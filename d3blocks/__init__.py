@@ -12,9 +12,22 @@ __author__ = 'Erdogan Taskesen, Oliver Verver'
 __email__ = 'erdogant@gmail.com, mail@oliver3.nl'
 __version__ = '1.4.11'
 
+# Setup root logger
+import logging
+
+_logger = logging.getLogger('D3Blocks')
+_log_handler = logging.StreamHandler()
+_fmt = '[{asctime}] [{name}] [{levelname}] {msg}'
+_formatter = logging.Formatter(fmt=_fmt, style='{', datefmt='%d-%m-%Y %H:%M:%S')
+_log_handler.setFormatter(_formatter)
+_log_handler.setLevel(logging.DEBUG)
+_logger.addHandler(_log_handler)
+_logger.propagate = False
+
+
 # module level doc-string
 __doc__ = """
-d3blocks
+D3Blocks
 =====================================================================
 
 d3blocks is for the creation of stand-alone and interactive d3 graphs.
