@@ -1307,16 +1307,18 @@ class D3Blocks():
         Examples
         --------
         >>> # Load d3blocks
+        >>> import random
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
         >>> d3 = D3Blocks(chart='movingbubbles')
         >>> #
         >>> # Import example
-        >>> df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+        >>> df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
         >>> #
-        >>> # Specify the colors and node sizes for the specific sample_id
-        >>> size = {1: 20, 3: 40}
+        >>> # Specify the colors and node sizes for the specific sample_id or for demonstration, generated randomly
+        >>> # size = {1: 15, 3: 30, 5: 25}
+        >>> size = {i: random.randint(2, 15) for i in range(1, 100)}
         >>> color = {1: '#FF0000', 3: '#000FFF'}
         >>> #
         >>> # Show
@@ -2083,8 +2085,8 @@ class D3Blocks():
 
         References
         ----------
-        * Blog: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
         * Gitlab : https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph
+        * Blog
 
         """
         # Cleaning
