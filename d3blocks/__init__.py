@@ -38,11 +38,11 @@ References
 ----------
 * Github : https://github.com/d3blocks/d3blocks
 * Docs: https://d3blocks.github.io/d3blocks/
-* D3Blocks: https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4
-* D3Graph: https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7
-* Scatter: https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046
-* Sankey: https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43
-* Movingbubbles: https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226
-* Comparison of Sankey, D3graph and Heatmap: https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16
+* D3Blocks
+* D3Graph
+* Scatter
+* Sankey
+* Movingbubbles
+* Comparison of Sankey, D3graph and Heatmap
 
 """

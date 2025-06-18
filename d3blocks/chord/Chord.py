@@ -16,7 +16,6 @@ try:
 except:
     from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script
 
-
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""

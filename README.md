@@ -63,23 +63,25 @@ d3 = D3Blocks()
 ### [Supported charts](https://d3blocks.github.io/d3blocks/)
 
 
+|-----|------------------------------------------------------------------------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 |  nr |  Block                                                                             |    Function                  |    Blog                                                                                                                              |
 |-----|------------------------------------------------------------------------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-|  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7)              |
-|  2  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7)         |
-|  3  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43)           |
-|  4  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226)    |
-|  5  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046)       |
-|  6  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://medium.com/@erdogant/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16) |
-|  7  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  8  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  9  | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  10 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  11 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  12 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  13 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
-|  14 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4) |
+|  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                                                                               |
+|  2  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                                                                                          |
+|  3  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                                                                                |
+|  4  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://erdogant.medium.com)    |
+|  5  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://erdogant.medium.com)       |
+|  6  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://erdogant.medium.com)  |
+|  7  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://erdogant.medium.com) |
+|  8  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://erdogant.medium.com) |
+|  9  | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://erdogant.medium.com) |
+|  10 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://erdogant.medium.com) |
+|  11 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://erdogant.medium.com) |
+|  12 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://erdogant.medium.com) |
+|  13 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://erdogant.medium.com) |
+|  14 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://erdogant.medium.com) |
 |-----|------------------------------------------------------------------------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+
 
 -------------------------------------------------------------------------
 
