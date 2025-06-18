@@ -1439,7 +1439,7 @@ class D3Blocks():
         >>> df = d3.import_example('climate')
         >>> #
         >>> # Show
-        >>> d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
+        >>> d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500])
         >>> #
 
         Examples
@@ -1458,7 +1458,7 @@ class D3Blocks():
         >>> d3.node_properties.get('wind_speed')['color']='#000000'
         >>> print(d3.node_properties)
         >>> #
-        >>> d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
+        >>> d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d')
         >>> d3.edge_properties
         >>> #
         >>> # Show
@@ -2547,8 +2547,8 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Load example data
-        >>> df = d3.import_example('energy')
         >>> df = d3.import_example('animals')
+        >>> df = d3.import_example('energy')
         >>> #
         >>> # Plot
         >>> d3.circlepacking(df)

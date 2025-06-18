@@ -338,14 +338,14 @@ df = d3.import_example('surfspots')
 df = df.iloc[0:100,:]
 # Defaults
 # html = d3.maps(df, filepath='c://temp//maps.html')
-html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2')
+html = d3.maps(df, filepath='c://temp//maps1.html', color=df['label'].values, cmap='Set2')
 
 # Customize a bit
 html = d3.maps(df,
                color=df['label'].values,
-               filepath='c://temp//maps.html',
+               filepath='c://temp//maps2.html',
                cmap='Set2',
-               countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
+               countries = {'World': {'color':'#D3D3D3', 'opacity': 0.8, 'line': 'none', 'linewidth': 0.1},
                             'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'none', 'linewidth': 1},
                             'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
                             'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
@@ -353,7 +353,7 @@ html = d3.maps(df,
 
 # Few countries
 html = d3.maps(df,
-               filepath='c://temp//maps.html',
+               filepath='c://temp//maps3.html',
                countries = {'Netherlands': {'color': '#000FFF', 'opacity': 0.8, 'line': 'dashed', 'linewidth': 1},
                             'Australia': {'opacity': 1, 'line': 'dashed', 'linewidth': 1},
                             })
@@ -562,6 +562,8 @@ d3.d3graph(df, filepath='c:/temp/d3graph.html', showfig=True)
 d3.chord(df, filepath='c:/temp/chord.html', showfig=True)
 
 d3.sankey(df, filepath='c:/temp/sankey.html', showfig=True)
+
+d3.heatmap(df, filepath='heatmap.html')
 # d3 = D3Blocks(chart='Sankey', frame=True)
 # d3.set_node_properties(df)
 # d3.node_properties
@@ -959,9 +961,9 @@ d3.node_properties.get('Sleeping')['color'] = '#000000'
 d3.set_edge_properties(df, size=size, color=color)
 # d3.edge_properties
 # Show
-d3.show(color_method='node', filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.')
-d3.show(standardize='samplewise', color_method='node', filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.')
-d3.show(standardize='sequential', color_method='node', filepath=r'c:\temp\movingbubbles.html', title='Movingbubbles with adjusted configurations.')
+d3.show(color_method='node', filepath=r'c:\temp\movingbubbles1.html', title='Movingbubbles with adjusted configurations.')
+d3.show(standardize='samplewise', color_method='node', filepath=r'c:\temp\movingbubbles2.html', title='Movingbubbles with adjusted configurations.')
+d3.show(standardize='sequential', color_method='node', filepath=r'c:\temp\movingbubbles3.html', title='Movingbubbles with adjusted configurations.')
 
 
 
@@ -1675,6 +1677,16 @@ df3['state'] = ['home', 'school', 'work', 'eating', 'coffee', 'sleeping']
 # Concatenate the dataframes
 df = pd.concat([df1, df2, df3], axis=0)
 
+
+# Set base datetime and step
+from datetime import datetime, timedelta
+base_time = datetime(2000, 1, 1, 0, 0, 0)
+time_step = timedelta(seconds=5)
+# Reassign datetime values sequentially
+df['datetime'] = [base_time + i*time_step for i in range(len(df))]
+# Optional: sort by sample_id again if needed
+df = df.sort_values(['sample_id', 'datetime']).reset_index(drop=True)
+
 print(df)
 #               datetime  sample_id     state
 # 0  01-01-2000 00:00:00          1      home
@@ -1709,9 +1721,9 @@ time_notes.append({"start_minute": 11, "stop_minute": 15, "note": "The first ent
 time_notes.append({"start_minute": 16, "stop_minute": 40, "note": "From this point, the entities will move behind each other towards threir final destination: sleeping."})
 
 # Make the moving bubbles
-df = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+out = d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
 
-df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
+# df = d3.movingbubbles(df, center='sleeping', datetime='datetime', state='state', sample_id='sample_id', speed={"slow": 1000, "medium": 200, "fast": 10}, time_notes=time_notes, filepath='movingbubbles.html', cmap='Set2_r', standardize='samplewise')
 
 
 # %% Sankey

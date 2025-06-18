@@ -2,7 +2,7 @@ Elasticgraph
 #############
 
 .. tip::
-	`Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python. <https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7>`_
+	`Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python. <https://erdogant.medium.com/>`_
 
 -------------------------
 
