@@ -414,15 +414,15 @@ class Testd3blocks(unittest.TestCase):
         # Generate random data with various states
         df = d3.import_example('random_time', n=10000, c=500, date_start="01-01-2000 00:10:05", date_stop="01-01-2001 23:59:59")
         # Make the moving bubbles chart.
-        d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+        d3.movingbubbles(df, datetime='datetime', state='state', sample_id='sample_id', standardize=None, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html', dt_format='%d-%m-%Y %H:%M:%S')
 
         d3 = D3Blocks()
         df = d3.import_example('random_time', n=10000, c=300, date_start="01-01-2000 00:10:05", date_stop="01-01-2000 23:59:59")
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True, dt_format='%d-%m-%Y %H:%M:%S')
         assert html is not None
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True, dt_format='%d-%m-%Y %H:%M:%S')
         assert html is None
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False, dt_format='%d-%m-%Y %H:%M:%S')
         assert html is None
 
     def test_html(self):
@@ -485,11 +485,11 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('random_time', n=10000, c=100, date_start="01-01-2000 00:10:05", date_stop="01-01-2000 23:59:59")
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True, dt_format='%d-%m-%Y %H:%M:%S')
         assert html is not None
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True, dt_format='%d-%m-%Y %H:%M:%S')
         assert html is None
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False, showfig=False)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath='test.html', notebook=False, showfig=False, dt_format='%d-%m-%Y %H:%M:%S')
         assert html is None
 
         from d3blocks import D3Blocks
