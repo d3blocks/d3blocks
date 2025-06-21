@@ -3374,17 +3374,17 @@ def set_logger(verbose: [str, int] = 'info', return_status: bool = False):
     if (verbose==0) or (verbose is None):
         verbose=60
     # Convert str to levels
-        levels = {
-            'silent': logging.CRITICAL + 10,
-            'off': logging.CRITICAL + 10,
-            'no': logging.CRITICAL + 10,
-            'debug': logging.DEBUG,
-            'info': logging.INFO,
-            'warning': logging.WARNING,
-            'error': logging.ERROR,
-            'critical': logging.CRITICAL,
-        }
-        verbose = levels[verbose]
+    levels = {
+        'silent': logging.CRITICAL + 10,
+        'off': logging.CRITICAL + 10,
+        'no': logging.CRITICAL + 10,
+        'debug': logging.DEBUG,
+        'info': logging.INFO,
+        'warning': logging.WARNING,
+        'error': logging.ERROR,
+        'critical': logging.CRITICAL,
+    }
+    verbose = levels[verbose]
 
     # Show examples
     logger.setLevel(verbose)
