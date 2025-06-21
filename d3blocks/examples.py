@@ -1,3 +1,36 @@
+# %% Force directed clustered graphs
+# Load library
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Import example
+df = d3.import_example('energy') # 'stormofswords'
+#
+# Create force-directed-network (without cluster labels)
+d3.elasticgraph(df, filepath='Elasticgraph.html', figsize=[700, 700])
+#
+# Show elasticgraph
+d3.Elasticgraph.show()
+# Show original graph with the same properties
+d3.Elasticgraph.D3graph.show()
+#
+# Add cluster labels (no need to do it again because it is the default)
+# d3.Elasticgraph.set_node_properties(color=None)
+#
+# After making changes, show the graph again using show()
+d3.Elasticgraph.show()
+# Show original graph
+d3.Elasticgraph.D3graph.show()
+#
+# Node properties
+# d3.Elasticgraph.D3graph.node_properties
+#
+# Node properties
+# d3.Elasticgraph.D3graph.edge_properties
+
+
 # %% issue 48
 # https://github.com/d3blocks/d3blocks/issues/48
 import pandas as pd
@@ -170,6 +203,8 @@ d3 = D3Blocks()
 # Sankey
 df = d3.import_example(data='energy')
 html = d3.sankey(df, filepath=r'c:\temp\sankey.html', fontsize=12)
+html = d3.sankey(df, filepath=None, fontsize=12)
+html = d3.sankey(df, filepath=None, fontsize=12, return_html=True)
 
 
 # %% Save functionality
@@ -181,6 +216,7 @@ df = d3.import_example('cancer')
 html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin1.html')
 html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin2.html', save_button=False)
 html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin3.html', save_button=True)
+html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=r'c:\temp\violin3.html', return_html=True)
 
 # Treemap
 df = d3.import_example(data='energy')
@@ -191,12 +227,14 @@ df = d3.import_example(data='energy')
 html = d3.tree(df)
 html = d3.tree(df, save_button=False)
 html = d3.tree(df, save_button=True)
+html = d3.tree(df, return_html=True, filepath=None)
 
 # Timeseries
 df = d3.import_example('climate')
-html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=r'c:\temp\timeseries1.html')
-html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=r'c:\temp\timeseries1.html', save_button=False)
-html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', filepath=r'c:\temp\timeseries1.html', save_button=True)
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html', save_button=False)
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html', save_button=True)
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html', return_html=True)
 
 # Scatter
 df = d3.import_example('cancer')
@@ -719,7 +757,7 @@ df = d3.import_example('cancer')
 html = d3.scatter(df['tsneX'].values, df['tsneY'].values)
 
 df = d3.import_example('climate')
-html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d')
 
 df = d3.import_example('energy')
 html = d3.treemap(df)
