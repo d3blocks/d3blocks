@@ -84,7 +84,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, chart: str = None, frame: bool = True, verbose: int = 20, support: str = 'text') -> None:
+    def __init__(self, chart: str = None, frame: bool = True, verbose: (int, str) = 'info', support: str = 'text') -> None:
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
@@ -117,6 +117,7 @@ class D3Blocks():
                   showfig: bool = True,
                   notebook: bool = False,
                   save_button: bool = False,
+                  return_html: bool = False,
                   overwrite: bool = True):
         """Particles block.
 
@@ -220,7 +221,9 @@ class D3Blocks():
         # Create the plot
         html = Particles.show(text, self.config, logger)
         # Display the chart
-        return self.display(html)
+        self.display(html)
+        if return_html:
+            return html
 
     def violin(self,
                x,
@@ -243,6 +246,7 @@ class D3Blocks():
                overwrite: bool = True,
                notebook: bool = False,
                save_button: bool = True,
+               return_html: bool = False,
                reset_properties: bool = True):
         """Violin block.
 
@@ -389,7 +393,9 @@ class D3Blocks():
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(np.unique(self.edge_properties['x'].values), cmap=self.config['cmap'])
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def scatter(self,
                 x,
@@ -418,6 +424,7 @@ class D3Blocks():
                 overwrite=True,
                 notebook=False,
                 save_button: bool = True,
+                return_html: bool = False,
                 reset_properties=True,
                 ):
         """Scatterplot block.
@@ -630,7 +637,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(x, y, x1=x1, y1=y1, x2=x2, y2=y2, color=color, size=size, tooltip=tooltip, opacity=opacity, c_gradient=c_gradient, stroke=stroke, cmap=self.config['cmap'], scale=self.config['scale'], jitter=self.config['jitter'], logger=logger)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def chord(self,
               df,
@@ -647,6 +656,7 @@ class D3Blocks():
               overwrite=True,
               notebook=False,
               save_button=True,
+              return_html: bool = False,
               reset_properties=True,
               ):
         """Chord block.
@@ -819,7 +829,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df, color=color, opacity=opacity, cmap=cmap, logger=logger)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def imageslider(self,
                     img_before,
@@ -832,6 +844,7 @@ class D3Blocks():
                     figsize = [None, None],
                     showfig=True,
                     notebook=False,
+                    return_html: bool = False,
                     overwrite=True):
         """Imageslider Block.
 
@@ -940,7 +953,9 @@ class D3Blocks():
         # Open the webbrowser
         # self.open_browser(logger=logger)
         # Display the chart
-        return self.display(html)
+        self.display(html)
+        if return_html:
+            return html
 
     def sankey(self,
                df,
@@ -956,6 +971,7 @@ class D3Blocks():
                overwrite=True,
                notebook=False,
                save_button: bool = True,
+               return_html: bool = False,
                reset_properties=True,
                ):
         """Sankey block.
@@ -1020,6 +1036,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1113,8 +1132,10 @@ class D3Blocks():
             self.set_node_properties(df, cmap=self.config['cmap'], color=color, fontsize=self.config['fontsize'], node=self.config['node'])
         # Set edge properties
         self.set_edge_properties(df)
-        # Create the plot
-        return self.show()
+        # Create the plot and return html
+        html = self.show()
+        if return_html:
+            return html
 
     def movingbubbles(self,
                       df,
@@ -1141,6 +1162,7 @@ class D3Blocks():
                       overwrite: bool = True,
                       notebook: bool = False,
                       save_button: bool = True,
+                      return_html: bool = False,
                       reset_properties: bool = True,
                       ):
         """Movingbubbles block.
@@ -1330,7 +1352,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df, timedelta=self.config['timedelta'], state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, color=color, standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def timeseries(self,
                    df,
@@ -1347,6 +1371,7 @@ class D3Blocks():
                    overwrite=True,
                    notebook=False,
                    save_button: bool = True,
+                   return_html: bool = False,
                    reset_properties=True,
                    ):
         """Timeseries block.
@@ -1473,7 +1498,10 @@ class D3Blocks():
         # Create the plot
         html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Display the chart
-        return self.display(html)
+        self.display(html)
+        if return_html:
+            return html
+
 
     def heatmap(self,
                 df,
@@ -1498,6 +1526,7 @@ class D3Blocks():
                 overwrite=True,
                 notebook=False,
                 save_button: bool = True,
+                return_html: bool = False,
                 reset_properties=True,
                 ):
         """Heatmap block.
@@ -1643,7 +1672,9 @@ class D3Blocks():
         # Set edge properties
         self.edge_properties = self.chart.set_edge_properties(df, config=self.config, logger=logger)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def matrix(self,
                df,
@@ -1661,6 +1692,7 @@ class D3Blocks():
                overwrite=True,
                notebook=False,
                save_button: bool = True,
+               return_html: bool = False,
                reset_properties=True,
                ):
         """Matrix block.
@@ -1772,7 +1804,9 @@ class D3Blocks():
         # Set edge properties
         html = self.chart.set_properties(df, self.config, self.node_properties, logger)
         # Display the chart
-        return self.display(html)
+        self.display(html)
+        if return_html:
+            return html
 
     def d3graph(self,
                 df,
@@ -2122,6 +2156,7 @@ class D3Blocks():
              overwrite: bool = True,
              notebook: bool = False,
              save_button: bool = True,
+             return_html: bool = False,
              reset_properties: bool = True):
         """Tree block.
 
@@ -2281,7 +2316,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def treemap(self,
                 df: pd.DataFrame,
@@ -2294,6 +2331,7 @@ class D3Blocks():
                 showfig: bool = True,
                 overwrite: bool = True,
                 notebook: bool = False,
+                return_html: bool = False,
                 reset_properties: bool = True):
         """Treemap block.
 
@@ -2437,7 +2475,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def circlepacking(self,
                       df,
@@ -2453,6 +2493,7 @@ class D3Blocks():
                       overwrite: bool = True,
                       notebook: bool = False,
                       save_button: bool = True,
+                      return_html: bool = False,
                       reset_properties: bool = True,
                       ):
         """Circlepacking block.
@@ -2600,7 +2641,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def maps(self,
              df,
@@ -2618,6 +2661,7 @@ class D3Blocks():
              overwrite: bool = True,
              notebook: bool = False,
              save_button: bool = True,
+             return_html: bool = False,
              reset_properties: bool = True,
              ):
         """Maps block.
@@ -2770,7 +2814,9 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(countries)
         # Create the plot
-        return self.show()
+        html = self.show()
+        if return_html:
+            return html
 
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
@@ -2893,6 +2939,7 @@ class D3Blocks():
         None.
 
         """
+        html = None
         # Some checks
         if not hasattr(self, 'edge_properties') or not hasattr(self, 'node_properties'):
             logger.error('Can not show the chart without the edge_properties and/or node_properties. <return>"')
@@ -2914,7 +2961,9 @@ class D3Blocks():
             html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger, **kwargs)
 
         # Display the chart
-        return self.display(html)
+        self.display(html)
+        # Return html
+        return html
 
     def display(self, html):
         """Display."""
@@ -2926,8 +2975,7 @@ class D3Blocks():
             # Open the webbrowser
             self.open_browser(logger=logger)
         else:
-            logger.info('Nothing to display when filepath is None and notebook is False. Return HTML.')
-            return html
+            logger.info('Nothing to display when filepath is None and notebook is False.')
 
     # Open the webbrowser
     def open_browser(self, sleep=0.2, logger=None):

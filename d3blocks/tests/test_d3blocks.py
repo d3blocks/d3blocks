@@ -117,7 +117,7 @@ class Testd3blocks(unittest.TestCase):
         # Initialize
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.sankey(df, filepath=None, notebook=False)
+        html = d3.sankey(df, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.sankey(df, filepath=None, notebook=True)
         assert html is None
@@ -193,7 +193,7 @@ class Testd3blocks(unittest.TestCase):
 
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.chord(df, filepath=None, notebook=False)
+        html = d3.chord(df, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.chord(df, filepath=None, notebook=True)
         assert html is None
@@ -211,7 +211,7 @@ class Testd3blocks(unittest.TestCase):
 
         d3 = D3Blocks()
         df = d3.import_example('climate')
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=False)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=True)
         assert html is None
@@ -245,7 +245,7 @@ class Testd3blocks(unittest.TestCase):
         # Initialize
         d3 = D3Blocks()
         img_before, img_after = d3.import_example('southern_nebula_internet')
-        html = d3.imageslider(img_before, img_after, filepath=None, notebook=False)
+        html = d3.imageslider(img_before, img_after, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.imageslider(img_before, img_after, filepath=None, notebook=True)
         assert html is None
@@ -279,7 +279,7 @@ class Testd3blocks(unittest.TestCase):
 
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=False)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=True)
         assert html is None
@@ -307,7 +307,7 @@ class Testd3blocks(unittest.TestCase):
         # Violin
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=False)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=True)
         assert html is None
@@ -323,7 +323,7 @@ class Testd3blocks(unittest.TestCase):
         # Initialize
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.particles('D3blocks', filepath=None, notebook=False)
+        html = d3.particles('D3blocks', filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.particles('D3blocks', filepath=None, notebook=True)
         assert html is None
@@ -418,7 +418,7 @@ class Testd3blocks(unittest.TestCase):
 
         d3 = D3Blocks()
         df = d3.import_example('random_time', n=10000, c=300, date_start="01-01-2000 00:10:05", date_stop="01-01-2000 23:59:59")
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
         assert html is None
@@ -430,7 +430,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=False)
+        html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.violin(x=df['labx'].values, y=df['age'].values, filepath=None, notebook=True)
         assert html is None
@@ -441,7 +441,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('climate')
-        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=False)
+        html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=None, notebook=True)
         assert html is None
@@ -452,7 +452,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('cancer')
-        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=False)
+        html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.scatter(df['tsneX'].values, df['tsneY'].values, filepath=None, notebook=True)
         assert html is None
@@ -463,7 +463,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.sankey(df, filepath=None, notebook=False)
+        html = d3.sankey(df, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.sankey(df, filepath=None, notebook=True)
         assert html is None
@@ -474,7 +474,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.particles('D3blocks', filepath=None, notebook=False)
+        html = d3.particles('D3blocks', filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.particles('D3blocks', filepath=None, notebook=True)
         assert html is None
@@ -485,7 +485,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('random_time', n=10000, c=100, date_start="01-01-2000 00:10:05", date_stop="01-01-2000 23:59:59")
-        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False)
+        html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
         assert html is None
@@ -495,7 +495,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         img_before, img_after = d3.import_example('southern_nebula_internet')
-        html = d3.imageslider(img_before, img_after, filepath=None, notebook=False)
+        html = d3.imageslider(img_before, img_after, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.imageslider(img_before, img_after, filepath=None, notebook=True)
         assert html is None
@@ -506,7 +506,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.chord(df, filepath=None, notebook=False)
+        html = d3.chord(df, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.chord(df, filepath=None, notebook=True)
         assert html is None
@@ -517,7 +517,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.treemap(df, filepath=None, notebook=False)
+        html = d3.treemap(df, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.treemap(df, filepath=None, notebook=True)
         assert html is None
@@ -528,7 +528,7 @@ class Testd3blocks(unittest.TestCase):
         from d3blocks import D3Blocks
         d3 = D3Blocks()
         df = d3.import_example('energy')
-        html = d3.tree(df, filepath=None, notebook=False)
+        html = d3.tree(df, filepath=None, notebook=False, return_html=True)
         assert html is not None
         html = d3.tree(df, filepath=None, notebook=True)
         assert html is None
