@@ -80,12 +80,7 @@ class D3Blocks():
     ----------
     * Github : https://github.com/d3blocks/d3blocks
     * Docs: https://d3blocks.github.io/d3blocks/
-    * D3Blocks
-    * D3Graph
-    * Scatter
-    * Sankey
-    * Movingbubbles
-    * Comparison of Sankey, D3graph and Heatmap
+    * Blogs: https://erdogant.medium.com
 
     """
 
