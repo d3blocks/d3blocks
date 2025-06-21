@@ -12,7 +12,6 @@ import webbrowser
 import random
 import time
 import datazets as dz
-
 import d3graph as d3network
 
 from d3blocks.elasticgraph.elasticgraph import Elasticgraph
@@ -32,9 +31,8 @@ import d3blocks.tree.Tree as Tree
 import d3blocks.maps.Maps as Maps
 import d3blocks.utils as utils
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
 # ###################### DEBUG ONLY ###################
+# import elasticgraph.elasticgraph as Elasticgraph
 # import movingbubbles.Movingbubbles as Movingbubbles
 # import timeseries.Timeseries as Timeseries
 # import sankey.Sankey as Sankey
@@ -52,6 +50,9 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 # import utils
 # #####################################################
 
+logger = logging.getLogger(__name__)
+if not logger.hasHandlers():
+    logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%d-%m-%Y %H:%M:%S')
 
 #%%
 class D3Blocks():

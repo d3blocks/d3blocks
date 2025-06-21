@@ -12,8 +12,9 @@ from typing import List, Union, Tuple
 from d3graph import d3graph, json_create, data_checks, make_graph
 from jinja2 import Environment, PackageLoader
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
+logger = logging.getLogger(__name__)
+if not logger.hasHandlers():
+    logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%d-%m-%Y %H:%M:%S')
 
 # %%
 class Elasticgraph:
@@ -78,6 +79,7 @@ class Elasticgraph:
         self.D3graph.config['d3_library'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/d3.v2.js'))
         self.D3graph.config['d3_script'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/elasticgraph_script.js'))
         self.D3graph.config['css'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/style.css'))
+        logger.info('Initializing Elasticgraph..')
 
     def graph(self,
               adjmat,
