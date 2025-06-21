@@ -1,0 +1,57 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font: 10px sans-serif;
+}
+
+circle.node {
+  fill: lightsteelblue;
+  stroke: #555;
+  stroke-width: 3px;
+}
+
+circle.leaf {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+circle.link-expanded {
+  stroke: #555;
+  stroke-width: 3px;
+  stroke-dasharray: 2px 4px;
+}
+
+circle.helper {
+  stroke-width: 0;
+  fill: #333;
+  opacity: 0.6;
+}
+
+circle.center-of-mass {
+  fill: white;
+  stroke: red;
+  stroke-width: 5px;
+}
+
+path.hull {
+  fill: lightsteelblue;
+  fill-opacity: 0.3;
+}
+
+path.hlink {
+  stroke: #333;
+  stroke-opacity: 0.5;
+  fill: none;
+  pointer-events: none;
+}
+
+line.link {
+  stroke: red;
+  stroke-opacity: 0.7;
+  pointer-events: none;
+}

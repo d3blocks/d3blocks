@@ -13,9 +13,10 @@ import random
 import time
 import datazets as dz
 
-from elasticgraph import Elasticgraph
+# from elasticgraph import Elasticgraph
 import d3graph as d3network
 
+from d3blocks.elasticgraph.elasticgraph import Elasticgraph
 import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
 import d3blocks.timeseries.Timeseries as Timeseries
 import d3blocks.sankey.Sankey as Sankey

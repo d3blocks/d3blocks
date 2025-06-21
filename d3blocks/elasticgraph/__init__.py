@@ -1,0 +1,8 @@
+# -*- coding: utf-8 -*-
+"""Elasticgraph"""
+
+import logging
+from elasticgraph.elasticgraph import Elasticgraph
+
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+

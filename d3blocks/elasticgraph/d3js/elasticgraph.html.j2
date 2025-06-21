@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style type="text/css">
+        {% include "styles.css" %}
+    </style>
+    <script>
+        {% include "d3.v2.js" %}
+        {% include "d3graphscript.js" %}
+
+        window.addEventListener('DOMContentLoaded', function () {
+            d3graphscript({{ json_data }}, {
+                width: {{ width }},
+                height: {{ height }},
+                dr: {{ point_radius }},
+                off: {{ hull_offset }},
+                debug: {{ debug }},
+                single_click_expand: {{ single_click_expand|int }}
+            })
+        });
+    </script>
+</head>
+<body></body>
+</html>
+
