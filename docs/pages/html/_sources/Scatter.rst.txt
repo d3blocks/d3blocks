@@ -2,7 +2,7 @@ Scatter
 #############
 
 .. tip::
-	`Get the Most Out of Your Scatterplot by Making It Interactive Using D3js and Python. <https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046>`_
+	`Get the Most Out of Your Scatterplot by Making It Interactive Using D3js and Python. <https://erdogant.medium.com/>`_
 
 -------------------------
 

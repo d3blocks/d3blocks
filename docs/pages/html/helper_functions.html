@@ -1,24 +1,22 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vec2adjmat &mdash; d3blocks d3blocks documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Export to HTML &mdash; d3blocks d3blocks documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=6837f5c9"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6837f5c9"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -37,9 +35,6 @@
           <a href="index.html" class="icon icon-home">
             d3blocks
           </a>
-              <div class="version">
-                1.4.9
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -84,9 +79,10 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Export to HTML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.D3Blocks.vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-d3blocks.D3Blocks.import_example">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#saving-charts">Saving Charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
@@ -115,7 +111,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">vec2adjmat</li>
+      <li class="breadcrumb-item active">Export to HTML</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/helper_functions.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -126,8 +122,25 @@
            <div itemprop="articleBody">
              
   <p>The D3Blocks library also contains various helper functions to get the data in the right shape for the desired chart.</p>
-<section id="module-d3blocks.d3blocks.D3Blocks.vec2adjmat">
-<span id="vec2adjmat"></span><h1>vec2adjmat<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.vec2adjmat" title="Link to this heading"></a></h1>
+<section id="export-to-html">
+<h1>Export to HTML<a class="headerlink" href="#export-to-html" title="Link to this heading"></a></h1>
+<p>Each block can be exported to HTML using the return_html parameter.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># load library</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+
+<span class="c1"># Initialize</span>
+<span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+
+<span class="c1"># Get data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+
+<span class="c1"># Return HTML for Sankey</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">return_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="module-d3blocks.D3Blocks.vec2adjmat">
+<span id="vec2adjmat"></span><h1>vec2adjmat<a class="headerlink" href="#module-d3blocks.D3Blocks.vec2adjmat" title="Link to this heading"></a></h1>
 <p>Convert source and target into adjacency matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param source<span class="colon">:</span></dt>
@@ -184,8 +197,8 @@
 </pre></div>
 </div>
 </section>
-<section id="module-d3blocks.d3blocks.D3Blocks.adjmat2vec">
-<span id="adjmat2vec"></span><h1>adjmat2vec<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.adjmat2vec" title="Link to this heading"></a></h1>
+<section id="module-d3blocks.D3Blocks.adjmat2vec">
+<span id="adjmat2vec"></span><h1>adjmat2vec<a class="headerlink" href="#module-d3blocks.D3Blocks.adjmat2vec" title="Link to this heading"></a></h1>
 <p>Convert adjacency matrix into vector with source and target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param adjmat<span class="colon">:</span></dt>
@@ -221,8 +234,8 @@
 </pre></div>
 </div>
 </section>
-<section id="module-d3blocks.d3blocks.D3Blocks.import_example">
-<span id="examples"></span><h1>Examples<a class="headerlink" href="#module-d3blocks.d3blocks.D3Blocks.import_example" title="Link to this heading"></a></h1>
+<section id="module-d3blocks.D3Blocks.import_example">
+<span id="examples"></span><h1>Examples<a class="headerlink" href="#module-d3blocks.D3Blocks.import_example" title="Link to this heading"></a></h1>
 <p>Import example dataset from github source.</p>
 <p>Import one of the few datasets from github sourcek.</p>
 <dl class="field-list simple">
@@ -299,9 +312,7 @@
 <section id="saving-charts">
 <h1>Saving Charts<a class="headerlink" href="#saving-charts" title="Link to this heading"></a></h1>
 <p>Each d3block contains saving functionality to save your chart to a SVG image.
-The save functionality can be enabled by setting the <code class="docutils literal notranslate"><span class="pre">`save_button=True`</span></code> parameter.
-After setting the save_button parameter, the output HTML will contain a save button that can be used accordingly.
-In case you do not need the save button, disable it with <code class="docutils literal notranslate"><span class="pre">`save_button=False`</span></code>.</p>
+The save functionality can be enabled by setting the <a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a></p>
 <hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>

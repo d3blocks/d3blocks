@@ -2,14 +2,9 @@ Sankey
 #############
 
 .. tip::
-	`Hands-on Guide to Create beautiful Sankey Charts in d3js with Python. <https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43>`_
+	`Hands-on Guide to Create beautiful Sankey Charts in d3js with Python. <https://erdogant.medium.com/>`_
 
 -------------------------
-
-.. automodule:: d3blocks.d3blocks.D3Blocks.sankey
-    :members:
-    :undoc-members:
-
 
 Input Data
 ************
@@ -32,6 +27,15 @@ The input dataset is a DataFrame with three column, source, target and weight.
 	# 67                     Wind  Electricity grid  289.366
 
 	# [68 rows x 3 columns]
+
+-------------------------
+
+.. automodule:: d3blocks.d3blocks.D3Blocks.sankey
+    :members:
+    :undoc-members:
+
+
+
 
 Charts
 ************
