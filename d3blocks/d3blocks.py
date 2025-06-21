@@ -163,6 +163,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         overwrite : bool, optional (default: True)
                 * True: Overwrite the output html in the destination directory.
                 * False: Do not overwrite
@@ -315,6 +318,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -505,6 +511,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -727,6 +736,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -890,6 +902,9 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         overwrite : bool, (default: True)
                 * True: Overwrite the html in the destination directory.
                 * False: Do not overwrite destination file but show warning instead.
@@ -1262,6 +1277,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1425,6 +1443,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1588,6 +1609,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -1752,6 +1776,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2203,6 +2230,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2379,6 +2409,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2553,6 +2586,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
@@ -2724,6 +2760,9 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return html
+                * False: Nothing is returned
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
