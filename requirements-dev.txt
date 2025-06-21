@@ -1,6 +1,5 @@
 sphinx_rtd_theme
 rst2pdf
-spyder-kernels==2.2.1
 sphinx
 pytest
 irelease
