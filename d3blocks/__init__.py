@@ -8,8 +8,8 @@ from d3blocks.utils import (
     convert_flare2source_target,
     )
 
-__author__ = 'Erdogan Taskesen, Oliver Verver'
-__email__ = 'erdogant@gmail.com, mail@oliver3.nl'
+__author__ = 'Erdogan Taskesen'
+__email__ = 'erdogant@gmail.com'
 __version__ = '1.4.11'
 
 # Setup root logger
@@ -38,11 +38,6 @@ References
 ----------
 * Github : https://github.com/d3blocks/d3blocks
 * Docs: https://d3blocks.github.io/d3blocks/
-* D3Blocks
-* D3Graph
-* Scatter
-* Sankey
-* Movingbubbles
-* Comparison of Sankey, D3graph and Heatmap
+* Blog: https://erdogant.medium.com
 
 """

@@ -2,7 +2,6 @@
 
 Library     : d3blocks
 Author      : E.Taskesen, O.Verver
-Mail        : erdogant@gmail.com, oliver@sensibly.nl
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 

@@ -8,23 +8,11 @@ License     : GPL3
 """
 import logging
 import os
-from pathlib import Path
 from typing import List, Union, Tuple
 from d3graph import d3graph, json_create, data_checks, make_graph
 from jinja2 import Environment, PackageLoader
 
-# logger = logging.getLogger('')
-# for handler in logger.handlers[:]:
-#     logger.removeHandler(handler)
-# console = logging.StreamHandler()
-# formatter = logging.Formatter('[elasticgraph] %(levelname)s> %(message)s')
-# console.setFormatter(formatter)
-# logger.addHandler(console)
-# logger = logging.getLogger()
-
-logger = logging.getLogger(__name__)
-if not logger.hasHandlers():
-    logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%Y-%m-%d %H:%M:%S')
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 # %%

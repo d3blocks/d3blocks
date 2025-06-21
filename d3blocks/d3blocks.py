@@ -13,7 +13,6 @@ import random
 import time
 import datazets as dz
 
-# from elasticgraph import Elasticgraph
 import d3graph as d3network
 
 from d3blocks.elasticgraph.elasticgraph import Elasticgraph
@@ -33,6 +32,8 @@ import d3blocks.tree.Tree as Tree
 import d3blocks.maps.Maps as Maps
 import d3blocks.utils as utils
 
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+
 # ###################### DEBUG ONLY ###################
 # import movingbubbles.Movingbubbles as Movingbubbles
 # import timeseries.Timeseries as Timeseries
@@ -51,18 +52,8 @@ import d3blocks.utils as utils
 # import utils
 # #####################################################
 
-# logger = logging.getLogger('')
-# for handler in logger.handlers[:]:  # get rid of existing old handlers
-#     logger.removeHandler(handler)
-# console = logging.StreamHandler()
-# formatter = logging.Formatter('[d3blocks] >%(levelname)s> %(message)s')
-# console.setFormatter(formatter)
-# logger.addHandler(console)
-# logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
-
-
+#%%
 class D3Blocks():
     """D3Blocks.
 
@@ -101,7 +92,7 @@ class D3Blocks():
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
-        set_logger(verbose=verbose)
+        verbose = set_logger(verbose=verbose, return_status=True)
         # Clean
         self._clean(clean_config=True, logger=logger)
         # Get chart function
@@ -114,6 +105,7 @@ class D3Blocks():
         self.config['frame'] = frame
         self.config['support'] = utils.get_support(support)
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
+        self.logger = logger
 
     def particles(self,
                   text: str,
@@ -3305,7 +3297,7 @@ def get_logger():
 
 
 # %%
-def set_logger(verbose: [str, int] = 'info'):
+def set_logger(verbose: [str, int] = 'info', return_status: bool = False):
     """Set the logger for verbosity messages.
 
     Parameters
@@ -3338,19 +3330,22 @@ def set_logger(verbose: [str, int] = 'info'):
     if (verbose==0) or (verbose is None):
         verbose=60
     # Convert str to levels
-    if isinstance(verbose, str):
-        levels = {'silent': 60,
-                  'off': 60,
-                  'no': 60,
-                  'debug': 10,
-                  'info': 20,
-                  'warning': 30,
-                  'critical': 50}
+        levels = {
+            'silent': logging.CRITICAL + 10,
+            'off': logging.CRITICAL + 10,
+            'no': logging.CRITICAL + 10,
+            'debug': logging.DEBUG,
+            'info': logging.INFO,
+            'warning': logging.WARNING,
+            'error': logging.ERROR,
+            'critical': logging.CRITICAL,
+        }
         verbose = levels[verbose]
 
     # Show examples
     logger.setLevel(verbose)
-
+    if return_status:
+        return verbose
 
 # %%
 def disable_tqdm():

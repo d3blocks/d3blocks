@@ -19,8 +19,11 @@ import time
 import json
 import d3graph as d3network
 from collections import defaultdict
+import logging
 
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
+#%%
 def include_save_to_svg_script(save_button=False, title='d3graph_chart'):
     javascript_code = ""
     show_save_button = ['<!--', '-->']
