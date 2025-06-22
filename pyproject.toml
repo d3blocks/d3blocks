@@ -34,7 +34,6 @@ Homepage = "https://erdogant.github.io/d3blocks"
 Download = "https://github.com/erdogant/d3blocks/archive/{version}.tar.gz"
 
 [tool.setuptools]
-packages = ["d3blocks"]
 include-package-data = true
 
 [tool.setuptools.dynamic]
