@@ -36,5 +36,8 @@ Download = "https://github.com/erdogant/d3blocks/archive/{version}.tar.gz"
 [tool.setuptools]
 include-package-data = true
 
+[tool.setuptools.packages.find]
+include = ["d3blocks*"]
+
 [tool.setuptools.dynamic]
 version = { attr = "d3blocks.__version__" }
