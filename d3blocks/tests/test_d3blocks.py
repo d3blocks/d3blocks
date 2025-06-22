@@ -409,6 +409,9 @@ class Testd3blocks(unittest.TestCase):
         d3.show()
 
     def test_movingbubbles(self):
+        # Check dates
+        assert test_movingbubbles_datetime()
+
         # Set color scheme
         d3 = D3Blocks()
         # Generate random data with various states
@@ -534,3 +537,36 @@ class Testd3blocks(unittest.TestCase):
         assert html is None
         html = d3.tree(df, filepath='test.html', notebook=False, showfig=False)
         assert html is None
+
+
+def test_movingbubbles_datetime():
+    """Test that movingbubbles datetime parsing works correctly."""
+    print("Testing movingbubbles datetime parsing...")
+    
+    try:
+        # Initialize
+        d3 = D3Blocks()
+        
+        # Generate random data with various states
+        df = d3.import_example('random_time', n=100, c=50, 
+                              date_start="01-01-2000 00:10:05", 
+                              date_stop="01-01-2000 23:59:59")
+        
+        print(f"Successfully generated data with {len(df)} rows")
+        print(f"Date range: {df['datetime'].min()} to {df['datetime'].max()}")
+        
+        # Test movingbubbles function
+        html = d3.movingbubbles(df, datetime='datetime', state='state', 
+                               sample_id='sample_id', standardize=None, 
+                               speed={"slow": 1000, "medium": 200, "fast": 10}, 
+                               filepath=None, dt_format='%d-%m-%Y %H:%M:%S',
+                               return_html=True, showfig=False)
+        
+        print("Successfully created movingbubbles chart")
+        print("✅ Test passed!")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Test failed: {e}")
+        return False
+
