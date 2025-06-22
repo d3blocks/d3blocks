@@ -579,7 +579,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
     # Set a random time-point at multiple occasion at the same time.
     # df['datetime'].iloc[np.array(list(map(lambda x: random.randint(0, c), np.arange(0, c/20))))] = df['datetime'].iloc[0]
-    df['datetime'] = pd.to_datetime(df['datetime'])
+    df['datetime'] = pd.to_datetime(df['datetime'], format=dt_format)
     df = df.sort_values(by="datetime")
     df.dropna(inplace=True)
     df.reset_index(inplace=True, drop=True)

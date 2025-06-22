@@ -277,6 +277,9 @@ def get_data_ready_for_d3(df, node_properties):
     for node, i in zip(uinode, idx):
         dfvec['source'] = dfvec['source'].replace(node, i)
         dfvec['target'] = dfvec['target'].replace(node, i)
+    
+    # Fix FutureWarning about downcasting
+    dfvec = dfvec.infer_objects(copy=False)
 
     NODE_STR = '\n{\n"nodes":\n[\n'
     # for node, classlabel in zip(node_properties['label'], node_properties['classlabel']):

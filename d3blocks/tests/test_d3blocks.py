@@ -47,7 +47,7 @@ class Testd3blocks(unittest.TestCase):
 
         for i, label in enumerate(d3.node_properties['label']):
             if node_colors.get(label) is not None:
-                d3.node_properties['color'].iloc[i] = node_colors.get(label)['color']
+                d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
 
         d3.show(showfig=True, figsize=[600, 600], fontsize=8, scaler='zscore')
 
@@ -66,7 +66,7 @@ class Testd3blocks(unittest.TestCase):
         # Update the colors of the network graph to be consistent with the colors
         for i, label in enumerate(d3.node_properties['label']):
             if node_colors.get(label) is not None:
-                d3.node_properties['color'].iloc[i] = node_colors.get(label)['color']
+                d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
         
         # The colors in the dataframe are used in the chart.
         print(d3.node_properties)
