@@ -18,7 +18,7 @@
 
 <div>
 
-<a href="https://d3blocks.github.io/d3blocks/"><img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" width="175" align="left" /></a>
+<a href="https://d3blocks.github.io/d3blocks/"><img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" width="275" align="left" /></a>
 ``D3Blocks`` is a Python package that builds on the graphics of d3 javascript (d3js). It allows you to create the most visually attractive and useful charts with only a few lines of Python code!
 The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. **⭐️ Star it if you like it ⭐️**
 </div>
