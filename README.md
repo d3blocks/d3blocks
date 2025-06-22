@@ -1,10 +1,3 @@
-<p align="center">
-  <a href="https://d3blocks.github.io/d3blocks/pages/html/index.html">
-  <img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" align="center" width="600" /> 
-  </a>
-</p>
-
-
 [![Python](https://img.shields.io/pypi/pyversions/d3blocks)](https://img.shields.io/pypi/pyversions/d3blocks)
 [![Pypi](https://img.shields.io/pypi/v/d3blocks)](https://pypi.org/project/d3blocks/)
 [![Docs](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
@@ -21,10 +14,16 @@
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#colab-notebook)
 [![Donate](https://img.shields.io/badge/Support%20this%20project-grey.svg?logo=github%20sponsors)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#)
 
--------------------------------------------------------------------------
+### 
 
-D3Blocks builds on the graphics of d3 javascript (d3js) to create the most visually attractive and useful charts with only a few lines of Python code!
-The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. 
+<div>
+
+<a href="https://d3blocks.github.io/d3blocks/"><img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" width="175" align="left" /></a>
+``D3Blocks`` is a Python package that builds on the graphics of d3 javascript (d3js). It allows you to create the most visually attractive and useful charts with only a few lines of Python code!
+The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. **⭐️ Star it if you like it ⭐️**
+</div>
+
+---
 
 <p align="center">
   <a href="https://d3blocks.github.io/d3blocks/pages/html/index.html">
@@ -32,32 +31,27 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
   </a>
 </p>
 
--------------------------------------------------------------------------
+---
 
-#### See [here](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog) an overview for all the blogs 
+### Resources and Links
+- **Example Notebooks:** [Examples](https://erdogant.github.io/bnlearn/pages/html/Documentation.html#google-colab-notebooks)
+- **Blog Posts:** [Medium](https://erdogant.medium.com/)
+- **Documentation:** [Website](https://erdogant.github.io/bnlearn)
+- **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/erdogant/bnlearn/issues)
 
--------------------------------------------------------------------------
+
+---
 
 
-#### Installation (Pypi)
-```bash
-pip install d3blocks     # Normal installation
-pip install -U d3blocks  # Force update
-```
+### Key Pipelines
 
-#### Installation (clone)
-```bash
-git clone https://github.com/d3blocks/d3blocks.git
-cd d3blocks
-pip install -U .
-```  
-
-#### Import d3blocks package
-```python
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks()
-```
+| Feature | Description |
+|---------|-------------|
+| [**Interactive Network Visualization**](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html) | Create interactive network graphs with D3graph and Elasticgraph for relationship analysis. |
+| [**Data Flow Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html) | Visualize data flows and relationships using Sankey diagrams and Chord diagrams. |
+| [**Temporal Data Analysis**](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html) | Analyze time-series data with interactive charts and moving bubbles for dynamic visualization. |
+| [**Statistical Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html) | Create statistical plots including scatter plots, violin plots, and heatmaps. |
+| [**Hierarchical Data Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Tree.html) | Visualize hierarchical structures with tree diagrams, treemaps, and circle packing. |
 
 -------------------------------------------------------------------------
 ### [Supported charts](https://d3blocks.github.io/d3blocks/)
@@ -83,6 +77,46 @@ d3 = D3Blocks()
 
 -------------------------------------------------------------------------
 
-#### References
+#### Installation (Pypi)
+```bash
+pip install d3blocks     # Normal installation
+pip install -U d3blocks  # Force update
+```
+
+#### Installation (clone)
+```bash
+git clone https://github.com/d3blocks/d3blocks.git
+cd d3blocks
+pip install -U .
+```  
+
+#### Import d3blocks package
+```python
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+```
+
+
+<hr>
+
+### References
 * [bl.ocks](https://bl.ocks.org/)
 * [observablehq](https://observablehq.com/top)
+
+### Contributors
+Setting up and maintaining bnlearn has been possible thanks to users and contributors. Thanks to:
+
+<p align="left">
+  <a href="https://github.com/erdogant/bnlearn/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=erdogant/bnlearn" />
+  </a>
+</p>
+
+### Maintainer
+* Erdogan Taskesen, github: [erdogant](https://github.com/erdogant)
+* Contributions are welcome.
+* Yes! This library is entirely **free** but it runs on coffee! :) Feel free to support with a <a href="https://erdogant.github.io/donate/?currency=USD&amount=5">Coffee</a>.
+
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/erdogant)
+
