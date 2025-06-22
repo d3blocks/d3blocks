@@ -105,11 +105,11 @@ d3 = D3Blocks()
 * [observablehq](https://observablehq.com/top)
 
 ### Contributors
-Setting up and maintaining bnlearn has been possible thanks to users and contributors. Thanks to:
+Setting up and maintaining D3blocks has been possible thanks to users and contributors. Thanks to:
 
 <p align="left">
-  <a href="https://github.com/erdogant/bnlearn/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=erdogant/bnlearn" />
+  <a href="https://github.com/d3blocks/d3blocks/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=d3blocks/d3blocks" />
   </a>
 </p>
 
