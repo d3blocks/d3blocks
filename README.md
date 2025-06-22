@@ -34,10 +34,10 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 ---
 
 ### Resources and Links
-- **Example Notebooks:** [Examples](https://erdogant.github.io/bnlearn/pages/html/Documentation.html#google-colab-notebooks)
+- **Example Notebooks:** [Examples](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
 - **Blog Posts:** [Medium](https://erdogant.medium.com/)
-- **Documentation:** [Website](https://erdogant.github.io/bnlearn)
-- **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/erdogant/bnlearn/issues)
+- **Documentation:** [Website](https://d3blocks.github.io/d3blocks)
+- **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/d3blocks/d3blocks/issues)
 
 
 ---
