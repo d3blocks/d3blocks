@@ -32,6 +32,8 @@ def set_config(config={}, **kwargs):
     config['ordering'] = kwargs.get('ordering', 'ascending')
     config['arrowhead'] = kwargs.get('arrowhead', 10)
     config['save_button'] = kwargs.get('save_button', True)
+    config['margin'] = kwargs.get('margin', 150)  # Margin around the chord diagram
+    config['text_offset'] = kwargs.get('text_offset', 5)  # Additional offset for text labels
     # return
     return config
 
@@ -281,6 +283,8 @@ def write_html(X, config, logger=None):
         'FONTSIZE': config['fontsize'],
         'ARROWHEAD': config['arrowhead'],
         'ORDERING': ORDERING,
+        'MARGIN': config['margin'],
+        'TEXT_OFFSET': config['text_offset'],
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],

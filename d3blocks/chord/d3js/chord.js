@@ -1732,12 +1732,12 @@
     return arc;
   }
 
-  function generateChord({data, nodes, width= 954, height = width}) {
+  function generateChord({data, nodes, width= 954, height = width, margin = 150, textOffset = 5}) {
       {{ ORDERING }}
       // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
       const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
       const node_opacity = new Map(nodes.map(n => [n.name, n.opacity]));    // GET NODE OPACITY
-      const innerRadius = Math.min(width, height) * 0.5 - 150;
+      const innerRadius = Math.min(width, height) * 0.5 - margin;
       const outerRadius = innerRadius + 10;
       const index = new Map(names.map((name, i) => [name, i]));
       let matrix = Array.from(index, () => new Array(names.length).fill(0));
@@ -1806,7 +1806,7 @@
           .attr("dy", "0.35em")
           .attr("transform", d => `
         rotate(${(d.angle * 180 / Math.PI - 90)})
-        translate(${outerRadius + 5})
+        translate(${outerRadius + textOffset})
         ${d.angle > Math.PI ? "rotate(180)" : ""}
       `)
           .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
@@ -1857,8 +1857,8 @@
       return svg.node();
   }
 
-  window.Chord = function ({data, nodes, width, height}) {
-      const svg = generateChord({data, nodes, width, height});
+  window.Chord = function ({data, nodes, width, height, margin, textOffset}) {
+      const svg = generateChord({data, nodes, width, height, margin, textOffset});
       document.body.append(svg);
   };
 

@@ -665,6 +665,8 @@ class D3Blocks():
               overwrite=True,
               notebook=False,
               save_button=True,
+              margin=150,
+              text_offset=5,
               return_html: bool = False,
               reset_properties=True,
               ):
@@ -742,6 +744,12 @@ class D3Blocks():
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
+        margin : int, (default: 150)
+                * Margin around the chord diagram in pixels.
+                * Larger values create more space around the diagram.
+        text_offset : int, (default: 5)
+                * Additional offset for text labels in pixels.
+                * Larger values move labels further from the chord arcs.
 
         Returns
         -------
@@ -834,7 +842,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Chord', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, save_button=save_button, margin=margin, text_offset=text_offset, logger=logger)
         # Set node properties
         if reset_properties or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=cmap)
