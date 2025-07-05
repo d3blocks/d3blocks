@@ -134,9 +134,16 @@ table {
   height: 730px;
 }
 #current_time {
-  font-size: 70px;
+  font-size: 50px;
   color: #666;
   text-align: center;
+}
+#day_info {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 10px;
+  font-style: italic;
 }
 #chart {
   float: left;

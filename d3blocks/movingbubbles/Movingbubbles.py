@@ -384,6 +384,7 @@ def write_html(X, config, logger=None):
         'COLOR_METHOD': config['color_method'],
         'START_HOUR_MIN': config['start_hour'] + (config['start_minute'] / 60),
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
+        'TIMEDELTA': config['timedelta'],
 
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,

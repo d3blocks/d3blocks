@@ -25,6 +25,9 @@ Licensed    : GPL3
 <body>
     <div id="main-wrapper">
     <div id="sidebar">
+    {% if TIMEDELTA == "days" %}
+    <div id="day_info">Data in days</div>
+    {% endif %}
     <div id="current_time">{{ START_TIME }}</div>
     
     <div id="speed">
@@ -255,7 +258,7 @@ function timer() {
 
 	// Update time
 	var true_minute = curr_minute % 1440;
-	d3.select("#current_time").text(minutesToTime(true_minute));
+	d3.select("#current_time").text(formatTime(true_minute));
 	
 	// Update notes
 	// var true_minute = curr_minute % 1440;
@@ -411,25 +414,42 @@ function readablePercent(n) {
 }
 
 
-// Minutes to time of day. Data is minutes from first date time point in data
-function minutesToTime(m) {
-	var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
-	var hh = Math.floor(minutes / 60);
-	if (hh > 24) {
-		hh = hh - 24;
-	} else if (hh == 24) {
-	} else if (hh == 0) {
-		hh = 0;
-	}
-	var mm = minutes % 60;
-	if (mm < 10) {
-		mm = "0" + mm;
-	}
-	if (hh < 10) {
-		hh = "0" + hh;
-	}
+// Time display based on timedelta unit
+function formatTime(m) {
+	var timedelta = "{{ TIMEDELTA }}";
 	
-	return hh + ":" + mm
+	if (timedelta === "seconds") {
+		// Display as seconds
+		var total_seconds = m;
+		var hh = Math.floor(total_seconds / 3600);
+		var mm = Math.floor((total_seconds % 3600) / 60);
+		var ss = total_seconds % 60;
+		
+		if (hh < 10) hh = "0" + hh;
+		if (mm < 10) mm = "0" + mm;
+		if (ss < 10) ss = "0" + ss;
+		
+		return hh + ":" + mm + ":" + ss;
+	} else {
+		// Default: minutes (HH:MM format)
+		var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
+		var hh = Math.floor(minutes / 60);
+		if (hh > 24) {
+			hh = hh - 24;
+		} else if (hh == 24) {
+		} else if (hh == 0) {
+			hh = 0;
+		}
+		var mm = minutes % 60;
+		if (mm < 10) {
+			mm = "0" + mm;
+		}
+		if (hh < 10) {
+			hh = "0" + hh;
+		}
+		
+		return hh + ":" + mm;
+	}
 }
 
 {{ SAVE_TO_SVG_SCRIPT }}

@@ -292,6 +292,15 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <dt class="field-even">type save_button<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
 </dd>
+<dt class="field-odd">param return_html<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>True: Return html</p></li>
+<li><p>False: Nothing is returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">type return_html<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, (default: False)</p>
+</dd>
 <dt class="field-odd">param reset_properties<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>True: Reset the node_properties at each run.</p></li>
@@ -300,6 +309,24 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 </dd>
 <dt class="field-even">type reset_properties<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool, (default: True)</p>
+</dd>
+<dt class="field-odd">param margin<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Margin around the chord diagram in pixels.</p></li>
+<li><p>Larger values create more space around the diagram.</p></li>
+</ul>
+</dd>
+<dt class="field-even">type margin<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, (default: 150)</p>
+</dd>
+<dt class="field-odd">param text_offset<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Additional offset for text labels in pixels.</p></li>
+<li><p>Larger values move labels further from the chord arcs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">type text_offset<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, (default: 5)</p>
 </dd>
 <dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -322,6 +349,24 @@ Then, arcs are drawn between each entity. The size of the arc is proportional to
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot with very large margins for long labels</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">chord</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;chord_large_margins.html&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">1200</span><span class="p">],</span>  <span class="c1"># Even larger figure size</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="n">margin</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>  <span class="c1"># Large margin for long labels</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="n">text_offset</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>  <span class="c1"># Large text offset</span>
 </pre></div>
 </div>
 <p class="rubric">Examples</p>
