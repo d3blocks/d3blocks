@@ -1675,6 +1675,30 @@ class D3Blocks():
         >>> d3.heatmap(df, color=['#FFF000', '#FFF000', '#FFF000', '#000FFF' , '#000FFF', '#000FFF', '#000FFF'])
         >>> d3.node_properties
 
+        Examples
+        --------
+        >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Network graph
+        >>> d3.d3graph(df, charge=800, collision=2, showfig=True)
+        >>> #
+        >>> # Extract the node colors from the network graph.
+        >>> node_colors = d3.D3graph.node_properties
+        >>> #
+        >>> # Heatmap
+        >>> d3 = D3Blocks()
+        >>> # Create the heatmap but do not show it yet because we first need to adjust the colors
+        >>> d3.heatmap(df, showfig=False)
+        >>> # Update the colors of the network graph to be consistent with the colors
+        >>> d3.node_properties
+        >>> #
+        >>> for i, label in enumerate(d3.node_properties['label']):
+        >>>     if node_colors.get(label) is not None:
+        >>>         d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
+        >>> #
+        >>> d3.show(showfig=True, figsize=[600, 600], fontsize=8, scaler='zscore')
+
         References
         ----------
         * https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html
