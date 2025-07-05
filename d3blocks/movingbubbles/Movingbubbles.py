@@ -209,7 +209,7 @@ def _set_nodesize(df, sample_id, size, logger):
     # If the size column not exists, create one with default size
     if not np.any(np.isin(df.columns, 'size')):
         df['size'] = size
-        if logger is not None: logger.info('Set all nodes to size: %d' %(size))
+        if logger is not None: logger.info('Set all nodes to size: %s' %(str(size)))
 
     return df
 
@@ -260,7 +260,10 @@ def show(df, **kwargs):
     for i in uiid:
         # Combine the sample_id with its time in state
         Iloc=df['sample_id']==i
-        tmplist=str(list(zip(sid[Iloc], df['time_in_state'].loc[Iloc].values)))
+        # Convert NumPy integers to regular Python integers to avoid np.int64 in string representation
+        sid_values = [int(x) for x in sid[Iloc]]
+        time_values = [int(x) for x in df['time_in_state'].loc[Iloc].values]
+        tmplist=str(list(zip(sid_values, time_values)))
         tmplist=tmplist.replace('(', '')
         tmplist=tmplist.replace(')', '')
         tmplist=tmplist.replace('[', '')
@@ -271,7 +274,7 @@ def show(df, **kwargs):
 
     # Node size in the same order as the uiid
     nodedict = dict(zip(df['sample_id'], df['size']))
-    config['node_size'] = list(map(lambda x: nodedict.get(x), uiid))
+    config['node_size'] = [int(nodedict.get(x)) if isinstance(nodedict.get(x), (np.integer, int)) else nodedict.get(x) for x in uiid]
 
     # Node color in the same order as the uiid
     nodedict = dict(zip(df['sample_id'], df['color']))
@@ -279,24 +282,28 @@ def show(df, **kwargs):
 
     # Set color codes for the d3js
     df_labels = pd.DataFrame(labels).T
-    config['colorByActivity'] = dict(df_labels[['id', 'color']].values.astype(str))
+    # Convert NumPy integers to regular Python integers for proper JSON serialization
+    color_by_activity = {}
+    for idx, row in df_labels[['id', 'color']].iterrows():
+        color_by_activity[str(int(row['id']))] = row['color']
+    config['colorByActivity'] = color_by_activity
     # config['node_size'] = dict(zip(df_labels['id'].astype(str), df_labels['size']))
     # config['node_size'] = dict(zip(df['sample_id'], [4]*df.shape[0]))
 
     # Create the description for the numerical codes
     act_codes = []
     for label in labels:
-        act_codes.append({"index": str(labels.get(label)['id']), "short": str(labels.get(label)['short']), "desc": str(labels.get(label)['desc'])})
+        act_codes.append({"index": str(int(labels.get(label)['id'])), "short": str(labels.get(label)['short']), "desc": str(labels.get(label)['desc'])})
     config['act_codes'] = act_codes
 
     # Used for percentages by minute
-    act_counts = dict(zip(df_labels['id'].astype(str), np.zeros(len(df_labels['id'])).astype(int)))
+    act_counts = dict(zip(df_labels['id'].astype(str), [0] * len(df_labels['id'])))
     config['act_counts'] = act_counts
 
     # Define the starting day, hour, minute
-    config['start_hour'] = df[config['columns']['datetime']].dt.hour[0]
-    config['start_minute'] = df[config['columns']['datetime']].dt.minute[0]
-    config['start_day'] = df[config['columns']['datetime']].dt.day[0]
+    config['start_hour'] = int(df[config['columns']['datetime']].dt.hour[0])
+    config['start_minute'] = int(df[config['columns']['datetime']].dt.minute[0])
+    config['start_day'] = int(df[config['columns']['datetime']].dt.day[0])
 
     datestart = df[config['columns']['datetime']].iloc[0]
     datestop = df[config['columns']['datetime']].iloc[-1]
@@ -534,7 +541,7 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
 
     # Generate random timestamps with catagories and sample ids
     state_mem = {}
-    idx_middle=np.where(np.array(location_types)=='Travel')[0][0]
+    idx_middle=int(np.where(np.array(location_types)=='Travel')[0][0])
     i=0
     while i <= df.shape[0]-3:
     # for i in tqdm(range(0, df.shape[0])):
@@ -547,9 +554,9 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
         # Set the start state:
         # Get random idx based pdf
         df.loc[i, 'sample_id'] = sample_id
-        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
+        idx = int(np.random.choice(np.arange(0, len(location_types)), p=pdf))
         if (state_prev is not None) and (idx==state_prev['state']):
-            idx = np.mod(idx+1, len(location_types))
+            idx = int(np.mod(idx+1, len(location_types)))
         df.loc[i, 'state'] = location_types[idx]
         df.loc[i, 'datetime'] = random_date(date_start, date_stop, random.random(), dt_format=dt_format)
         i = i + 1
@@ -563,16 +570,16 @@ def generate_data_with_random_datetime(n=10000, c=1000, date_start=None, date_st
         # Set the end state:
         # Get random idx based pdf
         df.loc[i, 'sample_id'] = sample_id
-        idx = np.random.choice(np.arange(0, len(location_types)), p=pdf)
+        idx = int(np.random.choice(np.arange(0, len(location_types)), p=pdf))
         if (location_types[idx]==df['state'].iloc[i-1]):
-            idx = np.mod(idx+1, len(location_types))
+            idx = int(np.mod(idx+1, len(location_types)))
 
         df.loc[i, 'state'] = location_types[idx]
         df.loc[i, 'datetime'] = random_date(df['datetime'].iloc[i-1], date_stop, random.random(), dt_format=dt_format)
         i = i + 1
 
         # Store the last state
-        state_mem[sample_id] = {'state':idx}
+        state_mem[sample_id] = {'state':int(idx)}
 
         # Rotate pdf list
         # pdf.insert(0, pdf.pop())
