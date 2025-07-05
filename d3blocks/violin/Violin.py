@@ -135,7 +135,8 @@ def set_edge_properties(*args, **kwargs):
         fontsize=np.array(fontsize)
         fontsize[np.isnan(fontsize)] = 0
         fontsize = np.maximum(fontsize, 0)
-        fontsize = fontsize.astype(int)
+        # Convert NumPy integers to regular Python integers for proper JSON serialization
+        fontsize = [int(x) for x in fontsize]
     # Set size to a minimum of 1
     if isinstance(size, (list, np.ndarray)):
         size = np.array(size)

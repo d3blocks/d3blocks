@@ -161,7 +161,8 @@ def set_colors(df, **kwargs):
     adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=df.get('weight', None).values, symmetric=True)
 
     # Default is all cluster labels are the same
-    node_properties['classlabel'] = np.zeros(node_properties.shape[0]).astype(int)
+    # Convert NumPy integers to regular Python integers for proper JSON serialization
+    node_properties['classlabel'] = [0] * node_properties.shape[0]
     node_properties['color'] = '#000000'
 
     if isinstance(config['color'], str) and config['color']=='cluster':
@@ -183,18 +184,26 @@ def set_colors(df, **kwargs):
             logger.error('Feature name(s): %s can not be used. Hint: Remove special characters. <return>' %(df.index.values[~np.isin(np.arange(0, df.shape[0]), idx)]))
             return None
         logger.info('Colors are based on clustering.')
-        node_properties['classlabel'] = results['labx'].astype(int)
+        # Convert NumPy integers to regular Python integers for proper JSON serialization
+        node_properties['classlabel'] = [int(x) for x in results['labx']]
         # # Create node colors
-        node_properties['color'] = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
+        colors = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
+        # Convert NumPy strings to regular Python strings
+        node_properties['color'] = [str(c) for c in colors]
     elif isinstance(config['color'], (list, np.ndarray)):
         if np.all(list(map(colourmap.is_hex_color, config['color']))):
             logger.info('Colors are based on the input hex colors.')
-            node_properties['color'] = config['color']
-            node_properties['classlabel'] = ismember(config['color'], np.unique(config['color']))[1]
+            # Convert NumPy strings to regular Python strings
+            node_properties['color'] = [str(c) for c in config['color']]
+            class_labels = ismember(config['color'], np.unique(config['color']))[1]
+            node_properties['classlabel'] = [int(x) for x in class_labels]
         else:
             logger.info('Colors are based on the labels.')
-            node_properties['classlabel'] = ismember(config['color'], np.unique(config['color']))[1]
-            node_properties['color'] = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
+            class_labels = ismember(config['color'], np.unique(config['color']))[1]
+            node_properties['classlabel'] = [int(x) for x in class_labels]
+            colors = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
+            # Convert NumPy strings to regular Python strings
+            node_properties['color'] = [str(c) for c in colors]
 
     return node_properties
 
@@ -274,24 +283,42 @@ def get_data_ready_for_d3(df, node_properties):
     # Convert into adj into vector
     dfvec = df.copy()
     uinode, idx = np.unique(node_properties['label'], return_index=True)
-    for node, i in zip(uinode, idx):
-        dfvec['source'] = dfvec['source'].replace(node, i)
-        dfvec['target'] = dfvec['target'].replace(node, i)
     
-    # Fix FutureWarning about downcasting
+    # Create a mapping dictionary to avoid FutureWarning about downcasting
+    node_to_idx = {}
+    for node, i in zip(uinode, idx):
+        node_to_idx[node] = int(i)
+    
+    # Apply the mapping to avoid pandas replace warnings
+    # Convert to object dtype first to avoid downcasting warnings
+    dfvec['source'] = dfvec['source'].astype('object')
+    dfvec['target'] = dfvec['target'].astype('object')
+    
+    # Now apply the mapping
+    dfvec['source'] = dfvec['source'].map(node_to_idx).fillna(dfvec['source'])
+    dfvec['target'] = dfvec['target'].map(node_to_idx).fillna(dfvec['target'])
+    
+    # Ensure proper data types
     dfvec = dfvec.infer_objects(copy=False)
 
     NODE_STR = '\n{\n"nodes":\n[\n'
     # for node, classlabel in zip(node_properties['label'], node_properties['classlabel']):
     for i, node in enumerate(node_properties['label']):
-        NODE_STR = NODE_STR + '{"name":' + '"' + node + '"' + ',' + '"cluster":' + str(node_properties['classlabel'].iloc[i]) + ',' + '"color":' + '"' + str(node_properties['color'].iloc[i]) + '"' + "},"
+        # Convert NumPy integers to regular Python integers for proper JSON serialization
+        cluster_val = int(node_properties['classlabel'].iloc[i])
+        color_val = str(node_properties['color'].iloc[i])
+        NODE_STR = NODE_STR + '{"name":' + '"' + node + '"' + ',' + '"cluster":' + str(cluster_val) + ',' + '"color":' + '"' + color_val + '"' + "},"
         # NODE_STR = NODE_STR + '{"name":' + '"' + node + '"' + ',' "},"
         NODE_STR = NODE_STR + '\n'
     NODE_STR = NODE_STR + '],\n'
 
     EDGE_STR = '"links":\n[\n'
     for i in range(0, dfvec.shape[0]):
-        EDGE_STR = EDGE_STR + '{"source":' + str(dfvec.iloc[i, 0]) + ',' + '"target":' + str(dfvec.iloc[i, 1]) + ',' + '"value":' + str(dfvec.iloc[i, 2]) + '},'
+        # Convert NumPy integers to regular Python integers for proper JSON serialization
+        source_val = int(dfvec.iloc[i, 0])
+        target_val = int(dfvec.iloc[i, 1])
+        value_val = float(dfvec.iloc[i, 2]) if dfvec.iloc[i, 2] is not None else 0.0
+        EDGE_STR = EDGE_STR + '{"source":' + str(source_val) + ',' + '"target":' + str(target_val) + ',' + '"value":' + str(value_val) + '},'
         EDGE_STR = EDGE_STR + '\n'
     EDGE_STR = EDGE_STR + ']\n}'
 

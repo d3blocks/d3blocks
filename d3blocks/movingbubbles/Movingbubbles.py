@@ -184,14 +184,16 @@ def _set_nodecolor(df, sample_id, color, cmap, logger):
         if logger is not None: logger.info('Processing the specified in node colors in dictionary..')
         df['color'] = '#808080'
         for key in color.keys():
-            df.loc[df[sample_id]==key, 'color'] = color.get(key)
+            df.loc[df[sample_id]==key, 'color'] = str(color.get(key))
 
     if color is None:
-        df['color'] = colourmap.fromlist(df['sample_id'], cmap=cmap, scheme='hex')[0]
+        colors = colourmap.fromlist(df['sample_id'], cmap=cmap, scheme='hex')[0]
+        # Convert NumPy strings to regular Python strings
+        df['color'] = [str(c) for c in colors]
 
     # If the color column not exists, create one with default color
     if not np.any(np.isin(df.columns, 'color')):
-        df['color'] = color
+        df['color'] = str(color) if color is not None else color
         if logger is not None: logger.info('Set all nodes to color: %s' %(color))
 
     return df
@@ -278,14 +280,15 @@ def show(df, **kwargs):
 
     # Node color in the same order as the uiid
     nodedict = dict(zip(df['sample_id'], df['color']))
-    config['node_color'] = list(map(lambda x: nodedict.get(x), uiid))
+    # Convert NumPy strings to regular Python strings for proper JSON serialization
+    config['node_color'] = [str(nodedict.get(x)) if nodedict.get(x) is not None else nodedict.get(x) for x in uiid]
 
     # Set color codes for the d3js
     df_labels = pd.DataFrame(labels).T
-    # Convert NumPy integers to regular Python integers for proper JSON serialization
+    # Convert NumPy integers to regular Python integers and NumPy strings to regular Python strings for proper JSON serialization
     color_by_activity = {}
     for idx, row in df_labels[['id', 'color']].iterrows():
-        color_by_activity[str(int(row['id']))] = row['color']
+        color_by_activity[str(int(row['id']))] = str(row['color'])
     config['colorByActivity'] = color_by_activity
     # config['node_size'] = dict(zip(df_labels['id'].astype(str), df_labels['size']))
     # config['node_size'] = dict(zip(df['sample_id'], [4]*df.shape[0]))
@@ -293,11 +296,18 @@ def show(df, **kwargs):
     # Create the description for the numerical codes
     act_codes = []
     for label in labels:
-        act_codes.append({"index": str(int(labels.get(label)['id'])), "short": str(labels.get(label)['short']), "desc": str(labels.get(label)['desc'])})
+        act_codes.append({
+            "index": str(int(labels.get(label)['id'])), 
+            "short": str(labels.get(label)['short']), 
+            "desc": str(labels.get(label)['desc'])
+        })
     config['act_codes'] = act_codes
 
     # Used for percentages by minute
-    act_counts = dict(zip(df_labels['id'].astype(str), [0] * len(df_labels['id'])))
+    # Convert NumPy integers to regular Python strings for proper JSON serialization
+    act_counts = {}
+    for idx in df_labels['id']:
+        act_counts[str(int(idx))] = 0
     config['act_counts'] = act_counts
 
     # Define the starting day, hour, minute
