@@ -60,7 +60,8 @@ def set_edge_properties(df, **kwargs):
     """
     logger = kwargs.get('logger', None)
     df = df.copy()
-    df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+    # Convert NumPy types to regular Python types for proper JSON serialization
+    df = pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
     return df
 
 
@@ -88,15 +89,17 @@ def set_node_properties(df, **kwargs):
 
     dict_labels = {}
     for i, label in enumerate(uilabels):
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        label_str = str(label)
         if size=='sum':
-            if df.loc[df['source']==label].empty:
-                weight = df.loc[df['target']==label]['weight'].sum()
+            if df.loc[df['source']==label_str].empty:
+                weight = df.loc[df['target']==label_str]['weight'].sum()
             else:
-                weight = df.loc[df['source']==label]['weight'].sum()
+                weight = df.loc[df['source']==label_str]['weight'].sum()
         else:
             weight = 1
         # Store
-        dict_labels[label] = {'id': i, 'label': label, 'value': weight}
+        dict_labels[label_str] = {'id': i, 'label': label_str, 'value': weight}
     # Return
     return dict_labels
 
@@ -149,7 +152,8 @@ def convert_to_links_format(df, logger):
     logger.debug("Setting up data for d3js..")
     links = []
     for index, row in df.iterrows():
-        link = {"source": row['source'], "target": row['target'], "value": row['weight']}
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        link = {"source": str(row['source']), "target": str(row['target']), "value": float(row['weight'])}
         links.append(link)
     return links
 
