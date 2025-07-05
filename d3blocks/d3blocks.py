@@ -783,6 +783,24 @@ class D3Blocks():
         >>> from d3blocks import D3Blocks
         >>> #
         >>> # Initialize
+        >>> d3 = D3Blocks()
+        >>> #
+        >>> # Load example data
+        >>> df = d3.import_example('energy')
+        >>> #
+        >>> # Plot with very large margins for long labels
+        >>> d3.chord(df, 
+        >>>          filepath='chord_large_margins.html',
+        >>>          figsize=[1200, 1200],  # Even larger figure size
+        >>>          margin=300,  # Large margin for long labels
+        >>>          text_offset=50)  # Large text offset
+
+        Examples
+        --------
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> #
+        >>> # Initialize
         >>> d3 = D3Blocks(chart='Chord', frame=False)
         >>> #
         >>> # Import example
