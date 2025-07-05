@@ -1194,9 +1194,9 @@ class D3Blocks():
         understand the movements of entities, and whether clusters occur at specific time points and state(s).
         It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
         force-directed and colliding nodes. The function d3.import_example('random_time') is created to generate
-        a randomized dataset with various states. The input dataset should contain 3 columns; 
+        a randomized dataset with various states. The input dataset should contain 3 columns; 
             * DateTime column: Describes the data-time when an event occurs.
-            * State column: Describes what the particular state was at that point of time of the specific sample_id. 
+            * State column: Describes what the particular state was at that point of time of the specific sample_id. 
             * Sample_id column: A sample can have multiple states at various time points but can not have two states at exactly the same point in time.
 
         Parameters
