@@ -167,7 +167,7 @@ def set_edge_properties(df, **kwargs):
     if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
         if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
         # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
-        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta, logger=logger)
+        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta if timedelta else 'minutes', logger=logger)
     else:
         raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
 
@@ -502,7 +502,9 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     zerotime=df['delta'][0] - df['delta'][0]
     Iloc = df['delta']==zerotime
     if np.any(Iloc):
-        if minimum_time=='minutes':
+        if minimum_time=='seconds':
+            df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(seconds=1)
+        elif minimum_time=='minutes':
             df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(seconds=60)
         elif minimum_time=='days':
             df.loc[Iloc, 'delta'] = df.loc[Iloc, 'delta'] + dt.timedelta(days=1)
