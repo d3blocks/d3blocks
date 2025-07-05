@@ -2339,10 +2339,11 @@ class D3Blocks():
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, save_button=save_button, logger=logger)
         # Cleaning of data
-        df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=[str(x) for x in df.columns.values[:-1]])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
@@ -2501,10 +2502,11 @@ class D3Blocks():
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=False, logger=logger)
         # Cleaning of data
-        df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str))
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=[str(x) for x in df.columns.values[:-1]])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
@@ -2670,10 +2672,11 @@ class D3Blocks():
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
         # Cleaning of data
-        df = utils.pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, cmap=self.config['cmap'], labels=df.columns.values[:-1].astype(str), size=self.config['size'])
+            self.set_node_properties(df, cmap=self.config['cmap'], labels=[str(x) for x in df.columns.values[:-1]], size=self.config['size'])
         # Set edge properties
         self.set_edge_properties(df)
         # Create the plot
@@ -3277,7 +3280,9 @@ def _import_example(data, n=10000, c=1000, date_start=None, date_stop=None, dt_f
     elif data=='energy':
         df = pd.read_csv(csvfile)
         df.rename(columns={'value': 'weight'}, inplace=True)
-        df[['source', 'target']] = df[['source', 'target']].astype(str)
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        df['source'] = df['source'].apply(str)
+        df['target'] = df['target'].apply(str)
     elif data=='stormofswords':
         df = pd.read_csv(csvfile)
         # df.rename(columns={'weight':'value'}, inplace=True)
