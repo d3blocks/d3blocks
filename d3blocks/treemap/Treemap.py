@@ -59,7 +59,9 @@ def set_edge_properties(df, **kwargs):
     # node_properties = kwargs.get('node_properties')
     logger = kwargs.get('logger', None)
     df = df.copy()
-    df = pre_processing(df, labels=df.columns.values[:-1].astype(str), logger=logger)
+    # Convert NumPy strings to regular Python strings for proper JSON serialization
+    labels = [str(x) for x in df.columns.values[:-1]]
+    df = pre_processing(df, labels=labels, logger=logger)
     # Create unique dataframe, udpate weights
     # df = create_unique_dataframe(df, logger=logger)
     return df
@@ -88,8 +90,10 @@ def set_node_properties(df, **kwargs):
 
     dict_labels = {}
     for i, label in enumerate(uilabels):
-        # dict_labels[label] = {'id': i, 'label': label, 'tooltip': ''}
-        dict_labels[label] = {'label': label, 'tooltip': ''}
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        label_str = str(label)
+        # dict_labels[label_str] = {'id': i, 'label': label_str, 'tooltip': ''}
+        dict_labels[label_str] = {'label': label_str, 'tooltip': ''}
     # Return
     return dict_labels
 

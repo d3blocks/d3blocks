@@ -52,7 +52,8 @@ def convert_to_json_format(df, logger=None):
     if logger is not None: logger.debug("Setting up json data file..")
     json = []
     for index, row in df.iterrows():
-        link = row.astype(str).to_dict()
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        link = {k: str(v) for k, v in row.to_dict().items()}
         json.append(link)
     return json
 
@@ -344,15 +345,16 @@ def vec2flare(df, logger=None):
     flare = {'name': "flare", 'children': []}
     # iterate through dataframe values
     for row in df.values:
-        level0 = row[0]
-        level1 = row[1]
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        level0 = str(row[0])
+        level1 = str(row[1])
 
         if df.shape[1]==3:
-            weight = row[-1]
+            weight = float(row[-1]) if row[-1] is not None else 0.0
             d = {'name': level0, 'children': [{'name': level1, 'size': weight}]}
         elif df.shape[1]==4:
-            level2 = row[2]
-            weight = row[-1]
+            level2 = str(row[2])
+            weight = float(row[-1]) if row[-1] is not None else 0.0
             d = {'name': level0, 'children': [{'name': level1, 'children': [{'name': level2, 'size': weight}]}]}
         # elif df.shape[1]==5:
         #     level2, level3 = row[2], row[3]
@@ -473,7 +475,8 @@ def set_labels(df, col_labels=None, logger=None):
     if df is None: raise Exception('Input labels must be provided.')
     if isinstance(df, pd.DataFrame) and (col_labels is not None) and np.all(ismember(col_labels, df.columns.values)[0]):
         if logger is not None: logger.info('Collecting labels from DataFrame using the "source" and "target" columns.')
-        labels = df[col_labels].values.flatten().astype(str)
+        # Convert NumPy strings to regular Python strings for proper JSON serialization
+        labels = [str(x) for x in df[col_labels].values.flatten()]
     else:
         labels = df
 
@@ -575,9 +578,11 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
     elif isinstance(X, pd.DataFrame) and not frame:
         if logger is not None: logger.info('Convert to Dictionary.')
         if np.all(ismember(['source', 'target'], X.columns.values)[0]):
-            X.index = X[['source', 'target']]
+            # Convert NumPy types to regular Python types for proper JSON serialization
+            X.index = [str(x) for x in X[['source', 'target']].values]
         else:
-            X.index = X['label']
+            # Convert NumPy types to regular Python types for proper JSON serialization
+            X.index = [str(x) for x in X['label'].values]
         X = X.to_dict(orient='index')
 
     return X
@@ -604,7 +609,9 @@ def create_unique_dataframe(X, logger=None):
     if isinstance(X, pd.DataFrame):
         Iloc = ismember(X.columns, ['source', 'target', 'weight'])[0]
         X = X.loc[:, Iloc]
-        if 'weight' in X.columns: X['weight'] = X['weight'].astype(float)
+        if 'weight' in X.columns: 
+            # Convert NumPy types to regular Python types for proper JSON serialization
+            X['weight'] = X['weight'].apply(float)
         # Groupby values and sum the weights
         X = X.groupby(by=['source', 'target']).sum()
         X.reset_index(drop=False, inplace=True)
@@ -629,7 +636,8 @@ def set_colors(X, c, cmap, c_gradient=None):
 
     if hexok:
         # Input is hex-colors thus we do not need to touch the colors.
-        labels = np.arange(0, X.shape[0]).astype(str)
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        labels = [str(x) for x in np.arange(0, X.shape[0])]
         c_hex = c
     else:
         # The input are string-labels and not colors. Lets convert to hex-colors.
@@ -704,11 +712,13 @@ def pre_processing(df, labels=['source', 'target'], clean_source_target=False, l
             df['weight']=1
 
         for label in labels:
-            df[label] = df[label].astype(str)
+            # Convert NumPy types to regular Python types for proper JSON serialization
+            df[label] = df[label].apply(str)
     else:
         if isinstance(df, list):
             df = np.array(df)
-        df = df.astype(str)
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        df = np.array([str(x) for x in df])
 
     # Remove quotes and special chars
     df = remove_quotes(df)
@@ -773,16 +783,19 @@ def remove_special_chars(df, clean_source_target=False):
 
     """
     if isinstance(df, pd.DataFrame):
-        df.columns = clean_text(df.columns.values.astype(str))
-        df.index = clean_text(df.index.values.astype(str))
+        # Convert NumPy types to regular Python types for proper JSON serialization
+        df.columns = clean_text([str(x) for x in df.columns.values])
+        df.index = clean_text([str(x) for x in df.index.values])
         # df.columns = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.columns.values.astype(str)))
         # df.index = list(map(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode("utf-8").replace(' ', '_'), df.index.values.astype(str)))
 
     if isinstance(df, pd.DataFrame) and clean_source_target:
         if df.get('source', None) is not None:
-            df['source'] = clean_text(df['source'].values.astype(str))
+            # Convert NumPy types to regular Python types for proper JSON serialization
+            df['source'] = clean_text([str(x) for x in df['source'].values])
         if df.get('target', None) is not None:
-            df['target'] = clean_text(df['target'].values.astype(str))
+            # Convert NumPy types to regular Python types for proper JSON serialization
+            df['target'] = clean_text([str(x) for x in df['target'].values])
 
     return df
 
