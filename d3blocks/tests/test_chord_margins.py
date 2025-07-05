@@ -8,6 +8,7 @@ import sys
 import os
 import pandas as pd
 import numpy as np
+from d3blocks import D3Blocks
 
 # Add the d3blocks directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'd3blocks'))
