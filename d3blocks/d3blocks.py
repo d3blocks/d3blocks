@@ -2217,7 +2217,7 @@ class D3Blocks():
         # Create default graph
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
         # Open the webbrowser
-        self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite)
+        self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite)
         # Display the chart
         # return self.display(html)
 
