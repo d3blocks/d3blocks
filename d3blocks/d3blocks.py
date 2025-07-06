@@ -2065,7 +2065,7 @@ class D3Blocks():
         # Create default graph
         self.D3graph.graph(adjmat, color=color, size=size, opacity=opacity, scaler=scaler, cmap=cmap)
         # Open the webbrowser
-        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite, show_slider=show_slider, set_slider=set_slider)
+        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite, show_slider=show_slider, set_slider=set_slider, notebook=notebook)
         # Display the chart
         # return self.display(html)
 
