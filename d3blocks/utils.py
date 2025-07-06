@@ -171,13 +171,23 @@ def normalize(X, minscale = 0.5, maxscale = 4, scaler: str = 'zscore'):
         X = (X.flatten() - np.mean(X)) / np.std(X)
         X = X + (minscale - np.min(X))
     elif scaler == 'minmax':
-        try:
-            from sklearn.preprocessing import MinMaxScaler
-        except:
-            raise Exception('sklearn needs to be pip installed first. Try: pip install scikit-learn')
-        # scaling
+        # Local implementation of MinMax scaling without sklearn dependency
         if len(X.shape)<=1: X = X.reshape(-1, 1)
-        X = MinMaxScaler(feature_range=(minscale, maxscale)).fit_transform(X).flatten()
+        X_min, X_max = np.min(X), np.max(X)
+        if X_max - X_min != 0:  # Avoid division by zero
+            X = (X - X_min) / (X_max - X_min) * (maxscale - minscale) + minscale
+        else:
+            X = np.full_like(X, minscale)  # If all values are the same, set to minscale
+        X = X.flatten()
+        
+        # Original sklearn implementation (commented out to remove dependency)
+        # try:
+        #     from sklearn.preprocessing import MinMaxScaler
+        # except:
+        #     raise Exception('sklearn needs to be pip installed first. Try: pip install scikit-learn')
+        # # scaling
+        # if len(X.shape)<=1: X = X.reshape(-1, 1)
+        # X = MinMaxScaler(feature_range=(minscale, maxscale)).fit_transform(X).flatten()
     else:
         X = X.ravel()
     # Max digits is 4
