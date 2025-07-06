@@ -102,7 +102,7 @@ def test_elasticgraph():
         
         # Create Chart
         print("🎨 Creating elasticgraph chart...")
-        d3.elasticgraph(df, filepath='elastic.html')
+        d3.elasticgraph(df, filepath='elastic.html', showfig=False)
         print("✅ ElasticGraph chart created successfully")
         print("📁 Chart saved as 'elastic.html'")
         assert True
@@ -127,7 +127,7 @@ def test_sankey():
         
         # Create Chart
         print("🎨 Creating sankey chart...")
-        d3.sankey(df, filepath='sankey.html')
+        d3.sankey(df, filepath='sankey.html', showfig=False)
         print("✅ Sankey chart created successfully")
         print("📁 Chart saved as 'sankey.html'")
         assert True
@@ -152,7 +152,7 @@ def test_chord():
         
         # Create Chart
         print("🎨 Creating chord chart...")
-        d3.chord(df, filepath='chord.html')
+        d3.chord(df, filepath='chord.html', showfig=False)
         print("✅ Chord chart created successfully")
         print("📁 Chart saved as 'chord.html'")
         assert True
@@ -177,7 +177,7 @@ def test_heatmap():
 
         # Create Chart
         print("🎨 Creating heatmap chart...")
-        d3.heatmap(df, filepath='heatmap.html')
+        d3.heatmap(df, filepath='heatmap.html', showfig=False)
         print("✅ Heatmap chart created successfully")
         print("📁 Chart saved as 'heatmap.html'")
         assert True
@@ -203,7 +203,7 @@ def test_tree():
         # Create Chart
         if df is not None:
             print("🎨 Creating tree chart...")
-            d3.tree(df, filepath='tree.html')
+            d3.tree(df, filepath='tree.html', showfig=False)
             print("✅ Tree chart created successfully")
             print("📁 Chart saved as 'tree.html'")
         else:
@@ -231,7 +231,7 @@ def test_treemap():
         # Create Chart
         if df is not None:
             print("🎨 Creating treemap chart...")
-            d3.treemap(df, filepath='treemap.html')
+            d3.treemap(df, filepath='treemap.html', showfig=False)
             print("✅ Treemap chart created successfully")
             print("📁 Chart saved as 'treemap.html'")
         else:
@@ -258,7 +258,7 @@ def test_circlepacking():
 
         # Create Chart
         print("🎨 Creating circlepacking chart...")
-        d3.circlepacking(df, filepath='circlepacking.html')
+        d3.circlepacking(df, filepath='circlepacking.html', showfig=False)
         print("✅ Circlepacking chart created successfully")
         print("📁 Chart saved as 'circlepacking.html'")
         assert True
@@ -283,7 +283,7 @@ def test_timeseries():
 
         # Create Chart
         print("🎨 Creating timeseries chart...")
-        d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500])
+        d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500], showfig=False)
         print("✅ Timeseries chart created successfully")
         assert True
     except Exception as e:
@@ -313,7 +313,7 @@ def test_movingbubbles():
         print(f"✅ Customization parameters prepared: {len(color)} colors, {len(size)} sizes")
 
         print("🎨 Creating movingbubbles chart...")
-        d3.movingbubbles(df, color=color, size=size, figsize=[775, 800])
+        d3.movingbubbles(df, color=color, size=size, figsize=[775, 800], showfig=False)
         print("✅ MovingBubbles chart created successfully")
         assert True
     except Exception as e:

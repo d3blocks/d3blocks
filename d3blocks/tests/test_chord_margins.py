@@ -33,7 +33,7 @@ def test_chord_default_margins():
         
         # Plot with default margins (may cut off labels)
         print("🎨 Creating chord diagram with default margins...")
-        d3.chord(df, filepath='chord_default_margins.html')
+        d3.chord(df, filepath='chord_default_margins.html', showfig=False)
         print("✅ Chord with default margins created successfully")
         print("📁 Chart saved as 'chord_default_margins.html'")
         print("⚠️ Note: Labels may be cut off with default margins")
@@ -67,7 +67,8 @@ def test_chord_increased_margins():
                  filepath='chord_increased_margins.html',
                  figsize=[1000, 1000],  # Larger figure size
                  margin=200,  # Increased margin (default was 150)
-                 text_offset=20)  # Increased text offset (default was 5)
+                 text_offset=20,
+                 showfig=False)  # Increased text offset (default was 5)
         print("✅ Chord with increased margins created successfully")
         print("📁 Chart saved as 'chord_increased_margins.html'")
         print("✅ Labels should be fully visible with increased margins")
@@ -101,7 +102,8 @@ def test_chord_large_margins():
                  filepath='chord_large_margins.html',
                  figsize=[1200, 1200],  # Even larger figure size
                  margin=300,  # Large margin for long labels
-                 text_offset=50)  # Large text offset
+                 text_offset=50,
+                 showfig=False)  # Large text offset
         print("✅ Chord with large margins created successfully")
         print("📁 Chart saved as 'chord_large_margins.html'")
         print("✅ Large margins ensure all labels are visible")
@@ -150,7 +152,8 @@ def test_chord_custom_data():
                  filepath='chord_long_labels.html',
                  figsize=[1400, 1400],  # Large figure size
                  margin=400,  # Very large margin for long labels
-                 text_offset=80)  # Large text offset
+                 text_offset=80,
+                 showfig=False)  # Large text offset
         print("✅ Chord with long labels created successfully")
         print("📁 Chart saved as 'chord_long_labels.html'")
         print("✅ Large margins accommodate very long labels")
@@ -218,7 +221,8 @@ def test_chord_parameter_comparison():
                      filepath=combo['filepath'],
                      figsize=combo['figsize'],
                      margin=combo['margin'],
-                     text_offset=combo['text_offset'])
+                     text_offset=combo['text_offset'],
+                     showfig=False)
             print(f"✅ {combo['name']} chord diagram created")
             print(f"📁 Chart saved as '{combo['filepath']}'")
         

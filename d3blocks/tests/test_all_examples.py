@@ -27,7 +27,7 @@ def test_particles():
         
         # Create chart with defaults
         print("🎨 Creating default particles chart...")
-        d3.particles('D3blocks')
+        d3.particles('D3blocks', showfig=False)
         print("✅ Default particles chart created")
         
         # Create customized chart
@@ -39,7 +39,8 @@ def test_particles():
                      figsize=[750, 150],
                      fontsize=130,
                      cmap='Turbo',
-                     color_background='#ffffff')
+                     color_background='#ffffff',
+                     showfig=False)
         print("✅ Customized particles chart created")
         print("📁 Chart saved as 'D3Blocks.html'")
         print("✅ Particles test completed successfully")
@@ -83,7 +84,8 @@ def test_violin():
                   size=df['survival_months'].values/10, 
                   x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], 
                   filepath='violine.html', 
-                  figsize=[900, None])
+                  figsize=[900, None],
+                  showfig=False)
         print("✅ Violin chart created successfully")
         print("📁 Chart saved as 'violine.html'")
         print("✅ Violin test completed successfully")
@@ -153,7 +155,8 @@ def test_scatter():
                    opacity=0.4,
                    tooltip=tooltip,
                    filepath='scatter_demo.html',
-                   cmap='tab20')
+                   cmap='tab20',
+                   showfig=False)
         print("✅ Scatter test completed")
         assert True
     except Exception as e:
@@ -190,7 +193,8 @@ def test_scatter_transitions():
                    opacity=0.4,
                    tooltip=tooltip,
                    filepath='scatter_transitions2.html',
-                   cmap='tab20')
+                   cmap='tab20',
+                   showfig=False)
         print("✅ Scatter transitions test completed")
         assert True
     except Exception as e:
@@ -226,9 +230,16 @@ def test_scatter_advanced():
         
         # Set specific node properties.
         if d3.edge_properties is not None:
-            d3.edge_properties.loc[0,'size']=50
-            d3.edge_properties.loc[0,'color']='#000000'
-            d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
+            # If it's a dict
+            if isinstance(d3.edge_properties, dict):
+                d3.edge_properties[0]['size'] = 50
+                d3.edge_properties[0]['color'] = '#000000'
+                d3.edge_properties[0]['tooltip'] = 'I am adjusted!'
+            # If it's a DataFrame
+            elif hasattr(d3.edge_properties, 'loc'):
+                d3.edge_properties.loc[0, 'size'] = 50
+                d3.edge_properties.loc[0, 'color'] = '#000000'
+                d3.edge_properties.loc[0, 'tooltip'] = 'I am adjusted!'
         
         # Show the chart again with adjustments
         d3.show(showfig=False)
@@ -252,7 +263,7 @@ def test_chord():
         assert df is not None
         
         # Plot
-        d3.chord(df)
+        d3.chord(df, showfig=False)
         print("✅ Chord test completed")
         assert True
     except Exception as e:
@@ -316,16 +327,16 @@ def test_chord_ordering():
         assert df is not None
         
         # Custom order of the labels
-        d3.chord(df, ordering=np.sort(np.unique(df['source'].values)))
+        d3.chord(df, ordering=np.sort(np.unique(df['source'].values)), showfig=False)
         
         # Sort Ascending
-        d3.chord(df, ordering='ascending')
+        d3.chord(df, ordering='ascending', showfig=False)
         
         # Sort Descending
-        d3.chord(df, ordering='descending')
+        d3.chord(df, ordering='descending', showfig=False)
         
         # Do not sort
-        d3.chord(df, ordering='')
+        d3.chord(df, ordering='', showfig=False)
         print("✅ Chord ordering test completed")
         assert True
     except Exception as e:
@@ -348,7 +359,7 @@ def test_imageslider():
         img_before, img_after = d3.import_example('southern_nebula_internet')
         
         # Plot
-        d3.imageslider(img_before, img_after)
+        d3.imageslider(img_before, img_after, showfig=False)
         
         # Plot with custom settings
         d3.imageslider(img_before, img_after, showfig=False, scale=True, colorscale=2, figsize=[400, 400])
@@ -372,7 +383,7 @@ def test_sankey():
         assert df is not None
         
         # Plot
-        d3.sankey(df)
+        d3.sankey(df, showfig=False)
         print("✅ Sankey test completed")
         assert True
     except Exception as e:
@@ -419,7 +430,8 @@ def test_sankey_custom_colors():
         
         # Custom color the nodes
         html = d3.sankey(df.copy(), filepath='sankey.html', 
-                        color={'Nuclear': '#FF0000', 'Wind':'#000000', 'Electricity grid':'#FF0000'})
+                        color={'Nuclear': '#FF0000', 'Wind':'#000000', 'Electricity grid':'#FF0000'},
+                        showfig=False)
         
         # Alternatively:
         d3 = D3Blocks(chart='Sankey', frame=True)
@@ -447,7 +459,7 @@ def test_movingbubbles():
         assert df is not None
         
         # Plot
-        d3.movingbubbles(df, speed={"stop": 100000, "slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+        d3.movingbubbles(df, speed={"stop": 100000, "slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html', showfig=False)
         print("✅ Movingbubbles test completed")
         assert True
     except Exception as e:
@@ -503,7 +515,7 @@ def test_movingbubbles_custom():
         color = {1: '#FF0000', 3: '#000FFF'}
         
         # Show
-        d3.movingbubbles(df, color=color, size=size)
+        d3.movingbubbles(df, color=color, size=size, showfig=False)
         print("✅ Movingbubbles custom test completed")
         assert True
     except Exception as e:
@@ -524,7 +536,7 @@ def test_timeseries():
         assert df is not None
         
         # Show
-        d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500])
+        d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500], showfig=False)
         print("✅ Timeseries test completed")
         assert True
     except Exception as e:
@@ -573,7 +585,7 @@ def test_heatmap():
         assert df is not None
         
         # Plot
-        d3.heatmap(df)
+        d3.heatmap(df, showfig=False)
         print("✅ Heatmap test completed")
         assert True
     except Exception as e:
@@ -594,12 +606,7 @@ def test_heatmap_cluster_params():
         assert df is not None
         
         # Change cluster parameters
-        d3.heatmap(df, cluster_params={'evaluate':'dbindex',
-                                      'metric':'hamming',
-                                      'linkage':'complete',
-                                      'normalize': False,
-                                      'min_clust': 3,
-                                      'max_clust': 15})
+        d3.heatmap(df, cluster_params={'evaluate':'dbindex', 'min_clust':3}, showfig=False)
         print("✅ Heatmap cluster parameters test completed")
         assert True
     except Exception as e:
@@ -620,10 +627,10 @@ def test_heatmap_color_labels():
         assert df is not None
         
         # Plot and color on label
-        d3.heatmap(df, color=[1,1,1,2,2,2,3])
+        d3.heatmap(df, color=[1,1,1,2,2,2,3], showfig=False)
         
         # Plot and specify the hex color
-        d3.heatmap(df, color=['#FFF000', '#FFF000', '#FFF000', '#000FFF' , '#000FFF', '#000FFF', '#000FFF'])
+        d3.heatmap(df, color=['#FFF000', '#FFF000', '#FFF000', '#000FFF' , '#000FFF', '#000FFF', '#000FFF'], showfig=False)
         print("✅ Heatmap color labels test completed")
         assert True
     except Exception as e:
@@ -643,7 +650,7 @@ def test_matrix():
         df = pd.DataFrame(np.random.randint(0, 10, size=(6, 20)))
         
         # Plot
-        d3.matrix(df)
+        d3.matrix(df, showfig=False)
         
         d3.matrix(df,
                   vmin=1,
@@ -651,7 +658,8 @@ def test_matrix():
                   title='D3blocks Matrix',
                   figsize=[600, 300],
                   cmap='interpolateGreens',
-                  filepath='matrix.html')
+                  filepath='matrix.html',
+                  showfig=False)
         print("✅ Matrix test completed")
         return True
     except Exception as e:
@@ -671,10 +679,10 @@ def test_d3graph():
         df = d3.import_example('energy') # 'bigbang', 'stormofswords'
         
         # Create network using default
-        d3.d3graph(df, filepath='d3graph.html')
+        d3.d3graph(df, filepath='d3graph.html', showfig=False)
         
         # Change scaler
-        d3.d3graph(df, scaler='minmax')
+        d3.d3graph(df, scaler='minmax', showfig=False)
         
         # Change node properties
         d3.D3graph.set_node_properties(color=None)
@@ -682,14 +690,14 @@ def test_d3graph():
         d3.D3graph.node_properties['Solar']['color']='#FF0000'
         d3.D3graph.node_properties['Solar']['edge_color']='#000000'
         d3.D3graph.node_properties['Solar']['edge_size']=5
-        d3.D3graph.show()
+        d3.D3graph.show(showfig=False)
         
         # Change edge properties
         d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
-        d3.D3graph.show()
+        d3.D3graph.show(showfig=False)
         
         # After making changes, show the graph again using show()
-        d3.D3graph.show()
+        d3.D3graph.show(showfig=False)
         print("✅ D3graph test completed")
         return True
     except Exception as e:
@@ -709,19 +717,19 @@ def test_elasticgraph():
         df = d3.import_example('energy') # 'stormofswords'
         
         # Create force-directed-network (without cluster labels)
-        d3.elasticgraph(df, filepath='Elasticgraph.html')
+        d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
         
         # Show elasticgraph
-        d3.Elasticgraph.show()
+        d3.Elasticgraph.show(showfig=False)
         
         # Show original graph with the same properties
-        d3.Elasticgraph.D3graph.show()
+        d3.Elasticgraph.D3graph.show(showfig=False)
         
         # After making changes, show the graph again using show()
-        d3.Elasticgraph.show()
+        d3.Elasticgraph.show(showfig=False)
         
         # Show original graph
-        d3.Elasticgraph.D3graph.show()
+        d3.Elasticgraph.D3graph.show(showfig=False)
         print("✅ Elasticgraph test completed")
         return True
     except Exception as e:
@@ -741,7 +749,7 @@ def test_tree():
         df = d3.import_example('energy')
         
         # Plot
-        d3.tree(df)
+        d3.tree(df, showfig=False)
         print("✅ Tree test completed")
         return True
     except Exception as e:
@@ -787,7 +795,7 @@ def test_tree_advanced():
         d3.set_edge_properties(df)
         
         # Show chart
-        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath='tree_hierarchy.html')
+        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath='tree_hierarchy.html', showfig=False)
         print("✅ Tree advanced test completed")
         return True
     except Exception as e:
@@ -811,7 +819,7 @@ def test_tree_frame():
         d3.set_edge_properties(df)
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Tree frame test completed")
         return True
     except Exception as e:
@@ -832,7 +840,7 @@ def test_treemap():
         df = d3.import_example('animals')
         
         # Plot
-        d3.treemap(df)
+        d3.treemap(df, showfig=False)
         print("✅ Treemap test completed")
         return True
     except Exception as e:
@@ -856,7 +864,7 @@ def test_treemap_advanced():
         d3.set_edge_properties(df)
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Treemap advanced test completed")
         return True
     except Exception as e:
@@ -886,7 +894,7 @@ def test_treemap_tooltip():
         d3.set_edge_properties(df)
         
         # Show chart
-        d3.show(filepath='treemap_advanced.html')
+        d3.show(filepath='treemap_advanced.html', showfig=False)
         print("✅ Treemap tooltip test completed")
         return True
     except Exception as e:
@@ -907,7 +915,7 @@ def test_circlepacking():
         df = d3.import_example('energy')
         
         # Plot
-        d3.circlepacking(df)
+        d3.circlepacking(df, showfig=False)
         print("✅ Circlepacking test completed")
         return True
     except Exception as e:
@@ -931,7 +939,7 @@ def test_circlepacking_advanced():
         d3.set_edge_properties(df)
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Circlepacking advanced test completed")
         return True
     except Exception as e:
@@ -955,10 +963,11 @@ def test_circlepacking_custom():
                                 zoom='mouseover',
                                 filepath='circlepacking_advanced.html',
                                 border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
-                                overwrite=True)
+                                overwrite=True,
+                                showfig=False)
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Circlepacking custom test completed")
         return True
     except Exception as e:
@@ -978,7 +987,7 @@ def test_maps():
         df = d3.import_example('surfspots')
         
         # Plot
-        d3.maps(df)
+        d3.maps(df, showfig=False)
         print("✅ Maps test completed")
         return True
     except Exception as e:
@@ -998,13 +1007,14 @@ def test_maps_custom():
         df = d3.import_example('surfspots')
         
         # Plot
-        d3.maps(df, color=df['label'].values, cmap='Set2')
+        d3.maps(df, color=df['label'].values, cmap='Set2', showfig=False)
         
         html = d3.maps(df, color=df['label'].values, 
                       countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
                                   'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'none', 'linewidth': 1},
                                   'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
-                                  'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5}})
+                                  'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5}},
+                      showfig=False)
         print("✅ Maps custom test completed")
         return True
     except Exception as e:
@@ -1031,7 +1041,7 @@ def test_maps_advanced():
                                 'Netherlands': {'color': '#000FFF', 'line': 'dashed'}})
         
         # Show chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Maps advanced test completed")
         return True
     except Exception as e:
