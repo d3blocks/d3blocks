@@ -71,22 +71,29 @@ def create_test_data(timedelta_unit='minutes'):
 
 def test_timedelta_units():
     """Test different timedelta units."""
-    print("Testing movingbubbles timedelta fix...")
+    print("=== Testing MovingBubbles Timedelta Units ===")
+    print("📊 Testing movingbubbles timedelta fix...")
     
     # Test each time unit
-    for timedelta_unit in ['seconds', 'minutes', 'days']:
-        print(f"\n--- Testing {timedelta_unit.upper()} ---")
+    for i, timedelta_unit in enumerate(['seconds', 'minutes', 'days'], 1):
+        print(f"\n🎯 Testing {timedelta_unit.upper()} ({i}/3)")
+        print(f"📊 Initializing D3Blocks...")
         
         # Create test data
+        print(f"🔧 Creating test data for {timedelta_unit}...")
         df = create_test_data(timedelta_unit)
-        print(f"Created test data with {len(df)} rows")
-        print(f"Time range: {df['datetime'].min()} to {df['datetime'].max()}")
+        print(f"✅ Test data created with {len(df)} rows")
+        print(f"📅 Time range: {df['datetime'].min()} to {df['datetime'].max()}")
+        print(f"🎯 Unique states: {df['state'].unique()}")
         
         # Initialize d3blocks
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         try:
             # Create the movingbubbles plot
+            print(f"🎨 Creating movingbubbles plot for {timedelta_unit}...")
+            print(f"🔧 Parameters: timedelta={timedelta_unit}, standardize=samplewise")
             d3.movingbubbles(
                 df,
                 datetime='datetime',
@@ -100,23 +107,26 @@ def test_timedelta_units():
                 save_button=True
             )
             
-            print(f"✓ Successfully created plot for {timedelta_unit}")
+            print(f"✅ Successfully created plot for {timedelta_unit}")
+            print(f"📁 Chart saved as 'movingbubbles_test_{timedelta_unit}.html'")
             
             # Check if the delta column was created correctly
             if 'delta' in df.columns:
-                print(f"  Delta column created with {len(df['delta'].dropna())} non-null values")
-                print(f"  Delta range: {df['delta'].min()} to {df['delta'].max()}")
+                print(f"📊 Delta column created with {len(df['delta'].dropna())} non-null values")
+                print(f"📈 Delta range: {df['delta'].min()} to {df['delta'].max()}")
             else:
-                print("  Warning: Delta column not found in dataframe")
+                print("⚠️ Warning: Delta column not found in dataframe")
                 
         except Exception as e:
-            print(f"✗ Error creating plot for {timedelta_unit}: {str(e)}")
+            print(f"❌ Error creating plot for {timedelta_unit}: {str(e)}")
+            print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
             assert False
     
-    print("\n--- Test Summary ---")
+    print("\n📋 Test Summary")
     print("The fix should ensure that:")
     print("1. When timedelta='seconds': plot runs in seconds")
     print("2. When timedelta='minutes': plot runs in minutes") 
     print("3. When timedelta='days': plot runs in days")
-    print("\nCheck the generated HTML files to verify the animation speed matches the timedelta setting.")
+    print("\n🔍 Check the generated HTML files to verify the animation speed matches the timedelta setting.")
+    print("✅ All timedelta unit tests completed successfully")
     assert True 

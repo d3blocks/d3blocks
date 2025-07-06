@@ -10,18 +10,27 @@ except:
 
 class Testd3blocks(unittest.TestCase):
     def test_medium_blog_chart_comparison(self) -> None:
+        print("=== Testing Medium Blog Chart Comparison ===")
+        print("📊 Setting up test data...")
+        
         # Source node names
         source = ['Penny', 'Penny', 'Amy', 'Bernadette', 'Bernadette', 'Sheldon', 'Sheldon', 'Sheldon', 'Rajesh']
         # Target node names
         target = ['Leonard', 'Amy', 'Bernadette', 'Rajesh', 'Howard', 'Howard', 'Leonard', 'Amy', 'Penny']
         # Edge Weights
         weight = [5, 3, 2, 2, 5, 2, 3, 5, 2]
+        print(f"✅ Test data prepared: {len(source)} edges between {len(set(source + target))} nodes")
 
         # Import and Initialize
+        print("📊 Initializing D3Blocks...")
         from d3blocks import D3Blocks
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
+        
         # Convert
+        print("🔄 Converting to adjacency matrix...")
         adjmat = d3.vec2adjmat(source, target, weight)
+        print(f"✅ Adjacency matrix created: {adjmat.shape if hasattr(adjmat, 'shape') else 'matrix created'}")
 
         # Initialize
         d3 = D3Blocks()
@@ -397,7 +406,7 @@ class Testd3blocks(unittest.TestCase):
         # Set edge properties
         d3.set_edge_properties(df)
         # Show chart
-        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
+        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath='tree_test.html')
 
         # Load d3blocks
         from d3blocks import D3Blocks

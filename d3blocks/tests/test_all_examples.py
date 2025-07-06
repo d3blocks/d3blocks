@@ -17,16 +17,21 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 def test_particles():
     """Test particles functionality."""
     print("=== Testing Particles ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Create chart with defaults
+        print("🎨 Creating default particles chart...")
         d3.particles('D3blocks')
+        print("✅ Default particles chart created")
         
         # Create customized chart
+        print("🎨 Creating customized particles chart...")
         d3.particles('D3Blocks',
                      filepath='D3Blocks.html',
                      collision=0.05,
@@ -35,30 +40,41 @@ def test_particles():
                      fontsize=130,
                      cmap='Turbo',
                      color_background='#ffffff')
-        print("✅ Particles test completed")
+        print("✅ Customized particles chart created")
+        print("📁 Chart saved as 'D3Blocks.html'")
+        print("✅ Particles test completed successfully")
         assert True
     except Exception as e:
         print(f"❌ Particles test failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def test_violin():
     """Test violin functionality."""
     print("=== Testing Violin ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Import example dataset
+        print("📥 Importing cancer dataset...")
         df = d3.import_example('cancer')
         assert df is not None
+        print(f"✅ Cancer dataset loaded successfully - {len(df)} rows, {len(df.columns)} columns")
+        print(f"📊 Dataset columns: {list(df.columns)}")
         
         # Set some input variables.
+        print("🔧 Preparing chart parameters...")
         tooltip = df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
         fontsize = df['age'].values
+        print(f"✅ Tooltip and fontsize prepared for {len(tooltip)} data points")
         
         # Create the chart
+        print("🎨 Creating violin chart...")
         d3.violin(x=df['labx'].values, 
                   y=df['age'].values, 
                   fontsize=fontsize, 
@@ -68,10 +84,13 @@ def test_violin():
                   x_order=['acc','kich', 'brca','lgg','blca','coad','ov'], 
                   filepath='violine.html', 
                   figsize=[900, None])
-        print("✅ Violin test completed")
+        print("✅ Violin chart created successfully")
+        print("📁 Chart saved as 'violine.html'")
+        print("✅ Violin test completed successfully")
         assert True
     except Exception as e:
         print(f"❌ Violin test failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def test_violin_advanced():
@@ -768,7 +787,7 @@ def test_tree_advanced():
         d3.set_edge_properties(df)
         
         # Show chart
-        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c://temp//tree.html')
+        d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath='tree_hierarchy.html')
         print("✅ Tree advanced test completed")
         return True
     except Exception as e:
@@ -867,7 +886,7 @@ def test_treemap_tooltip():
         d3.set_edge_properties(df)
         
         # Show chart
-        d3.show(filepath=r'c://temp//treemap.html')
+        d3.show(filepath='treemap_advanced.html')
         print("✅ Treemap tooltip test completed")
         return True
     except Exception as e:
@@ -934,7 +953,7 @@ def test_circlepacking_custom():
         html = d3.circlepacking(df,
                                 speed=1500,
                                 zoom='mouseover',
-                                filepath='c://temp//circlepacking.html',
+                                filepath='circlepacking_advanced.html',
                                 border={'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 2},
                                 overwrite=True)
         

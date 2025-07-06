@@ -17,84 +17,113 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 def test_chord_default_margins():
     """Test chord with default margins (labels may be cut off)."""
     print("=== Testing Chord with Default Margins ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Load example data
+        print("📥 Loading energy dataset...")
         df = d3.import_example('energy')
         assert df is not None
+        print(f"✅ Energy dataset loaded successfully")
         
         # Plot with default margins (may cut off labels)
+        print("🎨 Creating chord diagram with default margins...")
         d3.chord(df, filepath='chord_default_margins.html')
-        print("✅ Chord with default margins created")
+        print("✅ Chord with default margins created successfully")
+        print("📁 Chart saved as 'chord_default_margins.html'")
+        print("⚠️ Note: Labels may be cut off with default margins")
         assert True
     except Exception as e:
         print(f"❌ Chord with default margins failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def test_chord_increased_margins():
     """Test chord with increased margins to prevent label cutoff."""
     print("=== Testing Chord with Increased Margins ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Load example data
+        print("📥 Loading energy dataset...")
         df = d3.import_example('energy')
         assert df is not None
+        print(f"✅ Energy dataset loaded successfully")
         
         # Plot with increased margins to prevent label cutoff
+        print("🎨 Creating chord diagram with increased margins...")
+        print("🔧 Parameters: figsize=[1000, 1000], margin=200, text_offset=20")
         d3.chord(df, 
                  filepath='chord_increased_margins.html',
                  figsize=[1000, 1000],  # Larger figure size
                  margin=200,  # Increased margin (default was 150)
                  text_offset=20)  # Increased text offset (default was 5)
-        print("✅ Chord with increased margins created")
+        print("✅ Chord with increased margins created successfully")
+        print("📁 Chart saved as 'chord_increased_margins.html'")
+        print("✅ Labels should be fully visible with increased margins")
         assert True
     except Exception as e:
         print(f"❌ Chord with increased margins failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def test_chord_large_margins():
     """Test chord with very large margins for long labels."""
     print("=== Testing Chord with Large Margins ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Load example data
+        print("📥 Loading energy dataset...")
         df = d3.import_example('energy')
         assert df is not None
+        print(f"✅ Energy dataset loaded successfully")
         
         # Plot with very large margins for long labels
+        print("🎨 Creating chord diagram with large margins...")
+        print("🔧 Parameters: figsize=[1200, 1200], margin=300, text_offset=50")
         d3.chord(df, 
                  filepath='chord_large_margins.html',
                  figsize=[1200, 1200],  # Even larger figure size
                  margin=300,  # Large margin for long labels
                  text_offset=50)  # Large text offset
-        print("✅ Chord with large margins created")
+        print("✅ Chord with large margins created successfully")
+        print("📁 Chart saved as 'chord_large_margins.html'")
+        print("✅ Large margins ensure all labels are visible")
         assert True
     except Exception as e:
         print(f"❌ Chord with large margins failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def test_chord_custom_data():
     """Test chord with custom data that has long labels."""
     print("=== Testing Chord with Custom Long Labels ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Create custom data with long labels
+        print("🔧 Creating custom dataset with long labels...")
         data = {
             'source': [
                 'Very Long Source Label That Might Be Cut Off',
@@ -111,33 +140,45 @@ def test_chord_custom_data():
             'weight': [10, 20, 15, 25]
         }
         df = pd.DataFrame(data)
+        print(f"✅ Custom dataset created with {len(df)} rows")
+        print(f"📊 Dataset columns: {list(df.columns)}")
         
         # Plot with large margins to accommodate long labels
+        print("🎨 Creating chord diagram with custom long labels...")
+        print("🔧 Parameters: figsize=[1400, 1400], margin=400, text_offset=80")
         d3.chord(df, 
                  filepath='chord_long_labels.html',
                  figsize=[1400, 1400],  # Large figure size
                  margin=400,  # Very large margin for long labels
                  text_offset=80)  # Large text offset
-        print("✅ Chord with long labels created")
+        print("✅ Chord with long labels created successfully")
+        print("📁 Chart saved as 'chord_long_labels.html'")
+        print("✅ Large margins accommodate very long labels")
         assert True
     except Exception as e:
         print(f"❌ Chord with long labels failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def test_chord_parameter_comparison():
     """Test different parameter combinations to show the effect."""
     print("=== Testing Chord Parameter Comparison ===")
+    print("📊 Initializing D3Blocks...")
     try:
         from d3blocks import D3Blocks
         
         # Initialize
         d3 = D3Blocks()
+        print("✅ D3Blocks initialized successfully")
         
         # Load example data
+        print("📥 Loading energy dataset...")
         df = d3.import_example('energy')
         assert df is not None
+        print(f"✅ Energy dataset loaded successfully")
         
         # Test different combinations
+        print("🔧 Setting up parameter combinations for comparison...")
         combinations = [
             {
                 'name': 'Default',
@@ -168,19 +209,25 @@ def test_chord_parameter_comparison():
                 'filepath': 'chord_comparison_extra_large.html'
             }
         ]
+        print(f"✅ {len(combinations)} parameter combinations prepared")
         
-        for combo in combinations:
-            print(f"Creating {combo['name']} chord diagram...")
+        for i, combo in enumerate(combinations, 1):
+            print(f"🎨 Creating {combo['name']} chord diagram ({i}/{len(combinations)})...")
+            print(f"🔧 Parameters: figsize={combo['figsize']}, margin={combo['margin']}, text_offset={combo['text_offset']}")
             d3.chord(df, 
                      filepath=combo['filepath'],
                      figsize=combo['figsize'],
                      margin=combo['margin'],
                      text_offset=combo['text_offset'])
+            print(f"✅ {combo['name']} chord diagram created")
+            print(f"📁 Chart saved as '{combo['filepath']}'")
         
-        print("✅ All chord comparison diagrams created")
+        print("✅ All chord comparison diagrams created successfully")
+        print("📊 Comparison complete: Default, Medium, Large, and Extra Large configurations")
         assert True
     except Exception as e:
         print(f"❌ Chord parameter comparison failed: {e}")
+        print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
 
 def run_all_chord_tests():
