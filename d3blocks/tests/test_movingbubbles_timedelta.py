@@ -6,6 +6,7 @@ This script tests that the plot runs in the correct time units based on the time
 
 import pandas as pd
 import numpy as np
+import pytest
 from datetime import datetime, timedelta
 from d3blocks import D3Blocks
 
@@ -95,7 +96,7 @@ def test_timedelta_units():
                 standardize='samplewise',
                 title=f'Movingbubbles Test - {timedelta_unit.capitalize()}',
                 filepath=f'movingbubbles_test_{timedelta_unit}.html',
-                showfig=True,
+                showfig=False,
                 save_button=True
             )
             
@@ -110,6 +111,7 @@ def test_timedelta_units():
                 
         except Exception as e:
             print(f"✗ Error creating plot for {timedelta_unit}: {str(e)}")
+            assert False
     
     print("\n--- Test Summary ---")
     print("The fix should ensure that:")
@@ -117,6 +119,4 @@ def test_timedelta_units():
     print("2. When timedelta='minutes': plot runs in minutes") 
     print("3. When timedelta='days': plot runs in days")
     print("\nCheck the generated HTML files to verify the animation speed matches the timedelta setting.")
-
-if __name__ == "__main__":
-    test_timedelta_units() 
+    assert True 

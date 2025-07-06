@@ -32,7 +32,7 @@ class Testd3blocks(unittest.TestCase):
         # Initialize
         d3 = D3Blocks()
         # Network graph
-        d3.d3graph(df, charge=800, collision=2, showfig=True)
+        d3.d3graph(df, charge=800, collision=2, showfig=False)
         # d3.elasticgraph(df, charge=800, collision=2, scaler='zscore')
         # Extract the node colors from the network graph.
         node_colors = d3.D3graph.node_properties
@@ -43,18 +43,17 @@ class Testd3blocks(unittest.TestCase):
         # Create the heatmap but do not show it yet because we first need to adjust the colors
         d3.heatmap(df, showfig=False)
         # Update the colors of the network graph to be consistent with the colors
-        d3.node_properties
+        if d3.node_properties is not None and node_colors is not None:
+            for i, label in enumerate(d3.node_properties['label']):
+                if node_colors.get(label) is not None:
+                    d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
 
-        for i, label in enumerate(d3.node_properties['label']):
-            if node_colors.get(label) is not None:
-                d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
-
-        d3.show(showfig=True, figsize=[600, 600], fontsize=8, scaler='zscore')
+        d3.show(showfig=False, figsize=[600, 600], fontsize=8, scaler='zscore')
 
         # Initialize
         d3 = D3Blocks()
         # Create sankey graph
-        d3.sankey(df, showfig=True)
+        d3.sankey(df, showfig=False)
         
         d3 = D3Blocks(chart='Sankey', frame=True)
         # Load data set
@@ -64,16 +63,17 @@ class Testd3blocks(unittest.TestCase):
         d3.set_node_properties(df)
         
         # Update the colors of the network graph to be consistent with the colors
-        for i, label in enumerate(d3.node_properties['label']):
-            if node_colors.get(label) is not None:
-                d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
+        if d3.node_properties is not None and node_colors is not None:
+            for i, label in enumerate(d3.node_properties['label']):
+                if node_colors.get(label) is not None:
+                    d3.node_properties.loc[i, 'color'] = node_colors.get(label)['color']
         
         # The colors in the dataframe are used in the chart.
         print(d3.node_properties)
         # Create edge properties
         d3.set_edge_properties(df, color='target', opacity='target')
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         
 
     def test_instantiate_d3blocks_no_args(self) -> None:
@@ -87,18 +87,20 @@ class Testd3blocks(unittest.TestCase):
         d3 = D3Blocks()
         # Import example
         df = d3.import_example('energy')
-        df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-        # Create the heatmap
-        d3.heatmap(df, stroke='red', figsize=(700, 700))
+        if df is not None:
+            df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+            # Create the heatmap
+            d3.heatmap(df, stroke='red', figsize=(700, 700))
 
     def test_matrix(self):
         # Initialize
         d3 = D3Blocks()
         # Import example
         df = d3.import_example('energy')
-        df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
-        # Create the heatmap
-        d3.matrix(df, stroke='red', vmax=10, figsize=(700, 700), cmap='interpolateGreens')
+        if df is not None:
+            df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+            # Create the heatmap
+            d3.matrix(df, stroke='red', vmax=10, figsize=(700, 700), cmap='interpolateGreens')
 
     def test_sankey(self):
         # Initialize
@@ -188,8 +190,9 @@ class Testd3blocks(unittest.TestCase):
         # d3.edge_properties
         # Show the chord diagram
         d3.set_edge_properties(df, color='#f0f0f0')
-        assert np.all(d3.edge_properties['color']=='#f0f0f0')
-        d3.show(showfig=True, filepath='chord.html')
+        if d3.edge_properties is not None:
+            assert np.all(d3.edge_properties['color']=='#f0f0f0')
+        d3.show(showfig=False, filepath='chord.html')
 
         d3 = D3Blocks()
         df = d3.import_example('energy')

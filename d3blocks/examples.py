@@ -675,30 +675,6 @@ d3.D3graph.set_node_properties(color='cluster')
 # Plot
 d3.D3graph.show()
 
-# %%
-import pypickle
-import pandas as pd
-df = pypickle.load(r'D:/REPOS/aeroplus/aeroplus/data/maintenance.pkl')
-df.columns.values[0] = df.columns[0].replace('\xa0', ' ')
-df.rename(columns={'Date': 'datetime', 'Reported by': 'sample_id', 'Aircraft': 'state'}, inplace=True)
-
-df['state']
-df['number'] = df['state'].str.extract(r'^(\d+)')
-df['state'] = df['state'].str.replace(r'^\d+\s+', '', regex=True)
-df['datetime'] = pd.to_datetime(df['datetime'])
-
-df.drop(labels=['Note', '', 'number', 'Status'], axis=1, inplace=True)
-# print(df)
-
-
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks(frame=False)
-# Import example
-# df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-
-# Show with size=5
-d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html')
 
 
 # %% d3graph

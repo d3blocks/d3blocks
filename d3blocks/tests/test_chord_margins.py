@@ -8,10 +8,11 @@ import sys
 import os
 import pandas as pd
 import numpy as np
+import pytest
 from d3blocks import D3Blocks
 
 # Add the d3blocks directory to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'd3blocks'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 def test_chord_default_margins():
     """Test chord with default margins (labels may be cut off)."""
@@ -24,14 +25,15 @@ def test_chord_default_margins():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Plot with default margins (may cut off labels)
         d3.chord(df, filepath='chord_default_margins.html')
         print("✅ Chord with default margins created")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord with default margins failed: {e}")
-        return False
+        assert False
 
 def test_chord_increased_margins():
     """Test chord with increased margins to prevent label cutoff."""
@@ -44,6 +46,7 @@ def test_chord_increased_margins():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Plot with increased margins to prevent label cutoff
         d3.chord(df, 
@@ -52,10 +55,10 @@ def test_chord_increased_margins():
                  margin=200,  # Increased margin (default was 150)
                  text_offset=20)  # Increased text offset (default was 5)
         print("✅ Chord with increased margins created")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord with increased margins failed: {e}")
-        return False
+        assert False
 
 def test_chord_large_margins():
     """Test chord with very large margins for long labels."""
@@ -68,6 +71,7 @@ def test_chord_large_margins():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Plot with very large margins for long labels
         d3.chord(df, 
@@ -76,10 +80,10 @@ def test_chord_large_margins():
                  margin=300,  # Large margin for long labels
                  text_offset=50)  # Large text offset
         print("✅ Chord with large margins created")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord with large margins failed: {e}")
-        return False
+        assert False
 
 def test_chord_custom_data():
     """Test chord with custom data that has long labels."""
@@ -115,10 +119,10 @@ def test_chord_custom_data():
                  margin=400,  # Very large margin for long labels
                  text_offset=80)  # Large text offset
         print("✅ Chord with long labels created")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord with long labels failed: {e}")
-        return False
+        assert False
 
 def test_chord_parameter_comparison():
     """Test different parameter combinations to show the effect."""
@@ -131,6 +135,7 @@ def test_chord_parameter_comparison():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Test different combinations
         combinations = [
@@ -173,10 +178,10 @@ def test_chord_parameter_comparison():
                      text_offset=combo['text_offset'])
         
         print("✅ All chord comparison diagrams created")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord parameter comparison failed: {e}")
-        return False
+        assert False
 
 def run_all_chord_tests():
     """Run all chord margin tests."""

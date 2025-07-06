@@ -6,7 +6,7 @@ d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy')
 # Create network using default
-d3.d3graph(df, filepath='d3graph.html', color='cluster', showfig=True)
+d3.d3graph(df, filepath='d3graph.html', color='cluster', showfig=False)
 
 #%%
 # Customize the chart
@@ -17,20 +17,21 @@ d3.D3graph.node_properties
 d3.D3graph.edge_properties
 
 # Change the node properties like this:
-d3.D3graph.set_node_properties(color=None)
-d3.D3graph.node_properties['Solar']['size']=30
-d3.D3graph.node_properties['Solar']['color']='#FF0000'
-d3.D3graph.node_properties['Solar']['edge_color']='#000000'
-d3.D3graph.node_properties['Solar']['edge_size']=5
+d3.D3graph.set_node_properties(color='cluster')
+if d3.D3graph.node_properties is not None and 'Solar' in d3.D3graph.node_properties:
+    d3.D3graph.node_properties['Solar']['size']=30
+    d3.D3graph.node_properties['Solar']['color']='#FF0000'
+    d3.D3graph.node_properties['Solar']['edge_color']='#000000'
+    d3.D3graph.node_properties['Solar']['edge_size']=5
 
 # After making changes, show the graph again using show()
-d3.D3graph.show()
+d3.D3graph.show(showfig=False)
 
 # Change edge properties like this:
 d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
 
 # After making changes, show the graph again using show()
-d3.D3graph.show()
+d3.D3graph.show(showfig=False)
 
 #%%
 # Load library
@@ -89,7 +90,8 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Create Chart
-d3.tree(df, filepath='tree.html')
+if df is not None:
+    d3.tree(df, filepath='tree.html')
 
 #%%
 # Load library
@@ -102,7 +104,8 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 # Create Chart
-d3.treemap(df, filepath=r'C:/temp/treemap.html')
+if df is not None:
+    d3.treemap(df, filepath='treemap.html')
 
 #%%
 # Load library

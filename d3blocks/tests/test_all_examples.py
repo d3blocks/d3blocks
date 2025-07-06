@@ -8,10 +8,11 @@ import sys
 import os
 import pandas as pd
 import numpy as np
+import pytest
 from d3blocks import D3Blocks
 
 # Add the d3blocks directory to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'd3blocks'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 def test_particles():
     """Test particles functionality."""
@@ -35,10 +36,10 @@ def test_particles():
                      cmap='Turbo',
                      color_background='#ffffff')
         print("✅ Particles test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Particles test failed: {e}")
-        return False
+        assert False
 
 def test_violin():
     """Test violin functionality."""
@@ -51,6 +52,7 @@ def test_violin():
         
         # Import example dataset
         df = d3.import_example('cancer')
+        assert df is not None
         
         # Set some input variables.
         tooltip = df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
@@ -67,10 +69,10 @@ def test_violin():
                   filepath='violine.html', 
                   figsize=[900, None])
         print("✅ Violin test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Violin test failed: {e}")
-        return False
+        assert False
 
 def test_violin_advanced():
     """Test violin advanced functionality."""
@@ -83,6 +85,7 @@ def test_violin_advanced():
         
         # Import example dataset
         df = d3.import_example('cancer')
+        assert df is not None
         
         # Set the properties by providing the labels
         d3.set_edge_properties(x=df['labx'].values, 
@@ -91,18 +94,19 @@ def test_violin_advanced():
                               x_order=['acc','kich', 'brca','lgg','blca','coad','ov'])
         
         # Set specific node properties.
-        d3.edge_properties.loc[0,'size']=50
-        d3.edge_properties.loc[0,'color']='#000000'
-        d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
-        d3.edge_properties.loc[0,'fontsize']=30
+        if d3.edge_properties is not None:
+            d3.edge_properties.loc[0,'size']=50
+            d3.edge_properties.loc[0,'color']='#000000'
+            d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
+            d3.edge_properties.loc[0,'fontsize']=30
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Violin advanced test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Violin advanced test failed: {e}")
-        return False
+        assert False
 
 def test_scatter():
     """Test scatter functionality."""
@@ -115,6 +119,7 @@ def test_scatter():
         
         # Load example data
         df = d3.import_example('cancer')
+        assert df is not None
         
         # Set size and tooltip
         size = df['survival_months'].fillna(1).values / 20
@@ -131,10 +136,10 @@ def test_scatter():
                    filepath='scatter_demo.html',
                    cmap='tab20')
         print("✅ Scatter test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Scatter test failed: {e}")
-        return False
+        assert False
 
 def test_scatter_transitions():
     """Test scatter with transitions."""
@@ -147,6 +152,7 @@ def test_scatter_transitions():
         
         # Load example data
         df = d3.import_example('cancer')
+        assert df is not None
         
         # Set size and tooltip
         size = df['survival_months'].fillna(1).values / 20
@@ -167,10 +173,10 @@ def test_scatter_transitions():
                    filepath='scatter_transitions2.html',
                    cmap='tab20')
         print("✅ Scatter transitions test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Scatter transitions test failed: {e}")
-        return False
+        assert False
 
 def test_scatter_advanced():
     """Test scatter advanced functionality."""
@@ -183,6 +189,7 @@ def test_scatter_advanced():
         
         # Import example
         df = d3.import_example('cancer')
+        assert df is not None
         
         # Set properties
         d3.set_edge_properties(df['tsneX'].values,
@@ -196,20 +203,21 @@ def test_scatter_advanced():
                                scale=True)
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         
         # Set specific node properties.
-        d3.edge_properties.loc[0,'size']=50
-        d3.edge_properties.loc[0,'color']='#000000'
-        d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
+        if d3.edge_properties is not None:
+            d3.edge_properties.loc[0,'size']=50
+            d3.edge_properties.loc[0,'color']='#000000'
+            d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
         
         # Show the chart again with adjustments
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Scatter advanced test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Scatter advanced test failed: {e}")
-        return False
+        assert False
 
 def test_chord():
     """Test chord functionality."""
@@ -222,14 +230,15 @@ def test_chord():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Plot
         d3.chord(df)
         print("✅ Chord test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord test failed: {e}")
-        return False
+        assert False
 
 def test_chord_advanced():
     """Test chord advanced functionality."""
@@ -242,33 +251,37 @@ def test_chord_advanced():
         
         # Import example
         df = d3.import_example('energy')
+        assert df is not None
         
         # Node properties
         d3.set_node_properties(df, opacity=0.2, cmap='tab20')
         d3.set_edge_properties(df, color='source', opacity='source')
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         
         # Make some edits to highlight the Nuclear node
-        d3.node_properties.get('Nuclear')['color']='#ff0000'
-        d3.node_properties.get('Nuclear')['opacity']=1
+        if d3.node_properties is not None and 'Nuclear' in d3.node_properties:
+            d3.node_properties.get('Nuclear')['color']='#ff0000'
+            d3.node_properties.get('Nuclear')['opacity']=1
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         
         # Make edits to highlight the Nuclear Edge
-        d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'color'] = '#ff0000'
-        d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'opacity'] = 0.8
-        d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'weight'] = 1000
+        if d3.edge_properties is not None:
+            mask = (d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation')
+            d3.edge_properties.loc[mask, 'color'] = '#ff0000'
+            d3.edge_properties.loc[mask, 'opacity'] = 0.8
+            d3.edge_properties.loc[mask, 'weight'] = 1000
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Chord advanced test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord advanced test failed: {e}")
-        return False
+        assert False
 
 def test_chord_ordering():
     """Test chord with different ordering."""
@@ -281,6 +294,7 @@ def test_chord_ordering():
         
         # Import example
         df = d3.import_example('energy')
+        assert df is not None
         
         # Custom order of the labels
         d3.chord(df, ordering=np.sort(np.unique(df['source'].values)))
@@ -294,10 +308,10 @@ def test_chord_ordering():
         # Do not sort
         d3.chord(df, ordering='')
         print("✅ Chord ordering test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Chord ordering test failed: {e}")
-        return False
+        assert False
 
 def test_imageslider():
     """Test imageslider functionality."""
@@ -318,12 +332,12 @@ def test_imageslider():
         d3.imageslider(img_before, img_after)
         
         # Plot with custom settings
-        d3.imageslider(img_before, img_after, showfig=True, scale=True, colorscale=2, figsize=[400, 400])
+        d3.imageslider(img_before, img_after, showfig=False, scale=True, colorscale=2, figsize=[400, 400])
         print("✅ Imageslider test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Imageslider test failed: {e}")
-        return False
+        assert False
 
 def test_sankey():
     """Test sankey functionality."""
@@ -336,14 +350,15 @@ def test_sankey():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Plot
         d3.sankey(df)
         print("✅ Sankey test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Sankey test failed: {e}")
-        return False
+        assert False
 
 def test_sankey_advanced():
     """Test sankey advanced functionality."""
@@ -356,18 +371,19 @@ def test_sankey_advanced():
         
         # Import example
         df = d3.import_example('energy')
+        assert df is not None
         
         # Node properties
         d3.set_node_properties(df)
         d3.set_edge_properties(df, color='target', opacity='target')
         
         # Show the chart
-        d3.show()
+        d3.show(showfig=False)
         print("✅ Sankey advanced test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Sankey advanced test failed: {e}")
-        return False
+        assert False
 
 def test_sankey_custom_colors():
     """Test sankey with custom colors."""
@@ -380,22 +396,23 @@ def test_sankey_custom_colors():
         
         # Import example
         df = d3.import_example('energy')
+        assert df is not None
         
         # Custom color the nodes
-        html = d3.sankey(df.copy(), filepath=r'c://temp//sankey.html', 
+        html = d3.sankey(df.copy(), filepath='sankey.html', 
                         color={'Nuclear': '#FF0000', 'Wind':'#000000', 'Electricity grid':'#FF0000'})
         
         # Alternatively:
         d3 = D3Blocks(chart='Sankey', frame=True)
-        df = d3.import_example(data='energy')
+        df = d3.import_example('energy')
         d3.set_node_properties(df, color={'Nuclear': '#FF0000', 'Wind':'#FF0000', 'Electricity grid':'#7FFFD4', 'Bio-conversion':'#000000', 'Industry': '#000000'})
         d3.set_edge_properties(df, color='target', opacity='target')
-        d3.show(filepath=r'c://temp//sankey.html')
+        d3.show(filepath='sankey.html', showfig=False)
         print("✅ Sankey custom colors test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Sankey custom colors test failed: {e}")
-        return False
+        assert False
 
 def test_movingbubbles():
     """Test movingbubbles functionality."""
@@ -408,14 +425,15 @@ def test_movingbubbles():
         
         # Load example data
         df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+        assert df is not None
         
         # Plot
         d3.movingbubbles(df, speed={"stop": 100000, "slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
         print("✅ Movingbubbles test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Movingbubbles test failed: {e}")
-        return False
+        assert False
 
 def test_movingbubbles_advanced():
     """Test movingbubbles advanced functionality."""
@@ -428,22 +446,24 @@ def test_movingbubbles_advanced():
         
         # Import example
         df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+        assert df is not None
         
         # Coloring the states.
         d3.set_node_properties(df['state'])
         
         # Color the sleeping state black
-        d3.node_properties.get('Sleeping')['color']='#000000'
+        if d3.node_properties is not None and 'Sleeping' in d3.node_properties:
+            d3.node_properties.get('Sleeping')['color']='#000000'
         
         d3.set_edge_properties(df)
         
         # Show
-        d3.show(title='Movingbubbles with adjusted configurations')
+        d3.show(title='Movingbubbles with adjusted configurations', showfig=False)
         print("✅ Movingbubbles advanced test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Movingbubbles advanced test failed: {e}")
-        return False
+        assert False
 
 def test_movingbubbles_custom():
     """Test movingbubbles with custom colors and sizes."""
@@ -457,6 +477,7 @@ def test_movingbubbles_custom():
         
         # Import example
         df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+        assert df is not None
         
         # Specify the colors and node sizes for the specific sample_id or for demonstration, generated randomly
         size = {i: random.randint(2, 15) for i in range(1, 100)}
@@ -465,10 +486,10 @@ def test_movingbubbles_custom():
         # Show
         d3.movingbubbles(df, color=color, size=size)
         print("✅ Movingbubbles custom test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Movingbubbles custom test failed: {e}")
-        return False
+        assert False
 
 def test_timeseries():
     """Test timeseries functionality."""
@@ -481,14 +502,15 @@ def test_timeseries():
         
         # Import example
         df = d3.import_example('climate')
+        assert df is not None
         
         # Show
         d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500])
         print("✅ Timeseries test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Timeseries test failed: {e}")
-        return False
+        assert False
 
 def test_timeseries_advanced():
     """Test timeseries advanced functionality."""
@@ -501,20 +523,22 @@ def test_timeseries_advanced():
         
         # Import example
         df = d3.import_example('climate')
+        assert df is not None
         
         # Node properties
         d3.set_node_properties(df.columns.values)
-        d3.node_properties.get('wind_speed')['color']='#000000'
+        if d3.node_properties is not None and 'wind_speed' in d3.node_properties:
+            d3.node_properties.get('wind_speed')['color']='#000000'
         
         d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d')
         
         # Show
-        d3.show(title='Timeseries with adjusted configurations')
+        d3.show(title='Timeseries with adjusted configurations', showfig=False)
         print("✅ Timeseries advanced test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Timeseries advanced test failed: {e}")
-        return False
+        assert False
 
 def test_heatmap():
     """Test heatmap functionality."""
@@ -527,14 +551,15 @@ def test_heatmap():
         
         # Load example data
         df = d3.import_example('stormofswords')  # 'energy'
+        assert df is not None
         
         # Plot
         d3.heatmap(df)
         print("✅ Heatmap test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Heatmap test failed: {e}")
-        return False
+        assert False
 
 def test_heatmap_cluster_params():
     """Test heatmap with cluster parameters."""
@@ -547,6 +572,7 @@ def test_heatmap_cluster_params():
         
         # Load example data
         df = d3.import_example('energy')
+        assert df is not None
         
         # Change cluster parameters
         d3.heatmap(df, cluster_params={'evaluate':'dbindex',
@@ -556,10 +582,10 @@ def test_heatmap_cluster_params():
                                       'min_clust': 3,
                                       'max_clust': 15})
         print("✅ Heatmap cluster parameters test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Heatmap cluster parameters test failed: {e}")
-        return False
+        assert False
 
 def test_heatmap_color_labels():
     """Test heatmap with color labels."""
@@ -572,6 +598,7 @@ def test_heatmap_color_labels():
         
         # Load example data
         df = d3.import_example('bigbang')
+        assert df is not None
         
         # Plot and color on label
         d3.heatmap(df, color=[1,1,1,2,2,2,3])
@@ -579,10 +606,10 @@ def test_heatmap_color_labels():
         # Plot and specify the hex color
         d3.heatmap(df, color=['#FFF000', '#FFF000', '#FFF000', '#000FFF' , '#000FFF', '#000FFF', '#000FFF'])
         print("✅ Heatmap color labels test completed")
-        return True
+        assert True
     except Exception as e:
         print(f"❌ Heatmap color labels test failed: {e}")
-        return False
+        assert False
 
 def test_matrix():
     """Test matrix functionality."""

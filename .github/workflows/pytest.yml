@@ -1,5 +1,5 @@
 name: Pytest for d3blocks
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -26,4 +26,10 @@ jobs:
           pip install .
       - name: Test with pytest
         run: |
-          pytest
+          pytest d3blocks/tests/ -v --tb=short
+      - name: Test specific test files
+        run: |
+          pytest d3blocks/tests/test_all_examples.py -v
+          pytest d3blocks/tests/test_d3blocks.py -v
+          pytest d3blocks/tests/test_chord_margins.py -v
+          pytest d3blocks/tests/test_movingbubbles_timedelta.py -v
