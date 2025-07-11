@@ -1900,6 +1900,11 @@ class D3Blocks():
                 slider=[None, None],
                 set_slider=0,
                 show_slider=True,
+
+                click={'fill': None, 'stroke': 'black', 'size': 1.3, 'stroke-width': 3},
+                background_color = '#FFFFFF',
+                dark_mode = False,
+
                 notebook=False,
                 showfig=True,
                 support='text',
@@ -1963,6 +1968,15 @@ class D3Blocks():
         show_slider : bool, (default: True)
             True: Slider is shown in the HTML.
             False: Slider is not shown in the HTML.
+        click : dict,
+            On node click event. The size depicts the multiplication factor.
+                * {'fill': 'red', 'stroke': 'black', 'size': 1.3, 'stroke-width': 3}
+                * {'fill': None, 'stroke': '#FFF000', 'size': 2, 'stroke-width': 1}
+                * None : No action on click.
+        background_color : str, optional
+            The background color of the HTML page and SVG. Default is '#FFFFFF'.
+        dark_mode : bool, optional
+            If True, enables dark mode for the visualization. Default is False.
         title : String, (default: None)
             Title of the figure.
                 * 'd3graph'
@@ -2052,6 +2066,9 @@ class D3Blocks():
         self.config['slider'] = slider
         self.config['show_slider'] = show_slider
         self.config['set_slider'] = set_slider
+        self.config['click'] = click
+        self.config['background_color'] = background_color
+        self.config['dark_mode'] = dark_mode
         self.config['notebook'] = notebook
 
         # Copy of data
@@ -2065,7 +2082,7 @@ class D3Blocks():
         # Create default graph
         self.D3graph.graph(adjmat, color=color, size=size, opacity=opacity, scaler=scaler, cmap=cmap)
         # Open the webbrowser
-        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite, show_slider=show_slider, set_slider=set_slider, notebook=notebook)
+        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite, show_slider=show_slider, set_slider=set_slider, notebook=notebook, background_color=background_color, dark_mode=dark_mode, click=click)
         # Display the chart
         # return self.display(html)
 

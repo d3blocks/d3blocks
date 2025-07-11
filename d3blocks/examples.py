@@ -483,7 +483,7 @@ d3 = D3Blocks()
 df = d3.import_example(data='energy')
 
 # Create the network graph
-d3.d3graph(df, cmap='Set2')
+d3.d3graph(df, cmap='Set2', dark_mode=True)
 # Extract the node colors from the network graph.
 node_colors = d3.D3graph.node_properties
 
