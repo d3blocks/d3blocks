@@ -6,10 +6,10 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 #
 # Import example
-df = d3.import_example('energy') # 'stormofswords'
+df = d3.import_example('stormofswords') # 'stormofswords'
 #
 # Create force-directed-network (without cluster labels)
-d3.elasticgraph(df, filepath='Elasticgraph.html', figsize=[700, 700])
+d3.elasticgraph(df, figsize=[700, 700])
 #
 # Show elasticgraph
 d3.Elasticgraph.show()
