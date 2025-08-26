@@ -20,9 +20,7 @@ Gumroad Products with Podcasts
 	#. `Gumroad products <https://erdogant.gumroad.com>`_
 	#. `D3Blocks The Python Library to Create Interactive and Standalone D3js Charts. <https://erdogant.gumroad.com/l/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts>`_
 	#. `Create Beautiful Stand-Alone and Interactive D3.js Charts with Python. <https://erdogant.gumroad.com/l/d3graph-bbdf625ebf60>`_
-	
-	https://erdogant.gumroad.com/l/d3graph-bbdf625ebf60
-	
+		
 	
 Colab Notebook
 ################
