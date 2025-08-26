@@ -4,21 +4,22 @@ Sponsor
 .. include:: sponsor.rst
 
 
-Medium Blog
-############
+Medium Blogs
+#############
 
 .. note::
-	#. `D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts. <https://erdogant.medium.com/>`_
+	#. `Subscribe to Medium blogs <https://erdogant.medium.com/subscribe>`_
+	#. `D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts. <https://medium.com/data-science-collective/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts-ef8c65286e86>`_
 
 
+Gumroad Products with Podcasts
+################################
 
-Github
-############
-
-.. note::
-	`Source code of d3blocks can be found at Github <https://github.com/d3blocks/d3blocks/>`_
-
-
+.. tip::
+	#. `Gumroad products <https://erdogant.gumroad.com>`_
+	#. `D3Blocks with Podcast. <https://erdogant.gumroad.com/l/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts>`_
+	
+	
 Colab Notebook
 ################
 
@@ -28,5 +29,10 @@ Colab Notebook
 .. _Colab notebook: https://colab.research.google.com/github/d3blocks/d3blocks/blob/master/notebooks/d3blocks.ipynb
 
 
+Github
+############
+
+.. note::
+	`Source code of d3blocks can be found at Github <https://github.com/d3blocks/d3blocks/>`_
 
 .. include:: add_bottom.add
