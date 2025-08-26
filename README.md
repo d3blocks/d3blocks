@@ -35,7 +35,8 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 ### Resources and Links
 - **Example Notebooks:** [Examples](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
-- **Blog Posts:** [Medium](https://erdogant.medium.com/)
+- **Medium Blogs** [Medium](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blogs)
+- **Gumroad Blogs with podcast:** [GumRoad](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#gumroad-products-with-podcasts))
 - **Documentation:** [Website](https://d3blocks.github.io/d3blocks)
 - **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/d3blocks/d3blocks/issues)
 
