@@ -1,0 +1,87 @@
+name: Build & Deploy Sphinx Docs
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # pip install numpy matplotlib pandas scipy sphinx_rtd_theme rst2pdf sphinx pytest irelease sphinxcontrib-fulltoc tabulate
+          pip install -r requirements-dev.txt || true
+          pip install -r requirements.txt || true
+
+      # 4. Build HTML docs
+      - name: Build HTML
+        working-directory: ./docs
+        run: |
+          make clean
+          make html
+
+      # 5. Verify build and copy files
+      - name: Verify build and copy files
+        run: |
+          # Debug: Show current working directory
+          echo "=== Current working directory ==="
+          pwd
+          echo "=== Current directory contents ==="
+          ls -la
+          
+          # Debug: List what was created
+          echo "=== Contents of docs/pages/html ==="
+          ls -la ./docs/pages/html/ || echo "docs/pages/html/ does not exist"
+          
+          # Create docs/pages folder if it doesn't exist
+          echo "=== Creating docs/pages directory ==="
+          mkdir -p ./docs/pages
+          echo "=== docs/pages directory created ==="
+          ls -la ./docs/pages/ || echo "docs/pages/ still does not exist"
+          
+          # Copy built HTML files to docs/pages folder
+          echo "=== Copying files ==="
+          cp -rv ./docs/pages/html/* ./docs/pages/ || echo "Copy failed with exit code $?"
+          
+          # Verify copy worked
+          echo "=== Contents of docs/pages after copy ==="
+          ls -la ./docs/pages/ || echo "docs/pages/ does not exist"
+          
+          # Show file sizes to verify copy
+          echo "=== File sizes in docs/pages ==="
+          du -sh ./docs/pages/ || echo "Cannot check docs/pages size"
+
+      # 6. Deploy to docs/pages/ folder on main branch
+      - name: Deploy to docs/pages/ folder
+        run: |
+          # Configure git
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          
+          # Debug: Show what we're about to commit
+          echo "=== Git status ==="
+          git status
+          
+          # Add and commit changes
+          git add ./docs/pages/
+          git commit -m "Update Sphinx documentation" || echo "No changes"
+          git push origin master
+    
