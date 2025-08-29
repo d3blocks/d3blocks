@@ -9,12 +9,32 @@ authors = [{ name = "Erdogan Taskesen", email = "erdogant@gmail.com" },]
 description = "Python package d3blocks."
 readme = "README.md"
 requires-python = ">=3"
-license = { file = "LICENSE" }
-keywords = ["Python", ""]
+license = "GPL-3.0-or-later"
+keywords = [
+    "Python",
+    "visualizations",
+    "interactive",
+    "javascript",
+    "d3js",
+    "d3blocks",
+    "network",
+    "graph",
+    "data visualization",
+    "web",
+    "extendable",
+    "extension",
+    "plugin",
+    "modular",
+    "customizable"
+]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved",
     "Operating System :: OS Independent",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Unix",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
 ]
 dependencies = [
     'numpy',
