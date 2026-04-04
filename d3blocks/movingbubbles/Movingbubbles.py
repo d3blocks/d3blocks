@@ -164,12 +164,11 @@ def set_edge_properties(df, **kwargs):
     df = df.copy()
 
     # Compute delta
-    if ~np.any(df.columns=='delta') and isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
+    if isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
         if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
-        # df = self.compute_time_delta(df, sample_id=sample_id, datetime=datetime, dt_format=self.config['dt_format'])
         df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta if timedelta else 'minutes', logger=logger)
     else:
-        raise Exception(print('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values)))
+        raise Exception('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values))
 
     # Set size per node. Note that sizes are still constant per node!
     df = _set_nodesize(df, sample_id, size, logger)
@@ -178,22 +177,19 @@ def set_edge_properties(df, **kwargs):
     return df
 
 def _set_nodecolor(df, sample_id, color, cmap, logger):
-    # Node color is set to default.
     if isinstance(color, dict):
-        # add new column to df with node color for the specified sample_id
+        # Per-node colors supplied as {sample_id: hex}
         if logger is not None: logger.info('Processing the specified in node colors in dictionary..')
         df['color'] = '#808080'
         for key in color.keys():
             df.loc[df[sample_id]==key, 'color'] = str(color.get(key))
-
-    if color is None:
+    elif color is None:
+        # Derive colors from cmap based on sample_id
         colors = colourmap.fromlist(df['sample_id'], cmap=cmap, scheme='hex')[0]
-        # Convert NumPy strings to regular Python strings
         df['color'] = [str(c) for c in colors]
-
-    # If the color column not exists, create one with default color
-    if not np.any(np.isin(df.columns, 'color')):
-        df['color'] = str(color) if color is not None else color
+    else:
+        # Single hex color string applied to all nodes
+        df['color'] = str(color)
         if logger is not None: logger.info('Set all nodes to color: %s' %(color))
 
     return df
@@ -249,11 +245,11 @@ def show(df, **kwargs):
 
     # Extract minutes and days
     if config['timedelta']=='seconds':
-        df['time_in_state'] = df['delta'].dt.seconds.astype(int)
+        df['time_in_state'] = df['delta'].dt.total_seconds().apply(lambda x: max(1, int(x))).astype(int)
     elif config['timedelta']=='minutes':
-        df['time_in_state'] = (np.ceil(df['delta'].dt.seconds / 60)).astype(int)
+        df['time_in_state'] = df['delta'].dt.total_seconds().apply(lambda x: max(1, int(np.ceil(x / 60)))).astype(int)
     elif config['timedelta']=='days':
-        df['time_in_state'] = df['delta'].dt.days.astype(int)
+        df['time_in_state'] = df['delta'].dt.total_seconds().apply(lambda x: max(1, int(np.ceil(x / 86400)))).astype(int)
 
     # Transform dataframe into input form for d3
     X = []
@@ -272,7 +268,7 @@ def show(df, **kwargs):
         tmplist=tmplist.replace(']', '')
         tmplist=tmplist.replace(' ', '')
         # Make one big happy list
-        X = [tmplist] + X
+        X.append(tmplist)
 
     # Node size in the same order as the uiid
     nodedict = dict(zip(df['sample_id'], df['size']))
@@ -459,9 +455,25 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
             # Get data for specific sample-id
             Iloc = df[sample_id]==s
             dfs = df.loc[Iloc, :]
-            # Timedelta
+            # Timedelta between consecutive rows for this sample
             timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
             df.loc[Iloc, 'delta'] = timedelta
+            # Last row of this sample has no successor — mark as NaT so it is
+            # caught by the NaT->zero block below and never triggers a move.
+            last_idx = dfs.index[-1]
+            df.loc[last_idx, 'delta'] = pd.NaT
+    elif method is None:
+        # Global mode: deltas are real wall-clock gaps between events across all
+        # sample_ids, sorted by datetime.  The last row of each sample gets NaT.
+        if logger is not None: logger.info('Standardize method: [global/None]')
+        df = df.sort_values(by=[datetime])
+        df.reset_index(drop=True, inplace=True)
+        tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
+        df.loc[1:, 'delta'] = tmpdelta
+        # NaT the last row per sample so it never triggers a move
+        for s in uis:
+            last_idx = df.loc[df[sample_id]==s].sort_values(by=[datetime]).index[-1]
+            df.loc[last_idx, 'delta'] = pd.NaT
             # Standardize time per unique sample. Each sample will start at timenow.
             # df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
     elif method=='relative':

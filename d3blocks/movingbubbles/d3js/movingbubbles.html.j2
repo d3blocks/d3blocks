@@ -252,13 +252,12 @@ function timer() {
 			return readablePercent(act_counts[d.index]);
 		});
 
-	// Update time
-	var true_minute = curr_minute % 1440;
-	d3.select("#current_time").text(formatTime(true_minute));
-	
-	// Update notes
-	// var true_minute = curr_minute % 1440;
-	if (true_minute == time_notes[notes_index].start_minute) {
+	// Update time display
+	d3.select("#current_time").text(formatTime(curr_minute));
+
+	// Update notes (compare against display minute, not raw counter)
+	var display_minute = curr_minute % 1440;
+	if (display_minute == time_notes[notes_index].start_minute) {
 		d3.select("#note")
 			.style("top", "0px")
 		  .transition()
@@ -269,7 +268,7 @@ function timer() {
 	} 
 	
 	// Make note disappear at the end.
-	else if (true_minute == time_notes[notes_index].stop_minute) {
+	else if (display_minute == time_notes[notes_index].stop_minute) {
 		
 		d3.select("#note").transition()
 			.duration(1000)
@@ -413,38 +412,27 @@ function readablePercent(n) {
 // Time display based on timedelta unit
 function formatTime(m) {
 	var timedelta = "{{ TIMEDELTA }}";
-	
+
 	if (timedelta === "seconds") {
-		// Display as seconds
+		// Display as HH:MM:SS
 		var total_seconds = m;
 		var hh = Math.floor(total_seconds / 3600);
 		var mm = Math.floor((total_seconds % 3600) / 60);
 		var ss = total_seconds % 60;
-		
+
 		if (hh < 10) hh = "0" + hh;
 		if (mm < 10) mm = "0" + mm;
 		if (ss < 10) ss = "0" + ss;
-		
+
 		return hh + ":" + mm + ":" + ss;
 	} else {
-		// Default: minutes (HH:MM format)
-		var minutes = (m + {{ START_HOUR_MIN }}*60) % 1440;
-		var hh = Math.floor(minutes / 60);
-		if (hh > 24) {
-			hh = hh - 24;
-		} else if (hh == 24) {
-		} else if (hh == 0) {
-			hh = 0;
-		}
-		var mm = minutes % 60;
-		if (mm < 10) {
-			mm = "0" + mm;
-		}
-		if (hh < 10) {
-			hh = "0" + hh;
-		}
-		
-		return hh + ":" + mm;
+		// Default: minutes — display as HH:MM, wrapping at midnight
+		var total_minutes = (m + Math.round({{ START_HOUR_MIN }} * 60)) % 1440;
+		if (total_minutes < 0) total_minutes += 1440;
+		var hh = Math.floor(total_minutes / 60) % 24;
+		var mm = total_minutes % 60;
+
+		return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
 	}
 }
 
