@@ -222,12 +222,8 @@ function timer() {
 			curr_moves = curr_node.moves; 
 
 		// Time to go to next activity
-		if (curr_node.next_move_time == curr_minute) {
-			if (curr_node.moves == curr_node.sched.length-1) {
-				curr_moves = 0;
-			} else {
-				curr_moves += 1;
-			}
+		if (curr_node.next_move_time == curr_minute && curr_node.moves < curr_node.sched.length-1) {
+			curr_moves += 1;
 		
 			// Subtract from current activity count
 			act_counts[curr_node.act] -= 1;
