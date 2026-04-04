@@ -1041,31 +1041,6 @@ d3.movingbubbles(df,
 df1 = d3.edge_properties
 d3.edge_properties['time_in_state'].cumsum()
 
-# %% 
-
-df = pd.read_csv(r'D:\REPOS\d3blocks\d3blocks\data\test_3_AL.csv')
-
-size={2386: 20, 10197: 10}
-color={2386: '#FF0000'}
-
-d3.movingbubbles(df,
-                 standardize='samplewise',
-                 size=size,
-                 color=color,
-                 color_method='node',
-                 dt_format='%Y-%m-%d %H:%M:%S',
-                 title='d3blocks_movingbubbles',
-                 cmap='Set1',
-                 timedelta='minutes',
-                 speed={"slow": 1000,
-                        "medium": 200,
-                        "fast": 20},
-                 )
-
-df1 = d3.edge_properties
-
-for i, _ in enumerate(df1.index):
-    df1['sample_id'].iloc[i]
 
 # %% Matrix
 import pandas as pd

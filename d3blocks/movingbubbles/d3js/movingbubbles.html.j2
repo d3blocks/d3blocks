@@ -16,7 +16,25 @@ Licensed    : GPL3
 {% include "style.css" %}
     body { font-size: {{ FONTSIZE }}; }
 .node { stroke-width: 1.5px; }
-
+#current_day {
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  margin-bottom: 2px;
+  font-style: italic;
+}
+#current_time {
+  font-size: 42px;
+  color: #666;
+  text-align: center;
+}
+#speed .togglebutton.pause {
+  border-right: none;
+}
+#speed .togglebutton.slow {
+  border-right: none;
+  border-left: none;
+}
 </style>
 </head>
 
@@ -25,13 +43,11 @@ Licensed    : GPL3
 <body>
     <div id="main-wrapper">
     <div id="sidebar">
-    {% if TIMEDELTA == "days" %}
-    <div id="day_info">Data in days</div>
-    {% endif %}
+    <div id="current_day">&nbsp;</div>
     <div id="current_time">{{ START_TIME }}</div>
-    
+
     <div id="speed">
-        <!-- <div class="togglebutton stop" data-val="stop">Stop</div> -->
+        <div class="togglebutton pause" data-val="pause">Pause</div>
         <div class="togglebutton slow" data-val="slow">Slow</div>
         <div class="togglebutton medium" data-val="medium">Medium</div>
         <div class="togglebutton fast" data-val="fast">Fast</div>
@@ -71,6 +87,8 @@ Licensed    : GPL3
     {% include "d3-3-5-5.min.js" %}
 
 var USER_SPEED = "slow";
+var IS_PAUSED = false;
+var timer_handle = null;
 
 var width = {{ WIDTH }},
     height = {{ HEIGHT }},
@@ -217,6 +235,8 @@ label.append("tspan")
 
 // Update nodes based on activity and duration
 function timer() {
+	if (IS_PAUSED) return;
+
 	d3.range(nodes.length).map(function(i) {
 		var curr_node = nodes[i],
 			curr_moves = curr_node.moves; 
@@ -252,8 +272,10 @@ function timer() {
 			return readablePercent(act_counts[d.index]);
 		});
 
-	// Update time display
-	d3.select("#current_time").text(formatTime(curr_minute));
+	// Update day + time display
+	var timeResult = formatTime(curr_minute);
+	d3.select("#current_day").html(timeResult.day);
+	d3.select("#current_time").text(timeResult.time);
 
 	// Update notes (compare against display minute, not raw counter)
 	var display_minute = curr_minute % 1440;
@@ -282,9 +304,9 @@ function timer() {
 	}
 	
 	
-	setTimeout(timer, speeds[USER_SPEED]);
+	timer_handle = setTimeout(timer, speeds[USER_SPEED]);
 }
-setTimeout(timer, speeds[USER_SPEED]);
+timer_handle = setTimeout(timer, speeds[USER_SPEED]);
 
 
 
@@ -356,33 +378,31 @@ function collide(alpha) {
 
 
 
-// Speed toggle
+// Speed / pause toggle
 d3.selectAll(".togglebutton")
   .on("click", function() {
-	if (d3.select(this).attr("data-val") == "slow") {
-		d3.select(".stop").classed("current", false);
-		d3.select(".slow").classed("current", true);
-		d3.select(".medium").classed("current", false);
-		d3.select(".fast").classed("current", false);
-	} else if (d3.select(this).attr("data-val") == "medium") {
-		d3.select(".stop").classed("current", false);
-		d3.select(".slow").classed("current", false);
-		d3.select(".medium").classed("current", true);
-		d3.select(".fast").classed("current", false);
-	} else if (d3.select(this).attr("data-val") == "fast") {
-		d3.select(".stop").classed("current", false);
-		d3.select(".slow").classed("current", false);
-		d3.select(".medium").classed("current", false);
-		d3.select(".fast").classed("current", true);
-	} 
-	else {
-		d3.select(".stop").classed("current", true);
-		d3.select(".slow").classed("current", false);
-		d3.select(".medium").classed("current", false);
-		d3.select(".fast").classed("current", false);
+	var val = d3.select(this).attr("data-val");
+
+	// Clear all active states
+	d3.select(".pause").classed("current", false);
+	d3.select(".slow").classed("current", false);
+	d3.select(".medium").classed("current", false);
+	d3.select(".fast").classed("current", false);
+
+	// Mark clicked button as active
+	d3.select(this).classed("current", true);
+
+	if (val === "pause") {
+		IS_PAUSED = true;
+		if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+	} else {
+		USER_SPEED = val;
+		if (IS_PAUSED) {
+			// Restart the timer loop
+			IS_PAUSED = false;
+			timer_handle = setTimeout(timer, speeds[USER_SPEED]);
+		}
 	}
-	
-	USER_SPEED = d3.select(this).attr("data-val");
 });
 
 
@@ -409,34 +429,56 @@ function readablePercent(n) {
 }
 
 
-// Time display based on timedelta unit
+// Time display — returns {day: "Day N", time: "HH:MM:SS"} for all timedelta modes
 function formatTime(m) {
 	var timedelta = "{{ TIMEDELTA }}";
+	var pad = function(n) { return (n < 10 ? "0" : "") + n; };
 
 	if (timedelta === "seconds") {
-		// Display as HH:MM:SS
+		// m counts elapsed seconds
 		var total_seconds = m;
-		var hh = Math.floor(total_seconds / 3600);
-		var mm = Math.floor((total_seconds % 3600) / 60);
-		var ss = total_seconds % 60;
+		var days  = Math.floor(total_seconds / 86400);
+		var rem   = total_seconds % 86400;
+		var hh    = Math.floor(rem / 3600);
+		var mm    = Math.floor((rem % 3600) / 60);
+		var ss    = rem % 60;
+		return {
+			day:  days > 0 ? "Day " + (days + 1) : "&nbsp;",
+			time: pad(hh) + ":" + pad(mm) + ":" + pad(ss)
+		};
 
-		if (hh < 10) hh = "0" + hh;
-		if (mm < 10) mm = "0" + mm;
-		if (ss < 10) ss = "0" + ss;
+	} else if (timedelta === "days") {
+		// m counts elapsed days
+		var hh = Math.floor((m % 1) * 24);   // fractional part → hours (always 0 here but safe)
+		return {
+			day:  "Day " + (m + 1),
+			time: pad(hh) + ":00:00"
+		};
 
-		return hh + ":" + mm + ":" + ss;
 	} else {
-		// Default: minutes — display as HH:MM, wrapping at midnight
-		var total_minutes = (m + Math.round({{ START_HOUR_MIN }} * 60)) % 1440;
-		if (total_minutes < 0) total_minutes += 1440;
-		var hh = Math.floor(total_minutes / 60) % 24;
-		var mm = total_minutes % 60;
-
-		return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+		// Default: minutes
+		// m counts elapsed minutes; offset by START_HOUR_MIN so display begins at the real start time
+		var total_minutes = m + Math.round({{ START_HOUR_MIN }} * 60);
+		var days  = Math.floor(total_minutes / 1440);
+		var rem   = total_minutes % 1440;
+		if (rem < 0) rem += 1440;
+		var hh    = Math.floor(rem / 60);
+		var mm    = rem % 60;
+		return {
+			day:  days > 0 ? "Day " + (days + 1) : "&nbsp;",
+			time: pad(hh) + ":" + pad(mm) + ":00"
+		};
 	}
 }
 
 {{ SAVE_TO_SVG_SCRIPT }}
+
+// Seed the day + time display once everything is defined
+(function() {
+	var t = formatTime(0);
+	d3.select("#current_day").html(t.day);
+	d3.select("#current_time").text(t.time);
+}());
 
 
 </script>
