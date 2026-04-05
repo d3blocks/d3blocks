@@ -101,6 +101,11 @@ d3 = D3Blocks()
 
 <hr>
 
+### Ethical Ads
+When HTMLs are generated, it automatically include ethical ads as a small way to support development. 
+This is done thoughtfully and only in my free time. Ads can be disabled via an input parameter, and you can also support the project with a coffee donation instead.
+
+
 ### References
 * [bl.ocks](https://bl.ocks.org/)
 * [observablehq](https://observablehq.com/top)
