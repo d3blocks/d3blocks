@@ -162,6 +162,7 @@ def normalize(X, minscale = 0.5, maxscale = 4, scaler: str = 'zscore'):
     # Z-scores is better. Min-Max Scaling is too sensitive to outlier observations and generates unseen problems,
 
     # Set sizes to 0 if not available
+    X = np.asarray(X).copy()
     X[np.isinf(X)]=0
     X[np.isnan(X)]=0
     if minscale is None: minscale=0.5
