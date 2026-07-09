@@ -11,23 +11,6 @@ d3.elasticgraph(df, filepath='Elasticgraph.html')
 #
 # Show elasticgraph
 d3.Elasticgraph.show()
-# Show original graph with the same properties
-d3.Elasticgraph.D3graph.show()
-#
-# Add cluster labels (no need to do it again because it is the default)
-# d3.Elasticgraph.set_node_properties(color=None)
-#
-# After making changes, show the graph again using show()
-d3.Elasticgraph.show()
-# Show original graph
-d3.Elasticgraph.D3graph.show()
-#
-# Node properties
-d3.Elasticgraph.D3graph.node_properties
-#
-# Node properties
-d3.Elasticgraph.D3graph.edge_properties
-#
 
 # %% Force directed clustered graphs
 # Load library

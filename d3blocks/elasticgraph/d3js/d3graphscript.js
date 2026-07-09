@@ -367,8 +367,10 @@ function d3graphscript(
     hlink,
     nodeg,
     helper_nodeg,
+    labelg,
     node,
-    hnode;
+    hnode,
+    label;
   const pathgen = d3.svg.line().interpolate("basis");
   const fill = d3.scale.category20();
   const body = d3.select("body");
@@ -437,6 +439,7 @@ function d3graphscript(
     }
     helper_linkg = vis.append("g");
     nodeg = vis.append("g");
+    labelg = vis.append("g");
     if (debug == 1) {
       node = vis
         .append("g")
@@ -573,7 +576,7 @@ function d3graphscript(
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
     node.exit().remove();
-    node
+    const nodeEnter = node
       .enter()
       .append("circle")
       // if (d.size) -- d.size > 0 when d is a group node.
@@ -588,7 +591,27 @@ function d3graphscript(
       .style("fill", (d) => fill(d.group))
       .on("click", on_node_click);
 
+    // native browser tooltip on hover, using the 'tooltip' field (falls back to label/name)
+    nodeEnter
+      .append("title")
+      .text((d) => d.tooltip || d.label || d.name);
+
     node.call(force.drag);
+
+    // node labels: one text element per node, positioned just below the circle
+    label = labelg.selectAll("text.label").data(net.nodes, nodeid);
+    label.exit().remove();
+    label
+      .enter()
+      .append("text")
+      .attr("class", "label")
+      .attr("text-anchor", "middle")
+      .attr("pointer-events", "none");
+    // (re)apply styling to both newly entered and pre-existing labels, same as hlink above
+    label
+      .style("fill", (d) => d.fontcolor || "#333")
+      .style("font-size", (d) => (d.fontsize ? d.fontsize + "px" : "12px"))
+      .text((d) => d.label || d.name);
 
     var drag_in_progress = false;
     var change_squared;
@@ -820,6 +843,10 @@ function d3graphscript(
       }
 
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+
+      label
+        .attr("x", (d) => d.x)
+        .attr("y", (d) => d.y + (d.size > 0 ? d.size + dr : dr + 1) + 10);
     });
 
     force2.on("tick", function () {

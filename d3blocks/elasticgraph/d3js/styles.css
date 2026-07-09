@@ -38,6 +38,12 @@ circle.center-of-mass {
   stroke-width: 5px;
 }
 
+text.label {
+  font-family: sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 path.hull {
   fill: lightsteelblue;
   fill-opacity: 0.3;
