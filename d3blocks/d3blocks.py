@@ -2102,6 +2102,7 @@ class D3Blocks():
                      notebook=False,
                      showfig=True,
                      save_button: bool = True,
+                     return_html: bool = False,
                      overwrite=True):
         """D3 Elasticgraph block.
 
@@ -2176,15 +2177,14 @@ class D3Blocks():
         >>> d3 = D3Blocks()
         >>> #
         >>> # Import example
-        >>> df = d3.import_example('energy') # 'stormofswords'
+        >>> df = d3.import_example('energy')
+        >>> df = d3.import_example('stormofswords')
         >>> #
         >>> # Create force-directed-network (without cluster labels)
         >>> d3.elasticgraph(df, filepath='Elasticgraph.html')
         >>> #
         >>> # Show elasticgraph
-        >>> d3.Elasticgraph.show()
-        >>> # Show original graph with the same properties
-        >>> d3.Elasticgraph.D3graph.show()
+        >>> html = d3.Elasticgraph.show();
         >>> #
         >>> # Add cluster labels (no need to do it again because it is the default)
         >>> # d3.Elasticgraph.set_node_properties(color=None)
@@ -2235,9 +2235,10 @@ class D3Blocks():
         # Create default graph
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
         # Open the webbrowser
-        self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite)
-        # Display the chart
-        # return self.display(html)
+        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite)
+        # Create the plot
+        if return_html:
+            return html
 
     def tree(self,
              df: pd.DataFrame,
