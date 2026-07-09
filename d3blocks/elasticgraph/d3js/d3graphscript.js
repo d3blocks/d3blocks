@@ -354,6 +354,7 @@ function d3graphscript(
     expand = {}, // expanded clusters
     debug = 0, // 0: disable, 1: all, 2: only force2
     single_click_expand = true,
+    sticky = true, // pin nodes in place after dragging; right-click to release
   } = {}
 ) {
   let net,
@@ -422,6 +423,54 @@ function d3graphscript(
     }
     return (expand[g] = s);
   }
+
+  // ---- STICKY DRAGGING ----
+  // IMPORTANT: we do NOT build this on top of force.drag(). force.drag() registers its
+  // "dragstart"/"drag"/"dragend" listeners WITHOUT a namespace, so chaining our own .on()
+  // calls on that same object silently REPLACES d3's internal handlers instead of adding
+  // to them. Those internal handlers matter: dragstart sets d.fixed |= 2 (protects the node
+  // from gravity/charge/recentering forces while it's being dragged) and drag continuously
+  // sets d.px/d.py + force.resume() (the actual elastic tracking). Losing them is what made
+  // a dragged node "jump" around: the simulation kept fighting its position mid-drag.
+  //
+  // So instead we build a fully independent d3.behavior.drag() that replicates that same
+  // protection, and add our own permanent-pin behaviour on top of it. This never touches
+  // force.drag()'s internals, so nothing gets silently overwritten.
+  //
+  // Sticky mode: dragend pins the node (d.fixed stays truthy after release) with a dashed
+  //   stroke as a visual cue. Right-click a pinned node to release it back into the simulation.
+  // Non-sticky: behaves like plain d3 dragging (released back into the simulation on mouseup).
+
+  function dragstarted(d) {
+    d3.event.sourceEvent.stopPropagation();
+    d3.select(this).classed("dragging", true);
+    d.fixed |= 2; // protect from simulation forces for the duration of the drag
+  }
+
+  function dragged(d) {
+    d.px = d3.event.x;
+    d.py = d3.event.y;
+    force.resume();
+  }
+
+  function dragended(d) {
+    d3.select(this).classed("dragging", false);
+    if (sticky) {
+      d.fixed = 1; // permanently pinned
+      d3.select(this).style("stroke-dasharray", "4,2");
+    } else {
+      d.fixed &= 1; // release back into the simulation unless already pinned
+    }
+  }
+
+  function releaseNode(d) {
+    d3.event.preventDefault();
+    d.fixed = 0;
+    d3.select(this).style("stroke-dasharray", null);
+    force.resume();
+  }
+
+  // ---- END STICKY DRAGGING ----
 
   function parseJson(data) {
     for (let i = 0; i < data.links.length; ++i) {
@@ -596,7 +645,26 @@ function d3graphscript(
       .append("title")
       .text((d) => d.tooltip || d.label || d.name);
 
-    node.call(force.drag);
+    // Sticky-aware drag: a fully independent d3.behavior.drag(), NOT force.drag() — see the
+    // comment above dragstarted() for why reusing force.drag() breaks the simulation.
+    const drag = d3.behavior
+      .drag()
+      .origin((d) => d)
+      .on("dragstart", dragstarted)
+      .on("drag", dragged)
+      .on("dragend", dragended);
+
+    node
+      // replicate the hover protection d3's own force.drag() normally provides, so a fast
+      // charge/repulsion animation doesn't make the node hard to grab before the drag starts
+      .on("mouseover.sticky", (d) => { d.fixed |= 4; })
+      .on("mouseout.sticky", (d) => { d.fixed &= 3; })
+      .call(drag);
+
+    if (sticky) {
+      // right-click a pinned node to release it back into the simulation
+      node.on("contextmenu", releaseNode);
+    }
 
     // node labels: one text element per node, positioned just below the circle
     label = labelg.selectAll("text.label").data(net.nodes, nodeid);
