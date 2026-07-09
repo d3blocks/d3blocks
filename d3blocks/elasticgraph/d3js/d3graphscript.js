@@ -369,9 +369,11 @@ function d3graphscript(
     nodeg,
     helper_nodeg,
     labelg,
+    edge_labelg,
     node,
     hnode,
-    label;
+    label,
+    edge_label;
   const pathgen = d3.svg.line().interpolate("basis");
   const fill = d3.scale.category20();
   const body = d3.select("body");
@@ -487,6 +489,7 @@ function d3graphscript(
       helper_nodeg = vis.append("g");
     }
     helper_linkg = vis.append("g");
+    edge_labelg = vis.append("g");
     nodeg = vis.append("g");
     labelg = vis.append("g");
     if (debug == 1) {
@@ -603,6 +606,28 @@ function d3graphscript(
     // both existing and enter()ed links may have changed stroke width due to expand state change somewhere:
     hlink.style("stroke-width", (d) => d.size || 1);
 
+    // edge-weight labels: one per rendered edge curve (net.helper_render_links has exactly
+    // one entry per visible hlink path already, so we reuse it here with the same id key).
+    // d.ref is the original edge/link data object (weight, tooltip, label, label_color, ...).
+    edge_label = edge_labelg
+      .selectAll("text.edge-label")
+      .data(net.helper_render_links, (d) => d.id);
+    edge_label.exit().remove();
+    edge_label
+      .enter()
+      .append("text")
+      .attr("class", "edge-label")
+      .attr("text-anchor", "middle")
+      .attr("pointer-events", "none");
+    // (re)apply to both newly entered and pre-existing labels, same pattern as hlink above
+    edge_label
+      .style("fill", (d) => d.ref.label_color || "#808080")
+      .style(
+        "font-size",
+        (d) => (d.ref.label_fontsize ? d.ref.label_fontsize + "px" : "8px")
+      )
+      .text((d) => d.ref.label || d.ref.tooltip || d.ref.weight || "");
+
     if (debug) {
       hnode = helper_nodeg
         .selectAll("circle.node")
@@ -638,12 +663,14 @@ function d3graphscript(
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
       .style("fill", (d) => fill(d.group))
+      .style("opacity", (d) => d.node_opacity)
+      .style("stroke", (d) => d.node_color_edge)
       .on("click", on_node_click);
 
     // native browser tooltip on hover, using the 'tooltip' field (falls back to label/name)
     nodeEnter
       .append("title")
-      .text((d) => d.tooltip || d.label || d.name);
+      .text((d) => d.node_tooltip || d.node_name || d.name);
 
     // Sticky-aware drag: a fully independent d3.behavior.drag(), NOT force.drag() — see the
     // comment above dragstarted() for why reusing force.drag() breaks the simulation.
@@ -677,9 +704,9 @@ function d3graphscript(
       .attr("pointer-events", "none");
     // (re)apply styling to both newly entered and pre-existing labels, same as hlink above
     label
-      .style("fill", (d) => d.fontcolor || "#333")
-      .style("font-size", (d) => (d.fontsize ? d.fontsize + "px" : "12px"))
-      .text((d) => d.label || d.name);
+      .style("fill", (d) => d.node_fontcolor || "#333")
+      .style("font-size", (d) => (d.node_fontsize ? d.node_fontsize + "px" : "12px"))
+      .text((d) => d.node_name || d.name);
 
     var drag_in_progress = false;
     var change_squared;
@@ -958,6 +985,10 @@ function d3graphscript(
           [d.real_target.x, d.real_target.y],
         ])
       );
+
+      edge_label
+        .attr("x", (d) => (d.real_source.x + d.real_target.x) / 2)
+        .attr("y", (d) => (d.real_source.y + d.real_target.y) / 2);
 
       if (debug) {
         hnode.attr("cx", (d) => d.x).attr("cy", (d) => d.y);

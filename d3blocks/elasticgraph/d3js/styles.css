@@ -13,6 +13,11 @@ circle.node {
   fill: lightsteelblue;
   stroke: #555;
   stroke-width: 3px;
+  cursor: move;
+}
+
+circle.node.dragging {
+  cursor: grabbing;
 }
 
 circle.leaf {
@@ -42,6 +47,16 @@ text.label {
   font-family: sans-serif;
   user-select: none;
   -webkit-user-select: none;
+}
+
+text.edge-label {
+  font-family: sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 path.hull {

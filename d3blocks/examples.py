@@ -7,7 +7,15 @@ d3 = D3Blocks()
 df = d3.import_example('energy') # 'stormofswords'
 #
 # Create force-directed-network (without cluster labels)
-d3.elasticgraph(df, filepath='Elasticgraph.html')
+d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+
+d3.Elasticgraph.D3graph.node_properties
+# d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
+d3.Elasticgraph.D3graph.node_properties['Wind']['size']=20
+# Add cluster labels (no need to do it again because it is the default)
+# Set edge properties
+d3.Elasticgraph.D3graph.edge_properties
+d3.Elasticgraph.D3graph.edge_properties[('Wind', 'Electricity_grid')]['label']='TEST'
 #
 # Show elasticgraph
 d3.Elasticgraph.show()

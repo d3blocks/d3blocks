@@ -2186,19 +2186,19 @@ class D3Blocks():
         >>> # Show elasticgraph
         >>> html = d3.Elasticgraph.show();
         >>> #
-        >>> # Add cluster labels (no need to do it again because it is the default)
+        >>> # Node properties
+        >>> d3.Elasticgraph.D3graph.node_properties
         >>> # d3.Elasticgraph.set_node_properties(color=None)
+        >>> d3.Elasticgraph.D3graph.node_properties['Wind']['size']=20
+        >>> #        
+        >>> # Edge properties
+        >>> d3.Elasticgraph.D3graph.edge_properties
+        >>> d3.Elasticgraph.D3graph.edge_properties[('Wind', 'Electricity_grid')]['label']='TEST'
         >>> #
         >>> # After making changes, show the graph again using show()
         >>> d3.Elasticgraph.show()
         >>> # Show original graph
         >>> d3.Elasticgraph.D3graph.show()
-        >>> #
-        >>> # Node properties
-        >>> d3.Elasticgraph.D3graph.node_properties
-        >>> #
-        >>> # Node properties
-        >>> d3.Elasticgraph.D3graph.edge_properties
         >>> #
 
         References

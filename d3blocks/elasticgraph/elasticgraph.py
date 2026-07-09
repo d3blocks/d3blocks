@@ -214,9 +214,6 @@ class Elasticgraph:
         html = self.write_html(json_data, overwrite=overwrite)
         # Display the chart
         return self.D3graph.display(html)
-        # if self.D3graph.config['showfig']:
-        #     self.D3graph.showfig(self.D3graph.config['filepath'])
-        # return html
 
     def set_edge_properties(self,
                             edge_distance: int = None,
