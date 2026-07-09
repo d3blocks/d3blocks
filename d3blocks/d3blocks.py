@@ -14,41 +14,42 @@ import time
 import datazets as dz
 import d3graph as d3network
 
-from d3blocks.elasticgraph.elasticgraph import Elasticgraph
-import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
-import d3blocks.timeseries.Timeseries as Timeseries
-import d3blocks.sankey.Sankey as Sankey
-import d3blocks.imageslider.Imageslider as Imageslider
-import d3blocks.chord.Chord as Chord
-import d3blocks.scatter.Scatter as Scatter
-import d3blocks.violin.Violin as Violin
-import d3blocks.particles.Particles as Particles
-import d3blocks.heatmap.Heatmap as Heatmap
-import d3blocks.matrix.Matrix as Matrix
-import d3blocks.treemap.Treemap as Treemap
-import d3blocks.circlepacking.Circlepacking as Circlepacking
-import d3blocks.tree.Tree as Tree
-import d3blocks.maps.Maps as Maps
-import d3blocks.utils as utils
-
-# ###################### DEBUG ONLY ###################
-# import elasticgraph.elasticgraph as Elasticgraph
-# import movingbubbles.Movingbubbles as Movingbubbles
-# import timeseries.Timeseries as Timeseries
-# import sankey.Sankey as Sankey
-# import imageslider.Imageslider as Imageslider
-# import chord.Chord as Chord
-# import scatter.Scatter as Scatter
-# import violin.Violin as Violin
-# import particles.Particles as Particles
-# import heatmap.Heatmap as Heatmap
-# import matrix.Matrix as Matrix
-# import treemap.Treemap as Treemap
-# import circlepacking.Circlepacking as Circlepacking
-# import tree.Tree as Tree
-# import maps.Maps as Maps
-# import utils
-# #####################################################
+try:
+    from d3blocks.elasticgraph.elasticgraph import Elasticgraph
+    import d3blocks.movingbubbles.Movingbubbles as Movingbubbles
+    import d3blocks.timeseries.Timeseries as Timeseries
+    import d3blocks.sankey.Sankey as Sankey
+    import d3blocks.imageslider.Imageslider as Imageslider
+    import d3blocks.chord.Chord as Chord
+    import d3blocks.scatter.Scatter as Scatter
+    import d3blocks.violin.Violin as Violin
+    import d3blocks.particles.Particles as Particles
+    import d3blocks.heatmap.Heatmap as Heatmap
+    import d3blocks.matrix.Matrix as Matrix
+    import d3blocks.treemap.Treemap as Treemap
+    import d3blocks.circlepacking.Circlepacking as Circlepacking
+    import d3blocks.tree.Tree as Tree
+    import d3blocks.maps.Maps as Maps
+    import d3blocks.utils as utils
+except:
+    # ###################### DEBUG ONLY ###################
+    import elasticgraph.elasticgraph as Elasticgraph
+    import movingbubbles.Movingbubbles as Movingbubbles
+    import timeseries.Timeseries as Timeseries
+    import sankey.Sankey as Sankey
+    import imageslider.Imageslider as Imageslider
+    import chord.Chord as Chord
+    import scatter.Scatter as Scatter
+    import violin.Violin as Violin
+    import particles.Particles as Particles
+    import heatmap.Heatmap as Heatmap
+    import matrix.Matrix as Matrix
+    import treemap.Treemap as Treemap
+    import circlepacking.Circlepacking as Circlepacking
+    import tree.Tree as Tree
+    import maps.Maps as Maps
+    import utils
+    # #####################################################
 
 logger = logging.getLogger(__name__)
 if not logger.hasHandlers():
