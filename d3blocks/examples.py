@@ -1,3 +1,34 @@
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Import example
+df = d3.import_example('energy') # 'stormofswords'
+#
+# Create force-directed-network (without cluster labels)
+d3.elasticgraph(df, filepath='Elasticgraph.html')
+#
+# Show elasticgraph
+d3.Elasticgraph.show()
+# Show original graph with the same properties
+d3.Elasticgraph.D3graph.show()
+#
+# Add cluster labels (no need to do it again because it is the default)
+# d3.Elasticgraph.set_node_properties(color=None)
+#
+# After making changes, show the graph again using show()
+d3.Elasticgraph.show()
+# Show original graph
+d3.Elasticgraph.D3graph.show()
+#
+# Node properties
+d3.Elasticgraph.D3graph.node_properties
+#
+# Node properties
+d3.Elasticgraph.D3graph.edge_properties
+#
+
 # %% Force directed clustered graphs
 # Load library
 from d3blocks import D3Blocks
@@ -37,7 +68,7 @@ import pandas as pd
 # Load library
 from d3blocks import D3Blocks
 
-df = pd.read_csv(r'C:\temp\sample1.csv')
+# df = pd.read_csv(r'C:\temp\sample1.csv')
 
 # Initialize
 d3 = D3Blocks(chart='tree', frame=False)
@@ -252,7 +283,6 @@ html = d3.sankey(df, filepath=r'c:\temp\sankey.html', save_button=True)
 df = d3.import_example('energy')
 from d3blocks import D3Blocks
 d3 = D3Blocks(support=False)
-html = d3.particles('Data en Innovatielab', fontsize=150, radius=2, spacing=6, figsize=[1500, 200], filepath=r'D:\OneDrive\DILAB\PROJECTEN\intakeformulieren\docs\pages\dilab.html')
 html = d3.particles('D3blocks', save_button=False)
 html = d3.particles('D3blocks', save_button=True)
 
@@ -1192,32 +1222,33 @@ d3.chord(df, filepath='chord_demo3.html', color='source-target')
 # %% Force directed clustered graphs
 # Load library
 from d3blocks import D3Blocks
-#
 # Initialize
 d3 = D3Blocks()
-#
+
 # Import example
 df = d3.import_example('energy') # 'stormofswords'
-#
+
 # Create force-directed-network (without cluster labels)
 d3.elasticgraph(df, filepath='Elasticgraph.html', figsize=[700, 700])
-#
+
 # Show elasticgraph
 d3.Elasticgraph.show()
+
 # Show original graph with the same properties
 d3.Elasticgraph.D3graph.show()
-#
+
 # Add cluster labels (no need to do it again because it is the default)
 # d3.Elasticgraph.set_node_properties(color=None)
-#
+
 # After making changes, show the graph again using show()
 d3.Elasticgraph.show()
+
 # Show original graph
 d3.Elasticgraph.D3graph.show()
-#
+
 # Node properties
 d3.Elasticgraph.D3graph.node_properties
-#
+
 # Node properties
 d3.Elasticgraph.D3graph.edge_properties
 
