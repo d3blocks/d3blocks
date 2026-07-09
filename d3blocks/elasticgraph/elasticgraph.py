@@ -11,10 +11,14 @@ import os
 from typing import List, Union, Tuple
 from d3graph import d3graph, json_create, data_checks, make_graph
 from jinja2 import Environment, PackageLoader
+import webbrowser
+import time
+from sys import platform
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
-if not logger.hasHandlers():
-    logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%d-%m-%Y %H:%M:%S')
+# if not logger.hasHandlers():
+#     logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%d-%m-%Y %H:%M:%S')
 
 # %%
 class Elasticgraph:
@@ -200,7 +204,7 @@ class Elasticgraph:
         self.D3graph.config['network_title'] = title
         self.D3graph.config['showfig'] = showfig
         self.D3graph.config['notebook'] = notebook
-        self.D3graph.config['filepath'] = self.D3graph.set_path(filepath)
+        self.D3graph.set_path(filepath)
 
         # Create dataframe from co-occurrence matrix
         self.D3graph.G = make_graph(self.D3graph.node_properties, self.D3graph.edge_properties)
