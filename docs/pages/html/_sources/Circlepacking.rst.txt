@@ -3,9 +3,7 @@ circlepacking
 
 -------------------------
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.circlepacking
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.circlepacking
 
 
 Input Data

@@ -1,9 +1,7 @@
 Heatmap
 #############
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.heatmap
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.heatmap
 
 
 

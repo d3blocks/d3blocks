@@ -22,26 +22,20 @@ Each block can be exported to HTML using the return_html parameter.
 vec2adjmat
 #############
 
-.. automodule:: d3blocks.D3Blocks.vec2adjmat
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.D3Blocks.vec2adjmat
 
 
 
 adjmat2vec
 #############
 
-.. automodule:: d3blocks.D3Blocks.adjmat2vec
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.D3Blocks.adjmat2vec
 
 
 Examples
 #############
 
-.. automodule:: d3blocks.D3Blocks.import_example
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.D3Blocks.import_example
 
 
 Saving Charts

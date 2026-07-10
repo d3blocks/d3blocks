@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>circlepacking &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=6837f5c9"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">circlepacking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.circlepacking"><code class="docutils literal notranslate"><span class="pre">D3Blocks.circlepacking()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a></li>
 </ul>
@@ -84,9 +85,9 @@
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Export to HTML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.vec2adjmat">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html#saving-charts">Saving Charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
@@ -129,56 +130,43 @@
   <section id="circlepacking">
 <h1>circlepacking<a class="headerlink" href="#circlepacking" title="Link to this heading"></a></h1>
 <hr class="docutils" />
-<p id="module-d3blocks.d3blocks.D3Blocks.circlepacking">Circlepacking block.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.circlepacking">
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">circlepacking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'click'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'#FFFFFF',</span> <span class="pre">'fill':</span> <span class="pre">'#FFFFFF',</span> <span class="pre">'padding':</span> <span class="pre">5,</span> <span class="pre">'width':</span> <span class="pre">1.5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'color':</span> <span class="pre">'#000000',</span> <span class="pre">'outlinecolor':</span> <span class="pre">'#FFFFFF',</span> <span class="pre">'size':</span> <span class="pre">20,</span> <span class="pre">'type':</span> <span class="pre">'Source</span> <span class="pre">Serif</span> <span class="pre">Pro'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Circlepacking</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Circlepacking.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">1920]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.circlepacking" title="Link to this definition"></a></dt>
+<dd><p>Circlepacking block.</p>
 <p>The Circlepacking chart is a visualization to hierarchically show the data as a set of nested circles.
 For demonstration purposes, the “energy” and “stormofswords” dataset can be used.
 The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Input data containing the following columns:</dt><dd><ul class="simple">
-<li><p>‘source’, ‘target’, ‘weight’</p></li>
-<li><p>‘level0’, ‘level1’, ‘level2’, ‘weight’</p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’, ‘target’, ‘weight’</p></li>
+<li><p>’level0’, ‘level1’, ‘level2’, ‘weight’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type df<span class="colon">:</span></dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param size<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Size of the nodes can automatically be set in with:</dt><dd><ul class="simple">
-<li><p>‘sum’ : This is the sum of the weights for the edges</p></li>
-<li><p>‘constant’ : All nodes are set to 1</p></li>
+</p></li>
+<li><p><strong>size</strong> (<em>str</em><em> (</em><em>default: &quot;sum&quot;</em><em>)</em>) – <dl class="simple">
+<dt>Size of the nodes can automatically be set in with:</dt><dd><ul>
+<li><p>’sum’ : This is the sum of the weights for the edges</p></li>
+<li><p>’constant’ : All nodes are set to 1</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type size<span class="colon">:</span></dt>
-<dd class="field-even"><p>str (default: “sum”)</p>
-</dd>
-<dt class="field-odd">param speed<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Speed in ms to zoom in/out</p>
-</dd>
-<dt class="field-even">type speed<span class="colon">:</span></dt>
-<dd class="field-even"><p>int (default: 750)</p>
-</dd>
-<dt class="field-odd">param zoom<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Zooming method.</dt><dd><ul class="simple">
-<li><p>‘click’</p></li>
-<li><p>‘mouseover’</p></li>
+</p></li>
+<li><p><strong>speed</strong> (<em>int</em><em> (</em><em>default: 750</em><em>)</em>) – Speed in ms to zoom in/out</p></li>
+<li><p><strong>zoom</strong> (<em>str</em><em> (</em><em>default: &quot;click&quot;</em><em>)</em>) – <dl class="simple">
+<dt>Zooming method.</dt><dd><ul>
+<li><p>’click’</p></li>
+<li><p>’mouseover’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type zoom<span class="colon">:</span></dt>
-<dd class="field-even"><p>str (default: “click”)</p>
-</dd>
-<dt class="field-odd">param border<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>border properties.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>border</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>border properties.</dt><dd><ul>
 <li><p>{‘color’: ‘#FFFFFF’, ‘width’: 1.5, ‘fill’: ‘#FFFFFF’, “padding”: 2}</p></li>
 <li><p>border color: color for the circles</p></li>
 <li><p>width: width for the circles</p></li>
@@ -187,116 +175,76 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type border<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict.</p>
-</dd>
-<dt class="field-odd">param font<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>font properties.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>font</strong> (<em>dict.</em>) – <dl class="simple">
+<dt>font properties.</dt><dd><ul>
 <li><p>{‘size’: 20, ‘type’:’sans-serif’}</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type font<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict.</p>
-</dd>
-<dt class="field-odd">param title<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Title of the figure.</dt><dd><ul class="simple">
-<li><p>‘Circlepacking’</p></li>
+</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Circlepacking’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type title<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
 <li><p>File path to save the output.</p></li>
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
 <li><p>Relative path: ‘./d3blocks.html’</p></li>
 <li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
 <li><p>None: Return HTML</p></li>
 </ul>
-</dd>
-<dt class="field-even">type filepath<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
 <li><p>[1000, 1200]</p></li>
 <li><p>[None, None]: Use the screen resolution.</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type figsize<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type showfig<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type overwrite<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param notebook<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type notebook<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-<dt class="field-odd">param save_button<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Save button is shown in the HTML to save the image in svg.</p></li>
 <li><p>False: No save button is shown in the HTML.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type save_button<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param return_html<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>return_html</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – <ul>
 <li><p>True: Return html</p></li>
 <li><p>False: Nothing is returned</p></li>
 </ul>
-</dd>
-<dt class="field-even">type return_html<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: False)</p>
-</dd>
-<dt class="field-odd">param reset_properties<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Reset the node_properties at each run.</p></li>
 <li><p>False: Use the d3.node_properties()</p></li>
 </ul>
+</p></li>
+</ul>
 </dd>
-<dt class="field-even">type reset_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -358,6 +306,8 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</dd></dl>
+
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset is a DataFrame that is hierarchically ordered from left to right.

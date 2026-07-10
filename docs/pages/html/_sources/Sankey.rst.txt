@@ -30,9 +30,7 @@ The input dataset is a DataFrame with three column, source, target and weight.
 
 -------------------------
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.sankey
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.sankey
 
 
 

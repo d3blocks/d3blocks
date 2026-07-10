@@ -1,9 +1,7 @@
 Chord
 #############
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.chord
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.chord
 
 
 

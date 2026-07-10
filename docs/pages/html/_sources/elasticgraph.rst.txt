@@ -1,17 +1,6 @@
 Elasticgraph
 #############
 
-.. tip::
-	`Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python. <https://erdogant.medium.com/>`_
-
--------------------------
-
-
-.. automodule:: d3blocks.d3blocks.D3Blocks.elasticgraph
-    :members:
-    :undoc-members:
-
-
 
 Input Data
 ************
@@ -35,6 +24,52 @@ The input dataset is a DataFrame with three column, source, target and weight.
 
 	# [68 rows x 3 columns]
 
+
+.. automethod:: d3blocks.d3blocks.D3Blocks.elasticgraph
+
+
+.. code:: python
+
+    from d3blocks import D3Blocks
+    
+    # Initialize
+    d3 = D3Blocks()
+    
+    # Import example
+    # df = d3.import_example('stormofswords')
+    df = d3.import_example('energy')
+    
+    # Create force-directed-network (without cluster labels)
+    d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+    
+    # Set all colors to the same color
+    # d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
+    
+    d3.Elasticgraph.D3graph.node_properties
+    d3.Elasticgraph.D3graph.node_properties['Wind']
+    d3.Elasticgraph.D3graph.node_properties['Wind']['size']=15
+    d3.Elasticgraph.D3graph.node_properties['Wind']['edge_color']='#FFFFFF'
+    d3.Elasticgraph.D3graph.node_properties['Wind']['edge_size']=5
+    d3.Elasticgraph.D3graph.node_properties['Wind']['fontsize']=20
+    d3.Elasticgraph.D3graph.node_properties['Wind']['fontcolor']='#000000'
+    d3.Elasticgraph.D3graph.node_properties['Wind']['group']='new group'
+    
+    # Update another node
+    d3.Elasticgraph.D3graph.node_properties['Wave']['size']=8
+    d3.Elasticgraph.D3graph.node_properties['Wave']['fontcolor']='#000000'
+    d3.Elasticgraph.D3graph.node_properties['Wave']['group']='new group'
+    
+    d3.Elasticgraph.D3graph.node_properties['Coal']['size']=10
+    d3.Elasticgraph.D3graph.node_properties['Biomass_imports']['size']=1
+    
+    # Set edge properties
+    d3.Elasticgraph.D3graph.edge_properties
+    d3.Elasticgraph.D3graph.edge_properties[('Wind', 'Electricity_grid')]['label']='TEST'
+    #
+    # Show elasticgraph
+    d3.Elasticgraph.show()
+
+
 Charts
 ************
 
@@ -44,16 +79,6 @@ Default
 .. raw:: html
 
    <iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_example1.html" height="800px" width="775px", frameBorder="0"></iframe>
-
-
-Change node properties
-''''''''''''''''''''''''
-
-
-.. raw:: html
-
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example4.html" height="800px" width="775px", frameBorder="0"></iframe>
-
 
 
 .. include:: add_bottom.add

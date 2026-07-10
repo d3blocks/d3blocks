@@ -5,9 +5,7 @@ MovingBubbles
 	`D3Blocks: How to Create Storytelling Moving Bubbles Charts in d3js with Python. <https://erdogant.medium.com/>`_
 
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.movingbubbles
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.movingbubbles
 
 
 

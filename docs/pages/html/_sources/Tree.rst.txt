@@ -3,9 +3,7 @@ Tree
 
 -------------------------
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.tree
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.tree
 
 
 Input Data

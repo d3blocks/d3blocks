@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>D3graph &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=6837f5c9"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -63,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">D3graph</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.d3graph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.d3graph()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default">Default</a></li>
@@ -89,9 +90,9 @@
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Export to HTML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.vec2adjmat">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html#saving-charts">Saving Charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
@@ -142,7 +143,10 @@
 <p>This page contains a summary of the possiblities what you can do with D3graph. More details can be found on the <a class="reference external" href="https://erdogant.github.io/d3graph">D3graph documentation pages</a>.</p>
 </div>
 <hr class="docutils" />
-<p id="module-d3blocks.d3blocks.D3Blocks.d3graph">d3graph block.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.d3graph">
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">d3graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'degree'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'degree'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D3graph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'d3graph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_slider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">click</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'fill':</span> <span class="pre">None,</span> <span class="pre">'size':</span> <span class="pre">1.3,</span> <span class="pre">'stroke':</span> <span class="pre">'black',</span> <span class="pre">'stroke-width':</span> <span class="pre">3}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#FFFFFF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.d3graph" title="Link to this definition"></a></dt>
+<dd><p>d3graph block.</p>
 <p>d3graph is integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
 The input data is a dataframe containing source, target, and weight. In underneath example, we load the energy
 dataset which contains 68 relationships that are stored in a DataFrame with the columns source, target, and weight.
@@ -152,23 +156,20 @@ on the weights. To explore the network, and the strength of the edges more exten
 (located at the top) can break the network based on the edge weights. The ouput is a html file that is
 interactive and stand alone. For demonstration purposes, the “energy” and “stormofswords” dataset can be used.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param df<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Input data containing the following columns:</dt><dd><ul class="simple">
-<li><p>‘source’</p></li>
-<li><p>‘target’</p></li>
-<li><p>‘weight’</p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type df<span class="colon">:</span></dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param color<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Color of the node.</dt><dd><ul class="simple">
-<li><p>‘cluster’ : Colours are based on the community distance clusters.</p></li>
+</p></li>
+<li><p><strong>color</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: '#000080'</em><em>)</em>) – <dl class="simple">
+<dt>Color of the node.</dt><dd><ul>
+<li><p>’cluster’ : Colours are based on the community distance clusters.</p></li>
 <li><p>None: All nodes will have the same color (auto generated).</p></li>
 <li><p>[‘#000000’]: All nodes will have the same hex color.</p></li>
 <li><p>[‘#377eb8’,’#ffffff’,’#000000’,…]: Hex colors are directly used.</p></li>
@@ -177,129 +178,65 @@ interactive and stand alone. For demonstration purposes, the “energy” and �
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type color<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of strings (default: ‘#000080’)</p>
-</dd>
-<dt class="field-odd">param size<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Size of the nodes.</dt><dd><ul class="simple">
-<li><p>‘degree’ opacity is based on the centrality measure.</p></li>
+</p></li>
+<li><p><strong>size</strong> (<em>array</em><em> of </em><em>integers</em><em> (</em><em>default: 5</em><em>)</em>) – <dl class="simple">
+<dt>Size of the nodes.</dt><dd><ul>
+<li><p>’degree’ opacity is based on the centrality measure.</p></li>
 <li><p>10: all nodes sizes are set to 10</p></li>
 <li><p>[10, 5, 3, 1, …]: Specify node sizes</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type size<span class="colon">:</span></dt>
-<dd class="field-even"><p>array of integers (default: 5)</p>
-</dd>
-<dt class="field-odd">param opacity<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Set the opacity of the node [0-1] where 0=transparant and 1=no transparancy.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>opacity</strong> (<em>list</em><em> of </em><em>floats</em><em> (</em><em>default: 'degree'</em><em>)</em>) – <dl class="simple">
+<dt>Set the opacity of the node [0-1] where 0=transparant and 1=no transparancy.</dt><dd><ul>
 <li><p>None: Colors are inhereted from the initialization</p></li>
-<li><p>‘degree’ opacity is based on the centrality measure.</p></li>
+<li><p>’degree’ opacity is based on the centrality measure.</p></li>
 <li><p>0.99: All nodes will get this transparancy</p></li>
 <li><p>[‘0.4, 0.1, 0.3,…]</p></li>
 <li><p>[‘A’,’A’,’B’,…]:  Opacity is generated using cmap and according to the unique labels.</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type opacity<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of floats (default: ‘degree’)</p>
-</dd>
-<dt class="field-odd">param scaler<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Scale the edge-width using the following scaler:
+</p></li>
+<li><p><strong>scaler</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'zscore'</em><em>)</em>) – Scale the edge-width using the following scaler:
 ‘zscore’ : Scale values to Z-scores.
 ‘minmax’ : The sklearn scaler will shrink the distribution between minmax.
-None : No scaler is used.</p>
-</dd>
-<dt class="field-even">type scaler<span class="colon">:</span></dt>
-<dd class="field-even"><p>str, (default: ‘zscore’)</p>
-</dd>
-<dt class="field-odd">param collision<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Response of the network. Higher means that more collisions are prevented.</p>
-</dd>
-<dt class="field-even">type collision<span class="colon">:</span></dt>
-<dd class="field-even"><p>float, (default: 0.5)</p>
-</dd>
-<dt class="field-odd">param charge<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p>
-</dd>
-<dt class="field-even">type charge<span class="colon">:</span></dt>
-<dd class="field-even"><p>int, (default: 400)</p>
-</dd>
-<dt class="field-odd">param cmap<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
-<li><p>‘tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
+None : No scaler is used.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 400</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’, ‘inferno’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type cmap<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: ‘Set1’)</p>
-</dd>
-<dt class="field-odd">param slider<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Slider is automatically set to the range of the edge weights.</p>
-</dd>
-<dt class="field-even">type slider<span class="colon">:</span></dt>
-<dd class="field-even"><p>typle [min: int, max: int]:, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param set_slider<span class="colon">:</span></dt>
-<dd class="field-odd"><p>0: Set the the slider with all edges connected
-1,2,3, etc: Set slider at a threshold with that particular network state.</p>
-</dd>
-<dt class="field-even">type set_slider<span class="colon">:</span></dt>
-<dd class="field-even"><p>int, (default: 0)</p>
-</dd>
-<dt class="field-odd">param show_slider<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True: Slider is shown in the HTML.
-False: Slider is not shown in the HTML.</p>
-</dd>
-<dt class="field-even">type show_slider<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param click<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>On node click event. The size depicts the multiplication factor.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>slider</strong> (<em>typle</em><em> [</em><em>min: int</em><em>, </em><em>max: int</em><em>]</em><em>:</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Slider is automatically set to the range of the edge weights.</p></li>
+<li><p><strong>set_slider</strong> (<em>int</em><em>, </em><em>(</em><em>default: 0</em><em>)</em>) – 0: Set the the slider with all edges connected
+1,2,3, etc: Set slider at a threshold with that particular network state.</p></li>
+<li><p><strong>show_slider</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – True: Slider is shown in the HTML.
+False: Slider is not shown in the HTML.</p></li>
+<li><p><strong>click</strong> (<em>dict</em><em>,</em>) – <dl class="simple">
+<dt>On node click event. The size depicts the multiplication factor.</dt><dd><ul>
 <li><p>{‘fill’: ‘red’, ‘stroke’: ‘black’, ‘size’: 1.3, ‘stroke-width’: 3}</p></li>
 <li><p>{‘fill’: None, ‘stroke’: ‘#FFF000’, ‘size’: 2, ‘stroke-width’: 1}</p></li>
 <li><p>None : No action on click.</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type click<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict,</p>
-</dd>
-<dt class="field-odd">param background_color<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The background color of the HTML page and SVG. Default is ‘#FFFFFF’.</p>
-</dd>
-<dt class="field-even">type background_color<span class="colon">:</span></dt>
-<dd class="field-even"><p>str, optional</p>
-</dd>
-<dt class="field-odd">param dark_mode<span class="colon">:</span></dt>
-<dd class="field-odd"><p>If True, enables dark mode for the visualization. Default is False.</p>
-</dd>
-<dt class="field-even">type dark_mode<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, optional</p>
-</dd>
-<dt class="field-odd">param title<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Title of the figure.</dt><dd><ul class="simple">
-<li><p>‘d3graph’</p></li>
+</p></li>
+<li><p><strong>background_color</strong> (<em>str</em><em>, </em><em>optional</em>) – The background color of the HTML page and SVG. Default is ‘#FFFFFF’.</p></li>
+<li><p><strong>dark_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, enables dark mode for the visualization. Default is False.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’d3graph’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type title<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>File path to save the output.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
 <li><p>Relative path: ‘./d3blocks.html’</p></li>
 <li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
@@ -307,59 +244,38 @@ False: Slider is not shown in the HTML.</p>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type filepath<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
 <li><p>[1500, 800]</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type figsize<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type showfig<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param notebook<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type notebook<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-<dt class="field-odd">param save_button<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Save button is shown in the HTML to save the image in svg.</p></li>
 <li><p>False: No save button is shown in the HTML.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type save_button<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
+</p></li>
+</ul>
 </dd>
-<dt class="field-even">type overwrite<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">rtype<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -406,6 +322,8 @@ False: Slider is not shown in the HTML.</p>
 <li><p>Documentation: <a class="reference external" href="https://erdogant.github.io/d3graph/">https://erdogant.github.io/d3graph/</a></p></li>
 <li><p>Blog</p></li>
 </ul>
+</dd></dl>
+
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>

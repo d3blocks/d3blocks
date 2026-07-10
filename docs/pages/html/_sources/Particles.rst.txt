@@ -1,9 +1,7 @@
 Particles
 #############
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.particles
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.particles
 
 
 

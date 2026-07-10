@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scatter &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=6837f5c9"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Scatter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.scatter"><code class="docutils literal notranslate"><span class="pre">D3Blocks.scatter()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default-scatterplot">Default scatterplot</a></li>
@@ -89,9 +90,9 @@
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Export to HTML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.vec2adjmat">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html#saving-charts">Saving Charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
@@ -138,157 +139,71 @@
 <p><a class="reference external" href="https://erdogant.medium.com/">Get the Most Out of Your Scatterplot by Making It Interactive Using D3js and Python.</a></p>
 </div>
 <hr class="docutils" />
-<p id="module-d3blocks.d3blocks.D3Blocks.scatter">Scatterplot block.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.scatter">
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'opaque'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_radio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['(x,</span> <span class="pre">y)',</span> <span class="pre">'(x1,</span> <span class="pre">y1)',</span> <span class="pre">'(x2,</span> <span class="pre">y2)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Link to this definition"></a></dt>
+<dd><p>Scatterplot block.</p>
 <p>The scatter plot is perhaps the most well-known chart to plot x, and y coordinates. Basic charts are very
 useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
 sample-wise colored and used to detect relationships between (groups of) variables.
 The input data frame should contain 2 columns (x and y) with the coordinates, and the index represents the
 class label.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param x<span class="colon">:</span></dt>
-<dd class="field-odd"><p>1d coordinates x-axis.</p>
-</dd>
-<dt class="field-even">type x<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param y<span class="colon">:</span></dt>
-<dd class="field-odd"><p>1d coordinates y-axis.</p>
-</dd>
-<dt class="field-even">type y<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param x1<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Second set of 1d coordinates x-axis.</p>
-</dd>
-<dt class="field-even">type x1<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param y1<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Second set of 1d coordinates y-axis.</p>
-</dd>
-<dt class="field-even">type y1<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param x2<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Third set of 1d coordinates x-axis.</p>
-</dd>
-<dt class="field-even">type x2<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param y2<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Third set of 1d coordinates y-axis.</p>
-</dd>
-<dt class="field-even">type y2<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy array</p>
-</dd>
-<dt class="field-odd">param jitter<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Add jitter to data points as random normal data. Values of 0.01 is usually good for one-hot data seperation.</p>
-</dd>
-<dt class="field-even">type jitter<span class="colon">:</span></dt>
-<dd class="field-even"><p>float, default: None</p>
-</dd>
-<dt class="field-odd">param size<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Size of the samples.</p>
-</dd>
-<dt class="field-even">type size<span class="colon">:</span></dt>
-<dd class="field-even"><p>list/array of with same size as (x,y).</p>
-</dd>
-<dt class="field-odd">param color<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy array</em>) – 1d coordinates x-axis.</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em>) – 1d coordinates y-axis.</p></li>
+<li><p><strong>x1</strong> (<em>numpy array</em>) – Second set of 1d coordinates x-axis.</p></li>
+<li><p><strong>y1</strong> (<em>numpy array</em>) – Second set of 1d coordinates y-axis.</p></li>
+<li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
+<li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
+<li><p><strong>jitter</strong> (<em>float</em><em>, </em><em>default: None</em>) – Add jitter to data points as random normal data. Values of 0.01 is usually good for one-hot data seperation.</p></li>
+<li><p><strong>size</strong> (<em>list/array</em><em> of </em><em>with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>.</em>) – Size of the samples.</p></li>
+<li><p><strong>color</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <ul>
 <li><p>‘#ffffff’ : All dots are get the same hex color.</p></li>
 <li><p>None: The same color as for c is applied.</p></li>
 <li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
 </ul>
-</dd>
-<dt class="field-even">type color<span class="colon">:</span></dt>
-<dd class="field-even"><p>list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param stroke<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Edgecolor of dotsize in hex colors.</dt><dd><ul class="simple">
-<li><p>‘#000000’ : All dots are get the same hex color.</p></li>
+</p></li>
+<li><p><strong>stroke</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <dl class="simple">
+<dt>Edgecolor of dotsize in hex colors.</dt><dd><ul>
+<li><p>’#000000’ : All dots are get the same hex color.</p></li>
 <li><p>[‘#000000’, ‘#ffffff’,…]: list/array of hex colors with same size as (x,y)</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type stroke<span class="colon">:</span></dt>
-<dd class="field-even"><p>list/array of hex colors with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param c_gradient<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Hex color to make a lineair gradient using the density.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>c_gradient</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'opaque'</em><em>)</em>) – <dl class="simple">
+<dt>Hex color to make a lineair gradient using the density.</dt><dd><ul>
 <li><p>None: Do not use gradient.</p></li>
 <li><p>opaque: Towards the edges the points become more transparant. This will stress the dense areas and make scatter plot tidy.</p></li>
-<li><p>‘#FFFFFF’: Towards the edges it smooths into this color</p></li>
+<li><p>’#FFFFFF’: Towards the edges it smooths into this color</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type c_gradient<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: ‘opaque’)</p>
-</dd>
-<dt class="field-odd">param opacity<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Opacity of the dot. Shoud be same size as (x,y)</p>
-</dd>
-<dt class="field-even">type opacity<span class="colon">:</span></dt>
-<dd class="field-even"><p>float or list/array [0-1]</p>
-</dd>
-<dt class="field-odd">param tooltip<span class="colon">:</span></dt>
-<dd class="field-odd"><p>labels of the samples.</p>
-</dd>
-<dt class="field-even">type tooltip<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of labels with same size as (x,y)</p>
-</dd>
-<dt class="field-odd">param cmap<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul class="simple">
-<li><p>‘tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
+</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em> or </em><em>list/array</em><em> [</em><em>0-1</em><em>]</em>) – Opacity of the dot. Shoud be same size as (x,y)</p></li>
+<li><p><strong>tooltip</strong> (<em>list</em><em> of </em><em>labels with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – labels of the samples.</p></li>
+<li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'inferno'</em><em>)</em>) – <dl class="simple">
+<dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
+<li><p>’tab20c’, ‘Set1’, ‘Set2’, ‘rainbow’, ‘bwr’, ‘binary’, ‘seismic’, ‘Blues’, ‘Reds’, ‘Pastel1’, ‘Paired’, ‘twilight’, ‘hsv’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type cmap<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: ‘inferno’)</p>
-</dd>
-<dt class="field-odd">param scale<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Scale datapoints. The default is False.</p>
-</dd>
-<dt class="field-even">type scale<span class="colon">:</span></dt>
-<dd class="field-even"><p>Bool, optional</p>
-</dd>
-<dt class="field-odd">param label_radio<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The labels used for the radiobuttons.</p>
-</dd>
-<dt class="field-even">type label_radio<span class="colon">:</span></dt>
-<dd class="field-even"><p>List [‘(x, y)’, ‘(x1, y1)’, ‘(x2, y2)’]</p>
-</dd>
-<dt class="field-odd">param set_xlim<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Width of the x-axis: The default is extracted from the data with 10% spacing.</p>
-</dd>
-<dt class="field-even">type set_xlim<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param set_ylim<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Height of the y-axis: The default is extracted from the data with 10% spacing.</p>
-</dd>
-<dt class="field-even">type set_ylim<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple, (default: [None, None])</p>
-</dd>
-<dt class="field-odd">param title<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Title of the figure.</dt><dd><ul class="simple">
-<li><p>‘Scatterplot’</p></li>
+</p></li>
+<li><p><strong>scale</strong> (<em>Bool</em><em>, </em><em>optional</em>) – Scale datapoints. The default is False.</p></li>
+<li><p><strong>label_radio</strong> (<em>List</em><em> [</em><em>'</em><em>(</em><em>x</em><em>, </em><em>y</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x1</em><em>, </em><em>y1</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x2</em><em>, </em><em>y2</em><em>)</em><em>'</em><em>]</em>) – The labels used for the radiobuttons.</p></li>
+<li><p><strong>set_xlim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Width of the x-axis: The default is extracted from the data with 10% spacing.</p></li>
+<li><p><strong>set_ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Height of the y-axis: The default is extracted from the data with 10% spacing.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’Scatterplot’</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type title<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>File path to save the output.</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
 <li><p>Temporarily path: ‘d3blocks.html’</p></li>
 <li><p>Relative path: ‘./d3blocks.html’</p></li>
 <li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
@@ -296,81 +211,53 @@ class label.</p>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type filepath<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
 <li><p>[900, 600]</p></li>
 </ul>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">type figsize<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Open browser-window.</p></li>
 <li><p>False: Do not open browser-window.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type showfig<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Overwrite the html in the destination directory.</p></li>
 <li><p>False: Do not overwrite destination file but show warning instead.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type overwrite<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param notebook<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
 <li><p>True: Use IPython to show chart in notebook.</p></li>
 <li><p>False: Do not use IPython.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type notebook<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-<dt class="field-odd">param save_button<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Save button is shown in the HTML to save the image in svg.</p></li>
 <li><p>False: No save button is shown in the HTML.</p></li>
 </ul>
-</dd>
-<dt class="field-even">type save_button<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param return_html<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>return_html</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – <ul>
 <li><p>True: Return html</p></li>
 <li><p>False: Nothing is returned</p></li>
 </ul>
-</dd>
-<dt class="field-even">type return_html<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: False)</p>
-</dd>
-<dt class="field-odd">param reset_properties<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
 <li><p>True: Reset the node_properties at each run.</p></li>
 <li><p>False: Use the d3.node_properties()</p></li>
 </ul>
+</p></li>
+</ul>
 </dd>
-<dt class="field-even">type reset_properties<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
 <li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
 <li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -476,6 +363,8 @@ class label.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Scatter.html">https://d3blocks.github.io/d3blocks/pages/html/Scatter.html</a></p></li>
 </ul>
+</dd></dl>
+
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset are the x-coordinates and y-coordinates that needs to be specified seperately.</p>

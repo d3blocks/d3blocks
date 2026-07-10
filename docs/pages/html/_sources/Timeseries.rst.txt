@@ -1,9 +1,7 @@
 Timeseries
 #############
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.timeseries
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.timeseries
 
 
 

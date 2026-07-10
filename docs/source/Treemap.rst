@@ -3,9 +3,7 @@ Treemap
 
 -------------------------
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.treemap
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.treemap
 
 
 Input Data

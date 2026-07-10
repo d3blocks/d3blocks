@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elasticgraph &mdash; d3blocks d3blocks documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=6837f5c9"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -64,10 +64,12 @@
 <li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Elasticgraph</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.elasticgraph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.elasticgraph()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default">Default</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#change-node-properties">Change node properties</a></li>
 </ul>
 </li>
 </ul>
@@ -88,9 +90,9 @@
 <p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Export to HTML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.vec2adjmat">vec2adjmat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.adjmat2vec">adjmat2vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#module-d3blocks.D3Blocks.import_example">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helper_functions.html#saving-charts">Saving Charts</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
@@ -132,194 +134,6 @@
              
   <section id="elasticgraph">
 <h1>Elasticgraph<a class="headerlink" href="#elasticgraph" title="Link to this heading"></a></h1>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p><a class="reference external" href="https://erdogant.medium.com/">Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python.</a></p>
-</div>
-<hr class="docutils" />
-<p id="module-d3blocks.d3blocks.D3Blocks.elasticgraph">D3 Elasticgraph block.</p>
-<p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
-the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
-dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
-in the d3blocks library.
-In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
-with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
-heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
-by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
-interactive and stand alone. For demonstration purposes, the “bigbang”, “energy” and “stormofswords” dataset can
-be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">param df<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Input data containing the following columns:</dt><dd><ul class="simple">
-<li><p>‘source’</p></li>
-<li><p>‘target’</p></li>
-<li><p>‘weight’</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">type df<span class="colon">:</span></dt>
-<dd class="field-even"><p>pd.DataFrame()</p>
-</dd>
-<dt class="field-odd">param group<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Grouping (and coloring) of the nodes.</dt><dd><ul class="simple">
-<li><p>‘cluster’ : Colours are based on the community distance clusters.</p></li>
-<li><p>None: All nodes will have the same color (auto generated).</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">type group<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of strings (default: ‘cluster’)</p>
-</dd>
-<dt class="field-odd">param collision<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Response of the network. Higher means that more collisions are prevented.</p>
-</dd>
-<dt class="field-even">type collision<span class="colon">:</span></dt>
-<dd class="field-even"><p>float, (default: 0.5)</p>
-</dd>
-<dt class="field-odd">param charge<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p>
-</dd>
-<dt class="field-even">type charge<span class="colon">:</span></dt>
-<dd class="field-even"><p>int, (default: 250)</p>
-</dd>
-<dt class="field-odd">param size<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Size of the nodes.</p>
-</dd>
-<dt class="field-even">type size<span class="colon">:</span></dt>
-<dd class="field-even"><p>float, (default: 4)</p>
-</dd>
-<dt class="field-odd">param hull_offset<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The higher the number the more the clusters will overlap after expanding.</p>
-</dd>
-<dt class="field-even">type hull_offset<span class="colon">:</span></dt>
-<dd class="field-even"><p>float, (default: 15)</p>
-</dd>
-<dt class="field-odd">param single_click_expand<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Nodes are not expanded with a single click.</p>
-</dd>
-<dt class="field-even">type single_click_expand<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: False)</p>
-</dd>
-<dt class="field-odd">param title<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Title of the figure.</dt><dd><ul class="simple">
-<li><p>‘elasticgraph’</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">type title<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (default: None)</p>
-</dd>
-<dt class="field-odd">param filepath<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>File path to save the output.</dt><dd><ul class="simple">
-<li><p>Temporarily path: ‘d3blocks.html’</p></li>
-<li><p>Relative path: ‘./d3blocks.html’</p></li>
-<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
-<li><p>None: Return HTML</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">type filepath<span class="colon">:</span></dt>
-<dd class="field-even"><p>String, (Default: user temp directory)</p>
-</dd>
-<dt class="field-odd">param figsize<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>Size of the figure in the browser, [width, height].</dt><dd><ul class="simple">
-<li><p>[None, None] # Full screen</p></li>
-<li><p>[1500, 800]</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">type figsize<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-<dt class="field-odd">param showfig<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>True: Open browser-window.</p></li>
-<li><p>False: Do not open browser-window.</p></li>
-</ul>
-</dd>
-<dt class="field-even">type showfig<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param notebook<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>True: Use IPython to show chart in notebook.</p></li>
-<li><p>False: Do not use IPython.</p></li>
-</ul>
-</dd>
-<dt class="field-even">type notebook<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-<dt class="field-odd">param save_button<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>True: Save button is shown in the HTML to save the image in svg.</p></li>
-<li><p>False: No save button is shown in the HTML.</p></li>
-</ul>
-</dd>
-<dt class="field-even">type save_button<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">param overwrite<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>True: Overwrite the html in the destination directory.</p></li>
-<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
-</ul>
-</dd>
-<dt class="field-even">type overwrite<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool, (default: True)</p>
-</dd>
-<dt class="field-odd">rtype<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;stormofswords&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create force-directed-network (without cluster labels)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show elasticgraph</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph with the same properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add cluster labels (no need to do it again because it is the default)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># d3.Elasticgraph.set_node_properties(color=None)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># After making changes, show the graph again using show()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-</pre></div>
-</div>
-<p class="rubric">References</p>
-<ul class="simple">
-<li><p>Gitlab : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph">https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph</a></p></li>
-<li><p>Blog</p></li>
-</ul>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
@@ -339,15 +153,182 @@ be used.</p>
 <span class="c1"># [68 rows x 3 columns]</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.elasticgraph">
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">elasticgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_click_expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.elasticgraph" title="Link to this definition"></a></dt>
+<dd><p>D3 Elasticgraph block.</p>
+<p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
+the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
+dataframe containing source, target, and weight. This graph relies on the properties of d3graph and is also utilized
+in the d3blocks library.
+In underneath example, we load an example dataset which contains K relationships that are stored in a DataFrame
+with the columns source, target, and weight. The nodes are clustered (and colored) based on the Louvain
+heuristics which is the partition of highest modularity, i.e. the highest partition of the dendrogram generated
+by the Louvain algorithm. The strength of the edges is based on the weights. The ouput is a html file that is
+interactive and stand alone. For demonstration purposes, the “bigbang”, “energy” and “stormofswords” dataset can
+be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
+<dt>Input data containing the following columns:</dt><dd><ul>
+<li><p>’source’</p></li>
+<li><p>’target’</p></li>
+<li><p>’weight’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>group</strong> (<em>list</em><em> of </em><em>strings</em><em> (</em><em>default: 'cluster'</em><em>)</em>) – <dl class="simple">
+<dt>Grouping (and coloring) of the nodes.</dt><dd><ul>
+<li><p>’cluster’ : Colours are based on the community distance clusters.</p></li>
+<li><p>None: All nodes will have the same color (auto generated).</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 250</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>size</strong> (<em>float</em><em>, </em><em>(</em><em>default: 4</em><em>)</em>) – Size of the nodes.</p></li>
+<li><p><strong>hull_offset</strong> (<em>float</em><em>, </em><em>(</em><em>default: 15</em><em>)</em>) – The higher the number the more the clusters will overlap after expanding.</p></li>
+<li><p><strong>single_click_expand</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Nodes are not expanded with a single click.</p></li>
+<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Title of the figure.</dt><dd><ul>
+<li><p>’elasticgraph’</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <dl class="simple">
+<dt>File path to save the output.</dt><dd><ul>
+<li><p>Temporarily path: ‘d3blocks.html’</p></li>
+<li><p>Relative path: ‘./d3blocks.html’</p></li>
+<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
+<li><p>None: Return HTML</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
+<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
+<li><p>[None, None] # Full screen</p></li>
+<li><p>[1500, 800]</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Open browser-window.</p></li>
+<li><p>False: Do not open browser-window.</p></li>
+</ul>
+</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
+<li><p>True: Use IPython to show chart in notebook.</p></li>
+<li><p>False: Do not use IPython.</p></li>
+</ul>
+</p></li>
+<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Save button is shown in the HTML to save the image in svg.</p></li>
+<li><p>False: No save button is shown in the HTML.</p></li>
+</ul>
+</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
+<li><p>True: Overwrite the html in the destination directory.</p></li>
+<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;stormofswords&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create force-directed-network (without cluster labels)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show elasticgraph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">();</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># d3.Elasticgraph.set_node_properties(color=None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Edge properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[(</span><span class="s1">&#39;Wind&#39;</span><span class="p">,</span> <span class="s1">&#39;Electricity_grid&#39;</span><span class="p">)][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;TEST&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># After making changes, show the graph again using show()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show original graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Gitlab : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph">https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph</a></p></li>
+<li><p>Blog</p></li>
+</ul>
+</dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+
+<span class="c1"># Initialize</span>
+<span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+
+<span class="c1"># Import example</span>
+<span class="c1"># df = d3.import_example(&#39;stormofswords&#39;)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create force-directed-network (without cluster labels)</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Set all colors to the same color</span>
+<span class="c1"># d3.Elasticgraph.D3graph.set_node_properties(fontcolor=&#39;#000000&#39;)</span>
+
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">]</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">15</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#FFFFFF&#39;</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">5</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;fontsize&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">20</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;fontcolor&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wind&#39;</span><span class="p">][</span><span class="s1">&#39;group&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;new group&#39;</span>
+
+<span class="c1"># Update another node</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wave&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">8</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wave&#39;</span><span class="p">][</span><span class="s1">&#39;fontcolor&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Wave&#39;</span><span class="p">][</span><span class="s1">&#39;group&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;new group&#39;</span>
+
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Coal&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Biomass_imports&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="c1"># Set edge properties</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[(</span><span class="s1">&#39;Wind&#39;</span><span class="p">,</span> <span class="s1">&#39;Electricity_grid&#39;</span><span class="p">)][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;TEST&#39;</span>
+<span class="c1">#</span>
+<span class="c1"># Show elasticgraph</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="charts">
 <h2>Charts<a class="headerlink" href="#charts" title="Link to this heading"></a></h2>
 <section id="default">
 <h3>Default<a class="headerlink" href="#default" title="Link to this heading"></a></h3>
-<iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_example1.html" height="800px" width="775px", frameBorder="0"></iframe></section>
-<section id="change-node-properties">
-<h3>Change node properties<a class="headerlink" href="#change-node-properties" title="Link to this heading"></a></h3>
-<iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example4.html" height="800px" width="775px", frameBorder="0"></iframe><hr>
+<iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_example1.html" height="800px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
         <!-- Show an image ad -->

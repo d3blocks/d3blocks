@@ -1,9 +1,7 @@
 Matrix
 #############
 
-.. automodule:: d3blocks.d3blocks.D3Blocks.matrix
-    :members:
-    :undoc-members:
+.. automethod:: d3blocks.d3blocks.D3Blocks.matrix
 
 
 
