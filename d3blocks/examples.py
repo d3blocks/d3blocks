@@ -1,21 +1,34 @@
 from d3blocks import D3Blocks
-#
+
 # Initialize
 d3 = D3Blocks()
-#
+
 # Import example
 df = d3.import_example('energy') # 'stormofswords'
-#
+
 # Create force-directed-network (without cluster labels)
-d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+d3.elasticgraph(df, filepath='Elasticgraph.html', charge=50, showfig=False)
+
+# Set all colors to the same color
+# d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
 
 d3.Elasticgraph.D3graph.node_properties
-# d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
-d3.Elasticgraph.D3graph.node_properties['Wind']['size']=100
-d3.Elasticgraph.D3graph.node_properties['Wind']['edge_color']='#B22222'
-d3.Elasticgraph.D3graph.node_properties['Wind']['edge_size']=2
+d3.Elasticgraph.D3graph.node_properties['Wind']
+d3.Elasticgraph.D3graph.node_properties['Wind']['size']=15
+d3.Elasticgraph.D3graph.node_properties['Wind']['edge_color']='#FFFFFF'
+d3.Elasticgraph.D3graph.node_properties['Wind']['edge_size']=5
 d3.Elasticgraph.D3graph.node_properties['Wind']['fontsize']=20
-# Add cluster labels (no need to do it again because it is the default)
+d3.Elasticgraph.D3graph.node_properties['Wind']['fontcolor']='#000000'
+d3.Elasticgraph.D3graph.node_properties['Wind']['group']='new group'
+
+# Create new group label
+d3.Elasticgraph.D3graph.node_properties['Wave']['size']=8
+d3.Elasticgraph.D3graph.node_properties['Wave']['group']='new group'
+d3.Elasticgraph.D3graph.node_properties['Wave']['fontcolor']='#000000'
+
+d3.Elasticgraph.D3graph.node_properties['Coal']['size']=10
+d3.Elasticgraph.D3graph.node_properties['Biomass_imports']['size']=1
+
 # Set edge properties
 d3.Elasticgraph.D3graph.edge_properties
 d3.Elasticgraph.D3graph.edge_properties[('Wind', 'Electricity_grid')]['label']='TEST'
