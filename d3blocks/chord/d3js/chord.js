@@ -1786,6 +1786,42 @@
           .radius(innerRadius - 1)
           .padAngle(1 / innerRadius);
 
+      // Container for the per-link gradients (source-color -> target-color).
+      const defs = svg.append("defs");
+      const gradientRadius = innerRadius - 1;
+
+      function link_gradient_id(i) {
+          return `chord-link-gradient-${i}`;
+      }
+
+      function create_link_gradient(d, i) {
+          const gradId = link_gradient_id(i);
+          const sourceColor = node_colors.get(names[d.source.index]);
+          const targetColor = node_colors.get(names[d.target.index]);
+
+          // Position the gradient stops at the mid-angle of the source and
+          // target arcs so the color transitions across the ribbon.
+          const sourceAngle = (d.source.startAngle + d.source.endAngle) / 2 - Math.PI / 2;
+          const targetAngle = (d.target.startAngle + d.target.endAngle) / 2 - Math.PI / 2;
+          const x1 = gradientRadius * Math.cos(sourceAngle);
+          const y1 = gradientRadius * Math.sin(sourceAngle);
+          const x2 = gradientRadius * Math.cos(targetAngle);
+          const y2 = gradientRadius * Math.sin(targetAngle);
+
+          const gradient = defs.append("linearGradient")
+              .attr("id", gradId)
+              .attr("gradientUnits", "userSpaceOnUse")
+              .attr("x1", x1)
+              .attr("y1", y1)
+              .attr("x2", x2)
+              .attr("y2", y2);
+
+          gradient.append("stop").attr("offset", "0%").attr("stop-color", sourceColor);
+          gradient.append("stop").attr("offset", "100%").attr("stop-color", targetColor);
+
+          return `url(#${gradId})`;
+      }
+
       const group = svg.append("g")
           .attr("font-size", {{ FONTSIZE }})
           .attr("font-family", "sans-serif")
@@ -1826,7 +1862,8 @@
           .join("path")
           .style("mix-blend-mode", "multiply")
           //.attr("fill", d => color_func(names[d.target.index]))
-          .attr("fill", d => link_color(d.source.index, d.target.index))              // COLORS LINKS
+          //.attr("fill", d => link_color(d.source.index, d.target.index))             // COLORS LINKS (FLAT, deprecated)
+          .attr("fill", (d, i) => create_link_gradient(d, i))                          // COLORS LINKS (GRADIENT: source -> target)
           .attr("fill-opacity", d => link_opacity(d.source.index, d.target.index))    // OPACITY LINKS
           .attr("d", ribbon)
           .append("title")
