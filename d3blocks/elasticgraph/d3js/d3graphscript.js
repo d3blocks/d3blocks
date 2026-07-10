@@ -381,6 +381,13 @@ function d3graphscript(
   const defaultRadius = 4
   const scaling = dr / defaultRadius
 
+  // d.size is INTERNAL bookkeeping (cluster member count for group nodes, unrelated to
+  // the Python 'size' field). For real leaf nodes (d.size falsy) use the actual per-node
+  // visual size (JSON field node_size, originally 'size' in node_properties).
+  function nodeRadius(d) {
+    return d.size > 0 ? d.size + dr : (d.node_size || 1) + dr;
+  }
+
   //   function updateWindow() {
   //     const w =
   //       window.innerWidth ||
@@ -643,7 +650,7 @@ function d3graphscript(
           "class",
           (d) => "node" + (d.size > 0 ? "" : d.size < 0 ? " helper" : " leaf")
         )
-        .attr("r", (d) => (d.size > 0 ? d.size + dr : d.size < 0 ? 2 : dr + 1))
+        .attr("r", (d) => (d.size < 0 ? 2 : nodeRadius(d)))
         .attr("cx", (d) => d.x)
         .attr("cy", (d) => d.y)
         .style("fill", (d) => fill(d.group));
@@ -660,7 +667,7 @@ function d3graphscript(
           "node" +
           (d.size > 0 ? (d.expansion ? " link-expanded" : "") : " leaf")
         ))
-      .attr("r", (d) => (d.size > 0 ? d.size + dr : dr + 1))
+      .attr("r", (d) => nodeRadius(d))
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
       .style("fill", (d) => fill(d.group))
@@ -843,9 +850,7 @@ function d3graphscript(
         var k,
           dx,
           dy,
-          r =
-            (n.size > 0 ? n.size + dr : dr + 1) +
-            2; /* styled border outer thickness and a bit */
+          r = nodeRadius(n) + 2; /* styled border outer thickness and a bit */
 
         dx = 0;
         if (n.x < r) dx = r - n.x;
