@@ -206,6 +206,15 @@ class Elasticgraph:
         self.D3graph.config['notebook'] = notebook
         self.D3graph.set_path(filepath)
 
+        # Ensure numeric node properties are always float, not int. If a user manually
+        # overrides a value (e.g. node_properties['Wind']['size'] = 5), an int here mixes
+        # dtypes with the rest of the (float) column and causes inconsistent typing all the
+        # way through to the browser-side JSON, leading to unpredictable rendering.
+        for props in self.D3graph.node_properties.values():
+            for key in ('size', 'edge_size'):
+                if key in props and props[key] is not None:
+                    props[key] = float(props[key])
+
         # Create dataframe from co-occurrence matrix
         self.D3graph.G = make_graph(self.D3graph.node_properties, self.D3graph.edge_properties)
         # Create json
@@ -214,6 +223,9 @@ class Elasticgraph:
         html = self.write_html(json_data, overwrite=overwrite)
         # Display the chart
         return self.D3graph.display(html)
+        # if self.D3graph.config['showfig']:
+        #     self.D3graph.showfig(self.D3graph.config['filepath'])
+        # return html
 
     def set_edge_properties(self,
                             edge_distance: int = None,
