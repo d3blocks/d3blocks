@@ -1,11 +1,6 @@
 Elasticgraph
 #############
 
-.. tip::
-	`Read the Medium blog for more details about creating beautiful stand-alone interactive D3 charts with Python. <https://erdogant.medium.com/>`_
-
--------------------------
-
 
 .. automodule:: d3blocks.d3blocks.D3Blocks.elasticgraph
     :members:

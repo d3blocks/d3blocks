@@ -665,6 +665,7 @@ function d3graphscript(
       .style("fill", (d) => fill(d.group))
       .style("opacity", (d) => d.node_opacity)
       .style("stroke", (d) => d.node_color_edge)
+      .style("stroke-width", (d) => d.node_size_edge)
       .on("click", on_node_click);
 
     // native browser tooltip on hover, using the 'tooltip' field (falls back to label/name)

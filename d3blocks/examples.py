@@ -11,7 +11,10 @@ d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
 
 d3.Elasticgraph.D3graph.node_properties
 # d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
-d3.Elasticgraph.D3graph.node_properties['Wind']['size']=20
+d3.Elasticgraph.D3graph.node_properties['Wind']['size']=100
+d3.Elasticgraph.D3graph.node_properties['Wind']['edge_color']='#B22222'
+d3.Elasticgraph.D3graph.node_properties['Wind']['edge_size']=2
+d3.Elasticgraph.D3graph.node_properties['Wind']['fontsize']=20
 # Add cluster labels (no need to do it again because it is the default)
 # Set edge properties
 d3.Elasticgraph.D3graph.edge_properties
