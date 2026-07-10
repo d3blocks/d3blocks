@@ -626,7 +626,8 @@ function d3graphscript(
         "font-size",
         (d) => (d.ref.label_fontsize ? d.ref.label_fontsize + "px" : "8px")
       )
-      .text((d) => d.ref.label || d.ref.tooltip || d.ref.weight || "");
+      .text((d) => d.ref.label || "");
+      //.text((d) => d.ref.label || d.ref.tooltip || d.ref.weight || "");
 
     if (debug) {
       hnode = helper_nodeg
@@ -707,7 +708,7 @@ function d3graphscript(
     label
       .style("fill", (d) => d.node_fontcolor || "#333")
       .style("font-size", (d) => (d.node_fontsize ? d.node_fontsize + "px" : "12px"))
-      .text((d) => d.node_name || d.name);
+      .text((d) => d.node_name || d.name || "group " + d.group);
 
     var drag_in_progress = false;
     var change_squared;
