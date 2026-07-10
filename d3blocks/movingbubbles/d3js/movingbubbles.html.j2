@@ -60,6 +60,18 @@ Licensed    : GPL3
     	  <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
     </select>
 
+    <br><br>
+    <b>Filter by date:</b>
+    <div id="date-filter">
+        <input type="date" id="dateFilterStart" value="{{ DATE_MIN }}" min="{{ DATE_MIN }}" max="{{ DATE_MAX }}">
+        <span>&ndash;</span>
+        <input type="date" id="dateFilterEnd" value="{{ DATE_MAX }}" min="{{ DATE_MIN }}" max="{{ DATE_MAX }}">
+        <br><br>
+        <button id="applyDateFilter" class="togglebutton" style="width:auto; float:none; display:inline-block; padding:3px 8px;">Apply</button>
+        <button id="resetDateFilter" class="togglebutton" style="width:auto; float:none; display:inline-block; padding:3px 8px;">Reset</button>
+        <div id="dateFilterCount" style="margin-top:6px; font-size:12px; color:#999;"></div>
+    </div>
+
     <!-- Create save button -->
     {{ SAVE_BUTTON_START }}
         <br><br>
@@ -111,6 +123,12 @@ var colorByActivity = {{ COLORBYACTIVITY }} // array of the colors per state
 var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
 var node_color = {{ NODE_COLOR }}; //array of color values, one for each node
 var color_method = "{{ COLOR_METHOD }}"; //Nodes can be colored based on "STATE" or "NODE"
+
+// DATE FILTER. node_start_date[i] is the "YYYY-MM-DD" date of the first event
+// for the i-th node/sample, aligned with node_size/node_color by index.
+var node_start_date = {{ NODE_START_DATE }};
+var DATE_MIN = "{{ DATE_MIN }}";
+var DATE_MAX = "{{ DATE_MAX }}";
 
 // DATA. The nodes are comma seperated and within each node, the pattern is: ["sample_id 1, time_in_state 1, ..", "sample_id 2, time_in_state 1, ..", ..]
 data = {{ json_data }}
@@ -194,6 +212,40 @@ var circle = svg.selectAll("circle")
 	.style("fill", function(d) { return d.color; });
 	// .call(force.drag);
 
+// Track which nodes are currently visible based on the date filter.
+// Note: this only hides/shows bubbles — the underlying simulation and the
+// activity percentages keep accounting for every sample regardless of the
+// filter, so the "%" labels reflect the full dataset, not just what's shown.
+var node_active = nodes.map(function() { return true; });
+
+function applyDateFilter() {
+	var startVal = document.getElementById('dateFilterStart').value;
+	var endVal = document.getElementById('dateFilterEnd').value;
+	if (!startVal || !endVal) return;
+
+	var startDate = new Date(startVal);
+	var endDate = new Date(endVal);
+	var visibleCount = 0;
+
+	nodes.forEach(function(d, i) {
+		var nodeDate = new Date(node_start_date[i]);
+		var withinRange = (nodeDate >= startDate) && (nodeDate <= endDate);
+		node_active[i] = withinRange;
+		if (withinRange) visibleCount += 1;
+	});
+
+	circle.style("display", function(d, i) { return node_active[i] ? null : "none"; });
+
+	d3.select("#dateFilterCount").text(visibleCount + " / " + nodes.length + " samples shown");
+}
+
+d3.select("#applyDateFilter").on("click", applyDateFilter);
+d3.select("#resetDateFilter").on("click", function() {
+	document.getElementById('dateFilterStart').value = DATE_MIN;
+	document.getElementById('dateFilterEnd').value = DATE_MAX;
+	applyDateFilter();
+});
+
 // Activity labels
 var label = svg.selectAll("text")
 	.data(act_codes)
@@ -231,6 +283,10 @@ label.append("tspan")
 	.text(function(d) {
 		return act_counts[d.index] + "%";
 	});
+
+// Apply the date filter once at startup so the visible-count label reflects
+// the full (default) range and the initial visibility state is set.
+applyDateFilter();
 	
 
 // Update nodes based on activity and duration
