@@ -1,4 +1,5 @@
 from d3blocks import D3Blocks
+import pandas as pd
 
 # Initialize
 d3 = D3Blocks()
@@ -6,8 +7,10 @@ d3 = D3Blocks()
 # Import example
 df = d3.import_example('energy') # 'stormofswords'
 
+# adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=df['weight'])
+
 # Create force-directed-network (without cluster labels)
-d3.elasticgraph(df, filepath='Elasticgraph.html', charge=50, showfig=False)
+d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
 
 # Set all colors to the same color
 # d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
@@ -35,6 +38,20 @@ d3.Elasticgraph.D3graph.edge_properties[('Wind', 'Electricity_grid')]['label']='
 #
 # Show elasticgraph
 d3.Elasticgraph.show()
+
+# %%
+from d3blocks import D3Blocks
+import pandas as pd
+
+# Initialize
+d3 = D3Blocks()
+df = pd.read_csv('https://github.com/d3blocks/d3blocks/files/11995798/Df.csv', sep=',', index_col=False)
+del df['Unnamed: 0']
+df = df[0:100]
+
+
+d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+d3.Elasticgraph.show(figsize=[2500, 2500])
 
 # %% Force directed clustered graphs
 # Load library
@@ -1435,11 +1452,11 @@ d3.node_properties.get('Nuclear')['opacity']=1
 # Show the chart
 d3.show()
 # Make edits to highlight the Nuclear Edge
-d3.edge_properties.get(('Nuclear', 'Thermal generation'))['color']='#ff0000'
-d3.edge_properties.get(('Nuclear', 'Thermal generation'))['opacity']=0.8
-d3.edge_properties.get(('Nuclear', 'Thermal generation'))['weight']=1000
-# Show the chart
-d3.show()
+# d3.edge_properties.get(('Nuclear', 'Thermal generation'))['color']='#ff0000'
+# d3.edge_properties.get(('Nuclear', 'Thermal generation'))['opacity']=0.8
+# d3.edge_properties.get(('Nuclear', 'Thermal generation'))['weight']=1000
+# # Show the chart
+# d3.show()
 
 
 # Initialize
