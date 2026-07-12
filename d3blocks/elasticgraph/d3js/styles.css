@@ -59,6 +59,11 @@ text.edge-label {
   stroke-linejoin: round;
 }
 
+svg.labels-hidden text.label,
+svg.labels-hidden text.edge-label {
+  display: none;
+}
+
 path.hull {
   fill: lightsteelblue;
   fill-opacity: 0.3;

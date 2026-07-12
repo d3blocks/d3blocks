@@ -355,6 +355,7 @@ function d3graphscript(
     debug = 0, // 0: disable, 1: all, 2: only force2
     single_click_expand = true,
     sticky = true, // pin nodes in place after dragging; right-click to release
+    label_zoom_threshold = 0.6, // below this zoom scale, labels are hidden
   } = {}
 ) {
   let net,
@@ -378,6 +379,25 @@ function d3graphscript(
   const fill = d3.scale.category20();
   const body = d3.select("body");
   const vis = body.append("svg").attr("width", width).attr("height", height).style('display', 'block');
+
+  // Everything gets appended into this <g> instead of directly onto the svg, so the zoom
+  // behaviour below can transform (scale/translate) the whole graph as one unit without
+  // touching the underlying force-layout coordinates at all.
+  const zoomRoot = vis.append("g");
+
+  vis.call(
+    d3.behavior.zoom().on("zoom", () => {
+      zoomRoot.attr(
+        "transform",
+        "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"
+      );
+      // hide labels once zoomed out past the threshold - a single class toggle is much
+      // cheaper than touching every text element on every zoom/pan tick, and CSS handles
+      // hiding all of them at once.
+      vis.classed("labels-hidden", d3.event.scale < label_zoom_threshold);
+    })
+  );
+
   const defaultRadius = 4
   const scaling = dr / defaultRadius
 
@@ -490,15 +510,15 @@ function d3graphscript(
     // prepare data struct to also carry our 'path helper nodes':
     data.helpers = { left: {}, right: {} };
 
-    hullg = vis.append("g");
+    hullg = zoomRoot.append("g");
     if (debug) {
-      linkg = vis.append("g");
-      helper_nodeg = vis.append("g");
+      linkg = zoomRoot.append("g");
+      helper_nodeg = zoomRoot.append("g");
     }
-    helper_linkg = vis.append("g");
-    edge_labelg = vis.append("g");
-    nodeg = vis.append("g");
-    labelg = vis.append("g");
+    helper_linkg = zoomRoot.append("g");
+    edge_labelg = zoomRoot.append("g");
+    nodeg = zoomRoot.append("g");
+    labelg = zoomRoot.append("g");
     if (debug == 1) {
       node = vis
         .append("g")
@@ -768,7 +788,16 @@ function d3graphscript(
           drag_in_progress = true;
         }
 
-        if (n.size > 0 ? n.link_count < 4 : n.group_data.link_count < 3)
+        // Only treat as 'weakly connected, push outward' when the node's cluster actually
+        // has a link to some OTHER cluster. Fully isolated clusters (no inter-cluster edges)
+        // report a group-level link_count of 0, same as a genuinely weakly-connected node -
+        // but once expanded, their intra-cluster edges become real (processed) edges, giving
+        // every member a first_link and triggering this same push-outward treatment with no
+        // legitimate closer target to converge toward, which just drifts them to one side.
+        if (
+          (n.size > 0 ? n.ig_link_count : n.group_data.ig_link_count) > 0 &&
+          (n.size > 0 ? n.link_count < 4 : n.group_data.link_count < 3)
+        )
           singles.push(n);
       });
 
