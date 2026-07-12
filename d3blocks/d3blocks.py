@@ -790,7 +790,7 @@ class D3Blocks():
         >>> df = d3.import_example('energy')
         >>> #
         >>> # Plot with very large margins for long labels
-        >>> d3.chord(df, 
+        >>> d3.chord(df,
         >>>          filepath='chord_large_margins.html',
         >>>          figsize=[1200, 1200],  # Even larger figure size
         >>>          margin=300,  # Large margin for long labels
@@ -1213,9 +1213,9 @@ class D3Blocks():
         understand the movements of entities, and whether clusters occur at specific time points and state(s).
         It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
         force-directed and colliding nodes. The function d3.import_example('random_time') is created to generate
-        a randomized dataset with various states. The input dataset should contain 3 columns; 
+        a randomized dataset with various states. The input dataset should contain 3 columns;
             * DateTime column: Describes the data-time when an event occurs.
-            * State column: Describes what the particular state was at that point of time of the specific sample_id. 
+            * State column: Describes what the particular state was at that point of time of the specific sample_id.
             * Sample_id column: A sample can have multiple states at various time points but can not have two states at exactly the same point in time.
 
         Parameters
@@ -1905,6 +1905,17 @@ class D3Blocks():
                 click={'fill': None, 'stroke': 'black', 'size': 1.3, 'stroke-width': 3},
                 background_color = '#FFFFFF',
                 dark_mode = False,
+                
+                link_tension: float = None,
+                sticky: bool = None,
+                node_text_inside: bool = False,
+                max_ticks: int = 300,
+                label_zoom_threshold: float = 0.4,
+                canvas_edge_threshold: int = 2000,
+                show_density: bool = False,
+                density_grid_size: int = 60,
+                density_blur: int = 10,
+                density_opacity: float = 0.6,
 
                 notebook=False,
                 showfig=True,
@@ -1993,6 +2004,45 @@ class D3Blocks():
         showfig : bool, (default: True)
                 * True: Open browser-window.
                 * False: Do not open browser-window.
+        sticky : bool, (default: None)
+            When True, nodes stay fixed in place after being dragged (overrides the value set in __init__).
+            When False, nodes are released after dragging (default simulation behaviour).
+            When None, the value set in __init__ is used.
+            Right-click a fixed node to release it back into the simulation.
+        max_ticks : int, (default: 300)
+            Caps how many simulation ticks run before the force layout auto-stops, instead
+            of letting it cool down naturally (which can take thousands of ticks on large
+            graphs, each re-running collision detection over every node).
+            0 or None: disable the cap and run to natural cooldown.
+        label_zoom_threshold : float, (default: 0.6)
+            Node and edge labels are hidden below this zoom scale (unreadable anyway, and
+            costly to keep rendering for large graphs) and reappear once zoomed back in
+            past it. Uses a single CSS class toggle, not per-label work. 0: never hide.
+        canvas_edge_threshold : int, (default: 2000)
+            Above this many visible edges, edges are drawn on a <canvas> layer instead of
+            as individual SVG <line> elements. SVG's per-element DOM overhead is what makes
+            tens of thousands of edges freeze the page; canvas draw calls stay cheap
+            regardless of edge count. Nodes always stay SVG (drag/click/tooltips). Only
+            applies once edges exceed this count, so small/medium graphs are unaffected -
+            note that in canvas mode, the "Save as SVG" export won't include edges, since
+            they no longer live in the SVG DOM.
+        show_density : bool, (default: False)
+            Adds a node-clustering heatmap layer (grid-binned density of node positions),
+            drawn on its own canvas beneath the edges and nodes, with a toggle button in
+            the UI ("Show/Hide Density") to turn it on/off regardless of this default.
+            Recomputed from live node positions each frame it's visible, so it tracks the
+            force layout as nodes settle, and it responds to the weight/component sliders
+            since it's based on whichever nodes are currently on screen. Color scheme is
+            a yellow-to-red heat gradient in light mode, single-hue blue in dark mode
+            (updates live when dark mode is toggled).
+        density_grid_size : int, (default: 40)
+            Grid resolution for the density heatmap (cells along the longer axis of the
+            node bounding box). Higher = finer detail on tight clusters, more cells to draw.
+        density_blur : int, (default: 8)
+            Blur radius (px) applied to the heatmap for a smooth look instead of a
+            blocky grid.
+        density_opacity : float, (default: 0.6)
+            Maximum heatmap opacity, reached at the highest-density grid cell.
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
@@ -2083,7 +2133,28 @@ class D3Blocks():
         # Create default graph
         self.D3graph.graph(adjmat, color=color, size=size, opacity=opacity, scaler=scaler, cmap=cmap)
         # Open the webbrowser
-        self.D3graph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, overwrite=overwrite, show_slider=show_slider, set_slider=set_slider, notebook=notebook, background_color=background_color, dark_mode=dark_mode, click=click)
+        self.D3graph.show(figsize=figsize,
+                          title=title,
+                          filepath=filepath,
+                          showfig=showfig,
+                          overwrite=overwrite,
+                          show_slider=show_slider,
+                          set_slider=set_slider,
+                          notebook=notebook,
+                          background_color=background_color, 
+                          dark_mode=dark_mode,
+                          click=click,
+                          link_tension= link_tension,
+                          sticky=sticky,
+                          node_text_inside=node_text_inside,
+                          max_ticks=max_ticks,
+                          label_zoom_threshold=label_zoom_threshold,
+                          canvas_edge_threshold=canvas_edge_threshold,
+                          show_density=show_density,
+                          density_grid_size=density_grid_size,
+                          density_blur=density_blur,
+                          density_opacity=density_opacity,
+                          )
         # Display the chart
         # return self.display(html)
 
@@ -2093,12 +2164,14 @@ class D3Blocks():
                      group='cluster',
                      title='Elasticgraph - D3blocks',
                      filepath='Elasticgraph.html',
-                     figsize=[1500, 800],
+                     figsize=[1500, 1500],
                      collision=0.5,
-                     charge=250,
+                     charge=1000,
                      size=4,
                      hull_offset=15,
                      single_click_expand=False,
+                     sticky=True,
+                     label_zoom_threshold=0.4,
                      notebook=False,
                      showfig=True,
                      save_button: bool = True,
@@ -2129,15 +2202,19 @@ class D3Blocks():
                 * 'cluster' : Colours are based on the community distance clusters.
                 * None: All nodes will have the same color (auto generated).
         collision : float, (default: 0.5)
-            Response of the network. Higher means that more collisions are prevented.
-        charge : int, (default: 250)
-            Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.
+            Response of the network. Higher means that more collisions are prevented (looser spacing between linked nodes). Lower makes the network tighter.
+        charge : int, (default: 1000)
+            Node repulsion strength. Higher makes nodes push apart more strongly (looser network); towards zero becomes a denser/tighter network.
         size : float, (default: 4)
             Size of the nodes.
         hull_offset : float, (default: 15)
             The higher the number the more the clusters will overlap after expanding.
         single_click_expand: bool, (default: False)
             Nodes are not expanded with a single click.
+        sticky : bool, (default: True)
+            Pin a node in place after dragging it. Right-click a pinned node to release it back into the simulation.
+        label_zoom_threshold : float, (default: 0.4)
+            Zoom scale below which node/edge labels are hidden (they reappear when zooming back in).
         title : String, (default: None)
             Title of the figure.
                 * 'elasticgraph'
@@ -2190,7 +2267,7 @@ class D3Blocks():
         >>> d3.Elasticgraph.D3graph.node_properties
         >>> # d3.Elasticgraph.set_node_properties(color=None)
         >>> d3.Elasticgraph.D3graph.node_properties['Wind']['size']=20
-        >>> #        
+        >>> #
         >>> # Edge properties
         >>> d3.Elasticgraph.D3graph.edge_properties
         >>> d3.Elasticgraph.D3graph.edge_properties[('Wind', 'Electricity_grid')]['label']='TEST'
@@ -2200,12 +2277,6 @@ class D3Blocks():
         >>> # Show original graph
         >>> d3.Elasticgraph.D3graph.show()
         >>> #
-
-        References
-        ----------
-        * Gitlab : https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph
-        * Blog
-
         """
         # Cleaning
         self._clean(clean_config=False)
@@ -2222,6 +2293,8 @@ class D3Blocks():
         self.config['size'] = size
         self.config['hull_offset'] = hull_offset
         self.config['single_click_expand'] = single_click_expand
+        self.config['sticky'] = sticky
+        self.config['label_zoom_threshold'] = label_zoom_threshold
         self.config['notebook'] = notebook
 
         # Copy of data
@@ -2229,7 +2302,7 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
         # Initialize network d3-elasticgraph-network
-        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand)
+        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
@@ -3530,4 +3603,3 @@ def set_chart_func(chart=None, logger=None):
             chart = None
 
     return chart
-

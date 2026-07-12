@@ -1,4 +1,41 @@
 from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Import example
+df = d3.import_example('energy') # 'bigbang', 'stormofswords'
+#
+# Create network using default
+d3.d3graph(df, filepath='d3graph.html')
+#
+# Change scaler
+d3.d3graph(df, scaler='minmax')
+#
+# Change node properties
+d3.D3graph.set_node_properties(color=None)
+d3.D3graph.node_properties['Solar']['size']=30
+d3.D3graph.node_properties['Solar']['color']='#FF0000'
+d3.D3graph.node_properties['Solar']['edge_color']='#000000'
+d3.D3graph.node_properties['Solar']['edge_size']=5
+# d3.D3graph.show(filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\d3graph_example1.html')
+#
+# Change edge properties
+d3.D3graph.set_edge_properties(directed=True, marker_end='arrow')
+# d3.D3graph.show(filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\d3graph_example2.html')
+#
+# Node properties
+d3.D3graph.node_properties
+#
+# Node properties
+d3.D3graph.edge_properties
+#
+# After making changes, show the graph again using show()
+# d3.D3graph.show(filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\d3graph_example3.html')
+
+
+# %%
+from d3blocks import D3Blocks
 import pandas as pd
 
 # Initialize
@@ -10,7 +47,9 @@ df = d3.import_example('energy') # 'stormofswords'
 # adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=df['weight'])
 
 # Create force-directed-network (without cluster labels)
-d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+# d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+# d3.elasticgraph(df, filepath='Elasticgraph.html', collision=0.8, charge=1500, size=4, hull_offset=10, showfig=True)
+d3.elasticgraph(df, filepath='Elasticgraph.html', charge=1500)
 
 # Set all colors to the same color
 # d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
@@ -45,13 +84,16 @@ import pandas as pd
 
 # Initialize
 d3 = D3Blocks()
-df = pd.read_csv('https://github.com/d3blocks/d3blocks/files/11995798/Df.csv', sep=',', index_col=False)
-del df['Unnamed: 0']
-df = df[0:100]
+df = d3.import_example('socialmedia') # 'stormofswords'
+
+# df = pd.read_csv('https://github.com/d3blocks/d3blocks/files/11995798/Df.csv', sep=',', index_col=False)
+# del df['Unnamed: 0']
+df = df[0:1000]
 
 
-d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+d3.elasticgraph(df, filepath='Elasticgraph.html', collision=0.1, charge=2000, size=4, hull_offset=15, showfig=False)
 d3.Elasticgraph.show(figsize=[2500, 2500])
+
 
 # %% Force directed clustered graphs
 # Load library
@@ -64,7 +106,7 @@ d3 = D3Blocks()
 df = d3.import_example('stormofswords') # 'stormofswords'
 #
 # Create force-directed-network (without cluster labels)
-d3.elasticgraph(df, figsize=[700, 700])
+d3.elasticgraph(df, figsize=[800, 700], collision=1, charge=3000)
 #
 # Show elasticgraph
 d3.Elasticgraph.show()

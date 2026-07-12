@@ -18,7 +18,11 @@
                 dr: {{ point_radius }},
                 off: {{ hull_offset }},
                 debug: {{ debug }},
-                single_click_expand: {{ single_click_expand|int }}
+                single_click_expand: {{ single_click_expand|int }},
+                collision: {{ collision }},
+                charge: {{ charge }},
+                sticky: {{ sticky|int }},
+                label_zoom_threshold: {{ label_zoom_threshold }}
             })
         });
     </script>

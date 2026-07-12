@@ -356,6 +356,8 @@ function d3graphscript(
     single_click_expand = true,
     sticky = true, // pin nodes in place after dragging; right-click to release
     label_zoom_threshold = 0.6, // below this zoom scale, labels are hidden
+    charge = -1000, // node repulsion strength (negative = repel); groups repel at 2x this
+    collision = 0.5, // link-distance/spacing multiplier; 0.5 = default spacing, higher = looser
   } = {}
 ) {
   let net,
@@ -544,21 +546,22 @@ function d3graphscript(
       .linkDistance((l) => {
         const n1 = l.source;
         const n2 = l.target;
+        const collisionFactor = collision / 0.5; // 0.5 is the baseline/default
 
         const inSameGroup = n1.group == n2.group;
         if (inSameGroup) {
           // In the same group
-          return 2 * scaling;
+          return 2 * scaling * collisionFactor;
         } else {
           // Not in the same group
-          return 40 * scaling;
+          return 40 * scaling * collisionFactor;
         }
       })
       .gravity(1.0) // gravity+charge tweaked to ensure good 'grouped' view (e.g. green group not smack between blue&orange, ...
       .charge((d) => {
         // ... charge is important to turn single-linked groups to the outside
-        if (d.size > 0) return -2000 * scaling; // group node
-        return -1000 * scaling; // 'regular node'
+        if (d.size > 0) return charge * 2 * scaling; // group node
+        return charge * scaling; // 'regular node'
       })
       .friction(0.7) // friction adjusted to get dampened display
       .start();
@@ -768,6 +771,7 @@ function d3graphscript(
             */
       var center = { x: 0, y: 0, weight: 0 },
         singles = [],
+        groupCentroids = {},
         size,
         c,
         mx,
@@ -788,17 +792,39 @@ function d3graphscript(
           drag_in_progress = true;
         }
 
-        // Only treat as 'weakly connected, push outward' when the node's cluster actually
-        // has a link to some OTHER cluster. Fully isolated clusters (no inter-cluster edges)
-        // report a group-level link_count of 0, same as a genuinely weakly-connected node -
-        // but once expanded, their intra-cluster edges become real (processed) edges, giving
-        // every member a first_link and triggering this same push-outward treatment with no
-        // legitimate closer target to converge toward, which just drifts them to one side.
-        if (
-          (n.size > 0 ? n.ig_link_count : n.group_data.ig_link_count) > 0 &&
-          (n.size > 0 ? n.link_count < 4 : n.group_data.link_count < 3)
-        )
-          singles.push(n);
+        // accumulate each cluster's live centroid from its currently-visible (expanded)
+        // members, used below to gently pull members back toward their own cluster.
+        if (!(n.size > 0)) {
+          const gc = groupCentroids[n.group] || (groupCentroids[n.group] = { x: 0, y: 0, count: 0 });
+          gc.x += n.x;
+          gc.y += n.y;
+          gc.count++;
+        }
+
+        // Only collapsed GROUP placeholders get pushed outward (their apparent original
+        // intent). Applying this per individual leaf member (once expanded) compounds
+        // across every member of a cluster - each pushing the same direction, every tick,
+        // uncapped - dragging the whole cluster to the canvas boundary where it gets
+        // clamped and pinned as a thin strip. Cohesion + normal link/charge forces are
+        // enough to hold an expanded cluster together without this redundant extra push.
+        if (n.size > 0 && n.ig_link_count > 0 && n.link_count < 4) singles.push(n);
+      });
+
+      // cluster cohesion: nudge every real node a small step toward its own cluster's
+      // current centroid. linkDistance already pulls DIRECTLY-linked same-group nodes
+      // together, but members with no direct edge to another member of their own cluster
+      // had nothing pulling them together at all - only charge pushing them apart and
+      // gravity pulling everyone toward the same global center - so they'd drift and
+      // interleave with unrelated clusters. This fixes that gap without touching charge.
+      const cohesionStrength = 0.15;
+      net.nodes.forEach((n) => {
+        if (n.size > 0) return;
+        const gc = groupCentroids[n.group];
+        if (!gc || gc.count < 2) return;
+        const cx = gc.x / gc.count;
+        const cy = gc.y / gc.count;
+        n.x += (cx - n.x) * cohesionStrength * e.alpha;
+        n.y += (cy - n.y) * cohesionStrength * e.alpha;
       });
 
       size = force.size();

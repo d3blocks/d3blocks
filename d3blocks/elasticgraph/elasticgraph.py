@@ -17,8 +17,6 @@ from sys import platform
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
-# if not logger.hasHandlers():
-#     logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%d-%m-%Y %H:%M:%S')
 
 # %%
 class Elasticgraph:
@@ -44,9 +42,13 @@ class Elasticgraph:
     hull_offset : float, (default: 15)
         The higher the number the more the clusters will overlap after expanding.
     collision : float, (default: 0.5)
-        Response of the network. Higher means that more collisions are prevented.
-    charge : int, (default: 250)
-        Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.
+        Response of the network. Higher means that more collisions are prevented (looser spacing between linked nodes). Lower makes the network tighter.
+    charge : int, (default: 1000)
+        Node repulsion strength. Higher makes nodes push apart more strongly (looser network); towards zero becomes a denser/tighter network.
+    sticky : bool, (default: True)
+        Pin a node in place after dragging it. Right-click a pinned node to release it back into the simulation.
+    label_zoom_threshold : float, (default: 0.4)
+        Zoom scale below which node/edge labels are hidden (they reappear when zooming back in).
     single_click_expand : bool, (default: True)
         Nodes are expanded with a single click.
     verbose : int, (default: 20)
@@ -63,7 +65,7 @@ class Elasticgraph:
     * Fork Ger Hobbelts (Block 3104394): https://bl.ocks.org/GerHobbelt/3104394
     """
 
-    def __init__(self, radius: int = 4, hull_offset: int = 15, collision: float = 0.5, charge: int = 250, verbose: int = 20, single_click_expand: bool = True) -> None:
+    def __init__(self, radius: int = 4, hull_offset: int = 15, collision: float = 0.8, charge: int = 1000, sticky: bool = True, label_zoom_threshold: float = 0.4, verbose: int = 20, single_click_expand: bool = True) -> None:
         """Initialize elasticgraph."""
         self.D3graph = d3graph()
         # Cleaning
@@ -77,6 +79,8 @@ class Elasticgraph:
         self.D3graph.config['debug'] = '0'
         self.D3graph.config['collision'] = collision
         self.D3graph.config['charge'] = -abs(charge)
+        self.D3graph.config['sticky'] = sticky
+        self.D3graph.config['label_zoom_threshold'] = label_zoom_threshold
         self.D3graph.config['single_click_expand'] = single_click_expand
         # Set paths
         self.D3graph.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
@@ -112,39 +116,15 @@ class Elasticgraph:
 
         Examples
         --------
-        >>> from elasticgraph import Elasticgraph
-        >>> #
         >>> # Initialize
-        >>> d3 = Elasticgraph()
-        >>> #
-        >>> # Load karate example
-        >>> adjmat, _ = d3.import_example('karate')
-        >>> #
-        >>> # Initialize
-        >>> d3.graph(adjmat)
-        >>> #
-        >>> # Plot
-        >>> d3.show()
-        >>> #
-        >>> # Node properties
-        >>> d3.set_node_properties(label=df['label'].values, color=df['label'].values, size=df['degree'].values, edge_size=df['degree'].values, cmap='Set1')
-        >>> #
-        >>> print(d3.D3graph.edge_properties)
-        >>> print(d3.D3graph.node_properties)
-        >>> #
-        >>> # Plot
-        >>> d3.show()
-        >>> #
-        >>> # Example 2:
-        >>> # Initialize
-        >>> d3 = Elasticgraph(single_click_expand=True)
-        >>> # Load karate example
-        >>> adjmat, _ = d3.import_example('karate')
-        >>> # Initialize
-        >>> d3.graph(adjmat)
-        >>> # Plot
-        >>> d3.show()
-
+        >>> d3 = D3Blocks()
+        >>>
+        >>> # Import example
+        >>> df = d3.import_example('energy')
+        >>>
+        >>> # Create force-directed-network
+        >>> d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=True, collision=1, charge=2500)
+        
         Returns
         -------
         None
@@ -362,6 +342,10 @@ class Elasticgraph:
             'hull_offset': self.D3graph.config['hull_offset'],
             'debug': self.D3graph.config['debug'],
             'single_click_expand': self.D3graph.config['single_click_expand'],
+            'collision': self.D3graph.config['collision'],
+            'charge': self.D3graph.config['charge'],
+            'sticky': self.D3graph.config['sticky'],
+            'label_zoom_threshold': self.D3graph.config['label_zoom_threshold'],
         }
 
         try:
