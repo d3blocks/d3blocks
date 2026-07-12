@@ -28,6 +28,11 @@ The input dataset is a DataFrame with three column, source, target and weight.
 .. automethod:: d3blocks.d3blocks.D3Blocks.elasticgraph
 
 
+.. raw:: html
+
+   <iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_stormofswords.html" height="600px" width="700px", frameBorder="0"></iframe>
+
+
 .. code:: python
 
     from d3blocks import D3Blocks
@@ -40,7 +45,7 @@ The input dataset is a DataFrame with three column, source, target and weight.
     df = d3.import_example('energy')
     
     # Create force-directed-network (without cluster labels)
-    d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
+    d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False, collision=1, charge=2500)
     
     # Set all colors to the same color
     # d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
@@ -70,15 +75,31 @@ The input dataset is a DataFrame with three column, source, target and weight.
     d3.Elasticgraph.show()
 
 
-Charts
-************
+.. raw:: html
 
-Default
-'''''''' 
+   <iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_energy.html" height="600px" width="700px", frameBorder="0"></iframe>
+
+
+.. code:: python
+
+    from d3blocks import D3Blocks
+    
+    # Initialize
+    d3 = D3Blocks()
+    df = d3.import_example('socialmedia')
+    df = df[0:1000]
+
+    # Create graph
+    d3.elasticgraph(df, collision=0.1, charge=2000, size=4, hull_offset=15, showfig=True, figsize=[2500, 2500], filepath=r'socialmedia_1000.html')
+
+
+Interactive example:
+
+`View the social media network visualization <https://erdogant.github.io\docs\d3blocks\elasticgraph_socialmedia_1000.html>`_
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_example1.html" height="800px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_socialmedia_1000.html" height="600px" width="700px", frameBorder="0"></iframe>
 
 
 .. include:: add_bottom.add

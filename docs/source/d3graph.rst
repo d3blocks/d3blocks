@@ -44,7 +44,17 @@ Default
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example1.html" height="800px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example1.html" height="700px" width="700px", frameBorder="0"></iframe>
+
+
+
+Change scaler
+''''''''''''''''''''''''
+
+
+.. raw:: html
+
+   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example2.html" height="700px" width="700px", frameBorder="0"></iframe>
 
 
 Change node properties
@@ -53,7 +63,7 @@ Change node properties
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example2.html" height="800px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="700px" width="700px", frameBorder="0"></iframe>
 
 
 Change Edge properties
@@ -61,10 +71,44 @@ Change Edge properties
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="775px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example4.html" height="700px" width="700px", frameBorder="0"></iframe>
 
 
 
+Social Media Example
+''''''''''''''''''''''''
+
+.. code:: python
+
+    from d3blocks import D3Blocks
+    
+    # Initialize
+    d3 = D3Blocks()
+    
+    # Load example data
+    df = d3.import_example('socialmedia')
+    # Slice first 10000 rows
+    df = df[0:10000]
+    
+    # Create network using default
+    d3.d3graph(df, filepath='d3graph.html', showfig=False)
+    
+    d3.d3graph(df, 
+               density_grid_size=60,
+               density_blur=10,
+               density_opacity=0.6,
+               dark_mode=True,
+               show_density=True,
+               filepath=r'd3graph_socialmedia.html',
+               )
+
+Interactive example:
+
+`View the social media network visualization <https://erdogant.github.io/docs/d3blocks/d3graph_socialmedia.html>`_
+
+.. raw:: html
+
+   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_socialmedia.html" height="700px" width="700px", frameBorder="0"></iframe>
 
 
 .. include:: add_bottom.add

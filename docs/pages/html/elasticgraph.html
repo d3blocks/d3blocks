@@ -68,10 +68,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.elasticgraph"><code class="docutils literal notranslate"><span class="pre">D3Blocks.elasticgraph()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#default">Default</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
@@ -155,7 +151,7 @@
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.elasticgraph">
-<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">elasticgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">800]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_click_expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.elasticgraph" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">elasticgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zscore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elasticgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1500,</span> <span class="pre">1500]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_click_expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sticky</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_zoom_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.elasticgraph" title="Link to this definition"></a></dt>
 <dd><p>D3 Elasticgraph block.</p>
 <p>Elasticgraph is integrated in d3blocks to create interactive and stand-alone D3 force-directed graphs for which
 the groups are clustered. The original d3js is forked from Ger Hobbelts (see references). The input data is a
@@ -187,11 +183,13 @@ be used.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented.</p></li>
-<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 250</em><em>)</em>) – Edge length of the network. Towards zero becomes a dense network. Higher make edges longer.</p></li>
+<li><p><strong>collision</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.5</em><em>)</em>) – Response of the network. Higher means that more collisions are prevented (looser spacing between linked nodes). Lower makes the network tighter.</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>(</em><em>default: 1000</em><em>)</em>) – Node repulsion strength. Higher makes nodes push apart more strongly (looser network); towards zero becomes a denser/tighter network.</p></li>
 <li><p><strong>size</strong> (<em>float</em><em>, </em><em>(</em><em>default: 4</em><em>)</em>) – Size of the nodes.</p></li>
 <li><p><strong>hull_offset</strong> (<em>float</em><em>, </em><em>(</em><em>default: 15</em><em>)</em>) – The higher the number the more the clusters will overlap after expanding.</p></li>
 <li><p><strong>single_click_expand</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Nodes are not expanded with a single click.</p></li>
+<li><p><strong>sticky</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Pin a node in place after dragging it. Right-click a pinned node to release it back into the simulation.</p></li>
+<li><p><strong>label_zoom_threshold</strong> (<em>float</em><em>, </em><em>(</em><em>default: 0.4</em><em>)</em>) – Zoom scale below which node/edge labels are hidden (they reappear when zooming back in).</p></li>
 <li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
 <dt>Title of the figure.</dt><dd><ul>
 <li><p>’elasticgraph’</p></li>
@@ -276,14 +274,9 @@ be used.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
-<p class="rubric">References</p>
-<ul class="simple">
-<li><p>Gitlab : <a class="reference external" href="https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph">https://gitlab.com/rwsdatalab/public/codebase/tools/elasticgraph</a></p></li>
-<li><p>Blog</p></li>
-</ul>
 </dd></dl>
 
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+<iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_stormofswords.html" height="600px" width="700px", frameBorder="0"></iframe><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
 
 <span class="c1"># Initialize</span>
 <span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
@@ -293,7 +286,7 @@ be used.</p>
 <span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span>
 
 <span class="c1"># Create force-directed-network (without cluster labels)</span>
-<span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;Elasticgraph.html&#39;</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">2500</span><span class="p">)</span>
 
 <span class="c1"># Set all colors to the same color</span>
 <span class="c1"># d3.Elasticgraph.D3graph.set_node_properties(fontcolor=&#39;#000000&#39;)</span>
@@ -323,12 +316,20 @@ be used.</p>
 <span class="n">d3</span><span class="o">.</span><span class="n">Elasticgraph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</section>
-<section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Link to this heading"></a></h2>
-<section id="default">
-<h3>Default<a class="headerlink" href="#default" title="Link to this heading"></a></h3>
-<iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_example1.html" height="800px" width="775px", frameBorder="0"></iframe><hr>
+<iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_energy.html" height="600px" width="700px", frameBorder="0"></iframe><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+
+<span class="c1"># Initialize</span>
+<span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;socialmedia&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1000</span><span class="p">]</span>
+
+<span class="c1"># Create graph</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">elasticgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">collision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">charge</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">hull_offset</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">2500</span><span class="p">,</span> <span class="mi">2500</span><span class="p">],</span> <span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;socialmedia_1000.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Interactive example:</p>
+<p><a class="reference external" href="https://erdogant.github.iodocsd3blockselasticgraph_socialmedia_1000.html">View the social media network visualization</a></p>
+<iframe src="https://erdogant.github.io\docs\d3blocks\elasticgraph_socialmedia_1000.html" height="600px" width="700px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
         <!-- Show an image ad -->
@@ -336,7 +337,6 @@ be used.</p>
         <div data-ea-publisher="erdogantgithubio" data-ea-type="image" data-ea-style="stickybox"></div>
 </center>
 <hr></section>
-</section>
 </section>
 
 
