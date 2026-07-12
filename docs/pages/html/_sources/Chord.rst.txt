@@ -34,10 +34,16 @@ Chart
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\chord.html" height="750px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\chord_energy1.html" height="650px" width="700px", frameBorder="0"></iframe>
 
 
+.. raw:: html
 
+   <iframe src="https://erdogant.github.io\docs\d3blocks\chord_energy2.html" height="650px" width="700px", frameBorder="0"></iframe>
+
+.. raw:: html
+
+   <iframe src="https://erdogant.github.io\docs\d3blocks\chord_energy3.html" height="650px" width="700px", frameBorder="0"></iframe>
 
 
 .. include:: add_bottom.add
