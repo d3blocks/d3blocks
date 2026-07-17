@@ -2,7 +2,7 @@
 [![Pypi](https://img.shields.io/pypi/v/d3blocks)](https://pypi.org/project/d3blocks/)
 [![Docs](https://img.shields.io/badge/Sphinx-Docs-blue)](https://d3blocks.github.io/d3blocks/)
 [![LOC](https://sloc.xyz/github/d3blocks/d3blocks/?category=code)](https://github.com/d3blocks/d3blocks/)
-[![Downloads](https://static.pepy.tech/personalized-badge/d3blocks?period=month&units=international_system&left_color=grey&right_color=brightgreen&left_text=PyPI%20downloads/month)](https://pepy.tech/)
+[![Downloads](https://static.pepy.tech/personalized-badge/d3blocks?period=month&units=international_system&left_color=grey&right_color=brightgreen&left_text=PyPI%20downloads/month)](https://pepy.tech/project/d3blocks)
 [![Downloads](https://static.pepy.tech/personalized-badge/d3blocks?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=Downloads)](https://pepy.tech/project/d3blocks)
 [![License](https://img.shields.io/badge/license-GPL3-green.svg)](https://github.com/d3blocks/d3blocks/blob/master/LICENSE)
 [![Forks](https://img.shields.io/github/forks/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/network)
@@ -36,7 +36,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 ### Social Media Example
 
 <p align="center">
-  <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/socialmedia.gif" width="700" />
+  <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/d3graph/socialmedia.gif" width="700" />
 </p>
 
 ---
@@ -67,7 +67,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 
 |  nr |  Block                                                                             |    Function                  |    Blog                                                                     |
-|-----|------------------------------------------------------------------------------------|------------------------------|------------------------------------------------------------------------------|
+|-----|------------------------------------------------------------------------------------|------------------------------|---------------------------------------------------------------------------|
 |  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                      |
 |  2  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                                 |
 |  3  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                       |
@@ -132,4 +132,4 @@ Setting up and maintaining D3blocks has been possible thanks to users and contri
 * Contributions are welcome.
 * Yes! This library is entirely **free** but it runs on coffee! :) Feel free to support with a <a href="https://erdogant.github.io/donate/?currency=USD&amount=5">Coffee</a>.
 
-[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffdd00)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#)
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](/docs/donation/)
