@@ -1894,19 +1894,17 @@ class D3Blocks():
                 scaler='zscore',
                 title='D3graph - D3blocks',
                 filepath='d3graph.html',
-                figsize=[1500, 800],
-                collision=0.5,
-                charge=400,
                 cmap='Set1',
+                figsize=[None, None],
+                collision=0.5,
+                charge=600,
+                link_tension: float = 1,
                 slider=[None, None],
                 set_slider=0,
                 show_slider=True,
-
                 click={'fill': None, 'stroke': 'black', 'size': 1.3, 'stroke-width': 3},
                 background_color = '#FFFFFF',
-                dark_mode = False,
-                
-                link_tension: float = None,
+                dark_mode = True,
                 sticky: bool = None,
                 node_text_inside: bool = False,
                 max_ticks: int = 300,
@@ -1916,11 +1914,11 @@ class D3Blocks():
                 density_grid_size: int = 60,
                 density_blur: int = 10,
                 density_opacity: float = 0.6,
-
                 notebook=False,
                 showfig=True,
                 support='text',
                 save_button: bool = True,
+                show_controls: bool = True,
                 overwrite=True):
         """d3graph block.
 
@@ -2046,6 +2044,14 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        show_controls : bool, (default: True)
+            Whether to render the top-panel buttons (Dark Mode, Hide Edges, Show Density,
+            Save) at all. Set to False when embedding the generated HTML into an existing
+            page/app that provides its own UI chrome and doesn't need d3graph's built-in
+            controls - the buttons (and their JS wiring) are omitted entirely rather than
+            just hidden, so there's no extra DOM/clutter in the embed. The weight/component
+            sliders are controlled separately via show_slider; the Save button specifically
+            is also controlled via save_button, independent of this.
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
@@ -2127,7 +2133,7 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
         # Initialize network graph
-        self.D3graph = d3network.d3graph(collision=collision, charge=charge, slider=slider, support=support)
+        self.D3graph = d3network.d3graph(collision=collision, charge=charge, link_tension=link_tension, slider=slider, support=support)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
@@ -2137,14 +2143,12 @@ class D3Blocks():
                           title=title,
                           filepath=filepath,
                           showfig=showfig,
-                          overwrite=overwrite,
                           show_slider=show_slider,
                           set_slider=set_slider,
                           notebook=notebook,
                           background_color=background_color, 
                           dark_mode=dark_mode,
                           click=click,
-                          link_tension= link_tension,
                           sticky=sticky,
                           node_text_inside=node_text_inside,
                           max_ticks=max_ticks,
@@ -2154,6 +2158,9 @@ class D3Blocks():
                           density_grid_size=density_grid_size,
                           density_blur=density_blur,
                           density_opacity=density_opacity,
+                          save_button=save_button,
+                          show_controls=show_controls,
+                          overwrite=overwrite,
                           )
         # Display the chart
         # return self.display(html)

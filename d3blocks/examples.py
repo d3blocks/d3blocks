@@ -1,4 +1,39 @@
 from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('socialmedia')
+# Slice first 10000 rows
+df = df[0:5000]
+# Create adjmat
+# adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=df['weight'])
+# Update matrix with random weights
+# tmpadjmat = np.random.randint(1, 10, size=adjmat.shape)
+# adjmat = adjmat*tmpadjmat
+
+# Create graph
+d3.d3graph(df)
+
+# Show graph with default settings
+# d3.show()
+
+# Show graph with custom specific settings
+d3.show(density_grid_size=60,
+        figsize=[None, None],
+        density_blur=15, # Smaller is more dense heatmap
+        density_opacity=0.8,
+        dark_mode=True,
+        show_density=True,
+        show_slider=True,
+        show_controls=True,
+        )
+
+# %%
+
+
+from d3blocks import D3Blocks
 #
 # Initialize
 d3 = D3Blocks()
@@ -103,7 +138,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 #
 # Import example
-df = d3.import_example('stormofswords') # 'stormofswords'
+df = d3.import_example('energy') # 'stormofswords'
 #
 # Create force-directed-network (without cluster labels)
 d3.elasticgraph(df, figsize=[800, 700], collision=1, charge=3000)
@@ -613,7 +648,7 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('bigbang')
 d3.d3graph(df)
-d3.circlepacking(df, filepath='c:/temp/circlepacking.html')
+d3.circlepacking(df)
 
 # %%
 
