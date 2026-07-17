@@ -1894,7 +1894,7 @@ class D3Blocks():
                 scaler='zscore',
                 title='D3graph - D3blocks',
                 filepath='d3graph.html',
-                cmap='Set1',
+                cmap='Set2',
                 figsize=[None, None],
                 collision=0.5,
                 charge=600,
