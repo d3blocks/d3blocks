@@ -10,7 +10,6 @@ df = df[0:5000]
 
 # Show graph with custom specific settings
 d3.d3graph(df, 
-           figsize=[None, None],
            dark_mode=True,
            show_density=True,
            show_slider=True,
