@@ -33,7 +33,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 ---
 
-### Social Media Example
+### D3Graph Network Example
 
 <p align="center">
   <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/d3graph/socialmedia.gif" width="700" />
