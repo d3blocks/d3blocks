@@ -1,4 +1,5 @@
 from d3blocks import D3Blocks
+import numpy as np
 
 # Initialize
 d3 = D3Blocks()
@@ -6,7 +7,8 @@ d3 = D3Blocks()
 # Load example data
 df = d3.import_example('socialmedia')
 # Slice first 10000 rows
-df = df[0:5000]
+df = df[0:2000]
+df['weight'] = np.random.randint(1, 11, size=df.shape[0])
 
 # Show graph with custom specific settings
 d3.d3graph(df, 

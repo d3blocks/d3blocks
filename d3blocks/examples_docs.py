@@ -1,3 +1,96 @@
+import pandas as pd
+from d3blocks import D3Blocks
+
+# PageRank-focused graph
+# Many nodes point to A with strong weights → A has highest PageRank
+df = pd.DataFrame({
+    'source': ['B','C','D','E','F','G','H','I'],
+    'target': ['A','A','A','A','A','A','A','A'],
+    'weight': [1,2,3,4,5,2,1,3]
+})
+
+# Most important node for PageRank: A
+d3 = D3Blocks()
+d3.d3graph(df, filepath='pagerank_graph.html', directed=True, showfig=True)
+
+# %%
+
+import pandas as pd
+from d3blocks import D3Blocks
+
+# HITS-focused graph
+# Hubs (H1,H2) → Authorities (A1,A2,A3)
+df = pd.DataFrame({
+    'source': ['H1','H1','H1','H2','H2','H2'],
+    'target': ['A1','A2','A3','A1','A2','A3'],
+    'weight': [3,2,1,3,2,1]
+})
+
+# Most important nodes:
+#   Authorities: A1, A2, A3
+#   Hubs: H1, H2
+
+d3 = D3Blocks()
+d3.d3graph(df, filepath='hits_graph.html')
+
+# %%
+
+import pandas as pd
+from d3blocks import D3Blocks
+
+# Closeness-focused synthetic graph
+# C is the center of a star → shortest paths to all nodes → highest closeness
+df = pd.DataFrame({
+    'source': ['C','C','C','C','C'],
+    'target': ['A','B','D','E','F'],
+    'weight': [1,1,1,1,1]
+})
+
+# Most important node for Closeness Centrality: C
+
+d3 = D3Blocks()
+d3.d3graph(df, filepath='closeness_graph.html')
+
+# %%
+
+import pandas as pd
+from d3blocks import D3Blocks
+
+# Betweenness-focused synthetic graph
+# M is the only connector between two clusters → highest betweenness
+df = pd.DataFrame({
+    'source': ['A','B','C','M','M','X','Y','Z'],
+    'target': ['M','M','M','X','Y','M','M','M'],
+    'weight': [1,1,1,3,3,1,1,1]
+})
+
+# Most important node for Betweenness Centrality: M
+
+d3 = D3Blocks()
+d3.d3graph(df, filepath='betweenness_graph.html')
+
+
+# %%
+import pandas as pd
+from d3blocks import D3Blocks
+
+# Degree-focused graph
+# X connects to many nodes with strong weights → highest degree centrality
+df = pd.DataFrame({
+    'source': ['X','X','X','X','X','A','B','C'],
+    'target': ['A','B','C','D','E','F','G','H'],
+    'weight': [5,4,3,2,1,1,1,1]
+})
+
+# Most important node for Degree Centrality: X
+
+d3 = D3Blocks()
+d3.d3graph(df, filepath='degree_graph.html')
+
+
+# %%
+
+
 # =============================================================================
 # D3BLOCKS - ELASTICGRAPH
 # =============================================================================
