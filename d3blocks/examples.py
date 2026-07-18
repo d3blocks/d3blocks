@@ -40,6 +40,7 @@ d3.D3graph.node_properties['Solar']['size']=30
 d3.D3graph.node_properties['Solar']['color']='#FF0000'
 d3.D3graph.node_properties['Solar']['edge_color']='#000000'
 d3.D3graph.node_properties['Solar']['edge_size']=5
+d3.D3graph.node_properties['Solar']['label']='this is a long test'
 # d3.D3graph.show(filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\d3graph_example1.html')
 #
 # Change edge properties
