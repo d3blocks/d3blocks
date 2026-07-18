@@ -1892,6 +1892,10 @@ class D3Blocks():
                 size='degree',
                 opacity='degree',
                 scaler='zscore',
+                directed=False, 
+                marker_start=None,
+                marker_end='arrow',
+                marker_color='#808080',
                 title='D3graph - D3blocks',
                 filepath='d3graph.html',
                 cmap='Set2',
@@ -1963,6 +1967,17 @@ class D3Blocks():
             'zscore' : Scale values to Z-scores.
             'minmax' : The sklearn scaler will shrink the distribution between minmax.
             None : No scaler is used.
+        directed : Bool, (default: False)
+            * True: Edges are shown with an marker (e.g. arrow)
+            * False: Edges do not show markers.
+        marker_start : (list of) str, (default: 'arrow')
+            * The start of the edge can be one of the following markers:
+            * 'arrow','square','circle','stub',None or ''
+        marker_end : (list of) str, (default: 'arrow')
+            * The end of the edge can be one of the following markers:
+            * 'arrow','square','circle','stub',None or ''
+        marker_color : str, (default: '#808080')
+            * The label color in hex.
         collision : float, (default: 0.5)
             Response of the network. Higher means that more collisions are prevented.
         charge : int, (default: 400)
@@ -2138,6 +2153,8 @@ class D3Blocks():
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
         self.D3graph.graph(adjmat, color=color, size=size, opacity=opacity, scaler=scaler, cmap=cmap)
+        # Set some of the edge properties
+        self.D3graph.set_edge_properties(directed=directed, marker_start=marker_start, marker_end=marker_end, marker_color=marker_color)
         # Open the webbrowser
         self.D3graph.show(figsize=figsize,
                           title=title,
