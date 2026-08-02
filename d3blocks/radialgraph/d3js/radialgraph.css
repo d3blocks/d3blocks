@@ -176,7 +176,7 @@
 
   /* —— Bottom slide-up node info panel —— */
   #nodePanel {
-    position: fixed; left: 220px; right: 0; bottom: 0; z-index: 14;
+    position: fixed; left: 220px; right: 10px; bottom: 0; z-index: 14;
     max-height: 48vh; overflow-y: auto;
     background: var(--panel-bg);
     backdrop-filter: blur(12px);
@@ -186,6 +186,8 @@
     transform: translateY(100%); opacity: 0; pointer-events: none;
     transition: transform 0.28s ease, opacity 0.28s ease, left 0.28s ease, border-color 0.25s, background 0.35s;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
+    /* Ensure the node panel doesn't span the full viewport width when side-panels are open */
+    width: auto; min-width: 280px; max-width: calc(100% - 240px);
   }
   #nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
   body.panel-collapsed #nodePanel { left: 0; }
@@ -570,5 +572,4 @@
   left: 0 !important;
   right: 0 !important;
 }
-#hint { left: 0 !important; }
-#nodePanel { left: 0 !important; }
+
