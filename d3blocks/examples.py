@@ -18,6 +18,48 @@ d3.d3graph(df,
            show_controls=True,
            )
 
+adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
+node_stats = d3.D3graph.network_statistic(adjmat, 'betweenness')
+
+node_stats = d3.D3graph.network_statistic(adjmat, 'closeness')
+node_stats = d3.D3graph.network_statistic(adjmat, 'degree')
+node_stats = d3.D3graph.network_statistic(adjmat, 'hits_authority')
+node_stats = d3.D3graph.network_statistic(adjmat, 'hits_hub')
+node_stats = d3.D3graph.network_statistic(adjmat, 'pagerank')
+
+# %%
+# Import library
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Create network graph
+d3.elasticgraph(df)
+
+# %%
+import pandas as pd
+from d3blocks import D3Blocks
+
+# Degree-focused graph
+# X connects to many nodes with strong weights → highest degree centrality
+df = pd.DataFrame({
+    'source': ['X','X','X','X','X','A','B','C'],
+    'target': ['A','B','C','D','E','F','G','H'],
+    'weight': [5,4,3,2,1,1,1,1]
+})
+
+# Most important node for Degree Centrality: X
+
+d3 = D3Blocks()
+d3.d3graph(df, filepath='degree_graph.html')
+
+# Compute stats
+adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
+node_stats = d3.D3graph.network_statistic(adjmat, 'degree')
 
 # %%
 
