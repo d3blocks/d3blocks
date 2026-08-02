@@ -2271,6 +2271,31 @@ function computeNetworkMetrics(nodeIds, edges) {
   document.querySelectorAll('input[name="statMetric"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       if (!radio.checked) return;
+      // If Flow diffusion is currently active, switch edge statistics back to
+      // default so edge coloring is not left in flow mode when a node metric
+      // is selected. Trigger the radio change handler to reuse its update logic.
+      const flowRadio = document.querySelector('input[name="edgeStatMode"][value="flow-home"]');
+      const defaultEdgeRadio = document.querySelector('input[name="edgeStatMode"][value="default"]');
+      try {
+        if (flowRadio && flowRadio.checked) {
+          if (defaultEdgeRadio) {
+            // Select default and dispatch change to run the existing handler
+            defaultEdgeRadio.checked = true;
+            defaultEdgeRadio.dispatchEvent(new Event("change", { bubbles: true }));
+          } else {
+            // Fallback: set the internal mode and recompute
+            edgeStatMode = "default";
+            recomputeMetrics();
+            flowCache.key = null;
+            stopFlowAnimation();
+            update();
+          }
+        }
+      } catch (e) {
+        console.warn("Error while forcing edgeStat to default", e);
+      }
+
+      // Apply the selected node metric
       applyStatMetric(radio.value);
     });
   });
