@@ -1,3 +1,17 @@
+from d3blocks import D3Blocks
+
+# ----------------------------------------------------------------------
+# 1. Basic: focus = highest-degree node, default panels
+# ----------------------------------------------------------------------
+d3 = D3Blocks()
+df = d3.import_example('energy')
+filepath = r'D:\REPOS\erdogant.github.io\docs\d3blocks\radialgraph_quickstart.html'
+html = d3.radialgraph(df, showfig=True, return_html=True, figsize=[700, 700], filepath=filepath)
+print('Wrote radialgraph_energy.html (center auto = highest degree)')
+
+
+# %%
+
 import pandas as pd
 from d3blocks import D3Blocks
 

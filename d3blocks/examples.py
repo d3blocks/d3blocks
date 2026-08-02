@@ -1,15 +1,3 @@
-"""Example: RadialGraph via d3blocks.
-
-Prerequisites
--------------
-1. Copy artifacts/radialgraph/ into your d3blocks package as d3blocks/radialgraph/
-2. Use the wired artifacts/d3blocks.py (or apply INTEGRATION_PATCH.md to your tree)
-3. Have d3graph installed (already a d3blocks dependency)
-
-Run
----
-    python example_radialgraph.py
-"""
 from d3blocks import D3Blocks
 
 # ----------------------------------------------------------------------
@@ -17,13 +5,9 @@ from d3blocks import D3Blocks
 # ----------------------------------------------------------------------
 d3 = D3Blocks()
 df = d3.import_example('energy')
-
-html = d3.radialgraph(
-    df,
-    filepath='radialgraph_energy.html',
-    showfig=True,
-    return_html=True,
-)
+df = d3.import_example('socialmedia')
+df = df[0:2000]
+html = d3.radialgraph(df, showfig=True, return_html=True)
 print('Wrote radialgraph_energy.html (center auto = highest degree)')
 
 # %%
@@ -39,10 +23,13 @@ html = d3.radialgraph(
     ring_spacing=80,
     auto_ring_spacing=True,
     filepath='radialgraph_solar.html',
-    showfig=False,
+    showfig=True,
     return_html=True,
 )
 print('Wrote radialgraph_solar.html (center=Solar)')
+
+# %%
+
 
 # ----------------------------------------------------------------------
 # 3. With significance testing (PageRank null model via d3graph)
@@ -56,10 +43,13 @@ html = d3.radialgraph(
     significance_n_random=50,   # use 1000 for real runs
     significance_alpha=0.05,
     filepath='radialgraph_significance.html',
-    showfig=False,
+    showfig=True,
     return_html=True,
 )
 print('Wrote radialgraph_significance.html (Significance radio uses node_proba)')
+
+# %%
+
 
 # ----------------------------------------------------------------------
 # 4. Hide panels / light mode
@@ -73,10 +63,13 @@ html = d3.radialgraph(
     dark_mode=False,
     background_color='#ffffff',
     filepath='radialgraph_minimal.html',
-    showfig=False,
+    showfig=True,
     return_html=True,
 )
 print('Wrote radialgraph_minimal.html (minimal chrome, light theme)')
+
+# %%
+
 
 # ----------------------------------------------------------------------
 # 5. Edit node properties then re-show (same pattern as Tree / Chord)
@@ -88,7 +81,7 @@ if 'Solar' in d3.node_properties:
     d3.node_properties['Solar']['color'] = '#FF0000'
     d3.node_properties['Solar']['size'] = 25
 d3.set_edge_properties(df)
-html = d3.show(filepath='radialgraph_edited.html', showfig=False, return_html=True)
+html = d3.show(filepath='radialgraph_edited.html', showfig=True, return_html=True)
 print('Wrote radialgraph_edited.html (Solar forced red/large)')
 
 
