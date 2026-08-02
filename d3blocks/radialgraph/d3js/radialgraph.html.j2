@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ TITLE }}</title>
+{{ SUPPORT }}
+<style>{% include "radialgraph.css" %}</style>
+<script>{% include "d3.v7.min.js" %}</script>
+</head>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
+{% if showControls == 'true' %}
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+<div class="top-panel-left"></div>
+<div class="top-panel-center">
+  <div class="search-wrap top-search">
+    <input class="search-input" id="searchInput" type="search" placeholder="Find a node…" autocomplete="off" spellcheck="false" />
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+<div class="top-panel-right">
+  <button class="button-switch" id="themeBtn" type="button">{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}</button>
+  <button class="button-switch" id="flowDiffButton" type="button">Flow diffusion</button>
+  <button class="button-switch" id="rippleBtnTop" type="button">Ripple expand</button>
+</div>
+<!-- Hidden anchor button with the id expected by the main script. The visible
+     top-panel 'Ripple expand' button will forward clicks to this so the
+     existing handlers in d3.radialgraph.js continue to work. -->
+<button id="rippleBtn" style="display:none;" aria-hidden="true"></button>
+</div>
+
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button id="exportDataButton" class="button-switch">Export Data</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
+  </div>
+</div>
+
+<div class="stats-panel collapsed" id="layoutPanel">
+  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <label><input type="radio" name="layoutMode" value="rings" checked> Rings (radial)</label>
+    <label><input type="radio" name="layoutMode" value="global"> Global (force)</label>
+    <div class="physics-control">
+      <label for="ringSpacingSlider">Ring spacing <span id="ringSpacingVal">{{ ringSpacing }}</span></label>
+      <input type="range" id="ringSpacingSlider" min="40" max="160" step="5" value="{{ ringSpacing }}" />
+    </div>
+    <label><input type="checkbox" id="autoRingSpacingToggle" {% if autoRingSpacing == 'true' %}checked{% endif %}> Auto ring spacing</label>
+  </div>
+</div>
+
+{% if showStatsPanel == 'true' %}
+<div class="stats-panel collapsed" id="statsPanel">
+  <div class="stats-panel-title">Network Statistic<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <label><input type="radio" name="statMetric" value="user_default" checked> Default</label>
+    <label><input type="radio" name="statMetric" value="node_proba"> Significance</label>
+    <label><input type="radio" name="statMetric" value="node_pagerank"> PageRank</label>
+    <label><input type="radio" name="statMetric" value="node_hits_hub"> HITS (Hub)</label>
+    <label><input type="radio" name="statMetric" value="node_hits_authority"> HITS (Authority)</label>
+    <label><input type="radio" name="statMetric" value="node_degree_centrality"> Degree Centrality</label>
+    <label><input type="radio" name="statMetric" value="node_closeness_centrality"> Closeness Centrality</label>
+    <label><input type="radio" name="statMetric" value="node_betweenness_centrality"> Betweenness Centrality</label>
+    <label><input type="radio" name="statMetric" value="network_clustering"> Network Clustering</label>
+  </div>
+</div>
+{% endif %}
+
+<div class="stats-panel collapsed" id="edgeStatPanel">
+  <div class="stats-panel-title">Edge Statistics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <label><input type="radio" name="edgeStatMode" value="default" checked> Default</label>
+    <label><input type="radio" name="edgeStatMode" value="community"> Community</label>
+    <label><input type="radio" name="edgeStatMode" value="jaccard"> Jaccard</label>
+    <!-- Flow diffusion is controlled by the top-panel Flow button -->
+    <!-- Hidden radio to allow the existing in-script radio change handler to be reused by the top button -->
+    <input type="radio" name="edgeStatMode" value="flow-home" style="display:none">
+  </div>
+</div>
+<div class="stats-panel collapsed" id="edgeFilterPanel">
+  <div class="stats-panel-title">Edge Filters<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <label><input type="checkbox" id="crossLinksToggle" checked> Show cross-links</label>
+    <label><input type="checkbox" name="edgeDirFilter" value="outbound" checked> Outbound</label>
+    <label><input type="checkbox" name="edgeDirFilter" value="inbound" checked> Inbound</label>
+    <label><input type="checkbox" name="edgeDirFilter" value="bidirectional" checked> Bidirectional</label>
+    <label><input type="checkbox" id="hideIsolatedToggle"> Hide nodes without edges</label>
+  </div>
+</div>
+
+{% endif %}
+<div id="radialgraph-container"></div>
+<div class="radialgraph-tooltip" id="radialgraph-tooltip"></div>
+<div id="hint">tap to expand/collapse · double-tap to focus · drag · scroll/pinch to zoom</div>
+{% if showNodePanel == 'true' %}
+<div id="nodePanel" role="dialog" aria-label="Node details">
+  <div class="node-panel-header">
+    <div><div class="node-panel-title" id="nodePanelTitle">—</div><div class="node-panel-sub" id="nodePanelSub"></div></div>
+    <button class="node-panel-close" id="nodePanelClose" type="button">✕</button>
+  </div>
+  <div class="node-panel-body">
+    <div class="node-stats-grid" id="nodeStatsGrid"></div>
+    <div class="node-importance" id="nodeImportance"></div>
+  </div>
+</div>
+{% endif %}
+<script>
+  const radialgraphData = {{ json_data }};
+  const radialgraphConfig = {
+    "width": {{ WIDTH }}, "height": {{ HEIGHT }}, "fontSize": {{ fontsize }},
+    "center": {{ center }}, "ringSpacing": {{ ringSpacing }},
+    "autoRingSpacing": {{ autoRingSpacing }}, "radialStrength": {{ radialStrength }},
+    "rippleDelayMs": {{ rippleDelayMs }}, "charge": {{ charge }},
+    "collision": {{ collision }}, "linkDistance": {{ linkDistance }},
+    "linkStrength": {{ linkStrength }}, "sticky": {{ sticky }},
+    "significanceAlpha": {{ SIGNIFICANCE_ALPHA }}, "darkMode": {{ darkMode }},
+    "showStatsPanel": {{ showStatsPanel }}, "showNodePanel": {{ showNodePanel }},
+    "showControls": {{ showControls }}
+  };
+</script>
+<script>{% include "d3.radialgraph.js" %}</script>
+<script>
+function positionSidePanels() {
+  var panels = document.querySelectorAll(".stats-panel");
+  var topPanel = document.querySelector('.top-panel');
+  var y = 10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0);
+  panels.forEach(function (panel) {
+    panel.style.top = y + "px"; panel.style.left = "10px";
+    panel.style.maxHeight = "calc(100vh - " + Math.round(y + 10) + "px)";
+    y += panel.getBoundingClientRect().height + 8;
+  });
+}
+window.addEventListener("DOMContentLoaded", positionSidePanels);
+window.addEventListener("resize", positionSidePanels);
+if (window.ResizeObserver) {
+  var o = new ResizeObserver(positionSidePanels);
+  document.querySelectorAll(".stats-panel").forEach(function (p) { o.observe(p); });
+  var tp = document.querySelectorAll('.top-panel'); tp.forEach(function (p) { o.observe(p); });
+}
+document.querySelectorAll(".stats-panel-title").forEach(function (title) {
+  title.addEventListener("click", function () {
+    var panel = title.parentElement, collapsing = !panel.classList.contains("collapsed");
+    if (collapsing) { if (panel.style.height) panel.dataset.expandedHeight = panel.style.height; panel.style.height = ""; }
+    else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
+    panel.classList.toggle("collapsed"); positionSidePanels();
+  });
+});
+</script>
+<script>
+// Export Data button: download the raw JSON for the current graph
+const exportDataBtn = document.getElementById('exportDataButton');
+if (exportDataBtn) {
+  exportDataBtn.addEventListener('click', function () {
+    try {
+      const dataStr = JSON.stringify(radialgraphData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '{{ TITLE }}_data.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed', err);
+      alert('Failed to export data.');
+    }
+  });
+}
+
+// Flow diffusion top-button: toggle the edgeStatMode between 'flow-home' and the default
+const flowBtn = document.getElementById('flowDiffButton');
+if (flowBtn) {
+  // initialize visual state if script set flow mode prior
+  try { if (typeof edgeStatMode !== 'undefined' && edgeStatMode === 'flow-home') flowBtn.classList.add('active'); } catch(e){}
+  flowBtn.addEventListener('click', function () {
+    try {
+      // Use the existing radio change handlers in d3.radialgraph.js by toggling
+      // a hidden 'flow-home' radio and dispatching a change event. This keeps
+      // all metric recomputation and animation startup in one place.
+      const flowRadio = document.querySelector('input[name="edgeStatMode"][value="flow-home"]');
+      const defaultRadio = document.querySelector('input[name="edgeStatMode"][value="default"]');
+      if (!flowRadio) {
+        console.warn('flow radio not present');
+        return;
+      }
+      if (flowRadio.checked) {
+        // turn off flow: select default radio
+        if (defaultRadio) {
+          defaultRadio.checked = true;
+          defaultRadio.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+          // fallback: uncheck flow and manually trigger update
+          flowRadio.checked = false;
+          flowRadio.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        flowBtn.classList.remove('active');
+      } else {
+        // turn on flow by checking the hidden radio and firing change
+        flowRadio.checked = true;
+        flowRadio.dispatchEvent(new Event('change', { bubbles: true }));
+        flowBtn.classList.add('active');
+      }
+    } catch (err) {
+      console.error('Flow toggle failed', err);
+    }
+  });
+}
+
+// Forward top-panel ripple button clicks to the hidden rippleBtn so the
+// existing ripple logic in d3.radialgraph.js (which attaches to #rippleBtn)
+// runs unchanged.
+const rippleTop = document.getElementById('rippleBtnTop');
+const rippleHidden = document.getElementById('rippleBtn');
+if (rippleTop && rippleHidden) {
+  rippleTop.addEventListener('click', function (e) { rippleHidden.click(); });
+  // Keep visual active state in sync: when hidden button text changes the
+  // script may set disabled/text; observe attribute changes and mirror active state
+  const obs = new MutationObserver(() => {
+    if (!rippleHidden) return;
+    const isBusy = rippleHidden.disabled || (rippleHidden.textContent || '').toLowerCase().includes('rippl');
+    rippleTop.disabled = rippleHidden.disabled;
+    rippleTop.classList.toggle('active', rippleHidden.classList.contains('active') || isBusy);
+  });
+  obs.observe(rippleHidden, { attributes: true, childList: true, subtree: true, characterData: true });
+}
+</script>
+<script>{{ SAVE_TO_SVG_SCRIPT }}</script>
+</body>
+</html>
