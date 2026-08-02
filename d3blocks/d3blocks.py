@@ -2538,7 +2538,7 @@ class D3Blocks():
                      size='degree',
                      cmap: str = 'Set2',
                      scaler: str = 'zscore',
-                     minmax=[8, 13],
+                     minmax=[6, 13],
                      edge_color: str = '#808080',
                      edge_opacity='weight',
                      edge_scaler: str = 'zscore',

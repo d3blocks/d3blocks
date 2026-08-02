@@ -11,8 +11,6 @@ html = d3.radialgraph(df, showfig=True, return_html=True)
 print('Wrote radialgraph_energy.html (center auto = highest degree)')
 
 # %%
-
-
 # ----------------------------------------------------------------------
 # 2. Explicit focus node
 # ----------------------------------------------------------------------

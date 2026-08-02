@@ -402,13 +402,20 @@ class Renderer {
     const merge = glow.append("feMerge");
     merge.append("feMergeNode").attr("in", "blur");
     merge.append("feMergeNode").attr("in", "SourceGraphic");
-    // Stronger yellow glow for flow-diffusion edges
-    const flowGlow = defs.append("filter").attr("id", "edge-flow-glow").attr("x", "-120%").attr("y", "-120%").attr("width", "340%").attr("height", "340%");
-    flowGlow.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "4.5").attr("result", "blur");
+    // Stronger yellow glow for flow-diffusion edges (intensified)
+    const flowGlow = defs.append("filter").attr("id", "edge-flow-glow").attr("x", "-160%").attr("y", "-160%").attr("width", "420%").attr("height", "420%");
+    // Broadened glow: two blur passes with a larger stdDeviation for a stronger halo
+    flowGlow.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "6.5").attr("result", "blur1");
+    flowGlow.append("feGaussianBlur").attr("in", "blur1").attr("stdDeviation", "3.2").attr("result", "blur2");
     const flowMerge = flowGlow.append("feMerge");
-    flowMerge.append("feMergeNode").attr("in", "blur");
-    flowMerge.append("feMergeNode").attr("in", "blur");
+    flowMerge.append("feMergeNode").attr("in", "blur1");
+    flowMerge.append("feMergeNode").attr("in", "blur2");
     flowMerge.append("feMergeNode").attr("in", "SourceGraphic");
+    // Gentle channel boost so yellowish highlights pop a bit more
+    const comp = flowGlow.append("feComponentTransfer");
+    comp.append("feFuncR").attr("type", "gamma").attr("amplitude", "1.15").attr("exponent", "0.95").attr("offset", "0");
+    comp.append("feFuncG").attr("type", "gamma").attr("amplitude", "1.05").attr("exponent", "0.98").attr("offset", "0");
+    comp.append("feFuncB").attr("type", "gamma").attr("amplitude", "0.9").attr("exponent", "1").attr("offset", "0");
     // Arrowhead for one-way follows (source → target)
     const marker = defs.append("marker").attr("id", "arrow-oneway").attr("viewBox", "0 -4 8 8").attr("refX", 10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto");
     marker.append("path").attr("d", "M0,-3.5L8,0L0,3.5").attr("fill", "#aaa");
@@ -2394,9 +2401,15 @@ function computeNetworkMetrics(nodeIds, edges) {
   const crossLinksToggle = document.getElementById("crossLinksToggle");
 
   function syncRingSpacingControls() {
-    const disabled = !layout.localMode || autoRingSpacingToggle.checked;
-    ringSpacingSlider.disabled = disabled;
-    ringSpacingSlider.style.opacity = disabled ? "0.45" : "1";
+    // Disable the Auto ring spacing checkbox when in Global (force) mode
+    if (autoRingSpacingToggle) autoRingSpacingToggle.disabled = !layout.localMode;
+    // Disable the manual ring-spacing slider when in Global mode or when
+    // Auto ring spacing is enabled (auto manages the radii).
+    const disabled = !layout.localMode || (autoRingSpacingToggle && autoRingSpacingToggle.checked);
+    if (ringSpacingSlider) {
+      ringSpacingSlider.disabled = disabled;
+      ringSpacingSlider.style.opacity = disabled ? "0.45" : "1";
+    }
   }
 
   document.querySelectorAll('input[name="layoutMode"]').forEach((radio) => {
@@ -2574,6 +2587,27 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   window.addEventListener("resize", resizeGraph);
 
+  // Charge slider wiring
+  const chargeSlider = document.getElementById("chargeSlider");
+  const chargeVal = document.getElementById("chargeVal");
+  function setCharge(v) {
+    const val = Number(v);
+    if (Number.isFinite(val)) {
+      // Update the layout's charge force strength
+      if (layout && layout.simulation && layout.simulation.force) {
+        const f = layout.simulation.force("charge");
+        if (f) f.strength(val);
+        // restart simulation gently to pick up change
+        layout.simulation.alpha(0.4).restart();
+      }
+      if (chargeSlider) chargeSlider.value = val;
+      if (chargeVal) chargeVal.textContent = val;
+    }
+  }
+  if (chargeSlider) chargeSlider.addEventListener("input", (e) => setCharge(e.target.value));
+  // initialize display from cfg
+  setCharge(cfg.charge != null ? cfg.charge : -140);
+
   // Ripple delay slider wiring
   const rippleDelaySlider = document.getElementById("rippleDelaySlider");
   const rippleDelayVal = document.getElementById("rippleDelayVal");
@@ -2605,6 +2639,19 @@ function computeNetworkMetrics(nodeIds, edges) {
           nodeFlowBtn.disabled = false;
         }, 1000);
       }
+    });
+  }
+
+  // Node-panel Set-as-center button wiring
+  const nodeCenterBtn = document.getElementById("nodeCenterBtn");
+  if (nodeCenterBtn) {
+    nodeCenterBtn.addEventListener("click", () => {
+      const src = highlightedId || (document.getElementById("nodePanelTitle") && document.getElementById("nodePanelTitle").textContent);
+      if (!src || !model.nodesById.has(src)) return;
+      // make the node the center (re-root)
+      reroot(src);
+      // Close node panel after re-root to show updated layout
+      if (typeof closeNodePanel === "function") closeNodePanel();
     });
   }
 

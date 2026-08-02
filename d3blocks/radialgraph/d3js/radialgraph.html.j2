@@ -42,16 +42,24 @@
   <div class="stats-panel-body">
     <label><input type="radio" name="layoutMode" value="rings" checked> Rings (radial)</label>
     <label><input type="radio" name="layoutMode" value="global"> Global (force)</label>
+
+    <label><input type="checkbox" id="autoRingSpacingToggle" {% if autoRingSpacing == 'true' %}checked{% endif %}> Auto ring spacing</label>
+
     <div class="physics-control">
       <label for="ringSpacingSlider">Ring spacing <span id="ringSpacingVal">{{ ringSpacing }}</span></label>
       <input type="range" id="ringSpacingSlider" min="40" max="160" step="5" value="{{ ringSpacing }}" />
     </div>
-    <label><input type="checkbox" id="autoRingSpacingToggle" {% if autoRingSpacing == 'true' %}checked{% endif %}> Auto ring spacing</label>
+
+    <div class="physics-control">
+      <label for="chargeSlider">Charge <span id="chargeVal">{{ charge }}</span></label>
+      <input type="range" id="chargeSlider" min="-3000" max="3000" step="10" value="{{ charge }}" />
+    </div>
 
     <div class="physics-control">
       <label for="rippleDelaySlider">Ripple delay (ms) <span id="rippleDelayVal">{{ rippleDelayMs }}</span></label>
-      <input type="range" id="rippleDelaySlider" min="0" max="2000" step="10" value="{{ rippleDelayMs }}" />
+      <input type="range" id="rippleDelaySlider" min="0" max="3000" step="50" value="{{ rippleDelayMs }}" />
     </div>
+
   </div>
 </div>
 
@@ -104,6 +112,7 @@
     <div><div class="node-panel-title" id="nodePanelTitle">—</div><div class="node-panel-sub" id="nodePanelSub"></div></div>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="button-switch" id="nodeFlowBtn" type="button">Flow from here</button>
+      <button class="button-switch" id="nodeCenterBtn" type="button">Set as center</button>
       <button class="node-panel-close" id="nodePanelClose" type="button">✕</button>
     </div>
   </div>

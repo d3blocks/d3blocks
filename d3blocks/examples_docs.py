@@ -3,11 +3,95 @@ from d3blocks import D3Blocks
 # ----------------------------------------------------------------------
 # 1. Basic: focus = highest-degree node, default panels
 # ----------------------------------------------------------------------
-d3 = D3Blocks()
+d3 = D3Blocks(chart='radialgraph')
 df = d3.import_example('energy')
 filepath = r'D:\REPOS\erdogant.github.io\docs\d3blocks\radialgraph_quickstart.html'
-html = d3.radialgraph(df, showfig=True, return_html=True, figsize=[700, 700], filepath=filepath)
+html = d3.radialgraph(df, showfig=True, return_html=True, figsize=[750, 750], filepath=filepath)
 print('Wrote radialgraph_energy.html (center auto = highest degree)')
+
+# %%
+# ----------------------------------------------------------------------
+# 2. Explicit focus node
+# ----------------------------------------------------------------------
+d3 = D3Blocks(chart='radialgraph')
+filepath = r'D:\REPOS\erdogant.github.io\docs\d3blocks\radialgraph_focus.html'
+df = d3.import_example('energy')
+
+html = d3.radialgraph(
+    df,
+    center='Solar',
+    ring_spacing=80,
+    auto_ring_spacing=True,
+    filepath=filepath,
+    showfig=True,
+    return_html=True,
+    figsize=[750, 750],
+)
+print('Wrote radialgraph_solar.html (center=Solar)')
+
+# %%
+
+
+# ----------------------------------------------------------------------
+# 3. With significance testing (PageRank null model via d3graph)
+#    Note: n_random is expensive; lower it for a quick smoke test.
+# ----------------------------------------------------------------------
+d3 = D3Blocks(chart='radialgraph')
+filepath = r'D:\REPOS\erdogant.github.io\docs\d3blocks\radialgraph_significance.html'
+df = d3.import_example('energy')
+
+html = d3.radialgraph(
+    df,
+    center='Solar',
+    significance_test='pagerank',
+    significance_n_random=50,   # use 1000 for real runs
+    significance_alpha=0.05,
+    filepath=filepath,
+    showfig=True,
+    return_html=True,
+    figsize=[750, 750],
+)
+print('Wrote radialgraph_significance.html (Significance radio uses node_proba)')
+
+# %%
+# ----------------------------------------------------------------------
+# 4. Hide panels / light mode
+# ----------------------------------------------------------------------
+d3 = D3Blocks(chart='radialgraph')
+html = d3.radialgraph(
+    df,
+    center='Solar',
+    show_stats_panel=False,
+    show_node_panel=False,
+    dark_mode=False,
+    background_color='#ffffff',
+    filepath='radialgraph_minimal.html',
+    showfig=True,
+    return_html=True,
+)
+print('Wrote radialgraph_minimal.html (minimal chrome, light theme)')
+
+# %%
+
+
+# ----------------------------------------------------------------------
+# 5. Edit node properties then re-show (same pattern as Tree / Chord)
+# ----------------------------------------------------------------------
+d3 = D3Blocks(chart='radialgraph', frame=False)
+filepath = r'D:\REPOS\erdogant.github.io\docs\d3blocks\radialgraph_nodeproperties.html'
+df = d3.import_example('energy')
+
+d3.set_node_properties(df, center='Solar', color='cluster', size='degree')
+# After set_node_properties, keys are node names
+if 'Solar' in d3.node_properties:
+    d3.node_properties['Solar']['color'] = '#FF0000'
+    d3.node_properties['Solar']['size'] = 25
+
+# Set node properties
+d3.set_edge_properties(df)
+
+html = d3.show(filepath=filepath, showfig=True, return_html=True, figsize=[750, 750],)
+print('Wrote radialgraph_nodeproperties.html (Solar forced red/large)')
 
 
 # %%
