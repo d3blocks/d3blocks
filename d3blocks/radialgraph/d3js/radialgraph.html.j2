@@ -47,6 +47,11 @@
       <input type="range" id="ringSpacingSlider" min="40" max="160" step="5" value="{{ ringSpacing }}" />
     </div>
     <label><input type="checkbox" id="autoRingSpacingToggle" {% if autoRingSpacing == 'true' %}checked{% endif %}> Auto ring spacing</label>
+
+    <div class="physics-control">
+      <label for="rippleDelaySlider">Ripple delay (ms) <span id="rippleDelayVal">{{ rippleDelayMs }}</span></label>
+      <input type="range" id="rippleDelaySlider" min="0" max="2000" step="10" value="{{ rippleDelayMs }}" />
+    </div>
   </div>
 </div>
 
@@ -122,14 +127,30 @@
 <script>{% include "d3.radialgraph.js" %}</script>
 <script>
 function positionSidePanels() {
-  var panels = document.querySelectorAll(".stats-panel");
+  var panels = Array.from(document.querySelectorAll(".stats-panel"));
   var topPanel = document.querySelector('.top-panel');
   var y = 10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0);
+  var maxRight = 0;
   panels.forEach(function (panel) {
-    panel.style.top = y + "px"; panel.style.left = "10px";
+    panel.style.top = y + "px";
+    panel.style.left = "10px";
     panel.style.maxHeight = "calc(100vh - " + Math.round(y + 10) + "px)";
     y += panel.getBoundingClientRect().height + 8;
+    var r = panel.getBoundingClientRect().right;
+    if (r > maxRight) maxRight = r;
   });
+
+  // If the left-side menu is collapsed, panels are hidden and the left inset
+  // should be 0. Otherwise make the bottom nodePanel and hints start after
+  // the right edge of the widest visible panel (plus a small gap).
+  var nodePanel = document.getElementById('nodePanel');
+  var radialContainer = document.getElementById('radialgraph-container');
+  var hint = document.getElementById('hint');
+  var collapsed = document.body.classList.contains('panel-collapsed');
+  var leftInset = collapsed ? 0 : Math.max(220, Math.ceil(maxRight) + 8);
+  if (nodePanel) nodePanel.style.left = leftInset + 'px';
+  if (radialContainer) radialContainer.style.left = leftInset + 'px';
+  if (hint) hint.style.left = leftInset + 'px';
 }
 window.addEventListener("DOMContentLoaded", positionSidePanels);
 window.addEventListener("resize", positionSidePanels);
