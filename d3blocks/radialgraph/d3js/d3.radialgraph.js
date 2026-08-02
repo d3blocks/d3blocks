@@ -2425,11 +2425,27 @@ function computeNetworkMetrics(nodeIds, edges) {
       if (isFlowMode()) startFlowAnimation();
     });
 
-  // —— Ripple expand (press again → collapse all) ——
-  const RIPPLE_DELAY_MS = cfg.rippleDelayMs != null ? cfg.rippleDelayMs : 900;
-  function rippleExpandFrom(startId, delayMs = RIPPLE_DELAY_MS) {
+  // —— Ripple expand (press again → collapse all) ———
+  // Ripple delay (ms) between each layer; user-adjustable via Layout panel
+  let rippleDelayMs = cfg.rippleDelayMs != null ? cfg.rippleDelayMs : 900;
+  function rippleExpandFrom(startId, delayMs = rippleDelayMs) {
     clearTimeout(rippleTimer);
     const layers = model.bfsLayersFrom(startId);
+    // If delay is zero, expand all layers immediately (fast path)
+    if (delayMs === 0) {
+      for (let i = 0; i < layers.length; i++) {
+        model.expandNodes(layers[i]);
+        recomputeMetrics();
+        flowCache.key = null;
+        stopFlowAnimation();
+        update();
+        if (isFlowMode()) startFlowAnimation();
+      }
+      rippleBtn.disabled = false;
+      rippleBtn.textContent = "Collapse all";
+      return;
+    }
+
     let i = 0;
     const step = () => {
       if (i >= layers.length) {
@@ -2486,6 +2502,21 @@ function computeNetworkMetrics(nodeIds, edges) {
   }
 
   window.addEventListener("resize", resizeGraph);
+
+  // Ripple delay slider + number input wiring
+  const rippleDelaySlider = document.getElementById("rippleDelaySlider");
+  const rippleDelayNumber = document.getElementById("rippleDelayNumber");
+  const rippleDelayVal = document.getElementById("rippleDelayVal");
+  function setRippleDelay(ms) {
+    rippleDelayMs = Math.max(0, Math.min(3000, Number(ms) || rippleDelayMs));
+    if (rippleDelaySlider) rippleDelaySlider.value = rippleDelayMs;
+    if (rippleDelayNumber) rippleDelayNumber.value = rippleDelayMs;
+    if (rippleDelayVal) rippleDelayVal.textContent = rippleDelayMs;
+  }
+  if (rippleDelaySlider) rippleDelaySlider.addEventListener("input", (e) => setRippleDelay(e.target.value));
+  if (rippleDelayNumber) rippleDelayNumber.addEventListener("input", (e) => setRippleDelay(e.target.value));
+  // initialize display
+  setRippleDelay(rippleDelayMs);
 
   // —— Side panel show / hide ——
   const panelToggle = document.getElementById("panelToggle");
