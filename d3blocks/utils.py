@@ -22,6 +22,7 @@ from collections import defaultdict
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger(__name__)
 
 #%%
 def include_save_to_svg_script(save_button=False, title='d3graph_chart'):
@@ -600,15 +601,13 @@ def convert_dataframe_dict(X, frame, chart=None, logger=None):
 
 
 # %% Create unique dataframe and update weights
-def create_unique_dataframe(X, logger=None):
+def create_unique_dataframe(X, method='sum', logger=None):
     """Combine source-target into adjacency matrix with updated weights.
 
     Parameters
     ----------
     X : DataFrame
         Data frame containing the columns [source, target, weight].
-    logger : Object, optional
-        Logger object. The default is None.
 
     Returns
     -------
@@ -624,7 +623,12 @@ def create_unique_dataframe(X, logger=None):
             # Convert NumPy types to regular Python types for proper JSON serialization
             X['weight'] = X['weight'].apply(float)
         # Groupby values and sum the weights
-        X = X.groupby(by=['source', 'target']).sum()
+        if method=='sum':
+            X = X.groupby(by=['source', 'target']).sum()
+        else:
+            logger.error(f'Method {method} is not implemented. Using sum instead.')
+            X = X.groupby(by=['source', 'target']).sum()
+        # Reset index
         X.reset_index(drop=False, inplace=True)
     return X
 
