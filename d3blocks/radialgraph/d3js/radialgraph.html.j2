@@ -102,7 +102,10 @@
 <div id="nodePanel" role="dialog" aria-label="Node details">
   <div class="node-panel-header">
     <div><div class="node-panel-title" id="nodePanelTitle">—</div><div class="node-panel-sub" id="nodePanelSub"></div></div>
-    <button class="node-panel-close" id="nodePanelClose" type="button">✕</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="button-switch" id="nodeFlowBtn" type="button">Flow from here</button>
+      <button class="node-panel-close" id="nodePanelClose" type="button">✕</button>
+    </div>
   </div>
   <div class="node-panel-body">
     <div class="node-stats-grid" id="nodeStatsGrid"></div>
