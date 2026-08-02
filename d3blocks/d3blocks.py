@@ -29,6 +29,7 @@ try:
     import d3blocks.treemap.Treemap as Treemap
     import d3blocks.circlepacking.Circlepacking as Circlepacking
     import d3blocks.tree.Tree as Tree
+    import d3blocks.radialgraph.Radialgraph as Radialgraph
     import d3blocks.maps.Maps as Maps
     import d3blocks.utils as utils
 except:
@@ -47,6 +48,7 @@ except:
     import treemap.Treemap as Treemap
     import circlepacking.Circlepacking as Circlepacking
     import tree.Tree as Tree
+    import radialgraph.Radialgraph as Radialgraph
     import maps.Maps as Maps
     import utils
     # #####################################################
@@ -2517,6 +2519,224 @@ class D3Blocks():
         if return_html:
             return html
 
+
+    def radialgraph(self,
+                     df: pd.DataFrame,
+                     center: str = None,
+                     ring_spacing: int = 70,
+                     auto_ring_spacing: bool = True,
+                     radial_strength: float = 0.8,
+                     ripple_delay_ms: int = 900,
+                     charge: int = -120,
+                     collision: float = 1.0,
+                     link_distance: int = 40,
+                     link_strength: float = None,
+                     sticky: bool = True,
+                     shape='circle',
+                     color: str = 'cluster',
+                     opacity: str = 'degree',
+                     size='degree',
+                     cmap: str = 'Set2',
+                     scaler: str = 'zscore',
+                     minmax=[8, 13],
+                     edge_color: str = '#808080',
+                     edge_opacity='weight',
+                     edge_scaler: str = 'zscore',
+                     edge_minmax=[0.5, 15],
+                     min_weight: float = 1.0,
+                     significance_test: str = None,
+                     significance_alpha: float = 0.05,
+                     significance_n_top: int = 100,
+                     significance_n_random: int = 1000,
+                     significance_seed: int = None,
+                     show_stats_panel: bool = True,
+                     show_node_panel: bool = True,
+                     show_controls: bool = True,
+                     dark_mode: bool = True,
+                     background_color: str = '#12141c',
+                     font={'size': 10},
+                     title: str = 'RadialGraph - D3blocks',
+                     filepath: str = 'radialgraph.html',
+                     figsize=[800, 800],
+                     showfig: bool = True,
+                     overwrite: bool = True,
+                     notebook: bool = False,
+                     save_button: bool = True,
+                     return_html: bool = False,
+                     reset_properties: bool = True):
+        """RadialGraph block.
+
+        Force-directed network arranged radially by hop-distance from a
+        focal node (Obsidian-style local graph). Node and edge appearance
+        are computed by delegating to d3graph so the same data+settings
+        produce matching values; the two blocks only differ in layout.
+
+        Client-side, a single Network Statistic selector (matching
+        d3graph's vocabulary) drives node color and size together over the
+        *currently filtered* edge set. Optional significance testing uses
+        d3graph.network_significance() on the Python side.
+
+        Parameters
+        ----------
+        df : pd.DataFrame()
+            Input data containing the following columns:
+                * 'source', 'target', 'weight'
+        center : str, (default: None)
+            Focal node name. None: highest-degree node is chosen automatically.
+            A node name: concentric rings by hop-distance from that node.
+        ring_spacing : int, (default: 70)
+            Pixels between consecutive depth rings.
+        auto_ring_spacing : bool, (default: True)
+            Derive per-ring spacing from node counts on each ring.
+        radial_strength : float, (default: 0.8)
+            How rigidly nodes snap to their ring (0..1).
+        ripple_delay_ms : int, (default: 900)
+            Delay between hop-layers during ripple expand.
+        charge : int, (default: -120)
+            Node repulsion strength (matches d3graph's own `charge` param).
+        collision : float, (default: 1.0)
+            Node collision radius multiplier (matches d3graph's `collision`).
+        link_distance : int, (default: 40)
+            Target rest length for links.
+        link_strength : float, (default: None)
+            Link force strength; None lets d3 pick its own per-link default.
+        sticky : bool, (default: True)
+            Whether a dragged node stays pinned where dropped.
+        shape : (str, dict), (default: 'circle')
+            'circle' or 'square' for every node, or a dict/Series keyed by
+            node name for a per-node mix.
+        color : str, (default: 'cluster')
+            Node color. 'cluster': Louvain community color (same as D3graph).
+        opacity : str, (default: 'degree')
+            Node opacity. 'degree': degree-centrality based (same as D3graph).
+        size : str, (default: 'degree')
+            Node size. 'degree': degree-centrality based (same as D3graph).
+        cmap : str, (default: 'Set2')
+        scaler : str, (default: 'zscore')
+            Node size/opacity scaler: 'zscore', 'minmax', or None.
+        minmax : list, (default: [8, 13])
+            Node size range.
+        edge_color : str, (default: '#808080')
+        edge_opacity : (float, str), (default: 'weight')
+            'weight': opacity scaled by edge weight (same as D3graph).
+        edge_scaler : str, (default: 'zscore')
+        edge_minmax : list, (default: [0.5, 15])
+            Edge/link width range.
+        min_weight : float, (default: 1.0)
+            Edges are kept with weight > min_weight.
+        significance_test : str, (default: None)
+            None = skip. One of 'pagerank', 'hits_hub', 'hits_authority',
+            'closeness', 'betweenness' to run d3graph.network_significance()
+            and attach node_proba for the Significance radio option.
+        significance_alpha : float, (default: 0.05)
+        significance_n_top : int, (default: 100)
+        significance_n_random : int, (default: 1000)
+        significance_seed : int, (default: None)
+        show_stats_panel : bool, (default: True)
+            Show the Network Statistic side panel.
+        show_node_panel : bool, (default: True)
+            Show the Node Info / detail panel.
+        show_controls : bool, (default: True)
+            Show the full side-panel chrome.
+        dark_mode : bool, (default: True)
+        background_color : str, (default: '#12141c')
+        font : dict.
+            font properties.
+                * {'size': 10}
+        title : String, (default: None)
+            Title of the figure.
+        filepath : String, (Default: user temp directory)
+                * File path to save the output.
+                * None: Return HTML
+        figsize : tuple
+            Size of the figure in the browser, [width, height].
+                * [800, 800]
+        showfig : bool, (default: True)
+        overwrite : bool, (default: True)
+        notebook : bool
+        save_button : bool, (default: True)
+        return_html : bool, (default: False)
+        reset_properties : bool, (default: True)
+
+        Returns
+        -------
+        d3.node_properties: DataFrame of dictionary
+             Contains properties of the unique input label/nodes/samples.
+
+        d3.edge_properties: DataFrame of dictionary
+             Contains properties of the unique input edges/links.
+
+        d3.config: dictionary
+             Contains configuration properties.
+
+        Examples
+        --------
+        >>> from d3blocks import D3Blocks
+        >>> d3 = D3Blocks()
+        >>> df = d3.import_example('energy')
+        >>> d3.radialgraph(df)                       # focus = highest-degree
+        >>> d3.radialgraph(df, center='Solar')        # explicit focus
+        >>> d3.radialgraph(df, significance_test='pagerank')
+
+        References
+        ----------
+        * https://d3js.org/d3-force
+        * https://d3blocks.github.io/d3blocks/pages/html/RadialGraph.html
+
+        """
+        # Create unique dataframe, update weights
+        df = utils.create_unique_dataframe(df, method='sum', logger=logger)
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('RadialGraph', logger)
+        # Store properties
+        self.config = self.chart.set_config(
+            config=self.config, filepath=filepath, font=font, title=title,
+            showfig=showfig, overwrite=overwrite, figsize=figsize,
+            center=center, ring_spacing=ring_spacing,
+            auto_ring_spacing=auto_ring_spacing,
+            radial_strength=radial_strength, ripple_delay_ms=ripple_delay_ms,
+            charge=charge, collision=collision, link_distance=link_distance,
+            link_strength=link_strength, sticky=sticky, shape=shape,
+            reset_properties=reset_properties, notebook=notebook,
+            save_button=save_button, color=color, opacity=opacity, size=size,
+            cmap=cmap, scaler=scaler, minmax=minmax, edge_color=edge_color,
+            edge_opacity=edge_opacity, edge_scaler=edge_scaler,
+            edge_minmax=edge_minmax, min_weight=min_weight,
+            significance_test=significance_test,
+            significance_alpha=significance_alpha,
+            significance_n_top=significance_n_top,
+            significance_n_random=significance_n_random,
+            significance_seed=significance_seed,
+            show_stats_panel=show_stats_panel, show_node_panel=show_node_panel,
+            show_controls=show_controls, dark_mode=dark_mode,
+            background_color=background_color, logger=logger,
+        )
+        # Cleaning of data
+        df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
+        # Set default label properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(
+                df, center=center, shape=shape, color=color, opacity=opacity,
+                size=size, cmap=cmap, scaler=scaler, minmax=minmax,
+                significance_test=significance_test,
+                significance_alpha=significance_alpha,
+                significance_n_top=significance_n_top,
+                significance_n_random=significance_n_random,
+                significance_seed=significance_seed,
+            )
+        # Set edge properties
+        self.set_edge_properties(
+            df, edge_color=edge_color, edge_opacity=edge_opacity,
+            edge_scaler=edge_scaler, edge_minmax=edge_minmax,
+            min_weight=min_weight,
+        )
+        # Create the plot
+        html = self.show()
+        if return_html:
+            return html
+
     def treemap(self,
                 df: pd.DataFrame,
                 margin = {"top": 40, "right": 10, "bottom": 10, "left": 10},
@@ -3620,7 +3840,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking']):
+        if np.isin(chart, ['Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))
