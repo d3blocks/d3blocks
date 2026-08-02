@@ -405,7 +405,7 @@ class Renderer {
     // Stronger yellow glow for flow-diffusion edges (intensified)
     const flowGlow = defs.append("filter").attr("id", "edge-flow-glow").attr("x", "-160%").attr("y", "-160%").attr("width", "420%").attr("height", "420%");
     // Broadened glow: two blur passes with a larger stdDeviation for a stronger halo
-    flowGlow.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "6.5").attr("result", "blur1");
+    flowGlow.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "10").attr("result", "blur1");
     flowGlow.append("feGaussianBlur").attr("in", "blur1").attr("stdDeviation", "3.2").attr("result", "blur2");
     const flowMerge = flowGlow.append("feMerge");
     flowMerge.append("feMergeNode").attr("in", "blur1");
@@ -413,8 +413,8 @@ class Renderer {
     flowMerge.append("feMergeNode").attr("in", "SourceGraphic");
     // Gentle channel boost so yellowish highlights pop a bit more
     const comp = flowGlow.append("feComponentTransfer");
-    comp.append("feFuncR").attr("type", "gamma").attr("amplitude", "1.15").attr("exponent", "0.95").attr("offset", "0");
-    comp.append("feFuncG").attr("type", "gamma").attr("amplitude", "1.05").attr("exponent", "0.98").attr("offset", "0");
+    comp.append("feFuncR").attr("type", "gamma").attr("amplitude", "1.8").attr("exponent", "0.95").attr("offset", "0");
+    comp.append("feFuncG").attr("type", "gamma").attr("amplitude", "1.8").attr("exponent", "0.98").attr("offset", "0");
     comp.append("feFuncB").attr("type", "gamma").attr("amplitude", "0.9").attr("exponent", "1").attr("offset", "0");
     // Arrowhead for one-way follows (source → target)
     const marker = defs.append("marker").attr("id", "arrow-oneway").attr("viewBox", "0 -4 8 8").attr("refX", 10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto");
