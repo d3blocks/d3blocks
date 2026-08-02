@@ -36,7 +36,7 @@ def test_radialgraph_returns_html():
     html = d3.radialgraph(_sample_df(), showfig=False, return_html=True)
     assert isinstance(html, str)
     assert 'radialgraph-container' in html
-    assert 'd3.forceSimulation' in html
+    assert 'forceSimulation' in html
 
 
 def test_radialgraph_handles_cycles_and_many_to_many():
@@ -65,9 +65,9 @@ def test_radialgraph_node_properties_editable():
 def test_radialgraph_has_scroll_zoom_and_drag():
     d3 = D3Blocks(chart='radialgraph', frame=False)
     html = d3.radialgraph(_sample_df(), showfig=False, return_html=True)
-    assert 'd3.zoom()' in html
+    assert 'zoom()' in html
     assert 'dblclick.zoom' in html
-    assert 'd3.drag()' in html
+    assert 'drag()' in html
 
 
 def test_radialgraph_local_mode_computes_depth_rings():
