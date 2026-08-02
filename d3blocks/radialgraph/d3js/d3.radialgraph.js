@@ -624,7 +624,9 @@ class Interaction {
   constructor({ svg, g, simulation, tooltip, getRootId, isLocalMode, onToggle, onReroot, onShowGhosts, onHideGhosts, onZoom, onSelect }) {
     this.zoom = d3
       .zoom()
-      .scaleExtent([0.15, 8])
+      // Allow more zoom-out for very large networks (smaller scale) and a
+      // slightly larger max zoom-in. Users can now zoom out to 0.02×.
+      .scaleExtent([0.02, 12])
       .on("zoom", (e) => {
         g.attr("transform", e.transform);
         if (onZoom) onZoom(e.transform.k);
