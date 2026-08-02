@@ -34,7 +34,7 @@ D3Blocks builds on the graphics of D3 Javascript to create the most visually att
 	   pip install d3blocks
 
 
-   
+
     * More detailed and structured story line about the charts can be found in the blogs*
 
 
@@ -48,25 +48,26 @@ Contents
 .. toctree::
    :maxdepth: 1
    :caption: Motivation
-   
+
    Motivation
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Installation
-   
+
    Installation
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Blocks
-   
+
    Timeseries
    Chord
    d3graph
    elasticgraph
+   Radialgraph
    Sankey
    Heatmap
    Matrix
@@ -83,7 +84,7 @@ Contents
 .. toctree::
    :maxdepth: 1
    :caption: Helper functions
-   
+
    helper_functions
 
 .. toctree::
