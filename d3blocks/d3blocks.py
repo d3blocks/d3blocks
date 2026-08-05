@@ -34,7 +34,7 @@ try:
     import d3blocks.utils as utils
 except:
     # ###################### DEBUG ONLY ###################
-    import elasticgraph.elasticgraph as Elasticgraph
+    from elasticgraph.elasticgraph import Elasticgraph
     import movingbubbles.Movingbubbles as Movingbubbles
     import timeseries.Timeseries as Timeseries
     import sankey.Sankey as Sankey
