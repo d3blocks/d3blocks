@@ -1,29 +1,31 @@
+# Intialize Treemap
 from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# Get example dataset
+d3 = D3Blocks(chart='radialgraph', frame=False)
+#
+# Import example
 df = d3.import_example('energy')
-
-# Create the Radialgraph
-d3.radialgraph(df, center='Solar', showfig=False, to_df=True)
-
-# Inspect or override individual node properties before the final show()
-print(d3.node_properties['Solar'])
-
+#
 # Set node properties
-d3.node_properties['Solar']['color'] = '#e45756'
+d3.set_node_properties(df)
+#
+# Set tooltip for specific nodes
+d3.node_properties['Bio-conversion']['size'] = 50
+d3.node_properties['Bio-conversion']['color'] = '#000000'
+d3.node_properties['Bio-conversion']['tooltip'] = 'My tooltip for Bio conversion Operations'
+
+# d3.node_properties['Bio-conversion']['fontsize'] = 25
+# d3.node_properties['Bio-conversion']['opacity'] = 0.1
+# d3.node_properties['Bio-conversion']['edge_size'] = 5
+# d3.node_properties['Bio-conversion']['edge_color'] = '#FF0000'
 
 # Set edge properties
-d3.node_properties['Solar']['color'] = '#e45756'
+d3.set_edge_properties(df)
+d3.edge_properties
 
+# Show chart
 d3.show()
 
-
 # %%
-
-
 # Import
 from d3blocks import D3Blocks
 
@@ -426,6 +428,41 @@ d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_pr
 #
 # Show the chart
 d3.show()
+
+# %%
+
+# Load d3blocks
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks(chart='Radialgraph', frame=False)
+#
+# Import example
+df = d3.import_example('energy')
+#
+# Node properties
+d3.set_node_properties(df, opacity=0.2, cmap='tab20')
+d3.set_edge_properties(df, color='source', opacity='source')
+#
+# Show the chart
+d3.show()
+#
+# Make some edits to highlight the Nuclear node
+# d3.node_properties
+d3.node_properties.get('Nuclear')['color']='#ff0000'
+d3.node_properties.get('Nuclear')['opacity']=1
+# Show the chart
+#
+d3.show()
+
+# Make edits to highlight the Nuclear Edge
+d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'color'] = '#ff0000'
+d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'opacity'] = 0.8
+d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'weight'] = 1000
+#
+# Show the chart
+d3.show()
+
 
 
 # %%
