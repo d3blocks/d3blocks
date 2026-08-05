@@ -247,7 +247,8 @@ function assignAngularWedges(nodes, parentOf, rootId) {
   function assign(id) {
     const children = childrenOf.get(id) || [];
     if (!children.length) return;
-    const start = angleStart.get(id), end = angleEnd.get(id);
+    const start = angleStart.get(id),
+      end = angleEnd.get(id);
     const total = children.reduce((s, c) => s + subtreeSize.get(c), 0) || 1;
     let cursor = start;
     children.forEach((c) => {
@@ -261,7 +262,8 @@ function assignAngularWedges(nodes, parentOf, rootId) {
   if (childrenOf.has(rootId)) assign(rootId);
 
   nodes.forEach((n) => {
-    const s = angleStart.get(n.id), e = angleEnd.get(n.id);
+    const s = angleStart.get(n.id),
+      e = angleEnd.get(n.id);
     n.targetAngle = s != null && e != null ? (s + e) / 2 : null;
   });
 }
@@ -435,7 +437,7 @@ class LayoutEngine {
         // instead of waiting for the angular force to correct it over
         // several ticks. Falls back to the old fan-around-parent spread
         // for nodes that end up with no assigned wedge.
-        const a = n.targetAngle != null ? n.targetAngle : angle + (siblings.length > 1 ? (i / (siblings.length - 1) - 0.5) : 0) * spread;
+        const a = n.targetAngle != null ? n.targetAngle : angle + (siblings.length > 1 ? i / (siblings.length - 1) - 0.5 : 0) * spread;
         n.x = src.x + Math.cos(a) * offset;
         n.y = src.y + Math.sin(a) * offset;
         n.vx = 0;
@@ -1566,6 +1568,77 @@ function computeNetworkMetrics(nodeIds, edges) {
     return done;
   }
 
+  // One-shot flow animation from an arbitrary source cache (not tied to model.rootId)
+  function applyFlowWaveToLinksWithCache(cache, waveTime) {
+    const maxHop = Math.max(1, cache.maxHop);
+    const frontier = Math.min(maxHop + 1.5, waveTime / FLOW_MS_PER_HOP);
+    const done = frontier >= maxHop + 1.2;
+
+    if (!renderer.linkSel || renderer.linkSel.empty()) return done;
+    renderer.linkSel.each(function (e) {
+      const sid = typeof e.source === "object" ? e.source.id : e.source;
+      const tid = typeof e.target === "object" ? e.target.id : e.target;
+      const k = pairKey(sid, tid);
+      const score = cache.scores.get(k) || 0;
+      const hop = cache.hops.has(k) ? cache.hops.get(k) : 99;
+      const intensity = score / cache.maxScore;
+      e.flowScore = intensity;
+      e.flowHop = hop;
+
+      if (score <= 0 || hop >= 99) {
+        e.edgeColor = "#2a2818";
+        e.edgeWidth = 0.5;
+        e.edgeOpacity = 0.08;
+        e.edgeGlow = false;
+        return;
+      }
+
+      if (hop > frontier + 0.15) {
+        e.edgeColor = "#3a3520";
+        e.edgeWidth = 0.6;
+        e.edgeOpacity = 0.12;
+        e.edgeGlow = false;
+      } else {
+        const age = frontier - hop;
+        const reveal = Math.max(0, Math.min(1, age / 0.8));
+        const pulse = age < 0.6 ? 0.55 + 0.45 * Math.sin((age / 0.6) * Math.PI) : 1;
+        const bright = intensity * reveal * pulse;
+        e.edgeColor = flowYellow(0.15 + 0.85 * bright);
+        e.edgeWidth = 0.8 + intensity * 4.2 * reveal;
+        e.edgeOpacity = 0.2 + 0.75 * bright;
+        e.edgeGlow = bright > 0.25;
+      }
+    });
+    renderer.updateLinkStyles();
+    return done;
+  }
+
+  function startFlowFromCache(cache) {
+    stopFlowAnimation();
+    flowAnimStart = performance.now();
+    const step = (now) => {
+      const done = applyFlowWaveToLinksWithCache(cache, now - flowAnimStart);
+      if (done) {
+        flowAnimRaf = null;
+        return;
+      }
+      flowAnimRaf = requestAnimationFrame(step);
+    };
+    flowAnimRaf = requestAnimationFrame(step);
+  }
+
+  function startFlowFrom(sourceId) {
+    try {
+      const flowAdj = buildFilteredFlowAdj();
+      const cache = { key: "flow-src|" + sourceId + "|" + filterKey(), ...computeSourceFlow(sourceId, flowAdj) };
+      startFlowFromCache(cache);
+      return cache;
+    } catch (err) {
+      console.error("startFlowFrom error", err);
+      return null;
+    }
+  }
+
   function startFlowAnimation() {
     stopFlowAnimation();
     if (!isFlowMode()) return;
@@ -1995,6 +2068,41 @@ function computeNetworkMetrics(nodeIds, edges) {
   }
 
   if (nodePanelClose) nodePanelClose.addEventListener("click", closeNodePanel);
+
+  // Node-panel Flow-from-here button wiring
+  const nodeFlowBtn = document.getElementById("nodeFlowBtn");
+  if (nodeFlowBtn) {
+    nodeFlowBtn.addEventListener("click", () => {
+      const src = highlightedId || (document.getElementById("nodePanelTitle") && document.getElementById("nodePanelTitle").textContent);
+      if (!src || !model.nodesById.has(src)) return;
+      nodeFlowBtn.disabled = true;
+      const cache = startFlowFrom(src);
+      if (cache && cache.maxHop != null) {
+        const est = (cache.maxHop + 1) * FLOW_MS_PER_HOP + 200;
+        setTimeout(() => {
+          nodeFlowBtn.disabled = false;
+        }, est);
+      } else {
+        // fallback re-enable after a second
+        setTimeout(() => {
+          nodeFlowBtn.disabled = false;
+        }, 1000);
+      }
+    });
+  }
+
+  // Node-panel Set-as-center button wiring
+  const nodeCenterBtn = document.getElementById("nodeCenterBtn");
+  if (nodeCenterBtn) {
+    nodeCenterBtn.addEventListener("click", () => {
+      const src = highlightedId || (document.getElementById("nodePanelTitle") && document.getElementById("nodePanelTitle").textContent);
+      if (!src || !model.nodesById.has(src)) return;
+      // make the node the center (re-root)
+      reroot(src);
+      // Close node panel after re-root to show updated layout
+      if (typeof closeNodePanel === "function") closeNodePanel();
+    });
+  }
 
   const expandAllBtn = document.getElementById("expandAllBtn") || { textContent: "", disabled: false, addEventListener: function () {} };
   const rippleBtn = document.getElementById("rippleBtn") || { textContent: "", disabled: false, addEventListener: function () {} };
