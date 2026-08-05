@@ -1,13 +1,56 @@
 from d3blocks import D3Blocks
 
+# Initialize
+d3 = D3Blocks()
+
+# Get example dataset
+df = d3.import_example('energy')
+
+# Create the Radialgraph
+d3.radialgraph(df, center='Solar', showfig=False, to_df=True)
+
+# Inspect or override individual node properties before the final show()
+print(d3.node_properties['Solar'])
+
+# Set node properties
+d3.node_properties['Solar']['color'] = '#e45756'
+
+# Set edge properties
+d3.node_properties['Solar']['color'] = '#e45756'
+
+d3.show()
+
+
+# %%
+
+
+# Import
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Example dataset
+df = d3.import_example('energy')
+
+# Configure radialgraph
+d3.radialgraph(
+    df,
+    center='Solar',
+    significance_test='hits_hub',   # pagerank or 'betweenness', 'closeness', 'hits_hub', 'hits_authority'
+    significance_n_random=50,     # number of randomized networks
+)
+
+# %%
+from d3blocks import D3Blocks
+
 # ----------------------------------------------------------------------
 # 1. Basic: focus = highest-degree node, default panels
 # ----------------------------------------------------------------------
 d3 = D3Blocks()
-df = d3.import_example('energy')
 df = d3.import_example('socialmedia')
 df = df[0:2000]
-html = d3.radialgraph(df, showfig=True, return_html=True)
+html = d3.radialgraph(df, showfig=True, return_html=True, significance_n_random=50, significance_test='hits_hub')
 print('Wrote radialgraph_energy.html (center auto = highest degree)')
 
 # %%
@@ -27,8 +70,6 @@ html = d3.radialgraph(
 print('Wrote radialgraph_solar.html (center=Solar)')
 
 # %%
-
-
 # ----------------------------------------------------------------------
 # 3. With significance testing (PageRank null model via d3graph)
 #    Note: n_random is expensive; lower it for a quick smoke test.
@@ -47,8 +88,6 @@ html = d3.radialgraph(
 print('Wrote radialgraph_significance.html (Significance radio uses node_proba)')
 
 # %%
-
-
 # ----------------------------------------------------------------------
 # 4. Hide panels / light mode
 # ----------------------------------------------------------------------
@@ -67,8 +106,6 @@ html = d3.radialgraph(
 print('Wrote radialgraph_minimal.html (minimal chrome, light theme)')
 
 # %%
-
-
 # ----------------------------------------------------------------------
 # 5. Edit node properties then re-show (same pattern as Tree / Chord)
 # ----------------------------------------------------------------------
@@ -85,8 +122,6 @@ print('Wrote radialgraph_edited.html (Solar forced red/large)')
 
 
 # %%
-
-
 from d3blocks import D3Blocks
 import numpy as np
 
@@ -205,7 +240,7 @@ df = d3.import_example('energy') # 'stormofswords'
 # Create force-directed-network (without cluster labels)
 # d3.elasticgraph(df, filepath='Elasticgraph.html', showfig=False)
 # d3.elasticgraph(df, filepath='Elasticgraph.html', collision=0.8, charge=1500, size=4, hull_offset=10, showfig=True)
-d3.elasticgraph(df, filepath='Elasticgraph.html', charge=1500)
+d3.elasticgraph(df)
 
 # Set all colors to the same color
 # d3.Elasticgraph.D3graph.set_node_properties(fontcolor='#000000')
