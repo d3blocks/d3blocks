@@ -263,19 +263,13 @@ def set_node_properties(df, **kwargs):
         # Ensure proba key exists (NaN until significance runs).
         if 'proba' not in props:
             props['proba'] = float('nan')
+    
     significance_test = kwargs.get('significance_test', None)
     if significance_test is not None:
         if significance_test not in _SIGNIFICANCE_STATS:
-            if logger is not None:
-                logger.warning(
-                    f"significance_test='{significance_test}' is not supported "
-                    f"(expected one of {_SIGNIFICANCE_STATS}). Skipping."
-                )
+            if logger is not None: logger.warning(f"significance_test='{significance_test}' is not supported (expected one of {_SIGNIFICANCE_STATS}). Skipping.")
         else:
-            if logger is not None:
-                logger.info(
-                    f"Running network_significance(statistic='{significance_test}')…"
-                )
+            if logger is not None: logger.info(f"Running network_significance(statistic='{significance_test}')…")
             g.network_significance(
                 g.adjmat,
                 statistic=significance_test,
@@ -284,6 +278,7 @@ def set_node_properties(df, **kwargs):
                 alpha=kwargs.get('significance_alpha', 0.05),
                 seed=kwargs.get('significance_seed', None),
             )
+            
             # Copy proba values back into our node_properties dict.
             for name, props in node_properties.items():
                 if name in g.node_properties and 'proba' in g.node_properties[name]:
