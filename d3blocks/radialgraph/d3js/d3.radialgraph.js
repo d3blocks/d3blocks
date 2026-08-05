@@ -216,10 +216,85 @@ class GraphModel {
 // about seeding/freezing for a clean expand animation; knows nothing about
 // SVG or DOM.
 // =========================================================================
+// Subtree-size-weighted angular wedges - gives each branch a slice of the
+// circle proportional to how many descendants it has, instead of leaving
+// angle entirely to emergent force settling. Without this, a branch with
+// many children gets crowded into whatever narrow wedge force-collision
+// happens to leave it, and collision then has nowhere to push those nodes
+// but outward past their "correct" ring radius - which is exactly why
+// asymmetric branches were breaking the circular look. parentOf is the
+// BFS spanning-tree view already used for seeding; lateral/cross-links
+// don't participate in wedge sizing, only in rendering.
+function assignAngularWedges(nodes, parentOf, rootId) {
+  const childrenOf = new Map(nodes.map((n) => [n.id, []]));
+  nodes.forEach((n) => {
+    const p = parentOf.get(n.id);
+    if (p != null && childrenOf.has(p)) childrenOf.get(p).push(n.id);
+  });
+
+  const subtreeSize = new Map();
+  function computeSize(id) {
+    if (subtreeSize.has(id)) return subtreeSize.get(id);
+    let size = 1;
+    for (const c of childrenOf.get(id) || []) size += computeSize(c);
+    subtreeSize.set(id, size);
+    return size;
+  }
+  nodes.forEach((n) => computeSize(n.id));
+
+  const angleStart = new Map([[rootId, 0]]);
+  const angleEnd = new Map([[rootId, 2 * Math.PI]]);
+  function assign(id) {
+    const children = childrenOf.get(id) || [];
+    if (!children.length) return;
+    const start = angleStart.get(id), end = angleEnd.get(id);
+    const total = children.reduce((s, c) => s + subtreeSize.get(c), 0) || 1;
+    let cursor = start;
+    children.forEach((c) => {
+      const span = (end - start) * (subtreeSize.get(c) / total);
+      angleStart.set(c, cursor);
+      angleEnd.set(c, cursor + span);
+      cursor += span;
+      assign(c);
+    });
+  }
+  if (childrenOf.has(rootId)) assign(rootId);
+
+  nodes.forEach((n) => {
+    const s = angleStart.get(n.id), e = angleEnd.get(n.id);
+    n.targetAngle = s != null && e != null ? (s + e) / 2 : null;
+  });
+}
+
+// Custom D3 force: nudges each node toward its own current radius but at
+// targetAngle, leaving radius itself entirely to forceRadial - the two
+// forces divide the polar coordinate cleanly instead of fighting over the
+// same (x, y). Nodes without a targetAngle (global mode, or root) are
+// left untouched.
+function forceAngular(strength = 0.3) {
+  let nodes = [];
+  function force(alpha) {
+    for (const d of nodes) {
+      if (d.targetAngle == null) continue;
+      const r = Math.hypot(d.x, d.y);
+      if (r < 1e-6) continue;
+      const tx = r * Math.cos(d.targetAngle);
+      const ty = r * Math.sin(d.targetAngle);
+      d.vx += (tx - d.x) * strength * alpha;
+      d.vy += (ty - d.y) * strength * alpha;
+    }
+  }
+  force.initialize = (_nodes) => {
+    nodes = _nodes;
+  };
+  return force;
+}
+
 class LayoutEngine {
-  constructor({ ringSpacing = 70, charge = -140, collision = 1, linkDistance = 36, linkStrength = 0.5, radialStrength = 0.85 } = {}) {
+  constructor({ ringSpacing = 70, charge = -140, collision = 1, linkDistance = 36, linkStrength = 0.5, radialStrength = 0.85, angularStrength = 0.3 } = {}) {
     this.ringSpacing = ringSpacing;
     this.radialStrength = radialStrength;
+    this.angularStrength = angularStrength;
     this.localMode = true;
     // Auto ring spacing: radius per depth ring is derived from how many
     // nodes (and how big they are) occupy that ring, rather than a single
@@ -295,10 +370,12 @@ class LayoutEngine {
     if (localMode) {
       this.simulation.force("center", null);
       this.simulation.force("radial", d3.forceRadial((d) => this._radiusForDepth(d.depth), 0, 0).strength(this.radialStrength));
+      this.simulation.force("angular", forceAngular(this.angularStrength));
       rootNode.fx = 0;
       rootNode.fy = 0;
     } else {
       this.simulation.force("radial", null);
+      this.simulation.force("angular", null);
       this.simulation.force("center", d3.forceCenter(0, 0));
       rootNode.fx = null;
       rootNode.fy = null;
@@ -352,8 +429,13 @@ class LayoutEngine {
       const spread = Math.PI / 6;
       const offset = 20;
       siblings.forEach((n, i) => {
-        const t = siblings.length > 1 ? i / (siblings.length - 1) - 0.5 : 0;
-        const a = angle + t * spread;
+        // Prefer the node's own proportional wedge angle (set by
+        // assignAngularWedges) - it already accounts for subtree size, so
+        // seeding there directly gets the circular layout right away
+        // instead of waiting for the angular force to correct it over
+        // several ticks. Falls back to the old fan-around-parent spread
+        // for nodes that end up with no assigned wedge.
+        const a = n.targetAngle != null ? n.targetAngle : angle + (siblings.length > 1 ? (i / (siblings.length - 1) - 0.5) : 0) * spread;
         n.x = src.x + Math.cos(a) * offset;
         n.y = src.y + Math.sin(a) * offset;
         n.vx = 0;
@@ -402,20 +484,13 @@ class Renderer {
     const merge = glow.append("feMerge");
     merge.append("feMergeNode").attr("in", "blur");
     merge.append("feMergeNode").attr("in", "SourceGraphic");
-    // Stronger yellow glow for flow-diffusion edges (intensified)
-    const flowGlow = defs.append("filter").attr("id", "edge-flow-glow").attr("x", "-160%").attr("y", "-160%").attr("width", "420%").attr("height", "420%");
-    // Broadened glow: two blur passes with a larger stdDeviation for a stronger halo
-    flowGlow.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "10").attr("result", "blur1");
-    flowGlow.append("feGaussianBlur").attr("in", "blur1").attr("stdDeviation", "3.2").attr("result", "blur2");
+    // Stronger yellow glow for flow-diffusion edges
+    const flowGlow = defs.append("filter").attr("id", "edge-flow-glow").attr("x", "-120%").attr("y", "-120%").attr("width", "340%").attr("height", "340%");
+    flowGlow.append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", "4.5").attr("result", "blur");
     const flowMerge = flowGlow.append("feMerge");
-    flowMerge.append("feMergeNode").attr("in", "blur1");
-    flowMerge.append("feMergeNode").attr("in", "blur2");
+    flowMerge.append("feMergeNode").attr("in", "blur");
+    flowMerge.append("feMergeNode").attr("in", "blur");
     flowMerge.append("feMergeNode").attr("in", "SourceGraphic");
-    // Gentle channel boost so yellowish highlights pop a bit more
-    const comp = flowGlow.append("feComponentTransfer");
-    comp.append("feFuncR").attr("type", "gamma").attr("amplitude", "1.8").attr("exponent", "0.95").attr("offset", "0");
-    comp.append("feFuncG").attr("type", "gamma").attr("amplitude", "1.8").attr("exponent", "0.98").attr("offset", "0");
-    comp.append("feFuncB").attr("type", "gamma").attr("amplitude", "0.9").attr("exponent", "1").attr("offset", "0");
     // Arrowhead for one-way follows (source → target)
     const marker = defs.append("marker").attr("id", "arrow-oneway").attr("viewBox", "0 -4 8 8").attr("refX", 10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto");
     marker.append("path").attr("d", "M0,-3.5L8,0L0,3.5").attr("fill", "#aaa");
@@ -631,9 +706,7 @@ class Interaction {
   constructor({ svg, g, simulation, tooltip, getRootId, isLocalMode, onToggle, onReroot, onShowGhosts, onHideGhosts, onZoom, onSelect }) {
     this.zoom = d3
       .zoom()
-      // Allow more zoom-out for very large networks (smaller scale) and a
-      // slightly larger max zoom-in. Users can now zoom out to 0.02×.
-      .scaleExtent([0.02, 12])
+      .scaleExtent([0.15, 8])
       .on("zoom", (e) => {
         g.attr("transform", e.transform);
         if (onZoom) onZoom(e.transform.k);
@@ -1514,77 +1587,6 @@ function computeNetworkMetrics(nodeIds, edges) {
     flowAnimRaf = requestAnimationFrame(step);
   }
 
-  // One-shot flow animation from an arbitrary source cache (not tied to model.rootId)
-  function applyFlowWaveToLinksWithCache(cache, waveTime) {
-    const maxHop = Math.max(1, cache.maxHop);
-    const frontier = Math.min(maxHop + 1.5, waveTime / FLOW_MS_PER_HOP);
-    const done = frontier >= maxHop + 1.2;
-
-    if (!renderer.linkSel || renderer.linkSel.empty()) return done;
-    renderer.linkSel.each(function (e) {
-      const sid = typeof e.source === "object" ? e.source.id : e.source;
-      const tid = typeof e.target === "object" ? e.target.id : e.target;
-      const k = pairKey(sid, tid);
-      const score = cache.scores.get(k) || 0;
-      const hop = cache.hops.get(k) ?? 99;
-      const intensity = score / cache.maxScore;
-      e.flowScore = intensity;
-      e.flowHop = hop;
-
-      if (score <= 0 || hop >= 99) {
-        e.edgeColor = "#2a2818";
-        e.edgeWidth = 0.5;
-        e.edgeOpacity = 0.08;
-        e.edgeGlow = false;
-        return;
-      }
-
-      if (hop > frontier + 0.15) {
-        e.edgeColor = "#3a3520";
-        e.edgeWidth = 0.6;
-        e.edgeOpacity = 0.12;
-        e.edgeGlow = false;
-      } else {
-        const age = frontier - hop;
-        const reveal = Math.max(0, Math.min(1, age / 0.8));
-        const pulse = age < 0.6 ? 0.55 + 0.45 * Math.sin((age / 0.6) * Math.PI) : 1;
-        const bright = intensity * reveal * pulse;
-        e.edgeColor = flowYellow(0.15 + 0.85 * bright);
-        e.edgeWidth = 0.8 + intensity * 4.2 * reveal;
-        e.edgeOpacity = 0.2 + 0.75 * bright;
-        e.edgeGlow = bright > 0.25;
-      }
-    });
-    renderer.updateLinkStyles();
-    return done;
-  }
-
-  function startFlowFromCache(cache) {
-    stopFlowAnimation();
-    flowAnimStart = performance.now();
-    const step = (now) => {
-      const done = applyFlowWaveToLinksWithCache(cache, now - flowAnimStart);
-      if (done) {
-        flowAnimRaf = null;
-        return;
-      }
-      flowAnimRaf = requestAnimationFrame(step);
-    };
-    flowAnimRaf = requestAnimationFrame(step);
-  }
-
-  function startFlowFrom(sourceId) {
-    try {
-      const flowAdj = buildFilteredFlowAdj();
-      const cache = { key: "flow-src|" + sourceId + "|" + filterKey(), ...computeSourceFlow(sourceId, flowAdj) };
-      startFlowFromCache(cache);
-      return cache;
-    } catch (err) {
-      console.error("startFlowFrom error", err);
-      return null;
-    }
-  }
-
   // Annotate each visible link with edgeColor / edgeWidth / edgeOpacity for
   // the current edge-statistics mode. Mutates link objects in place.
   function applyEdgeStyles(links) {
@@ -2058,6 +2060,7 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   function update() {
     const { nodes, links, parentOf } = getRenderGraph();
+    assignAngularWedges(nodes, parentOf, model.rootId);
     applyNodeColors(nodes);
     applyNodeSizes(nodes);
     layout.simulation.force("collide").radius((d) => d.size + 3);
@@ -2342,6 +2345,21 @@ function computeNetworkMetrics(nodeIds, edges) {
       colorMode = key;
       sizeMode = METRIC_KEYS.has(key) ? key : "default";
     }
+
+    // Choosing a network (node) statistic shouldn't leave the edge-statistic
+    // radio group with nothing selected - this is the state that results
+    // from toggling Flow diffusion on then picking a network statistic.
+    // Fall back to "Default" rather than leaving edges unstyled/ambiguous.
+    const edgeChecked = document.querySelector('input[name="edgeStatMode"]:checked');
+    if (!edgeChecked) {
+      const defaultEdgeRadio = document.querySelector('input[name="edgeStatMode"][value="default"]');
+      if (defaultEdgeRadio) defaultEdgeRadio.checked = true;
+      edgeStatMode = "default";
+      stopFlowAnimation();
+      const flowBtnEl = document.getElementById("flowDiffButton");
+      if (flowBtnEl) flowBtnEl.classList.remove("active");
+    }
+
     update();
     layout.simulation.alpha(0.5).restart();
   }
@@ -2349,31 +2367,6 @@ function computeNetworkMetrics(nodeIds, edges) {
   document.querySelectorAll('input[name="statMetric"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       if (!radio.checked) return;
-      // If Flow diffusion is currently active, switch edge statistics back to
-      // default so edge coloring is not left in flow mode when a node metric
-      // is selected. Trigger the radio change handler to reuse its update logic.
-      const flowRadio = document.querySelector('input[name="edgeStatMode"][value="flow-home"]');
-      const defaultEdgeRadio = document.querySelector('input[name="edgeStatMode"][value="default"]');
-      try {
-        if (flowRadio && flowRadio.checked) {
-          if (defaultEdgeRadio) {
-            // Select default and dispatch change to run the existing handler
-            defaultEdgeRadio.checked = true;
-            defaultEdgeRadio.dispatchEvent(new Event("change", { bubbles: true }));
-          } else {
-            // Fallback: set the internal mode and recompute
-            edgeStatMode = "default";
-            recomputeMetrics();
-            flowCache.key = null;
-            stopFlowAnimation();
-            update();
-          }
-        }
-      } catch (e) {
-        console.warn("Error while forcing edgeStat to default", e);
-      }
-
-      // Apply the selected node metric
       applyStatMetric(radio.value);
     });
   });
@@ -2401,15 +2394,9 @@ function computeNetworkMetrics(nodeIds, edges) {
   const crossLinksToggle = document.getElementById("crossLinksToggle");
 
   function syncRingSpacingControls() {
-    // Disable the Auto ring spacing checkbox when in Global (force) mode
-    if (autoRingSpacingToggle) autoRingSpacingToggle.disabled = !layout.localMode;
-    // Disable the manual ring-spacing slider when in Global mode or when
-    // Auto ring spacing is enabled (auto manages the radii).
-    const disabled = !layout.localMode || (autoRingSpacingToggle && autoRingSpacingToggle.checked);
-    if (ringSpacingSlider) {
-      ringSpacingSlider.disabled = disabled;
-      ringSpacingSlider.style.opacity = disabled ? "0.45" : "1";
-    }
+    const disabled = !layout.localMode || autoRingSpacingToggle.checked;
+    ringSpacingSlider.disabled = disabled;
+    ringSpacingSlider.style.opacity = disabled ? "0.45" : "1";
   }
 
   document.querySelectorAll('input[name="layoutMode"]').forEach((radio) => {
@@ -2509,27 +2496,11 @@ function computeNetworkMetrics(nodeIds, edges) {
       if (isFlowMode()) startFlowAnimation();
     });
 
-  // —— Ripple expand (press again → collapse all) ———
-  // Ripple delay (ms) between each layer; user-adjustable via Layout panel
-  let rippleDelayMs = cfg.rippleDelayMs != null ? cfg.rippleDelayMs : 900;
-  function rippleExpandFrom(startId, delayMs = rippleDelayMs) {
+  // —— Ripple expand (press again → collapse all) ——
+  const RIPPLE_DELAY_MS = cfg.rippleDelayMs != null ? cfg.rippleDelayMs : 900;
+  function rippleExpandFrom(startId, delayMs = RIPPLE_DELAY_MS) {
     clearTimeout(rippleTimer);
     const layers = model.bfsLayersFrom(startId);
-    // If delay is zero, expand all layers immediately (fast path)
-    if (delayMs === 0) {
-      for (let i = 0; i < layers.length; i++) {
-        model.expandNodes(layers[i]);
-        recomputeMetrics();
-        flowCache.key = null;
-        stopFlowAnimation();
-        update();
-        if (isFlowMode()) startFlowAnimation();
-      }
-      rippleBtn.disabled = false;
-      rippleBtn.textContent = "Collapse all";
-      return;
-    }
-
     let i = 0;
     const step = () => {
       if (i >= layers.length) {
@@ -2586,74 +2557,6 @@ function computeNetworkMetrics(nodeIds, edges) {
   }
 
   window.addEventListener("resize", resizeGraph);
-
-  // Charge slider wiring
-  const chargeSlider = document.getElementById("chargeSlider");
-  const chargeVal = document.getElementById("chargeVal");
-  function setCharge(v) {
-    const val = Number(v);
-    if (Number.isFinite(val)) {
-      // Update the layout's charge force strength
-      if (layout && layout.simulation && layout.simulation.force) {
-        const f = layout.simulation.force("charge");
-        if (f) f.strength(val);
-        // restart simulation gently to pick up change
-        layout.simulation.alpha(0.4).restart();
-      }
-      if (chargeSlider) chargeSlider.value = val;
-      if (chargeVal) chargeVal.textContent = val;
-    }
-  }
-  if (chargeSlider) chargeSlider.addEventListener("input", (e) => setCharge(e.target.value));
-  // initialize display from cfg
-  setCharge(cfg.charge != null ? cfg.charge : -140);
-
-  // Ripple delay slider wiring
-  const rippleDelaySlider = document.getElementById("rippleDelaySlider");
-  const rippleDelayVal = document.getElementById("rippleDelayVal");
-  function setRippleDelay(ms) {
-    rippleDelayMs = Math.max(0, Math.min(3000, Number(ms) || rippleDelayMs));
-    if (rippleDelaySlider) rippleDelaySlider.value = rippleDelayMs;
-    if (rippleDelayVal) rippleDelayVal.textContent = rippleDelayMs;
-  }
-  if (rippleDelaySlider) rippleDelaySlider.addEventListener("input", (e) => setRippleDelay(e.target.value));
-  // initialize display
-  setRippleDelay(rippleDelayMs);
-
-  // Node-panel Flow-from-here button wiring
-  const nodeFlowBtn = document.getElementById("nodeFlowBtn");
-  if (nodeFlowBtn) {
-    nodeFlowBtn.addEventListener("click", () => {
-      const src = highlightedId || (document.getElementById("nodePanelTitle") && document.getElementById("nodePanelTitle").textContent);
-      if (!src || !model.nodesById.has(src)) return;
-      nodeFlowBtn.disabled = true;
-      const cache = startFlowFrom(src);
-      if (cache && cache.maxHop != null) {
-        const est = (cache.maxHop + 1) * FLOW_MS_PER_HOP + 200;
-        setTimeout(() => {
-          nodeFlowBtn.disabled = false;
-        }, est);
-      } else {
-        // fallback re-enable after a second
-        setTimeout(() => {
-          nodeFlowBtn.disabled = false;
-        }, 1000);
-      }
-    });
-  }
-
-  // Node-panel Set-as-center button wiring
-  const nodeCenterBtn = document.getElementById("nodeCenterBtn");
-  if (nodeCenterBtn) {
-    nodeCenterBtn.addEventListener("click", () => {
-      const src = highlightedId || (document.getElementById("nodePanelTitle") && document.getElementById("nodePanelTitle").textContent);
-      if (!src || !model.nodesById.has(src)) return;
-      // make the node the center (re-root)
-      reroot(src);
-      // Close node panel after re-root to show updated layout
-      if (typeof closeNodePanel === "function") closeNodePanel();
-    });
-  }
 
   // —— Side panel show / hide ——
   const panelToggle = document.getElementById("panelToggle");
