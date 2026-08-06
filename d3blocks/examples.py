@@ -9,14 +9,14 @@ df = d3.import_example('energy')
 d3.set_node_properties(df)
 #
 # Set tooltip for specific nodes
-d3.node_properties['Bio-conversion']['size'] = 50
+d3.node_properties['Bio-conversion']['size'] = 20
 d3.node_properties['Bio-conversion']['color'] = '#000000'
 d3.node_properties['Bio-conversion']['tooltip'] = 'My tooltip for Bio conversion Operations'
 
-# d3.node_properties['Bio-conversion']['fontsize'] = 25
-# d3.node_properties['Bio-conversion']['opacity'] = 0.1
-# d3.node_properties['Bio-conversion']['edge_size'] = 5
-# d3.node_properties['Bio-conversion']['edge_color'] = '#FF0000'
+d3.node_properties['Bio-conversion']['fontsize'] = 20
+d3.node_properties['Bio-conversion']['opacity'] = 0.3
+d3.node_properties['Bio-conversion']['edge_size'] = 1
+d3.node_properties['Bio-conversion']['edge_color'] = '#FF0000'
 
 # Set edge properties
 d3.set_edge_properties(df)

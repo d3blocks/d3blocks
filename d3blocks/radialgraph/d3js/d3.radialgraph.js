@@ -577,6 +577,11 @@ class Renderer {
         if (inner.empty()) inner = g.append("g").attr("class", "radialgraph-node-inner");
         inner.selectAll("rect, circle").remove();
         const hasHidden = hasHiddenNeighbors(d.id);
+        // Node border ("edge" in d3graph vocabulary). An explicit per-node
+        // edge_color / edge_size always wins; otherwise fall back to the
+        // implicit hint-ring that marks nodes with hidden neighbors.
+        const borderColor = d.edge_color != null ? d.edge_color : hasHidden ? ringStroke : "none";
+        const borderWidth = d.edge_size != null ? d.edge_size : 1.5;
         if (d.shape === "square") {
           inner
             .append("rect")
@@ -587,16 +592,30 @@ class Renderer {
             .attr("rx", 2)
             .attr("fill", d.color)
             .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
-            .attr("stroke", hasHidden ? ringStroke : "none")
-            .attr("stroke-width", 1.5);
+            .attr("stroke", borderColor)
+            .attr("stroke-width", borderWidth);
         } else {
           inner
             .append("circle")
             .attr("r", d.size)
             .attr("fill", d.color)
             .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
-            .attr("stroke", hasHidden ? ringStroke : "none")
-            .attr("stroke-width", 1.5);
+            .attr("stroke", borderColor)
+            .attr("stroke-width", borderWidth);
+        }
+        // "Has hidden neighbors" affordance. Previously this was the node's
+        // own stroke, but that collides with a user-set edge_color; draw it
+        // as a thin outer ring instead so both can coexist.
+        inner.selectAll(".hidden-hint-ring").remove();
+        if (hasHidden && d.edge_color != null) {
+          inner
+            .append("circle")
+            .attr("class", "hidden-hint-ring")
+            .attr("r", (d.size || 6) + (d.edge_size != null ? d.edge_size : 1.5) + 2)
+            .attr("fill", "none")
+            .attr("stroke", ringStroke)
+            .attr("stroke-width", 1.2)
+            .attr("stroke-opacity", 0.75);
         }
         // Ensure label attributes are kept in sync with node props
         const label = g.select(".radialgraph-label");
@@ -1691,19 +1710,9 @@ function computeNetworkMetrics(nodeIds, edges) {
       e.edgeWidth = e.link_width != null ? e.link_width : null;
       e.edgeOpacity = e.link_opacity != null ? e.link_opacity : null;
 
-      // Fallback to per-node edge defaults (source → target precedence)
-      if (e.edgeColor == null) {
-        const srcNode = model.nodesById.get(sid) || {};
-        const tgtNode = model.nodesById.get(tid) || {};
-        if (srcNode.edge_color != null) e.edgeColor = srcNode.edge_color;
-        else if (tgtNode.edge_color != null) e.edgeColor = tgtNode.edge_color;
-      }
-      if (e.edgeWidth == null) {
-        const srcNode = model.nodesById.get(sid) || {};
-        const tgtNode = model.nodesById.get(tid) || {};
-        if (srcNode.edge_size != null) e.edgeWidth = srcNode.edge_size;
-        else if (tgtNode.edge_size != null) e.edgeWidth = tgtNode.edge_size;
-      }
+      // NOTE: node_properties['edge_color'] / ['edge_size'] describe the NODE
+      // BORDER (d3graph semantics) and deliberately do NOT leak into link
+      // styling here — links are styled from per-link link_color/link_width.
 
       if (edgeStatMode === "community") {
         const ca = (model.nodesById.get(sid) || {}).community;

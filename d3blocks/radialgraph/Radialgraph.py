@@ -96,6 +96,10 @@ def set_config(config={}, font={}, **kwargs):
     config['scaler'] = kwargs.get('scaler', 'zscore')
     config['minmax'] = kwargs.get('minmax', [8, 13])
     config['edge_color'] = kwargs.get('edge_color', '#808080')
+    # Node *border* defaults (d3graph node_properties['edge_color'/'edge_size']).
+    # Kept separate from the link-level edge_color above.
+    config['node_edge_color'] = kwargs.get('node_edge_color', '#000000')
+    config['node_edge_size'] = kwargs.get('node_edge_size', 1)
     config['edge_opacity'] = kwargs.get('edge_opacity', 'weight')
     config['edge_scaler'] = kwargs.get('edge_scaler', 'zscore')
     config['edge_minmax'] = kwargs.get('edge_minmax', [0.5, 15])
@@ -257,9 +261,21 @@ def set_node_properties(df, **kwargs):
         center = _highest_degree_node(df)
         depths = _compute_depths(df, center, logger=logger)
 
+    # Node-border defaults. These are the properties the user tweaks via
+    #   d3.node_properties['<node>']['edge_color'] = '#FF0000'
+    #   d3.node_properties['<node>']['edge_size']  = 10
+    # d3graph already emits them for most configurations; fill in anything
+    # missing so the keys are always present and settable.
+    node_edge_color = kwargs.get('node_edge_color', '#000000')
+    node_edge_size = kwargs.get('node_edge_size', 1)
+
     for name, props in node_properties.items():
         props['depth'] = depths.get(name)
         props['shape'] = _resolve_shape(name, shape_cfg)
+        if props.get('edge_color') is None:
+            props['edge_color'] = node_edge_color
+        if props.get('edge_size') is None:
+            props['edge_size'] = node_edge_size
         # Ensure proba key exists (NaN until significance runs).
         if 'proba' not in props:
             props['proba'] = float('nan')
@@ -332,6 +348,14 @@ def _build_graph_json(df, node_properties, logger=None):
                 continue
         return {}
 
+    def _as_float(value, default=None):
+        if value is None:
+            return default
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return default
+
     nodes = []
     for name in node_names:
         props = _get_props(name, node_properties or {})
@@ -353,9 +377,10 @@ def _build_graph_json(df, node_properties, logger=None):
             'depth': props.get('depth', None),
             'fontcolor': props.get('fontcolor', props.get('color', '#dcddde')),
             'fontsize': float(props.get('fontsize', 10) or 10),
-            # allow per-node defaults for how incident edges should look
+            # Node BORDER styling (d3graph semantics): stroke color + width
+            # of the node circle/square itself, not of its links.
             'edge_color': props.get('edge_color', None),
-            'edge_size': float(props.get('edge_size')) if props.get('edge_size') is not None else None,
+            'edge_size': _as_float(props.get('edge_size')),
             # node_proba mirrors d3graph's JSON field name so the shared
             # statMetric selector vocabulary transfers cleanly.
             'node_proba': proba_val,
@@ -365,27 +390,14 @@ def _build_graph_json(df, node_properties, logger=None):
     for _, row in df.iterrows():
         src = str(row[source_col])
         tgt = str(row[target_col])
-        # Prefer explicit per-edge columns; fall back to per-node edge settings if present
-        src_props = _get_props(src, node_properties or {})
-        tgt_props = _get_props(tgt, node_properties or {})
-        link_color = row.get('edge_color') if row.get('edge_color') is not None else (src_props.get('edge_color') if src_props.get('edge_color') is not None else (tgt_props.get('edge_color') if tgt_props.get('edge_color') is not None else '#999999'))
-        # edge width: per-edge 'edge_width' or per-node 'edge_size'
-        if row.get('edge_width') is not None:
-            link_width = float(row.get('edge_width') or 1)
-        elif src_props.get('edge_size') is not None:
-            try:
-                link_width = float(src_props.get('edge_size'))
-            except Exception:
-                link_width = 1.0
-        elif tgt_props.get('edge_size') is not None:
-            try:
-                link_width = float(tgt_props.get('edge_size'))
-            except Exception:
-                link_width = 1.0
-        else:
-            link_width = float(row.get('edge_width', 1) or 1)
-
-        link_opacity = float(row.get('edge_opacity', 0.6) if row.get('edge_opacity') is not None else 0.6)
+        # Link styling comes from the per-edge columns only. The per-node
+        # 'edge_color'/'edge_size' properties describe the node border and
+        # must not bleed into link appearance.
+        link_color = row.get('edge_color') if row.get('edge_color') is not None else '#999999'
+        link_width = _as_float(row.get('edge_width'), 1.0) or 1.0
+        link_opacity = _as_float(row.get('edge_opacity'), 0.6)
+        if link_opacity is None:
+            link_opacity = 0.6
 
         links.append({
             'source': src,
