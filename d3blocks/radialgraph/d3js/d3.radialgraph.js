@@ -586,6 +586,7 @@ class Renderer {
             .attr("height", d.size * 2)
             .attr("rx", 2)
             .attr("fill", d.color)
+            .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
             .attr("stroke", hasHidden ? ringStroke : "none")
             .attr("stroke-width", 1.5);
         } else {
@@ -593,8 +594,17 @@ class Renderer {
             .append("circle")
             .attr("r", d.size)
             .attr("fill", d.color)
+            .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
             .attr("stroke", hasHidden ? ringStroke : "none")
             .attr("stroke-width", 1.5);
+        }
+        // Ensure label attributes are kept in sync with node props
+        const label = g.select(".radialgraph-label");
+        if (!label.empty()) {
+          label
+            .attr("x", (d.size || 6) + 4)
+            .attr("fill", d.fontcolor || "#dcddde")
+            .style("font-size", d.fontsize ? d.fontsize + "px" : "10px");
         }
         // Search highlight rings (shown via .search-hit CSS)
         let rings = g.select(".search-rings");
@@ -623,6 +633,8 @@ class Renderer {
             .attr("x", (d) => d.size + 4)
             .attr("dy", "0.32em")
             .attr("opacity", 0)
+            .attr("fill", (d) => d.fontcolor || "#dcddde")
+            .style("font-size", (d) => (d.fontsize ? d.fontsize + "px" : "10px"))
             .text((d) => d.id);
           sel.select(".radialgraph-node-inner").attr("transform", "scale(0.001)").transition().duration(300).attr("transform", "scale(1)");
           return sel;
@@ -830,19 +842,17 @@ class Interaction {
       // Tap: show the node's info panel immediately, regardless of whether
       // this becomes a single (toggle) or double (re-root) tap.
       if (this.onSelect) this.onSelect(d);
-      // Tap: double-tap → re-root; single tap → expand/collapse (deferred so a
+      // Tap: → re-root; single tap → expand/collapse (deferred so a
       // second tap within the window can cancel the toggle and focus instead).
       if (this._isDoubleTap(d)) {
         clearTimeout(this._pendingToggle);
         this._pendingToggle = null;
         this._lastTap = { id: null, time: 0 };
-        if (d.id !== this.getRootId()) this.onReroot(d);
+        // Expand/collapse on double-click
+        this.onToggle(d);
       } else {
         clearTimeout(this._pendingToggle);
-        this._pendingToggle = setTimeout(() => {
-          this._pendingToggle = null;
-          this.onToggle(d);
-        }, this._DOUBLE_TAP_MS);
+        // Single click: just select the node (already done above)
       }
     };
     // filter:null allows drag on touch + mouse; touchable nodes need this for mobile
@@ -1211,6 +1221,9 @@ function computeNetworkMetrics(nodeIds, edges) {
     fontsize: n.fontsize || 10,
     depth: n.depth != null ? n.depth : null,
     node_proba: typeof n.node_proba === "number" ? n.node_proba : NaN,
+    // include per-node edge defaults (may be used when no per-link override exists)
+    edge_color: n.edge_color || null,
+    edge_size: n.edge_size != null ? +n.edge_size : null,
     degree: 0,
     betweenness: 0,
     closeness: 0,
@@ -1672,6 +1685,25 @@ function computeNetworkMetrics(nodeIds, edges) {
       e.edgeGlow = false;
       e.flowScore = null;
       e.flowHop = null;
+
+      // Start from explicit per-link values if present; may be overridden
+      e.edgeColor = e.link_color || null;
+      e.edgeWidth = e.link_width != null ? e.link_width : null;
+      e.edgeOpacity = e.link_opacity != null ? e.link_opacity : null;
+
+      // Fallback to per-node edge defaults (source → target precedence)
+      if (e.edgeColor == null) {
+        const srcNode = model.nodesById.get(sid) || {};
+        const tgtNode = model.nodesById.get(tid) || {};
+        if (srcNode.edge_color != null) e.edgeColor = srcNode.edge_color;
+        else if (tgtNode.edge_color != null) e.edgeColor = tgtNode.edge_color;
+      }
+      if (e.edgeWidth == null) {
+        const srcNode = model.nodesById.get(sid) || {};
+        const tgtNode = model.nodesById.get(tid) || {};
+        if (srcNode.edge_size != null) e.edgeWidth = srcNode.edge_size;
+        else if (tgtNode.edge_size != null) e.edgeWidth = tgtNode.edge_size;
+      }
 
       if (edgeStatMode === "community") {
         const ca = (model.nodesById.get(sid) || {}).community;
@@ -2605,8 +2637,8 @@ function computeNetworkMetrics(nodeIds, edges) {
     });
 
   // —— Ripple expand (press again → collapse all) ——
-  const RIPPLE_DELAY_MS = cfg.rippleDelayMs != null ? cfg.rippleDelayMs : 900;
-  function rippleExpandFrom(startId, delayMs = RIPPLE_DELAY_MS) {
+  let rippleDelayMs = cfg.rippleDelayMs != null ? cfg.rippleDelayMs : 900;
+  function rippleExpandFrom(startId, delayMs = rippleDelayMs) {
     clearTimeout(rippleTimer);
     const layers = model.bfsLayersFrom(startId);
     let i = 0;
@@ -2632,6 +2664,18 @@ function computeNetworkMetrics(nodeIds, edges) {
     };
     step();
   }
+
+  // Ripple delay slider wiring
+  const rippleDelaySlider = document.getElementById("rippleDelaySlider");
+  const rippleDelayVal = document.getElementById("rippleDelayVal");
+  function setRippleDelay(ms) {
+    rippleDelayMs = Math.max(0, Math.min(3000, Number(ms) || rippleDelayMs));
+    if (rippleDelaySlider) rippleDelaySlider.value = rippleDelayMs;
+    if (rippleDelayVal) rippleDelayVal.textContent = rippleDelayMs;
+  }
+  if (rippleDelaySlider) rippleDelaySlider.addEventListener("input", (e) => setRippleDelay(e.target.value));
+  // initialize display
+  setRippleDelay(rippleDelayMs);
 
   rippleBtn.addEventListener("click", () => {
     if (rippleActive) {

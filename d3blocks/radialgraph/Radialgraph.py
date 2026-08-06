@@ -263,7 +263,7 @@ def set_node_properties(df, **kwargs):
         # Ensure proba key exists (NaN until significance runs).
         if 'proba' not in props:
             props['proba'] = float('nan')
-    
+
     significance_test = kwargs.get('significance_test', None)
     if significance_test is not None:
         if significance_test not in _SIGNIFICANCE_STATS:
@@ -278,7 +278,7 @@ def set_node_properties(df, **kwargs):
                 alpha=kwargs.get('significance_alpha', 0.05),
                 seed=kwargs.get('significance_seed', None),
             )
-            
+
             # Copy proba values back into our node_properties dict.
             for name, props in node_properties.items():
                 if name in g.node_properties and 'proba' in g.node_properties[name]:
@@ -304,9 +304,37 @@ def _build_graph_json(df, node_properties, logger=None):
                 center = name
                 break
 
+    # Helper to tolerate slight label normalization differences (spaces → underscores, trimmed, or quoted)
+    def _get_props(name, node_props):
+        if not node_props:
+            return {}
+        # Fast path: exact match
+        if name in node_props:
+            return node_props[name]
+        s = str(name)
+        # Try trimmed
+        if s.strip() in node_props:
+            return node_props[s.strip()]
+        # Try underscore variant
+        us = s.strip().replace(' ', '_')
+        if us in node_props:
+            return node_props[us]
+        # Try removing quotes
+        rq = s.replace("'", "")
+        if rq in node_props:
+            return node_props[rq]
+        # Last resort: stringified-key equality
+        for k, v in node_props.items():
+            try:
+                if str(k) == s:
+                    return v
+            except Exception:
+                continue
+        return {}
+
     nodes = []
     for name in node_names:
-        props = (node_properties or {}).get(name, {})
+        props = _get_props(name, node_properties or {})
         proba = props.get('proba', float('nan'))
         try:
             proba_val = float(proba)
@@ -323,8 +351,11 @@ def _build_graph_json(df, node_properties, logger=None):
             'label': props.get('label', str(name)),
             'shape': props.get('shape', 'circle'),
             'depth': props.get('depth', None),
-            'fontcolor': props.get('fontcolor', '#dcddde'),
+            'fontcolor': props.get('fontcolor', props.get('color', '#dcddde')),
             'fontsize': float(props.get('fontsize', 10) or 10),
+            # allow per-node defaults for how incident edges should look
+            'edge_color': props.get('edge_color', None),
+            'edge_size': float(props.get('edge_size')) if props.get('edge_size') is not None else None,
             # node_proba mirrors d3graph's JSON field name so the shared
             # statMetric selector vocabulary transfers cleanly.
             'node_proba': proba_val,
@@ -332,13 +363,37 @@ def _build_graph_json(df, node_properties, logger=None):
 
     links = []
     for _, row in df.iterrows():
+        src = str(row[source_col])
+        tgt = str(row[target_col])
+        # Prefer explicit per-edge columns; fall back to per-node edge settings if present
+        src_props = _get_props(src, node_properties or {})
+        tgt_props = _get_props(tgt, node_properties or {})
+        link_color = row.get('edge_color') if row.get('edge_color') is not None else (src_props.get('edge_color') if src_props.get('edge_color') is not None else (tgt_props.get('edge_color') if tgt_props.get('edge_color') is not None else '#999999'))
+        # edge width: per-edge 'edge_width' or per-node 'edge_size'
+        if row.get('edge_width') is not None:
+            link_width = float(row.get('edge_width') or 1)
+        elif src_props.get('edge_size') is not None:
+            try:
+                link_width = float(src_props.get('edge_size'))
+            except Exception:
+                link_width = 1.0
+        elif tgt_props.get('edge_size') is not None:
+            try:
+                link_width = float(tgt_props.get('edge_size'))
+            except Exception:
+                link_width = 1.0
+        else:
+            link_width = float(row.get('edge_width', 1) or 1)
+
+        link_opacity = float(row.get('edge_opacity', 0.6) if row.get('edge_opacity') is not None else 0.6)
+
         links.append({
-            'source': str(row[source_col]),
-            'target': str(row[target_col]),
+            'source': src,
+            'target': tgt,
             'weight': float(row.get('weight', 1) or 1),
-            'link_color': row.get('edge_color', '#999999'),
-            'link_width': float(row.get('edge_width', 1) or 1),
-            'link_opacity': float(row.get('edge_opacity', 0.6) if row.get('edge_opacity') is not None else 0.6),
+            'link_color': link_color,
+            'link_width': link_width,
+            'link_opacity': link_opacity,
         })
 
     payload = {'nodes': nodes, 'links': links, 'rootId': str(center) if center is not None else None}
