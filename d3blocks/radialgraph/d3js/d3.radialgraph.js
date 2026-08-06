@@ -1367,6 +1367,17 @@ function computeNetworkMetrics(nodeIds, edges) {
   let edgeStatMode = "default"; // 'default' | 'community' | 'jaccard' | 'flow-home'
   let highlightedId = null; // search highlight survives re-renders
 
+  // —— Click-to-highlight-neighbors ——
+  // Clicking a node dims everything except that node and its direct
+  // neighbors, and gives the incident edges a yellow glow so the local
+  // structure pops. Cleared by clicking empty canvas. Mirrors the
+  // behaviour of d3graph's click highlight.
+  let selectedHighlightId = null;
+  const NEIGHBOR_DIM_OPACITY = 0.8;
+  const EDGE_GLOW_WIDTH_MULT = 2;
+  const EDGE_GLOW_COLOR = "#ffcc00";
+  const EDGE_GLOW_FILTER = "drop-shadow(0 0 3px " + EDGE_GLOW_COLOR + ") drop-shadow(0 0 6px " + EDGE_GLOW_COLOR + ")";
+
   // —— Information-diffusion flow scores (DIRECTED: source → target only) ——
   // Single-source from the current focus, following arrow direction only.
   // Node size (baseSize) scales how much mass a node injects.
@@ -1647,6 +1658,7 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   function startFlowFromCache(cache) {
     stopFlowAnimation();
+    clearNeighborHighlight(); // the flow wave owns link styling
     flowAnimStart = performance.now();
     const step = (now) => {
       const done = applyFlowWaveToLinksWithCache(cache, now - flowAnimStart);
@@ -1673,6 +1685,7 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   function startFlowAnimation() {
     stopFlowAnimation();
+    clearNeighborHighlight(); // the flow wave owns link styling
     if (!isFlowMode()) return;
     ensureFlowCache();
     flowAnimStart = performance.now();
@@ -2207,6 +2220,73 @@ function computeNetworkMetrics(nodeIds, edges) {
     return { nodes, links, parentOf, depths, visibleIds };
   }
 
+  // Resting stroke width / opacity for a link — the same fallbacks the
+  // Renderer uses, so clearing a highlight restores the exact base look.
+  function restingLinkWidth(d) {
+    return d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4;
+  }
+  function restingLinkOpacity(d) {
+    return d.edgeOpacity != null ? d.edgeOpacity : d.relation === "mutual" ? 0.7 : 0.5;
+  }
+
+  function clearNeighborHighlightStyles() {
+    if (renderer.nodeSel && !renderer.nodeSel.empty()) {
+      renderer.nodeSel.interrupt().style("opacity", null);
+    }
+    if (renderer.linkSel && !renderer.linkSel.empty()) {
+      renderer.linkSel
+        .interrupt()
+        .style("opacity", null)
+        .style("filter", (d) => (d.edgeGlow ? "url(#edge-flow-glow)" : null))
+        .attr("stroke-width", restingLinkWidth)
+        .attr("stroke-opacity", restingLinkOpacity);
+    }
+  }
+
+  // Paint the dim/glow overlay for the currently selected node. Safe to call
+  // after every render — it re-derives everything from selectedHighlightId.
+  function applyNeighborHighlight() {
+    if (!renderer.nodeSel || renderer.nodeSel.empty()) return;
+    if (selectedHighlightId == null || !model.nodesById.has(selectedHighlightId)) {
+      clearNeighborHighlightStyles();
+      return;
+    }
+    const keep = new Set([selectedHighlightId]);
+    model.neighbors(selectedHighlightId).forEach((nb) => keep.add(nb));
+
+    renderer.nodeSel.interrupt().style("opacity", (d) => (keep.has(d.id) ? 1 : NEIGHBOR_DIM_OPACITY));
+
+    if (renderer.linkSel && !renderer.linkSel.empty()) {
+      renderer.linkSel.each(function (e) {
+        const sid = typeof e.source === "object" ? e.source.id : e.source;
+        const tid = typeof e.target === "object" ? e.target.id : e.target;
+        const connected = sid === selectedHighlightId || tid === selectedHighlightId;
+        // Kill the enter-transition so it can't animate over the highlight.
+        const el = d3.select(this).interrupt();
+        if (connected) {
+          el.classed("glow", false)
+            .style("opacity", 1)
+            .attr("stroke-opacity", 1)
+            .attr("stroke-width", restingLinkWidth(e) * EDGE_GLOW_WIDTH_MULT)
+            .style("filter", EDGE_GLOW_FILTER);
+        } else {
+          el.style("opacity", NEIGHBOR_DIM_OPACITY).style("filter", null);
+        }
+      });
+    }
+  }
+
+  function setNeighborHighlight(id) {
+    selectedHighlightId = id;
+    applyNeighborHighlight();
+  }
+
+  function clearNeighborHighlight() {
+    if (selectedHighlightId == null) return;
+    selectedHighlightId = null;
+    clearNeighborHighlightStyles();
+  }
+
   function update() {
     const { nodes, links, parentOf } = getRenderGraph();
     assignAngularWedges(nodes, parentOf, model.rootId);
@@ -2227,6 +2307,8 @@ function computeNetworkMetrics(nodeIds, edges) {
     if (highlightedId) {
       renderer.nodeSel.classed("search-hit", (d) => d.id === highlightedId);
     }
+    // Re-paint the click highlight — the keyed join just rebuilt the DOM.
+    applyNeighborHighlight();
     // Track what was actually rendered (not the full expanded frontier) so a
     // node hidden for having no edges is treated as "new" if it later gains one.
     previousIds = new Set(nodes.map((n) => n.id));
@@ -2266,6 +2348,7 @@ function computeNetworkMetrics(nodeIds, edges) {
     rippleBtn.disabled = false;
     rippleBtn.textContent = "Ripple expand";
     renderer.clearGhosts();
+    clearNeighborHighlight();
     // Outbound/inbound direction is relative to hop-depth from the focus,
     // so re-rooting changes which edges count toward each category.
     recomputeMetrics();
@@ -2300,7 +2383,10 @@ function computeNetworkMetrics(nodeIds, edges) {
     },
     onHideGhosts: () => renderer.clearGhosts(),
     onZoom: (k) => updateLabelVisibility(k),
-    onSelect: (d) => showNodePanel(d),
+    onSelect: (d) => {
+      showNodePanel(d);
+      setNeighborHighlight(d.id);
+    },
   });
 
   update();
@@ -2327,6 +2413,7 @@ function computeNetworkMetrics(nodeIds, edges) {
   // Clear search ring / node panel only when user clicks empty canvas
   interaction.onBackgroundClick = () => {
     clearSearchHighlight();
+    clearNeighborHighlight();
     closeNodePanel();
   };
 
