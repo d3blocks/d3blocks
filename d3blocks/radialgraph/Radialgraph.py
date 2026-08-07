@@ -89,6 +89,9 @@ def set_config(config={}, font={}, **kwargs):
     config['sticky'] = kwargs.get('sticky', True)
     config['shape'] = kwargs.get('shape', 'circle')
 
+    # Display behaviour: whether to expand all nodes by default on load
+    config['expand_all_on_load'] = kwargs.get('expand_all_on_load', False)
+
     # Node / edge property defaults - identical to d3graph.graph() defaults.
     config['color'] = kwargs.get('color', 'cluster')
     config['opacity'] = kwargs.get('opacity', 'degree')
@@ -468,6 +471,8 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        # expose the expand-on-load flag to the client template
+        'expandAllOnLoad': 'true' if config.get('expand_all_on_load', False) else 'false',
     }
 
     try:

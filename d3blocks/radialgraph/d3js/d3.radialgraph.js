@@ -1270,6 +1270,12 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   const model = new GraphModel({ nodes, edges, rootId: rootId });
 
+  // Expand-all-on-load option (set from Python via template). When true,
+  // reveal the entire graph immediately so the visual matches d3graph's
+  // default of showing all nodes.
+  const expandAllOnLoad = cfg.expandAllOnLoad === true || cfg.expandAllOnLoad === "true";
+  if (expandAllOnLoad) model.expandAll();
+
   // Network metrics — initially over the full (unfiltered) graph. Recomputed
   // by recomputeMetrics() whenever the edge direction filter or focus changes.
   const metrics = computeNetworkMetrics(
