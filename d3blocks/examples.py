@@ -1,3 +1,34 @@
+import numpy as np
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(frame=False)
+
+# Example dataset
+df = d3.import_example('socialmedia')
+df = df[0:2000]
+df["weight"] = np.random.randint(1, 101, size=len(df))
+# d3.set_edge_properties(df)
+# radialgraph
+d3.radialgraph(df, expand_all_on_load=False, edge_minmax=[0.5, 20])
+d3.node_properties['@k9hXVu2Rzmastodon.social']
+d3.node_properties['@medvjed@witter.czmastodon.social']
+d3.edge_properties
+d3.edge_properties['edge_width']
+# d3.edge_properties['edge_width']
+
+# radialgraph
+d3.d3graph(df)
+
+# radialgraph
+d3.sankey(df)
+
+# radialgraph
+d3.chord(df)
+
+# %%
+
+
 # Intialize Treemap
 from d3blocks import D3Blocks
 d3 = D3Blocks(chart='radialgraph', frame=False)
