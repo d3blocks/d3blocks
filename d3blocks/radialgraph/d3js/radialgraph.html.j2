@@ -100,6 +100,7 @@
 <div id="hint">tap to expand/collapse · double-tap to focus · drag · scroll/pinch to zoom</div>
 {% if showNodePanel == 'true' %}
 <div id="nodePanel" role="dialog" aria-label="Node details">
+  <div id="nodePanelResizer" class="node-panel-resizer" title="Drag to resize" aria-hidden="false"></div>
   <div class="node-panel-header">
     <div><div class="node-panel-title" id="nodePanelTitle">—</div><div class="node-panel-sub" id="nodePanelSub"></div></div>
     <div style="display:flex;gap:8px;align-items:center">
@@ -157,22 +158,101 @@ function positionSidePanels() {
   if (radialContainer) radialContainer.style.left = leftInset + 'px';
   if (hint) hint.style.left = leftInset + 'px';
 }
-window.addEventListener("DOMContentLoaded", positionSidePanels);
-window.addEventListener("resize", positionSidePanels);
-if (window.ResizeObserver) {
-  var o = new ResizeObserver(positionSidePanels);
-  document.querySelectorAll(".stats-panel").forEach(function (p) { o.observe(p); });
-  var tp = document.querySelectorAll('.top-panel'); tp.forEach(function (p) { o.observe(p); });
-}
-document.querySelectorAll(".stats-panel-title").forEach(function (title) {
-  title.addEventListener("click", function () {
-    var panel = title.parentElement, collapsing = !panel.classList.contains("collapsed");
-    if (collapsing) { if (panel.style.height) panel.dataset.expandedHeight = panel.style.height; panel.style.height = ""; }
-    else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
-    panel.classList.toggle("collapsed"); positionSidePanels();
-  });
-});
-</script>
+
+	window.addEventListener("DOMContentLoaded", positionSidePanels);
+	window.addEventListener("resize", positionSidePanels);
+	if (window.ResizeObserver) {
+	  var o = new ResizeObserver(positionSidePanels);
+	  document.querySelectorAll(".stats-panel").forEach(function (p) { o.observe(p); });
+	  var tp = document.querySelectorAll('.top-panel'); tp.forEach(function (p) { o.observe(p); });
+	}
+	document.querySelectorAll(".stats-panel-title").forEach(function (title) {
+	  title.addEventListener("click", function () {
+	    var panel = title.parentElement, collapsing = !panel.classList.contains("collapsed");
+	    if (collapsing) { if (panel.style.height) panel.dataset.expandedHeight = panel.style.height; panel.style.height = ""; }
+	    else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
+	    panel.classList.toggle("collapsed"); positionSidePanels();
+	  });
+	});
+
+	// —— Node panel resizer: drag to change height, double-click to toggle collapsed ——
+	(function () {
+	  var nodePanel = document.getElementById('nodePanel');
+	  var resizer = document.getElementById('nodePanelResizer');
+	  var dragging = false;
+	  var startY = 0;
+	  var startHeight = 0;
+	  var minHeight = 40; // px, allow small so it can appear closed
+	  var maxHeight = Math.round(window.innerHeight * 0.85);
+
+	  if (!nodePanel || !resizer) return;
+
+	  function clamp(h) { return Math.max(0, Math.min(h, Math.round(window.innerHeight * 0.95))); }
+
+	  function setPanelHeight(h) {
+	    if (h <= minHeight) {
+	      // consider 'closed' when very small: remove open state
+	      nodePanel.style.maxHeight = minHeight + 'px';
+	      nodePanel.classList.remove('open');
+	    } else {
+	      nodePanel.style.maxHeight = h + 'px';
+	      if (!nodePanel.classList.contains('open')) nodePanel.classList.add('open');
+	    }
+	  }
+
+	  resizer.addEventListener('mousedown', startDrag);
+	  resizer.addEventListener('touchstart', startDrag, { passive: false });
+
+	  function startDrag(e) {
+	    e.preventDefault();
+	    dragging = true;
+	    startY = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+	    startHeight = nodePanel.getBoundingClientRect().height;
+	    document.documentElement.classList.add('resizing');
+	    window.addEventListener('mousemove', onDrag);
+	    window.addEventListener('touchmove', onDrag, { passive: false });
+	    window.addEventListener('mouseup', stopDrag);
+	    window.addEventListener('touchend', stopDrag);
+	  }
+
+	  function onDrag(e) {
+	    if (!dragging) return;
+	    e.preventDefault();
+	    var y = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+	    var dy = startY - y; // move up increases height
+	    var newHeight = clamp(startHeight + dy);
+	    setPanelHeight(newHeight);
+	  }
+
+	  function stopDrag() {
+	    if (!dragging) return;
+	    dragging = false;
+	    document.documentElement.classList.remove('resizing');
+	    window.removeEventListener('mousemove', onDrag);
+	    window.removeEventListener('touchmove', onDrag);
+	    window.removeEventListener('mouseup', stopDrag);
+	    window.removeEventListener('touchend', stopDrag);
+	    // persist last height in dataset for later restore
+	    var h = nodePanel.getBoundingClientRect().height;
+	    nodePanel.dataset.lastHeight = String(h);
+	  }
+
+	  // double-click toggles fully closed/open
+	  resizer.addEventListener('dblclick', function () {
+	    if (!nodePanel.classList.contains('open')) {
+	      // restore last height or default
+	      var h = parseInt(nodePanel.dataset.lastHeight || Math.round(window.innerHeight * 0.35), 10);
+	      setPanelHeight(clamp(h));
+	    } else {
+	      // close
+	      nodePanel.classList.remove('open');
+	      nodePanel.dataset.lastHeight = String(nodePanel.getBoundingClientRect().height);
+	      nodePanel.style.maxHeight = minHeight + 'px';
+	    }
+	  });
+
+	})();
+	</script>
 <script>
 // Export Data button: download the raw JSON for the current graph
 const exportDataBtn = document.getElementById('exportDataButton');

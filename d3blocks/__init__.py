@@ -10,7 +10,7 @@ from d3blocks.utils import (
 
 __author__ = 'Erdogan Taskesen'
 __email__ = 'erdogant@gmail.com'
-__version__ = '1.8.0'
+__version__ = '1.8.1'
 
 # Setup root logger
 import logging

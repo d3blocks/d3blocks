@@ -191,6 +191,11 @@
   }
   #nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
   body.panel-collapsed #nodePanel { left: 0; }
+  .node-panel-resizer {
+    position: absolute; left: 0; right: 0; top: 0; height: 8px; cursor: ns-resize; z-index: 16;
+    display: block; background: linear-gradient(90deg, rgba(0,0,0,0.0), rgba(255,255,255,0.02), rgba(0,0,0,0.0));
+  }
+  .node-panel-resizer:active { background: linear-gradient(90deg, rgba(0,0,0,0.02), rgba(255,255,255,0.04), rgba(0,0,0,0.02)); }
   .node-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
   .node-panel-title { color: var(--text); font-size: 16px; font-weight: 700; word-break: break-word; }
   .node-panel-sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
