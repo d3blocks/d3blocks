@@ -1063,7 +1063,7 @@ import numpy as np
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(verbose=10, support='text')
+d3 = D3Blocks(support='text')
 
 # Import example
 df = d3.import_example('energy')
@@ -1492,7 +1492,7 @@ assert html is None
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('random_time', n=10000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False)
+html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=False, return_html=True)
 assert html is not None
 html = d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 10}, filepath=None, notebook=True)
 assert html is None
@@ -1504,7 +1504,7 @@ assert html is None
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 img_before, img_after = d3.import_example('southern_nebula_internet')
-html = d3.imageslider(img_before, img_after, filepath=None, notebook=False)
+html = d3.imageslider(img_before, img_after, filepath=None, notebook=False, return_html=True)
 assert html is not None
 html = d3.imageslider(img_before, img_after, filepath=None, notebook=True)
 assert html is None
@@ -1515,7 +1515,7 @@ assert html is None
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
-html = d3.chord(df, filepath=None, notebook=False)
+html = d3.chord(df, filepath=None, notebook=False, return_html=True)
 assert html is not None
 html = d3.chord(df, filepath=None, notebook=True)
 assert html is None
