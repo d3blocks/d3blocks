@@ -51,11 +51,35 @@ License     : GPL3
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 
+<!-- Bottom slide-up point info panel -->
+<div id="nodePanel" role="dialog" aria-label="Point details">
+  <div class="node-panel-header">
+    <div>
+      <div class="node-panel-title" id="nodePanelTitle">—</div>
+      <div class="node-panel-sub" id="nodePanelSub"></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="node-panel-close" id="nodePanelClose" type="button">✕</button>
+    </div>
+  </div>
+  <div id="nodeStatsGrid" style="padding:8px 12px;"></div>
+</div>
+
 <!-- Circle are black when hovered-->
 <style>
 .myCircle:hover {
   stroke: black;
 }
+#nodePanel {
+  position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 20;
+  transform: translateY(100%); transition: transform 200ms ease, opacity 200ms ease;
+  opacity: 0; pointer-events: none; background: rgba(255,255,255,0.95); border: 1px solid #ccc; border-radius: 6px 6px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
+}
+#nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.node-panel-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.node-panel-title { font-weight:600 }
+.node-panel-sub { font-size:0.9em; color:#666 }
+.node-panel-close { background:transparent; border:0; font-size:16px; cursor:pointer }
 </style>
 
 
@@ -113,7 +137,7 @@ var mousemove = function(d) {
 Tooltip
   .html(d[6])
 //  .html("Exact value: " + d[6])
-  .style("left", (d3.mouse(this)[0]+70) + "px")
+  .style("left", (d3.mouse(this)[0] + 30) + "px")
   .style("top", (d3.mouse(this)[1]) + "px")
 }
 
@@ -159,11 +183,45 @@ var circles = svg.selectAll("circle")
     {{ MOUSEOVER }}
     {{ MOUSEMOVE }}
     {{ MOUSELEAVE }}
+    .on("click", function(d) { d3.event.stopPropagation(); showNodePanel(d); });
+
+// background (svg) click closes the panel
+svg.on("click", function() { closeNodePanel(); });
+
+// Node panel DOM refs and behavior
+const nodePanel = document.getElementById("nodePanel");
+const nodePanelTitle = document.getElementById("nodePanelTitle");
+const nodePanelSub = document.getElementById("nodePanelSub");
+const nodeStatsGrid = document.getElementById("nodeStatsGrid");
+const nodePanelClose = document.getElementById("nodePanelClose");
+
+function showNodePanel(d) {
+  // d is an array of values: use d[6] as tooltip if present
+  const title = (d && d[6]) ? d[6] : (d && d[0] != null ? String(d[0]) : 'Point');
+  nodePanelTitle.textContent = title;
+  const sub = (d && d[0] != null && d[1] != null) ? `x: ${d[0]}, y: ${d[1]}` : '';
+  nodePanelSub.textContent = sub;
+  // Render some basic stats
+  if (nodeStatsGrid) {
+    nodeStatsGrid.innerHTML = `
+      <div>radius: ${d[3]}</div>
+      <div>opacity: ${d[4]}</div>
+      <div>stroke: ${d[5]}</div>
+    `;
+  }
+  if (nodePanel) nodePanel.classList.add('open');
+}
+
+function closeNodePanel() {
+  if (nodePanel) nodePanel.classList.remove('open');
+}
+
+if (nodePanelClose) nodePanelClose.addEventListener('click', closeNodePanel);
 
 
 // Read checkboxes and create transition ****************************
 const buttons = d3.selectAll('input');
-buttons.on('change', function(d) 
+buttons.on('change', function(d)
 {
 	// console.log('button changed to ' + this.value);
 
