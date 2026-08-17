@@ -16,19 +16,46 @@ License     : GPL3
 
     <style>
       body { background: {{ COLOR_BACKGROUND }} }
+      /* Top-panel & controls (small subset of scatter.css) */
+      .top-panel { display:flex; align-items:center; gap:8px; padding:8px 12px; }
+      .top-panel .top-panel-left { flex:0 0 40px }
+      .top-panel .top-panel-center { flex:1; display:flex; justify-content:center }
+      .top-panel .top-panel-right { flex:0 0 auto; display:flex; gap:8px; align-items:center }
+      .search-wrap { position:relative; width:100%; max-width:520px }
+      .search-input { width:100%; box-sizing:border-box; padding:6px 8px; border-radius:4px; border:1px solid rgba(0,0,0,0.12) }
+      .search-input:focus { outline:none; box-shadow:0 0 0 3px rgba(90,150,240,0.08); }
+      .search-results { position:absolute; top:calc(100% + 6px); left:0; right:0; background:white; border:1px solid rgba(0,0,0,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.08); width:100%; max-height:240px; overflow:auto; display:none; z-index:80; border-radius:4px; padding:6px 0 }
+      .search-results.open { display:block }
+      .search-item { padding:6px 10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center }
+      .search-item.active, .search-item:hover { background: rgba(90,150,240,0.08) }
+      .search-item .meta { color:#666; font-size:0.9em; margin-left:8px }
+      .button-switch { padding:6px 10px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); background:transparent; cursor:pointer }
+      .button-switch:active { transform:translateY(1px) }
+      .search-hit{stroke:#ff9900!important;stroke-width:3px!important}
+      body.light { background: #fff }
     </style>
+    <!-- Include radialgraph theme & panel CSS so the theme toggle shows visual changes -->
+    <style>{% include "scatter.css" %}</style>
 
 </head>
 
-<!-- Create save button -->
-<div style="max-width:{{ WIDTH }}px;">
-{{ SAVE_BUTTON_START }}
-    <div style="max-width:{{ WIDTH }}px;">
-    <center><button id="saveButton">Save</button>
-{{ SAVE_BUTTON_STOP }}
+<body>
+
+<!-- Top panel (search centered, controls on right) -->
+<div class="top-panel" role="toolbar" aria-label="Top controls" style="position:relative;z-index:40">
+  <div class="top-panel-left"></div>
+  <div class="top-panel-center">
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find a point…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
+  </div>
 </div>
 
-<body>
 
 <svg width="{{ WIDTH }}" height="{{ HEIGHT }}"></svg>
 
@@ -67,20 +94,24 @@ License     : GPL3
 
 <!-- Circle are black when hovered-->
 <style>
-.myCircle:hover {
-  stroke: black;
-}
-#nodePanel {
-  position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 20;
-  transform: translateY(100%); transition: transform 200ms ease, opacity 200ms ease;
-  opacity: 0; pointer-events: none; background: rgba(255,255,255,0.95); border: 1px solid #ccc; border-radius: 6px 6px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
-}
-#nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-.node-panel-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom: 1px solid rgba(0,0,0,0.06); }
-.node-panel-title { font-weight:600 }
-.node-panel-sub { font-size:0.9em; color:#666 }
-.node-panel-close { background:transparent; border:0; font-size:16px; cursor:pointer }
-</style>
+	.myCircle:hover {
+	  stroke: black;
+	}
+	/* Node panel respects theme variables */
+	#nodePanel {
+	  position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 20;
+	  transform: translateY(100%); transition: transform 200ms ease, opacity 200ms ease;
+	  opacity: 0; pointer-events: none;
+	  background: var(--panel-bg); color: var(--text);
+	  border: 1px solid var(--panel-border); border-radius: 6px 6px 0 0;
+	  box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
+	}
+	#nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+	.node-panel-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom: 1px solid var(--panel-border); }
+	.node-panel-title { font-weight:600 }
+	.node-panel-sub { font-size:0.9em; color: var(--text-muted); }
+	.node-panel-close { background:transparent; border:0; font-size:16px; cursor:pointer; color: var(--text); }
+	</style>
 
 
 
@@ -174,6 +205,7 @@ var circles = svg.selectAll("circle")
   .data(jsonData)
   .enter().append("circle")
     .attr("class", "myCircle")                     // Edge-color turns black when when hovered
+    .attr("data-idx", function(d,i){ return i; })   // index for search mapping
     .attr("cx", function(d) { return x(d[0]); })   // x-coordinates
     .attr("cy", function(d) { return y(d[1]); })   // y-coordinates
     .attr("fill", function(d) { return d[2]; })    // fill hexcolor
@@ -184,6 +216,9 @@ var circles = svg.selectAll("circle")
     {{ MOUSEMOVE }}
     {{ MOUSELEAVE }}
     .on("click", function(d) { d3.event.stopPropagation(); showNodePanel(d); });
+
+// background (svg) click closes the panel
+svg.on("click", function() { closeNodePanel(); });
 
 // background (svg) click closes the panel
 svg.on("click", function() { closeNodePanel(); });
@@ -218,6 +253,119 @@ function closeNodePanel() {
 
 if (nodePanelClose) nodePanelClose.addEventListener('click', closeNodePanel);
 
+// —— Search & jump (basic, adapted from radialgraph) ——
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+let searchActiveIndex = -1;
+let searchMatches = [];
+
+function clearSearchHighlight() {
+  d3.selectAll('circle').classed('search-hit', false);
+}
+
+function highlightPoint(idx) {
+  clearSearchHighlight();
+  const sel = d3.select('circle[data-idx="' + idx + '"]');
+  if (!sel.empty()) sel.classed('search-hit', true);
+}
+
+function jumpToPoint(idx) {
+  const i = parseInt(idx, 10);
+  if (Number.isNaN(i) || i < 0 || i >= jsonData.length) return;
+  // Show panel for the point and highlight it
+  showNodePanel(jsonData[i]);
+  highlightPoint(i);
+  // Close results and set input value
+  if (searchResults) searchResults.classList.remove('open');
+  if (searchInput) {
+    searchInput.value = (jsonData[i] && jsonData[i][6]) ? jsonData[i][6] : String(i);
+    searchInput.blur();
+  }
+}
+
+function renderSearchResults(query) {
+  const q = (query || '').trim().toLowerCase();
+  searchActiveIndex = -1;
+  if (!q) {
+    searchMatches = [];
+    if (searchResults) { searchResults.innerHTML = ''; searchResults.classList.remove('open'); }
+    return;
+  }
+  const all = jsonData.map(function(d,i){ return {id: (d && d[6]) ? String(d[6]) : String(i), idx: i, d: d}; });
+  searchMatches = all
+    .filter(function(it){ return it.id.toLowerCase().includes(q); })
+    .sort(function(a,b){
+      const al = a.id.toLowerCase(), bl = b.id.toLowerCase();
+      const ap = al.startsWith(q) ? 0 : 1;
+      const bp = bl.startsWith(q) ? 0 : 1;
+      if (ap !== bp) return ap - bp;
+      return a.id.length - b.id.length || a.id.localeCompare(b.id);
+    })
+    .slice(0, 12);
+
+  if (!searchMatches.length) {
+    if (searchResults) { searchResults.innerHTML = '<div class="search-item" style="opacity:0.5;cursor:default;padding:6px 10px">No matches</div>'; searchResults.classList.add('open'); }
+    return;
+  }
+  if (searchResults) {
+    searchResults.innerHTML = searchMatches.map(function(it, i){
+      const d = it.d || {};
+      const meta = (d[0] != null && d[1] != null) ? ('x:' + d[0] + ' · y:' + d[1]) : '';
+      return '<div class="search-item" data-idx="'+it.idx+'" data-i="'+i+'" style="padding:6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center">' +
+        '<div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + it.id + '</div>' +
+        (meta?('<div style="color:#666;font-size:0.9em;margin-left:8px">'+meta+'</div>'):'') +
+        '</div>';
+    }).join('');
+    searchResults.classList.add('open');
+  }
+}
+
+if (searchInput) searchInput.addEventListener('input', function(){ renderSearchResults(searchInput.value); });
+if (searchInput) searchInput.addEventListener('focus', function(){ if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
+
+if (searchInput) searchInput.addEventListener('keydown', function(e){
+  if (!searchResults || !searchResults.classList.contains('open') || !searchMatches.length) {
+    if (e.key === 'Enter' && searchInput.value.trim()) {
+      // Exact or first match
+      const q = searchInput.value.trim();
+      const exact = searchMatches.find(function(m){ return m.id === q; }) || searchMatches[0] || null;
+      if (exact) jumpToPoint(exact.idx);
+    }
+    return;
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault(); searchActiveIndex = Math.min(searchMatches.length - 1, searchActiveIndex + 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault(); searchActiveIndex = Math.max(0, searchActiveIndex - 1);
+  } else if (e.key === 'Enter') {
+    e.preventDefault(); const id = searchMatches[searchActiveIndex >= 0 ? searchActiveIndex : 0]; if (id) jumpToPoint(id.idx); return;
+  } else if (e.key === 'Escape') {
+    if (searchResults) { searchResults.classList.remove('open'); searchInput.blur(); } return;
+  } else { return; }
+  // update active class
+  if (searchResults) {
+    const items = searchResults.querySelectorAll('.search-item');
+    items.forEach(function(el,i){ el.classList.toggle('active', i === searchActiveIndex); if (i === searchActiveIndex) el.scrollIntoView({block:'nearest'}); });
+  }
+});
+
+if (searchResults) searchResults.addEventListener('mousedown', function(e){
+  const item = e.target.closest('.search-item'); if (!item || !item.dataset.idx) return; e.preventDefault(); jumpToPoint(item.dataset.idx);
+});
+
+document.addEventListener('click', function(e){ if (!e.target.closest('.search-wrap')) { if (searchResults) searchResults.classList.remove('open'); } });
+
+// Add small styles for search-hit
+var sstyle = document.createElement('style'); sstyle.innerHTML = '.search-hit{stroke:#ff9900!important;stroke-width:3px!important;} .search-item.active{background:rgba(90,150,240,0.08);}'; document.head.appendChild(sstyle);
+
+// Theme toggle (button + T key)
+function toggleTheme() {
+  const themeBtn = document.getElementById('themeBtn');
+  const isLight = document.body.classList.toggle('light');
+  if (themeBtn) themeBtn.textContent = isLight ? 'Theme: Light' : 'Theme: Dark';
+}
+const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); themeBtn.textContent = document.body.classList.contains('light') ? 'Theme: Light' : 'Theme: Dark'; }
+window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme(); });
 
 // Read checkboxes and create transition ****************************
 const buttons = d3.selectAll('input');
