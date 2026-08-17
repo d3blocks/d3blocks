@@ -1,3 +1,35 @@
+# Scatter
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('mnist')
+
+size = np.random.randint(0, 8, df.shape[0])
+opacity = np.random.randint(0, 8, df.shape[0])/10
+tooltip = df['y'].values.astype(str)
+
+# Set all propreties
+d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
+           df['PC2'].values,                   # PC2 y-coordinates
+           x1=df['tsne_1'].values,             # tSNE x-coordinates
+           y1=df['tsne_2'].values,             # tSNE y-coordinates
+           color=df['tsne_2'].values.astype(str),   # Hex-colors or classlabels
+           tooltip=tooltip,                    # Tooltip
+           size=size,                          # Node size
+           opacity=opacity,                    # Opacity
+           stroke='#000000',
+           cmap='tab20',                       # Colormap
+           scale=True,                         # Scale the datapoints
+           label_radio=['PCA', 'tSNE'],
+           color_background='#DC143C',
+           )
+
+
+# %%
 import numpy as np
 from d3blocks import D3Blocks
 
