@@ -38,12 +38,29 @@ License     : GPL3
     <style>{% include "scatter.css" %}</style>
 
     <style>
-    /* Left layout panel */
-    .layout-panel {
-      position: fixed; left: 12px; top: 64px; width: 200px; background: var(--panel-bg, #fff); color: var(--text, #111); border:1px solid rgba(0,0,0,0.08); padding:10px; border-radius:6px; z-index:60; box-shadow:0 8px 24px rgba(0,0,0,0.08);
-      font-family: sans-serif; font-size: 13px;
+    /* Floating left layout panel (d3graph-style): overlays the plot, does not shift it. */
+    #layoutPanel.stats-panel {
+      top: 56px;
+      left: 10px;
+      z-index: 60;
     }
-    .layout-panel .layout-title { font-weight:700; margin-bottom:6px }
+    /* Keep the fixed-size scatterplot centered in the viewport */
+    #scatter-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #scatterSvg {
+      display: block;
+      margin: 0 auto;
+    }
+    #my_dataviz {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
     </style>
 
 </head>
@@ -65,8 +82,30 @@ License     : GPL3
   </div>
 </div>
 
+<!-- Side panel: Size / Color / Shape (collapsible, floats over the plot like index.html.j2) -->
+<div class="stats-panel" id="layoutPanel">
+  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="layoutSizeSelect">Size</label>
+      <select id="layoutSizeSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
+    </div>
+    <div class="physics-control">
+      <label for="layoutColorSelect">Color</label>
+      <select id="layoutColorSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
+    </div>
+    <div class="physics-control">
+      <label for="layoutShapeSelect">Shape</label>
+      <select id="layoutShapeSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
+        <option value="circle">Default</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-<svg width="{{ WIDTH }}" height="{{ HEIGHT }}"></svg>
+<!-- Main visualization: full width / centered; left panel floats over it -->
+<div id="scatter-main">
+<svg id="scatterSvg" width="{{ WIDTH }}" height="{{ HEIGHT }}"></svg>
 
 <script>
 	{% include "d3.v4.min.js" %}
@@ -86,6 +125,7 @@ License     : GPL3
 
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
+</div><!-- /#scatter-main -->
 
 <!-- Bottom slide-up point info panel -->
 <div id="nodePanel" role="dialog" aria-label="Point details">
@@ -106,7 +146,7 @@ License     : GPL3
 	.myCircle:hover {
 	  stroke: black;
 	}
-	/* Node panel respects theme variables */
+	/* Node panel respects theme variables (floats above the plot, same as d3graph) */
 	#nodePanel {
 	  position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 20;
 	  transform: translateY(100%); transition: transform 200ms ease, opacity 200ms ease;
@@ -127,11 +167,9 @@ License     : GPL3
 <script>
 	var jsonData = {{ json_data }};
 
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg");
-
-var svg = d3.select("svg"),
+// Use the main scatter SVG (must not use d3.select("svg") — the Layout
+// panel chevron is also an <svg> and comes first in the DOM).
+var svg = d3.select("#scatterSvg"),
     width = +svg.attr("width"),
     height = +svg.attr("height")-1;
 
@@ -199,27 +237,25 @@ svg.append("g")
     .attr("class", "brush")
     .call(brush);
 
-// Left layout panel (similar to radialgraph) -----------------
-var layoutPanelHtml = `
-  <div id="layoutPanel" class="layout-panel">
-    <div class="layout-title">Layout</div>
-    <div style="margin-top:8px">
-      <label style="font-size:0.9em">Size</label>
-      <select id="layoutSizeSelect"><option value="">Default</option></select>
-    </div>
-    <div style="margin-top:8px">
-      <label style="font-size:0.9em">Color</label>
-      <select id="layoutColorSelect"><option value="">Default</option></select>
-    </div>
-    <div style="margin-top:8px">
-      <label style="font-size:0.9em">Shape</label>
-      <select id="layoutShapeSelect">><option value="circle">Default</option></select>
-    </div>
-
-  </div>`;
-
-// Inject left panel into body
-var div = document.createElement('div'); div.innerHTML = layoutPanelHtml; document.body.appendChild(div.firstElementChild);
+// Collapsible layout panel (same interaction as index.html.j2 stats-panels)
+(function () {
+  var panel = document.getElementById('layoutPanel');
+  if (!panel) return;
+  var title = panel.querySelector('.stats-panel-title');
+  if (!title) return;
+  title.addEventListener('click', function () {
+    var collapsing = !panel.classList.contains('collapsed');
+    if (collapsing) {
+      if (panel.style.height) {
+        panel.dataset.expandedHeight = panel.style.height;
+      }
+      panel.style.height = '';
+    } else if (panel.dataset.expandedHeight) {
+      panel.style.height = panel.dataset.expandedHeight;
+    }
+    panel.classList.toggle('collapsed');
+  });
+})();
 
 // symbol/shape helpers and current mode state
 var SHAPE_MAP = {
