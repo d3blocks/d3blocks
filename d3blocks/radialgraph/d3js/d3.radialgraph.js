@@ -473,6 +473,8 @@ class LayoutEngine {
 class Renderer {
   constructor({ container, width, height, onEnterNode }) {
     this.onEnterNode = onEnterNode;
+    this.edgeWidthMult = 1.0;  // updated by the Edge Width slider
+    this.nodeSizeMult  = 1.0;  // updated by the Node Size slider
     this.svg = d3
       .select(container)
       .append("svg")
@@ -516,7 +518,7 @@ class Renderer {
     this.nodeById = new Map(nodes.map((n) => [n.id, n]));
 
     const linkClass = (d) => "radialgraph-link glow " + (d.relation === "mutual" ? "mutual" : "oneway");
-    const finalWidth = (d) => (d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4);
+    const finalWidth = (d) => (d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4) * this.edgeWidthMult;
     const finalOpacity = (d) => (d.edgeOpacity != null ? d.edgeOpacity : d.relation === "mutual" ? 0.7 : 0.5);
     const targetId = (d) => (typeof d.target === "object" ? d.target.id : d.target);
     const strokeColor = (d) => {
@@ -577,18 +579,16 @@ class Renderer {
         if (inner.empty()) inner = g.append("g").attr("class", "radialgraph-node-inner");
         inner.selectAll("rect, circle").remove();
         const hasHidden = hasHiddenNeighbors(d.id);
-        // Node border ("edge" in d3graph vocabulary). An explicit per-node
-        // edge_color / edge_size always wins; otherwise fall back to the
-        // implicit hint-ring that marks nodes with hidden neighbors.
         const borderColor = d.edge_color != null ? d.edge_color : hasHidden ? ringStroke : "none";
         const borderWidth = d.edge_size != null ? d.edge_size : 1.5;
+        const sz = (d.size || 6) * this.nodeSizeMult;  // scaled size
         if (d.shape === "square") {
           inner
             .append("rect")
-            .attr("x", -d.size)
-            .attr("y", -d.size)
-            .attr("width", d.size * 2)
-            .attr("height", d.size * 2)
+            .attr("x", -sz)
+            .attr("y", -sz)
+            .attr("width", sz * 2)
+            .attr("height", sz * 2)
             .attr("rx", 2)
             .attr("fill", d.color)
             .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
@@ -597,42 +597,37 @@ class Renderer {
         } else {
           inner
             .append("circle")
-            .attr("r", d.size)
+            .attr("r", sz)
             .attr("fill", d.color)
             .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
             .attr("stroke", borderColor)
             .attr("stroke-width", borderWidth);
         }
-        // "Has hidden neighbors" affordance. Previously this was the node's
-        // own stroke, but that collides with a user-set edge_color; draw it
-        // as a thin outer ring instead so both can coexist.
         inner.selectAll(".hidden-hint-ring").remove();
         if (hasHidden && d.edge_color != null) {
           inner
             .append("circle")
             .attr("class", "hidden-hint-ring")
-            .attr("r", (d.size || 6) + (d.edge_size != null ? d.edge_size : 1.5) + 2)
+            .attr("r", sz + (d.edge_size != null ? d.edge_size : 1.5) + 2)
             .attr("fill", "none")
             .attr("stroke", ringStroke)
             .attr("stroke-width", 1.2)
             .attr("stroke-opacity", 0.75);
         }
-        // Ensure label attributes are kept in sync with node props
         const label = g.select(".radialgraph-label");
         if (!label.empty()) {
           label
-            .attr("x", (d.size || 6) + 4)
+            .attr("x", sz + 4)
             .attr("fill", d.fontcolor || "#dcddde")
             .style("font-size", d.fontsize ? d.fontsize + "px" : "10px");
         }
-        // Search highlight rings (shown via .search-hit CSS)
         let rings = g.select(".search-rings");
         if (rings.empty()) {
           rings = g.insert("g", ":first-child").attr("class", "search-rings");
           rings.append("circle").attr("class", "search-ring search-ring-border");
           rings.append("circle").attr("class", "search-ring search-ring-yellow");
         }
-        rings.selectAll("circle").attr("r", (d.size || 6) + 12);
+        rings.selectAll("circle").attr("r", sz + 12);
       });
     };
 
@@ -723,7 +718,7 @@ class Renderer {
     if (!this.linkSel || this.linkSel.empty()) return;
     this.linkSel
       .attr("stroke", (d) => d.edgeColor || "#888")
-      .attr("stroke-width", (d) => (d.edgeWidth != null ? d.edgeWidth : 1.4))
+      .attr("stroke-width", (d) => (d.edgeWidth != null ? d.edgeWidth : 1.4) * this.edgeWidthMult)
       .attr("stroke-opacity", (d) => (d.edgeOpacity != null ? d.edgeOpacity : 0.5))
       .style("filter", (d) => (d.edgeGlow ? "url(#edge-flow-glow)" : null))
       .classed("glow", (d) => !!d.edgeGlow);
@@ -2171,6 +2166,8 @@ function computeNetworkMetrics(nodeIds, edges) {
   let rippleActive = false;
 
   let showCrossLinks = true;
+  let nodeSizeMult  = 1.0;   // driven by Node Size slider
+  let edgeWidthMult = 1.0;   // driven by Edge Width slider
   // Independent checkboxes: any combination of 'outbound' / 'inbound' /
   // 'bidirectional' may be active at once. Default: all checked (full network).
   let edgeDirFilter = new Set(["outbound", "inbound", "bidirectional"]);
@@ -2229,7 +2226,7 @@ function computeNetworkMetrics(nodeIds, edges) {
   // Resting stroke width / opacity for a link — the same fallbacks the
   // Renderer uses, so clearing a highlight restores the exact base look.
   function restingLinkWidth(d) {
-    return d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4;
+    return (d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4) * edgeWidthMult;
   }
   function restingLinkOpacity(d) {
     return d.edgeOpacity != null ? d.edgeOpacity : d.relation === "mutual" ? 0.7 : 0.5;
@@ -2715,6 +2712,39 @@ function computeNetworkMetrics(nodeIds, edges) {
   });
 
   syncRingSpacingControls();
+
+  // —— Node Size & Edge Width multiplier sliders ——
+  function applyVisualScaleMultipliers() {
+    if (renderer.nodeSel && !renderer.nodeSel.empty()) update();
+    if (renderer.linkSel && !renderer.linkSel.empty()) {
+      renderer.linkSel.attr("stroke-width", restingLinkWidth);
+    }
+    applyNeighborHighlight();
+  }
+
+  const nodeSizeMultSlider  = document.getElementById("nodeSizeMultSlider");
+  const nodeSizeMultVal     = document.getElementById("nodeSizeMultVal");
+  const edgeWidthMultSlider = document.getElementById("edgeWidthMultSlider");
+  const edgeWidthMultVal    = document.getElementById("edgeWidthMultVal");
+
+  if (nodeSizeMultSlider) {
+    nodeSizeMultSlider.addEventListener("input", () => {
+      nodeSizeMult = +nodeSizeMultSlider.value;
+      renderer.nodeSizeMult = nodeSizeMult;
+      if (nodeSizeMultVal) nodeSizeMultVal.textContent = nodeSizeMult.toFixed(1);
+      update();
+    });
+  }
+  if (edgeWidthMultSlider) {
+    edgeWidthMultSlider.addEventListener("input", () => {
+      edgeWidthMult = +edgeWidthMultSlider.value;
+      renderer.edgeWidthMult = edgeWidthMult;
+      if (edgeWidthMultVal) edgeWidthMultVal.textContent = edgeWidthMult.toFixed(1);
+      if (renderer.linkSel && !renderer.linkSel.empty())
+        renderer.linkSel.attr("stroke-width", restingLinkWidth);
+      applyNeighborHighlight();
+    });
+  }
 
   // —— Expand all / collapse all ——
   if (expandAllBtn)
