@@ -196,11 +196,6 @@ var k = height / width,
 var xAxis = d3.axisTop(x).ticks(12),
     yAxis = d3.axisRight(y).ticks(12 * height / width);
 
-var brush = d3.brush().on("end", brushended),
-    idleTimeout,
-    idleDelay = 350;
-
-
 // create a tooltip with the box ****************************
 // Fixed positioning + pageX/pageY so the box tracks the cursor next to the point
 // (appending to #my_dataviz with SVG-local mouse coords put it far off-screen).
@@ -257,9 +252,142 @@ svg.append("g")
     .attr("transform", "translate(10,0)")
     .call(yAxis);
 
-svg.append("g")
-    .attr("class", "brush")
-    .call(brush);
+// Transparent overlay for pan (drag) — sits behind points so clicks still hit them
+var panOverlay = svg.insert("rect", ":first-child")
+  .attr("class", "pan-overlay")
+  .attr("width", width)
+  .attr("height", height + 1)
+  .attr("fill", "transparent")
+  .style("cursor", "grab");
+
+// Click-and-drag to pan the view (replaces brush rectangle zoom)
+var isPanning = false;
+var didPan = false; // true if this gesture moved — suppress click-to-close
+var panStart = null; // {x, y, xDomain, yDomain}
+
+function svgPixelFromEvent(event, node) {
+  var rect = node.getBoundingClientRect();
+  var scaleX = rect.width / (width || rect.width || 1);
+  var scaleY = rect.height / ((height + 1) || rect.height || 1);
+  return {
+    px: (event.clientX - rect.left) / (scaleX || 1),
+    py: (event.clientY - rect.top) / (scaleY || 1)
+  };
+}
+
+function startPan(event) {
+  // Only primary button; ignore if started on a point (points stopPropagation on click, but mousedown may still fire)
+  if (event.button !== 0) return;
+  var target = event.target;
+  if (target && target.classList && target.classList.contains('point')) return;
+  isPanning = true;
+  didPan = false;
+  var node = svg.node();
+  var p = svgPixelFromEvent(event, node);
+  panStart = {
+    px: p.px,
+    py: p.py,
+    xDomain: x.domain().slice(),
+    yDomain: y.domain().slice()
+  };
+  panOverlay.style("cursor", "grabbing");
+  svg.style("cursor", "grabbing");
+  event.preventDefault();
+}
+
+function movePan(event) {
+  if (!isPanning || !panStart) return;
+  var node = svg.node();
+  var p = svgPixelFromEvent(event, node);
+  var dx = p.px - panStart.px;
+  var dy = p.py - panStart.py;
+  if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didPan = true;
+
+  // Convert pixel delta to domain delta (invert of scale range)
+  var xSpan = panStart.xDomain[1] - panStart.xDomain[0];
+  var ySpan = panStart.yDomain[1] - panStart.yDomain[0];
+  // x increases to the right; dragging right should move view left => domain decreases
+  var dDataX = -dx * (xSpan / (width || 1));
+  // y scale is inverted (domain high at top of screen); dragging down moves view up in data
+  var dDataY = dy * (ySpan / (height || 1));
+
+  x.domain([panStart.xDomain[0] + dDataX, panStart.xDomain[1] + dDataX]);
+  y.domain([panStart.yDomain[0] + dDataY, panStart.yDomain[1] + dDataY]);
+  zoom(0); // immediate update while dragging
+  event.preventDefault();
+}
+
+function endPan() {
+  if (!isPanning) return;
+  isPanning = false;
+  panStart = null;
+  panOverlay.style("cursor", "grab");
+  svg.style("cursor", null);
+  updatePointLabels();
+  // Clear didPan on next tick so the trailing click does not close the node panel
+  setTimeout(function(){ didPan = false; }, 0);
+}
+
+// Attach pan to overlay (background); points keep their own click/hover
+panOverlay.node().addEventListener('mousedown', startPan);
+window.addEventListener('mousemove', movePan);
+window.addEventListener('mouseup', endPan);
+
+// Double-click background to reset zoom/pan to original domain
+panOverlay.node().addEventListener('dblclick', function() {
+  x.domain(x0.slice());
+  y.domain(y0.slice());
+  zoom(400);
+});
+
+// Mouse-wheel zoom (centered on cursor).
+// Zooming in past LABEL_ZOOM_THRESHOLD makes point labels appear (if a Label is selected).
+// Native listener with {passive:false} so preventDefault works in modern browsers.
+(function setupWheelZoom() {
+  var node = svg.node();
+  if (!node) return;
+  node.addEventListener('wheel', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    var delta = event.deltaY;
+    // deltaY < 0 => scroll up => zoom in; > 0 => zoom out
+    var scaleFactor = delta < 0 ? 0.85 : 1.18;
+
+    var p = svgPixelFromEvent(event, node);
+    var mx = x.invert(p.px);
+    var my = y.invert(p.py);
+
+    var xd = x.domain();
+    var yd = y.domain();
+
+    var newXd = [
+      mx - (mx - xd[0]) * scaleFactor,
+      mx + (xd[1] - mx) * scaleFactor
+    ];
+    var newYd = [
+      my - (my - yd[0]) * scaleFactor,
+      my + (yd[1] - my) * scaleFactor
+    ];
+
+    // Clamp zoom-out so we never go wider than the original domain
+    var x0Span = Math.abs(x0[1] - x0[0]) || 1;
+    var y0Span = Math.abs(y0[1] - y0[0]) || 1;
+    if (Math.abs(newXd[1] - newXd[0]) > x0Span) {
+      newXd = x0.slice();
+    }
+    if (Math.abs(newYd[1] - newYd[0]) > y0Span) {
+      newYd = y0.slice();
+    }
+
+    // Avoid degenerate domains
+    if (newXd[0] === newXd[1] || newYd[0] === newYd[1]) return;
+
+    x.domain(newXd);
+    y.domain(newYd);
+    zoom(120); // short transition for responsive scroll zoom
+  }, { passive: false });
+})();
 
 // Collapsible layout panel (same interaction as index.html.j2 stats-panels)
 (function () {
@@ -526,16 +654,11 @@ var layoutShapeSelect = document.getElementById('layoutShapeSelect'); if (layout
 var layoutLabelSelect = document.getElementById('layoutLabelSelect'); if (layoutLabelSelect) layoutLabelSelect.addEventListener('change', function(e){ applyLabelMode(e.target.value); });
 
 // background (svg) click closes the panel
-svg.on("click", function() { closeNodePanel(); });
-
-// background (svg) click closes the panel
-svg.on("click", function() { closeNodePanel(); });
-
-// background (svg) click closes the panel
-svg.on("click", function() { closeNodePanel(); });
-
-// background (svg) click closes the panel
-svg.on("click", function() { closeNodePanel(); });
+// Background click closes the node panel (ignored after a pan drag)
+svg.on("click", function() {
+  if (didPan || isPanning) return;
+  closeNodePanel();
+});
 
 // Node panel DOM refs and behavior
 const nodePanel = document.getElementById("nodePanel");
@@ -779,38 +902,29 @@ buttons.on('change', function(d)
 
 // *************************************************
 
-function brushended() {
-  var s = d3.event.selection;
-  if (!s) {
-    if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-    x.domain(x0);
-    y.domain(y0);
-  } else {
-    x.domain([s[0][0], s[1][0]].map(x.invert, x));
-    y.domain([s[1][1], s[0][1]].map(y.invert, y));
-    svg.select(".brush").call(brush.move, null);
+function zoom(duration) {
+  duration = (typeof duration === 'number') ? duration : 750;
+  var modeNode = d3.select('input[name="radio_states"]:checked').node();
+  var mode = modeNode ? modeNode.value : 'radiobutton1';
+  function applyPointTransforms(selection) {
+    if (mode == 'radiobutton1') selection.attr('transform', function(d){ return transformForIndex(d, 0, 1); });
+    else if (mode == 'radiobutton2') selection.attr('transform', function(d){ return transformForIndex(d, 7, 8); });
+    else if (mode == 'radiobutton3') selection.attr('transform', function(d){ return transformForIndex(d, 9, 10); });
   }
-  zoom();
-}
 
-function idled() {
-  idleTimeout = null;
-}
+  // duration 0: immediate update for smooth pan dragging
+  if (duration <= 0) {
+    svg.select(".axis--x").call(xAxis);
+    svg.select(".axis--y").call(yAxis);
+    applyPointTransforms(points);
+    updatePointLabels();
+    return;
+  }
 
-function zoom() {
-  var t = svg.transition().duration(750);
+  var t = svg.transition().duration(duration);
   svg.select(".axis--x").transition(t).call(xAxis);
   svg.select(".axis--y").transition(t).call(yAxis);
-
-    // Get correct coordinates for zooming
-    var mode = d3.select('input[name="radio_states"]:checked').node().value;
-    if (mode == 'radiobutton1'){
-        points.transition(t).attr('transform', function(d){ return transformForIndex(d, 0, 1); });
-    } else if (mode == 'radiobutton2'){
-        points.transition(t).attr('transform', function(d){ return transformForIndex(d, 7, 8); });
-    } else if (mode == 'radiobutton3'){
-        points.transition(t).attr('transform', function(d){ return transformForIndex(d, 9, 10); });
-    }
+  applyPointTransforms(points.transition(t));
 
   // Labels only when zoomed in (cheap early-out when none selected / zoomed out)
   t.on('end', updatePointLabels);
