@@ -98,7 +98,20 @@ License     : GPL3
       <label for="layoutShapeSelect">Shape</label>
       <select id="layoutShapeSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
         <option value="circle">Default</option>
+        <option value="circle">Circle</option>
+        <option value="square">Square</option>
+        <option value="triangle">Triangle</option>
+        <option value="diamond">Diamond</option>
+        <option value="cross">Cross</option>
       </select>
+    </div>
+    <div class="physics-control">
+      <label for="layoutLabelSelect">Label</label>
+      <select id="layoutLabelSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
+        <option value="">None</option>
+        <option value="__tooltip__">Name / tooltip</option>
+      </select>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
     </div>
   </div>
 </div>
@@ -189,33 +202,44 @@ var brush = d3.brush().on("end", brushended),
 
 
 // create a tooltip with the box ****************************
-var Tooltip = d3.select("#my_dataviz")
+// Fixed positioning + pageX/pageY so the box tracks the cursor next to the point
+// (appending to #my_dataviz with SVG-local mouse coords put it far off-screen).
+var Tooltip = d3.select("body")
   .append("div")
-  .style("opacity", 0)
   .attr("class", "tooltip")
-  .style("background-color", "white")
-  .style("border", "solid")
-  .style("border-width", "2px")
+  .style("opacity", 0)
+  .style("position", "fixed")
+  .style("pointer-events", "none")
+  .style("z-index", 200)
+  .style("background-color", "var(--tooltip-bg, white)")
+  .style("color", "var(--tooltip-text, #111)")
+  .style("border", "1px solid rgba(0,0,0,0.15)")
   .style("border-radius", "5px")
-  .style("padding", "5px")
-  .style("position", "absolute")
+  .style("padding", "5px 8px")
+  .style("font-size", "12px")
+  .style("box-shadow", "0 2px 8px rgba(0,0,0,0.15)")
+  .style("max-width", "280px")
+  .style("white-space", "nowrap");
 
 // Three function that change the tooltip when user hover / move / leave a cell
 	var mouseover = function(d) {
 	  Tooltip.style('opacity', 1);
-	  // scale up the symbol slightly
-	  d3.select(this).attr('transform', function(dd){ return transformFor(dd, 1.4); }).style('opacity', 0.9);
+	  // scale up the symbol slightly (respect current radio coordinate mode)
+	  var c = (typeof currentCoordIndices === 'function') ? currentCoordIndices() : [0, 1];
+	  d3.select(this).attr('transform', function(dd){ return transformForIndex(dd, c[0], c[1], 1.4); }).style('opacity', 0.9);
 	};
 
 	var mousemove = function(d) {
-  Tooltip.html(d[6])
-    .style('left', (d3.mouse(this)[0] + 30) + 'px')
-    .style('top', (d3.mouse(this)[1]) + 'px');
+  var e = d3.event;
+  Tooltip.html(d[6] != null ? d[6] : '')
+    .style('left', (e.pageX + 14) + 'px')
+    .style('top', (e.pageY + 12) + 'px');
 }
 
 var mouseleave = function(d) {
   Tooltip.style('opacity', 0);
-  d3.select(this).attr('transform', function(dd){ return transformFor(dd, 1); });
+  var c = (typeof currentCoordIndices === 'function') ? currentCoordIndices() : [0, 1];
+  d3.select(this).attr('transform', function(dd){ return transformForIndex(dd, c[0], c[1], 1); });
 }
 
 // ************************************************
@@ -315,8 +339,7 @@ function transformForIndex(d, xi, yi, scale) {
   var sizeSel = document.getElementById('layoutSizeSelect');
   var colorSel = document.getElementById('layoutColorSelect');
   var shapeSel = document.getElementById('layoutShapeSelect');
-
-  if (!keysArr.length) return;
+  var labelSel = document.getElementById('layoutLabelSelect');
 
   // Classify keys as numeric or categorical (simple heuristic)
   var numericKeys = [];
@@ -331,7 +354,6 @@ function transformForIndex(d, xi, yi, scale) {
 
   // Populate size select with numeric keys only
   if (sizeSel) {
-    // leave the default 'Base' option
     numericKeys.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; sizeSel.appendChild(opt); });
   }
 
@@ -345,6 +367,11 @@ function transformForIndex(d, xi, yi, scale) {
     if (categoricalKeys.length) {
       categoricalKeys.forEach(function(k){ var opt = document.createElement('option'); opt.value = 'prop:' + k; opt.text = k; shapeSel.appendChild(opt); });
     }
+  }
+
+  // Populate label select: tooltip name + all property keys
+  if (labelSel) {
+    keysArr.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; labelSel.appendChild(opt); });
   }
 })();
 
@@ -420,10 +447,83 @@ function applyShapeMode(val) {
   }
 }
 
+// —— Point labels (only drawn when zoomed in enough) ——
+var currentLabelKey = null; // null | '__tooltip__' | property key
+var labelGroup = svg.append('g').attr('class', 'point-labels').style('pointer-events', 'none');
+var LABEL_ZOOM_THRESHOLD = 2.0; // show labels when domain is at least this factor smaller than original
+
+function currentCoordIndices() {
+  var modeNode = d3.select('input[name="radio_states"]:checked').node();
+  var mode = modeNode ? modeNode.value : 'radiobutton1';
+  if (mode === 'radiobutton2') return [7, 8];
+  if (mode === 'radiobutton3') return [9, 10];
+  return [0, 1];
+}
+
+function labelTextFor(d) {
+  if (!currentLabelKey) return '';
+  if (currentLabelKey === '__tooltip__') return (d && d[6] != null) ? String(d[6]) : '';
+  if (d && d[11] && d[11][currentLabelKey] != null) {
+    var v = d[11][currentLabelKey];
+    return (typeof v === 'object') ? JSON.stringify(v) : String(v);
+  }
+  return '';
+}
+
+function isZoomedInEnough() {
+  var xd = x.domain(), yd = y.domain();
+  var xSpan = Math.abs(xd[1] - xd[0]);
+  var ySpan = Math.abs(yd[1] - yd[0]);
+  var x0Span = Math.abs(x0[1] - x0[0]) || 1;
+  var y0Span = Math.abs(y0[1] - y0[0]) || 1;
+  var zoomFactor = Math.min(x0Span / xSpan, y0Span / ySpan);
+  return zoomFactor >= LABEL_ZOOM_THRESHOLD;
+}
+
+function updatePointLabels() {
+  if (!currentLabelKey || !isZoomedInEnough()) {
+    labelGroup.selectAll('text').remove();
+    return;
+  }
+  var coords = currentCoordIndices();
+  var xi = coords[0], yi = coords[1];
+  var xd = x.domain(), yd = y.domain();
+  // Only label points currently in the visible domain (keeps cost low when zoomed in)
+  var visible = [];
+  for (var i = 0; i < jsonData.length; i++) {
+    var d = jsonData[i];
+    if (!d) continue;
+    var xv = d[xi], yv = d[yi];
+    if (xv >= xd[0] && xv <= xd[1] && yv >= yd[0] && yv <= yd[1]) {
+      visible.push({ d: d, i: i });
+    }
+  }
+  var labels = labelGroup.selectAll('text').data(visible, function(v){ return v.i; });
+  labels.exit().remove();
+  labels.enter().append('text')
+    .attr('class', 'point-label')
+    .style('font-size', '11px')
+    .style('paint-order', 'stroke')
+    .style('stroke', 'var(--bg, #fff)')
+    .style('stroke-width', '3px')
+    .style('stroke-linejoin', 'round')
+    .style('fill', 'var(--text, #222)')
+    .merge(labels)
+    .text(function(v){ return labelTextFor(v.d); })
+    .attr('x', function(v){ return x(v.d[xi]) + 8; })
+    .attr('y', function(v){ return y(v.d[yi]) + 3; });
+}
+
+function applyLabelMode(key) {
+  currentLabelKey = key || null;
+  updatePointLabels();
+}
+
 // Wire up layout controls
 var layoutSizeSelect = document.getElementById('layoutSizeSelect'); if (layoutSizeSelect) layoutSizeSelect.addEventListener('change', function(e){ applySizeMode(e.target.value); });
 var layoutColorSelect = document.getElementById('layoutColorSelect'); if (layoutColorSelect) layoutColorSelect.addEventListener('change', function(e){ applyColorMode(e.target.value); });
 var layoutShapeSelect = document.getElementById('layoutShapeSelect'); if (layoutShapeSelect) layoutShapeSelect.addEventListener('change', function(e){ applyShapeMode(e.target.value); });
+var layoutLabelSelect = document.getElementById('layoutLabelSelect'); if (layoutLabelSelect) layoutLabelSelect.addEventListener('change', function(e){ applyLabelMode(e.target.value); });
 
 // background (svg) click closes the panel
 svg.on("click", function() { closeNodePanel(); });
@@ -656,22 +756,24 @@ const buttons = d3.selectAll('input');
 buttons.on('change', function(d)
 {
 	// console.log('button changed to ' + this.value);
-
+	var t;
 	if (this.value == 'radiobutton1')
-		points.transition()
+		t = points.transition()
 			.delay(0)
 			.duration(2500)
 			.attr('transform', function(d){ return transformForIndex(d, 0, 1); })
 	else if (this.value == 'radiobutton2')
-		points.transition()
+		t = points.transition()
 			.delay(0)
 			.duration(2500)
 			.attr('transform', function(d){ return transformForIndex(d, 7, 8); })
 	else if (this.value == 'radiobutton3')
-		points.transition()
+		t = points.transition()
 			.delay(0)
 			.duration(2500)
 			.attr('transform', function(d){ return transformForIndex(d, 9, 10); })
+	if (t) t.on('end', updatePointLabels);
+	updatePointLabels();
 ;})
 
 
@@ -710,6 +812,9 @@ function zoom() {
         points.transition(t).attr('transform', function(d){ return transformForIndex(d, 9, 10); });
     }
 
+  // Labels only when zoomed in (cheap early-out when none selected / zoomed out)
+  t.on('end', updatePointLabels);
+  updatePointLabels();
 	}
 
 {{ SAVE_TO_SVG_SCRIPT }}
