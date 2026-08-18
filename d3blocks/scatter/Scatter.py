@@ -10,6 +10,8 @@ License     : GPL3
 # import colourmap
 
 import numpy as np
+import pandas as pd
+import json
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
 import os
@@ -65,7 +67,75 @@ def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger):
 
 # %% Set the Node properties
 def set_node_properties(*args, **kwargs):
-    """Set the node properties."""
+    """Set the node properties for scatter.
+
+    Accepts one of:
+      * None -> returns None
+      * pandas.DataFrame with rows matching datapoints; columns become properties
+      * dict of column -> array-like (length matches datapoints)
+      * list of dicts where each dict is per-point properties
+
+    Returns
+    -------
+    dict_properties : dict
+        Mapping from integer index to property dict for that datapoint.
+    """
+    import pandas as pd
+    logger = kwargs.get('logger', None)
+    properties = None
+    # Allow positional first arg
+    if len(args)>=1:
+        properties = args[0]
+    else:
+        properties = kwargs.get('properties', None)
+
+    if properties is None:
+        return None
+
+    # DataFrame -> dict of rows
+    if isinstance(properties, pd.DataFrame):
+        df = properties.reset_index(drop=True)
+        dict_props = {}
+        for i in range(len(df)):
+            # convert NaNs to None
+            row = df.iloc[i].to_dict()
+            for k, v in list(row.items()):
+                if pd.isna(v):
+                    row[k] = None
+            dict_props[i] = row
+        return dict_props
+
+    # dict of columns -> array-like
+    if isinstance(properties, dict):
+        # keys are property names; values are list-like
+        # determine length
+        first = next(iter(properties.values()))
+        length = len(first)
+        dict_props = {}
+        for i in range(length):
+            p = {}
+            for k, v in properties.items():
+                try:
+                    val = v[i]
+                except Exception:
+                    val = None
+                p[k] = None if (val is None) else val
+            dict_props[i] = p
+        return dict_props
+
+    # list of dicts
+    if isinstance(properties, (list, tuple)):
+        dict_props = {}
+        for i, it in enumerate(properties):
+            if isinstance(it, dict):
+                dict_props[i] = it
+            else:
+                dict_props[i] = {'value': it}
+        return dict_props
+
+    # Fallback
+    if logger is not None:
+        logger.info('Could not parse properties for scatter; ignoring.')
     return None
 
 
@@ -109,6 +179,14 @@ def set_edge_properties(*args, **kwargs):
         'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
     scale: Bool, optional
         Scale datapoints. The default is False.
+    properties: dict, list of dicts, or pd.DataFrame, (default: None)
+        User-defined properties for each datapoint, with the same logic as node_properties in d3graph.
+        Every column becomes a property that is: (1) shown in the bottom menu when a point is clicked,
+        and (2) offered as an interactive control to drive the point size (continuous/numeric columns)
+        or point shape (categorical/string columns).
+            * None: No additional properties are stored.
+            * {'age': [22, 41, 35], 'category': ['A', 'B', 'A']}: dict of array-like, same length as (x, y).
+            * pd.DataFrame with same number of rows as (x, y). Column names become the property names.
 
     Returns
     -------
@@ -139,7 +217,7 @@ def set_edge_properties(*args, **kwargs):
     cmap = kwargs.get('cmap', 'tab20')
     scale = kwargs.get('scale', False)
     logger = kwargs.get('logger', None)
-    
+
     if isinstance(size, list): size=np.array(size)
 
     # if (x1 is None): x1 = x
@@ -276,8 +354,12 @@ def show(df, **kwargs):
     """
     df = df.copy()
     logger = kwargs.get('logger', None)
+    label_radio = kwargs.get('label_radio', None)
     config = update_config(kwargs, logger)
     config = config.copy()
+    
+    if label_radio is not None:
+        config['label_radio'] = label_radio
 
     # Convert dict/frame.
     df = convert_dataframe_dict(df, frame=True)
@@ -310,8 +392,10 @@ def show(df, **kwargs):
         # y_spacing = (df['y'].max() - df['y'].min()) * spacing
         # config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
 
-    # Create the data from the input of javascript
-    X = get_data_ready_for_d3(df)
+    # Get node_properties from kwargs (passed by D3Blocks.show)
+    node_properties = kwargs.get('node_properties', None)
+    # Create the data from the input for javascript, include node_properties when provided
+    X = get_data_ready_for_d3(df, node_properties=node_properties)
     # Check whether tooltip is available. Otherwise remove the tooltip box.
     if np.all(df['tooltip']==''):
         config['mouseover'] = ''
@@ -382,21 +466,78 @@ def write_html(X, config, logger=None):
     return html
 
 
-def get_data_ready_for_d3(df):
-    """Convert the source-target data into d3 compatible data.
+def get_data_ready_for_d3(df, node_properties=None):
+    """Convert the edge_properties dataframe into d3 compatible JSON.
 
     Parameters
     ----------
     df : pd.DataFrame()
-        Input data.
+        Input data (edge_properties converted to DataFrame by caller).
+    node_properties : dict-like or DataFrame, optional
+        Per-point properties. If provided, the properties for each point will be
+        appended as the last element of each row's array so client-side code can
+        access them as `d[11]`.
 
     Returns
     -------
-    X : str.
-        Converted data into a string that is d3 compatible.
-
+    X : str
+        JSON string representing list-of-arrays where each array contains:
+        [x, y, color, size, opacity, stroke, tooltip, x1, y1, x2, y2, properties|null]
     """
-    # Set x, y
-    X = df[['x', 'y', 'color', 'size', 'opacity', 'stroke', 'tooltip', 'x1', 'y1', 'x2', 'y2']].to_json(orient='values')
-    # Return
-    return X
+    # Ensure df is a DataFrame
+    if not isinstance(df, (list, tuple)):
+        # df is expected to be a DataFrame already (convert_dataframe_dict done by caller)
+        try:
+            # Keep only expected columns and ensure ordering
+            cols = ['x', 'y', 'color', 'size', 'opacity', 'stroke', 'tooltip', 'x1', 'y1', 'x2', 'y2']
+            rows = df[cols].values.tolist()
+        except Exception:
+            # Fallback: try converting whole df to list of lists
+            rows = pd.DataFrame(df).values.tolist()
+    else:
+        rows = list(df)
+
+    # Normalize node_properties into a mapping idx->dict
+    props_map = None
+    if node_properties is not None:
+        try:
+            if isinstance(node_properties, pd.DataFrame):
+                props_map = {}
+                for i in range(len(node_properties)):
+                    row = node_properties.iloc[i].to_dict()
+                    for k, v in list(row.items()):
+                        if pd.isna(v): row[k] = None
+                    props_map[i] = row
+            elif isinstance(node_properties, dict):
+                props_map = node_properties
+            elif isinstance(node_properties, (list, tuple)):
+                # list of dicts
+                props_map = {}
+                for i, it in enumerate(node_properties):
+                    props_map[i] = it if isinstance(it, dict) else {'value': it}
+        except Exception:
+            # Last resort, try to treat as dict-like
+            try:
+                props_map = dict(node_properties)
+            except Exception:
+                props_map = None
+    # Build output array-of-arrays and append property object or null
+    out = []
+    for i, r in enumerate(rows):
+        # ensure r is list
+        row = list(r)
+        prop = None
+        if props_map is not None:
+            # props_map might use string keys; try int and str
+            if i in props_map:
+                prop = props_map[i]
+            elif str(i) in props_map:
+                prop = props_map[str(i)]
+            else:
+                # If props_map is a dict of column->list, handle earlier in set_node_properties
+                prop = None
+        # Append properties as last element
+        row.append(prop)
+        out.append(row)
+    # dump to json
+    return json.dumps(out)

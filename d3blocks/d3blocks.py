@@ -621,9 +621,9 @@ class D3Blocks():
         >>> #
         >>> # Set specific node properties.
         >>> print(d3.edge_properties)
-        >>> d3.edge_properties.loc[0,'size']=50
-        >>> d3.edge_properties.loc[0,'color']='#000000'
-        >>> d3.edge_properties.loc[0,'tooltip']='I am adjusted!'
+        >>> d3.edge_properties[0]['size']=50
+        >>> d3.edge_properties[0]['color']='#000000'
+        >>> d3.edge_properties[0]['tooltip']='I am adjusted!'
         >>> #
         >>> # Configuration can be changed too.
         >>> print(d3.config)

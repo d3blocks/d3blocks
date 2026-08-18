@@ -1,32 +1,31 @@
-# Scatter
-from d3blocks import D3Blocks
+#%% Scatter
+import pandas as pd
 import numpy as np
 
+# Load d3blocks
+from d3blocks import D3Blocks
+
 # Initialize
-d3 = D3Blocks()
+d3 = D3Blocks(chart='Scatter')
 
-# Load example data
-df = d3.import_example('mnist')
+# Import example
+df = d3.import_example('cancer')
 
-size = np.random.randint(0, 8, df.shape[0])
-opacity = np.random.randint(0, 8, df.shape[0])/10
-tooltip = df['y'].values.astype(str)
+# Set properties
+d3.set_node_properties(df)
 
-# Set all propreties
-d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
-           df['PC2'].values,                   # PC2 y-coordinates
-           x1=df['tsne_1'].values,             # tSNE x-coordinates
-           y1=df['tsne_2'].values,             # tSNE y-coordinates
-           color=df['tsne_2'].values.astype(str),   # Hex-colors or classlabels
-           tooltip=tooltip,                    # Tooltip
-           size=size,                          # Node size
-           opacity=opacity,                    # Opacity
-           stroke='#000000',
-           cmap='tab20',                       # Colormap
-           scale=True,                         # Scale the datapoints
-           label_radio=['PCA', 'tSNE'],
-           color_background='#DC143C',
-           )
+# Set properties
+d3.set_edge_properties(df['tsneX'].values,
+                       df['tsneY'].values,
+                       x1=df['PC1'].values,
+                       y1=df['PC2'].values,
+                       size=df['survival_months'].fillna(1).values / 10,
+                       color=df['labx'].values,
+                       tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                       scale=True,
+                       )
+
+d3.show(label_radio=['tSNE','PCA'])
 
 
 # %%
@@ -50,13 +49,13 @@ d3.edge_properties['edge_width']
 # d3.edge_properties['edge_width']
 
 # radialgraph
-d3.d3graph(df)
+# d3.d3graph(df)
 
-# radialgraph
-d3.sankey(df)
+# # radialgraph
+# d3.sankey(df)
 
-# radialgraph
-d3.chord(df)
+# # radialgraph
+# d3.chord(df)
 
 # %%
 

@@ -37,6 +37,15 @@ License     : GPL3
     <!-- Include radialgraph theme & panel CSS so the theme toggle shows visual changes -->
     <style>{% include "scatter.css" %}</style>
 
+    <style>
+    /* Left layout panel */
+    .layout-panel {
+      position: fixed; left: 12px; top: 64px; width: 200px; background: var(--panel-bg, #fff); color: var(--text, #111); border:1px solid rgba(0,0,0,0.08); padding:10px; border-radius:6px; z-index:60; box-shadow:0 8px 24px rgba(0,0,0,0.08);
+      font-family: sans-serif; font-size: 13px;
+    }
+    .layout-panel .layout-title { font-weight:700; margin-bottom:6px }
+    </style>
+
 </head>
 
 <body>
@@ -154,30 +163,21 @@ var Tooltip = d3.select("#my_dataviz")
   .style("position", "absolute")
 
 // Three function that change the tooltip when user hover / move / leave a cell
-var mouseover = function(d) {
-Tooltip
-  .style("opacity", 1);
+	var mouseover = function(d) {
+	  Tooltip.style('opacity', 1);
+	  // scale up the symbol slightly
+	  d3.select(this).attr('transform', function(dd){ return transformFor(dd, 1.4); }).style('opacity', 0.9);
+	};
 
-// Increases size of the dot with 0.5
-d3.select(this)
-  .style("r",  d[3] + (0.5*d[3]))
-  .style("opacity", 0.8);
-}
-
-var mousemove = function(d) {
-Tooltip
-  .html(d[6])
-//  .html("Exact value: " + d[6])
-  .style("left", (d3.mouse(this)[0] + 30) + "px")
-  .style("top", (d3.mouse(this)[1]) + "px")
+	var mousemove = function(d) {
+  Tooltip.html(d[6])
+    .style('left', (d3.mouse(this)[0] + 30) + 'px')
+    .style('top', (d3.mouse(this)[1]) + 'px');
 }
 
 var mouseleave = function(d) {
-Tooltip
-  .style("opacity", 0)
-// Back to orignal dot-size
-d3.select(this)
-  .style("r",  d[3])
+  Tooltip.style('opacity', 0);
+  d3.select(this).attr('transform', function(dd){ return transformFor(dd, 1); });
 }
 
 // ************************************************
@@ -199,23 +199,201 @@ svg.append("g")
     .attr("class", "brush")
     .call(brush);
 
-// initialize all points ***********************
+// Left layout panel (similar to radialgraph) -----------------
+var layoutPanelHtml = `
+  <div id="layoutPanel" class="layout-panel">
+    <div class="layout-title">Layout</div>
+    <div style="margin-top:8px">
+      <label style="font-size:0.9em">Size</label>
+      <select id="layoutSizeSelect"><option value="">Default</option></select>
+    </div>
+    <div style="margin-top:8px">
+      <label style="font-size:0.9em">Color</label>
+      <select id="layoutColorSelect"><option value="">Default</option></select>
+    </div>
+    <div style="margin-top:8px">
+      <label style="font-size:0.9em">Shape</label>
+      <select id="layoutShapeSelect">><option value="circle">Default</option></select>
+    </div>
 
-var circles = svg.selectAll("circle")
+  </div>`;
+
+// Inject left panel into body
+var div = document.createElement('div'); div.innerHTML = layoutPanelHtml; document.body.appendChild(div.firstElementChild);
+
+// symbol/shape helpers and current mode state
+var SHAPE_MAP = {
+  'circle': d3.symbolCircle,
+  'square': d3.symbolSquare,
+  'triangle': d3.symbolTriangle,
+  'diamond': d3.symbolDiamond,
+  'cross': d3.symbolCross
+};
+var currentShapeMode = 'circle';
+var shapeByProperty = null; // if set, maps categories to shapes
+
+function symbolPathForRadius(r, shapeName) {
+  var size = Math.PI * r * r; // area proportional to r^2
+  var s = d3.symbol().type(SHAPE_MAP[shapeName] || d3.symbolCircle).size(size);
+  return s();
+}
+
+function transformFor(d, scale) {
+  scale = (typeof scale === 'number') ? scale : 1;
+  return 'translate(' + x(d[0]) + ',' + y(d[1]) + ') scale(' + scale + ')';
+}
+
+// initialize all points as symbol paths ***********************
+var points = svg.selectAll('.point')
   .data(jsonData)
-  .enter().append("circle")
-    .attr("class", "myCircle")                     // Edge-color turns black when when hovered
-    .attr("data-idx", function(d,i){ return i; })   // index for search mapping
-    .attr("cx", function(d) { return x(d[0]); })   // x-coordinates
-    .attr("cy", function(d) { return y(d[1]); })   // y-coordinates
-    .attr("fill", function(d) { return d[2]; })    // fill hexcolor
-    .attr("r", function(d) { return d[3]; })       // dotsize
-    .attr("opacity", function(d) { return d[4]; }) // opacity
-    .attr("stroke", function(d) { return d[5]; })  // stroke color
+  .enter().append('path')
+    .attr('class', 'point')
+    .attr('data-idx', function(d,i){ return i; })
+    .attr('transform', function(d){ return transformFor(d, 1); })
+    .attr('fill', function(d){ return d[2]; })
+    .attr('opacity', function(d){ return d[4]; })
+    .attr('stroke', function(d){ return d[5]; })
+    .attr('data-base-r', function(d){ return d[3]; })
+    .attr('d', function(d){ return symbolPathForRadius(d[3], currentShapeMode); })
     {{ MOUSEOVER }}
     {{ MOUSEMOVE }}
     {{ MOUSELEAVE }}
-    .on("click", function(d) { d3.event.stopPropagation(); showNodePanel(d); });
+    .on('click', function(d){ d3.event.stopPropagation(); showNodePanel(d); });
+
+// store initial radii array for resetting
+var initialRadii = jsonData.map(function(d){ return (d && d[3]) ? d[3] : 1; });
+
+// helper to transform by arbitrary coordinate indices (used for radio modes)
+function transformForIndex(d, xi, yi, scale) {
+  scale = (typeof scale === 'number') ? scale : 1;
+  var xv = (typeof xi === 'number') ? d[xi] : d[0];
+  var yv = (typeof yi === 'number') ? d[yi] : d[1];
+  return 'translate(' + x(xv) + ',' + y(yv) + ') scale(' + scale + ')';
+}
+
+// Populate layout dropdowns based on available per-point properties
+(function populateLayoutControls(){
+  var keys = new Set();
+  jsonData.forEach(function(d){ if (d && d[11]) Object.keys(d[11]).forEach(function(k){ keys.add(k); }); });
+  var keysArr = Array.from(keys);
+  var sizeSel = document.getElementById('layoutSizeSelect');
+  var colorSel = document.getElementById('layoutColorSelect');
+  var shapeSel = document.getElementById('layoutShapeSelect');
+
+  if (!keysArr.length) return;
+
+  // Classify keys as numeric or categorical (simple heuristic)
+  var numericKeys = [];
+  var categoricalKeys = [];
+  keysArr.forEach(function(k){
+    var vals = jsonData.map(function(d){ return d && d[11] ? d[11][k] : null; });
+    var hasNumber = vals.some(function(v){ return typeof v === 'number' && Number.isFinite(v); });
+    var hasOther = vals.some(function(v){ return v != null && typeof v !== 'number'; });
+    if (hasNumber && !hasOther) numericKeys.push(k);
+    else categoricalKeys.push(k);
+  });
+
+  // Populate size select with numeric keys only
+  if (sizeSel) {
+    // leave the default 'Base' option
+    numericKeys.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; sizeSel.appendChild(opt); });
+  }
+
+  // Populate color select with all keys (numeric and categorical)
+  if (colorSel) {
+    keysArr.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; colorSel.appendChild(opt); });
+  }
+
+  // Populate shape select: keep explicit shape options already present; add property-based mapping only for categorical keys
+  if (shapeSel) {
+    if (categoricalKeys.length) {
+      categoricalKeys.forEach(function(k){ var opt = document.createElement('option'); opt.value = 'prop:' + k; opt.text = k; shapeSel.appendChild(opt); });
+    }
+  }
+})();
+
+// Apply size mapping for selected key (numeric)
+function applySizeMode(key) {
+  if (!key) {
+    // reset
+    points.each(function(d,i){ var r=initialRadii[i]; this.setAttribute('data-base-r', r); if (jsonData[i]) jsonData[i][3]=r; d3.select(this).attr('d', symbolPathForRadius(r, currentShapeMode)); });
+    return;
+  }
+  // numeric mapping
+  var vals = jsonData.map(function(dd){ return dd && dd[11] && typeof dd[11][key] === 'number' ? dd[11][key] : NaN; });
+  var vnum = vals.filter(function(x){ return Number.isFinite(x); });
+  if (!vnum.length) return;
+  var vmin = Math.min.apply(null, vnum);
+  var vmax = Math.max.apply(null, vnum);
+  points.each(function(dd,i){
+    var val = dd && dd[11] && typeof dd[11][key] === 'number' ? dd[11][key] : NaN;
+    var newr = Number.isFinite(val) ? (vmax===vmin ? (1+15/2) : (1 + ((val - vmin)/(vmax - vmin)) * 15)) : initialRadii[i];
+    this.setAttribute('data-base-r', newr);
+    if (jsonData[i]) jsonData[i][3]=newr;
+    d3.select(this).attr('d', symbolPathForRadius(newr, currentShapeMode));
+  });
+}
+
+// Apply color mapping for selected key (categorical or numeric)
+var currentColorScale = null;
+function applyColorMode(key) {
+  if (!key) {
+    points.attr('fill', function(d){ return d[2]; });
+    return;
+  }
+  var vals = jsonData.map(function(dd){ return dd && dd[11] ? dd[11][key] : null; });
+  var numeric = vals.every(function(v){ return v==null || typeof v === 'number' && Number.isFinite(v); });
+  if (numeric) {
+    var vnum = vals.filter(function(x){ return Number.isFinite(x); });
+    if (!vnum.length) return;
+    var vmin = Math.min.apply(null, vnum);
+    var vmax = Math.max.apply(null, vnum);
+    currentColorScale = d3.scaleSequential(d3.interpolateViridis).domain([vmin, vmax]);
+    points.attr('fill', function(d){ var v = d && d[11] ? d[11][key] : null; return (typeof v === 'number' && Number.isFinite(v)) ? currentColorScale(v) : d[2]; });
+  } else {
+    // categorical
+    var uniq = Array.from(new Set(vals.filter(function(x){ return x != null; })));
+    var palette = d3.schemeCategory10.concat(d3.schemeSet3 || []);
+    var catScale = d3.scaleOrdinal().domain(uniq).range(palette);
+    currentColorScale = catScale;
+    points.attr('fill', function(d){ var v = d && d[11] ? d[11][key] : null; return v != null ? catScale(v) : d[2]; });
+  }
+}
+
+// Apply shape mapping: either choose a single shape or map categories to shapes
+var categoricalShapeMap = null;
+function applyShapeMode(val) {
+  // val can be one of shape names or 'prop:<key>'
+  categoricalShapeMap = null;
+  if (!val || SHAPE_MAP[val]) {
+    currentShapeMode = val || 'circle';
+    // update all shapes
+    points.each(function(d,i){ var r = (jsonData[i] && jsonData[i][3]) ? jsonData[i][3] : initialRadii[i]; d3.select(this).attr('d', symbolPathForRadius(r, currentShapeMode)); });
+    return;
+  }
+  if (val.indexOf('prop:')===0) {
+    var key = val.split(':')[1];
+    // compute unique categories
+    var vals = jsonData.map(function(dd){ return dd && dd[11] ? dd[11][key] : null; });
+    var uniq = Array.from(new Set(vals.filter(function(x){ return x != null; })));
+    var shapeNames = Object.keys(SHAPE_MAP);
+    categoricalShapeMap = {};
+    uniq.forEach(function(u,i){ categoricalShapeMap[u] = shapeNames[i % shapeNames.length]; });
+    // update shapes
+    points.each(function(d,i){ var v = d && d[11] ? d[11][key] : null; var shape = v != null && categoricalShapeMap[v] ? categoricalShapeMap[v] : currentShapeMode; var r = (jsonData[i] && jsonData[i][3]) ? jsonData[i][3] : initialRadii[i]; d3.select(this).attr('d', symbolPathForRadius(r, shape)); });
+  }
+}
+
+// Wire up layout controls
+var layoutSizeSelect = document.getElementById('layoutSizeSelect'); if (layoutSizeSelect) layoutSizeSelect.addEventListener('change', function(e){ applySizeMode(e.target.value); });
+var layoutColorSelect = document.getElementById('layoutColorSelect'); if (layoutColorSelect) layoutColorSelect.addEventListener('change', function(e){ applyColorMode(e.target.value); });
+var layoutShapeSelect = document.getElementById('layoutShapeSelect'); if (layoutShapeSelect) layoutShapeSelect.addEventListener('change', function(e){ applyShapeMode(e.target.value); });
+
+// background (svg) click closes the panel
+svg.on("click", function() { closeNodePanel(); });
+
+// background (svg) click closes the panel
+svg.on("click", function() { closeNodePanel(); });
 
 // background (svg) click closes the panel
 svg.on("click", function() { closeNodePanel(); });
@@ -238,11 +416,81 @@ function showNodePanel(d) {
   nodePanelSub.textContent = sub;
   // Render some basic stats
   if (nodeStatsGrid) {
-    nodeStatsGrid.innerHTML = `
-      <div>radius: ${d[3]}</div>
-      <div>opacity: ${d[4]}</div>
-      <div>stroke: ${d[5]}</div>
-    `;
+    // Basic stats
+    var html = '';
+    html += '<div>radius: ' + d[3] + '</div>';
+    html += '<div>opacity: ' + d[4] + '</div>';
+    html += '<div>stroke: ' + d[5] + '</div>';
+    // Additional user properties (if present as last element d[11])
+    var props = (d && d[11]) ? d[11] : null;
+    if (props && typeof props === 'object') {
+      html += '<hr/>';
+      html += '<div style="font-weight:600;margin-bottom:6px">Properties</div>';
+      // Property list
+      Object.keys(props).forEach(function(k){
+        var v = props[k];
+        // stringify objects/arrays
+        if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
+        html += '<div style="display:flex;justify-content:space-between;gap:12px"><div style="color:#666">' + k + '</div><div>' + (v==null ? '' : v) + '</div></div>';
+      });
+      // Size-by control for numeric properties
+      var numericKeys = Object.keys(props).filter(function(k){ return typeof props[k] === 'number'; });
+      if (numericKeys.length) {
+        html += '<hr/>';
+        html += '<div style="display:flex;gap:8px;align-items:center"><label style="font-size:0.9em;margin-right:6px">Size by</label>';
+        html += '<select id="sizeBySelect"><option value="">—</option>' + numericKeys.map(function(k){ return '<option value="'+k+'">'+k+'</option>'; }).join('') + '</select>';
+        html += '<button id="resetSizeBtn" style="margin-left:6px">Reset</button></div>';
+      }
+    }
+    nodeStatsGrid.innerHTML = html;
+
+    // Wire up size control
+    var sizeSel = document.getElementById('sizeBySelect');
+    if (sizeSel) {
+      sizeSel.addEventListener('change', function(e){
+        var key = e.target.value;
+        if (!key) return;
+        // compute min/max of the property across data
+        var vals = jsonData.map(function(dd){ return (dd && dd[11] && typeof dd[11][key] === 'number') ? dd[11][key] : NaN; });
+        var vnum = vals.filter(function(x){ return Number.isFinite(x); });
+        if (!vnum.length) return;
+        var vmin = Math.min.apply(null, vnum);
+        var vmax = Math.max.apply(null, vnum);
+
+        // map values to radii between 1 and 20 and update symbol path
+        points.each(function(dd, i){
+          var val = (dd && dd[11] && typeof dd[11][key] === 'number') ? dd[11][key] : NaN;
+          var newr;
+          if (!Number.isFinite(val)) newr = initialRadii[i];
+          else if (vmax === vmin) {
+          newr = (1+15/2);
+          } else {
+            // Compress large values before normalization
+            var logVal = Math.log1p(Math.max(0, val));
+            var logMin = Math.log1p(Math.max(0, vmin));
+            var logMax = Math.log1p(Math.max(0, vmax));
+            var t = (logVal - logMin) / (logMax - logMin);
+            newr = 1 + t * 15;
+          }
+
+          // update stored base radius and jsonData for persistence
+          this.setAttribute('data-base-r', newr);
+          if (jsonData[i]) jsonData[i][3] = newr;
+          d3.select(this).attr('d', symbolPathForRadius(newr, currentShapeMode));
+        });
+      });
+
+      var resetBtn = document.getElementById('resetSizeBtn');
+      if (resetBtn) resetBtn.addEventListener('click', function(){
+        points.each(function(d,i){
+          var r = initialRadii[i];
+          this.setAttribute('data-base-r', r);
+          if (jsonData[i]) jsonData[i][3] = r;
+          d3.select(this).attr('d', symbolPathForRadius(r, currentShapeMode));
+        });
+        var sel = document.getElementById('sizeBySelect'); if (sel) sel.value = '';
+      });
+    }
   }
   if (nodePanel) nodePanel.classList.add('open');
 }
@@ -260,12 +508,12 @@ let searchActiveIndex = -1;
 let searchMatches = [];
 
 function clearSearchHighlight() {
-  d3.selectAll('circle').classed('search-hit', false);
+  d3.selectAll('.point').classed('search-hit', false);
 }
 
 function highlightPoint(idx) {
   clearSearchHighlight();
-  const sel = d3.select('circle[data-idx="' + idx + '"]');
+  const sel = d3.select('.point[data-idx="' + idx + '"]');
   if (!sel.empty()) sel.classed('search-hit', true);
 }
 
@@ -374,23 +622,20 @@ buttons.on('change', function(d)
 	// console.log('button changed to ' + this.value);
 
 	if (this.value == 'radiobutton1')
-		circles.transition()
-			.delay(0)                                     // Wait in ms to start transition
-			.duration(2500)                               // Transition speed in ms for radio button
-			.attr("cx", function(d) { return x(d[0]); })  // x-coordinates
-			.attr("cy", function(d) { return y(d[1]); })  // y-coordinates
+		points.transition()
+			.delay(0)
+			.duration(2500)
+			.attr('transform', function(d){ return transformForIndex(d, 0, 1); })
 	else if (this.value == 'radiobutton2')
-		circles.transition()
-			.delay(0)                                     // Wait in ms to start transition
-			.duration(2500)                               // Transition speed in ms for radio button
-			.attr("cx", function(d) { return x(d[7]); })  // x1-coordinates
-			.attr("cy", function(d) { return y(d[8]); })  // y1-coordinates
+		points.transition()
+			.delay(0)
+			.duration(2500)
+			.attr('transform', function(d){ return transformForIndex(d, 7, 8); })
 	else if (this.value == 'radiobutton3')
-		circles.transition()
-			.delay(0)                                     // Wait in ms to start transition
-			.duration(2500)                               // Transition speed in ms for radio button
-			.attr("cx", function(d) { return x(d[9]); })  // x1-coordinates
-			.attr("cy", function(d) { return y(d[10]); })  // y1-coordinates
+		points.transition()
+			.delay(0)
+			.duration(2500)
+			.attr('transform', function(d){ return transformForIndex(d, 9, 10); })
 ;})
 
 
@@ -419,23 +664,17 @@ function zoom() {
   svg.select(".axis--x").transition(t).call(xAxis);
   svg.select(".axis--y").transition(t).call(yAxis);
 
-	// console.log(d3.select('input[name="radio_states"]:checked').node().value);
     // Get correct coordinates for zooming
-    if (d3.select('input[name="radio_states"]:checked').node().value == 'radiobutton1'){
-        svg.selectAll("circle").transition(t)
-            .attr("cx", function(d) { return x(d[0]); })
-			.attr("cy", function(d) { return y(d[1]); });
-	} else if (d3.select('input[name="radio_states"]:checked').node().value == 'radiobutton2') {
-        svg.selectAll("circle").transition(t)
-            .attr("cx", function(d) { return x(d[7]); })
-			.attr("cy", function(d) { return y(d[8]); });
-	} else if (d3.select('input[name="radio_states"]:checked').node().value == 'radiobutton3') {
-        svg.selectAll("circle").transition(t)
-            .attr("cx", function(d) { return x(d[9]); })
-			.attr("cy", function(d) { return y(d[10]); });
-			}
+    var mode = d3.select('input[name="radio_states"]:checked').node().value;
+    if (mode == 'radiobutton1'){
+        points.transition(t).attr('transform', function(d){ return transformForIndex(d, 0, 1); });
+    } else if (mode == 'radiobutton2'){
+        points.transition(t).attr('transform', function(d){ return transformForIndex(d, 7, 8); });
+    } else if (mode == 'radiobutton3'){
+        points.transition(t).attr('transform', function(d){ return transformForIndex(d, 9, 10); });
+    }
 
-}
+	}
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
