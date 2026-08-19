@@ -2740,8 +2740,9 @@ function computeNetworkMetrics(nodeIds, edges) {
       edgeWidthMult = +edgeWidthMultSlider.value;
       renderer.edgeWidthMult = edgeWidthMult;
       if (edgeWidthMultVal) edgeWidthMultVal.textContent = edgeWidthMult.toFixed(1);
-      if (renderer.linkSel && !renderer.linkSel.empty())
-        renderer.linkSel.attr("stroke-width", restingLinkWidth);
+      // Re-select directly from DOM — guarantees we hit all live <line> elements
+      // even if renderer.linkSel is a stale join reference.
+      renderer.linkLayer.selectAll("line").interrupt().attr("stroke-width", restingLinkWidth);
       applyNeighborHighlight();
     });
   }
