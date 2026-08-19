@@ -51,10 +51,22 @@ License     : GPL3
       align-items: center;
       width: 100%;
       box-sizing: border-box;
+      position: relative;
     }
     #scatterSvg {
       display: block;
       margin: 0 auto;
+      position: relative;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #scatterCanvas {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      pointer-events: auto;
     }
     #my_dataviz {
       width: 100%;
@@ -218,27 +230,18 @@ var Tooltip = d3.select("body")
   .style("max-width", "280px")
   .style("white-space", "nowrap");
 
-// Three function that change the tooltip when user hover / move / leave a cell
-	var mouseover = function(d) {
-	  Tooltip.style('opacity', 1);
-	  // scale up the symbol slightly (respect current radio coordinate mode)
-	  var c = (typeof currentCoordIndices === 'function') ? currentCoordIndices() : [0, 1];
-	  d3.select(this).attr('transform', function(dd){ return transformForIndex(dd, c[0], c[1], 1.4); }).style('opacity', 0.9);
-	};
-
-	var mousemove = function(d) {
-  var e = d3.event;
-  Tooltip.html(d[6] != null ? d[6] : '')
-    .style('left', (e.pageX + 14) + 'px')
-    .style('top', (e.pageY + 12) + 'px');
+// Canvas uses one delegated interaction layer instead of one DOM listener per point.
+var hoveredPointIndex = -1;
+function showPointTooltip(d, event) {
+  if (!d) return;
+  Tooltip.style('opacity', 1)
+    .html(d[6] != null ? d[6] : '')
+    .style('left', (event.clientX + 14) + 'px')
+    .style('top', (event.clientY + 12) + 'px');
 }
-
-var mouseleave = function(d) {
+function hidePointTooltip() {
   Tooltip.style('opacity', 0);
-  var c = (typeof currentCoordIndices === 'function') ? currentCoordIndices() : [0, 1];
-  d3.select(this).attr('transform', function(dd){ return transformForIndex(dd, c[0], c[1], 1); });
 }
-
 // ************************************************
 
 
@@ -254,141 +257,147 @@ svg.append("g")
     .attr("transform", "translate(10,0)")
     .call(yAxis);
 
-// Transparent overlay for pan (drag) — sits behind points so clicks still hit them
-var panOverlay = svg.insert("rect", ":first-child")
-  .attr("class", "pan-overlay")
-  .attr("width", width)
-  .attr("height", height + 1)
-  .attr("fill", "transparent")
-  .style("cursor", "grab");
+// Canvas rendering layer: one element replaces one SVG element per point.
+var canvas = document.createElement('canvas');
+canvas.id = 'scatterCanvas';
+document.getElementById('scatter-main').insertBefore(canvas, document.getElementById('scatterSvg'));
+var canvasCtx = canvas.getContext('2d');
+var dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+canvas.style.width = width + 'px';
+canvas.style.height = (height + 1) + 'px';
+canvas.width = Math.round(width * dpr);
+canvas.height = Math.round((height + 1) * dpr);
+canvasCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-// Click-and-drag to pan the view (replaces brush rectangle zoom)
-var isPanning = false;
-var didPan = false; // true if this gesture moved — suppress click-to-close
-var panStart = null; // {x, y, xDomain, yDomain}
+var hitCellSize = 32;
+var hitGrid = new Map();
+var visiblePointIndices = [];
+var renderFramePending = false;
+var isPanning = false, didPan = false, panStart = null;
+var searchHighlightIndex = -1;
+var currentColorAccessor = null;
+var categoricalShapeMap = null, categoricalShapeKey = null;
 
-function svgPixelFromEvent(event, node) {
-  var rect = node.getBoundingClientRect();
-  var scaleX = rect.width / (width || rect.width || 1);
-  var scaleY = rect.height / ((height + 1) || rect.height || 1);
+function canvasPointFromEvent(event) {
+  var rect = canvas.getBoundingClientRect();
   return {
-    px: (event.clientX - rect.left) / (scaleX || 1),
-    py: (event.clientY - rect.top) / (scaleY || 1)
+    px: (event.clientX - rect.left) * width / (rect.width || width),
+    py: (event.clientY - rect.top) * (height + 1) / (rect.height || (height + 1))
   };
 }
-
-function startPan(event) {
-  // Only primary button; ignore if started on a point (points stopPropagation on click, but mousedown may still fire)
-  if (event.button !== 0) return;
-  var target = event.target;
-  if (target && target.classList && target.classList.contains('point')) return;
-  isPanning = true;
-  didPan = false;
-  var node = svg.node();
-  var p = svgPixelFromEvent(event, node);
-  panStart = {
-    px: p.px,
-    py: p.py,
-    xDomain: x.domain().slice(),
-    yDomain: y.domain().slice()
-  };
-  panOverlay.style("cursor", "grabbing");
-  svg.style("cursor", "grabbing");
-  event.preventDefault();
+function scheduleRender() {
+  if (renderFramePending) return;
+  renderFramePending = true;
+  requestAnimationFrame(function() {
+    renderFramePending = false;
+    renderPoints();
+  });
 }
-
-function movePan(event) {
-  if (!isPanning || !panStart) return;
-  var node = svg.node();
-  var p = svgPixelFromEvent(event, node);
-  var dx = p.px - panStart.px;
-  var dy = p.py - panStart.py;
-  if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didPan = true;
-
-  // Convert pixel delta to domain delta (invert of scale range)
-  var xSpan = panStart.xDomain[1] - panStart.xDomain[0];
-  var ySpan = panStart.yDomain[1] - panStart.yDomain[0];
-  // x increases to the right; dragging right should move view left => domain decreases
-  var dDataX = -dx * (xSpan / (width || 1));
-  // y scale is inverted (domain high at top of screen); dragging down moves view up in data
-  var dDataY = dy * (ySpan / (height || 1));
-
-  x.domain([panStart.xDomain[0] + dDataX, panStart.xDomain[1] + dDataX]);
-  y.domain([panStart.yDomain[0] + dDataY, panStart.yDomain[1] + dDataY]);
-  zoom(0); // immediate update while dragging
-  event.preventDefault();
+function addHit(i, px, py) {
+  var key = Math.floor(px / hitCellSize) + ',' + Math.floor(py / hitCellSize);
+  var bucket = hitGrid.get(key);
+  if (!bucket) hitGrid.set(key, bucket = []);
+  bucket.push(i);
 }
-
-function endPan() {
-  if (!isPanning) return;
-  isPanning = false;
-  panStart = null;
-  panOverlay.style("cursor", "grab");
-  svg.style("cursor", null);
-  updatePointLabels();
-  // Clear didPan on next tick so the trailing click does not close the node panel
-  setTimeout(function(){ didPan = false; }, 0);
+function rebuildHitGrid() {
+  hitGrid.clear();
+  visiblePointIndices.length = 0;
+  var c = currentCoordIndices(), xi = c[0], yi = c[1];
+  var xd = x.domain(), yd = y.domain();
+  for (var i=0; i<jsonData.length; i++) {
+    var d=jsonData[i];
+    if (!d || !Number.isFinite(+d[xi]) || !Number.isFinite(+d[yi])) continue;
+    var xv=+d[xi], yv=+d[yi];
+    if (xv<xd[0] || xv>xd[1] || yv<yd[0] || yv>yd[1]) continue;
+    var px=x(xv), py=y(yv);
+    visiblePointIndices.push(i);
+    addHit(i,px,py);
+  }
 }
+function hitTest(event) {
+  var p=canvasPointFromEvent(event), gx=Math.floor(p.px/hitCellSize), gy=Math.floor(p.py/hitCellSize);
+  var c=currentCoordIndices(), best=-1, bestDist=Infinity;
+  for(var yy=gy-1;yy<=gy+1;yy++) for(var xx=gx-1;xx<=gx+1;xx++) {
+    var bucket=hitGrid.get(xx+','+yy); if(!bucket) continue;
+    for(var j=0;j<bucket.length;j++) {
+      var i=bucket[j], d=jsonData[i], px=x(d[c[0]]), py=y(d[c[1]]);
+      var r=Math.max(3, +d[3] || 1), dx=px-p.px, dy=py-p.py, dist=dx*dx+dy*dy;
+      if(dist<=r*r && dist<bestDist){bestDist=dist;best=i;}
+    }
+  }
+  return best;
+}
+function drawSymbol(ctx,shape,r) {
+  if(shape==='circle'){ctx.arc(0,0,r,0,Math.PI*2);return;}
+  if(shape==='square'){ctx.rect(-r,-r,2*r,2*r);return;}
+  if(shape==='triangle'){var h=r*1.8;ctx.moveTo(0,-h);ctx.lineTo(-h*.866,h*.5);ctx.lineTo(h*.866,h*.5);ctx.closePath();return;}
+  if(shape==='diamond'){var q=r*1.35;ctx.moveTo(0,-q);ctx.lineTo(q*.78,0);ctx.lineTo(0,q);ctx.lineTo(-q*.78,0);ctx.closePath();return;}
+  var q=r*.45;ctx.moveTo(-r,-q);ctx.lineTo(-q,-q);ctx.lineTo(-q,-r);ctx.lineTo(q,-r);ctx.lineTo(q,-q);ctx.lineTo(r,-q);ctx.lineTo(r,q);ctx.lineTo(q,q);ctx.lineTo(q,r);ctx.lineTo(-q,r);ctx.lineTo(-q,q);ctx.lineTo(-r,q);ctx.closePath();
+}
+function renderPoints() {
+  var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1); rebuildHitGrid();
+  var c=currentCoordIndices(), xi=c[0], yi=c[1];
+  for(var n=0;n<visiblePointIndices.length;n++){
+    var i=visiblePointIndices[n], d=jsonData[i], px=x(d[xi]), py=y(d[yi]);
+    var r=Math.max(.5,+d[3]||1)*(i===hoveredPointIndex?1.4:1);
+    var shape=currentShapeMode;
+    if(categoricalShapeMap && d[11] && categoricalShapeMap[d[11][categoricalShapeKey]]) shape=categoricalShapeMap[d[11][categoricalShapeKey]];
+    ctx.save(); ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1; ctx.translate(px,py); ctx.beginPath(); drawSymbol(ctx,shape,r);
+    ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent'; ctx.fill();
+    if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
+    if(i===hoveredPointIndex || i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
+    ctx.restore();
+  }
+}
+function updateAxes(){svg.select(".axis--x").call(xAxis);svg.select(".axis--y").call(yAxis);}
 
-// Attach pan to overlay (background); points keep their own click/hover
-panOverlay.node().addEventListener('mousedown', startPan);
-window.addEventListener('mousemove', movePan);
-window.addEventListener('mouseup', endPan);
-
-// Double-click background to reset zoom/pan to original domain
-panOverlay.node().addEventListener('dblclick', function() {
-  x.domain(x0.slice());
-  y.domain(y0.slice());
-  zoom(400);
+canvas.addEventListener('mousedown',function(e){
+  if(e.button!==0)return;
+  if(hitTest(e)>=0)return;
+  isPanning=true;didPan=false;var p=canvasPointFromEvent(e);
+  panStart={px:p.px,py:p.py,xDomain:x.domain().slice(),yDomain:y.domain().slice()};
+  canvas.style.cursor='grabbing';e.preventDefault();
 });
+window.addEventListener('mousemove',function(e){
+  if(isPanning){
+    var p=canvasPointFromEvent(e),dx=p.px-panStart.px,dy=p.py-panStart.py;
+    if(Math.abs(dx)>2||Math.abs(dy)>2)didPan=true;
+    var xs=panStart.xDomain[1]-panStart.xDomain[0],ys=panStart.yDomain[1]-panStart.yDomain[0];
+    var ddx=dx*xs/(width||1),ddy=dy*ys/(height||1);
+    x.domain([panStart.xDomain[0]-ddx,panStart.xDomain[1]-ddx]);
+    y.domain([panStart.yDomain[0]+ddy,panStart.yDomain[1]+ddy]);
+    updateAxes();scheduleRender();return;
+  }
+  var idx=hitTest(e);
+  if(idx!==hoveredPointIndex){hoveredPointIndex=idx;if(idx>=0)showPointTooltip(jsonData[idx],e);else hidePointTooltip();scheduleRender();}
+  else if(idx>=0)showPointTooltip(jsonData[idx],e);
+});
+window.addEventListener('mouseup',function(){
+  if(isPanning){isPanning=false;panStart=null;canvas.style.cursor='default';updatePointLabels();setTimeout(function(){didPan=false;},0);}
+});
+canvas.addEventListener('click',function(e){
+  if(didPan)return;
+  var idx=hitTest(e);
+  if(idx>=0)showNodePanel(jsonData[idx]); else if(!isPanning)closeNodePanel();
+});
+canvas.addEventListener('dblclick',function(){
+  x.domain(x0.slice());y.domain(y0.slice());updateAxes();scheduleRender();updatePointLabels();
+});
+scheduleRender();
 
-// Mouse-wheel zoom (centered on cursor).
-// Zooming in past LABEL_ZOOM_THRESHOLD makes point labels appear (if a Label is selected).
-// Native listener with {passive:false} so preventDefault works in modern browsers.
+// Mouse-wheel zoom (centered on cursor). Render is immediate and coalesced.
 (function setupWheelZoom() {
-  var node = svg.node();
-  if (!node) return;
-  node.addEventListener('wheel', function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    var delta = event.deltaY;
-    // deltaY < 0 => scroll up => zoom in; > 0 => zoom out
-    var scaleFactor = delta < 0 ? 0.85 : 1.18;
-
-    var p = svgPixelFromEvent(event, node);
-    var mx = x.invert(p.px);
-    var my = y.invert(p.py);
-
-    var xd = x.domain();
-    var yd = y.domain();
-
-    var newXd = [
-      mx - (mx - xd[0]) * scaleFactor,
-      mx + (xd[1] - mx) * scaleFactor
-    ];
-    var newYd = [
-      my - (my - yd[0]) * scaleFactor,
-      my + (yd[1] - my) * scaleFactor
-    ];
-
-    // Clamp zoom-out so we never go wider than the original domain
-    var x0Span = Math.abs(x0[1] - x0[0]) || 1;
-    var y0Span = Math.abs(y0[1] - y0[0]) || 1;
-    if (Math.abs(newXd[1] - newXd[0]) > x0Span) {
-      newXd = x0.slice();
-    }
-    if (Math.abs(newYd[1] - newYd[0]) > y0Span) {
-      newYd = y0.slice();
-    }
-
-    // Avoid degenerate domains
-    if (newXd[0] === newXd[1] || newYd[0] === newYd[1]) return;
-
-    x.domain(newXd);
-    y.domain(newYd);
-    zoom(120); // short transition for responsive scroll zoom
-  }, { passive: false });
+  canvas.addEventListener('wheel',function(event){
+    event.preventDefault();event.stopPropagation();
+    var factor=event.deltaY<0?.85:1.18,p=canvasPointFromEvent(event);
+    var mx=x.invert(p.px),my=y.invert(p.py),xd=x.domain(),yd=y.domain();
+    var nx=[mx-(mx-xd[0])*factor,mx+(xd[1]-mx)*factor];
+    var ny=[my-(my-yd[0])*factor,my+(yd[1]-my)*factor];
+    if(Math.abs(nx[1]-nx[0])>Math.abs(x0[1]-x0[0]))nx=x0.slice();
+    if(Math.abs(ny[1]-ny[0])>Math.abs(y0[1]-y0[0]))ny=y0.slice();
+    if(nx[0]===nx[1]||ny[0]===ny[1])return;
+    x.domain(nx);y.domain(ny);updateAxes();scheduleRender();updatePointLabels();
+  },{passive:false});
 })();
 
 // Collapsible layout panel (same interaction as index.html.j2 stats-panels)
@@ -411,169 +420,38 @@ panOverlay.node().addEventListener('dblclick', function() {
   });
 })();
 
-// symbol/shape helpers and current mode state
-var SHAPE_MAP = {
-  'circle': d3.symbolCircle,
-  'square': d3.symbolSquare,
-  'triangle': d3.symbolTriangle,
-  'diamond': d3.symbolDiamond,
-  'cross': d3.symbolCross
-};
-var currentShapeMode = 'circle';
-var shapeByProperty = null; // if set, maps categories to shapes
-
-function symbolPathForRadius(r, shapeName) {
-  var size = Math.PI * r * r; // area proportional to r^2
-  var s = d3.symbol().type(SHAPE_MAP[shapeName] || d3.symbolCircle).size(size);
-  return s();
+// Point state. Rendering is done on a single canvas; this avoids the large
+// DOM and attribute-update cost of one SVG node per datum.
+var SHAPE_MAP={circle:d3.symbolCircle,square:d3.symbolSquare,triangle:d3.symbolTriangle,diamond:d3.symbolDiamond,cross:d3.symbolCross};
+var currentShapeMode='circle';
+var initialRadii=jsonData.map(function(d){return d&&Number.isFinite(+d[3])?+d[3]:1;});
+function transformForIndex(d,xi,yi,scale){scale=typeof scale==='number'?scale:1;return 'translate('+x(d[xi])+','+y(d[yi])+') scale('+scale+')';}
+function symbolPathForRadius(r,shapeName){var s=d3.symbol().type(SHAPE_MAP[shapeName]||d3.symbolCircle).size(Math.PI*r*r);return s();}
+function applySizeMode(key){
+  if(!key){for(var i=0;i<jsonData.length;i++)if(jsonData[i])jsonData[i][3]=initialRadii[i];scheduleRender();return;}
+  var min=Infinity,max=-Infinity;
+  for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:NaN;if(typeof v==='number'&&Number.isFinite(v)){if(v<min)min=v;if(v>max)max=v;}}
+  if(min===Infinity)return;
+  var lmin=Math.log1p(Math.max(0,min)),lmax=Math.log1p(Math.max(0,max));
+  for(var j=0;j<jsonData.length;j++){var d=jsonData[j],v=d&&d[11]?d[11][key]:NaN;
+    d[3]=(typeof v==='number'&&Number.isFinite(v))?(max===min?8.5:1+(Math.log1p(Math.max(0,v))-lmin)/(lmax-lmin)*15):initialRadii[j];
+  } scheduleRender();
 }
-
-function transformFor(d, scale) {
-  scale = (typeof scale === 'number') ? scale : 1;
-  return 'translate(' + x(d[0]) + ',' + y(d[1]) + ') scale(' + scale + ')';
+function applyColorMode(key){
+  currentColorAccessor=null;if(!key){scheduleRender();return;}
+  var vals=[],numeric=true,min=Infinity,max=-Infinity,has=false;
+  for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:null;vals.push(v);
+    if(v!=null){if(typeof v==='number'&&Number.isFinite(v)){has=true;min=Math.min(min,v);max=Math.max(max,v);}else numeric=false;}}
+  if(numeric&&has){currentColorScale=d3.scaleSequential(d3.interpolateViridis).domain([min,max]);currentColorAccessor=function(d){var v=d&&d[11]?d[11][key]:null;return typeof v==='number'&&Number.isFinite(v)?currentColorScale(v):d[2];};}
+  else {var uniq=Array.from(new Set(vals.filter(function(v){return v!=null;}))),palette=d3.schemeCategory10.concat(d3.schemeSet3||[]),scale=d3.scaleOrdinal().domain(uniq).range(palette);currentColorScale=scale;currentColorAccessor=function(d){var v=d&&d[11]?d[11][key]:null;return v!=null?scale(v):d[2];};}
+  scheduleRender();
 }
-
-// initialize all points as symbol paths ***********************
-var points = svg.selectAll('.point')
-  .data(jsonData)
-  .enter().append('path')
-    .attr('class', 'point')
-    .attr('data-idx', function(d,i){ return i; })
-    .attr('transform', function(d){ return transformFor(d, 1); })
-    .attr('fill', function(d){ return d[2]; })
-    .attr('opacity', function(d){ return d[4]; })
-    .attr('stroke', function(d){ return d[5]; })
-    .attr('data-base-r', function(d){ return d[3]; })
-    .attr('d', function(d){ return symbolPathForRadius(d[3], currentShapeMode); })
-    {{ MOUSEOVER }}
-    {{ MOUSEMOVE }}
-    {{ MOUSELEAVE }}
-    .on('click', function(d){ d3.event.stopPropagation(); showNodePanel(d); });
-
-// store initial radii array for resetting
-var initialRadii = jsonData.map(function(d){ return (d && d[3]) ? d[3] : 1; });
-
-// helper to transform by arbitrary coordinate indices (used for radio modes)
-function transformForIndex(d, xi, yi, scale) {
-  scale = (typeof scale === 'number') ? scale : 1;
-  var xv = (typeof xi === 'number') ? d[xi] : d[0];
-  var yv = (typeof yi === 'number') ? d[yi] : d[1];
-  return 'translate(' + x(xv) + ',' + y(yv) + ') scale(' + scale + ')';
-}
-
-// Populate layout dropdowns based on available per-point properties
-(function populateLayoutControls(){
-  var keys = new Set();
-  jsonData.forEach(function(d){ if (d && d[11]) Object.keys(d[11]).forEach(function(k){ keys.add(k); }); });
-  var keysArr = Array.from(keys);
-  var sizeSel = document.getElementById('layoutSizeSelect');
-  var colorSel = document.getElementById('layoutColorSelect');
-  var shapeSel = document.getElementById('layoutShapeSelect');
-  var labelSel = document.getElementById('layoutLabelSelect');
-
-  // Classify keys as numeric or categorical (simple heuristic)
-  var numericKeys = [];
-  var categoricalKeys = [];
-  keysArr.forEach(function(k){
-    var vals = jsonData.map(function(d){ return d && d[11] ? d[11][k] : null; });
-    var hasNumber = vals.some(function(v){ return typeof v === 'number' && Number.isFinite(v); });
-    var hasOther = vals.some(function(v){ return v != null && typeof v !== 'number'; });
-    if (hasNumber && !hasOther) numericKeys.push(k);
-    else categoricalKeys.push(k);
-  });
-
-  // Populate size select with numeric keys only
-  if (sizeSel) {
-    numericKeys.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; sizeSel.appendChild(opt); });
-  }
-
-  // Populate color select with all keys (numeric and categorical)
-  if (colorSel) {
-    keysArr.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; colorSel.appendChild(opt); });
-  }
-
-  // Populate shape select: keep explicit shape options already present; add property-based mapping only for categorical keys
-  if (shapeSel) {
-    if (categoricalKeys.length) {
-      categoricalKeys.forEach(function(k){ var opt = document.createElement('option'); opt.value = 'prop:' + k; opt.text = k; shapeSel.appendChild(opt); });
-    }
-  }
-
-  // Populate label select: tooltip name + all property keys
-  if (labelSel) {
-    keysArr.forEach(function(k){ var opt = document.createElement('option'); opt.value = k; opt.text = k; labelSel.appendChild(opt); });
-  }
-})();
-
-// Apply size mapping for selected key (numeric)
-function applySizeMode(key) {
-  if (!key) {
-    // reset
-    points.each(function(d,i){ var r=initialRadii[i]; this.setAttribute('data-base-r', r); if (jsonData[i]) jsonData[i][3]=r; d3.select(this).attr('d', symbolPathForRadius(r, currentShapeMode)); });
-    return;
-  }
-  // numeric mapping
-  var vals = jsonData.map(function(dd){ return dd && dd[11] && typeof dd[11][key] === 'number' ? dd[11][key] : NaN; });
-  var vnum = vals.filter(function(x){ return Number.isFinite(x); });
-  if (!vnum.length) return;
-  var vmin = Math.min.apply(null, vnum);
-  var vmax = Math.max.apply(null, vnum);
-  points.each(function(dd,i){
-    var val = dd && dd[11] && typeof dd[11][key] === 'number' ? dd[11][key] : NaN;
-    var newr = Number.isFinite(val) ? (vmax===vmin ? (1+15/2) : (1 + ((val - vmin)/(vmax - vmin)) * 15)) : initialRadii[i];
-    this.setAttribute('data-base-r', newr);
-    if (jsonData[i]) jsonData[i][3]=newr;
-    d3.select(this).attr('d', symbolPathForRadius(newr, currentShapeMode));
-  });
-}
-
-// Apply color mapping for selected key (categorical or numeric)
-var currentColorScale = null;
-function applyColorMode(key) {
-  if (!key) {
-    points.attr('fill', function(d){ return d[2]; });
-    return;
-  }
-  var vals = jsonData.map(function(dd){ return dd && dd[11] ? dd[11][key] : null; });
-  var numeric = vals.every(function(v){ return v==null || typeof v === 'number' && Number.isFinite(v); });
-  if (numeric) {
-    var vnum = vals.filter(function(x){ return Number.isFinite(x); });
-    if (!vnum.length) return;
-    var vmin = Math.min.apply(null, vnum);
-    var vmax = Math.max.apply(null, vnum);
-    currentColorScale = d3.scaleSequential(d3.interpolateViridis).domain([vmin, vmax]);
-    points.attr('fill', function(d){ var v = d && d[11] ? d[11][key] : null; return (typeof v === 'number' && Number.isFinite(v)) ? currentColorScale(v) : d[2]; });
-  } else {
-    // categorical
-    var uniq = Array.from(new Set(vals.filter(function(x){ return x != null; })));
-    var palette = d3.schemeCategory10.concat(d3.schemeSet3 || []);
-    var catScale = d3.scaleOrdinal().domain(uniq).range(palette);
-    currentColorScale = catScale;
-    points.attr('fill', function(d){ var v = d && d[11] ? d[11][key] : null; return v != null ? catScale(v) : d[2]; });
-  }
-}
-
-// Apply shape mapping: either choose a single shape or map categories to shapes
-var categoricalShapeMap = null;
-function applyShapeMode(val) {
-  // val can be one of shape names or 'prop:<key>'
-  categoricalShapeMap = null;
-  if (!val || SHAPE_MAP[val]) {
-    currentShapeMode = val || 'circle';
-    // update all shapes
-    points.each(function(d,i){ var r = (jsonData[i] && jsonData[i][3]) ? jsonData[i][3] : initialRadii[i]; d3.select(this).attr('d', symbolPathForRadius(r, currentShapeMode)); });
-    return;
-  }
-  if (val.indexOf('prop:')===0) {
-    var key = val.split(':')[1];
-    // compute unique categories
-    var vals = jsonData.map(function(dd){ return dd && dd[11] ? dd[11][key] : null; });
-    var uniq = Array.from(new Set(vals.filter(function(x){ return x != null; })));
-    var shapeNames = Object.keys(SHAPE_MAP);
-    categoricalShapeMap = {};
-    uniq.forEach(function(u,i){ categoricalShapeMap[u] = shapeNames[i % shapeNames.length]; });
-    // update shapes
-    points.each(function(d,i){ var v = d && d[11] ? d[11][key] : null; var shape = v != null && categoricalShapeMap[v] ? categoricalShapeMap[v] : currentShapeMode; var r = (jsonData[i] && jsonData[i][3]) ? jsonData[i][3] : initialRadii[i]; d3.select(this).attr('d', symbolPathForRadius(r, shape)); });
+function applyShapeMode(val){
+  categoricalShapeMap=null;categoricalShapeKey=null;
+  if(!val||SHAPE_MAP[val]){currentShapeMode=val||'circle';scheduleRender();return;}
+  if(val.indexOf('prop:')===0){var key=val.slice(5),uniq=[],seen=new Set();
+    for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:null;if(v!=null&&!seen.has(v)){seen.add(v);uniq.push(v);}}
+    var names=Object.keys(SHAPE_MAP);categoricalShapeMap={};uniq.forEach(function(v,i){categoricalShapeMap[v]=names[i%names.length];});categoricalShapeKey=key;scheduleRender();
   }
 }
 
@@ -654,13 +532,61 @@ var layoutSizeSelect = document.getElementById('layoutSizeSelect'); if (layoutSi
 var layoutColorSelect = document.getElementById('layoutColorSelect'); if (layoutColorSelect) layoutColorSelect.addEventListener('change', function(e){ applyColorMode(e.target.value); });
 var layoutShapeSelect = document.getElementById('layoutShapeSelect'); if (layoutShapeSelect) layoutShapeSelect.addEventListener('change', function(e){ applyShapeMode(e.target.value); });
 var layoutLabelSelect = document.getElementById('layoutLabelSelect'); if (layoutLabelSelect) layoutLabelSelect.addEventListener('change', function(e){ applyLabelMode(e.target.value); });
+// Populate Layout dropdowns from per-point properties.
+// Properties are stored in d[11]. The controls must be initialized from
+// the complete dataset, not from the currently selected point.
+(function initLayoutPropertyControls() {
+  var propsByKey = Object.create(null);
+  var numericKeys = Object.create(null);
+  var categoricalKeys = Object.create(null);
 
-// background (svg) click closes the panel
-// Background click closes the node panel (ignored after a pan drag)
-svg.on("click", function() {
-  if (didPan || isPanning) return;
-  closeNodePanel();
-});
+  for (var i = 0; i < jsonData.length; i++) {
+    var props = jsonData[i] && jsonData[i][11];
+    if (!props || typeof props !== 'object') continue;
+
+    Object.keys(props).forEach(function(key) {
+      var value = props[key];
+      if (value == null) return;
+
+      propsByKey[key] = true;
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        numericKeys[key] = true;
+      } else {
+        categoricalKeys[key] = true;
+      }
+    });
+  }
+
+  var sizeSelect = document.getElementById('layoutSizeSelect');
+  var colorSelect = document.getElementById('layoutColorSelect');
+  var shapeSelect = document.getElementById('layoutShapeSelect');
+  var labelSelect = document.getElementById('layoutLabelSelect');
+
+  function addOption(select, value, label) {
+    if (!select) return;
+    var option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    select.appendChild(option);
+  }
+
+  Object.keys(numericKeys).sort().forEach(function(key) {
+    addOption(sizeSelect, key, key);
+    addOption(colorSelect, key, key);
+  });
+
+  Object.keys(categoricalKeys).sort().forEach(function(key) {
+    addOption(colorSelect, key, key);
+    addOption(shapeSelect, 'prop:' + key, key);
+  });
+
+  Object.keys(propsByKey).sort().forEach(function(key) {
+    addOption(labelSelect, key, key);
+  });
+})();
+
+
+// Canvas click handling closes the panel when no point is hit.
 
 // Node panel DOM refs and behavior
 const nodePanel = document.getElementById("nodePanel");
@@ -705,51 +631,16 @@ function showNodePanel(d) {
     }
     nodeStatsGrid.innerHTML = html;
 
-    // Wire up size control
+    // Reuse the canvas-based size mapping.
     var sizeSel = document.getElementById('sizeBySelect');
     if (sizeSel) {
       sizeSel.addEventListener('change', function(e){
-        var key = e.target.value;
-        if (!key) return;
-        // compute min/max of the property across data
-        var vals = jsonData.map(function(dd){ return (dd && dd[11] && typeof dd[11][key] === 'number') ? dd[11][key] : NaN; });
-        var vnum = vals.filter(function(x){ return Number.isFinite(x); });
-        if (!vnum.length) return;
-        var vmin = Math.min.apply(null, vnum);
-        var vmax = Math.max.apply(null, vnum);
-
-        // map values to radii between 1 and 20 and update symbol path
-        points.each(function(dd, i){
-          var val = (dd && dd[11] && typeof dd[11][key] === 'number') ? dd[11][key] : NaN;
-          var newr;
-          if (!Number.isFinite(val)) newr = initialRadii[i];
-          else if (vmax === vmin) {
-          newr = (1+15/2);
-          } else {
-            // Compress large values before normalization
-            var logVal = Math.log1p(Math.max(0, val));
-            var logMin = Math.log1p(Math.max(0, vmin));
-            var logMax = Math.log1p(Math.max(0, vmax));
-            var t = (logVal - logMin) / (logMax - logMin);
-            newr = 1 + t * 15;
-          }
-
-          // update stored base radius and jsonData for persistence
-          this.setAttribute('data-base-r', newr);
-          if (jsonData[i]) jsonData[i][3] = newr;
-          d3.select(this).attr('d', symbolPathForRadius(newr, currentShapeMode));
-        });
+        if (e.target.value) applySizeMode(e.target.value);
       });
-
       var resetBtn = document.getElementById('resetSizeBtn');
       if (resetBtn) resetBtn.addEventListener('click', function(){
-        points.each(function(d,i){
-          var r = initialRadii[i];
-          this.setAttribute('data-base-r', r);
-          if (jsonData[i]) jsonData[i][3] = r;
-          d3.select(this).attr('d', symbolPathForRadius(r, currentShapeMode));
-        });
-        var sel = document.getElementById('sizeBySelect'); if (sel) sel.value = '';
+        applySizeMode('');
+        sizeSel.value = '';
       });
     }
   }
@@ -769,13 +660,12 @@ let searchActiveIndex = -1;
 let searchMatches = [];
 
 function clearSearchHighlight() {
-  d3.selectAll('.point').classed('search-hit', false);
+  searchHighlightIndex = -1;
+  scheduleRender();
 }
-
 function highlightPoint(idx) {
-  clearSearchHighlight();
-  const sel = d3.select('.point[data-idx="' + idx + '"]');
-  if (!sel.empty()) sel.classed('search-hit', true);
+  searchHighlightIndex = idx;
+  scheduleRender();
 }
 
 function jumpToPoint(idx) {
@@ -876,62 +766,47 @@ function toggleTheme() {
 const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); themeBtn.textContent = document.body.classList.contains('light') ? 'Theme: Light' : 'Theme: Dark'; }
 window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme(); });
 
-// Read checkboxes and create transition ****************************
-const buttons = d3.selectAll('input');
-buttons.on('change', function(d)
-{
-	// console.log('button changed to ' + this.value);
-	var t;
-	if (this.value == 'radiobutton1')
-		t = points.transition()
-			.delay(0)
-			.duration(2500)
-			.attr('transform', function(d){ return transformForIndex(d, 0, 1); })
-	else if (this.value == 'radiobutton2')
-		t = points.transition()
-			.delay(0)
-			.duration(2500)
-			.attr('transform', function(d){ return transformForIndex(d, 7, 8); })
-	else if (this.value == 'radiobutton3')
-		t = points.transition()
-			.delay(0)
-			.duration(2500)
-			.attr('transform', function(d){ return transformForIndex(d, 9, 10); })
-	if (t) t.on('end', updatePointLabels);
-	updatePointLabels();
-;})
+// Coordinate-mode changes are animated on canvas rather than by creating
+// an SVG transition object for every point.
+var buttons = d3.selectAll('input[name="radio_states"]');
+buttons.on('change', function() {
+  var target = this.value === 'radiobutton2' ? [7,8] : (this.value === 'radiobutton3' ? [9,10] : [0,1]);
+  var from = currentCoordIndices();
+  var start = performance.now(), duration = 2500;
 
+  function frame(now) {
+    var t = Math.min(1, (now-start)/duration);
+    t = t*t*(3-2*t);
+    renderInterpolatedPoints(from[0],from[1],target[0],target[1],t);
+    if(t<1) requestAnimationFrame(frame); else updatePointLabels();
+  }
+  requestAnimationFrame(frame);
+});
 
-// *************************************************
+function renderInterpolatedPoints(xi0,yi0,xi1,yi1,t) {
+  var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1);
+  hitGrid.clear(); visiblePointIndices.length=0;
+  var xd=x.domain(),yd=y.domain();
+  for(var i=0;i<jsonData.length;i++){
+    var d=jsonData[i]; if(!d)continue;
+    var xv=+d[xi0]+(+d[xi1]-+d[xi0])*t, yv=+d[yi0]+(+d[yi1]-+d[yi0])*t;
+    if(!Number.isFinite(xv)||!Number.isFinite(yv)||xv<xd[0]||xv>xd[1]||yv<yd[0]||yv>yd[1])continue;
+    var px=x(xv),py=y(yv),r=Math.max(.5,+d[3]||1)*(i===hoveredPointIndex?1.4:1);
+    var shape=currentShapeMode;
+    if(categoricalShapeMap&&d[11]&&categoricalShapeMap[d[11][categoricalShapeKey]])shape=categoricalShapeMap[d[11][categoricalShapeKey]];
+    ctx.save();ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1;ctx.translate(px,py);ctx.beginPath();drawSymbol(ctx,shape,r);
+    ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent';ctx.fill();
+    if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
+    if(i===hoveredPointIndex||i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
+    ctx.restore();
+  }
+}
 
 function zoom(duration) {
-  duration = (typeof duration === 'number') ? duration : 750;
-  var modeNode = d3.select('input[name="radio_states"]:checked').node();
-  var mode = modeNode ? modeNode.value : 'radiobutton1';
-  function applyPointTransforms(selection) {
-    if (mode == 'radiobutton1') selection.attr('transform', function(d){ return transformForIndex(d, 0, 1); });
-    else if (mode == 'radiobutton2') selection.attr('transform', function(d){ return transformForIndex(d, 7, 8); });
-    else if (mode == 'radiobutton3') selection.attr('transform', function(d){ return transformForIndex(d, 9, 10); });
-  }
-
-  // duration 0: immediate update for smooth pan dragging
-  if (duration <= 0) {
-    svg.select(".axis--x").call(xAxis);
-    svg.select(".axis--y").call(yAxis);
-    applyPointTransforms(points);
-    updatePointLabels();
-    return;
-  }
-
-  var t = svg.transition().duration(duration);
-  svg.select(".axis--x").transition(t).call(xAxis);
-  svg.select(".axis--y").transition(t).call(yAxis);
-  applyPointTransforms(points.transition(t));
-
-  // Labels only when zoomed in (cheap early-out when none selected / zoomed out)
-  t.on('end', updatePointLabels);
-  updatePointLabels();
-	}
+  updateAxes();
+  scheduleRender();
+  if(duration&&duration>0)updatePointLabels();
+}
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
