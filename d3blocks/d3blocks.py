@@ -559,7 +559,7 @@ class D3Blocks():
         >>>                        )
         >>> 
         >>> d3.show(label_radio=['tSNE','PCA'])
-        
+
         Examples
         --------
         >>> from d3blocks import D3Blocks

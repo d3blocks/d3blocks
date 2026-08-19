@@ -295,6 +295,13 @@ function scheduleRender() {
   requestAnimationFrame(function() {
     renderFramePending = false;
     renderPoints();
+    // Labels are a separate SVG layer drawn on top of the canvas points, so
+    // they must be refreshed in the SAME frame as renderPoints() -- not
+    // just on mouseup/dblclick/etc -- or they visibly lag/freeze behind the
+    // points while panning/zooming is in progress. updatePointLabels()
+    // already no-ops cheaply when no label key is active or not zoomed in
+    // enough, so doing this every frame is safe.
+    updatePointLabels();
   });
 }
 function addHit(i, px, py) {
