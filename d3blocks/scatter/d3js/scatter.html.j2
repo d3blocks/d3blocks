@@ -468,6 +468,14 @@ function currentCoordIndices() {
   return [0, 1];
 }
 
+// Tracks the coordinate pair actually on screen right now. Needed because a
+// radio 'change' event fires AFTER the DOM's :checked state has already
+// flipped to the new button, so currentCoordIndices() can't be used to find
+// the *previous* position from inside the handler -- it would return the
+// same (new) indices as the target, collapsing the slide into an instant
+// jump. This variable is only updated once an animation finishes.
+var activeCoordIndices = currentCoordIndices();
+
 function labelTextFor(d) {
   if (!currentLabelKey) return '';
   if (currentLabelKey === '__tooltip__') return (d && d[6] != null) ? String(d[6]) : '';
@@ -771,14 +779,15 @@ window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 
 var buttons = d3.selectAll('input[name="radio_states"]');
 buttons.on('change', function() {
   var target = this.value === 'radiobutton2' ? [7,8] : (this.value === 'radiobutton3' ? [9,10] : [0,1]);
-  var from = currentCoordIndices();
+  var from = activeCoordIndices; // previous on-screen position, NOT currentCoordIndices()
+  if (from[0] === target[0] && from[1] === target[1]) return; // already there
   var start = performance.now(), duration = 2500;
 
   function frame(now) {
     var t = Math.min(1, (now-start)/duration);
     t = t*t*(3-2*t);
     renderInterpolatedPoints(from[0],from[1],target[0],target[1],t);
-    if(t<1) requestAnimationFrame(frame); else updatePointLabels();
+    if(t<1) requestAnimationFrame(frame); else { activeCoordIndices = target; updatePointLabels(); }
   }
   requestAnimationFrame(frame);
 });
