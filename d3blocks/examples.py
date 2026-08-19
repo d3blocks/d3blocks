@@ -21,7 +21,8 @@ d3.set_edge_properties(df['tsneX'].values,
                        y1=df['PC2'].values,
                        size=df['survival_months'].fillna(1).values / 10,
                        color=df['labx'].values,
-                       tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                       opacity=0.5,
+                       tooltip=df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
                        scale=True,
                        )
 
@@ -1636,11 +1637,13 @@ d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
            cmap='tab20',                       # Colormap
            scale=True,                         # Scale the datapoints
            label_radio=['PCA', 'tSNE'],
-           figsize=[1024, 768], 
-           filepath='scatter_demo.html',
+           showfig=False,
            )
 
-d3.edge_properties
+d3.set_node_properties(df)
+d3.show(filepath='scatter_demo.html', label_radio=['PCA', 'tSNE'], showfig=True)
+
+# d3.edge_properties
 
 #      label         x         y        x1  ...  size   stroke  opacity tooltip
 # 0        0  0.472107  0.871347  0.294228  ...     0  #000000      0.1       0
@@ -1657,7 +1660,6 @@ d3.edge_properties
 
 # [1797 rows x 12 columns]
 
-d3.show(filepath='scatter_demo.html', label_radio=['PCA', 'tSNE'])
 
 # %% Create scatter chart with movements example
 from d3blocks import D3Blocks
