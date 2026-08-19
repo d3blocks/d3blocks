@@ -69,13 +69,20 @@ License     : GPL3
 
 <!-- Top panel (search centered, controls on right) -->
 <div class="top-panel" role="toolbar" aria-label="Top controls" style="position:relative;z-index:40">
-  <div class="top-panel-left"></div>
-  <div class="top-panel-center">
-    <div class="search-wrap top-search">
-      <input class="search-input" id="searchInput" type="search" placeholder="Find a point…" autocomplete="off" spellcheck="false" />
-      <div class="search-results" id="searchResults"></div>
+
+    <div class="top-panel-left">
+        <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+            <img src="https://raw.githubusercontent.com/d3blocks/d3blocks/main/logo.png" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+        </a>
     </div>
-  </div>
+
+    <div class="top-panel-center">
+        <div class="search-wrap top-search">
+        <input class="search-input" id="searchInput" type="search" placeholder="Find a point…" autocomplete="off" spellcheck="false" />
+        <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
@@ -98,11 +105,6 @@ License     : GPL3
       <label for="layoutShapeSelect">Shape</label>
       <select id="layoutShapeSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
         <option value="circle">Default</option>
-        <option value="circle">Circle</option>
-        <option value="square">Square</option>
-        <option value="triangle">Triangle</option>
-        <option value="diamond">Diamond</option>
-        <option value="cross">Cross</option>
       </select>
     </div>
     <div class="physics-control">
