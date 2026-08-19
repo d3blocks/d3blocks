@@ -5,8 +5,8 @@ Imageslider
 
 
 
-Input Data
-***********
+Input Data (Imageslider)
+************************
 
 The input dataset are two images.
 
@@ -22,8 +22,8 @@ The input dataset are two images.
 
 
 
-Chart
-******
+Chart (Imageslider)
+*********************
 
 .. raw:: html
 

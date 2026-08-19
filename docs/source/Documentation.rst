@@ -1,5 +1,5 @@
-Sponsor
-############
+Support
+#######
 
 .. include:: sponsor.rst
 

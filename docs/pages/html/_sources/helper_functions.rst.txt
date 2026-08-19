@@ -41,7 +41,6 @@ Examples
 Saving Charts
 #############
 
-Each d3block contains saving functionality to save your chart to a SVG image.
-The save functionality can be enabled by setting the ```
+Each d3block contains saving functionality to save your chart to a SVG image. The save functionality can be enabled by setting the ``save_button`` parameter to True.
 
 .. include:: add_bottom.add

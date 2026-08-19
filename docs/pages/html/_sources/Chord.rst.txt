@@ -5,8 +5,8 @@ Chord
 
 
 
-Input Data
-***********
+Input Data (Chord)
+******************
 
 The input dataset is a DataFrame with three column, source, target and weight.
 
@@ -29,8 +29,8 @@ The input dataset is a DataFrame with three column, source, target and weight.
 
 
 
-Chart
-******
+Chart (Chord)
+***************
 
 .. raw:: html
 

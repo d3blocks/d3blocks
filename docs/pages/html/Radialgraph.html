@@ -113,7 +113,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Sponsor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#medium-blogs">Medium Blogs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#gumroad-products-with-podcasts">Gumroad Products with Podcasts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
@@ -160,12 +160,12 @@ reachable through more than one path.</p>
 <p>The input is the same <code class="docutils literal notranslate"><span class="pre">source</span></code>/<code class="docutils literal notranslate"><span class="pre">target</span></code>/<code class="docutils literal notranslate"><span class="pre">weight</span></code> edge list every other
 network-oriented block in d3blocks uses, and node/edge appearance (color,
 size, opacity, edge width) is computed via the same delegation
-<code class="xref py py-func docutils literal notranslate"><span class="pre">d3graph.d3graph()</span></code> already provides for <span class="xref std std-ref">d3graph-label</span> — so a
+<code class="xref py py-func docutils literal notranslate"><span class="pre">d3graph.d3graph()</span></code> already provides for d3graph — so a
 <code class="xref py py-func docutils literal notranslate"><span class="pre">RadialGraph()</span></code> and a <code class="xref py py-func docutils literal notranslate"><span class="pre">d3graph()</span></code> built from the same data and the
 same settings agree on how the network looks; only the layout differs.</p>
 <section id="what-problem-does-this-solve">
 <h2>What problem does this solve?<a class="headerlink" href="#what-problem-does-this-solve" title="Link to this heading"></a></h2>
-<p>Global, all-at-once network layouts (like the default <span class="xref std std-ref">d3graph-label</span>
+<p>Global, all-at-once network layouts (like the default d3graph
 view) work well up to a few hundred nodes, but get overwhelming past that —
 everything competes for the same canvas at once. RadialGraph is for the
 opposite situation: <strong>exploring</strong> a large network starting from one node you
@@ -208,7 +208,7 @@ available if you switch to ring mode from the UI.</p></li>
 </section>
 <section id="input-data">
 <h2>Input data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
-<p>RadialGraph expects the same tabular input as <span class="xref std std-ref">d3graph-label</span>: a
+<p>RadialGraph expects the same tabular input as d3graph: a
 <code class="docutils literal notranslate"><span class="pre">pd.DataFrame</span></code> with a <code class="docutils literal notranslate"><span class="pre">source</span></code> column, a <code class="docutils literal notranslate"><span class="pre">target</span></code> column, and an
 optional <code class="docutils literal notranslate"><span class="pre">weight</span></code> column (defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code> for every edge if omitted).
 Each row is one edge:</p>
@@ -260,7 +260,7 @@ hierarchy.</p>
 <iframe src="https://erdogant.github.io\docs\d3blocks\radialgraph_focus.html" height="700px" width="700px", frameBorder="0"></iframe></section>
 <section id="coloring-and-sizing-nodes">
 <h2>Coloring and sizing nodes<a class="headerlink" href="#coloring-and-sizing-nodes" title="Link to this heading"></a></h2>
-<p>Node appearance is delegated to the same logic <span class="xref std std-ref">d3graph-label</span> uses, so
+<p>Node appearance is delegated to the same logic d3graph uses, so
 the same keyword values work in both:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
 
@@ -467,7 +467,7 @@ add <strong>Significance</strong> on top of any of these when the network is lar
 that “looks important” and “is structurally unusual” might not be the same
 thing.</p>
 <p>Selecting a statistic drives both node color <em>and</em> size together, exactly as
-it does in <span class="xref std std-ref">d3graph-label</span>’s own statistics panel — so switching between
+it does in d3graph’s own statistics panel — so switching between
 a D3graph and a RadialGraph view of the same data feels like the same tool,
 not two different ones.</p>
 </section>

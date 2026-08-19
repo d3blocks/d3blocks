@@ -269,7 +269,7 @@ class D3Blocks():
             This 1d-vector contains the class labels for each datapoint in y.
         y : list of float or numpy array.
             This 1d-vector contains the values for the samples.
-        size: list/array of with same size as (x,y). Can be of type str or int.
+        size : list/array of with same size as (x,y). Can be of type str or int.
             Size of the samples.
         color: list/array of hex colors with same size as y
                 * '#002147' : All dots/nodes are get the same hex color.
@@ -462,7 +462,7 @@ class D3Blocks():
             Add jitter to data points as random normal data. Values of 0.01 is usually good for one-hot data seperation.
         size: list/array of with same size as (x,y).
             Size of the samples.
-        color: list/array of hex colors with same size as (x,y)
+        color : list/array of hex colors with same size as (x,y)
                 * '#ffffff' : All dots are get the same hex color.
                 * None: The same color as for c is applied.
                 * ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
@@ -1279,6 +1279,7 @@ class D3Blocks():
         It may not be the most visually efficient method, but it is one of the more visually satisfying ones with
         force-directed and colliding nodes. The function d3.import_example('random_time') is created to generate
         a randomized dataset with various states. The input dataset should contain 3 columns;
+
             * DateTime column: Describes the data-time when an event occurs.
             * State column: Describes what the particular state was at that point of time of the specific sample_id.
             * Sample_id column: A sample can have multiple states at various time points but can not have two states at exactly the same point in time.
@@ -1295,15 +1296,17 @@ class D3Blocks():
             Name of the column with the states.
         center : String, (default: None)
             Center this category.
-        size: int or dictionary. (default: 5) or {sample_id i: size}
+        size : int or dictionary. (default: 5) or {sample_id i: size}
             Size the nodes by specifying per sample_id the size.
                 * 5: set all nodes this this size
                 * {'0': 4, '1': 10, '2': 5, ..}: Specify size for each sample_id
-        color: int or dictionary. (default: '#808080') or {sample_id i: hex-color}
+
+        color : int or dictionary. (default: '#808080') or {sample_id i: hex-color}
             Color the nodes by specifying per sample_id the color.
                 * '#000FFF': set all nodes to this color.
                 * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: Specify color for each sample_id
                 * None: Colors are based on sample_id using the cmap.
+
         color_method : str
             Coloring of the nodes.
                 * 'state': Use the colors defined per state as (d3.node_properties).
@@ -1315,6 +1318,7 @@ class D3Blocks():
             Movement of samples. A smaller number is slower/smoother movement.
                 * 0.1: min
                 * 10: max
+
         fontsize : int, (default: 14)
             Fontsize of the states.
         timedelta : String, (default: 'minutes')
@@ -1322,23 +1326,30 @@ class D3Blocks():
                 * 'seconds'
                 * 'minutes'
                 * 'days'
+
         standardize : str. (default: None)
             Method to standardize the data.
                 * None: standardize over the entire timeframe. Sample_ids are dependent to each other.
                 * 'samplewise': Standardize per sample_id by substracting the minimum time per sample_id.
                 * 'relative': Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.
                 * 'minimum': Movements are relative to the minimum time in the dataset.
+
         speed : dict, (default: {"stop": 100000, "slow": 1000, "medium": 200, "fast": 50})
             The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
+
         note : str, (default: None)
             A specific note, such as project description can be put on the html page.
                 * None: Default text will be provided about the simulation, and states.
         time_notes : dict, (default: None)
             The time notes will be shown between specific time points.
-                * time_notes = [{"start_minute": 1,
+
+            Example::
+
+                time_notes = [{"start_minute": 1,
                                "stop_minute": 5,
                                "note": "Enter your note here and it is shown between 1 min and 5 min."}]
-            time_notes.append[{"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."}]
+                time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."})
+
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
                 * 'tab20c', 'Set1', 'Set2'
@@ -1845,16 +1856,20 @@ class D3Blocks():
             Scale data in range Scaling in range by X*(100/max(X)).
                 * True: Scale the values.
                 * False: Do not scale.
+
         stroke : String, (default: 'red').
             Color of the recangle when hovering over a cell.
                 * 'red'
                 * 'black'
+
         description : String.
             Description text of the heatmap.
         vmax : Bool, (default: 100).
             Range of colors starting with maximum value. Increasing this value will color the cells more discrete.
                 * 1 : cells above value >1 are capped.
-            None : cells are colored based on the maximum value in the input data.
+
+            If None: cells are colored based on the maximum value in the input data.
+
         cmap : String, (default: 'interpolateInferno').
             The colormap scheme. See references for more schmes.
                 * 'interpolateInferno'
@@ -3320,30 +3335,16 @@ class D3Blocks():
         Parameters
         ----------
         df : pd.DataFrame()
-            Input data containing the following columns:
-                * 'source'
-                * 'target'
-                * 'weight'
-                * 'color' (optional)
-                * 'opacity'  (optional)
+            Input data containing the following columns: 'source', 'target', 'weight', and optionally 'color' and 'opacity'.
+
         color : Union[float, List[float]], optional
-            Link colors in Hex notation. Should be the same size as input DataFrame.
-                * None : 'cmap' is used to create colors.
-                * 'source': Color edges/links similar to that of source-color node.
-                * 'target': Color edges/links similar to that of target-color node.
-                * 'source-target': Color edges/link based on unique source-target edges using the colormap.
-                * '#ffffff': All links have the same hex color.
-                * ['#000000', '#ffffff',...]: Define per link.
-        opacity: float or list/array [0..1] (default: None)
-            Link Opacity. Should be the same size as input DataFrame.
-                * 'source': Opacity of edges/links similar to that of source-opacity node.
-                * 'target': Opacity of edges/links similar to that of target-opacity node.
-                * 0.8: All links have the same opacity.
-                * [0.1, 0.75,...]: Set opacity per edge/link.
+            Link colors in Hex notation. Should be the same size as the input DataFrame. Examples: None (use 'cmap'), 'source' (use source node color), 'target' (use target node color), 'source-target' (use colormap by unique source-target edges), '#ffffff' (single color), or a list of colors per link.
+
+        opacity : float or list/array [0..1] (default: None)
+            Link opacity. Can be a single float or a list per link. Examples: 'source' (use source node opacity), 'target' (use target node opacity), 0.8 (single value), or a list like [0.1, 0.75, ...].
+
         cmap : String, (default: 'tab20')
-            colormap is only used in case color=None.
-            All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
-                * 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
+            Colormap used when color=None. Examples: 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'.
 
         Returns
         -------

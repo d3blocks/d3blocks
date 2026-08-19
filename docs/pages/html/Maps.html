@@ -78,8 +78,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Maps</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.maps"><code class="docutils literal notranslate"><span class="pre">D3Blocks.maps()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#charts">Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-data-maps">Input Data (Maps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#charts-maps">Charts (Maps)</a></li>
 </ul>
 </li>
 </ul>
@@ -93,7 +93,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Sponsor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#medium-blogs">Medium Blogs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#gumroad-products-with-podcasts">Gumroad Products with Podcasts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
@@ -130,7 +130,6 @@
              
   <section id="maps">
 <h1>Maps<a class="headerlink" href="#maps" title="Link to this heading"></a></h1>
-<hr class="docutils" />
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.maps">
 <span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#0981D1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'Australia':</span> <span class="pre">{'color':</span> <span class="pre">'#008000',</span> <span class="pre">'line':</span> <span class="pre">'dashed',</span> <span class="pre">'linewidth':</span> <span class="pre">5,</span> <span class="pre">'opacity':</span> <span class="pre">0.3},</span> <span class="pre">'World':</span> <span class="pre">{'color':</span> <span class="pre">'#D3D3D3',</span> <span class="pre">'line':</span> <span class="pre">'none',</span> <span class="pre">'linewidth':</span> <span class="pre">1,</span> <span class="pre">'opacity':</span> <span class="pre">0.6}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Maps</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'maps.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.maps" title="Link to this definition"></a></dt>
@@ -318,8 +317,8 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 </div>
 </dd></dl>
 
-<section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
+<section id="input-data-maps">
+<h2>Input Data (Maps)<a class="headerlink" href="#input-data-maps" title="Link to this heading"></a></h2>
 <p>The input dataset is a DataFrame that contains the lat and lon coordinates. More features can be added such as label, size opacity.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#        lat    lon          label  size</span>
 <span class="c1"># 0    -82.9  135.0     Antarctica     4</span>
@@ -336,8 +335,8 @@ The javascript code is forked from Mike Bostock and then Pythonized.</p>
 </pre></div>
 </div>
 </section>
-<section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Link to this heading"></a></h2>
+<section id="charts-maps">
+<h2>Charts (Maps)<a class="headerlink" href="#charts-maps" title="Link to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\maps_surfspots.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>

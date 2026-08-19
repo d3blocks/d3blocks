@@ -9,8 +9,8 @@ MovingBubbles
 
 
 
-Input Data
-***********
+Input Data (MovingBubbles)
+*****************************
 
 The input data is a dataframe that should contain the columns datatime, sample_id and state.
 If the column names are different, then the column name can be specified.
@@ -33,8 +33,8 @@ If the column names are different, then the column name can be specified.
 	# [9999 rows x 3 columns]
 
 
-Chart
-******
+Chart (MovingBubbles)
+*********************
 
 .. raw:: html
 

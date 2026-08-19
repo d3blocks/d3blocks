@@ -1,13 +1,11 @@
 circlepacking
 #############
 
--------------------------
-
 .. automethod:: d3blocks.d3blocks.D3Blocks.circlepacking
 
 
-Input Data
-************
+Input Data (Circlepacking)
+**************************
 
 The input dataset is a DataFrame that is hierarchically ordered from left to right. 
 The number can be 3 levels and the column weight is obligatory.
@@ -29,12 +27,12 @@ The number can be 3 levels and the column weight is obligatory.
 
 	# [68 rows x 3 columns]
 
-Charts
-************
+Charts (Circlepacking)
+**************************
 
 .. raw:: html
 
-   <iframe src="https://erdogant.github.io\docs\d3blocks\circlepacking_energy.html" height="600px" width="775px", frameBorder="0"></iframe>
+   <iframe src="https://erdogant.github.io\docs\d3blocks\circlepacking_energy.html" height="600px" width="775px" frameBorder="0"></iframe>
 
 
 .. include:: add_bottom.add

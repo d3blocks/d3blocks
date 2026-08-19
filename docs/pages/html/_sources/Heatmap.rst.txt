@@ -5,8 +5,8 @@ Heatmap
 
 
 
-Input Data
-************
+Input Data (Heatmap)
+*********************
 
 The input dataset is a DataFrame with three column, source, target and weight.
 
@@ -27,8 +27,8 @@ The input dataset is a DataFrame with three column, source, target and weight.
 
 	# [68 rows x 3 columns]
 
-Charts
-************
+Charts (Heatmap)
+**********************
 
 .. raw:: html
 

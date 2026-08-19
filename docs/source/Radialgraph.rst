@@ -14,7 +14,7 @@ reachable through more than one path.
 The input is the same ``source``/``target``/``weight`` edge list every other
 network-oriented block in d3blocks uses, and node/edge appearance (color,
 size, opacity, edge width) is computed via the same delegation
-:func:`d3graph.d3graph` already provides for :ref:`d3graph-label` — so a
+:func:`d3graph.d3graph` already provides for d3graph — so a
 :func:`RadialGraph` and a :func:`d3graph` built from the same data and the
 same settings agree on how the network looks; only the layout differs.
 
@@ -22,7 +22,7 @@ same settings agree on how the network looks; only the layout differs.
 What problem does this solve?
 ------------------------------
 
-Global, all-at-once network layouts (like the default :ref:`d3graph-label`
+Global, all-at-once network layouts (like the default d3graph
 view) work well up to a few hundred nodes, but get overwhelming past that —
 everything competes for the same canvas at once. RadialGraph is for the
 opposite situation: **exploring** a large network starting from one node you
@@ -68,7 +68,7 @@ RadialGraph has two ways to arrange nodes, both driven by the same
 Input data
 ----------
 
-RadialGraph expects the same tabular input as :ref:`d3graph-label`: a
+RadialGraph expects the same tabular input as d3graph: a
 ``pd.DataFrame`` with a ``source`` column, a ``target`` column, and an
 optional ``weight`` column (defaults to ``1`` for every edge if omitted).
 Each row is one edge:
@@ -140,7 +140,7 @@ Focusing on a specific node
 Coloring and sizing nodes
 --------------------------
 
-Node appearance is delegated to the same logic :ref:`d3graph-label` uses, so
+Node appearance is delegated to the same logic d3graph uses, so
 the same keyword values work in both:
 
 .. code-block:: python
@@ -359,7 +359,7 @@ that "looks important" and "is structurally unusual" might not be the same
 thing.
 
 Selecting a statistic drives both node color *and* size together, exactly as
-it does in :ref:`d3graph-label`'s own statistics panel — so switching between
+it does in d3graph's own statistics panel — so switching between
 a D3graph and a RadialGraph view of the same data feels like the same tool,
 not two different ones.
 
@@ -495,24 +495,24 @@ edited directly, the same way as every other d3blocks chart:
     from d3blocks import D3Blocks
 
     d3 = D3Blocks(chart='radialgraph', frame=False)
-    
+
     # Import example
     df = d3.import_example('energy')
-    
-    # Get node properties    
+
+    # Get node properties
     d3.set_node_properties(df, center='Solar', color='cluster', size='degree')
 
     # Change keys are node names
     if 'Solar' in d3.node_properties:
         d3.node_properties['Solar']['color'] = '#FF0000'
         d3.node_properties['Solar']['size'] = 25
-    
+
     # Set node properties
     d3.set_edge_properties(df)
-    
+
     html = d3.show(filepath=filepath, showfig=True, return_html=True, figsize=[750, 750],)
     print('Wrote radialgraph_nodeproperties.html (Solar forced red/large)')
-    
+
 
 .. raw:: html
 

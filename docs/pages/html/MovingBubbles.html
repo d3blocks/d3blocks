@@ -70,8 +70,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Matrix.html">Matrix</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">MovingBubbles</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.movingbubbles"><code class="docutils literal notranslate"><span class="pre">D3Blocks.movingbubbles()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-data-movingbubbles">Input Data (MovingBubbles)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#chart-movingbubbles">Chart (MovingBubbles)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
@@ -93,7 +93,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Sponsor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#medium-blogs">Medium Blogs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#gumroad-products-with-podcasts">Gumroad Products with Podcasts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
@@ -226,18 +226,14 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </dd>
 </dl>
 </p></li>
-<li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
-<dt>The time notes will be shown between specific time points.</dt><dd><ul>
-<li><dl class="simple">
-<dt>time_notes = [{“start_minute”: 1,</dt><dd><p>”stop_minute”: 5,
-“note”: “Enter your note here and it is shown between 1 min and 5 min.”}]</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-<p>time_notes.append[{“start_minute”: 6, “stop_minute”: 10, “note”: “Enter your second note here and it is shown between 6 min and 10 min.”}]</p>
+<li><p><strong>time_notes</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <p>The time notes will be shown between specific time points.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">time_notes</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;start_minute&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="s2">&quot;stop_minute&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+               <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="s2">&quot;Enter your note here and it is shown between 1 min and 5 min.&quot;</span><span class="p">}]</span>
+<span class="n">time_notes</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;start_minute&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;stop_minute&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="s2">&quot;Enter your second note here and it is shown between 6 min and 10 min.&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
 </p></li>
 <li><p><strong>cmap</strong> (<em>String</em><em>, </em><em>(</em><em>default: 'Set1'</em><em>)</em>) – <dl class="simple">
 <dt>All colors can be reversed with ‘_r’, e.g. ‘binary’ to ‘binary_r’</dt><dd><ul>
@@ -378,8 +374,8 @@ a randomized dataset with various states. The input dataset should contain 3 col
 </ul>
 </dd></dl>
 
-<section id="input-data">
-<h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
+<section id="input-data-movingbubbles">
+<h2>Input Data (MovingBubbles)<a class="headerlink" href="#input-data-movingbubbles" title="Link to this heading"></a></h2>
 <p>The input data is a dataframe that should contain the columns datatime, sample_id and state.
 If the column names are different, then the column name can be specified.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                 datetime sample_id     state</span>
@@ -399,8 +395,8 @@ If the column names are different, then the column name can be specified.</p>
 </pre></div>
 </div>
 </section>
-<section id="chart">
-<h2>Chart<a class="headerlink" href="#chart" title="Link to this heading"></a></h2>
+<section id="chart-movingbubbles">
+<h2>Chart (MovingBubbles)<a class="headerlink" href="#chart-movingbubbles" title="Link to this heading"></a></h2>
 <iframe src="https://erdogant.github.io\docs\d3blocks\movingbubbles.html" height="900px" width="900px", frameBorder="0"></iframe><hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>

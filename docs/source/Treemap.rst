@@ -1,8 +1,6 @@
 Treemap
 #############
 
--------------------------
-
 .. automethod:: d3blocks.d3blocks.D3Blocks.treemap
 
 

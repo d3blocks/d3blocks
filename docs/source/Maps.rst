@@ -1,13 +1,11 @@
 Maps
 #############
 
--------------------------
-
 .. automethod:: d3blocks.d3blocks.D3Blocks.maps
 
 
-Input Data
-************
+Input Data (Maps)
+******************
 
 The input dataset is a DataFrame that contains the lat and lon coordinates. More features can be added such as label, size opacity.
 
@@ -26,8 +24,8 @@ The input dataset is a DataFrame that contains the lat and lon coordinates. More
 	# 9411  76.3 -100.1  North America     1
 	# 9412  78.2   15.6         Europe     3
 
-Charts
-************
+Charts (Maps)
+*****************
 
 .. raw:: html
 

@@ -1,8 +1,6 @@
 Tree
 #############
 
--------------------------
-
 .. automethod:: d3blocks.d3blocks.D3Blocks.tree
 
 
