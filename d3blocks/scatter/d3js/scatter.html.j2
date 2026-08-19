@@ -110,7 +110,7 @@ License     : GPL3
       <select id="layoutSizeSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
       <div class="slider-row" style="margin-top:8px">
         <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
-        <input type="range" id="sizeMultiplierSlider" min="0.1" max="3" step="0.05" value="1">
+        <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
       </div>
     </div>
     <div class="physics-control">
@@ -435,6 +435,14 @@ var initialRadii=jsonData.map(function(d){return d&&Number.isFinite(+d[3])?+d[3]
 // shrink points when there are many of them (dense scatter) or enlarge them
 // when there are few, so the plot always reads well on screen.
 var sizeMultiplier = 1;
+// The slider itself carries the EXPONENT (t in [-1, 1]), not the multiplier
+// directly. multiplier = SIZE_MULT_BASE^t is an exponential (not linear)
+// mapping: equal drag distance near either end of the slider produces a
+// much bigger change in multiplier than the same drag near the middle, so
+// size differences between points become easier to see as you push toward
+// either extreme, while the center (t=0) stays pinned at a neutral 1x.
+var SIZE_MULT_BASE = 4; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
+function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
 function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
 function transformForIndex(d,xi,yi,scale){scale=typeof scale==='number'?scale:1;return 'translate('+x(d[xi])+','+y(d[yi])+') scale('+scale+')';}
 function symbolPathForRadius(r,shapeName){var s=d3.symbol().type(SHAPE_MAP[shapeName]||d3.symbolCircle).size(Math.PI*r*r);return s();}
@@ -443,13 +451,21 @@ function applySizeMode(key){
   var min=Infinity,max=-Infinity;
   for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:NaN;if(typeof v==='number'&&Number.isFinite(v)){if(v<min)min=v;if(v>max)max=v;}}
   if(min===Infinity)return;
-  var MIN_R=4, MAX_R=20;
-  // Area-proportional scale: circle AREA scales linearly with the underlying
-  // value (radius ~ sqrt(value)), so visual size differences accurately
-  // reflect the data -- the standard approach for bubble/size encodings.
-  // d3.scaleSqrt is a signed power scale, so it also handles domains that
-  // are negative or straddle zero correctly (no more clamping to 0).
-  var scale=(min===max)?function(){return (MIN_R+MAX_R)/2;}:d3.scaleSqrt().domain([min,max]).range([MIN_R,MAX_R]).clamp(true);
+  var MAX_R=24;
+  // Direct, proportional linear scale -- the same style of mapping people
+  // write by hand in Python (e.g. `size=df['col'].values/10`): radius is
+  // directly proportional to the value, anchored at 0 (not at the data's
+  // min) so ratios are preserved -- a value twice as large renders at
+  // roughly twice the radius. This reflects real magnitude differences
+  // faithfully, instead of an area/sqrt scale that compresses them into a
+  // fixed narrow pixel band (theoretically "perceptually corrected" for
+  // area judgment, but at the cost of no longer looking proportional to
+  // the underlying numbers -- which is what people actually expect here).
+  var domainMin = Math.min(0, min); // keep 0 as the reference unless data goes negative
+  var span = max - domainMin;
+  var scale = span===0
+    ? function(){ return MAX_R*0.5; }
+    : function(v){ return Math.max(1, (v - domainMin) / span * MAX_R); };
   for(var j=0;j<jsonData.length;j++){var d=jsonData[j],v=d&&d[11]?d[11][key]:NaN;
     d[3]=(typeof v==='number'&&Number.isFinite(v))?scale(v):initialRadii[j];
   } scheduleRender();
@@ -560,7 +576,8 @@ var layoutLabelSelect = document.getElementById('layoutLabelSelect'); if (layout
 var sizeMultiplierSlider = document.getElementById('sizeMultiplierSlider');
 var sizeMultiplierVal = document.getElementById('sizeMultiplierVal');
 if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', function(e){
-  sizeMultiplier = parseFloat(e.target.value) || 1;
+  var t = parseFloat(e.target.value) || 0;
+  sizeMultiplier = sizeMultiplierFromSlider(t);
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = sizeMultiplier.toFixed(2) + '×';
   scheduleRender();
 });
