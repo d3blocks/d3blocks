@@ -16,25 +16,8 @@ License     : GPL3
 
     <style>
       body { background: {{ COLOR_BACKGROUND }} }
-      /* Top-panel & controls (small subset of scatter.css) */
-      .top-panel { display:flex; align-items:center; gap:8px; padding:8px 12px; }
-      .top-panel .top-panel-left { flex:0 0 40px }
-      .top-panel .top-panel-center { flex:1; display:flex; justify-content:center }
-      .top-panel .top-panel-right { flex:0 0 auto; display:flex; gap:8px; align-items:center }
-      .search-wrap { position:relative; width:100%; max-width:520px }
-      .search-input { width:100%; box-sizing:border-box; padding:6px 8px; border-radius:4px; border:1px solid rgba(0,0,0,0.12) }
-      .search-input:focus { outline:none; box-shadow:0 0 0 3px rgba(90,150,240,0.08); }
-      .search-results { position:absolute; top:calc(100% + 6px); left:0; right:0; background:white; border:1px solid rgba(0,0,0,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.08); width:100%; max-height:240px; overflow:auto; display:none; z-index:80; border-radius:4px; padding:6px 0 }
-      .search-results.open { display:block }
-      .search-item { padding:6px 10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center }
-      .search-item.active, .search-item:hover { background: rgba(90,150,240,0.08) }
-      .search-item .meta { color:#666; font-size:0.9em; margin-left:8px }
-      .button-switch { padding:6px 10px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); background:transparent; cursor:pointer }
-      .button-switch:active { transform:translateY(1px) }
       .search-hit{stroke:#ff9900!important;stroke-width:3px!important}
-      body.light { background: #fff }
     </style>
-    <!-- Include radialgraph theme & panel CSS so the theme toggle shows visual changes -->
     <style>{% include "scatter.css" %}</style>
 
     <style>
@@ -177,21 +160,7 @@ License     : GPL3
 	.myCircle:hover {
 	  stroke: black;
 	}
-	/* Node panel respects theme variables (floats above the plot, same as d3graph) */
-	#nodePanel {
-	  position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 20;
-	  transform: translateY(100%); transition: transform 200ms ease, opacity 200ms ease;
-	  opacity: 0; pointer-events: none;
-	  background: var(--panel-bg); color: var(--text);
-	  border: 1px solid var(--panel-border); border-radius: 6px 6px 0 0;
-	  box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
-	}
-	#nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-	.node-panel-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom: 1px solid var(--panel-border); }
-	.node-panel-title { font-weight:600 }
-	.node-panel-sub { font-size:0.9em; color: var(--text-muted); }
-	.node-panel-close { background:transparent; border:0; font-size:16px; cursor:pointer; color: var(--text); }
-	</style>
+</style>
 
 
 
