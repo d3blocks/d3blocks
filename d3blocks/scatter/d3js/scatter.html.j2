@@ -119,6 +119,13 @@ License     : GPL3
       </select>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
     </div>
+    <div class="physics-control">
+      <div class="slider-row">
+        <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
+        <input type="range" id="jitterSlider" min="0" max="25" step="1" value="0">
+      </div>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
+    </div>
   </div>
 </div>
 
@@ -294,9 +301,9 @@ function rebuildHitGrid() {
     if (!d || !Number.isFinite(+d[xi]) || !Number.isFinite(+d[yi])) continue;
     var xv=+d[xi], yv=+d[yi];
     if (xv<xd[0] || xv>xd[1] || yv<yd[0] || yv>yd[1]) continue;
-    var px=x(xv), py=y(yv);
+    var px=x(xv), py=y(yv); var jp=jitteredPoint(i,px,py);
     visiblePointIndices.push(i);
-    addHit(i,px,py);
+    addHit(i,jp.px,jp.py);
   }
 }
 function hitTest(event) {
@@ -305,7 +312,7 @@ function hitTest(event) {
   for(var yy=gy-1;yy<=gy+1;yy++) for(var xx=gx-1;xx<=gx+1;xx++) {
     var bucket=hitGrid.get(xx+','+yy); if(!bucket) continue;
     for(var j=0;j<bucket.length;j++) {
-      var i=bucket[j], d=jsonData[i], px=x(d[c[0]]), py=y(d[c[1]]);
+      var i=bucket[j], d=jsonData[i], px=x(d[c[0]]), py=y(d[c[1]]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
       var r=Math.max(3, baseRadius(d)), dx=px-p.px, dy=py-p.py, dist=dx*dx+dy*dy;
       if(dist<=r*r && dist<bestDist){bestDist=dist;best=i;}
     }
@@ -323,7 +330,7 @@ function renderPoints() {
   var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1); rebuildHitGrid();
   var c=currentCoordIndices(), xi=c[0], yi=c[1];
   for(var n=0;n<visiblePointIndices.length;n++){
-    var i=visiblePointIndices[n], d=jsonData[i], px=x(d[xi]), py=y(d[yi]);
+    var i=visiblePointIndices[n], d=jsonData[i], px=x(d[xi]), py=y(d[yi]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
     var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
     if(categoricalShapeMap && d[11] && categoricalShapeMap[d[11][categoricalShapeKey]]) shape=categoricalShapeMap[d[11][categoricalShapeKey]];
@@ -443,6 +450,27 @@ var sizeMultiplier = 1;
 var SIZE_MULT_BASE = 4; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
 function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
 function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
+
+// —— Jitter: nudges each point a small, stable amount so fully-overlapping
+// points become distinguishable. The offset is seeded from the point's own
+// index (not Math.random()) so it stays fixed across re-renders, pans, and
+// zooms rather than reshuffling every frame; it's applied in screen pixels
+// (after the x()/y() scales) so the amount of separation looks the same
+// regardless of zoom level.
+var jitterAmount = 0; // 0 = off; otherwise max offset radius in px
+var jitterCache = new Map();
+function seededRandom(seed) { var v = Math.sin(seed) * 10000; return v - Math.floor(v); }
+function jitterOffset(i) {
+  if (!jitterAmount) return null;
+  var c = jitterCache.get(i);
+  if (!c) { c = { a: seededRandom(i * 12.9898 + 1) * Math.PI * 2, r: Math.sqrt(seededRandom(i * 78.233 + 7)) }; jitterCache.set(i, c); }
+  var mag = c.r * jitterAmount;
+  return { dx: Math.cos(c.a) * mag, dy: Math.sin(c.a) * mag };
+}
+function jitteredPoint(i, px, py) {
+  var j = jitterOffset(i);
+  return j ? { px: px + j.dx, py: py + j.dy } : { px: px, py: py };
+}
 function transformForIndex(d,xi,yi,scale){scale=typeof scale==='number'?scale:1;return 'translate('+x(d[xi])+','+y(d[yi])+') scale('+scale+')';}
 function symbolPathForRadius(r,shapeName){var s=d3.symbol().type(SHAPE_MAP[shapeName]||d3.symbolCircle).size(Math.PI*r*r);return s();}
 function applySizeMode(key){
@@ -564,8 +592,8 @@ function updatePointLabels() {
     .style('opacity', 0)
     .merge(labels)
     .text(function(v){ return labelTextFor(v.d); })
-    .attr('x', function(v){ return x(v.d[xi]) + 8; })
-    .attr('y', function(v){ return y(v.d[yi]) + 3; })
+    .attr('x', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).px + 8; })
+    .attr('y', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).py + 3; })
     .style('opacity', op);
 }
 
@@ -585,6 +613,14 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', functio
   var t = parseFloat(e.target.value) || 0;
   sizeMultiplier = sizeMultiplierFromSlider(t);
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = sizeMultiplier.toFixed(2) + '×';
+  scheduleRender();
+});
+var jitterSlider = document.getElementById('jitterSlider');
+var jitterVal = document.getElementById('jitterVal');
+if (jitterSlider) jitterSlider.addEventListener('input', function(e){
+  jitterAmount = parseFloat(e.target.value) || 0;
+  if (jitterVal) jitterVal.textContent = jitterAmount + 'px';
+  hoveredPointIndex = -1; hidePointTooltip();
   scheduleRender();
 });
 // Populate Layout dropdowns from per-point properties.
@@ -859,7 +895,7 @@ function renderInterpolatedPoints(xi0,yi0,xi1,yi1,t) {
     var d=jsonData[i]; if(!d)continue;
     var xv=+d[xi0]+(+d[xi1]-+d[xi0])*t, yv=+d[yi0]+(+d[yi1]-+d[yi0])*t;
     if(!Number.isFinite(xv)||!Number.isFinite(yv)||xv<xd[0]||xv>xd[1]||yv<yd[0]||yv>yd[1])continue;
-    var px=x(xv),py=y(yv),r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
+    var px=x(xv),py=y(yv); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py; var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
     if(categoricalShapeMap&&d[11]&&categoricalShapeMap[d[11][categoricalShapeKey]])shape=categoricalShapeMap[d[11][categoricalShapeKey]];
     ctx.save();ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1;ctx.translate(px,py);ctx.beginPath();drawSymbol(ctx,shape,r);
