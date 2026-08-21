@@ -113,6 +113,7 @@
     position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 1100;
     max-height: 48vh; overflow-y: auto;
     background: var(--panel-bg);
+    color: var(--text);
     border: 1px solid var(--panel-border);
     border-top: 1px solid var(--panel-border);
     border-radius: 8px 8px 0 0;
@@ -134,6 +135,40 @@
     transition: var(--transition);
   }
   .node-panel-close:active { background: var(--btn-bg-active); }
+  /* Stat/property rows: laid out as compact wrapping "label: value" chips
+     instead of one row stretched across the full width of the (wide)
+     bottom bar -- a single flex row with justify-content:space-between puts
+     the label at the far left and the value at the far right, ~1000px+
+     apart on a wide screen, which is unreadable. Each pair here stays
+     tightly coupled and wraps to a new line once the row runs out of
+     width, so extra screen width just fits more pairs per line instead of
+     stretching each pair apart. */
+  .node-info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 6px;
+    column-gap: 28px;
+  }
+  .node-info-row {
+    display: flex;
+    gap: 6px;
+    font-size: 13px;
+    max-width: 100%;
+  }
+  .node-info-label { color: var(--text-muted); flex-shrink: 0; }
+  .node-info-label::after { content: ":"; }
+  .node-info-value { color: var(--text); word-break: break-word; }
+  .node-info-section-title {
+    flex-basis: 100%;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin: 12px 0 6px;
+    border-top: 1px solid var(--panel-border);
+    padding-top: 8px;
+  }
 
 /* ==== d3graph-aligned panel styles (from d3graph style.css) ==== */
 .stats-panel {

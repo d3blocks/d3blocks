@@ -21,9 +21,13 @@ License     : GPL3
     <style>{% include "scatter.css" %}</style>
 
     <style>
-    /* Floating left layout panel (d3graph-style): overlays the plot, does not shift it. */
+    /* Floating left layout panel (d3graph-style): overlays the plot, does not shift it.
+       top/margin-top below are pre-JS fallbacks only -- positionBelowTopBar()
+       (see script) measures the top-panel's actual rendered height at
+       runtime and overrides these, since that height varies with the logo
+       image load, font rendering, and wrapping on narrow screens. */
     #layoutPanel.stats-panel {
-      top: 56px;
+      top: 80px;
       left: 10px;
       z-index: 60;
     }
@@ -35,6 +39,7 @@ License     : GPL3
       width: 100%;
       box-sizing: border-box;
       position: relative;
+      margin-top: 80px;
     }
     #scatterSvg {
       display: block;
@@ -63,7 +68,7 @@ License     : GPL3
 <body>
 
 <!-- Top panel (search centered, controls on right) -->
-<div class="top-panel" role="toolbar" aria-label="Top controls" style="position:relative;z-index:40">
+<div class="top-panel" role="toolbar" aria-label="Top controls">
 
     <div class="top-panel-left">
         <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
@@ -380,6 +385,24 @@ scheduleRender();
   },{passive:false});
 })();
 
+// Keep the floating Layout panel and the scatterplot itself clear of the
+// fixed top bar. The bar's rendered height varies (logo image load, font
+// rendering, and it may wrap onto two lines on a narrow screen), so this
+// measures it at runtime instead of assuming a fixed pixel offset -- the
+// same approach index.html.j2 uses for its positionSidePanels().
+function positionBelowTopBar() {
+  var bar = document.querySelector('.top-panel');
+  var layoutPanel = document.getElementById('layoutPanel');
+  var main = document.getElementById('scatter-main');
+  if (!bar) return;
+  var bottom = bar.getBoundingClientRect().bottom;
+  if (layoutPanel) layoutPanel.style.top = (bottom + 8) + 'px';
+  if (main) main.style.marginTop = (bottom + 12) + 'px';
+}
+window.addEventListener('resize', positionBelowTopBar);
+window.addEventListener('load', positionBelowTopBar);
+positionBelowTopBar();
+
 // Collapsible layout panel (same interaction as index.html.j2 stats-panels)
 (function () {
   var panel = document.getElementById('layoutPanel');
@@ -629,29 +652,31 @@ function showNodePanel(d) {
   // Render some basic stats
   if (nodeStatsGrid) {
     // Basic stats
-    var html = '';
-    html += '<div>radius: ' + d[3] + '</div>';
-    html += '<div>opacity: ' + d[4] + '</div>';
-    html += '<div>stroke: ' + d[5] + '</div>';
+    var html = '<div class="node-info-grid">';
+    html += '<div class="node-info-row"><span class="node-info-label">Radius</span><span class="node-info-value">' + d[3] + '</span></div>';
+    html += '<div class="node-info-row"><span class="node-info-label">Opacity</span><span class="node-info-value">' + d[4] + '</span></div>';
+    html += '<div class="node-info-row"><span class="node-info-label">Stroke</span><span class="node-info-value">' + d[5] + '</span></div>';
     // Additional user properties (if present as last element d[11])
     var props = (d && d[11]) ? d[11] : null;
     if (props && typeof props === 'object') {
-      html += '<hr/>';
-      html += '<div style="font-weight:600;margin-bottom:6px">Properties</div>';
+      html += '<div class="node-info-section-title">Properties</div>';
       // Property list
       Object.keys(props).forEach(function(k){
         var v = props[k];
         // stringify objects/arrays
         if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
-        html += '<div style="display:flex;justify-content:space-between;gap:12px"><div style="color:#666">' + k + '</div><div>' + (v==null ? '' : v) + '</div></div>';
+        html += '<div class="node-info-row"><span class="node-info-label">' + k + '</span><span class="node-info-value">' + (v==null ? '' : v) + '</span></div>';
       });
-      // Size-by control for numeric properties
+    }
+    html += '</div>';
+    // Size-by control for numeric properties (outside the grid: full-width row)
+    if (props && typeof props === 'object') {
       var numericKeys = Object.keys(props).filter(function(k){ return typeof props[k] === 'number'; });
       if (numericKeys.length) {
-        html += '<hr/>';
-        html += '<div style="display:flex;gap:8px;align-items:center"><label style="font-size:0.9em;margin-right:6px">Size by</label>';
+        html += '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--panel-border)">';
+        html += '<label style="font-size:0.9em;margin-right:6px;color:var(--text)">Size by</label>';
         html += '<select id="sizeBySelect"><option value="">—</option>' + numericKeys.map(function(k){ return '<option value="'+k+'">'+k+'</option>'; }).join('') + '</select>';
-        html += '<button id="resetSizeBtn" style="margin-left:6px">Reset</button></div>';
+        html += '<button id="resetSizeBtn" class="button-switch" style="margin-left:6px">Reset</button></div>';
       }
     }
     nodeStatsGrid.innerHTML = html;
