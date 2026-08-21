@@ -51,9 +51,6 @@
     font-family: "Helvetica", Arial, sans-serif;
     overflow: hidden; transition: var(--transition);
   }
-  .point-label {
-    transition: opacity 0.15s linear;
-  }
   .search-wrap { position: relative; margin-bottom: 6px; }
   .search-input {
     width: 100%; box-sizing: border-box;

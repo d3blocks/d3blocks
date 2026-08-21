@@ -526,12 +526,10 @@ function applyShapeMode(val){
   }
 }
 
-// —— Point labels (only drawn once zoomed in; fade in/out gradually rather
-// than popping in at a single hard threshold) ——
+// —— Point labels (only drawn when zoomed in enough) ——
 var currentLabelKey = null; // null | '__tooltip__' | property key
 var labelGroup = svg.append('g').attr('class', 'point-labels').style('pointer-events', 'none');
-var LABEL_ZOOM_FADE_START = 1.4; // opacity 0 at/below this zoom factor
-var LABEL_ZOOM_FADE_END = 2.4;   // opacity 1 at/above this zoom factor
+var LABEL_ZOOM_THRESHOLD = 2.0; // show labels when domain is at least this factor smaller than original
 
 function currentCoordIndices() {
   var modeNode = d3.select('input[name="radio_states"]:checked').node();
@@ -576,21 +574,18 @@ function labelTextFor(d) {
   return '';
 }
 
-function labelOpacity() {
+function isZoomedInEnough() {
   var xd = x.domain(), yd = y.domain();
   var xSpan = Math.abs(xd[1] - xd[0]);
   var ySpan = Math.abs(yd[1] - yd[0]);
   var x0Span = Math.abs(x0[1] - x0[0]) || 1;
   var y0Span = Math.abs(y0[1] - y0[0]) || 1;
   var zoomFactor = Math.min(x0Span / xSpan, y0Span / ySpan);
-  if (zoomFactor <= LABEL_ZOOM_FADE_START) return 0;
-  if (zoomFactor >= LABEL_ZOOM_FADE_END) return 1;
-  return (zoomFactor - LABEL_ZOOM_FADE_START) / (LABEL_ZOOM_FADE_END - LABEL_ZOOM_FADE_START);
+  return zoomFactor >= LABEL_ZOOM_THRESHOLD;
 }
 
 function updatePointLabels() {
-  var op = labelOpacity();
-  if (!currentLabelKey || op <= 0) {
+  if (!currentLabelKey || !isZoomedInEnough()) {
     labelGroup.selectAll('text').remove();
     return;
   }
@@ -617,12 +612,10 @@ function updatePointLabels() {
     .style('stroke-width', '3px')
     .style('stroke-linejoin', 'round')
     .style('fill', 'var(--text, #222)')
-    .style('opacity', 0)
     .merge(labels)
     .text(function(v){ return labelTextFor(v.d); })
     .attr('x', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).px + 8; })
-    .attr('y', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).py + 3; })
-    .style('opacity', op);
+    .attr('y', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).py + 3; });
 }
 
 function applyLabelMode(key) {
