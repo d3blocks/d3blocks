@@ -84,6 +84,9 @@ License     : GPL3
     </div>
 
   <div class="top-panel-right">
+    <span id="selectionCount" class="selection-count" style="display:none"></span>
+    <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; click a point to toggle it">Select</button>
+    <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)">Export</button>
     <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
   </div>
@@ -259,6 +262,9 @@ var hitGrid = new Map();
 var visiblePointIndices = [];
 var renderFramePending = false;
 var isPanning = false, didPan = false, panStart = null;
+var selectMode = false;
+var selectedIndices = new Set();
+var isSelecting = false, didSelectDrag = false, selectDragStart = null, selectionRectPx = null;
 var searchHighlightIndex = -1;
 var currentColorAccessor = null;
 var categoricalShapeMap = null, categoricalShapeKey = null;
@@ -338,6 +344,16 @@ function renderPoints() {
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent'; ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
     if(i===hoveredPointIndex || i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
+    if(selectedIndices.has(i)){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
+    ctx.restore();
+  }
+  if (selectionRectPx) {
+    var rx=Math.min(selectionRectPx.x0,selectionRectPx.x1), ry=Math.min(selectionRectPx.y0,selectionRectPx.y1);
+    var rw=Math.abs(selectionRectPx.x1-selectionRectPx.x0), rh=Math.abs(selectionRectPx.y1-selectionRectPx.y0);
+    ctx.save();
+    ctx.fillStyle='rgba(26,188,156,0.15)';
+    ctx.strokeStyle='#1ABC9C';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.fillRect(rx,ry,rw,rh);ctx.strokeRect(rx,ry,rw,rh);
     ctx.restore();
   }
 }
@@ -345,12 +361,28 @@ function updateAxes(){svg.select(".axis--x").call(xAxis);svg.select(".axis--y").
 
 canvas.addEventListener('mousedown',function(e){
   if(e.button!==0)return;
+  if(selectMode){
+    var p=canvasPointFromEvent(e);
+    isSelecting=true;didSelectDrag=false;
+    selectDragStart={px:p.px,py:p.py};
+    selectionRectPx={x0:p.px,y0:p.py,x1:p.px,y1:p.py};
+    e.preventDefault();
+    return;
+  }
   if(hitTest(e)>=0)return;
   isPanning=true;didPan=false;var p=canvasPointFromEvent(e);
   panStart={px:p.px,py:p.py,xDomain:x.domain().slice(),yDomain:y.domain().slice()};
   canvas.style.cursor='grabbing';e.preventDefault();
 });
 window.addEventListener('mousemove',function(e){
+  if(isSelecting){
+    var p=canvasPointFromEvent(e);
+    var dx=p.px-selectDragStart.px, dy=p.py-selectDragStart.py;
+    if(Math.abs(dx)>2||Math.abs(dy)>2)didSelectDrag=true;
+    selectionRectPx={x0:selectDragStart.px,y0:selectDragStart.py,x1:p.px,y1:p.py};
+    scheduleRender();
+    return;
+  }
   if(isPanning){
     var p=canvasPointFromEvent(e),dx=p.px-panStart.px,dy=p.py-panStart.py;
     if(Math.abs(dx)>2||Math.abs(dy)>2)didPan=true;
@@ -365,9 +397,39 @@ window.addEventListener('mousemove',function(e){
   else if(idx>=0)showPointTooltip(jsonData[idx],e);
 });
 window.addEventListener('mouseup',function(){
+  if(isSelecting){
+    if(didSelectDrag && selectionRectPx){
+      var rx0=Math.min(selectionRectPx.x0,selectionRectPx.x1), rx1=Math.max(selectionRectPx.x0,selectionRectPx.x1);
+      var ry0=Math.min(selectionRectPx.y0,selectionRectPx.y1), ry1=Math.max(selectionRectPx.y0,selectionRectPx.y1);
+      var c=currentCoordIndices();
+      var next=new Set();
+      for(var n=0;n<visiblePointIndices.length;n++){
+        var i=visiblePointIndices[n], d=jsonData[i];
+        var px=x(d[c[0]]), py=y(d[c[1]]); var jp=jitteredPoint(i,px,py);
+        if(jp.px>=rx0 && jp.px<=rx1 && jp.py>=ry0 && jp.py<=ry1) next.add(i);
+      }
+      selectedIndices = next;
+      updateSelectionUI();
+    }
+    isSelecting=false;selectDragStart=null;selectionRectPx=null;
+    setTimeout(function(){didSelectDrag=false;},0);
+    scheduleRender();
+    return;
+  }
   if(isPanning){isPanning=false;panStart=null;canvas.style.cursor='default';updatePointLabels();setTimeout(function(){didPan=false;},0);}
 });
 canvas.addEventListener('click',function(e){
+  if(selectMode){
+    if(didSelectDrag)return; // a marquee drag already handled selection on mouseup
+    var idx=hitTest(e);
+    if(idx>=0){
+      if(selectedIndices.has(idx)) selectedIndices.delete(idx); else selectedIndices.add(idx);
+    } else {
+      selectedIndices.clear();
+    }
+    updateSelectionUI();scheduleRender();
+    return;
+  }
   if(didPan)return;
   var idx=hitTest(e);
   if(idx>=0)showNodePanel(jsonData[idx]); else if(!isPanning)closeNodePanel();
@@ -889,6 +951,64 @@ function toggleTheme() {
 }
 const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); themeBtn.textContent = document.body.classList.contains('light') ? 'Theme: Light' : 'Theme: Dark'; }
 window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme(); });
+
+// —— Selection mode: drag a rectangle to select points, or click a point to
+// toggle it. Selected points are marked (highlighted with a ring) and used
+// by Export; when nothing is selected, Export includes every point. ——
+const selectModeBtn = document.getElementById('selectModeBtn');
+const selectionCountEl = document.getElementById('selectionCount');
+function updateSelectionUI() {
+  if (!selectionCountEl) return;
+  var n = selectedIndices.size;
+  if (n > 0) {
+    selectionCountEl.style.display = '';
+    selectionCountEl.textContent = n + ' selected ✕';
+    selectionCountEl.title = 'Click to clear selection';
+  } else {
+    selectionCountEl.style.display = 'none';
+  }
+}
+if (selectModeBtn) selectModeBtn.addEventListener('click', function(){
+  selectMode = !selectMode;
+  selectModeBtn.classList.toggle('active', selectMode);
+  selectModeBtn.textContent = selectMode ? 'Select: On' : 'Select';
+  canvas.style.cursor = selectMode ? 'crosshair' : 'default';
+  if (!selectMode) { isSelecting=false; selectionRectPx=null; scheduleRender(); }
+});
+if (selectionCountEl) selectionCountEl.addEventListener('click', function(){
+  selectedIndices.clear(); updateSelectionUI(); scheduleRender();
+});
+window.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) && selectedIndices.size) {
+    selectedIndices.clear(); updateSelectionUI(); scheduleRender();
+  }
+});
+
+// Export: selected points (or all, if none selected), including every data
+// property, as a downloadable JSON file.
+function pointToExportObject(d) {
+  var obj = {
+    x: d[0], y: d[1], color: d[2], radius: d[3], opacity: d[4], stroke: d[5], label: d[6]
+  };
+  if (Number.isFinite(+d[7]) || Number.isFinite(+d[8])) { obj.x2 = d[7]; obj.y2 = d[8]; }
+  if (Number.isFinite(+d[9]) || Number.isFinite(+d[10])) { obj.x3 = d[9]; obj.y3 = d[10]; }
+  obj.properties = (d[11] && typeof d[11] === 'object') ? d[11] : {};
+  return obj;
+}
+const exportButton = document.getElementById('exportButton');
+if (exportButton) exportButton.addEventListener('click', function(){
+  var indices = selectedIndices.size > 0
+    ? Array.from(selectedIndices).sort(function(a,b){return a-b;})
+    : jsonData.map(function(_,i){return i;}).filter(function(i){return !!jsonData[i];});
+  var out = indices.map(function(i){ return pointToExportObject(jsonData[i]); });
+  var blob = new Blob([JSON.stringify(out, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = (selectedIndices.size > 0 ? 'scatter_selected_' + out.length : 'scatter_all_' + out.length) + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+});
 
 // Coordinate-mode changes are animated on canvas rather than by creating
 // an SVG transition object for every point.

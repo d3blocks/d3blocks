@@ -352,5 +352,17 @@
   justify-self: end;
 }
 .top-panel .button-switch { margin: 0; }
+.selection-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.selection-count:hover { background: var(--btn-bg-active); }
+#selectModeBtn { white-space: nowrap; }
 .top-search { width: 440px; max-width: 60vw; }
 .top-search .search-input { width: 100%; }
