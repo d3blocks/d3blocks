@@ -538,6 +538,23 @@ function currentCoordIndices() {
 // jump. This variable is only updated once an animation finishes.
 var activeCoordIndices = currentCoordIndices();
 
+// Per-point live on-screen position (in data space), kept up to date every
+// animation frame during a coordinate-mode transition. If the user picks a
+// new target mid-transition, the next animation reads its starting point
+// from here -- the points' actual current position -- rather than from
+// activeCoordIndices (which only updates when a transition finishes and
+// would otherwise be stale, making points visibly snap back to where the
+// PREVIOUS transition started before animating to the new target).
+var currentXVal = new Array(jsonData.length);
+var currentYVal = new Array(jsonData.length);
+(function initCurrentCoordVals() {
+  for (var i = 0; i < jsonData.length; i++) {
+    var d = jsonData[i];
+    currentXVal[i] = d ? +d[activeCoordIndices[0]] : NaN;
+    currentYVal[i] = d ? +d[activeCoordIndices[1]] : NaN;
+  }
+})();
+
 function labelTextFor(d) {
   if (!currentLabelKey) return '';
   if (currentLabelKey === '__tooltip__') return (d && d[6] != null) ? String(d[6]) : '';
@@ -872,28 +889,38 @@ window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 
 // Coordinate-mode changes are animated on canvas rather than by creating
 // an SVG transition object for every point.
 var buttons = d3.selectAll('input[name="radio_states"]');
+var targetCoordIndices = activeCoordIndices.slice(); // pair the animation is heading to (or already at)
+var coordTransitionToken = 0; // bumped on every new transition to invalidate stale in-flight frame loops
 buttons.on('change', function() {
   var target = this.value === 'radiobutton2' ? [7,8] : (this.value === 'radiobutton3' ? [9,10] : [0,1]);
-  var from = activeCoordIndices; // previous on-screen position, NOT currentCoordIndices()
-  if (from[0] === target[0] && from[1] === target[1]) return; // already there
+  if (targetCoordIndices[0] === target[0] && targetCoordIndices[1] === target[1]) return; // already there / already heading there
+  targetCoordIndices = target;
+  var myToken = ++coordTransitionToken;
+  // Snapshot each point's actual current position right now -- if a
+  // previous transition was interrupted mid-flight, this is wherever it
+  // actually got to, not where it started.
+  var fromX = currentXVal.slice(), fromY = currentYVal.slice();
   var start = performance.now(), duration = 2500;
 
   function frame(now) {
-    var t = Math.min(1, (now-start)/duration);
-    t = t*t*(3-2*t);
-    renderInterpolatedPoints(from[0],from[1],target[0],target[1],t);
-    if(t<1) requestAnimationFrame(frame); else { activeCoordIndices = target; updatePointLabels(); }
+    if (myToken !== coordTransitionToken) return; // superseded by a newer transition; stop
+    var rawT = Math.min(1, (now-start)/duration);
+    var t = rawT*rawT*(3-2*rawT);
+    renderInterpolatedPoints(fromX,fromY,target[0],target[1],t);
+    if(rawT<1) requestAnimationFrame(frame); else { activeCoordIndices = target; updatePointLabels(); }
   }
   requestAnimationFrame(frame);
 });
 
-function renderInterpolatedPoints(xi0,yi0,xi1,yi1,t) {
+function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
   var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1);
   hitGrid.clear(); visiblePointIndices.length=0;
   var xd=x.domain(),yd=y.domain();
   for(var i=0;i<jsonData.length;i++){
     var d=jsonData[i]; if(!d)continue;
-    var xv=+d[xi0]+(+d[xi1]-+d[xi0])*t, yv=+d[yi0]+(+d[yi1]-+d[yi0])*t;
+    var x0v=fromX[i], y0v=fromY[i], x1v=+d[xi1], y1v=+d[yi1];
+    var xv=x0v+(x1v-x0v)*t, yv=y0v+(y1v-y0v)*t;
+    currentXVal[i]=xv; currentYVal[i]=yv; // keep the live-position cache in sync every frame
     if(!Number.isFinite(xv)||!Number.isFinite(yv)||xv<xd[0]||xv>xd[1]||yv<yd[0]||yv>yd[1])continue;
     var px=x(xv),py=y(yv); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py; var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
