@@ -51,6 +51,9 @@
     font-family: "Helvetica", Arial, sans-serif;
     overflow: hidden; transition: var(--transition);
   }
+  .point-label {
+    transition: opacity 0.15s linear;
+  }
   .search-wrap { position: relative; margin-bottom: 6px; }
   .search-input {
     width: 100%; box-sizing: border-box;
@@ -158,6 +161,13 @@
   .node-info-label { color: var(--text-muted); flex-shrink: 0; }
   .node-info-label::after { content: ":"; }
   .node-info-value { color: var(--text); word-break: break-word; }
+  .node-info-link {
+    color: #6fa8dc;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .node-info-link:hover { text-decoration: underline; }
+  body.light .node-info-link { color: #2166ac; }
   .node-info-section-title {
     flex-basis: 100%;
     font-weight: 700;

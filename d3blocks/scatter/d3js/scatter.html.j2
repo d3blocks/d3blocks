@@ -487,10 +487,12 @@ function applyShapeMode(val){
   }
 }
 
-// —— Point labels (only drawn when zoomed in enough) ——
+// —— Point labels (only drawn once zoomed in; fade in/out gradually rather
+// than popping in at a single hard threshold) ——
 var currentLabelKey = null; // null | '__tooltip__' | property key
 var labelGroup = svg.append('g').attr('class', 'point-labels').style('pointer-events', 'none');
-var LABEL_ZOOM_THRESHOLD = 2.0; // show labels when domain is at least this factor smaller than original
+var LABEL_ZOOM_FADE_START = 1.4; // opacity 0 at/below this zoom factor
+var LABEL_ZOOM_FADE_END = 2.4;   // opacity 1 at/above this zoom factor
 
 function currentCoordIndices() {
   var modeNode = d3.select('input[name="radio_states"]:checked').node();
@@ -518,18 +520,21 @@ function labelTextFor(d) {
   return '';
 }
 
-function isZoomedInEnough() {
+function labelOpacity() {
   var xd = x.domain(), yd = y.domain();
   var xSpan = Math.abs(xd[1] - xd[0]);
   var ySpan = Math.abs(yd[1] - yd[0]);
   var x0Span = Math.abs(x0[1] - x0[0]) || 1;
   var y0Span = Math.abs(y0[1] - y0[0]) || 1;
   var zoomFactor = Math.min(x0Span / xSpan, y0Span / ySpan);
-  return zoomFactor >= LABEL_ZOOM_THRESHOLD;
+  if (zoomFactor <= LABEL_ZOOM_FADE_START) return 0;
+  if (zoomFactor >= LABEL_ZOOM_FADE_END) return 1;
+  return (zoomFactor - LABEL_ZOOM_FADE_START) / (LABEL_ZOOM_FADE_END - LABEL_ZOOM_FADE_START);
 }
 
 function updatePointLabels() {
-  if (!currentLabelKey || !isZoomedInEnough()) {
+  var op = labelOpacity();
+  if (!currentLabelKey || op <= 0) {
     labelGroup.selectAll('text').remove();
     return;
   }
@@ -556,10 +561,12 @@ function updatePointLabels() {
     .style('stroke-width', '3px')
     .style('stroke-linejoin', 'round')
     .style('fill', 'var(--text, #222)')
+    .style('opacity', 0)
     .merge(labels)
     .text(function(v){ return labelTextFor(v.d); })
     .attr('x', function(v){ return x(v.d[xi]) + 8; })
-    .attr('y', function(v){ return y(v.d[yi]) + 3; });
+    .attr('y', function(v){ return y(v.d[yi]) + 3; })
+    .style('opacity', op);
 }
 
 function applyLabelMode(key) {
@@ -643,6 +650,39 @@ const nodePanelSub = document.getElementById("nodePanelSub");
 const nodeStatsGrid = document.getElementById("nodeStatsGrid");
 const nodePanelClose = document.getElementById("nodePanelClose");
 
+function escapeHtml(v) {
+  if (v == null) return '';
+  return String(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// URLs (http/https/ftp/www.) and absolute file paths (unix or Windows) are
+// rendered as clickable links; everything else is shown as plain text.
+var URL_RE = /^(https?:\/\/|ftp:\/\/)\S+$/i;
+var WWW_RE = /^www\.\S+\.\S+$/i;
+var FILE_URL_RE = /^file:\/\/\S+$/i;
+var UNIX_PATH_RE = /^\/[^\s]+$/;
+var WIN_PATH_RE = /^[A-Za-z]:\\[^\s]+$/;
+
+function formatPropertyValue(v) {
+  if (v == null) return '';
+  if (typeof v === 'string') {
+    var s = v.trim();
+    var isLink = URL_RE.test(s) || WWW_RE.test(s) || FILE_URL_RE.test(s) || UNIX_PATH_RE.test(s) || WIN_PATH_RE.test(s);
+    if (isLink) {
+      var href = (WWW_RE.test(s)) ? ('https://' + s)
+                : (UNIX_PATH_RE.test(s) || WIN_PATH_RE.test(s)) ? ('file://' + s)
+                : s;
+      return '<a class="node-info-link" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(s) + '</a>';
+    }
+  }
+  return escapeHtml(v);
+}
+
 function showNodePanel(d) {
   // d is an array of values: use d[6] as tooltip if present
   const title = (d && d[6]) ? d[6] : (d && d[0] != null ? String(d[0]) : 'Point');
@@ -653,9 +693,9 @@ function showNodePanel(d) {
   if (nodeStatsGrid) {
     // Basic stats
     var html = '<div class="node-info-grid">';
-    html += '<div class="node-info-row"><span class="node-info-label">Radius</span><span class="node-info-value">' + d[3] + '</span></div>';
-    html += '<div class="node-info-row"><span class="node-info-label">Opacity</span><span class="node-info-value">' + d[4] + '</span></div>';
-    html += '<div class="node-info-row"><span class="node-info-label">Stroke</span><span class="node-info-value">' + d[5] + '</span></div>';
+    html += '<div class="node-info-row"><span class="node-info-label">Radius</span><span class="node-info-value">' + escapeHtml(d[3]) + '</span></div>';
+    html += '<div class="node-info-row"><span class="node-info-label">Opacity</span><span class="node-info-value">' + escapeHtml(d[4]) + '</span></div>';
+    html += '<div class="node-info-row"><span class="node-info-label">Stroke</span><span class="node-info-value">' + escapeHtml(d[5]) + '</span></div>';
     // Additional user properties (if present as last element d[11])
     var props = (d && d[11]) ? d[11] : null;
     if (props && typeof props === 'object') {
@@ -665,34 +705,11 @@ function showNodePanel(d) {
         var v = props[k];
         // stringify objects/arrays
         if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
-        html += '<div class="node-info-row"><span class="node-info-label">' + k + '</span><span class="node-info-value">' + (v==null ? '' : v) + '</span></div>';
+        html += '<div class="node-info-row"><span class="node-info-label">' + escapeHtml(k) + '</span><span class="node-info-value">' + formatPropertyValue(v) + '</span></div>';
       });
     }
     html += '</div>';
-    // Size-by control for numeric properties (outside the grid: full-width row)
-    if (props && typeof props === 'object') {
-      var numericKeys = Object.keys(props).filter(function(k){ return typeof props[k] === 'number'; });
-      if (numericKeys.length) {
-        html += '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--panel-border)">';
-        html += '<label style="font-size:0.9em;margin-right:6px;color:var(--text)">Size by</label>';
-        html += '<select id="sizeBySelect"><option value="">—</option>' + numericKeys.map(function(k){ return '<option value="'+k+'">'+k+'</option>'; }).join('') + '</select>';
-        html += '<button id="resetSizeBtn" class="button-switch" style="margin-left:6px">Reset</button></div>';
-      }
-    }
     nodeStatsGrid.innerHTML = html;
-
-    // Reuse the canvas-based size mapping.
-    var sizeSel = document.getElementById('sizeBySelect');
-    if (sizeSel) {
-      sizeSel.addEventListener('change', function(e){
-        if (e.target.value) applySizeMode(e.target.value);
-      });
-      var resetBtn = document.getElementById('resetSizeBtn');
-      if (resetBtn) resetBtn.addEventListener('click', function(){
-        applySizeMode('');
-        sizeSel.value = '';
-      });
-    }
   }
   if (nodePanel) nodePanel.classList.add('open');
 }
