@@ -122,7 +122,7 @@ License     : GPL3
     <div class="physics-control">
       <div class="slider-row">
         <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
-        <input type="range" id="jitterSlider" min="0" max="25" step="1" value="0">
+        <input type="range" id="jitterSlider" min="0" max="100" step="1" value="0">
       </div>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
     </div>
@@ -447,9 +447,20 @@ var sizeMultiplier = 1;
 // much bigger change in multiplier than the same drag near the middle, so
 // size differences between points become easier to see as you push toward
 // either extreme, while the center (t=0) stays pinned at a neutral 1x.
-var SIZE_MULT_BASE = 4; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
-function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
-function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
+
+// var SIZE_MULT_BASE = 8; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
+// function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
+// function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
+function sizeMultiplierFromSlider(t) {
+    var min = 0.05;
+    var max = 4;
+    var u = (t + 1) / 2;
+    return min * Math.pow(max / min, u);
+}
+
+function baseRadius(d) {
+    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
+}
 
 // —— Jitter: nudges each point a small, stable amount so fully-overlapping
 // points become distinguishable. The offset is seeded from the point's own
@@ -746,9 +757,9 @@ function showNodePanel(d) {
   if (nodeStatsGrid) {
     // Basic stats
     var html = '<div class="node-info-grid">';
-    html += '<div class="node-info-row"><span class="node-info-label">Radius</span><span class="node-info-value">' + escapeHtml(d[3]) + '</span></div>';
-    html += '<div class="node-info-row"><span class="node-info-label">Opacity</span><span class="node-info-value">' + escapeHtml(d[4]) + '</span></div>';
-    html += '<div class="node-info-row"><span class="node-info-label">Stroke</span><span class="node-info-value">' + escapeHtml(d[5]) + '</span></div>';
+    html += '<span class="node-info-label">Radius</span><span class="node-info-value">' + escapeHtml(d[3]) + '</span>';
+    html += '<span class="node-info-label">Opacity</span><span class="node-info-value">' + escapeHtml(d[4]) + '</span>';
+    html += '<span class="node-info-label">Stroke</span><span class="node-info-value">' + escapeHtml(d[5]) + '</span>';
     // Additional user properties (if present as last element d[11])
     var props = (d && d[11]) ? d[11] : null;
     if (props && typeof props === 'object') {
@@ -758,7 +769,7 @@ function showNodePanel(d) {
         var v = props[k];
         // stringify objects/arrays
         if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
-        html += '<div class="node-info-row"><span class="node-info-label">' + escapeHtml(k) + '</span><span class="node-info-value">' + formatPropertyValue(v) + '</span></div>';
+        html += '<span class="node-info-label">' + escapeHtml(k) + '</span><span class="node-info-value">' + formatPropertyValue(v) + '</span>';
       });
     }
     html += '</div>';
