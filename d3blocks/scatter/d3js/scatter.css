@@ -138,27 +138,22 @@
     transition: var(--transition);
   }
   .node-panel-close:active { background: var(--btn-bg-active); }
-  /* Stat/property rows: laid out as compact wrapping "label: value" chips
-     instead of one row stretched across the full width of the (wide)
-     bottom bar -- a single flex row with justify-content:space-between puts
-     the label at the far left and the value at the far right, ~1000px+
-     apart on a wide screen, which is unreadable. Each pair here stays
-     tightly coupled and wraps to a new line once the row runs out of
-     width, so extra screen width just fits more pairs per line instead of
-     stretching each pair apart. */
+  /* Stat/property list: a real CSS-grid table. Label/value pairs repeat as
+     column-pairs (label, value, label, value, ...) and wrap to a new grid
+     row once a row is full. Because every pair sits in the SAME set of grid
+     tracks, each label column and each value column is sized independently
+     and lines up across rows -- unlike a flex-wrap layout, where pairs of
+     differing width wrap raggedly and nothing lines up once there are many
+     properties. */
   .node-info-grid {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, max-content) minmax(70px, 1fr));
+    column-gap: 20px;
     row-gap: 6px;
-    column-gap: 28px;
-  }
-  .node-info-row {
-    display: flex;
-    gap: 6px;
+    align-items: baseline;
     font-size: 13px;
-    max-width: 100%;
   }
-  .node-info-label { color: var(--text-muted); flex-shrink: 0; }
+  .node-info-label { color: var(--text-muted); white-space: nowrap; }
   .node-info-label::after { content: ":"; }
   .node-info-value { color: var(--text); word-break: break-word; }
   .node-info-link {
@@ -169,7 +164,7 @@
   .node-info-link:hover { text-decoration: underline; }
   body.light .node-info-link { color: #2166ac; }
   .node-info-section-title {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
     font-weight: 700;
     font-size: 11px;
     text-transform: uppercase;
