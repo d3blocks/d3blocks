@@ -191,6 +191,38 @@
   }
   .assoc-td { color: var(--text); word-break: break-word; }
   .assoc-td.num { font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.enrich-var-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--panel-border);
+}
+.enrich-var-row:last-child { border-bottom: none; }
+.enrich-var-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.enrich-var-check input { accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+.enrich-var-dtype {
+  font-size: 11px;
+  flex-shrink: 0;
+  max-width: 128px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 2px 4px;
+}
 
 /* ==== d3graph-aligned panel styles (from d3graph style.css) ==== */
 .stats-panel {

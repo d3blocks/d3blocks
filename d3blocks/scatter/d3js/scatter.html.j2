@@ -22,7 +22,7 @@ License     : GPL3
 
     <style>
     /* Floating left layout panel (d3graph-style): overlays the plot, does not shift it.
-       top/margin-top below are pre-JS fallbacks only -- positionBelowTopBar()
+       top/margin-top below are pre-JS fallbacks only -- positionSidePanels()
        (see script) measures the top-panel's actual rendered height at
        runtime and overrides these, since that height varies with the logo
        image load, font rendering, and wrapping on narrow screens. */
@@ -30,6 +30,11 @@ License     : GPL3
       top: 80px;
       left: 10px;
       z-index: 60;
+    }
+    #enrichPanel.stats-panel {
+      top: 460px;
+      left: 10px;
+      z-index: 55;
     }
     /* Keep the fixed-size scatterplot centered in the viewport */
     #scatter-main {
@@ -87,7 +92,6 @@ License     : GPL3
     <span id="selectionCount" class="selection-count" style="display:none"></span>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; click a point to toggle it">Select</button>
     <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)">Export</button>
-    <button class="button-switch" id="assocButton" type="button" title="Select points first" disabled>Explore associations</button>
     <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
   </div>
@@ -455,27 +459,33 @@ scheduleRender();
   },{passive:false});
 })();
 
-// Keep the floating Layout panel and the scatterplot itself clear of the
-// fixed top bar. The bar's rendered height varies (logo image load, font
-// rendering, and it may wrap onto two lines on a narrow screen), so this
-// measures it at runtime instead of assuming a fixed pixel offset -- the
-// same approach index.html.j2 uses for its positionSidePanels().
-function positionBelowTopBar() {
+// Keep the floating side panels (Layout, Enrichments) and the scatterplot
+// itself clear of the fixed top bar, and stack the side panels below each
+// other. Heights vary (logo image load, font rendering, collapse/expand,
+// and the top bar may wrap onto two lines on a narrow screen), so this
+// measures everything at runtime instead of assuming fixed pixel offsets --
+// the same approach index.html.j2 uses for its positionSidePanels().
+function positionSidePanels() {
   var bar = document.querySelector('.top-panel');
-  var layoutPanel = document.getElementById('layoutPanel');
   var main = document.getElementById('scatter-main');
   if (!bar) return;
   var bottom = bar.getBoundingClientRect().bottom;
-  if (layoutPanel) layoutPanel.style.top = (bottom + 8) + 'px';
   if (main) main.style.marginTop = (bottom + 12) + 'px';
+  var y = bottom + 8;
+  ['layoutPanel', 'enrichPanel'].forEach(function(id){
+    var panel = document.getElementById(id);
+    if (!panel) return;
+    panel.style.top = y + 'px';
+    y += panel.getBoundingClientRect().height + 10;
+  });
 }
-window.addEventListener('resize', positionBelowTopBar);
-window.addEventListener('load', positionBelowTopBar);
-positionBelowTopBar();
+window.addEventListener('resize', positionSidePanels);
+window.addEventListener('load', positionSidePanels);
+positionSidePanels();
 
-// Collapsible layout panel (same interaction as index.html.j2 stats-panels)
-(function () {
-  var panel = document.getElementById('layoutPanel');
+// Collapsible side panels (same interaction as index.html.j2 stats-panels)
+['layoutPanel', 'enrichPanel'].forEach(function(panelId) {
+  var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
   if (!title) return;
@@ -490,8 +500,9 @@ positionBelowTopBar();
       panel.style.height = panel.dataset.expandedHeight;
     }
     panel.classList.toggle('collapsed');
+    setTimeout(positionSidePanels, 0);
   });
-})();
+});
 
 // Point state. Rendering is done on a single canvas; this avoids the large
 // DOM and attribute-update cost of one SVG node per datum.
@@ -1143,11 +1154,12 @@ function detectColumnDtype(values) {
 // ranksum) between that column and y. y is binary (1 = selected); per the
 // original algorithm's two-class handling, category '0' (not selected) is
 // the negative/background class and is not tested on its own.
-function computeSignificance(columns, yBits) {
+function computeSignificance(columns, yBits, dtypeOverrides) {
+  dtypeOverrides = dtypeOverrides || {};
   var out = [];
   Object.keys(columns).forEach(function(colname) {
     var values = columns[colname];
-    var dtype = detectColumnDtype(values);
+    var dtype = dtypeOverrides[colname] || detectColumnDtype(values);
     if (dtype === 'num') {
       var nums = values.map(function(v){ return (v===undefined||v===null||v==='') ? NaN : (typeof v==='number'?v:parseFloat(v)); });
       var res = probRanksums(nums, yBits);
@@ -1180,9 +1192,9 @@ function computeSignificance(columns, yBits) {
 
 // Port of hnet's enrichment(): orchestrates significance computation, Holm
 // correction, and alpha filtering.
-function enrichment(columns, yBits, alpha) {
+function enrichment(columns, yBits, alpha, dtypeOverrides) {
   alpha = alpha || 0.05;
-  var out = computeSignificance(columns, yBits);
+  var out = computeSignificance(columns, yBits, dtypeOverrides);
   var pvals = out.map(function(r){ return r.P; });
   var padj = holmCorrection(pvals);
   out.forEach(function(r, i){ r.Padj = padj[i]; });
@@ -1192,11 +1204,33 @@ function enrichment(columns, yBits, alpha) {
 }
 
 // Builds the df (property columns) and y (selection indicator) from the
-// current dataset + selection, then runs enrichment().
+// current dataset + selection, then runs enrichment() -- restricted to the
+// variables checked in the Enrichments panel, with any per-variable dtype
+// overrides applied.
 function runSelectionEnrichment() {
   var n = jsonData.length;
   var yBits = new Array(n).fill(0);
   selectedIndices.forEach(function(i){ yBits[i] = 1; });
+  var allColumns = buildAllPropertyColumns();
+  var columns = {}, dtypeOverrides = {};
+  Object.keys(allColumns).forEach(function(k){
+    var state = enrichVarState[k];
+    if (state && state.enabled === false) return; // excluded by the user
+    columns[k] = allColumns[k];
+    if (state && state.dtypeOverride) dtypeOverrides[k] = state.dtypeOverride;
+  });
+  return {
+    results: enrichment(columns, yBits, 0.05, dtypeOverrides),
+    nCols: Object.keys(columns).length,
+    nSelected: selectedIndices.size,
+    nTotal: n
+  };
+}
+
+// Builds {colname: [values across all points]} from every point's
+// properties object (d[11]). Shared by the variable-list UI and enrichment.
+function buildAllPropertyColumns() {
+  var n = jsonData.length;
   var columns = {};
   for (var i = 0; i < n; i++) {
     var d = jsonData[i];
@@ -1212,8 +1246,51 @@ function runSelectionEnrichment() {
       col[i] = (d && d[11] && Object.prototype.hasOwnProperty.call(d[11], k)) ? d[11][k] : undefined;
     }
   });
-  return { results: enrichment(columns, yBits, 0.05), nCols: Object.keys(columns).length, nSelected: selectedIndices.size, nTotal: n };
+  return columns;
 }
+
+// Per-variable UI state: whether it's included in the test, and an optional
+// dtype override ('' = auto-detect, 'num', or 'cat').
+var enrichVarState = {};
+
+function populateEnrichVarList() {
+  var container = document.getElementById('enrichVarList');
+  if (!container) return;
+  var columns = buildAllPropertyColumns();
+  var keys = Object.keys(columns).sort();
+  if (keys.length === 0) {
+    container.innerHTML = '<div class="node-info-placeholder">No properties found in this dataset.</div>';
+    return;
+  }
+  keys.forEach(function(k){
+    if (!enrichVarState[k]) enrichVarState[k] = { enabled: true, dtypeOverride: '' };
+  });
+  var html = '';
+  keys.forEach(function(k){
+    var autoType = detectColumnDtype(columns[k]);
+    html += '<div class="enrich-var-row">' +
+      '<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtml(k) + '" checked> ' + escapeHtml(k) + '</label>' +
+      '<select class="enrich-var-dtype" data-key="' + escapeHtml(k) + '">' +
+        '<option value="">Auto (' + (autoType === 'num' ? 'numeric' : 'categorical') + ')</option>' +
+        '<option value="num">Numeric</option>' +
+        '<option value="cat">Categorical</option>' +
+      '</select>' +
+    '</div>';
+  });
+  container.innerHTML = html;
+  container.querySelectorAll('.enrich-var-checkbox').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      enrichVarState[cb.dataset.key].enabled = cb.checked;
+    });
+  });
+  container.querySelectorAll('.enrich-var-dtype').forEach(function(sel){
+    sel.addEventListener('change', function(){
+      enrichVarState[sel.dataset.key].dtypeOverride = sel.value;
+    });
+  });
+  setTimeout(positionSidePanels, 0);
+}
+populateEnrichVarList();
 
 function formatPValue(p) {
   if (p === 0) return '<1e-300';
