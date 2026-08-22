@@ -109,7 +109,7 @@ License     : GPL3
   <div class="top-panel-right">
     <span id="selectionCount" class="selection-count" style="display:none"></span>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; Shift+drag to add to selection; click a point to toggle it">Select</button>
-    <button class="button-switch" id="densityToggleBtn" type="button" title="Show or hide point-density heatmap">Show Density</button>
+    <button class="button-switch active" id="densityToggleBtn" type="button" title="Show or hide point-density heatmap">Hide Density</button>
     <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
   </div>
 </div>
@@ -163,7 +163,7 @@ License     : GPL3
 </div>
 
 <!-- Side panel: density heatmap tuning (shown when density is enabled) -->
-<div class="stats-panel collapsed" id="densityPanel" style="display:none">
+<div class="stats-panel collapsed" id="densityPanel">
   <div class="stats-panel-title">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="physics-control">
@@ -295,21 +295,28 @@ var Tooltip = d3.select("body")
 // Image / audio URLs & file paths in tooltip text are rendered as media.
 // Author-supplied HTML (<br>, spans, etc.) is preserved — only plain media
 // URL/path tokens outside tags are rewritten.
+// Supports: http(s)/ftp/file URLs, Windows paths (C:\...), Unix absolute
+// paths (/...), and relative paths (./img.png, data/a.wav) by extension.
 var IMAGE_EXT_RE = /\.(png|jpe?g|gif|webp|svg|bmp|ico)(\?[^.\s]*)?$/i;
 var AUDIO_EXT_RE = /\.(mp3|wav|ogg|m4a|aac|flac|oga|opus)(\?[^.\s]*)?$/i;
-var MEDIA_URL_TOKEN_RE = /(?:https?:\/\/|ftp:\/\/|file:\/\/|www\.)[^\s<>"']+|\/[^\s<>"']+|[A-Za-z]:\\[^\s<>"']+/gi;
+// URL schemes OR any non-space token ending with a media extension (covers
+// relative and absolute disk paths).
+var MEDIA_URL_TOKEN_RE = /(?:https?:\/\/|ftp:\/\/|file:\/\/)[^\s<>"']+|www\.[^\s<>"']+|[^\s<>"']+\.(?:png|jpe?g|gif|webp|svg|bmp|ico|mp3|wav|ogg|m4a|aac|flac|oga|opus)(?:\?[^\s<>"']*)?/gi;
 
 function isImageRef(s) {
   if (!s || typeof s !== 'string') return false;
   var t = s.trim();
   if (/^data:image\//i.test(t)) return true;
-  return IMAGE_EXT_RE.test(t.split(/[?#]/)[0]);
+  // Strip file:// for extension check
+  var path = t.replace(/^file:\/\//i, '');
+  return IMAGE_EXT_RE.test(path.split(/[?#]/)[0]);
 }
 function isAudioRef(s) {
   if (!s || typeof s !== 'string') return false;
   var t = s.trim();
   if (/^data:audio\//i.test(t)) return true;
-  return AUDIO_EXT_RE.test(t.split(/[?#]/)[0]);
+  var path = t.replace(/^file:\/\//i, '');
+  return AUDIO_EXT_RE.test(path.split(/[?#]/)[0]);
 }
 function escapeHtmlTooltip(v) {
   if (v == null) return '';
@@ -320,10 +327,32 @@ function escapeHtmlTooltip(v) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+// Build a browser-usable src/href from a path or URL.
+// Windows disk paths become file:///C:/... ; Unix absolute become file:///...
+// Relative paths are left as-is so the browser resolves them against the page URL.
 function hrefForRef(s) {
   var t = String(s).trim();
+  if (!t) return t;
   if (/^www\./i.test(t)) return 'https://' + t;
-  if (/^\/[^\s]+$/.test(t) || /^[A-Za-z]:\\[^\s]+$/.test(t)) return 'file://' + t;
+  if (/^(https?:|ftp:|data:)/i.test(t)) return t;
+  if (/^file:\/\//i.test(t)) {
+    // Normalize file://C:\foo -> file:///C:/foo
+    var rest = t.replace(/^file:\/\//i, '');
+    if (/^[A-Za-z]:[\\/]/.test(rest)) {
+      return 'file:///' + rest.replace(/\\/g, '/');
+    }
+    if (rest.charAt(0) === '/') return 'file://' + rest;
+    return 'file:///' + rest.replace(/\\/g, '/');
+  }
+  // Windows absolute path
+  if (/^[A-Za-z]:[\\/]/.test(t)) {
+    return 'file:///' + t.replace(/\\/g, '/');
+  }
+  // Unix absolute path
+  if (t.charAt(0) === '/') {
+    return 'file://' + t;
+  }
+  // Relative path (resolved against the HTML document location)
   return t;
 }
 function audioPlayerHtml(src) {
@@ -377,8 +406,8 @@ var hoveredPointIndex = -1;
 var pinnedTooltipIndex = -1; // >=0 means tooltip stays put until empty click
 var tooltipAudioCtx = null;
 
-function stopTooltipAudio() {
-  var node = Tooltip.node();
+function stopTooltipAudio(root) {
+  var node = root || (Tooltip && Tooltip.node && Tooltip.node());
   if (!node) return;
   node.querySelectorAll('audio').forEach(function(a) {
     try { a.pause(); a.currentTime = 0; } catch (e) {}
@@ -386,6 +415,7 @@ function stopTooltipAudio() {
   node.querySelectorAll('.tooltip-audio-btn').forEach(function(b) {
     b.textContent = '▶';
     b.setAttribute('aria-label', 'Play');
+    b.removeAttribute('title');
   });
 }
 
@@ -447,16 +477,22 @@ function extractPeaksFromBuffer(audioBuffer, buckets) {
 function wireTooltipAudio(root) {
   if (!root) return;
   root.querySelectorAll('.tooltip-audio').forEach(function(wrap) {
+    // Avoid double-binding if content was not rebuilt
+    if (wrap.getAttribute('data-wired') === '1') return;
+    wrap.setAttribute('data-wired', '1');
+
     var btn = wrap.querySelector('.tooltip-audio-btn');
     var canvas = wrap.querySelector('.tooltip-audio-wave');
     var audio = wrap.querySelector('audio');
     if (!btn || !audio) return;
     var peaks = null;
-    var src = wrap.getAttribute('data-src') || audio.getAttribute('src');
+    var src = wrap.getAttribute('data-src') || audio.getAttribute('src') || '';
+    // Ensure src is set (some browsers need it on the element explicitly)
+    if (src && !audio.getAttribute('src')) audio.setAttribute('src', src);
     drawAudioWaveform(canvas, null, 0);
 
-    // Best-effort waveform decode (may fail for file:// or CORS)
-    if (src && (window.AudioContext || window.webkitAudioContext)) {
+    // Best-effort waveform via Web Audio (often blocked for file:// — ignore failures)
+    if (src && !/^file:/i.test(src) && (window.AudioContext || window.webkitAudioContext)) {
       try {
         if (!tooltipAudioCtx) tooltipAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         fetch(src).then(function(r){ return r.arrayBuffer(); }).then(function(buf){
@@ -468,63 +504,133 @@ function wireTooltipAudio(root) {
       } catch (e) {}
     }
 
-    btn.addEventListener('click', function(ev) {
+    function setPlayUi(playing) {
+      btn.textContent = playing ? '❚❚' : '▶';
+      btn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    }
+    function showAudioError(msg) {
+      setPlayUi(false);
+      btn.title = msg || 'Could not play this audio file';
+      btn.style.opacity = '0.7';
+    }
+
+    // Stop click from bubbling to the canvas (which would dismiss a pinned tooltip)
+    function stopEv(ev) {
       ev.preventDefault();
       ev.stopPropagation();
-      if (audio.paused) {
-        // pause any other tooltip audio
-        root.querySelectorAll('audio').forEach(function(a) {
-          if (a !== audio) { try { a.pause(); } catch (e) {} }
-        });
-        root.querySelectorAll('.tooltip-audio-btn').forEach(function(b) {
-          if (b !== btn) { b.textContent = '▶'; b.setAttribute('aria-label', 'Play'); }
-        });
-        audio.play().catch(function(){});
-        btn.textContent = '❚❚';
-        btn.setAttribute('aria-label', 'Pause');
-      } else {
+      if (ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+    }
+    btn.addEventListener('mousedown', stopEv);
+    btn.addEventListener('mouseup', stopEv);
+    canvas.addEventListener('mousedown', stopEv);
+    wrap.addEventListener('mousedown', stopEv);
+
+    btn.addEventListener('click', function(ev) {
+      stopEv(ev);
+      if (!audio.paused) {
         audio.pause();
-        btn.textContent = '▶';
-        btn.setAttribute('aria-label', 'Play');
+        setPlayUi(false);
+        return;
+      }
+      // Pause other players in the same root
+      root.querySelectorAll('audio').forEach(function(a) {
+        if (a !== audio) { try { a.pause(); } catch (e) {} }
+      });
+      root.querySelectorAll('.tooltip-audio-btn').forEach(function(b) {
+        if (b !== btn) { b.textContent = '▶'; b.setAttribute('aria-label', 'Play'); }
+      });
+
+      // Resume AudioContext if suspended (autoplay policies)
+      if (tooltipAudioCtx && tooltipAudioCtx.state === 'suspended') {
+        try { tooltipAudioCtx.resume(); } catch (e) {}
+      }
+
+      var p = audio.play();
+      if (p && typeof p.then === 'function') {
+        p.then(function() {
+          setPlayUi(true);
+          btn.title = '';
+          btn.style.opacity = '';
+        }).catch(function(err) {
+          // Retry once after load() — helps with late-resolved file:// / relative paths
+          try { audio.load(); } catch (e) {}
+          audio.play().then(function() {
+            setPlayUi(true);
+          }).catch(function(err2) {
+            var hint = 'Playback failed';
+            if (src && /^file:/i.test(src)) {
+              hint = 'Local file blocked by the browser. Use a path relative to the HTML file, or open the page as file://';
+            } else if (err2 && err2.name === 'NotAllowedError') {
+              hint = 'Playback blocked by the browser — click play again';
+            }
+            showAudioError(hint);
+          });
+        });
+      } else {
+        setPlayUi(true);
       }
     });
+
     audio.addEventListener('timeupdate', function() {
       var p = audio.duration ? audio.currentTime / audio.duration : 0;
       drawAudioWaveform(canvas, peaks, p);
     });
     audio.addEventListener('ended', function() {
-      btn.textContent = '▶';
-      btn.setAttribute('aria-label', 'Play');
+      setPlayUi(false);
       drawAudioWaveform(canvas, peaks, 0);
+    });
+    audio.addEventListener('error', function() {
+      showAudioError('Could not load audio' + (src ? (': ' + src) : ''));
     });
   });
 }
+
+// Track last tooltip content so hover/mousemove only repositions — does not
+// rebuild DOM (which would destroy <audio> and kill playback).
+var lastTooltipKey = null;
 
 function showPointTooltip(d, event, opts) {
   if (!d) return;
   opts = opts || {};
   var raw = d[6] != null ? d[6] : '';
+  var key = String(raw);
   var html = formatTooltipHtml(raw);
   var hasMedia = html.indexOf('tooltip-img') >= 0 || html.indexOf('tooltip-audio') >= 0;
   var hasRich = hasMedia || /<(br|div|p|img|ul|ol|li|table|span|b|i|strong|em)\b/i.test(html);
-  stopTooltipAudio();
-  Tooltip
-    .style('opacity', 1)
-    .style('white-space', hasRich ? 'normal' : 'nowrap')
-    .style('pointer-events', hasMedia ? 'auto' : 'none')
-    .html(html)
-    .style('left', (event.clientX + 14) + 'px')
-    .style('top', (event.clientY + 12) + 'px');
-  if (hasMedia) wireTooltipAudio(Tooltip.node());
+  var visible = parseFloat(Tooltip.style('opacity')) > 0;
+  var needsRebuild = opts.force || !visible || lastTooltipKey !== key;
+
+  if (needsRebuild) {
+    // Only stop audio when content actually changes
+    if (lastTooltipKey !== key) stopTooltipAudio(Tooltip.node());
+    lastTooltipKey = key;
+    Tooltip
+      .style('opacity', 1)
+      .style('white-space', hasRich ? 'normal' : 'nowrap')
+      .style('pointer-events', hasMedia ? 'auto' : 'none')
+      .html(html);
+    if (hasMedia) wireTooltipAudio(Tooltip.node());
+  } else {
+    Tooltip.style('opacity', 1).style('pointer-events', hasMedia ? 'auto' : 'none');
+  }
+
+  // Keep position fixed while pinned; otherwise follow the cursor
+  if (pinnedTooltipIndex < 0 || opts.forcePosition) {
+    Tooltip
+      .style('left', (event.clientX + 14) + 'px')
+      .style('top', (event.clientY + 12) + 'px');
+  }
 }
 function hidePointTooltip() {
-  stopTooltipAudio();
+  stopTooltipAudio(Tooltip.node());
   pinnedTooltipIndex = -1;
+  lastTooltipKey = null;
   Tooltip.style('opacity', 0).style('pointer-events', 'none');
 }
 function pinPointTooltip(idx, d, event) {
   pinnedTooltipIndex = idx;
-  showPointTooltip(d, event, { pinned: true });
+  // Pin in place; rebuild once so media is wired, then freeze position
+  showPointTooltip(d, event, { force: true, forcePosition: true, pinned: true });
 }
 // ************************************************
 
@@ -567,7 +673,7 @@ function sizeScatterCanvases() {
 sizeScatterCanvases();
 
 // ---- Point-density heatmap (ported from d3graph.js density layer) ----
-var densityVisible = false;
+var densityVisible = true;
 var densityGridSize = 40;
 var densityBlur = 8;
 var densityOpacity = 0.6;
@@ -586,13 +692,17 @@ function densityColor(t) {
   return 'hsl(' + hue + ', 100%, 50%)';
 }
 function computeDensityGrid() {
-  // Bin currently visible points in pixel space (same positions as drawn points).
-  var c = currentCoordIndices(), xi = c[0], yi = c[1];
+  // Bin points at their *live* on-screen positions (currentXVal/currentYVal).
+  // Those stay in sync during coordinate-mode transitions, so the heatmap
+  // morphs with the points instead of jumping to the target coords early.
+  var xd = x.domain(), yd = y.domain();
   var pts = [];
-  for (var n = 0; n < visiblePointIndices.length; n++) {
-    var i = visiblePointIndices[n], d = jsonData[i];
-    if (!d) continue;
-    var px = x(d[xi]), py = y(d[yi]);
+  for (var i = 0; i < jsonData.length; i++) {
+    if (!jsonData[i]) continue;
+    var xv = currentXVal[i], yv = currentYVal[i];
+    if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
+    if (xv < xd[0] || xv > xd[1] || yv < yd[0] || yv > yd[1]) continue;
+    var px = x(xv), py = y(yv);
     var jp = jitteredPoint(i, px, py);
     pts.push(jp.px, jp.py);
   }
@@ -708,12 +818,14 @@ function addHit(i, px, py) {
 function rebuildHitGrid() {
   hitGrid.clear();
   visiblePointIndices.length = 0;
-  var c = currentCoordIndices(), xi = c[0], yi = c[1];
+  // Use live positions (currentXVal/Y) so hit-testing matches drawn points
+  // during and after coordinate-mode transitions.
   var xd = x.domain(), yd = y.domain();
   for (var i=0; i<jsonData.length; i++) {
     var d=jsonData[i];
-    if (!d || !Number.isFinite(+d[xi]) || !Number.isFinite(+d[yi])) continue;
-    var xv=+d[xi], yv=+d[yi];
+    if (!d) continue;
+    var xv=currentXVal[i], yv=currentYVal[i];
+    if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
     if (xv<xd[0] || xv>xd[1] || yv<yd[0] || yv>yd[1]) continue;
     var px=x(xv), py=y(yv); var jp=jitteredPoint(i,px,py);
     visiblePointIndices.push(i);
@@ -722,11 +834,12 @@ function rebuildHitGrid() {
 }
 function hitTest(event) {
   var p=canvasPointFromEvent(event), gx=Math.floor(p.px/hitCellSize), gy=Math.floor(p.py/hitCellSize);
-  var c=currentCoordIndices(), best=-1, bestDist=Infinity;
+  var best=-1, bestDist=Infinity;
   for(var yy=gy-1;yy<=gy+1;yy++) for(var xx=gx-1;xx<=gx+1;xx++) {
     var bucket=hitGrid.get(xx+','+yy); if(!bucket) continue;
     for(var j=0;j<bucket.length;j++) {
-      var i=bucket[j], d=jsonData[i], px=x(d[c[0]]), py=y(d[c[1]]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
+      var i=bucket[j], d=jsonData[i];
+      var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
       var r=Math.max(3, baseRadius(d)), dx=px-p.px, dy=py-p.py, dist=dx*dx+dy*dy;
       if(dist<=r*r && dist<bestDist){bestDist=dist;best=i;}
     }
@@ -743,9 +856,11 @@ function drawSymbol(ctx,shape,r) {
 function renderPoints() {
   var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1); rebuildHitGrid();
   drawDensityLayer();
-  var c=currentCoordIndices(), xi=c[0], yi=c[1];
+  // Draw from live positions so density + points stay aligned (including
+  // mid-transition if a normal render is requested while animating).
   for(var n=0;n<visiblePointIndices.length;n++){
-    var i=visiblePointIndices[n], d=jsonData[i], px=x(d[xi]), py=y(d[yi]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
+    var i=visiblePointIndices[n], d=jsonData[i];
+    var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
     var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
     if(categoricalShapeMap && d[11] && categoricalShapeMap[d[11][categoricalShapeKey]]) shape=categoricalShapeMap[d[11][categoricalShapeKey]];
@@ -977,20 +1092,9 @@ var sizeMultiplier = 1;
 // much bigger change in multiplier than the same drag near the middle, so
 // size differences between points become easier to see as you push toward
 // either extreme, while the center (t=0) stays pinned at a neutral 1x.
-
-// var SIZE_MULT_BASE = 8; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
-// function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
-// function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
-function sizeMultiplierFromSlider(t) {
-    var min = 0.05;
-    var max = 4;
-    var u = (t + 1) / 2;
-    return min * Math.pow(max / min, u);
-}
-
-function baseRadius(d) {
-    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
-}
+var SIZE_MULT_BASE = 4; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
+function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
+function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
 
 // —— Jitter: nudges each point a small, stable amount so fully-overlapping
 // points become distinguishable. The offset is seeded from the point's own
@@ -1247,23 +1351,19 @@ function escapeHtml(v) {
     .replace(/'/g, '&#39;');
 }
 
-// URLs (http/https/ftp/www.) and absolute file paths (unix or Windows) are
-// rendered as clickable links; everything else is shown as plain text.
-var URL_RE = /^(https?:\/\/|ftp:\/\/)\S+$/i;
-var WWW_RE = /^www\.\S+\.\S+$/i;
-var FILE_URL_RE = /^file:\/\/\S+$/i;
-var UNIX_PATH_RE = /^\/[^\s]+$/;
-var WIN_PATH_RE = /^[A-Za-z]:\\[^\s]+$/;
-
+// Property values: media refs become image/audio widgets; other URLs/paths
+// become links; everything else is escaped text. Reuses tooltip media parsers.
 function formatPropertyValue(v) {
   if (v == null) return '';
   if (typeof v === 'string') {
     var s = v.trim();
-    var isLink = URL_RE.test(s) || WWW_RE.test(s) || FILE_URL_RE.test(s) || UNIX_PATH_RE.test(s) || WIN_PATH_RE.test(s);
-    if (isLink) {
-      var href = (WWW_RE.test(s)) ? ('https://' + s)
-                : (UNIX_PATH_RE.test(s) || WIN_PATH_RE.test(s)) ? ('file://' + s)
-                : s;
+    if (isImageRef(s) || isAudioRef(s) || /<(br|img|div|span|a)\b/i.test(s)) {
+      return formatTooltipHtml(s);
+    }
+    // Plain URL / path → clickable link
+    if (/^(https?:\/\/|ftp:\/\/|file:\/\/)/i.test(s) || /^www\./i.test(s) ||
+        /^\/[^\s]+$/.test(s) || /^[A-Za-z]:[\\/][^\s]*$/.test(s)) {
+      var href = hrefForRef(s);
       return '<a class="node-info-link" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(s) + '</a>';
     }
   }
@@ -1271,37 +1371,62 @@ function formatPropertyValue(v) {
 }
 
 function showNodePanel(d) {
-  // d is an array of values: use d[6] as tooltip if present
-  const title = (d && d[6]) ? d[6] : (d && d[0] != null ? String(d[0]) : 'Point');
-  nodePanelTitle.textContent = title;
+  // Stop any audio still playing in the bottom panel from a previous point.
+  if (nodeStatsGrid) {
+    nodeStatsGrid.querySelectorAll('audio').forEach(function(a) {
+      try { a.pause(); a.currentTime = 0; } catch (e) {}
+    });
+  }
+
+  var rawTip = (d && d[6] != null) ? String(d[6]) : '';
+  // Plain-text title (strip tags / collapse whitespace) for the header line.
+  var titlePlain = rawTip.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!titlePlain) titlePlain = (d && d[0] != null ? String(d[0]) : 'Point');
+  if (titlePlain.length > 100) titlePlain = titlePlain.slice(0, 97) + '\u2026';
+  nodePanelTitle.textContent = titlePlain;
   const sub = (d && d[0] != null && d[1] != null) ? `x: ${d[0]}, y: ${d[1]}` : '';
   nodePanelSub.textContent = sub;
-  // Render some basic stats
+
   if (nodeStatsGrid) {
-    // Basic stats
     var html = '<div class="node-info-grid">';
+    // Tooltip block — same media parsing as the floating tooltip (images, audio, HTML).
+    if (rawTip) {
+      html += '<div class="node-info-section-title">Tooltip</div>';
+      html += '<div class="node-info-media">' + formatTooltipHtml(rawTip) + '</div>';
+    }
     html += '<span class="node-info-label">Radius</span><span class="node-info-value">' + escapeHtml(d[3]) + '</span>';
     html += '<span class="node-info-label">Opacity</span><span class="node-info-value">' + escapeHtml(d[4]) + '</span>';
     html += '<span class="node-info-label">Stroke</span><span class="node-info-value">' + escapeHtml(d[5]) + '</span>';
-    // Additional user properties (if present as last element d[11])
     var props = (d && d[11]) ? d[11] : null;
     if (props && typeof props === 'object') {
       html += '<div class="node-info-section-title">Properties</div>';
-      // Property list
       Object.keys(props).forEach(function(k){
         var v = props[k];
-        // stringify objects/arrays
         if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
-        html += '<span class="node-info-label">' + escapeHtml(k) + '</span><span class="node-info-value">' + formatPropertyValue(v) + '</span>';
+        var rendered = formatPropertyValue(v);
+        var isMedia = typeof v === 'string' && (isImageRef(v.trim()) || isAudioRef(v.trim()) || /<(br|img)\b/i.test(v));
+        if (isMedia) {
+          html += '<div class="node-info-media-row"><span class="node-info-label">' + escapeHtml(k) + '</span>' +
+            '<div class="node-info-media">' + rendered + '</div></div>';
+        } else {
+          html += '<span class="node-info-label">' + escapeHtml(k) + '</span><span class="node-info-value">' + rendered + '</span>';
+        }
       });
     }
     html += '</div>';
     nodeStatsGrid.innerHTML = html;
+    // Wire play/pause + waveform for any audio widgets in the panel.
+    wireTooltipAudio(nodeStatsGrid);
   }
   if (nodePanel) nodePanel.classList.add('open');
 }
 
 function closeNodePanel() {
+  if (nodeStatsGrid) {
+    nodeStatsGrid.querySelectorAll('audio').forEach(function(a) {
+      try { a.pause(); a.currentTime = 0; } catch (e) {}
+    });
+  }
   if (nodePanel) nodePanel.classList.remove('open');
 }
 
@@ -1526,6 +1651,15 @@ window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 
       if (opacityVal) opacityVal.textContent = String(DEFAULT_DENSITY_OPACITY);
       refreshDensity();
     });
+  }
+
+  // Density is on by default (see `densityVisible` init + static markup
+  // above), but unlike the manual toggle-on path, the panel should stay
+  // collapsed on load rather than auto-expanding. Just sync rendering /
+  // layout for the already-correct initial DOM state.
+  if (densityVisible) {
+    if (typeof positionSidePanels === 'function') positionSidePanels();
+    refreshDensity();
   }
 })();
 
@@ -1780,14 +1914,20 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     currentXVal[i]=xv; currentYVal[i]=yv; // keep the live-position cache in sync every frame
     if(!Number.isFinite(xv)||!Number.isFinite(yv)||xv<xd[0]||xv>xd[1]||yv<yd[0]||yv>yd[1])continue;
     var px=x(xv),py=y(yv); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py; var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
+    visiblePointIndices.push(i);
+    addHit(i,px,py);
     var shape=currentShapeMode;
     if(categoricalShapeMap&&d[11]&&categoricalShapeMap[d[11][categoricalShapeKey]])shape=categoricalShapeMap[d[11][categoricalShapeKey]];
     ctx.save();ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1;ctx.translate(px,py);ctx.beginPath();drawSymbol(ctx,shape,r);
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent';ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
     if(i===hoveredPointIndex||i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
+    if(selectedIndices.has(i)){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
     ctx.restore();
   }
+  // Density follows the interpolated positions (currentXVal/currentYVal) so
+  // the heatmap reshapes continuously as points move between coordinate modes.
+  drawDensityLayer();
 }
 
 function zoom(duration) {

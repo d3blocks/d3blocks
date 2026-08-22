@@ -19,15 +19,18 @@ size=(df['survival_months'].fillna(1)/10)
 color=df['labx']
 
 tooltip = df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values
-tooltip[0] = 'This is a great image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
-tooltip[1] = 'https://www.topdesk.com/en/wp-content/media/sites/30/SD-Meme-Wi-fi-2.jpg'
-tooltip[2] = 'This is a great audio file: <br><br> https://samplelib.com/mp3/sample-3s.mp3'
-tooltip[3] = 'https://samplelib.com/mp3/sample-speech-1m.mp3'
+tooltip[0] = r'URL image and Image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
+tooltip[1] = r'Local image: <br><br> D:\data\star-history-202596.png'
+tooltip[2] = r'URL audio file: <br><br> https://samplelib.com/mp3/sample-3s.mp3'
+tooltip[3] = r'local audio file: <br><br>D:\data\50_speakers_audio\Speaker_0000\Speaker_0000_00030.wav'
 size[0]=30
 size[1]=30
 size[2]=30
 size[3]=30
-
+color[0] = 'special'
+color[1] = 'special'
+color[2] = 'special'
+color[3] = 'special'
 
 # Set properties
 d3.set_edge_properties(df['tsneX'].values,

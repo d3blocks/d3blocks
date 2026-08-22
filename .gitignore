@@ -12,6 +12,7 @@ demo/
 libraries/
 ppt/
 .pypirc
+depricated
 
 # Distribution / packaging
 .Python

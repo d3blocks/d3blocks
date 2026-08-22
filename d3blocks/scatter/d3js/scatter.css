@@ -254,6 +254,24 @@
     border-top: 1px solid var(--panel-border);
     padding-top: 8px;
   }
+  /* Media (images / audio players) parsed from tooltip or property values */
+  .node-info-media,
+  .node-info-media-row {
+    grid-column: 1 / -1;
+  }
+  .node-info-media-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 4px 0;
+  }
+  .node-info-media .tooltip-img {
+    width: 120px;
+    height: 120px;
+  }
+  .node-info-media .tooltip-audio {
+    margin: 4px 0;
+  }
   /* Association results table (Explore associations) */
   .assoc-table {
     display: grid;
