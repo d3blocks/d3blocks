@@ -108,23 +108,55 @@
   form label { color: var(--text); }
 
   /* —— Bottom slide-up node info panel (d3graph-style flat panel: no
-     blur/glassmorphism, matches .stats-panel's border/shadow/radius) —— */
+     blur/glassmorphism, matches .stats-panel's border/shadow/radius).
+     Height is controlled by a custom top-center drag handle (not CSS
+     resize), so the grab point sits at the middle of the top edge. —— */
   #nodePanel {
     position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 1100;
     min-height: 120px; max-height: 85vh; overflow: auto;
-    resize: vertical;
+    height: 220px;
     background: var(--panel-bg);
     color: var(--text);
     border: 1px solid var(--panel-border);
     border-top: 1px solid var(--panel-border);
     border-radius: 8px 8px 0 0;
-    box-sizing: border-box; padding: 14px 18px 18px;
+    box-sizing: border-box; padding: 18px 18px 18px;
     transform: translateY(100%); opacity: 0; pointer-events: none;
     transition: transform 0.28s ease, opacity 0.28s ease, border-color 0.25s, background 0.25s;
     box-shadow: var(--panel-shadow);
     font-family: "Helvetica", Arial, sans-serif;
   }
   #nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  /* Top-center drag handle: pull up/down to resize the bottom panel */
+  #nodePanelResizeHandle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 14px;
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    touch-action: none;
+    user-select: none;
+  }
+  #nodePanelResizeHandle::before {
+    content: '';
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--text-muted);
+    opacity: 0.55;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  #nodePanelResizeHandle:hover::before,
+  #nodePanelResizeHandle.dragging::before {
+    opacity: 0.95;
+    background: var(--accent);
+  }
   .node-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
   .node-panel-title { color: var(--text); font-size: 16px; font-weight: 700; word-break: break-word; }
   .node-panel-sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; }

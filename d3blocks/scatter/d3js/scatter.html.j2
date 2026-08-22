@@ -36,6 +36,11 @@ License     : GPL3
       left: 10px;
       z-index: 55;
     }
+    #exportPanel.stats-panel {
+      top: 700px;
+      left: 10px;
+      z-index: 50;
+    }
     /* Keep the fixed-size scatterplot centered in the viewport */
     #scatter-main {
       display: flex;
@@ -91,9 +96,7 @@ License     : GPL3
   <div class="top-panel-right">
     <span id="selectionCount" class="selection-count" style="display:none"></span>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; click a point to toggle it">Select</button>
-    <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)">Export</button>
     <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
-    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
   </div>
 </div>
 
@@ -130,7 +133,7 @@ License     : GPL3
     <div class="physics-control">
       <div class="slider-row">
         <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
-        <input type="range" id="jitterSlider" min="0" max="200" step="1" value="0">
+        <input type="range" id="jitterSlider" min="0" max="25" step="1" value="0">
       </div>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
     </div>
@@ -154,6 +157,16 @@ License     : GPL3
     <button class="button-switch" id="assocButton" type="button" title="Select points first" disabled style="width:100%;margin:4px 0 10px 0">Compute Associations</button>
     <div style="font-size:11px;opacity:0.6;margin-bottom:8px">Variables to test for significance:</div>
     <div id="enrichVarList"><div class="node-info-placeholder">No properties found in this dataset.</div></div>
+  </div>
+</div>
+
+<!-- Side panel: Export / Save -->
+<div class="stats-panel" id="exportPanel">
+  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)" style="width:100%;margin:4px 0 8px 0">Export</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads selected points (or all if none selected) as JSON.</div>
   </div>
 </div>
 
@@ -181,8 +194,9 @@ License     : GPL3
 <div id="my_dataviz"></div>
 </div><!-- /#scatter-main -->
 
-<!-- Bottom slide-up point info panel -->
+<!-- Bottom slide-up point info panel (resize handle at middle top) -->
 <div id="nodePanel" role="dialog" aria-label="Point details">
+  <div id="nodePanelResizeHandle" title="Drag to resize" aria-label="Resize panel"></div>
   <div class="node-panel-header">
     <div>
       <div class="node-panel-title" id="nodePanelTitle">—</div>
@@ -492,7 +506,7 @@ function positionSidePanels() {
   var bottom = bar.getBoundingClientRect().bottom;
   if (main) main.style.marginTop = (bottom + 12) + 'px';
   var y = bottom + 8;
-  ['layoutPanel', 'enrichPanel'].forEach(function(id){
+  ['layoutPanel', 'enrichPanel', 'exportPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel) return;
     panel.style.top = y + 'px';
@@ -504,7 +518,7 @@ window.addEventListener('load', positionSidePanels);
 positionSidePanels();
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['layoutPanel', 'enrichPanel'].forEach(function(panelId) {
+['layoutPanel', 'enrichPanel', 'exportPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
@@ -541,20 +555,9 @@ var sizeMultiplier = 1;
 // much bigger change in multiplier than the same drag near the middle, so
 // size differences between points become easier to see as you push toward
 // either extreme, while the center (t=0) stays pinned at a neutral 1x.
-
-// var SIZE_MULT_BASE = 8; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
-// function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
-// function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
-function sizeMultiplierFromSlider(t) {
-    var min = 0.05;
-    var max = 4;
-    var u = (t + 1) / 2;
-    return min * Math.pow(max / min, u);
-}
-
-function baseRadius(d) {
-    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
-}
+var SIZE_MULT_BASE = 4; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
+function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
+function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
 
 // —— Jitter: nudges each point a small, stable amount so fully-overlapping
 // points become distinguishable. The offset is seeded from the point's own
@@ -870,6 +873,44 @@ function closeNodePanel() {
 }
 
 if (nodePanelClose) nodePanelClose.addEventListener('click', closeNodePanel);
+
+// Bottom panel resize: drag the top-center handle to change height.
+// Panel is bottom-anchored, so decreasing clientY increases height.
+(function setupNodePanelResize() {
+  var handle = document.getElementById('nodePanelResizeHandle');
+  if (!handle || !nodePanel) return;
+  var minH = 120;
+  var maxHRatio = 0.85;
+  var startY = 0;
+  var startH = 0;
+  function onMove(e) {
+    var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    var dy = startY - clientY; // drag up → taller
+    var maxH = Math.floor(window.innerHeight * maxHRatio);
+    var next = Math.max(minH, Math.min(maxH, startH + dy));
+    nodePanel.style.height = next + 'px';
+  }
+  function onUp() {
+    handle.classList.remove('dragging');
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  }
+  function onDown(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    startY = e.touches ? e.touches[0].clientY : e.clientY;
+    startH = nodePanel.getBoundingClientRect().height;
+    handle.classList.add('dragging');
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+  }
+  handle.addEventListener('mousedown', onDown);
+  handle.addEventListener('touchstart', onDown, { passive: false });
+})();
 
 // —— Search & jump (basic, adapted from radialgraph) ——
 const searchInput = document.getElementById('searchInput');
