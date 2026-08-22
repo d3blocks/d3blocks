@@ -14,15 +14,30 @@ df = d3.import_example('cancer')
 # Set properties
 d3.set_node_properties(df)
 
+
+size=(df['survival_months'].fillna(1)/10)
+color=df['labx']
+
+tooltip = df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+tooltip[0] = 'This is a great image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
+tooltip[1] = 'https://www.topdesk.com/en/wp-content/media/sites/30/SD-Meme-Wi-fi-2.jpg'
+tooltip[2] = 'This is a great audio file: <br><br> https://samplelib.com/mp3/sample-3s.mp3'
+tooltip[3] = 'https://samplelib.com/mp3/sample-speech-1m.mp3'
+size[0]=30
+size[1]=30
+size[2]=30
+size[3]=30
+
+
 # Set properties
 d3.set_edge_properties(df['tsneX'].values,
                        df['tsneY'].values,
                        x1=df['PC1'].values,
                        y1=df['PC2'].values,
-                       size=df['survival_months'].fillna(1).values / 10,
-                       color=df['labx'].values,
+                       size=size,
+                       color=color,
                        opacity=0.5,
-                       tooltip=df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                       tooltip=tooltip,
                        scale=True,
                        )
 
