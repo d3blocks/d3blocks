@@ -58,13 +58,26 @@ License     : GPL3
       z-index: 0;
       pointer-events: none;
     }
-    #scatterCanvas {
+    #scatterDensityCanvas {
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1;
+      pointer-events: none;
+    }
+    #scatterCanvas {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
       pointer-events: auto;
+    }
+    #densityPanel.stats-panel {
+      top: 520px;
+      left: 10px;
+      z-index: 52;
     }
     #my_dataviz {
       width: 100%;
@@ -96,6 +109,7 @@ License     : GPL3
   <div class="top-panel-right">
     <span id="selectionCount" class="selection-count" style="display:none"></span>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; Shift+drag to add to selection; click a point to toggle it">Select</button>
+    <button class="button-switch" id="densityToggleBtn" type="button" title="Show or hide point-density heatmap">Show Density</button>
     <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
   </div>
 </div>
@@ -145,6 +159,27 @@ License     : GPL3
       </select>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
     </div>
+  </div>
+</div>
+
+<!-- Side panel: density heatmap tuning (shown when density is enabled) -->
+<div class="stats-panel collapsed" id="densityPanel" style="display:none">
+  <div class="stats-panel-title">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="densityGridSizeSlider">Grid size <span class="val" id="densityGridSizeVal">40</span></label>
+      <input type="range" id="densityGridSizeSlider" min="5" max="120" step="5" value="40">
+    </div>
+    <div class="physics-control">
+      <label for="densityBlurSlider">Blur <span class="val" id="densityBlurVal">8</span></label>
+      <input type="range" id="densityBlurSlider" min="0" max="30" step="1" value="8">
+    </div>
+    <div class="physics-control">
+      <label for="densityOpacitySlider">Opacity <span class="val" id="densityOpacityVal">0.6</span></label>
+      <input type="range" id="densityOpacitySlider" min="0" max="1" step="0.05" value="0.6">
+    </div>
+    <button class="button-switch" id="densityResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Heatmap of point density in the current view.</div>
   </div>
 </div>
 
@@ -507,16 +542,128 @@ svg.append("g")
     .call(yAxis);
 
 // Canvas rendering layer: one element replaces one SVG element per point.
+// Density heatmap sits under the points canvas (same idea as d3graph.js).
+var densityCanvas = document.createElement('canvas');
+densityCanvas.id = 'scatterDensityCanvas';
+document.getElementById('scatter-main').insertBefore(densityCanvas, document.getElementById('scatterSvg'));
+var densityCtx = densityCanvas.getContext('2d');
+var densityOffscreen = null;
+
 var canvas = document.createElement('canvas');
 canvas.id = 'scatterCanvas';
 document.getElementById('scatter-main').insertBefore(canvas, document.getElementById('scatterSvg'));
 var canvasCtx = canvas.getContext('2d');
 var dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-canvas.style.width = width + 'px';
-canvas.style.height = (height + 1) + 'px';
-canvas.width = Math.round(width * dpr);
-canvas.height = Math.round((height + 1) * dpr);
-canvasCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+function sizeScatterCanvases() {
+  [densityCanvas, canvas].forEach(function(el) {
+    el.style.width = width + 'px';
+    el.style.height = (height + 1) + 'px';
+    el.width = Math.round(width * dpr);
+    el.height = Math.round((height + 1) * dpr);
+  });
+  densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  canvasCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+sizeScatterCanvases();
+
+// ---- Point-density heatmap (ported from d3graph.js density layer) ----
+var densityVisible = false;
+var densityGridSize = 40;
+var densityBlur = 8;
+var densityOpacity = 0.6;
+var DEFAULT_DENSITY_GRID_SIZE = 40;
+var DEFAULT_DENSITY_BLUR = 8;
+var DEFAULT_DENSITY_OPACITY = 0.6;
+
+function densityColor(t) {
+  // Light theme: yellow → red heat. Dark theme: blue luminance ramp.
+  var isLight = document.body.classList.contains('light');
+  if (!isLight) {
+    var l = 25 + t * 45;
+    return 'hsl(210, 90%, ' + l + '%)';
+  }
+  var hue = 60 - t * 60;
+  return 'hsl(' + hue + ', 100%, 50%)';
+}
+function computeDensityGrid() {
+  // Bin currently visible points in pixel space (same positions as drawn points).
+  var c = currentCoordIndices(), xi = c[0], yi = c[1];
+  var pts = [];
+  for (var n = 0; n < visiblePointIndices.length; n++) {
+    var i = visiblePointIndices[n], d = jsonData[i];
+    if (!d) continue;
+    var px = x(d[xi]), py = y(d[yi]);
+    var jp = jitteredPoint(i, px, py);
+    pts.push(jp.px, jp.py);
+  }
+  if (!pts.length) return null;
+  var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (var j = 0; j < pts.length; j += 2) {
+    var pxj = pts[j], pyj = pts[j + 1];
+    if (pxj < minX) minX = pxj;
+    if (pxj > maxX) maxX = pxj;
+    if (pyj < minY) minY = pyj;
+    if (pyj > maxY) maxY = pyj;
+  }
+  var padX = (maxX - minX) * 0.05 || 20;
+  var padY = (maxY - minY) * 0.05 || 20;
+  minX -= padX; maxX += padX; minY -= padY; maxY += padY;
+  var w = (maxX - minX) || 1;
+  var h = (maxY - minY) || 1;
+  var cellsX, cellsY;
+  if (w >= h) {
+    cellsX = densityGridSize;
+    cellsY = Math.max(1, Math.round(densityGridSize * h / w));
+  } else {
+    cellsY = densityGridSize;
+    cellsX = Math.max(1, Math.round(densityGridSize * w / h));
+  }
+  var cellW = w / cellsX, cellH = h / cellsY;
+  var grid = new Float32Array(cellsX * cellsY);
+  var maxCount = 0;
+  for (var k = 0; k < pts.length; k += 2) {
+    var cx = Math.min(cellsX - 1, Math.max(0, Math.floor((pts[k] - minX) / cellW)));
+    var cy = Math.min(cellsY - 1, Math.max(0, Math.floor((pts[k + 1] - minY) / cellH)));
+    var idx = cy * cellsX + cx;
+    grid[idx] += 1;
+    if (grid[idx] > maxCount) maxCount = grid[idx];
+  }
+  return { grid: grid, cellsX: cellsX, cellsY: cellsY, cellW: cellW, cellH: cellH, minX: minX, minY: minY, maxCount: maxCount };
+}
+function drawDensityLayer() {
+  if (!densityCtx) return;
+  densityCtx.save();
+  densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  densityCtx.clearRect(0, 0, width, height + 1);
+  if (!densityVisible) { densityCtx.restore(); return; }
+
+  // rebuildHitGrid already runs in renderPoints before this is called.
+  var data = computeDensityGrid();
+  if (!data || data.maxCount <= 0) { densityCtx.restore(); return; }
+
+  if (!densityOffscreen) densityOffscreen = document.createElement('canvas');
+  densityOffscreen.width = densityCanvas.width;
+  densityOffscreen.height = densityCanvas.height;
+  var offCtx = densityOffscreen.getContext('2d');
+  offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  offCtx.clearRect(0, 0, width, height + 1);
+
+  for (var cy = 0; cy < data.cellsY; cy++) {
+    for (var cx = 0; cx < data.cellsX; cx++) {
+      var count = data.grid[cy * data.cellsX + cx];
+      if (count <= 0) continue;
+      var t = count / data.maxCount;
+      offCtx.fillStyle = densityColor(t);
+      offCtx.globalAlpha = densityOpacity * t;
+      offCtx.fillRect(data.minX + cx * data.cellW, data.minY + cy * data.cellH, data.cellW, data.cellH);
+    }
+  }
+  densityCtx.filter = densityBlur > 0 ? ('blur(' + densityBlur + 'px)') : 'none';
+  densityCtx.setTransform(1, 0, 0, 1, 0, 0);
+  densityCtx.drawImage(densityOffscreen, 0, 0);
+  densityCtx.filter = 'none';
+  densityCtx.restore();
+}
 
 var hitCellSize = 32;
 var hitGrid = new Map();
@@ -595,6 +742,7 @@ function drawSymbol(ctx,shape,r) {
 }
 function renderPoints() {
   var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1); rebuildHitGrid();
+  drawDensityLayer();
   var c=currentCoordIndices(), xi=c[0], yi=c[1];
   for(var n=0;n<visiblePointIndices.length;n++){
     var i=visiblePointIndices[n], d=jsonData[i], px=x(d[xi]), py=y(d[yi]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
@@ -758,9 +906,9 @@ function positionSidePanels() {
   var y = bottom + 8;
   var bottomPad = 12;
   var sideRight = 0;
-  ['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id){
+  ['exportPanel', 'layoutPanel', 'densityPanel', 'enrichPanel'].forEach(function(id){
     var panel = document.getElementById(id);
-    if (!panel) return;
+    if (!panel || panel.style.display === 'none') return;
     panel.style.top = y + 'px';
     var maxH = Math.max(80, window.innerHeight - y - bottomPad);
     panel.style.maxHeight = maxH + 'px';
@@ -784,7 +932,7 @@ window.addEventListener('load', positionSidePanels);
 positionSidePanels();
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
-  ['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id) {
+  ['exportPanel', 'layoutPanel', 'densityPanel', 'enrichPanel'].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
@@ -792,7 +940,7 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(panelId) {
+['exportPanel', 'layoutPanel', 'densityPanel', 'enrichPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
@@ -1306,9 +1454,80 @@ function toggleTheme() {
   const themeBtn = document.getElementById('themeBtn');
   const isLight = document.body.classList.toggle('light');
   if (themeBtn) themeBtn.textContent = isLight ? 'Theme: Light' : 'Theme: Dark';
+  // Density color ramp depends on light/dark — redraw if visible.
+  if (typeof drawDensityLayer === 'function') drawDensityLayer();
 }
 const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); themeBtn.textContent = document.body.classList.contains('light') ? 'Theme: Light' : 'Theme: Dark'; }
 window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme(); });
+
+// ---- Density toggle + left-panel sliders (mirrors d3graph density layer) ----
+(function setupDensityControls() {
+  var toggleBtn = document.getElementById('densityToggleBtn');
+  var panel = document.getElementById('densityPanel');
+  var gridSlider = document.getElementById('densityGridSizeSlider');
+  var blurSlider = document.getElementById('densityBlurSlider');
+  var opacitySlider = document.getElementById('densityOpacitySlider');
+  var gridVal = document.getElementById('densityGridSizeVal');
+  var blurVal = document.getElementById('densityBlurVal');
+  var opacityVal = document.getElementById('densityOpacityVal');
+  var resetBtn = document.getElementById('densityResetBtn');
+
+  function refreshDensity() {
+    if (typeof scheduleRender === 'function') scheduleRender();
+    else if (typeof drawDensityLayer === 'function') drawDensityLayer();
+  }
+
+  function setDensityVisible(on) {
+    densityVisible = !!on;
+    if (toggleBtn) {
+      toggleBtn.textContent = densityVisible ? 'Hide Density' : 'Show Density';
+      toggleBtn.classList.toggle('active', densityVisible);
+    }
+    if (panel) {
+      // Show the tuning panel only while density is on (same UX as d3graph).
+      panel.style.display = densityVisible ? '' : 'none';
+      if (densityVisible && panel.classList.contains('collapsed')) {
+        panel.classList.remove('collapsed');
+      }
+    }
+    if (typeof positionSidePanels === 'function') positionSidePanels();
+    refreshDensity();
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() {
+      setDensityVisible(!densityVisible);
+    });
+  }
+
+  function wireSlider(slider, valueEl, apply) {
+    if (!slider) return;
+    slider.addEventListener('input', function() {
+      var v = parseFloat(this.value);
+      apply(v);
+      if (valueEl) valueEl.textContent = String(v);
+      refreshDensity();
+    });
+  }
+  wireSlider(gridSlider, gridVal, function(v){ densityGridSize = v; });
+  wireSlider(blurSlider, blurVal, function(v){ densityBlur = v; });
+  wireSlider(opacitySlider, opacityVal, function(v){ densityOpacity = v; });
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      densityGridSize = DEFAULT_DENSITY_GRID_SIZE;
+      densityBlur = DEFAULT_DENSITY_BLUR;
+      densityOpacity = DEFAULT_DENSITY_OPACITY;
+      if (gridSlider) gridSlider.value = DEFAULT_DENSITY_GRID_SIZE;
+      if (blurSlider) blurSlider.value = DEFAULT_DENSITY_BLUR;
+      if (opacitySlider) opacitySlider.value = DEFAULT_DENSITY_OPACITY;
+      if (gridVal) gridVal.textContent = String(DEFAULT_DENSITY_GRID_SIZE);
+      if (blurVal) blurVal.textContent = String(DEFAULT_DENSITY_BLUR);
+      if (opacityVal) opacityVal.textContent = String(DEFAULT_DENSITY_OPACITY);
+      refreshDensity();
+    });
+  }
+})();
 
 // —— Selection mode: drag a rectangle to select points, or click a point to
 // toggle it. Selected points are marked (highlighted with a ring) and used
