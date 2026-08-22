@@ -107,12 +107,28 @@
   /* Make nearby form labels follow theme text color */
   form label { color: var(--text); }
 
+  /* Tooltip image thumbnails: fixed box so mixed tooltips stay consistent */
+  .tooltip-img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin: 4px 0;
+    background: rgba(127, 127, 127, 0.15);
+  }
+  .tooltip .tooltip-img:first-child { margin-top: 0; }
+  .tooltip .tooltip-img:last-child { margin-bottom: 0; }
+
   /* —— Bottom slide-up node info panel (d3graph-style flat panel: no
      blur/glassmorphism, matches .stats-panel's border/shadow/radius).
      Height is controlled by a custom top-center drag handle (not CSS
      resize), so the grab point sits at the middle of the top edge. —— */
   #nodePanel {
-    position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 1100;
+    /* left is set by positionSidePanels() so the panel stays clear of the
+       left side panels and centered in the remaining width; 240px is a
+       pre-JS fallback matching the default side-panel stack width. */
+    position: fixed; left: 240px; right: 10px; bottom: 0; z-index: 1100;
     min-height: 120px; max-height: 85vh; overflow: auto;
     height: 220px;
     background: var(--panel-bg);
@@ -122,7 +138,7 @@
     border-radius: 8px 8px 0 0;
     box-sizing: border-box; padding: 18px 18px 18px;
     transform: translateY(100%); opacity: 0; pointer-events: none;
-    transition: transform 0.28s ease, opacity 0.28s ease, border-color 0.25s, background 0.25s;
+    transition: transform 0.28s ease, opacity 0.28s ease, border-color 0.25s, background 0.25s, left 0.15s ease;
     box-shadow: var(--panel-shadow);
     font-family: "Helvetica", Arial, sans-serif;
   }
@@ -250,7 +266,9 @@
 .enrich-var-dtype {
   font-size: 11px;
   flex-shrink: 0;
-  max-width: 128px;
+  width: 118px;
+  max-width: 118px;
+  box-sizing: border-box;
   background: var(--btn-bg);
   color: var(--btn-text);
   border: 1px solid var(--btn-border);

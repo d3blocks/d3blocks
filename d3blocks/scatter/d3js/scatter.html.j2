@@ -255,12 +255,78 @@ var Tooltip = d3.select("body")
   .style("max-width", "280px")
   .style("white-space", "nowrap");
 
+// Image URLs / file paths in tooltip text are rendered as fixed-size thumbnails
+// so mixed tooltips stay visually consistent. Author-supplied HTML (<br>, spans,
+// etc.) is preserved — only plain image URL/path tokens outside tags are rewritten.
+var IMAGE_EXT_RE = /\.(png|jpe?g|gif|webp|svg|bmp|ico)(\?[^.\s]*)?$/i;
+var IMAGE_URL_TOKEN_RE = /(?:https?:\/\/|ftp:\/\/|file:\/\/|www\.)[^\s<>"']+|\/[^\s<>"']+|[A-Za-z]:\\[^\s<>"']+/gi;
+
+function isImageRef(s) {
+  if (!s || typeof s !== 'string') return false;
+  var t = s.trim();
+  if (/^data:image\//i.test(t)) return true;
+  return IMAGE_EXT_RE.test(t.split(/[?#]/)[0]);
+}
+function escapeHtmlTooltip(v) {
+  if (v == null) return '';
+  return String(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function hrefForRef(s) {
+  var t = String(s).trim();
+  if (/^www\./i.test(t)) return 'https://' + t;
+  if (/^\/[^\s]+$/.test(t) || /^[A-Za-z]:\\[^\s]+$/.test(t)) return 'file://' + t;
+  return t;
+}
+// Preserve intentional HTML; convert plain image refs to fixed-size <img>.
+function formatTooltipHtml(raw) {
+  if (raw == null || raw === '') return '';
+  var text = String(raw);
+  // Whole-string image (no HTML tags) → single thumbnail
+  if (text.indexOf('<') < 0 && isImageRef(text.trim())) {
+    return '<img class="tooltip-img" src="' + escapeHtmlTooltip(hrefForRef(text.trim())) + '" alt="">';
+  }
+  // Walk the string: copy tags verbatim; in text nodes, rewrite image tokens.
+  var result = '';
+  var i = 0;
+  while (i < text.length) {
+    if (text.charAt(i) === '<') {
+      var end = text.indexOf('>', i);
+      if (end < 0) { result += text.slice(i); break; }
+      result += text.slice(i, end + 1);
+      i = end + 1;
+      continue;
+    }
+    var nextTag = text.indexOf('<', i);
+    if (nextTag < 0) nextTag = text.length;
+    var chunk = text.slice(i, nextTag);
+    result += chunk.replace(IMAGE_URL_TOKEN_RE, function(match) {
+      if (isImageRef(match)) {
+        return '<img class="tooltip-img" src="' + escapeHtmlTooltip(hrefForRef(match)) + '" alt="">';
+      }
+      return match;
+    });
+    i = nextTag;
+  }
+  return result;
+}
+
 // Canvas uses one delegated interaction layer instead of one DOM listener per point.
 var hoveredPointIndex = -1;
 function showPointTooltip(d, event) {
   if (!d) return;
-  Tooltip.style('opacity', 1)
-    .html(d[6] != null ? d[6] : '')
+  var raw = d[6] != null ? d[6] : '';
+  var html = formatTooltipHtml(raw);
+  // Multi-line / image tooltips need normal wrapping; plain single-line stays nowrap.
+  var hasRich = html.indexOf('tooltip-img') >= 0 || /<(br|div|p|img|ul|ol|li|table|span|b|i|strong|em)\b/i.test(html);
+  Tooltip
+    .style('opacity', 1)
+    .style('white-space', hasRich ? 'normal' : 'nowrap')
+    .html(html)
     .style('left', (event.clientX + 14) + 'px')
     .style('top', (event.clientY + 12) + 'px');
 }
@@ -491,12 +557,16 @@ scheduleRender();
   },{passive:false});
 })();
 
-// Keep the floating side panels (Layout, Enrichments) and the scatterplot
-// itself clear of the fixed top bar, and stack the side panels below each
-// other. Heights vary (logo image load, font rendering, collapse/expand,
+// Keep the floating side panels (Export, Layout, Enrichments) and the
+// scatterplot clear of the fixed top bar, and stack the side panels below
+// each other. Heights vary (logo image load, font rendering, collapse/expand,
 // and the top bar may wrap onto two lines on a narrow screen), so this
 // measures everything at runtime instead of assuming fixed pixel offsets --
 // the same approach index.html.j2 uses for its positionSidePanels().
+//
+// Each panel also gets a max-height of (viewport bottom - its top), so a
+// long Enrichments variable list cannot push the panel off-screen: the
+// .stats-panel-body scrolls internally instead.
 function positionSidePanels() {
   var bar = document.querySelector('.top-panel');
   var main = document.getElementById('scatter-main');
@@ -504,16 +574,40 @@ function positionSidePanels() {
   var bottom = bar.getBoundingClientRect().bottom;
   if (main) main.style.marginTop = (bottom + 12) + 'px';
   var y = bottom + 8;
+  var bottomPad = 12;
+  var sideRight = 0;
   ['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel) return;
     panel.style.top = y + 'px';
-    y += panel.getBoundingClientRect().height + 10;
+    var maxH = Math.max(80, window.innerHeight - y - bottomPad);
+    panel.style.maxHeight = maxH + 'px';
+    var rect = panel.getBoundingClientRect();
+    sideRight = Math.max(sideRight, rect.right);
+    y += rect.height + 10;
   });
+  // Bottom node panel: sit in the free band to the right of the left side
+  // panels (no overlap), spanning that band so it reads as centered in the
+  // remaining middle of the viewport.
+  var nodePanelEl = document.getElementById('nodePanel');
+  if (nodePanelEl) {
+    var gap = 10;
+    var leftInset = Math.max(10, Math.ceil(sideRight) + gap);
+    nodePanelEl.style.left = leftInset + 'px';
+    nodePanelEl.style.right = '10px';
+  }
 }
 window.addEventListener('resize', positionSidePanels);
 window.addEventListener('load', positionSidePanels);
 positionSidePanels();
+// Side panels are user-resizable; keep the bottom panel clear as they change width.
+if (typeof ResizeObserver !== 'undefined') {
+  ['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
+  });
+}
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
 ['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(panelId) {
@@ -1149,12 +1243,49 @@ function normalCdf(z) {
   var y = 1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-z*z);
   return 0.5 * (1 + sign * y);
 }
+// Descriptive stats for a finite-number array: mean, sample std, median.
+function numericSummary(arr) {
+  var n = arr.length;
+  if (n === 0) return { n: 0, mean: NaN, std: NaN, median: NaN };
+  var sum = 0;
+  for (var i = 0; i < n; i++) sum += arr[i];
+  var mean = sum / n;
+  var ss = 0;
+  for (var j = 0; j < n; j++) {
+    var d = arr[j] - mean;
+    ss += d * d;
+  }
+  var std = n > 1 ? Math.sqrt(ss / (n - 1)) : 0;
+  var sorted = arr.slice().sort(function(a, b){ return a - b; });
+  var median = (n % 2 === 1)
+    ? sorted[(n - 1) / 2]
+    : (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+  return { n: n, mean: mean, std: std, median: median };
+}
+function formatStatNum(x) {
+  if (!Number.isFinite(x)) return '—';
+  var ax = Math.abs(x);
+  if (ax !== 0 && (ax < 0.001 || ax >= 10000)) return x.toExponential(2);
+  if (ax >= 100) return x.toFixed(1);
+  return x.toFixed(2);
+}
+
 // Wilcoxon rank-sum (Mann-Whitney) test via normal approximation, two-sided.
 // Mirrors hnet's _prob_ranksums: compares numeric values between the y==1
-// and y==0 groups.
+// and y==0 groups. Also returns mean/std/median for selection vs rest so the
+// UI can show interpretable effect summaries instead of only a z-score.
 function probRanksums(values, yBits) {
   var n = values.length;
   var idx = values.map(function(_, i){ return i; }).filter(function(i){ return Number.isFinite(values[i]); });
+  var selVals = [], restVals = [];
+  for (var s = 0; s < idx.length; s++) {
+    var si = idx[s];
+    if (yBits[si]) selVals.push(values[si]);
+    else restVals.push(values[si]);
+  }
+  var selStats = numericSummary(selVals);
+  var restStats = numericSummary(restVals);
+
   var sorted = idx.slice().sort(function(a,b){ return values[a]-values[b]; });
   var ranks = new Array(n);
   var i = 0;
@@ -1165,18 +1296,25 @@ function probRanksums(values, yBits) {
     for (var k = i; k <= j; k++) ranks[sorted[k]] = avgRank;
     i = j + 1;
   }
-  var n1 = 0, n2 = 0, R1 = 0;
+  var n1 = selStats.n, n2 = restStats.n, R1 = 0;
   for (var t = 0; t < idx.length; t++) {
     var ii = idx[t];
-    if (yBits[ii]) { n1++; R1 += ranks[ii]; } else { n2++; }
+    if (yBits[ii]) R1 += ranks[ii];
   }
-  if (n1 === 0 || n2 === 0) return { P: 1, zscore: 0 };
+  if (n1 === 0 || n2 === 0) {
+    return { P: 1, zscore: 0, sel: selStats, rest: restStats };
+  }
   var muU = n1 * n2 / 2;
   var U1 = R1 - n1 * (n1 + 1) / 2;
   var sigmaU = Math.sqrt(n1 * n2 * (n1 + n2 + 1) / 12);
   var z = sigmaU === 0 ? 0 : (U1 - muU) / sigmaU;
   var P = 2 * (1 - normalCdf(Math.abs(z)));
-  return { P: Math.min(1, Math.max(0, P)), zscore: z };
+  return {
+    P: Math.min(1, Math.max(0, P)),
+    zscore: z,
+    sel: selStats,
+    rest: restStats
+  };
 }
 // Holm-Bonferroni step-down multiple-testing correction.
 function holmCorrection(pvalues) {
@@ -1198,19 +1336,33 @@ function bonferroniCorrection(pvalues) {
   return pvalues.map(function(p){ return Math.min(1, p * m); });
 }
 
-// dtype detection for a property column: numeric if every present value
-// parses as a finite number, categorical otherwise (mirrors hnet's simpler
-// heuristic; missing/undefined values are skipped).
+// dtype detection for a property column.
+// 1) Must be "really numeric": every non-missing value parses as a finite
+//    number (booleans / non-numeric strings → category).
+// 2) Among present values, if the unique-value ratio is > 60%, treat as
+//    numeric; otherwise treat as category (e.g. coded 0/1/2 labels).
+// Missing / undefined / empty strings are skipped for both checks.
 function detectColumnDtype(values) {
-  var seenAny = false;
+  var present = 0;
+  var unique = {};
+  var uniqueCount = 0;
   for (var i = 0; i < values.length; i++) {
     var v = values[i];
     if (v === undefined || v === null || v === '') continue;
-    seenAny = true;
     if (typeof v === 'boolean') return 'cat';
-    if (!Number.isFinite(typeof v === 'number' ? v : parseFloat(v)) || (typeof v === 'string' && v.trim() !== '' && isNaN(Number(v)))) return 'cat';
+    var num = typeof v === 'number' ? v : parseFloat(v);
+    if (!Number.isFinite(num) || (typeof v === 'string' && v.trim() !== '' && isNaN(Number(v)))) return 'cat';
+    present++;
+    var key = String(num);
+    if (!Object.prototype.hasOwnProperty.call(unique, key)) {
+      unique[key] = true;
+      uniqueCount++;
+    }
   }
-  return seenAny ? 'num' : 'cat';
+  if (present === 0) return 'cat';
+  // > 60% unique and truly numeric → numeric; otherwise category
+  if (uniqueCount / present > 0.6) return 'num';
+  return 'cat';
 }
 
 // Port of hnet's _compute_significance(): for each property column, run the
@@ -1227,7 +1379,16 @@ function computeSignificance(columns, yBits, dtypeOverrides) {
     if (dtype === 'num') {
       var nums = values.map(function(v){ return (v===undefined||v===null||v==='') ? NaN : (typeof v==='number'?v:parseFloat(v)); });
       var res = probRanksums(nums, yBits);
-      out.push({ category_label: colname, category_name: colname, y: '1', dtype: 'num', P: res.P, zscore: res.zscore });
+      out.push({
+        category_label: colname,
+        category_name: colname,
+        y: '1',
+        dtype: 'num',
+        P: res.P,
+        zscore: res.zscore,
+        sel: res.sel,
+        rest: res.rest
+      });
     } else {
       // Build category -> indicator bits, skipping missing values.
       var cats = {};
@@ -1343,9 +1504,9 @@ function populateEnrichVarList() {
     html += '<div class="enrich-var-row">' +
       '<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtml(k) + '" checked> ' + escapeHtml(k) + '</label>' +
       '<select class="enrich-var-dtype" data-key="' + escapeHtml(k) + '">' +
-        '<option value="">Auto (' + (autoType === 'num' ? 'numeric' : 'categorical') + ')</option>' +
+        '<option value="">Auto (' + (autoType === 'num' ? 'numeric' : 'category') + ')</option>' +
         '<option value="num">Numeric</option>' +
-        '<option value="cat">Categorical</option>' +
+        '<option value="cat">Category</option>' +
       '</select>' +
     '</div>';
   });
@@ -1383,9 +1544,20 @@ function showAssociationsPanel() {
       var html = '<div class="assoc-table">';
       html += '<div class="assoc-th num">P</div><div class="assoc-th num">P (adj)</div><div class="assoc-th">Property</div><div class="assoc-th">Value</div><div class="assoc-th">Effect</div>';
       res.results.forEach(function(r){
-        var effect = r.dtype === 'num'
-          ? ((r.zscore > 0 ? 'higher in selection' : 'lower in selection') + ' (z=' + r.zscore.toFixed(2) + ')')
-          : (r.overlap_X + ' of ' + r.samplesize_N + ' selected have it (' + r.nr_succes_pop_n + ' total in dataset)');
+        var effect;
+        if (r.dtype === 'num') {
+          var sel = r.sel || {};
+          var rest = r.rest || {};
+          var direction = (r.zscore > 0) ? 'significantly higher' : 'significantly lower';
+          effect = direction +
+            ' — sel mean ' + formatStatNum(sel.mean) +
+            ', std ' + formatStatNum(sel.std) +
+            ', med ' + formatStatNum(sel.median) +
+            ' · rest mean ' + formatStatNum(rest.mean) +
+            ', med ' + formatStatNum(rest.median);
+        } else {
+          effect = r.overlap_X + ' of ' + r.samplesize_N + ' selected have it (' + r.nr_succes_pop_n + ' total in dataset)';
+        }
         html += '<div class="assoc-td num">' + formatPValue(r.P) + '</div>';
         html += '<div class="assoc-td num">' + formatPValue(r.Padj) + '</div>';
         html += '<div class="assoc-td">' + escapeHtml(r.category_name) + '</div>';
