@@ -254,6 +254,43 @@
     border-top: 1px solid var(--panel-border);
     padding-top: 8px;
   }
+  /* Properties: fixed 6-column grid with separators (like enrich-var-row) */
+  .node-info-props-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+    font-size: 13px;
+    border-top: 1px solid var(--panel-border);
+  }
+  .node-info-prop-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px;
+    min-width: 0;
+    border-bottom: 1px solid var(--panel-border);
+    border-right: 1px solid var(--panel-border);
+    box-sizing: border-box;
+  }
+  /* Drop right border on every 6th cell so edges don't double up at the end */
+  .node-info-prop-cell:nth-child(6n) {
+    border-right: none;
+  }
+  .node-info-prop-cell .node-info-label {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .node-info-prop-cell .node-info-value {
+    word-break: break-word;
+  }
+  /* Media properties span full width */
+  .node-info-prop-cell.node-info-prop-media {
+    grid-column: 1 / -1;
+    border-right: none;
+  }
   /* Media (images / audio players) parsed from tooltip or property values */
   .node-info-media,
   .node-info-media-row {
@@ -343,7 +380,11 @@
   margin-bottom: 2px;
 }
 #enrichAlphaInput,
-#enrichMultTestSelect {
+#enrichMultTestSelect,
+#layoutSizeSelect,
+#layoutColorSelect,
+#layoutShapeSelect,
+#layoutLabelSelect {
   background: var(--btn-bg);
   color: var(--btn-text);
   border: 1px solid var(--btn-border);

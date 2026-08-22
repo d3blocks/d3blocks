@@ -31,8 +31,13 @@ License     : GPL3
       left: 10px;
       z-index: 65;
     }
+    #densityPanel.stats-panel {
+      top: 180px;
+      left: 10px;
+      z-index: 62;
+    }
     #layoutPanel.stats-panel {
-      top: 220px;
+      top: 280px;
       left: 10px;
       z-index: 60;
     }
@@ -73,11 +78,6 @@ License     : GPL3
       transform: translateX(-50%);
       z-index: 2;
       pointer-events: auto;
-    }
-    #densityPanel.stats-panel {
-      top: 520px;
-      left: 10px;
-      z-index: 52;
     }
     #my_dataviz {
       width: 100%;
@@ -124,6 +124,29 @@ License     : GPL3
   </div>
 </div>
 
+<!-- Side panel: density heatmap tuning (directly below Export/Save; shown when density is enabled) -->
+<div class="stats-panel collapsed" id="densityPanel">
+  <div class="stats-panel-title">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <!--
+    <div class="physics-control">
+      <label for="densityGridSizeSlider">Grid size <span class="val" id="densityGridSizeVal">40</span></label>
+      <input type="range" id="densityGridSizeSlider" min="5" max="120" step="5" value="40">
+    </div>
+      -->
+    <div class="physics-control">
+      <label for="densityBlurSlider">Blur <span class="val" id="densityBlurVal">8</span></label>
+      <input type="range" id="densityBlurSlider" min="0" max="30" step="1" value="8">
+    </div>
+    <div class="physics-control">
+      <label for="densityOpacitySlider">Opacity <span class="val" id="densityOpacityVal">0.6</span></label>
+      <input type="range" id="densityOpacitySlider" min="0" max="1" step="0.05" value="0.6">
+    </div>
+    <button class="button-switch" id="densityResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Heatmap of point density in the current view.</div>
+  </div>
+</div>
+
 <!-- Side panel: Size / Color / Shape (collapsed by default) -->
 <div class="stats-panel collapsed" id="layoutPanel">
   <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
@@ -159,29 +182,6 @@ License     : GPL3
       </select>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
     </div>
-  </div>
-</div>
-
-<!-- Side panel: density heatmap tuning (shown when density is enabled) -->
-<div class="stats-panel collapsed" id="densityPanel">
-  <div class="stats-panel-title">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
-  <div class="stats-panel-body">
-    <!--
-    <div class="physics-control">
-      <label for="densityGridSizeSlider">Grid size <span class="val" id="densityGridSizeVal">40</span></label>
-      <input type="range" id="densityGridSizeSlider" min="5" max="120" step="5" value="40">
-    </div>
-      -->
-    <div class="physics-control">
-      <label for="densityBlurSlider">Blur <span class="val" id="densityBlurVal">8</span></label>
-      <input type="range" id="densityBlurSlider" min="0" max="30" step="1" value="8">
-    </div>
-    <div class="physics-control">
-      <label for="densityOpacitySlider">Opacity <span class="val" id="densityOpacityVal">0.6</span></label>
-      <input type="range" id="densityOpacitySlider" min="0" max="1" step="0.05" value="0.6">
-    </div>
-    <button class="button-switch" id="densityResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Heatmap of point density in the current view.</div>
   </div>
 </div>
 
@@ -1024,7 +1024,8 @@ function positionSidePanels() {
   var y = bottom + 8;
   var bottomPad = 12;
   var sideRight = 0;
-  ['exportPanel', 'layoutPanel', 'densityPanel', 'enrichPanel'].forEach(function(id){
+  // Order: Export/Save, then Density Layer, then Layout, then Enrichments
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel || panel.style.display === 'none') return;
     panel.style.top = y + 'px';
@@ -1050,7 +1051,7 @@ window.addEventListener('load', positionSidePanels);
 positionSidePanels();
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
-  ['exportPanel', 'layoutPanel', 'densityPanel', 'enrichPanel'].forEach(function(id) {
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
@@ -1058,7 +1059,7 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['exportPanel', 'layoutPanel', 'densityPanel', 'enrichPanel'].forEach(function(panelId) {
+['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
@@ -1409,24 +1410,26 @@ function showNodePanel(d) {
       html += '<div class="node-info-section-title">Tooltip</div>';
       html += '<div class="node-info-media">' + formatTooltipHtml(rawTip) + '</div>';
     }
-    html += '<span class="node-info-label">Radius</span><span class="node-info-value">' + escapeHtml(d[3]) + '</span>';
-    html += '<span class="node-info-label">Opacity</span><span class="node-info-value">' + escapeHtml(d[4]) + '</span>';
-    html += '<span class="node-info-label">Stroke</span><span class="node-info-value">' + escapeHtml(d[5]) + '</span>';
     var props = (d && d[13]) ? d[13] : null;
     if (props && typeof props === 'object') {
       html += '<div class="node-info-section-title">Properties</div>';
+      html += '<div class="node-info-props-grid">';
       Object.keys(props).forEach(function(k){
         var v = props[k];
         if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
         var rendered = formatPropertyValue(v);
         var isMedia = typeof v === 'string' && (isImageRef(v.trim()) || isAudioRef(v.trim()) || /<(br|img)\b/i.test(v));
         if (isMedia) {
-          html += '<div class="node-info-media-row"><span class="node-info-label">' + escapeHtml(k) + '</span>' +
+          html += '<div class="node-info-prop-cell node-info-prop-media">' +
+            '<span class="node-info-label">' + escapeHtml(k) + '</span>' +
             '<div class="node-info-media">' + rendered + '</div></div>';
         } else {
-          html += '<span class="node-info-label">' + escapeHtml(k) + '</span><span class="node-info-value">' + rendered + '</span>';
+          html += '<div class="node-info-prop-cell">' +
+            '<span class="node-info-label">' + escapeHtml(k) + '</span>' +
+            '<span class="node-info-value">' + rendered + '</span></div>';
         }
       });
+      html += '</div>';
     }
     html += '</div>';
     nodeStatsGrid.innerHTML = html;
@@ -1624,11 +1627,9 @@ window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 
       toggleBtn.classList.toggle('active', densityVisible);
     }
     if (panel) {
-      // Show the tuning panel only while density is on (same UX as d3graph).
+      // Show the tuning panel only while density is on; leave collapsed state alone
+      // so pressing Show Density does not auto-expand the panel.
       panel.style.display = densityVisible ? '' : 'none';
-      if (densityVisible && panel.classList.contains('collapsed')) {
-        panel.classList.remove('collapsed');
-      }
     }
     if (typeof positionSidePanels === 'function') positionSidePanels();
     refreshDensity();
