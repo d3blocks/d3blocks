@@ -413,6 +413,8 @@ class D3Blocks():
                 y1=None,
                 x2=None,
                 y2=None,
+                x3=None,
+                y3=None,
                 jitter=None,
                 size=3,
                 color='#002147',
@@ -423,7 +425,7 @@ class D3Blocks():
                 cmap='tab20',
                 scale=False,
                 color_background='#ffffff',
-                label_radio=['(x, y)', '(x1, y1)', '(x2, y2)'],
+                label_radio=['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'],
                 xlim=[None, None],
                 ylim=[None, None],
                 title='Scatter - D3blocks',
@@ -458,6 +460,10 @@ class D3Blocks():
             Third set of 1d coordinates x-axis.
         y2 : numpy array
             Third set of 1d coordinates y-axis.
+        x3 : numpy array
+            Fourth set of 1d coordinates x-axis.
+        y3 : numpy array
+            Fourth set of 1d coordinates y-axis.
         jitter : float, default: None
             Add jitter to data points as random normal data. Values of 0.01 is usually good for one-hot data seperation.
         size: list/array of with same size as (x,y).
@@ -484,7 +490,7 @@ class D3Blocks():
                 * 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
         scale: Bool, optional
             Scale datapoints. The default is False.
-        label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
+        label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)']
             The labels used for the radiobuttons.
         set_xlim : tuple, (default: [None, None])
             Width of the x-axis: The default is extracted from the data with 10% spacing.
@@ -706,11 +712,11 @@ class D3Blocks():
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, jitter=jitter, save_button=save_button, logger=logger)
         # Check exceptions
-        Scatter.check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger)
+        Scatter.check_exceptions(x, y, x1, y1, x2, y2, x3, y3, size, color, tooltip, logger)
         # Set node properties
         self.set_node_properties()
         # Set edge properties
-        self.set_edge_properties(x, y, x1=x1, y1=y1, x2=x2, y2=y2, color=color, size=size, tooltip=tooltip, opacity=opacity, c_gradient=c_gradient, stroke=stroke, cmap=self.config['cmap'], scale=self.config['scale'], jitter=self.config['jitter'], logger=logger)
+        self.set_edge_properties(x, y, x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3, color=color, size=size, tooltip=tooltip, opacity=opacity, c_gradient=c_gradient, stroke=stroke, cmap=self.config['cmap'], scale=self.config['scale'], jitter=self.config['jitter'], logger=logger)
         # Create the plot
         html = self.show()
         if return_html:

@@ -37,7 +37,7 @@ def set_config(config={}, **kwargs):
     config['scale'] = kwargs.get('scale', False)
     config['ylim'] = kwargs.get('ylim', [None, None])
     config['xlim'] = kwargs.get('xlim', [None, None])
-    config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)'])
+    config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'])
     config['color_background'] = kwargs.get('color_background', '#ffffff')
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
@@ -48,9 +48,9 @@ def set_config(config={}, **kwargs):
 
 
 # %% Preprocessing
-def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger):
+def check_exceptions(x, y, x1, y1, x2, y2, x3, y3, size, color, tooltip, logger):
     """Check Exceptions."""
-    # if len(config['label_radio'])!=sum(list(map(lambda x: x=='', config['radio_button_visible']))): raise Exception(logger.error('input parameter [label_radio] must contain the correct number of labels depending on the (x,y), (x1,y1), (x2,y2) coordinates.'))
+    # if len(config['label_radio'])!=sum(list(map(lambda x: x=='', config['radio_button_visible']))): raise Exception(logger.error('input parameter [label_radio] must contain the correct number of labels depending on the (x,y), (x1,y1), (x2,y2), (x3,y3) coordinates.'))
     if len(x)!=len(y): raise Exception(logger.error('input parameter [x] and [y] should be of size of (x, y).'))
     if size is None: raise Exception(logger.error('input parameter [size] should have value >0.'))
     if color is None: raise Exception(logger.error('input parameter [color] should be of a list of string with hex color, such as "#000000".'))
@@ -63,6 +63,9 @@ def check_exceptions(x, y, x1, y1, x2, y2, size, color, tooltip, logger):
     if (x2 is not None) or (y2 is not None):
         if len(x2)!=len(y2): raise Exception(logger.error('input parameter [x2] should be of size of (x2, y2).'))
         if len(x)!=len(x2): raise Exception(logger.error('input parameter (x2, y2) should be of size of (x, y).'))
+    if (x3 is not None) or (y3 is not None):
+        if len(x3)!=len(y3): raise Exception(logger.error('input parameter [x3] should be of size of (x3, y3).'))
+        if len(x)!=len(x3): raise Exception(logger.error('input parameter (x3, y3) should be of size of (x, y).'))
 
 
 # %% Set the Node properties
@@ -157,6 +160,10 @@ def set_edge_properties(*args, **kwargs):
         Third set of 1d coordinates x-axis.
     y2 : numpy array
         Third set of 1d coordinates y-axis.
+    x3 : numpy array
+        Fourth set of 1d coordinates x-axis.
+    y3 : numpy array
+        Fourth set of 1d coordinates y-axis.
     size: list/array of with same size as (x,y). Can be of type str or int.
         Size of the samples.
     color: list/array of hex colors with same size as (x,y)
@@ -206,6 +213,8 @@ def set_edge_properties(*args, **kwargs):
     y1 = kwargs.get('y1', None)
     x2 = kwargs.get('x2', None)
     y2 = kwargs.get('y2', None)
+    x3 = kwargs.get('x3', None)
+    y3 = kwargs.get('y3', None)
 
     jitter = kwargs.get('jitter', None)
     size = kwargs.get('size', 5)
@@ -229,6 +238,8 @@ def set_edge_properties(*args, **kwargs):
     if (y1 is None): y1 = np.zeros_like(x) * np.nan
     if (x2 is None): x2 = np.zeros_like(x) * np.nan
     if (y2 is None): y2 = np.zeros_like(x) * np.nan
+    if (x3 is None): x3 = np.zeros_like(x) * np.nan
+    if (y3 is None): y3 = np.zeros_like(x) * np.nan
 
     # Add jitter
     x = jitter_func(x, jitter=jitter)
@@ -237,6 +248,8 @@ def set_edge_properties(*args, **kwargs):
     y1 = jitter_func(y1, jitter=jitter)
     x2 = jitter_func(x2, jitter=jitter)
     y2 = jitter_func(y2, jitter=jitter)
+    x3 = jitter_func(x3, jitter=jitter)
+    y3 = jitter_func(y3, jitter=jitter)
 
     # if jitter is None or jitter is False: jitter=0
     # if jitter is True: jitter=0.01
@@ -254,6 +267,7 @@ def set_edge_properties(*args, **kwargs):
     # Combine second coordinates into array
     X1 = np.c_[x1, y1]
     X2 = np.c_[x2, y2]
+    X3 = np.c_[x3, y3]
 
     # Scale data
     if scale:
@@ -261,6 +275,7 @@ def set_edge_properties(*args, **kwargs):
         X = _scale_xy(X)
         X1 = _scale_xy(X1)
         X2 = _scale_xy(X2)
+        X3 = _scale_xy(X3)
 
     # In case only one (s)ize is defined. Set all points to this size.
     if isinstance(size, (int, float)): size = np.repeat(size, X.shape[0])
@@ -293,7 +308,7 @@ def set_edge_properties(*args, **kwargs):
     # Make dict with properties
     dict_properties = {}
     for i in range(0, X.shape[0]):
-        dict_properties[i] = {'label': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'color': color[i], 'size': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'tooltip': tooltip[i]}
+        dict_properties[i] = {'label': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'x3': X3[i][0], 'y3': X3[i][1], 'color': color[i], 'size': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'tooltip': tooltip[i]}
 
     # Create the plot
     # df = pd.DataFrame(dict_properties).T
@@ -317,7 +332,7 @@ def show(df, **kwargs):
     ----------
     df : pd.DataFrame()
         Input data.
-    label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)']
+    label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)']
         The labels used for the radiobuttons.
     set_xlim : tuple, (default: [None, None])
         Width of the x-axis: The default is extracted from the data with 10% spacing.
@@ -365,28 +380,30 @@ def show(df, **kwargs):
     df = convert_dataframe_dict(df, frame=True)
 
     # Set the radio button and visibility of the labels
-    config['radio_button_visible'] = [("display:none;" if (np.all(list(map(np.isnan, df['x1'])))) else ""),
+    # radio1 = (x,y) always present; radio2/3/4 hidden when that coordinate pair is all-NaN
+    config['radio_button_visible'] = ["",
                                       ("display:none;" if (np.all(list(map(np.isnan, df['x1'])))) else ""),
-                                      ("display:none;" if (np.all(list(map(np.isnan, df['x2'])))) else "")]
-    if ("display:none" in config['radio_button_visible'][0]): config['label_radio'][0]=""
-    if ("display:none" in config['radio_button_visible'][1]): config['label_radio'][1]=""
-    if len(config['label_radio'])==3 and ("display:none" in config['radio_button_visible'][2]):
-        config['label_radio'][2]=""
-    elif len(config['label_radio'])==2:
+                                      ("display:none;" if (np.all(list(map(np.isnan, df['x2'])))) else ""),
+                                      ("display:none;" if (np.all(list(map(np.isnan, df['x3'])))) else "")]
+    # Ensure label_radio has length 4
+    while len(config['label_radio']) < 4:
         config['label_radio'].append("")
+    if ("display:none" in config['radio_button_visible'][1]): config['label_radio'][1]=""
+    if ("display:none" in config['radio_button_visible'][2]): config['label_radio'][2]=""
+    if ("display:none" in config['radio_button_visible'][3]): config['label_radio'][3]=""
 
     # Compute xlim and ylim for the axis.
     spacing = 0.12
     if config['xlim']==[None, None] or len(config['xlim'])==0:
-        maxvalue = df[['x', 'x1', 'x2']].max().max()
-        minvalue = df[['x', 'x1', 'x2']].min().min()
+        maxvalue = df[['x', 'x1', 'x2', 'x3']].max().max()
+        minvalue = df[['x', 'x1', 'x2', 'x3']].min().min()
         x_spacing = ((maxvalue - minvalue) * spacing)
         config['xlim'] = [minvalue - x_spacing, maxvalue + x_spacing]
         # x_spacing = (df['x'].max() - df['x'].min()) * spacing
         # config['xlim'] = [df['x'].min() - x_spacing, df['x'].max() + x_spacing]
     if config['ylim']==[None, None] or len(config['ylim'])==0:
-        maxvalue = df[['y', 'y1', 'y2']].max().max()
-        minvalue = df[['y', 'y1', 'y2']].min().min()
+        maxvalue = df[['y', 'y1', 'y2', 'y3']].max().max()
+        minvalue = df[['y', 'y1', 'y2', 'y3']].min().min()
         y_spacing = ((maxvalue - minvalue) * spacing)
         config['ylim'] = [minvalue - y_spacing, maxvalue + y_spacing]
         # y_spacing = (df['y'].max() - df['y'].min()) * spacing
@@ -440,9 +457,11 @@ def write_html(X, config, logger=None):
         'RADIO_LABEL1': config['label_radio'][0],
         'RADIO_LABEL2': config['label_radio'][1],
         'RADIO_LABEL3': config['label_radio'][2],
+        'RADIO_LABEL4': config['label_radio'][3],
         'RADIO_VISIBLE1': config['radio_button_visible'][0],
         'RADIO_VISIBLE2': config['radio_button_visible'][1],
         'RADIO_VISIBLE3': config['radio_button_visible'][2],
+        'RADIO_VISIBLE4': config['radio_button_visible'][3],
         'MOUSEOVER': config['mouseover'],
         'MOUSEMOVE': config['mousemove'],
         'MOUSELEAVE': config['mouseleave'],
@@ -476,20 +495,20 @@ def get_data_ready_for_d3(df, node_properties=None):
     node_properties : dict-like or DataFrame, optional
         Per-point properties. If provided, the properties for each point will be
         appended as the last element of each row's array so client-side code can
-        access them as `d[11]`.
+        access them as `d[13]`.
 
     Returns
     -------
     X : str
         JSON string representing list-of-arrays where each array contains:
-        [x, y, color, size, opacity, stroke, tooltip, x1, y1, x2, y2, properties|null]
+        [x, y, color, size, opacity, stroke, tooltip, x1, y1, x2, y2, x3, y3, properties|null]
     """
     # Ensure df is a DataFrame
     if not isinstance(df, (list, tuple)):
         # df is expected to be a DataFrame already (convert_dataframe_dict done by caller)
         try:
             # Keep only expected columns and ensure ordering
-            cols = ['x', 'y', 'color', 'size', 'opacity', 'stroke', 'tooltip', 'x1', 'y1', 'x2', 'y2']
+            cols = ['x', 'y', 'color', 'size', 'opacity', 'stroke', 'tooltip', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3']
             rows = df[cols].values.tolist()
         except Exception:
             # Fallback: try converting whole df to list of lists

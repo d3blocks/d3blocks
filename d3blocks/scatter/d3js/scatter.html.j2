@@ -222,6 +222,7 @@ License     : GPL3
         	<input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
         	<input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
         	<input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
+        	<input type="radio" name="radio_states" value="radiobutton4" style="{{ RADIO_VISIBLE4 }}"> <label> {{ RADIO_LABEL4 }} </label>
         </center>
     </div>
 </form>
@@ -865,7 +866,7 @@ function renderPoints() {
     var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
     var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
-    if(categoricalShapeMap && d[11] && categoricalShapeMap[d[11][categoricalShapeKey]]) shape=categoricalShapeMap[d[11][categoricalShapeKey]];
+    if(categoricalShapeMap && d[13] && categoricalShapeMap[d[13][categoricalShapeKey]]) shape=categoricalShapeMap[d[13][categoricalShapeKey]];
     ctx.save(); ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1; ctx.translate(px,py); ctx.beginPath(); drawSymbol(ctx,shape,r);
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent'; ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
@@ -1134,7 +1135,7 @@ function symbolPathForRadius(r,shapeName){var s=d3.symbol().type(SHAPE_MAP[shape
 function applySizeMode(key){
   if(!key){for(var i=0;i<jsonData.length;i++)if(jsonData[i])jsonData[i][3]=initialRadii[i];scheduleRender();return;}
   var min=Infinity,max=-Infinity;
-  for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:NaN;if(typeof v==='number'&&Number.isFinite(v)){if(v<min)min=v;if(v>max)max=v;}}
+  for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][13]?jsonData[i][13][key]:NaN;if(typeof v==='number'&&Number.isFinite(v)){if(v<min)min=v;if(v>max)max=v;}}
   if(min===Infinity)return;
   var MAX_R=24;
   // Direct, proportional linear scale -- the same style of mapping people
@@ -1151,24 +1152,24 @@ function applySizeMode(key){
   var scale = span===0
     ? function(){ return MAX_R*0.5; }
     : function(v){ return Math.max(1, (v - domainMin) / span * MAX_R); };
-  for(var j=0;j<jsonData.length;j++){var d=jsonData[j],v=d&&d[11]?d[11][key]:NaN;
+  for(var j=0;j<jsonData.length;j++){var d=jsonData[j],v=d&&d[13]?d[13][key]:NaN;
     d[3]=(typeof v==='number'&&Number.isFinite(v))?scale(v):initialRadii[j];
   } scheduleRender();
 }
 function applyColorMode(key){
   currentColorAccessor=null;if(!key){scheduleRender();return;}
   var vals=[],numeric=true,min=Infinity,max=-Infinity,has=false;
-  for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:null;vals.push(v);
+  for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][13]?jsonData[i][13][key]:null;vals.push(v);
     if(v!=null){if(typeof v==='number'&&Number.isFinite(v)){has=true;min=Math.min(min,v);max=Math.max(max,v);}else numeric=false;}}
-  if(numeric&&has){currentColorScale=d3.scaleSequential(d3.interpolateViridis).domain([min,max]);currentColorAccessor=function(d){var v=d&&d[11]?d[11][key]:null;return typeof v==='number'&&Number.isFinite(v)?currentColorScale(v):d[2];};}
-  else {var uniq=Array.from(new Set(vals.filter(function(v){return v!=null;}))),palette=d3.schemeCategory10.concat(d3.schemeSet3||[]),scale=d3.scaleOrdinal().domain(uniq).range(palette);currentColorScale=scale;currentColorAccessor=function(d){var v=d&&d[11]?d[11][key]:null;return v!=null?scale(v):d[2];};}
+  if(numeric&&has){currentColorScale=d3.scaleSequential(d3.interpolateViridis).domain([min,max]);currentColorAccessor=function(d){var v=d&&d[13]?d[13][key]:null;return typeof v==='number'&&Number.isFinite(v)?currentColorScale(v):d[2];};}
+  else {var uniq=Array.from(new Set(vals.filter(function(v){return v!=null;}))),palette=d3.schemeCategory10.concat(d3.schemeSet3||[]),scale=d3.scaleOrdinal().domain(uniq).range(palette);currentColorScale=scale;currentColorAccessor=function(d){var v=d&&d[13]?d[13][key]:null;return v!=null?scale(v):d[2];};}
   scheduleRender();
 }
 function applyShapeMode(val){
   categoricalShapeMap=null;categoricalShapeKey=null;
   if(!val||SHAPE_MAP[val]){currentShapeMode=val||'circle';scheduleRender();return;}
   if(val.indexOf('prop:')===0){var key=val.slice(5),uniq=[],seen=new Set();
-    for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][11]?jsonData[i][11][key]:null;if(v!=null&&!seen.has(v)){seen.add(v);uniq.push(v);}}
+    for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][13]?jsonData[i][13][key]:null;if(v!=null&&!seen.has(v)){seen.add(v);uniq.push(v);}}
     var names=Object.keys(SHAPE_MAP);categoricalShapeMap={};uniq.forEach(function(v,i){categoricalShapeMap[v]=names[i%names.length];});categoricalShapeKey=key;scheduleRender();
   }
 }
@@ -1183,6 +1184,7 @@ function currentCoordIndices() {
   var mode = modeNode ? modeNode.value : 'radiobutton1';
   if (mode === 'radiobutton2') return [7, 8];
   if (mode === 'radiobutton3') return [9, 10];
+  if (mode === 'radiobutton4') return [11, 12];
   return [0, 1];
 }
 
@@ -1214,8 +1216,8 @@ var currentYVal = new Array(jsonData.length);
 function labelTextFor(d) {
   if (!currentLabelKey) return '';
   if (currentLabelKey === '__tooltip__') return (d && d[6] != null) ? String(d[6]) : '';
-  if (d && d[11] && d[11][currentLabelKey] != null) {
-    var v = d[11][currentLabelKey];
+  if (d && d[13] && d[13][currentLabelKey] != null) {
+    var v = d[13][currentLabelKey];
     return (typeof v === 'object') ? JSON.stringify(v) : String(v);
   }
   return '';
@@ -1292,7 +1294,7 @@ if (jitterSlider) jitterSlider.addEventListener('input', function(e){
   scheduleRender();
 });
 // Populate Layout dropdowns from per-point properties.
-// Properties are stored in d[11]. The controls must be initialized from
+// Properties are stored in d[13]. The controls must be initialized from
 // the complete dataset, not from the currently selected point.
 (function initLayoutPropertyControls() {
   var propsByKey = Object.create(null);
@@ -1300,7 +1302,7 @@ if (jitterSlider) jitterSlider.addEventListener('input', function(e){
   var categoricalKeys = Object.create(null);
 
   for (var i = 0; i < jsonData.length; i++) {
-    var props = jsonData[i] && jsonData[i][11];
+    var props = jsonData[i] && jsonData[i][13];
     if (!props || typeof props !== 'object') continue;
 
     Object.keys(props).forEach(function(key) {
@@ -1410,7 +1412,7 @@ function showNodePanel(d) {
     html += '<span class="node-info-label">Radius</span><span class="node-info-value">' + escapeHtml(d[3]) + '</span>';
     html += '<span class="node-info-label">Opacity</span><span class="node-info-value">' + escapeHtml(d[4]) + '</span>';
     html += '<span class="node-info-label">Stroke</span><span class="node-info-value">' + escapeHtml(d[5]) + '</span>';
-    var props = (d && d[11]) ? d[11] : null;
+    var props = (d && d[13]) ? d[13] : null;
     if (props && typeof props === 'object') {
       html += '<div class="node-info-section-title">Properties</div>';
       Object.keys(props).forEach(function(k){
@@ -1716,9 +1718,10 @@ function pointToExportObject(d) {
   var obj = {
     x: d[0], y: d[1], color: d[2], radius: d[3], opacity: d[4], stroke: d[5], label: d[6]
   };
-  if (Number.isFinite(+d[7]) || Number.isFinite(+d[8])) { obj.x2 = d[7]; obj.y2 = d[8]; }
-  if (Number.isFinite(+d[9]) || Number.isFinite(+d[10])) { obj.x3 = d[9]; obj.y3 = d[10]; }
-  obj.properties = (d[11] && typeof d[11] === 'object') ? d[11] : {};
+  if (Number.isFinite(+d[7]) || Number.isFinite(+d[8])) { obj.x1 = d[7]; obj.y1 = d[8]; }
+  if (Number.isFinite(+d[9]) || Number.isFinite(+d[10])) { obj.x2 = d[9]; obj.y2 = d[10]; }
+  if (Number.isFinite(+d[11]) || Number.isFinite(+d[12])) { obj.x3 = d[11]; obj.y3 = d[12]; }
+  obj.properties = (d[13] && typeof d[13] === 'object') ? d[13] : {};
   return obj;
 }
 const exportButton = document.getElementById('exportButton');
@@ -1775,14 +1778,14 @@ function runSelectionEnrichment() {
 }
 
 // Builds {colname: [values across all points]} from every point's
-// properties object (d[11]). Shared by the variable-list UI and enrichment.
+// properties object (d[13]). Shared by the variable-list UI and enrichment.
 function buildAllPropertyColumns() {
   var n = jsonData.length;
   var columns = {};
   for (var i = 0; i < n; i++) {
     var d = jsonData[i];
-    if (!d || !d[11] || typeof d[11] !== 'object') continue;
-    Object.keys(d[11]).forEach(function(k){
+    if (!d || !d[13] || typeof d[13] !== 'object') continue;
+    Object.keys(d[13]).forEach(function(k){
       if (!columns[k]) columns[k] = new Array(n);
     });
   }
@@ -1790,7 +1793,7 @@ function buildAllPropertyColumns() {
     var col = columns[k];
     for (var i = 0; i < n; i++) {
       var d = jsonData[i];
-      col[i] = (d && d[11] && Object.prototype.hasOwnProperty.call(d[11], k)) ? d[11][k] : undefined;
+      col[i] = (d && d[13] && Object.prototype.hasOwnProperty.call(d[13], k)) ? d[13][k] : undefined;
     }
   });
   return columns;
@@ -1896,7 +1899,9 @@ var buttons = d3.selectAll('input[name="radio_states"]');
 var targetCoordIndices = activeCoordIndices.slice(); // pair the animation is heading to (or already at)
 var coordTransitionToken = 0; // bumped on every new transition to invalidate stale in-flight frame loops
 buttons.on('change', function() {
-  var target = this.value === 'radiobutton2' ? [7,8] : (this.value === 'radiobutton3' ? [9,10] : [0,1]);
+  var target = this.value === 'radiobutton2' ? [7,8]
+             : (this.value === 'radiobutton3' ? [9,10]
+             : (this.value === 'radiobutton4' ? [11,12] : [0,1]));
   if (targetCoordIndices[0] === target[0] && targetCoordIndices[1] === target[1]) return; // already there / already heading there
   targetCoordIndices = target;
   var myToken = ++coordTransitionToken;
@@ -1930,7 +1935,7 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     visiblePointIndices.push(i);
     addHit(i,px,py);
     var shape=currentShapeMode;
-    if(categoricalShapeMap&&d[11]&&categoricalShapeMap[d[11][categoricalShapeKey]])shape=categoricalShapeMap[d[11][categoricalShapeKey]];
+    if(categoricalShapeMap&&d[13]&&categoricalShapeMap[d[13][categoricalShapeKey]])shape=categoricalShapeMap[d[13][categoricalShapeKey]];
     ctx.save();ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1;ctx.translate(px,py);ctx.beginPath();drawSymbol(ctx,shape,r);
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent';ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
