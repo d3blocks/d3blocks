@@ -37,10 +37,6 @@ d3.set_edge_properties(df['tsneX'].values,
                        df['tsneY'].values,
                        x1=df['PC1'].values,
                        y1=df['PC2'].values,
-                       x2=df['PC1'].values,
-                       y2=df['PC2'].values,
-                       x3=df['PC1'].values,
-                       y3=df['PC2'].values,
                        size=size,
                        color=color,
                        opacity=0.5,
@@ -48,7 +44,7 @@ d3.set_edge_properties(df['tsneX'].values,
                        scale=True,
                        )
 
-d3.show(label_radio=['tSNE','PCA','test','test2'])
+d3.show(label_radio=['tSNE','PCA'])
 
 
 # %%

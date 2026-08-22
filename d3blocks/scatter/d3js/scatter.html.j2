@@ -95,7 +95,7 @@ License     : GPL3
 
     <div class="top-panel-left">
         <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
-            <img src="https://raw.githubusercontent.com/d3blocks/d3blocks/main/logo.png" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+            <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
         </a>
     </div>
 
@@ -407,6 +407,7 @@ function formatTooltipHtml(raw) {
 // --- Tooltip pin + media wiring ---
 var hoveredPointIndex = -1;
 var pinnedTooltipIndex = -1; // >=0 means tooltip stays put until empty click
+var focusedPointIndex = -1; // point opened in the bottom panel (teal ring, same as selection)
 var tooltipAudioCtx = null;
 
 function stopTooltipAudio(root) {
@@ -871,7 +872,7 @@ function renderPoints() {
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent'; ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
     if(i===hoveredPointIndex || i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
-    if(selectedIndices.has(i)){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
+    if(selectedIndices.has(i) || i===focusedPointIndex){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
     ctx.restore();
   }
   if (selectionRectPx) {
@@ -976,11 +977,13 @@ canvas.addEventListener('click',function(e){
   if(didPan)return;
   var idx=hitTest(e);
   if(idx>=0){
-    // Pin tooltip in place and open the bottom detail panel.
+    // Pin tooltip in place, open the bottom detail panel, and highlight the point.
     pinPointTooltip(idx, jsonData[idx], e);
+    focusedPointIndex = idx;
     showNodePanel(jsonData[idx]);
+    scheduleRender();
   } else if(!isPanning){
-    // Empty click: dismiss pinned tooltip and bottom panel.
+    // Empty click: dismiss pinned tooltip, bottom panel, and focus ring.
     hidePointTooltip();
     closeNodePanel();
   }
@@ -1446,6 +1449,10 @@ function closeNodePanel() {
     });
   }
   if (nodePanel) nodePanel.classList.remove('open');
+  if (focusedPointIndex >= 0) {
+    focusedPointIndex = -1;
+    scheduleRender();
+  }
 }
 
 if (nodePanelClose) nodePanelClose.addEventListener('click', closeNodePanel);
@@ -1506,9 +1513,11 @@ function highlightPoint(idx) {
 function jumpToPoint(idx) {
   const i = parseInt(idx, 10);
   if (Number.isNaN(i) || i < 0 || i >= jsonData.length) return;
-  // Show panel for the point and highlight it
+  // Show panel for the point and highlight it (search + focus ring)
+  focusedPointIndex = i;
   showNodePanel(jsonData[i]);
   highlightPoint(i);
+  scheduleRender();
   // Close results and set input value
   if (searchResults) searchResults.classList.remove('open');
   if (searchInput) {
@@ -1941,7 +1950,7 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent';ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
     if(i===hoveredPointIndex||i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
-    if(selectedIndices.has(i)){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
+    if(selectedIndices.has(i)||i===focusedPointIndex){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
     ctx.restore();
   }
   // Density follows the interpolated positions (currentXVal/currentYVal) so

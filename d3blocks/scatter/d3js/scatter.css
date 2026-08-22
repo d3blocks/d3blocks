@@ -165,7 +165,8 @@
     position: fixed; left: 240px; right: 10px; bottom: 0; z-index: 1100;
     min-height: 120px; max-height: 85vh; overflow: auto;
     height: 220px;
-    background: var(--panel-bg);
+    /* Near-solid background (side panels keep the lighter --panel-bg) */
+    background: rgba(34, 34, 34, 0.98);
     color: var(--text);
     border: 1px solid var(--panel-border);
     border-top: 1px solid var(--panel-border);
@@ -175,6 +176,9 @@
     transition: transform 0.28s ease, opacity 0.28s ease, border-color 0.25s, background 0.25s, left 0.15s ease;
     box-shadow: var(--panel-shadow);
     font-family: "Helvetica", Arial, sans-serif;
+  }
+  body.light #nodePanel {
+    background: rgba(255, 255, 255, 0.98);
   }
   #nodePanel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
   /* Top-center drag handle: pull up/down to resize the bottom panel */
