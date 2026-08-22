@@ -1094,9 +1094,20 @@ var sizeMultiplier = 1;
 // much bigger change in multiplier than the same drag near the middle, so
 // size differences between points become easier to see as you push toward
 // either extreme, while the center (t=0) stays pinned at a neutral 1x.
-var SIZE_MULT_BASE = 4; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
-function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
-function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
+
+// var SIZE_MULT_BASE = 8; // t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x
+// function sizeMultiplierFromSlider(t) { return Math.pow(SIZE_MULT_BASE, t); }
+// function baseRadius(d) { return Math.max(.5, +d[3]||1) * sizeMultiplier; }
+function sizeMultiplierFromSlider(t) {
+    var min = 0.05;
+    var max = 8;
+    var u = (t + 1) / 2;
+    return min * Math.pow(max / min, u);
+}
+
+function baseRadius(d) {
+    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
+}
 
 // —— Jitter: nudges each point a small, stable amount so fully-overlapping
 // points become distinguishable. The offset is seeded from the point's own
