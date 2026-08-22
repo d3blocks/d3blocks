@@ -111,7 +111,8 @@
      blur/glassmorphism, matches .stats-panel's border/shadow/radius) —— */
   #nodePanel {
     position: fixed; left: 10px; right: 10px; bottom: 0; z-index: 1100;
-    max-height: 48vh; overflow-y: auto;
+    min-height: 120px; max-height: 85vh; overflow: auto;
+    resize: vertical;
     background: var(--panel-bg);
     color: var(--text);
     border: 1px solid var(--panel-border);
@@ -174,7 +175,7 @@
   /* Association results table (Explore associations) */
   .assoc-table {
     display: grid;
-    grid-template-columns: minmax(90px, max-content) minmax(60px, max-content) 1fr minmax(70px, max-content) minmax(70px, max-content);
+    grid-template-columns: minmax(60px, max-content) minmax(70px, max-content) minmax(90px, max-content) minmax(60px, max-content) 1fr;
     column-gap: 16px;
     row-gap: 4px;
     font-size: 13px;
@@ -189,6 +190,7 @@
     border-bottom: 1px solid var(--panel-border);
     padding-bottom: 6px;
   }
+  .assoc-th.num { font-variant-numeric: tabular-nums; }
   .assoc-td { color: var(--text); word-break: break-word; }
   .assoc-td.num { font-variant-numeric: tabular-nums; color: var(--text-muted); }
 .enrich-var-row {
@@ -222,6 +224,15 @@
   border: 1px solid var(--btn-border);
   border-radius: 5px;
   padding: 2px 4px;
+}
+#enrichAlphaInput {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-family: "Helvetica", Arial, sans-serif;
 }
 
 /* ==== d3graph-aligned panel styles (from d3graph style.css) ==== */

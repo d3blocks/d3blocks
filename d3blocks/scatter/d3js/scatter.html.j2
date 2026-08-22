@@ -130,10 +130,30 @@ License     : GPL3
     <div class="physics-control">
       <div class="slider-row">
         <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
-        <input type="range" id="jitterSlider" min="0" max="200" step="1" value="0">
+        <input type="range" id="jitterSlider" min="0" max="25" step="1" value="0">
       </div>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
     </div>
+  </div>
+</div>
+
+<div class="stats-panel collapsed" id="enrichPanel">
+  <div class="stats-panel-title">Enrichments<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="enrichAlphaInput">Alpha cutoff</label>
+      <input type="number" id="enrichAlphaInput" min="0" max="1" step="0.001" value="0.05" style="width:100%;box-sizing:border-box;margin-top:4px">
+    </div>
+    <div class="physics-control">
+      <label for="enrichMultTestSelect">Multiple testing correction</label>
+      <select id="enrichMultTestSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
+        <option value="holm" selected>Holm</option>
+        <option value="bonferroni">Bonferroni</option>
+      </select>
+    </div>
+    <button class="button-switch" id="assocButton" type="button" title="Select points first" disabled style="width:100%;margin:4px 0 10px 0">Compute Associations</button>
+    <div style="font-size:11px;opacity:0.6;margin-bottom:8px">Variables to test for significance:</div>
+    <div id="enrichVarList"><div class="node-info-placeholder">No properties found in this dataset.</div></div>
   </div>
 </div>
 
@@ -1133,6 +1153,11 @@ function holmCorrection(pvalues) {
   }
   return adj;
 }
+// Bonferroni correction: simply scales each p-value by the number of tests.
+function bonferroniCorrection(pvalues) {
+  var m = pvalues.length;
+  return pvalues.map(function(p){ return Math.min(1, p * m); });
+}
 
 // dtype detection for a property column: numeric if every present value
 // parses as a finite number, categorical otherwise (mirrors hnet's simpler
@@ -1190,13 +1215,14 @@ function computeSignificance(columns, yBits, dtypeOverrides) {
   return out;
 }
 
-// Port of hnet's enrichment(): orchestrates significance computation, Holm
-// correction, and alpha filtering.
-function enrichment(columns, yBits, alpha, dtypeOverrides) {
+// Port of hnet's enrichment(): orchestrates significance computation,
+// multiple-test correction (Holm or Bonferroni), and alpha filtering.
+function enrichment(columns, yBits, alpha, dtypeOverrides, multtest) {
   alpha = alpha || 0.05;
+  multtest = multtest || 'holm';
   var out = computeSignificance(columns, yBits, dtypeOverrides);
   var pvals = out.map(function(r){ return r.P; });
-  var padj = holmCorrection(pvals);
+  var padj = multtest === 'bonferroni' ? bonferroniCorrection(pvals) : holmCorrection(pvals);
   out.forEach(function(r, i){ r.Padj = padj[i]; });
   out = out.filter(function(r){ return r.Padj <= alpha; });
   out.sort(function(a,b){ return a.Padj - b.Padj; });
@@ -1219,11 +1245,18 @@ function runSelectionEnrichment() {
     columns[k] = allColumns[k];
     if (state && state.dtypeOverride) dtypeOverrides[k] = state.dtypeOverride;
   });
+  var alphaInput = document.getElementById('enrichAlphaInput');
+  var alpha = alphaInput ? parseFloat(alphaInput.value) : 0.05;
+  if (!Number.isFinite(alpha) || alpha <= 0 || alpha > 1) alpha = 0.05;
+  var multtestSelect = document.getElementById('enrichMultTestSelect');
+  var multtest = multtestSelect ? multtestSelect.value : 'holm';
   return {
-    results: enrichment(columns, yBits, 0.05, dtypeOverrides),
+    results: enrichment(columns, yBits, alpha, dtypeOverrides, multtest),
     nCols: Object.keys(columns).length,
     nSelected: selectedIndices.size,
-    nTotal: n
+    nTotal: n,
+    alpha: alpha,
+    multtest: multtest
   };
 }
 
@@ -1303,22 +1336,22 @@ function showAssociationsPanel() {
   var res = runSelectionEnrichment();
   if (nodePanelTitle) nodePanelTitle.textContent = 'Associations for selection';
   if (nodePanelSub) nodePanelSub.textContent = res.nSelected + ' of ' + res.nTotal + ' points selected \u2014 ' +
-    res.results.length + ' significant of ' + res.nCols + ' properties tested (\u03b1=0.05, Holm-corrected)';
+    res.results.length + ' significant of ' + res.nCols + ' properties tested (\u03b1=' + res.alpha + ', ' + (res.multtest === 'bonferroni' ? 'Bonferroni' : 'Holm') + '-corrected)';
   if (nodeStatsGrid) {
     if (res.results.length === 0) {
       nodeStatsGrid.innerHTML = '<div class="node-info-placeholder">No statistically significant associations found for this selection.</div>';
     } else {
       var html = '<div class="assoc-table">';
-      html += '<div class="assoc-th">Property</div><div class="assoc-th">Value</div><div class="assoc-th">Effect</div><div class="assoc-th">P</div><div class="assoc-th">P (adj)</div>';
+      html += '<div class="assoc-th num">P</div><div class="assoc-th num">P (adj)</div><div class="assoc-th">Property</div><div class="assoc-th">Value</div><div class="assoc-th">Effect</div>';
       res.results.forEach(function(r){
         var effect = r.dtype === 'num'
           ? ((r.zscore > 0 ? 'higher in selection' : 'lower in selection') + ' (z=' + r.zscore.toFixed(2) + ')')
           : (r.overlap_X + ' of ' + r.samplesize_N + ' selected have it (' + r.nr_succes_pop_n + ' total in dataset)');
+        html += '<div class="assoc-td num">' + formatPValue(r.P) + '</div>';
+        html += '<div class="assoc-td num">' + formatPValue(r.Padj) + '</div>';
         html += '<div class="assoc-td">' + escapeHtml(r.category_name) + '</div>';
         html += '<div class="assoc-td">' + escapeHtml(r.dtype === 'num' ? 'numeric' : r.value) + '</div>';
         html += '<div class="assoc-td">' + escapeHtml(effect) + '</div>';
-        html += '<div class="assoc-td num">' + formatPValue(r.P) + '</div>';
-        html += '<div class="assoc-td num">' + formatPValue(r.Padj) + '</div>';
       });
       html += '</div>';
       nodeStatsGrid.innerHTML = html;
