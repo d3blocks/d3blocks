@@ -120,6 +120,40 @@
   .tooltip .tooltip-img:first-child { margin-top: 0; }
   .tooltip .tooltip-img:last-child { margin-bottom: 0; }
 
+  /* Tooltip audio player: play/pause + waveform */
+  .tooltip-audio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+    max-width: 220px;
+  }
+  .tooltip-audio-btn {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--btn-border, #555);
+    background: var(--btn-bg, #333);
+    color: var(--btn-text, #eee);
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tooltip-audio-btn:hover { background: var(--btn-bg-active, #3d3d3d); }
+  .tooltip-audio-wave {
+    display: block;
+    width: 160px;
+    height: 36px;
+    border-radius: 4px;
+    background: rgba(127, 127, 127, 0.12);
+  }
+  .tooltip-audio audio { display: none; }
+
   /* —— Bottom slide-up node info panel (d3graph-style flat panel: no
      blur/glassmorphism, matches .stats-panel's border/shadow/radius).
      Height is controlled by a custom top-center drag handle (not CSS
@@ -275,7 +309,23 @@
   border-radius: 5px;
   padding: 2px 4px;
 }
-#enrichAlphaInput {
+.enrich-options-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 8px 0 4px;
+}
+.enrich-options-row .enrich-option {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+.enrich-options-row .enrich-option label {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+#enrichAlphaInput,
+#enrichMultTestSelect {
   background: var(--btn-bg);
   color: var(--btn-text);
   border: 1px solid var(--btn-border);
