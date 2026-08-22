@@ -1629,7 +1629,7 @@ d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
            df['PC2'].values,                   # PC2 y-coordinates
            x1=df['tsne_1'].values,             # tSNE x-coordinates
            y1=df['tsne_2'].values,             # tSNE y-coordinates
-           color=df['y'].values,   # Hex-colors or classlabels
+           color=df['y'].values.astype(str),   # Hex-colors or classlabels
            tooltip=tooltip,                    # Tooltip
            size=size,                          # Node size
            opacity=opacity,                    # Opacity

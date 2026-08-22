@@ -26,20 +26,20 @@ License     : GPL3
        (see script) measures the top-panel's actual rendered height at
        runtime and overrides these, since that height varies with the logo
        image load, font rendering, and wrapping on narrow screens. */
-    #layoutPanel.stats-panel {
+    #exportPanel.stats-panel {
       top: 80px;
+      left: 10px;
+      z-index: 65;
+    }
+    #layoutPanel.stats-panel {
+      top: 220px;
       left: 10px;
       z-index: 60;
     }
     #enrichPanel.stats-panel {
-      top: 460px;
+      top: 600px;
       left: 10px;
       z-index: 55;
-    }
-    #exportPanel.stats-panel {
-      top: 700px;
-      left: 10px;
-      z-index: 50;
     }
     /* Keep the fixed-size scatterplot centered in the viewport */
     #scatter-main {
@@ -100,6 +100,16 @@ License     : GPL3
   </div>
 </div>
 
+<!-- Side panel: Export / Save (first in the left stack) -->
+<div class="stats-panel" id="exportPanel">
+  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)" style="width:100%;margin:4px 0 8px 0">Export</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads selected points (or all if none selected) as JSON.</div>
+  </div>
+</div>
+
 <!-- Side panel: Size / Color / Shape (collapsible, floats over the plot like index.html.j2) -->
 <div class="stats-panel" id="layoutPanel">
   <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
@@ -111,6 +121,11 @@ License     : GPL3
         <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
         <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
       </div>
+      <div class="slider-row" style="margin-top:8px">
+        <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
+        <input type="range" id="jitterSlider" min="0" max="25" step="1" value="0">
+      </div>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
     </div>
     <div class="physics-control">
       <label for="layoutColorSelect">Color</label>
@@ -129,13 +144,6 @@ License     : GPL3
         <option value="__tooltip__">Name / tooltip</option>
       </select>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
-    </div>
-    <div class="physics-control">
-      <div class="slider-row">
-        <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
-        <input type="range" id="jitterSlider" min="0" max="25" step="1" value="0">
-      </div>
-      <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
     </div>
   </div>
 </div>
@@ -157,16 +165,6 @@ License     : GPL3
     <button class="button-switch" id="assocButton" type="button" title="Select points first" disabled style="width:100%;margin:4px 0 10px 0">Compute Associations</button>
     <div style="font-size:11px;opacity:0.6;margin-bottom:8px">Variables to test for significance:</div>
     <div id="enrichVarList"><div class="node-info-placeholder">No properties found in this dataset.</div></div>
-  </div>
-</div>
-
-<!-- Side panel: Export / Save -->
-<div class="stats-panel" id="exportPanel">
-  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
-  <div class="stats-panel-body">
-    <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)" style="width:100%;margin:4px 0 8px 0">Export</button>
-    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads selected points (or all if none selected) as JSON.</div>
   </div>
 </div>
 
@@ -506,7 +504,7 @@ function positionSidePanels() {
   var bottom = bar.getBoundingClientRect().bottom;
   if (main) main.style.marginTop = (bottom + 12) + 'px';
   var y = bottom + 8;
-  ['layoutPanel', 'enrichPanel', 'exportPanel'].forEach(function(id){
+  ['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel) return;
     panel.style.top = y + 'px';
@@ -518,7 +516,7 @@ window.addEventListener('load', positionSidePanels);
 positionSidePanels();
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['layoutPanel', 'enrichPanel', 'exportPanel'].forEach(function(panelId) {
+['exportPanel', 'layoutPanel', 'enrichPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
