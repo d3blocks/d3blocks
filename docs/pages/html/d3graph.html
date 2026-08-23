@@ -346,24 +346,24 @@ is also controlled via save_button, independent of this.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">)</span> <span class="c1"># &#39;bigbang&#39;, &#39;stormofswords&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'energy'</span><span class="p">)</span> <span class="c1"># 'bigbang', 'stormofswords'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create network using default</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;d3graph.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">'d3graph.html'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change scaler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">scaler</span><span class="o">=</span><span class="s1">&#39;minmax&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">scaler</span><span class="o">=</span><span class="s1">'minmax'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change node properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#FF0000&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Solar&#39;</span><span class="p">][</span><span class="s1">&#39;edge_size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">'Solar'</span><span class="p">][</span><span class="s1">'size'</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">'Solar'</span><span class="p">][</span><span class="s1">'color'</span><span class="p">]</span><span class="o">=</span><span class="s1">'#FF0000'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">'Solar'</span><span class="p">][</span><span class="s1">'edge_color'</span><span class="p">]</span><span class="o">=</span><span class="s1">'#000000'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">'Solar'</span><span class="p">][</span><span class="s1">'edge_size'</span><span class="p">]</span><span class="o">=</span><span class="mi">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change edge properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker_end</span><span class="o">=</span><span class="s1">&#39;arrow&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker_end</span><span class="o">=</span><span class="s1">'arrow'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">D3graph</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Node properties</span>
@@ -388,7 +388,7 @@ is also controlled via save_button, independent of this.</p></li>
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset is a DataFrame with three column, source, target and weight.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#                      source            target   weight</span>
-<span class="c1"># 0      Agricultural &#39;waste&#39;    Bio-conversion  124.729</span>
+<span class="c1"># 0      Agricultural 'waste'    Bio-conversion  124.729</span>
 <span class="c1"># 1            Bio-conversion            Liquid    0.597</span>
 <span class="c1"># 2            Bio-conversion            Losses   26.862</span>
 <span class="c1"># 3            Bio-conversion             Solid  280.322</span>
@@ -426,12 +426,12 @@ is also controlled via save_button, independent of this.</p></li>
 <span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
 
 <span class="c1"># Load example data</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;socialmedia&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'socialmedia'</span><span class="p">)</span>
 <span class="c1"># Slice first 10000 rows</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10000</span><span class="p">]</span>
 
 <span class="c1"># Create network using default</span>
-<span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;d3graph.html&#39;</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">'d3graph.html'</span><span class="p">,</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">d3</span><span class="o">.</span><span class="n">d3graph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
            <span class="n">density_grid_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
@@ -439,7 +439,7 @@ is also controlled via save_button, independent of this.</p></li>
            <span class="n">density_opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
            <span class="n">dark_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
            <span class="n">show_density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-           <span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;d3graph_socialmedia.html&#39;</span><span class="p">,</span>
+           <span class="n">filepath</span><span class="o">=</span><span class="sa">r</span><span class="s1">'d3graph_socialmedia.html'</span><span class="p">,</span>
            <span class="p">)</span>
 </pre></div>
 </div>

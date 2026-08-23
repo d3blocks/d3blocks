@@ -17,6 +17,7 @@
       <script src="_static/documentation_options.js?v=6837f5c9"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -72,11 +73,18 @@
 <li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Scatter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#d3blocks.d3blocks.D3Blocks.scatter"><code class="docutils literal notranslate"><span class="pre">D3Blocks.scatter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#strengths">Strengths</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#chart">Chart</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default-scatterplot">Default scatterplot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transitions-2-coordinates">Transitions (2 coordinates)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#transitions-3-coordinates">Transitions (3 coordinates)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statistical-associations">Statistical Associations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#categorical-features-hypergeometric-test">Categorical features: hypergeometric test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#numerical-features-mann-whitney-u-test">Numerical features: Mann-Whitney U test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-testing-correction">Multiple testing correction</a></li>
 </ul>
 </li>
 </ul>
@@ -142,7 +150,7 @@
 <hr class="docutils" />
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.scatter">
-<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'opaque'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_radio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['(x,</span> <span class="pre">y)',</span> <span class="pre">'(x1,</span> <span class="pre">y1)',</span> <span class="pre">'(x2,</span> <span class="pre">y2)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[900,</span> <span class="pre">600]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#002147'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'opaque'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stroke</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tab20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_radio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['(x,</span> <span class="pre">y)',</span> <span class="pre">'(x1,</span> <span class="pre">y1)',</span> <span class="pre">'(x2,</span> <span class="pre">y2)',</span> <span class="pre">'(x3,</span> <span class="pre">y3)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Scatter</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1024,</span> <span class="pre">768]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.scatter" title="Link to this definition"></a></dt>
 <dd><p>Scatterplot block.</p>
 <p>The scatter plot is perhaps the most well-known chart to plot x, and y coordinates. Basic charts are very
 useful from time to time, especially with the brushing and zooming capabilities. The scatter plots can be
@@ -158,6 +166,8 @@ class label.</p>
 <li><p><strong>y1</strong> (<em>numpy array</em>) – Second set of 1d coordinates y-axis.</p></li>
 <li><p><strong>x2</strong> (<em>numpy array</em>) – Third set of 1d coordinates x-axis.</p></li>
 <li><p><strong>y2</strong> (<em>numpy array</em>) – Third set of 1d coordinates y-axis.</p></li>
+<li><p><strong>x3</strong> (<em>numpy array</em>) – Fourth set of 1d coordinates x-axis.</p></li>
+<li><p><strong>y3</strong> (<em>numpy array</em>) – Fourth set of 1d coordinates y-axis.</p></li>
 <li><p><strong>jitter</strong> (<em>float</em><em>, </em><em>default: None</em>) – Add jitter to data points as random normal data. Values of 0.01 is usually good for one-hot data seperation.</p></li>
 <li><p><strong>size</strong> (<em>list/array</em><em> of </em><em>with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em><em>.</em>) – Size of the samples.</p></li>
 <li><p><strong>color</strong> (<em>list/array</em><em> of </em><em>hex colors with same size as</em><em> (</em><em>x</em><em>,</em><em>y</em><em>)</em>) – <ul>
@@ -193,7 +203,7 @@ class label.</p>
 </dl>
 </p></li>
 <li><p><strong>scale</strong> (<em>Bool</em><em>, </em><em>optional</em>) – Scale datapoints. The default is False.</p></li>
-<li><p><strong>label_radio</strong> (<em>List</em><em> [</em><em>'</em><em>(</em><em>x</em><em>, </em><em>y</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x1</em><em>, </em><em>y1</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x2</em><em>, </em><em>y2</em><em>)</em><em>'</em><em>]</em>) – The labels used for the radiobuttons.</p></li>
+<li><p><strong>label_radio</strong> (<em>List</em><em> [</em><em>'</em><em>(</em><em>x</em><em>, </em><em>y</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x1</em><em>, </em><em>y1</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x2</em><em>, </em><em>y2</em><em>)</em><em>'</em><em>, </em><em>'</em><em>(</em><em>x3</em><em>, </em><em>y3</em><em>)</em><em>'</em><em>]</em>) – The labels used for the radiobuttons.</p></li>
 <li><p><strong>set_xlim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Width of the x-axis: The default is extracted from the data with 10% spacing.</p></li>
 <li><p><strong>set_ylim</strong> (<em>tuple</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – Height of the y-axis: The default is extracted from the data with 10% spacing.</p></li>
 <li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
@@ -266,27 +276,75 @@ class label.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Scatter&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">'Scatter'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;cancer&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'cancer'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">size</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;labx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'tsneX'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">df</span><span class="p">[</span><span class="s1">'tsneY'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'PC1'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'PC2'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">size</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'survival_months'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'labx'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                       <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">tooltip</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;labx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">&#39; &lt;br&gt; Survival: &#39;</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">tooltip</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'labx'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">' &lt;br&gt; Survival: '</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'survival_months'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                       <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                       <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tSNE&#39;</span><span class="p">,</span><span class="s1">&#39;PCA&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">'tSNE'</span><span class="p">,</span><span class="s1">'PCA'</span><span class="p">])</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">'Scatter'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'cancer'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'survival_months'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'labx'</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'labx'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">' &lt;br&gt; Survival: '</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'survival_months'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'URL image and Image: &lt;br&gt;&lt;br&gt; https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg &lt;br&gt; &lt;br&gt; With great audio too: &lt;br&gt;&lt;br&gt; https://samplelib.com/mp3/sample-12s.mp3'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'Local image: &lt;br&gt;&lt;br&gt;&lt;PATH TO YOUR IMAGE&gt;'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'URL audio file: &lt;br&gt;&lt;br&gt; https://samplelib.com/mp3/sample-3s.mp3'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'local audio file: &lt;br&gt;&lt;br&gt; /data/50_speakers_audio/Speaker_0000/Speaker_0000_00030.wav'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'special'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'special'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'special'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'special'</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'tsneX'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">df</span><span class="p">[</span><span class="s1">'tsneY'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'PC1'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'PC2'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">tooltip</span><span class="o">=</span><span class="n">tooltip</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                       <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">'tSNE'</span><span class="p">,</span><span class="s1">'PCA'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p class="rubric">Examples</p>
@@ -294,33 +352,34 @@ class label.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">'Scatter'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;mnist&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'mnist'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">opacity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'y'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set all propreties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>                   <span class="c1"># PC1 x-coordinates</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;PC2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>                   <span class="c1"># PC2 y-coordinates</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsne_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>             <span class="c1"># tSNE x-coordinates</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsne_2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>             <span class="c1"># tSNE y-coordinates</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsne_2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>   <span class="c1"># Hex-colors or classlabels</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'PC1'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>                   <span class="c1"># PC1 x-coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">df</span><span class="p">[</span><span class="s1">'PC2'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>                   <span class="c1"># PC2 y-coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">x1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'tsne_1'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>             <span class="c1"># tSNE x-coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">y1</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'tsne_2'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>             <span class="c1"># tSNE y-coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'y'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>   <span class="c1"># Hex-colors or classlabels</span>
 <span class="gp">&gt;&gt;&gt; </span>           <span class="n">tooltip</span><span class="o">=</span><span class="n">tooltip</span><span class="p">,</span>                    <span class="c1"># Tooltip</span>
 <span class="gp">&gt;&gt;&gt; </span>           <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>                          <span class="c1"># Node size</span>
 <span class="gp">&gt;&gt;&gt; </span>           <span class="n">opacity</span><span class="o">=</span><span class="n">opacity</span><span class="p">,</span>                    <span class="c1"># Opacity</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">stroke</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;tab20&#39;</span><span class="p">,</span>                       <span class="c1"># Colormap</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">stroke</span><span class="o">=</span><span class="s1">'#000000'</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">cmap</span><span class="o">=</span><span class="s1">'tab20'</span><span class="p">,</span>                       <span class="c1"># Colormap</span>
 <span class="gp">&gt;&gt;&gt; </span>           <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                         <span class="c1"># Scale the datapoints</span>
-<span class="gp">&gt;&gt;&gt; </span>           <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PCA&#39;</span><span class="p">,</span> <span class="s1">&#39;tSNE&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">'PCA'</span><span class="p">,</span> <span class="s1">'tSNE'</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>           <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>           <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;scatter_demo.html&#39;</span><span class="p">,</span> <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PCA&#39;</span><span class="p">,</span> <span class="s1">&#39;tSNE&#39;</span><span class="p">],</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s1">'scatter_demo.html'</span><span class="p">,</span> <span class="n">label_radio</span><span class="o">=</span><span class="p">[</span><span class="s1">'PCA'</span><span class="p">,</span> <span class="s1">'tSNE'</span><span class="p">],</span> <span class="n">showfig</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">Examples</p>
@@ -328,82 +387,23 @@ class label.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;cancer&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set size and tooltip</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="mi">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;labx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="s1">&#39; &lt;br /&gt; Survival: &#39;</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;survival_months&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">               df[&#39;tsneY&#39;].values,</span>
-<span class="go">               size=size,</span>
-<span class="go">               color=df[&#39;labx&#39;].values,</span>
-<span class="go">               stroke=&#39;#000000&#39;,</span>
-<span class="go">               opacity=0.4,</span>
-<span class="go">               tooltip=tooltip,</span>
-<span class="go">               filepath=&#39;scatter_demo.html&#39;,</span>
-<span class="go">               cmap=&#39;tab20&#39;)</span>
-</pre></div>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">               df[&#39;tsneY&#39;].values,</span>
-<span class="go">               x1=df[&#39;PC1&#39;].values,</span>
-<span class="go">               y1=df[&#39;PC2&#39;].values,</span>
-<span class="go">               label_radio=[&#39;tSNE&#39;, &#39;PCA&#39;],</span>
-<span class="go">               scale=True,</span>
-<span class="go">               size=size,</span>
-<span class="go">               color=df[&#39;labx&#39;].values,</span>
-<span class="go">               stroke=&#39;#000000&#39;,</span>
-<span class="go">               opacity=0.4,</span>
-<span class="go">               tooltip=tooltip,</span>
-<span class="go">               filepath=&#39;scatter_transitions2.html&#39;,</span>
-<span class="go">               cmap=&#39;tab20&#39;)</span>
-</pre></div>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">               df[&#39;tsneY&#39;].values,</span>
-<span class="go">               x1=df[&#39;PC1&#39;].values,</span>
-<span class="go">               y1=df[&#39;PC2&#39;].values,</span>
-<span class="go">               x2=df[&#39;PC2&#39;].values,</span>
-<span class="go">               y2=df[&#39;PC1&#39;].values,</span>
-<span class="go">               label_radio=[&#39;tSNE&#39;, &#39;PCA&#39;, &#39;PCA_reverse&#39;],</span>
-<span class="go">               scale=True,</span>
-<span class="go">               size=size,</span>
-<span class="go">               color=df[&#39;labx&#39;].values,</span>
-<span class="go">               stroke=&#39;#000000&#39;,</span>
-<span class="go">               opacity=0.4,</span>
-<span class="go">               tooltip=tooltip,</span>
-<span class="go">               filepath=&#39;scatter_transitions3.html&#39;,</span>
-<span class="go">               cmap=&#39;tab20&#39;)</span>
-</pre></div>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">&#39;Scatter&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">'Scatter'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">&#39;cancer&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'cancer'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsneX&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="go">                           df[&#39;tsneY&#39;].values,</span>
-<span class="go">                           x1=df[&#39;PC1&#39;].values,</span>
-<span class="go">                           y1=df[&#39;PC2&#39;].values,</span>
-<span class="go">                           label_radio=[&#39;tSNE&#39;,&#39;PCA&#39;],</span>
-<span class="go">                           size=df[&#39;survival_months&#39;].fillna(1).values / 10,</span>
-<span class="go">                           color=df[&#39;labx&#39;].values,</span>
-<span class="go">                           tooltip=df[&#39;labx&#39;].values + &#39; &lt;br /&gt; Survival: &#39; + df[&#39;survival_months&#39;].astype(str).str[0:4].values,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'tsneX'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+<span class="go">                           df['tsneY'].values,</span>
+<span class="go">                           x1=df['PC1'].values,</span>
+<span class="go">                           y1=df['PC2'].values,</span>
+<span class="go">                           label_radio=['tSNE','PCA'],</span>
+<span class="go">                           size=df['survival_months'].fillna(1).values / 10,</span>
+<span class="go">                           color=df['labx'].values,</span>
+<span class="go">                           tooltip=df['labx'].values + ' &lt;br /&gt; Survival: ' + df['survival_months'].astype(str).str[0:4].values,</span>
 <span class="go">                           scale=True)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the chart</span>
@@ -411,9 +411,9 @@ class label.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set specific node properties.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#000000&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;tooltip&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;I am adjusted!&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'size'</span><span class="p">]</span><span class="o">=</span><span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'color'</span><span class="p">]</span><span class="o">=</span><span class="s1">'#000000'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'tooltip'</span><span class="p">]</span><span class="o">=</span><span class="s1">'I am adjusted!'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Configuration can be changed too.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d3</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
@@ -428,6 +428,19 @@ class label.</p>
 </ul>
 </dd></dl>
 
+<section id="strengths">
+<h2>Strengths<a class="headerlink" href="#strengths" title="Link to this heading"></a></h2>
+<p>The scatter chart is one of the most flexible building blocks in <code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> because it is not limited to plotting x/y coordinates. It is designed to turn a table of samples and properties into an <em>explorable</em> map:</p>
+<ul class="simple">
+<li><p><strong>Interactive by design.</strong> Points can be panned, zoomed, hovered, and brushed (rectangular selection) directly in the browser, without regenerating the plot.</p></li>
+<li><p><strong>Multiple visual encodings at once.</strong> Color, size, opacity and labels can each be mapped to a different column, so several dimensions of the data can be inspected simultaneously on top of the x/y layout.</p></li>
+<li><p><strong>Adjustable, intuitive controls.</strong> Sliders — including dual-thumb range sliders for things such as the pixel bounds a point is allowed to render at — let the end-user reshape the chart live, without touching code.</p></li>
+<li><p><strong>Transitions between coordinate systems.</strong> The same set of points can smoothly animate between two or three different x/y layouts (e.g. PCA vs. t-SNE vs. UMAP coordinates), which makes it easy to compare embeddings or track how samples move between representations.</p></li>
+<li><p><strong>Scales to large datasets.</strong> Because rendering happens with D3/SVG in the browser, scatter plots with thousands of points remain responsive.</p></li>
+<li><p><strong>Built-in statistical exploration.</strong> Selecting a subset of points (e.g. via brushing) triggers an on-the-fly statistical association test against every other column in the dataset, surfacing which features are significantly enriched in the selection. This is described in detail in the <em>Statistical Associations</em> section below.</p></li>
+<li><p><strong>Composable output.</strong> Like other <code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> charts, the result is a self-contained, shareable HTML file that requires no server or notebook to view it.</p></li>
+</ul>
+</section>
 <section id="input-data">
 <h2>Input Data<a class="headerlink" href="#input-data" title="Link to this heading"></a></h2>
 <p>The input dataset are the x-coordinates and y-coordinates that needs to be specified seperately.</p>
@@ -459,7 +472,53 @@ class label.</p>
 <iframe src="https://erdogant.github.io\docs\d3blocks\scatter_transitions2.html" height="600px" width="775px", frameBorder="0"></iframe></section>
 <section id="transitions-3-coordinates">
 <h3>Transitions (3 coordinates)<a class="headerlink" href="#transitions-3-coordinates" title="Link to this heading"></a></h3>
-<iframe src="https://erdogant.github.io\docs\d3blocks\scatter_transitions3.html" height="600px" width="775px", frameBorder="0"></iframe><hr>
+<iframe src="https://erdogant.github.io\docs\d3blocks\scatter_transitions3.html" height="600px" width="775px", frameBorder="0"></iframe></section>
+</section>
+<section id="statistical-associations">
+<h2>Statistical Associations<a class="headerlink" href="#statistical-associations" title="Link to this heading"></a></h2>
+<p>Alongside the visual encodings, the scatter chart can compute <strong>statistical associations</strong> between a selection of points and every other property column in the dataset. Selecting a group of points (e.g. by brushing a region of the plot) defines a binary label <code class="docutils literal notranslate"><span class="pre">y</span></code> — 1 for samples inside the selection, 0 for the rest — and each remaining column is then tested for whether it is significantly enriched in that selection. The results are ranked and shown in a stats panel next to the chart, so associations can be discovered interactively rather than being computed up front in a notebook.</p>
+<p>The methodology mirrors the enrichment approach used in <a class="reference external" href="https://arxiv.org/abs/2005.04679">HNet: Graphical Hypergeometric Networks</a>, applied here at plot-interaction time instead of over an entire graph. Two different tests are used depending on the data type of the column being compared against the selection.</p>
+<section id="categorical-features-hypergeometric-test">
+<h3>Categorical features: hypergeometric test<a class="headerlink" href="#categorical-features-hypergeometric-test" title="Link to this heading"></a></h3>
+<p>For a categorical column, each category is treated as a separate binary feature (present / absent per sample), and its overlap with the selection is tested with a one-sided hypergeometric test — the same “over-representation” test HNet uses to decide whether an edge between two categorical nodes is significant.</p>
+<p>Given:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(M\)</span> — the total number of samples,</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> — the number of samples that have the category of interest,</p></li>
+<li><p><span class="math notranslate nohighlight">\(N\)</span> — the number of samples in the selection,</p></li>
+<li><p><span class="math notranslate nohighlight">\(x\)</span> — the observed overlap between the category and the selection,</p></li>
+</ul>
+<p>the probability of seeing an overlap at least as large as the one observed, by chance, is:</p>
+<div class="math notranslate nohighlight">
+\[P(X \geq x) = \sum_{i=x}^{\min(n, N)} \frac{\binom{n}{i}\binom{M-n}{N-i}}{\binom{M}{N}}\]</div>
+<p>A small p-value means the category is over-represented in the selection far more than would be expected if samples were assigned to it at random — i.e. the category and the selection are statistically associated. Categories with fewer than two occurrences are skipped as too small to test meaningfully, and where a column only has two categories (e.g. <code class="docutils literal notranslate"><span class="pre">True</span></code>/<code class="docutils literal notranslate"><span class="pre">False</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code>/<code class="docutils literal notranslate"><span class="pre">1</span></code>), the background/negative class is not tested on its own — only the positive class is, matching HNet’s two-class handling.</p>
+</section>
+<section id="numerical-features-mann-whitney-u-test">
+<h3>Numerical features: Mann-Whitney U test<a class="headerlink" href="#numerical-features-mann-whitney-u-test" title="Link to this heading"></a></h3>
+<p>For a numeric column, the values of samples inside the selection are compared against the values of the samples outside it using the <strong>Mann-Whitney U test</strong> (equivalently, the Wilcoxon rank-sum test) — a non-parametric test that does not assume the values are normally distributed, which is what HNet uses for numeric-to-categorical comparisons.</p>
+<p>All values are pooled and ranked (tied values receive the average of the ranks they span). If the selection group has <span class="math notranslate nohighlight">\(n_1\)</span> samples with summed rank <span class="math notranslate nohighlight">\(R_1\)</span>, and the rest of the data has <span class="math notranslate nohighlight">\(n_2\)</span> samples, the U statistic and its normal approximation are:</p>
+<div class="math notranslate nohighlight">
+\[U_1 = R_1 - \frac{n_1 (n_1 + 1)}{2}\]</div>
+<div class="math notranslate nohighlight">
+\[z = \frac{U_1 - \dfrac{n_1 n_2}{2}}{\sqrt{\dfrac{n_1 n_2 (n_1 + n_2 + 1)}{12}}}\]</div>
+<p>The two-sided p-value is then obtained from the standard normal CDF, <span class="math notranslate nohighlight">\(\Phi\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[P = 2 \left(1 - \Phi(|z|)\right)\]</div>
+<p>A small p-value indicates the numeric column’s distribution differs meaningfully between the selected samples and the rest (e.g. the selection tends to have systematically higher or lower values), rather than the difference being attributable to chance. Alongside the p-value, the mean, sample standard deviation and median are also reported for both groups, so an association can be interpreted in terms of effect direction and size — not only significance.</p>
+</section>
+<section id="multiple-testing-correction">
+<h3>Multiple testing correction<a class="headerlink" href="#multiple-testing-correction" title="Link to this heading"></a></h3>
+<p>Because a p-value is computed independently for every category and every numeric column, testing many columns at once inflates the chance of false positives. To control this, the raw p-values are corrected before filtering on significance, using one of:</p>
+<ul class="simple">
+<li><p><strong>Holm-Bonferroni</strong> (default) — a step-down procedure that is less conservative than a plain Bonferroni correction while still strongly controlling the family-wise error rate.</p></li>
+<li><p><strong>Bonferroni</strong> — the classical correction, which simply scales each p-value by the number of tests performed.</p></li>
+</ul>
+<p>Only associations whose adjusted p-value (<code class="docutils literal notranslate"><span class="pre">Padj</span></code>) falls below the significance threshold <code class="docutils literal notranslate"><span class="pre">alpha</span></code> (default <code class="docutils literal notranslate"><span class="pre">0.05</span></code>) are kept, and the surviving associations are sorted by <code class="docutils literal notranslate"><span class="pre">Padj</span></code> so the strongest, most reliable associations surface first in the stats panel.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The underlying enrichment engine is dependency-free JavaScript (no server round-trip needed) and can also be called directly, independent of the chart: <code class="docutils literal notranslate"><span class="pre">D3BlocksAssociations.enrichment(columns,</span> <span class="pre">yBits,</span> <span class="pre">alpha,</span> <span class="pre">dtypeOverrides,</span> <span class="pre">multtest)</span></code> returns the filtered, sorted list of significant associations for a set of columns and a binary selection mask.</p>
+</div>
+<hr>
 <center>
         <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
         <!-- Show an image ad -->

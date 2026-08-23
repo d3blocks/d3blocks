@@ -588,9 +588,9 @@ class D3Blocks():
         >>> 
         >>> tooltip = df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> tooltip[0] = r'URL image and Image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
-        >>> tooltip[1] = r'Local image: <br><br> D:\data\star-history-202596.png'
+        >>> tooltip[1] = r'Local image: <br><br><PATH TO YOUR IMAGE>'
         >>> tooltip[2] = r'URL audio file: <br><br> https://samplelib.com/mp3/sample-3s.mp3'
-        >>> tooltip[3] = r'local audio file: <br><br>D:\data\50_speakers_audio\Speaker_0000\Speaker_0000_00030.wav'
+        >>> tooltip[3] = r'local audio file: <br><br> /data/50_speakers_audio/Speaker_0000/Speaker_0000_00030.wav'
         >>> size[0]=30
         >>> size[1]=30
         >>> size[2]=30
