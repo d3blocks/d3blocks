@@ -1420,11 +1420,6 @@ function showNodePanel(d) {
 
   if (nodeStatsGrid) {
     var html = '<div class="node-info-grid">';
-    // Tooltip block — same media parsing as the floating tooltip (images, audio, HTML).
-    if (rawTip) {
-      html += '<div class="node-info-section-title">Tooltip</div>';
-      html += '<div class="node-info-media">' + formatTooltipHtml(rawTip) + '</div>';
-    }
     var props = (d && d[13]) ? d[13] : null;
     if (props && typeof props === 'object') {
       html += '<div class="node-info-section-title">Properties</div>';
