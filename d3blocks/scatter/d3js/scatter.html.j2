@@ -1374,18 +1374,30 @@ function escapeHtml(v) {
 // become links; everything else is escaped text. Reuses tooltip media parsers.
 function formatPropertyValue(v) {
   if (v == null) return '';
+
   if (typeof v === 'string') {
     var s = v.trim();
-    if (isImageRef(s) || isAudioRef(s) || /<(br|img|div|span|a)\b/i.test(s)) {
-      return formatTooltipHtml(s);
+
+    // A bare filename (e.g. "car_horn_329.wav" or "image.jpg")
+    // is not a media reference. Keep it as plain text.
+    // var isBareFilename = /^[^\\/:*?"<>|]+$/.test(s) && /\.[A-Za-z0-9]+$/.test(s);
+    var isBareFilename = /^[^\\/:*?"<>|]+\.[A-Za-z0-9]+$/.test(s);
+
+    if (!isBareFilename &&
+        (isImageRef(s) || isAudioRef(s) || /<(br|img|div|span|a)\b/i.test(s))) {
+        return formatTooltipHtml(s);
     }
+
     // Plain URL / path → clickable link
     if (/^(https?:\/\/|ftp:\/\/|file:\/\/)/i.test(s) || /^www\./i.test(s) ||
         /^\/[^\s]+$/.test(s) || /^[A-Za-z]:[\\/][^\s]*$/.test(s)) {
       var href = hrefForRef(s);
-      return '<a class="node-info-link" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(s) + '</a>';
+      return '<a class="node-info-link" href="' + escapeHtml(href) +
+             '" target="_blank" rel="noopener noreferrer">' +
+             escapeHtml(s) + '</a>';
     }
   }
+
   return escapeHtml(v);
 }
 
