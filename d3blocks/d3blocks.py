@@ -568,25 +568,75 @@ class D3Blocks():
 
         Examples
         --------
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> 
+        >>> # Load d3blocks
+        >>> from d3blocks import D3Blocks
+        >>> 
+        >>> # Initialize
+        >>> d3 = D3Blocks(chart='Scatter')
+        >>> 
+        >>> # Import example
+        >>> df = d3.import_example('cancer')
+        >>> 
+        >>> # Set properties
+        >>> d3.set_node_properties(df)
+        >>>         
+        >>> size=(df['survival_months'].fillna(1)/10)
+        >>> color=df['labx']
+        >>> 
+        >>> tooltip = df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+        >>> tooltip[0] = r'URL image and Image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
+        >>> tooltip[1] = r'Local image: <br><br> D:\data\star-history-202596.png'
+        >>> tooltip[2] = r'URL audio file: <br><br> https://samplelib.com/mp3/sample-3s.mp3'
+        >>> tooltip[3] = r'local audio file: <br><br>D:\data\50_speakers_audio\Speaker_0000\Speaker_0000_00030.wav'
+        >>> size[0]=30
+        >>> size[1]=30
+        >>> size[2]=30
+        >>> size[3]=30
+        >>> color[0] = 'special'
+        >>> color[1] = 'special'
+        >>> color[2] = 'special'
+        >>> color[3] = 'special'
+        >>> 
+        >>> # Set properties
+        >>> d3.set_edge_properties(df['tsneX'].values,
+        >>>                        df['tsneY'].values,
+        >>>                        x1=df['PC1'].values,
+        >>>                        y1=df['PC2'].values,
+        >>>                        size=size,
+        >>>                        color=color,
+        >>>                        opacity=0.5,
+        >>>                        tooltip=tooltip,
+        >>>                        scale=True,
+        >>>                        )
+        >>> 
+        >>> d3.show(label_radio=['tSNE','PCA'])
+
+        Examples
+        --------
         >>> from d3blocks import D3Blocks
         >>> import numpy as np
         >>> 
         >>> # Initialize
-        >>> d3 = D3Blocks()
+        >>> d3 = D3Blocks(chart='Scatter')
         >>> 
         >>> # Load example data
         >>> df = d3.import_example('mnist')
+        >>> 
+        >>> d3.set_node_properties(df)
         >>> 
         >>> size = np.random.randint(0, 8, df.shape[0])
         >>> opacity = np.random.randint(0, 8, df.shape[0])/10
         >>> tooltip = df['y'].values.astype(str)
         >>> 
         >>> # Set all propreties
-        >>> d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
+        >>> d3.set_edge_properties(df['PC1'].values,                   # PC1 x-coordinates
         >>>            df['PC2'].values,                   # PC2 y-coordinates
         >>>            x1=df['tsne_1'].values,             # tSNE x-coordinates
         >>>            y1=df['tsne_2'].values,             # tSNE y-coordinates
-        >>>            color=df['tsne_2'].values.astype(str),   # Hex-colors or classlabels
+        >>>            color=df['y'].values.astype(str),   # Hex-colors or classlabels
         >>>            tooltip=tooltip,                    # Tooltip
         >>>            size=size,                          # Node size
         >>>            opacity=opacity,                    # Opacity
@@ -597,71 +647,7 @@ class D3Blocks():
         >>>            showfig=False,
         >>>            )
         >>> 
-        >>> d3.set_node_properties(df)
         >>> d3.show(filepath='scatter_demo.html', label_radio=['PCA', 'tSNE'], showfig=True)
-
-
-        Examples
-        --------
-        >>> # Load d3blocks
-        >>> from d3blocks import D3Blocks
-        >>> #
-        >>> # Initialize
-        >>> d3 = D3Blocks()
-        >>> #
-        >>> # Load example data
-        >>> df = d3.import_example('cancer')
-        >>> #
-        >>> # Set size and tooltip
-        >>> size = df['survival_months'].fillna(1).values / 20
-        >>> tooltip = df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values
-        >>> #
-        >>> # Scatter plot
-        >>> d3.scatter(df['tsneX'].values,
-                       df['tsneY'].values,
-                       size=size,
-                       color=df['labx'].values,
-                       stroke='#000000',
-                       opacity=0.4,
-                       tooltip=tooltip,
-                       filepath='scatter_demo.html',
-                       cmap='tab20')
-
-        Examples
-        --------
-        >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['tsneX'].values,
-                       df['tsneY'].values,
-                       x1=df['PC1'].values,
-                       y1=df['PC2'].values,
-                       label_radio=['tSNE', 'PCA'],
-                       scale=True,
-                       size=size,
-                       color=df['labx'].values,
-                       stroke='#000000',
-                       opacity=0.4,
-                       tooltip=tooltip,
-                       filepath='scatter_transitions2.html',
-                       cmap='tab20')
-
-        Examples
-        --------
-        >>> # Scatter plot with transitions. Note that scale is set to True to make the axis comparible to each other
-        >>> d3.scatter(df['tsneX'].values,
-                       df['tsneY'].values,
-                       x1=df['PC1'].values,
-                       y1=df['PC2'].values,
-                       x2=df['PC2'].values,
-                       y2=df['PC1'].values,
-                       label_radio=['tSNE', 'PCA', 'PCA_reverse'],
-                       scale=True,
-                       size=size,
-                       color=df['labx'].values,
-                       stroke='#000000',
-                       opacity=0.4,
-                       tooltip=tooltip,
-                       filepath='scatter_transitions3.html',
-                       cmap='tab20')
 
         Examples
         --------
@@ -673,6 +659,9 @@ class D3Blocks():
         >>> #
         >>> # Import example
         >>> df = d3.import_example('cancer')
+        >>> #
+        >>> # Set properties
+        >>> d3.set_node_properties(df)
         >>> #
         >>> # Set properties
         >>> d3.set_edge_properties(df['tsneX'].values,
