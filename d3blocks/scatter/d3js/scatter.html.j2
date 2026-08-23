@@ -159,6 +159,20 @@ License     : GPL3
         <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
       </div>
       <div class="slider-row" style="margin-top:8px">
+        <label>Size range <span class="val" id="sizeRangeVal">1.5px – 30.0px</span></label>
+        <div class="dual-range" id="sizeRangeControl">
+          <div class="dual-range-track"></div>
+          <div class="dual-range-fill" id="sizeRangeFill"></div>
+          <input type="range" id="sizeRangeMinSlider" class="dual-range-input dual-range-min"
+                 min="0.5" max="60" step="0.5" value="1.5"
+                 aria-label="Minimum point radius in pixels">
+          <input type="range" id="sizeRangeMaxSlider" class="dual-range-input dual-range-max"
+                 min="0.5" max="60" step="0.5" value="30"
+                 aria-label="Maximum point radius in pixels">
+        </div>
+        <div style="font-size:11px;opacity:0.6;margin-top:2px">Smallest/largest a point can ever render, in pixels</div>
+      </div>
+      <div class="slider-row" style="margin-top:8px">
         <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
         <input type="range" id="jitterSlider" min="0" max="200" step="1" value="0">
       </div>
@@ -1115,9 +1129,17 @@ function sizeMultiplierFromSlider(t) {
 //    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
 //}
 
+// radiusClampMin/radiusClampMax used to be fixed constants (1 and 30) that
+// every rendered point's on-screen radius was clamped between, regardless of
+// how big or small the underlying data / sizeMultiplier made it. They're now
+// set interactively by the "Size range" dual-thumb slider (see the
+// sizeRangeMinSlider/sizeRangeMaxSlider wiring below), so the user can widen
+// or narrow the smallest/largest a point is ever allowed to render.
+var radiusClampMin = 1.5;
+var radiusClampMax = 30;
 function baseRadius(d) {
     var radius = Math.max(.5, +d[3] || 1) * sizeMultiplier;
-    return Math.max(1, Math.min(radius, 30));
+    return Math.max(radiusClampMin, Math.min(radius, radiusClampMax));
 }
 
 // —— Jitter: nudges each point a small, stable amount so fully-overlapping
@@ -1295,6 +1317,51 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', functio
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = sizeMultiplier.toFixed(2) + '×';
   scheduleRender();
 });
+
+// —— Size range: a dual-thumb slider (two overlapping native <input
+// type="range"> elements, styled so only their thumbs are interactive)
+// that sets radiusClampMin/radiusClampMax, the smallest/largest a point's
+// on-screen radius (in px) is ever allowed to render at. Linear scale here
+// (unlike the exponential "Size multiplier" slider above) since these are
+// plain pixel values, not a ratio. Left thumb = min radius, right thumb =
+// max radius.
+var SIZE_RANGE_MIN_GAP = 0.5; // smallest allowed px distance between thumbs, so they never fully collide
+var sizeRangeMinSlider = document.getElementById('sizeRangeMinSlider');
+var sizeRangeMaxSlider = document.getElementById('sizeRangeMaxSlider');
+var sizeRangeVal = document.getElementById('sizeRangeVal');
+var sizeRangeFill = document.getElementById('sizeRangeFill');
+
+function updateSizeRangeUI(activeInput) {
+  if (!sizeRangeMinSlider || !sizeRangeMaxSlider) return;
+  var minPos = parseFloat(sizeRangeMinSlider.value);
+  var maxPos = parseFloat(sizeRangeMaxSlider.value);
+  if (maxPos - minPos < SIZE_RANGE_MIN_GAP) {
+    // Keep the thumb the user is actually dragging in control; push the
+    // other one out of the way rather than letting them swap past each other.
+    if (activeInput === sizeRangeMaxSlider) {
+      maxPos = minPos + SIZE_RANGE_MIN_GAP;
+      sizeRangeMaxSlider.value = maxPos;
+    } else {
+      minPos = maxPos - SIZE_RANGE_MIN_GAP;
+      sizeRangeMinSlider.value = minPos;
+    }
+  }
+  radiusClampMin = minPos;
+  radiusClampMax = maxPos;
+  if (sizeRangeVal) sizeRangeVal.textContent = radiusClampMin.toFixed(1) + 'px – ' + radiusClampMax.toFixed(1) + 'px';
+  if (sizeRangeFill) {
+    var lo = parseFloat(sizeRangeMinSlider.min), hi = parseFloat(sizeRangeMinSlider.max);
+    var leftPct = (minPos - lo) / (hi - lo) * 100;
+    var rightPct = (maxPos - lo) / (hi - lo) * 100;
+    sizeRangeFill.style.left = leftPct + '%';
+    sizeRangeFill.style.width = Math.max(0, rightPct - leftPct) + '%';
+  }
+  scheduleRender();
+}
+if (sizeRangeMinSlider) sizeRangeMinSlider.addEventListener('input', function(e){ updateSizeRangeUI(e.target); });
+if (sizeRangeMaxSlider) sizeRangeMaxSlider.addEventListener('input', function(e){ updateSizeRangeUI(e.target); });
+updateSizeRangeUI(); // paint the fill bar / label for the initial values on load
+
 var jitterSlider = document.getElementById('jitterSlider');
 var jitterVal = document.getElementById('jitterVal');
 if (jitterSlider) jitterSlider.addEventListener('input', function(e){
@@ -1312,6 +1379,9 @@ if (layoutResetBtn) layoutResetBtn.addEventListener('click', function() {
   if (sizeMultiplierSlider) sizeMultiplierSlider.value = 0;
   sizeMultiplier = 1;
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = '1.00×';
+  if (sizeRangeMinSlider) sizeRangeMinSlider.value = 1.5;
+  if (sizeRangeMaxSlider) sizeRangeMaxSlider.value = 30;
+  updateSizeRangeUI();
   if (jitterSlider) jitterSlider.value = 0;
   jitterAmount = 0;
   if (jitterVal) jitterVal.textContent = '0px';
