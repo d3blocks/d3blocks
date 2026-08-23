@@ -1110,8 +1110,13 @@ function sizeMultiplierFromSlider(t) {
     return min * Math.pow(max / min, u);
 }
 
+//function baseRadius(d) {
+//    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
+//}
+
 function baseRadius(d) {
-    return Math.max(.5, +d[3] || 1) * sizeMultiplier;
+    var radius = Math.max(.5, +d[3] || 1) * sizeMultiplier;
+    return Math.max(1, Math.min(radius, 30));
 }
 
 // —— Jitter: nudges each point a small, stable amount so fully-overlapping
