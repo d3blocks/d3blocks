@@ -420,7 +420,7 @@ class D3Blocks():
                 color='#002147',
                 c_gradient='opaque',
                 opacity=0.6,
-                stroke='#ffffff',
+                stroke='#000000',
                 tooltip=None,
                 cmap='tab20',
                 scale=False,
@@ -437,6 +437,7 @@ class D3Blocks():
                 save_button: bool = True,
                 return_html: bool = False,
                 reset_properties=True,
+                df = None,
                 ):
         """Scatterplot block.
 
@@ -526,6 +527,8 @@ class D3Blocks():
         reset_properties : bool, (default: True)
                 * True: Reset the node_properties at each run.
                 * False: Use the d3.node_properties()
+        df : pd.DataFrame, (default: None)
+                * Dataframe with properties. This should match index as for x,y
 
         Returns
         -------
@@ -553,18 +556,19 @@ class D3Blocks():
         >>> d3.set_node_properties(df)
         >>> 
         >>> # Set properties
-        >>> d3.set_edge_properties(df['tsneX'].values,
-        >>>                        df['tsneY'].values,
-        >>>                        x1=df['PC1'].values,
-        >>>                        y1=df['PC2'].values,
-        >>>                        size=df['survival_months'].fillna(1).values / 10,
-        >>>                        color=df['labx'].values,
-        >>>                        opacity=0.5,
-        >>>                        tooltip=df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
-        >>>                        scale=True,
-        >>>                        )
+        >>> d3.scatter(df['tsneX'].values,
+        >>>            df['tsneY'].values,
+        >>>            x1=df['PC1'].values,
+        >>>            y1=df['PC2'].values,
+        >>>            size=df['survival_months'].fillna(1).values / 10,
+        >>>            color=df['labx'].values,
+        >>>            opacity=0.5,
+        >>>            tooltip=df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+        >>>            scale=True,
+        >>>            label_radio=['tSNE','PCA'],
+        >>>            df=df,
+        >>>            )
         >>> 
-        >>> d3.show(label_radio=['tSNE','PCA'])
 
         Examples
         --------
@@ -580,9 +584,6 @@ class D3Blocks():
         >>> # Import example
         >>> df = d3.import_example('cancer')
         >>> 
-        >>> # Set properties
-        >>> d3.set_node_properties(df)
-        >>>         
         >>> size=(df['survival_months'].fillna(1)/10)
         >>> color=df['labx']
         >>> 
@@ -601,18 +602,20 @@ class D3Blocks():
         >>> color[3] = 'special'
         >>> 
         >>> # Set properties
-        >>> d3.set_edge_properties(df['tsneX'].values,
+        >>> d3.scatter(df['tsneX'].values,
         >>>                        df['tsneY'].values,
         >>>                        x1=df['PC1'].values,
         >>>                        y1=df['PC2'].values,
         >>>                        size=size,
         >>>                        color=color,
+        >>>                        stroke='#000000',
         >>>                        opacity=0.5,
         >>>                        tooltip=tooltip,
         >>>                        scale=True,
+        >>>                        label_radio=['tSNE','PCA'],
+        >>>                        df=df,
         >>>                        )
         >>> 
-        >>> d3.show(label_radio=['tSNE','PCA'])
 
         Examples
         --------
@@ -702,8 +705,11 @@ class D3Blocks():
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, jitter=jitter, save_button=save_button, logger=logger)
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, x3, y3, size, color, tooltip, logger)
-        # Set node properties
-        self.set_node_properties()
+        # Set node properties\
+        if df is not None:
+            self.set_node_properties(df)
+        else:
+            self.set_node_properties()
         # Set edge properties
         self.set_edge_properties(x, y, x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3, color=color, size=size, tooltip=tooltip, opacity=opacity, c_gradient=c_gradient, stroke=stroke, cmap=self.config['cmap'], scale=self.config['scale'], jitter=self.config['jitter'], logger=logger)
         # Create the plot

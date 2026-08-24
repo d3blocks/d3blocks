@@ -11,10 +11,6 @@ d3 = D3Blocks(chart='Scatter')
 # Import example
 df = d3.import_example('cancer')
 
-# Set properties
-d3.set_node_properties(df)
-
-
 size=(df['survival_months'].fillna(1)/10)
 color=df['labx']
 
@@ -33,7 +29,7 @@ color[2] = 'special'
 color[3] = 'special'
 
 # Set properties
-d3.set_edge_properties(df['tsneX'].values,
+d3.scatter(df['tsneX'].values,
                        df['tsneY'].values,
                        x1=df['PC1'].values,
                        y1=df['PC2'].values,
@@ -42,10 +38,9 @@ d3.set_edge_properties(df['tsneX'].values,
                        opacity=0.5,
                        tooltip=tooltip,
                        scale=True,
+                       label_radio=['tSNE','PCA'],
+                       df=df,
                        )
-
-d3.show(label_radio=['tSNE','PCA'])
-
 
 # %%
 import numpy as np
