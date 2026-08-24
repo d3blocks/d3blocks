@@ -430,7 +430,7 @@ class D3Blocks():
                 ylim=[None, None],
                 title='Scatter - D3blocks',
                 filepath='scatter.html',
-                figsize = [1024, 768],
+                figsize = [1150, 768],
                 showfig = True,
                 overwrite=True,
                 notebook=False,

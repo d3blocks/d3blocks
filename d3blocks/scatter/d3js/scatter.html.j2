@@ -46,6 +46,11 @@ License     : GPL3
       left: 10px;
       z-index: 55;
     }
+    #enrichVarsPanel.stats-panel {
+      top: 700px;
+      left: 10px;
+      z-index: 54;
+    }
     /* Keep the fixed-size scatterplot centered in the viewport */
     #scatter-main {
       display: flex;
@@ -217,6 +222,15 @@ License     : GPL3
         </select>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Side panel: variables tested for statistical enrichment (split out from
+     Statistical Enrichments so the two panels can be collapsed/scrolled
+     independently -- the variable list can get long). -->
+<div class="stats-panel collapsed" id="enrichVarsPanel">
+  <div class="stats-panel-title">Enrichment Variables<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
     <div style="font-size:11px;opacity:0.6;margin-bottom:8px">Variables to test for significance:</div>
     <div id="enrichVarList"><div class="node-info-placeholder">No properties found in this dataset.</div></div>
   </div>
@@ -1042,8 +1056,8 @@ function positionSidePanels() {
   var y = bottom + 8;
   var bottomPad = 12;
   var sideRight = 0;
-  // Order: Export/Save, then Density Layer, then Layout, then Enrichments
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id){
+  // Order: Export/Save, then Density Layer, then Layout, then Enrichments, then Enrichment Variables
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel || panel.style.display === 'none') return;
     panel.style.top = y + 'px';
@@ -1069,7 +1083,7 @@ window.addEventListener('load', positionSidePanels);
 positionSidePanels();
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel'].forEach(function(id) {
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
@@ -1077,7 +1091,7 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel'].forEach(function(panelId) {
+['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
@@ -1250,6 +1264,11 @@ function labelTextFor(d) {
   if (currentLabelKey === '__tooltip__') return (d && d[6] != null) ? String(d[6]) : '';
   if (d && d[13] && d[13][currentLabelKey] != null) {
     var v = d[13][currentLabelKey];
+    if (typeof v === 'number' && Number.isFinite(v)) {
+      // Show at most 2 decimals, without padding whole numbers or values
+      // that already have fewer decimals (e.g. 3 stays "3", 3.1 stays "3.1").
+      return String(Math.round(v * 100) / 100);
+    }
     return (typeof v === 'object') ? JSON.stringify(v) : String(v);
   }
   return '';
@@ -1396,27 +1415,29 @@ if (layoutResetBtn) layoutResetBtn.addEventListener('click', function() {
 // Populate Layout dropdowns from per-point properties.
 // Properties are stored in d[13]. The controls must be initialized from
 // the complete dataset, not from the currently selected point.
-(function initLayoutPropertyControls() {
+//
+// Called (see bottom of the script, after associations.js loads) once
+// enrichVarState is available, so numeric/categorical classification here
+// matches the Enrichment Variables panel exactly: a column that's set
+// (auto-detected or user-overridden) as "Category" there -- including
+// numerically-coded categories like 0/1/2 cluster ids -- is offered as a
+// Shape option here too, not just string-valued columns.
+function initLayoutPropertyControls() {
+  var columns = buildAllPropertyColumns();
   var propsByKey = Object.create(null);
   var numericKeys = Object.create(null);
   var categoricalKeys = Object.create(null);
 
-  for (var i = 0; i < jsonData.length; i++) {
-    var props = jsonData[i] && jsonData[i][13];
-    if (!props || typeof props !== 'object') continue;
-
-    Object.keys(props).forEach(function(key) {
-      var value = props[key];
-      if (value == null) return;
-
-      propsByKey[key] = true;
-      if (typeof value === 'number' && Number.isFinite(value)) {
-        numericKeys[key] = true;
-      } else {
-        categoricalKeys[key] = true;
-      }
-    });
-  }
+  Object.keys(columns).forEach(function(key) {
+    var col = columns[key];
+    var hasValue = col.some(function(v){ return v != null && v !== ''; });
+    if (!hasValue) return;
+    propsByKey[key] = true;
+    var state = enrichVarState[key];
+    var dtype = (state && state.dtypeOverride) || detectColumnDtype(col);
+    if (dtype === 'num') numericKeys[key] = true;
+    else categoricalKeys[key] = true;
+  });
 
   var sizeSelect = document.getElementById('layoutSizeSelect');
   var colorSelect = document.getElementById('layoutColorSelect');
@@ -1444,7 +1465,7 @@ if (layoutResetBtn) layoutResetBtn.addEventListener('click', function() {
   Object.keys(propsByKey).sort().forEach(function(key) {
     addOption(labelSelect, key, key);
   });
-})();
+}
 
 
 // Canvas click handling closes the panel when no point is hit.
@@ -1926,17 +1947,20 @@ function populateEnrichVarList() {
     return;
   }
   keys.forEach(function(k){
-    if (!enrichVarState[k]) enrichVarState[k] = { enabled: true, dtypeOverride: '' };
+    // dtypeOverride is always a concrete 'num'/'cat' now (defaulted from
+    // auto-detection) so the dropdown shows the actual type directly
+    // instead of an "Auto (...)" placeholder.
+    if (!enrichVarState[k]) enrichVarState[k] = { enabled: true, dtypeOverride: detectColumnDtype(columns[k]) };
   });
   var html = '';
   keys.forEach(function(k){
-    var autoType = detectColumnDtype(columns[k]);
+    var state = enrichVarState[k];
+    var dtype = state.dtypeOverride || detectColumnDtype(columns[k]);
     html += '<div class="enrich-var-row">' +
-      '<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtml(k) + '" checked> ' + escapeHtml(k) + '</label>' +
+      '<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtml(k) + '"' + (state.enabled !== false ? ' checked' : '') + '> ' + escapeHtml(k) + '</label>' +
       '<select class="enrich-var-dtype" data-key="' + escapeHtml(k) + '">' +
-        '<option value="">Auto (' + (autoType === 'num' ? 'numeric' : 'category') + ')</option>' +
-        '<option value="num">Numeric</option>' +
-        '<option value="cat">Category</option>' +
+        '<option value="num"' + (dtype === 'num' ? ' selected' : '') + '>Numeric</option>' +
+        '<option value="cat"' + (dtype === 'cat' ? ' selected' : '') + '>Category</option>' +
       '</select>' +
     '</div>';
   });
@@ -1954,6 +1978,11 @@ function populateEnrichVarList() {
   setTimeout(positionSidePanels, 0);
 }
 populateEnrichVarList();
+// Layout panel's Size/Color/Shape/Label dropdowns are populated here (not
+// where the function is defined) because it relies on buildAllPropertyColumns/
+// detectColumnDtype/enrichVarState, which only exist once associations.js
+// (included above) has loaded and populateEnrichVarList() has run.
+initLayoutPropertyControls();
 
 function formatPValue(p) {
   if (p === 0) return '<1e-300';
