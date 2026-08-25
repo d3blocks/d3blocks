@@ -168,8 +168,14 @@ function bonferroniCorrection(pvalues) {
 // dtype detection for a property column.
 // 1) Must be "really numeric": every non-missing value parses as a finite
 //    number (booleans / non-numeric strings → category).
-// 2) Among present values, if the unique-value ratio is > 60%, treat as
-//    numeric; otherwise treat as category (e.g. coded 0/1/2 labels).
+// 2) Numeric && "many distinct values" → continuous. This uses BOTH an
+//    absolute floor (MIN_UNIQUE_FOR_NUMERIC) and a ratio: a ratio alone
+//    misclassifies genuinely continuous data as categorical whenever
+//    there's any repetition/rounding relative to sample size (e.g. 50
+//    points with 20 unique float values -> only 40% unique, wrongly
+//    "category" under a pure-ratio rule) -- the absolute floor catches
+//    that. The ratio alone still matters for SMALL samples so a
+//    low-N/high-uniqueness column isn't forced to 'num' by the floor.
 // Missing / undefined / empty strings are skipped for both checks.
 function detectColumnDtype(values) {
   var present = 0;
@@ -189,8 +195,8 @@ function detectColumnDtype(values) {
     }
   }
   if (present === 0) return 'cat';
-  // > 60% unique and truly numeric → numeric; otherwise category
-  if (uniqueCount / present > 0.6) return 'num';
+  var MIN_UNIQUE_FOR_NUMERIC = 10;
+  if (uniqueCount >= MIN_UNIQUE_FOR_NUMERIC || uniqueCount / present > 0.6) return 'num';
   return 'cat';
 }
 
