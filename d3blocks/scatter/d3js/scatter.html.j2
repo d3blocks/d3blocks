@@ -41,6 +41,11 @@ License     : GPL3
       left: 10px;
       z-index: 60;
     }
+    #physicsPanel.stats-panel {
+      top: 520px;
+      left: 10px;
+      z-index: 58;
+    }
     #enrichPanel.stats-panel {
       top: 600px;
       left: 10px;
@@ -202,6 +207,25 @@ License     : GPL3
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
     </div>
     <button class="button-switch" id="layoutResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
+  </div>
+</div>
+
+<!-- Side panel: force-directed physics. Overlapping points push apart via
+     collision, while a weak spring keeps every point anchored near its real
+     (x, y) position -- so nothing drifts far, it just de-overlaps. Turning
+     it off reuses the same simulation, just with the collision force
+     dropped and the anchor spring strengthened, so points settle straight
+     back to their true coordinates instead of being teleported there. -->
+<div class="stats-panel collapsed" id="physicsPanel">
+  <div class="stats-panel-title">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="physicsForceCheckbox" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0">
+        <input type="checkbox" id="physicsForceCheckbox">
+        <span>Force-directed points</span>
+      </label>
+      <div style="font-size:11px;opacity:0.6;margin-top:6px">Overlapping points push each other apart, then settle back near their real position. Disable to snap back to the original coordinates.</div>
+    </div>
   </div>
 </div>
 
@@ -736,7 +760,7 @@ function computeDensityGrid() {
     if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
     if (xv < xd[0] || xv > xd[1] || yv < yd[0] || yv > yd[1]) continue;
     var px = x(xv), py = y(yv);
-    var jp = jitteredPoint(i, px, py);
+    var jp = renderPosFor(i, px, py);
     pts.push(jp.px, jp.py);
   }
   if (!pts.length) return null;
@@ -860,7 +884,7 @@ function rebuildHitGrid() {
     var xv=currentXVal[i], yv=currentYVal[i];
     if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
     if (xv<xd[0] || xv>xd[1] || yv<yd[0] || yv>yd[1]) continue;
-    var px=x(xv), py=y(yv); var jp=jitteredPoint(i,px,py);
+    var px=x(xv), py=y(yv); var jp=renderPosFor(i,px,py);
     visiblePointIndices.push(i);
     addHit(i,jp.px,jp.py);
   }
@@ -872,7 +896,7 @@ function hitTest(event) {
     var bucket=hitGrid.get(xx+','+yy); if(!bucket) continue;
     for(var j=0;j<bucket.length;j++) {
       var i=bucket[j], d=jsonData[i];
-      var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
+      var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=renderPosFor(i,px,py); px=jp.px; py=jp.py;
       var r=Math.max(3, baseRadius(d)), dx=px-p.px, dy=py-p.py, dist=dx*dx+dy*dy;
       if(dist<=r*r && dist<bestDist){bestDist=dist;best=i;}
     }
@@ -893,7 +917,7 @@ function renderPoints() {
   // mid-transition if a normal render is requested while animating).
   for(var n=0;n<visiblePointIndices.length;n++){
     var i=visiblePointIndices[n], d=jsonData[i];
-    var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py;
+    var px=x(currentXVal[i]), py=y(currentYVal[i]); var jp=renderPosFor(i,px,py); px=jp.px; py=jp.py;
     var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
     if(categoricalShapeMap && d[13] && categoricalShapeMap[d[13][categoricalShapeKey]]) shape=categoricalShapeMap[d[13][categoricalShapeKey]];
@@ -978,7 +1002,7 @@ window.addEventListener('mouseup',function(){
         : new Set();
       for(var n=0;n<visiblePointIndices.length;n++){
         var i=visiblePointIndices[n], d=jsonData[i];
-        var px=x(d[c[0]]), py=y(d[c[1]]); var jp=jitteredPoint(i,px,py);
+        var px=x(d[c[0]]), py=y(d[c[1]]); var jp=renderPosFor(i,px,py);
         if(jp.px>=rx0 && jp.px<=rx1 && jp.py>=ry0 && jp.py<=ry1) next.add(i);
       }
       selectedIndices = next;
@@ -1056,8 +1080,8 @@ function positionSidePanels() {
   var y = bottom + 8;
   var bottomPad = 12;
   var sideRight = 0;
-  // Order: Export/Save, then Density Layer, then Layout, then Enrichments, then Enrichment Variables
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
+  // Order: Export/Save, then Density Layer, then Layout, then Physics, then Enrichments, then Enrichment Variables
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel || panel.style.display === 'none') return;
     panel.style.top = y + 'px';
@@ -1083,7 +1107,7 @@ window.addEventListener('load', positionSidePanels);
 positionSidePanels();
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id) {
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
@@ -1091,7 +1115,7 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['exportPanel', 'densityPanel', 'layoutPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(panelId) {
+['exportPanel', 'densityPanel', 'layoutPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
@@ -1176,10 +1200,161 @@ function jitteredPoint(i, px, py) {
   var j = jitterOffset(i);
   return j ? { px: px + j.dx, py: py + j.dy } : { px: px, py: py };
 }
+
+// —— Force-directed physics (Physics panel) ——————————————————————
+// A d3-force simulation (bundled in the d3 v4 build above) that pushes
+// overlapping points apart while a weak spring keeps every point anchored
+// near its real on-screen position. Anchor targets are LIVE accessor
+// functions -- x(currentXVal[i]), y(currentYVal[i]) -- so the simulation
+// automatically tracks pan/zoom and even an in-flight coordinate-mode
+// transition without any extra bookkeeping; it just keeps chasing wherever
+// the point "really" is right now.
+//
+// Turning it off doesn't teleport points back: it re-runs the same
+// simulation with the collision force removed and the anchor spring
+// strengthened, so points settle straight back to their true coordinates.
+// Once that settle converges, physics mode is torn down entirely and
+// rendering falls back to plain (jitter-only) positioning.
+var physicsSupported = typeof d3.forceSimulation === 'function';
+var physicsEnabled = false;
+var physicsSettling = false; // true while animating back to real coords after being turned off
+var forceSim = null;
+var physicsNodes = null;          // array of {i, x, y, vx, vy} -- present whenever physics is enabled OR settling
+var physicsNodeByIndex = null;    // Map<pointIndex, node> for O(1) lookup during render/hit-test
+var PHYSICS_COLLIDE_PADDING = 2;  // extra px gap kept between touching points
+var PHYSICS_ANCHOR_STRENGTH = 0.12;  // spring pulling each point back toward its true position while enabled
+var PHYSICS_SETTLE_STRENGTH = 0.3;   // stronger pull used only while settling back after being disabled
+
+function physicsAnchorX(i) { return x(currentXVal[i]); }
+function physicsAnchorY(i) { return y(currentYVal[i]); }
+function physicsRadius(i) { return Math.max(1, baseRadius(jsonData[i])) + PHYSICS_COLLIDE_PADDING; }
+
+// A hand-rolled d3-force "force": d3's own forceX/forceY cache their target
+// accessor's result once at initialize() time and never re-read it per
+// tick, so they'd freeze onto whatever pan/zoom/transition state was
+// active the moment the simulation (re)started. This force instead calls
+// physicsAnchorX/Y fresh on every tick, so the pull-back target genuinely
+// tracks wherever the point "really" is right now.
+function makeAnchorForce(strength) {
+  var nodes;
+  function force(alpha) {
+    for (var idx = 0; idx < nodes.length; idx++) {
+      var n = nodes[idx];
+      n.vx += (physicsAnchorX(n.i) - n.x) * strength * alpha;
+      n.vy += (physicsAnchorY(n.i) - n.y) * strength * alpha;
+    }
+  }
+  force.initialize = function(_nodes) { nodes = _nodes; };
+  return force;
+}
+
+function buildPhysicsNodes() {
+  var nodes = [];
+  for (var i = 0; i < jsonData.length; i++) {
+    if (!jsonData[i]) continue;
+    if (!Number.isFinite(currentXVal[i]) || !Number.isFinite(currentYVal[i])) continue;
+    var prev = physicsNodeByIndex && physicsNodeByIndex.get(i);
+    nodes.push({
+      i: i,
+      x: prev ? prev.x : physicsAnchorX(i),
+      y: prev ? prev.y : physicsAnchorY(i),
+      vx: prev ? prev.vx : 0,
+      vy: prev ? prev.vy : 0
+    });
+  }
+  return nodes;
+}
+
+function onPhysicsTick() { scheduleRender(); }
+function onPhysicsEnd() {
+  if (physicsSettling) {
+    // Settled back to real coordinates -- drop out of physics mode so
+    // rendering goes back to the plain (non-simulated) position path.
+    physicsSettling = false;
+    physicsNodes = null;
+    physicsNodeByIndex = null;
+    forceSim = null;
+    scheduleRender();
+    updatePointLabels();
+  }
+}
+
+function startPhysicsSimulation(settleOnly) {
+  if (!physicsSupported) return;
+  physicsNodes = buildPhysicsNodes();
+  physicsNodeByIndex = new Map();
+  physicsNodes.forEach(function(n) { physicsNodeByIndex.set(n.i, n); });
+
+  if (forceSim) forceSim.stop();
+  forceSim = d3.forceSimulation(physicsNodes)
+    .alpha(1)
+    // While actively enabled, keep the simulation "hot" indefinitely
+    // (alphaDecay 0) so it stays responsive to pan/zoom/coordinate-mode
+    // changes instead of cooling down and freezing. While settling back
+    // after being disabled, let it decay normally so it converges and the
+    // 'end' event fires, letting us clean up physics state entirely.
+    .alphaDecay(settleOnly ? 0.05 : 0)
+    .velocityDecay(0.5)
+    .force('anchor', makeAnchorForce(settleOnly ? PHYSICS_SETTLE_STRENGTH : PHYSICS_ANCHOR_STRENGTH))
+    .force('collide', settleOnly ? null : d3.forceCollide(function(n) { return physicsRadius(n.i); }).iterations(2))
+    .on('tick', onPhysicsTick)
+    .on('end', onPhysicsEnd);
+}
+
+function stopPhysicsEntirely() {
+  if (forceSim) { forceSim.stop(); forceSim = null; }
+  physicsEnabled = false;
+  physicsSettling = false;
+  physicsNodes = null;
+  physicsNodeByIndex = null;
+}
+
+// d3.forceCollide snapshots its radius accessor once when the force is
+// (re)assigned, so if the user changes point size (Size mode dropdown or
+// the size-multiplier slider) while physics is running, the collision
+// radii would otherwise stay stale. Re-assigning the force here forces a
+// fresh read of every node's current baseRadius(); harmless / a no-op when
+// physics isn't currently enabled.
+function refreshPhysicsCollisionRadii() {
+  if (!physicsEnabled || !forceSim) return;
+  forceSim.force('collide', d3.forceCollide(function(n) { return physicsRadius(n.i); }).iterations(2));
+}
+
+// Shared by every render/hit-test path that previously called jitteredPoint
+// directly: returns the physics-simulated position when physics is active
+// for this point, otherwise falls back to the ordinary jitter offset.
+function renderPosFor(i, px, py) {
+  if (physicsNodeByIndex) {
+    var n = physicsNodeByIndex.get(i);
+    if (n) return { px: n.x, py: n.y };
+  }
+  return jitteredPoint(i, px, py);
+}
+
+(function wirePhysicsControls() {
+  var checkbox = document.getElementById('physicsForceCheckbox');
+  if (!checkbox) return;
+  if (!physicsSupported) {
+    checkbox.disabled = true;
+    checkbox.title = 'Force simulation is unavailable (d3-force not loaded).';
+    return;
+  }
+  checkbox.addEventListener('change', function(e) {
+    if (e.target.checked) {
+      physicsEnabled = true;
+      physicsSettling = false;
+      startPhysicsSimulation(false);
+    } else {
+      physicsEnabled = false;
+      physicsSettling = true;
+      startPhysicsSimulation(true);
+    }
+  });
+})();
 function transformForIndex(d,xi,yi,scale){scale=typeof scale==='number'?scale:1;return 'translate('+x(d[xi])+','+y(d[yi])+') scale('+scale+')';}
 function symbolPathForRadius(r,shapeName){var s=d3.symbol().type(SHAPE_MAP[shapeName]||d3.symbolCircle).size(Math.PI*r*r);return s();}
 function applySizeMode(key){
-  if(!key){for(var i=0;i<jsonData.length;i++)if(jsonData[i])jsonData[i][3]=initialRadii[i];scheduleRender();return;}
+  if(!key){for(var i=0;i<jsonData.length;i++)if(jsonData[i])jsonData[i][3]=initialRadii[i];refreshPhysicsCollisionRadii();scheduleRender();return;}
   var min=Infinity,max=-Infinity;
   for(var i=0;i<jsonData.length;i++){var v=jsonData[i]&&jsonData[i][13]?jsonData[i][13][key]:NaN;if(typeof v==='number'&&Number.isFinite(v)){if(v<min)min=v;if(v>max)max=v;}}
   if(min===Infinity)return;
@@ -1200,7 +1375,7 @@ function applySizeMode(key){
     : function(v){ return Math.max(1, (v - domainMin) / span * MAX_R); };
   for(var j=0;j<jsonData.length;j++){var d=jsonData[j],v=d&&d[13]?d[13][key]:NaN;
     d[3]=(typeof v==='number'&&Number.isFinite(v))?scale(v):initialRadii[j];
-  } scheduleRender();
+  } refreshPhysicsCollisionRadii(); scheduleRender();
 }
 function applyColorMode(key){
   currentColorAccessor=null;if(!key){scheduleRender();return;}
@@ -1314,8 +1489,8 @@ function updatePointLabels() {
     .style('fill', 'var(--text, #222)')
     .merge(labels)
     .text(function(v){ return labelTextFor(v.d); })
-    .attr('x', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).px + 8; })
-    .attr('y', function(v){ return jitteredPoint(v.i, x(v.d[xi]), y(v.d[yi])).py + 3; });
+    .attr('x', function(v){ return renderPosFor(v.i, x(v.d[xi]), y(v.d[yi])).px + 8; })
+    .attr('y', function(v){ return renderPosFor(v.i, x(v.d[xi]), y(v.d[yi])).py + 3; });
 }
 
 function applyLabelMode(key) {
@@ -1334,6 +1509,7 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', functio
   var t = parseFloat(e.target.value) || 0;
   sizeMultiplier = sizeMultiplierFromSlider(t);
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = sizeMultiplier.toFixed(2) + '×';
+  refreshPhysicsCollisionRadii();
   scheduleRender();
 });
 
@@ -1375,6 +1551,7 @@ function updateSizeRangeUI(activeInput) {
     sizeRangeFill.style.left = leftPct + '%';
     sizeRangeFill.style.width = Math.max(0, rightPct - leftPct) + '%';
   }
+  refreshPhysicsCollisionRadii();
   scheduleRender();
 }
 if (sizeRangeMinSlider) sizeRangeMinSlider.addEventListener('input', function(e){ updateSizeRangeUI(e.target); });
@@ -2127,7 +2304,7 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     var xv=x0v+(x1v-x0v)*t, yv=y0v+(y1v-y0v)*t;
     currentXVal[i]=xv; currentYVal[i]=yv; // keep the live-position cache in sync every frame
     if(!Number.isFinite(xv)||!Number.isFinite(yv)||xv<xd[0]||xv>xd[1]||yv<yd[0]||yv>yd[1])continue;
-    var px=x(xv),py=y(yv); var jp=jitteredPoint(i,px,py); px=jp.px; py=jp.py; var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
+    var px=x(xv),py=y(yv); var jp=renderPosFor(i,px,py); px=jp.px; py=jp.py; var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     visiblePointIndices.push(i);
     addHit(i,px,py);
     var shape=currentShapeMode;
