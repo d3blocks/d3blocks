@@ -1432,8 +1432,9 @@ function initLayoutPropertyControls() {
     var col = columns[key];
     var hasValue = col.some(function(v){ return v != null && v !== ''; });
     if (!hasValue) return;
-    propsByKey[key] = true;
     var state = enrichVarState[key];
+    if (state && state.enabled === false) return; // unchecked in Enrichment Variables -- hide from Layout too
+    propsByKey[key] = true;
     var dtype = (state && state.dtypeOverride) || detectColumnDtype(col);
     if (dtype === 'num') numericKeys[key] = true;
     else categoricalKeys[key] = true;
@@ -1443,6 +1444,25 @@ function initLayoutPropertyControls() {
   var colorSelect = document.getElementById('layoutColorSelect');
   var shapeSelect = document.getElementById('layoutShapeSelect');
   var labelSelect = document.getElementById('layoutLabelSelect');
+
+  // This function is re-run whenever a variable's dtype is flipped in the
+  // Enrichment Variables panel, so it must be safe to call repeatedly:
+  // remember each dropdown's current selection, wipe out the previously
+  // injected (dynamic) options -- keeping only the static first option
+  // ("Default" / "None" / "circle") -- then rebuild from scratch.
+  var prevSize = sizeSelect ? sizeSelect.value : '';
+  var prevColor = colorSelect ? colorSelect.value : '';
+  var prevShape = shapeSelect ? shapeSelect.value : '';
+  var prevLabel = labelSelect ? labelSelect.value : '';
+
+  function clearDynamicOptions(select) {
+    if (!select) return;
+    while (select.options.length > 1) select.remove(1);
+  }
+  clearDynamicOptions(sizeSelect);
+  clearDynamicOptions(colorSelect);
+  clearDynamicOptions(shapeSelect);
+  clearDynamicOptions(labelSelect);
 
   function addOption(select, value, label) {
     if (!select) return;
@@ -1465,6 +1485,26 @@ function initLayoutPropertyControls() {
   Object.keys(propsByKey).sort().forEach(function(key) {
     addOption(labelSelect, key, key);
   });
+
+  // Restore each dropdown's previous selection if the option is still
+  // there; otherwise fall back to its default and re-apply, so a variable
+  // that just moved out of a dropdown (e.g. Numeric -> Category, dropping
+  // out of Size) doesn't leave the plot rendered by a stale, now-invisible
+  // selection.
+  function restoreSelection(select, prevValue, fallbackValue, applyFn) {
+    if (!select) return;
+    var stillValid = Array.prototype.some.call(select.options, function(o){ return o.value === prevValue; });
+    if (stillValid) {
+      select.value = prevValue;
+    } else {
+      select.value = fallbackValue;
+      applyFn(fallbackValue);
+    }
+  }
+  restoreSelection(sizeSelect, prevSize, '', applySizeMode);
+  restoreSelection(colorSelect, prevColor, '', applyColorMode);
+  restoreSelection(shapeSelect, prevShape, 'circle', applyShapeMode);
+  restoreSelection(labelSelect, prevLabel, '', applyLabelMode);
 }
 
 
@@ -1956,8 +1996,9 @@ function populateEnrichVarList() {
   keys.forEach(function(k){
     var state = enrichVarState[k];
     var dtype = state.dtypeOverride || detectColumnDtype(columns[k]);
-    html += '<div class="enrich-var-row">' +
-      '<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtml(k) + '"' + (state.enabled !== false ? ' checked' : '') + '> ' + escapeHtml(k) + '</label>' +
+    var rowClasses = 'enrich-var-row ' + (dtype === 'num' ? 'dtype-num' : 'dtype-cat') + (state.enabled === false ? ' disabled' : '');
+    html += '<div class="' + rowClasses + '" data-key="' + escapeHtml(k) + '">' +
+      '<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtml(k) + '"' + (state.enabled !== false ? ' checked' : '') + '><span class="enrich-var-dot" aria-hidden="true"></span>' + escapeHtml(k) + '</label>' +
       '<select class="enrich-var-dtype" data-key="' + escapeHtml(k) + '">' +
         '<option value="num"' + (dtype === 'num' ? ' selected' : '') + '>Numeric</option>' +
         '<option value="cat"' + (dtype === 'cat' ? ' selected' : '') + '>Category</option>' +
@@ -1968,11 +2009,24 @@ function populateEnrichVarList() {
   container.querySelectorAll('.enrich-var-checkbox').forEach(function(cb){
     cb.addEventListener('change', function(){
       enrichVarState[cb.dataset.key].enabled = cb.checked;
+      var row = cb.closest('.enrich-var-row');
+      if (row) row.classList.toggle('disabled', !cb.checked);
+      // Unchecking/rechecking changes which variables are offered in the
+      // Layout panel's Size/Color/Shape/Label dropdowns.
+      initLayoutPropertyControls();
     });
   });
   container.querySelectorAll('.enrich-var-dtype').forEach(function(sel){
     sel.addEventListener('change', function(){
       enrichVarState[sel.dataset.key].dtypeOverride = sel.value;
+      var row = sel.closest('.enrich-var-row');
+      if (row) {
+        row.classList.remove('dtype-num', 'dtype-cat');
+        row.classList.add(sel.value === 'num' ? 'dtype-num' : 'dtype-cat');
+      }
+      // Numeric <-> Category flips which Layout dropdown (Size vs. Shape,
+      // both use Color) this variable belongs under, so rebuild those lists.
+      initLayoutPropertyControls();
     });
   });
   setTimeout(positionSidePanels, 0);

@@ -22,6 +22,8 @@
     --transition: background 0.2s, color 0.2s, border-color 0.25s;
     --accent: #1ABC9C;
     --topbar-bg: rgba(34, 34, 34, 0.4);
+    --dtype-num-color: #6FA8DC;
+    --dtype-cat-color: #E0895C;
   }
   body.light {
     /* Light theme — matches d3graph's default (undarkened) look. */
@@ -44,6 +46,8 @@
     --search-hover: #e8f8f5;
     --accent: #1ABC9C;
     --topbar-bg: rgba(255, 255, 255, 0.4);
+    --dtype-num-color: #2166AC;
+    --dtype-cat-color: #C0622A;
   }
   html, body {
     margin: 0; height: 100%;
@@ -422,6 +426,27 @@
   white-space: nowrap;
 }
 .enrich-var-check input { accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+/* Small color-coded dot: blue = numeric, orange = categorical (matches the
+   dtype dropdown's current value, including user overrides), so the
+   variable's role in Statistical Enrichments / the Layout panel's
+   Size vs. Shape dropdowns is clear at a glance. */
+.enrich-var-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.enrich-var-row.dtype-num .enrich-var-dot { background: var(--dtype-num-color); }
+.enrich-var-row.dtype-cat .enrich-var-dot { background: var(--dtype-cat-color); }
+.enrich-var-row.dtype-num:not(.disabled) .enrich-var-check { color: var(--dtype-num-color); }
+.enrich-var-row.dtype-cat:not(.disabled) .enrich-var-check { color: var(--dtype-cat-color); }
+/* Unchecked (excluded from the test): gray out the row so it reads as
+   "off" regardless of its numeric/categorical color. */
+.enrich-var-row.disabled { opacity: 0.5; }
+.enrich-var-row.disabled .enrich-var-check { color: var(--text-muted); }
+.enrich-var-row.disabled .enrich-var-dot { background: var(--text-muted); }
+.enrich-var-row.disabled .enrich-var-dtype { color: var(--text-muted); }
 .enrich-var-dtype {
   font-size: 11px;
   flex-shrink: 0;
