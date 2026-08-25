@@ -169,29 +169,6 @@ License     : GPL3
     <div class="physics-control">
       <label for="layoutSizeSelect">Size</label>
       <select id="layoutSizeSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
-      <div class="slider-row" style="margin-top:8px">
-        <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
-        <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
-      </div>
-      <div class="slider-row" style="margin-top:8px">
-        <label>Size range <span class="val" id="sizeRangeVal">1.5px – 30.0px</span></label>
-        <div class="dual-range" id="sizeRangeControl">
-          <div class="dual-range-track"></div>
-          <div class="dual-range-fill" id="sizeRangeFill"></div>
-          <input type="range" id="sizeRangeMinSlider" class="dual-range-input dual-range-min"
-                 min="0.5" max="60" step="0.5" value="1.5"
-                 aria-label="Minimum point radius in pixels">
-          <input type="range" id="sizeRangeMaxSlider" class="dual-range-input dual-range-max"
-                 min="0.5" max="60" step="0.5" value="30"
-                 aria-label="Maximum point radius in pixels">
-        </div>
-        <div style="font-size:11px;opacity:0.6;margin-top:2px">Smallest/largest a point can ever render, in pixels</div>
-      </div>
-      <div class="slider-row" style="margin-top:8px">
-        <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
-        <input type="range" id="jitterSlider" min="0" max="200" step="1" value="0">
-      </div>
-      <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
     </div>
     <div class="physics-control">
       <label for="layoutColorSelect">Color</label>
@@ -224,6 +201,29 @@ License     : GPL3
 <div class="stats-panel collapsed" id="physicsPanel">
   <div class="stats-panel-title">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
+      <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+    </div>
+    <div class="physics-control">
+      <label>Size range <span class="val" id="sizeRangeVal">1.5px – 30.0px</span></label>
+      <div class="dual-range" id="sizeRangeControl">
+        <div class="dual-range-track"></div>
+        <div class="dual-range-fill" id="sizeRangeFill"></div>
+        <input type="range" id="sizeRangeMinSlider" class="dual-range-input dual-range-min"
+               min="0.5" max="60" step="0.5" value="1.5"
+               aria-label="Minimum point radius in pixels">
+        <input type="range" id="sizeRangeMaxSlider" class="dual-range-input dual-range-max"
+               min="0.5" max="60" step="0.5" value="30"
+               aria-label="Maximum point radius in pixels">
+      </div>
+      <div style="font-size:11px;opacity:0.6;margin-top:2px">Smallest/largest a point can ever render, in pixels</div>
+    </div>
+    <div class="physics-control">
+      <label for="jitterSlider">Jitter <span class="val" id="jitterVal">0px</span></label>
+      <input type="range" id="jitterSlider" min="0" max="200" step="1" value="0">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Separates fully overlapping points</div>
+    </div>
     <div class="physics-control">
       <label for="physicsForceCheckbox" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0">
         <input type="checkbox" id="physicsForceCheckbox">
