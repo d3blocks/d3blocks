@@ -70,7 +70,10 @@ License     : GPL3
       display: block;
       margin: 0 auto;
       position: relative;
-      z-index: 0;
+      /* Axis ticks + point labels live here. Must render above the density
+         heatmap (z-index 1) so labels stay legible; points themselves
+         (z-index 2) still render on top of both. */
+      z-index: 2;
       pointer-events: none;
     }
     #scatterDensityCanvas {
@@ -78,6 +81,8 @@ License     : GPL3
       top: 0;
       left: 50%;
       transform: translateX(-50%);
+      /* Density layer sits at the very back: behind the axis/labels and
+         behind the data points (z-index 2 and 3). */
       z-index: 1;
       pointer-events: none;
     }
@@ -86,7 +91,7 @@ License     : GPL3
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 2;
+      z-index: 3;
       pointer-events: auto;
     }
     #my_dataviz {
@@ -145,8 +150,8 @@ License     : GPL3
     </div>
       -->
     <div class="physics-control">
-      <label for="densityBlurSlider">Blur <span class="val" id="densityBlurVal">8</span></label>
-      <input type="range" id="densityBlurSlider" min="0" max="30" step="1" value="8">
+      <label for="densityBlurSlider">Blur <span class="val" id="densityBlurVal">15</span></label>
+      <input type="range" id="densityBlurSlider" min="0" max="30" step="1" value="15">
     </div>
     <div class="physics-control">
       <label for="densityOpacitySlider">Opacity <span class="val" id="densityOpacityVal">0.6</span></label>
@@ -227,8 +232,8 @@ License     : GPL3
       <div style="font-size:11px;opacity:0.6;margin-top:6px">Overlapping points push each other apart, then settle back near their real position. Disable to snap back to the original coordinates.</div>
     </div>
     <div class="slider-row" style="margin-top:12px">
-      <label for="physicsPaddingSlider">Collision spacing <span class="val" id="physicsPaddingVal">2px</span></label>
-      <input type="range" id="physicsPaddingSlider" min="0" max="20" step="1" value="2">
+      <label for="physicsPaddingSlider">Collision spacing <span class="val" id="physicsPaddingVal">0px</span></label>
+      <input type="range" id="physicsPaddingSlider" min="0" max="20" step="1" value="0">
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Extra gap kept between overlapping points (works whether force-directed points is on now or later).</div>
     </div>
   </div>
@@ -737,10 +742,10 @@ sizeScatterCanvases();
 // ---- Point-density heatmap (ported from d3graph.js density layer) ----
 var densityVisible = true;
 var densityGridSize = 40;
-var densityBlur = 8;
+var densityBlur = 15;
 var densityOpacity = 0.6;
 var DEFAULT_DENSITY_GRID_SIZE = 40;
-var DEFAULT_DENSITY_BLUR = 8;
+var DEFAULT_DENSITY_BLUR = 15;
 var DEFAULT_DENSITY_OPACITY = 0.6;
 
 function densityColor(t) {
@@ -1053,14 +1058,21 @@ scheduleRender();
 
 // Mouse-wheel zoom (centered on cursor). Render is immediate and coalesced.
 (function setupWheelZoom() {
+  // Allow zooming out well beyond the original data extent (x0/y0): point
+  // radii are fixed screen pixels, so at exactly the original extent an
+  // edge point's circle can still clip past the canvas edge. A larger cap
+  // gives room to shrink everything further so all points (including
+  // their radii) actually fit on screen.
+  var ZOOM_OUT_LIMIT_FACTOR = 3;
   canvas.addEventListener('wheel',function(event){
     event.preventDefault();event.stopPropagation();
     var factor=event.deltaY<0?.85:1.18,p=canvasPointFromEvent(event);
     var mx=x.invert(p.px),my=y.invert(p.py),xd=x.domain(),yd=y.domain();
     var nx=[mx-(mx-xd[0])*factor,mx+(xd[1]-mx)*factor];
     var ny=[my-(my-yd[0])*factor,my+(yd[1]-my)*factor];
-    if(Math.abs(nx[1]-nx[0])>Math.abs(x0[1]-x0[0]))nx=x0.slice();
-    if(Math.abs(ny[1]-ny[0])>Math.abs(y0[1]-y0[0]))ny=y0.slice();
+    var maxXSpan=Math.abs(x0[1]-x0[0])*ZOOM_OUT_LIMIT_FACTOR, maxYSpan=Math.abs(y0[1]-y0[0])*ZOOM_OUT_LIMIT_FACTOR;
+    if (Math.abs(nx[1]-nx[0])>maxXSpan) { var cx=(nx[0]+nx[1])/2; nx=[cx-maxXSpan/2, cx+maxXSpan/2]; }
+    if (Math.abs(ny[1]-ny[0])>maxYSpan) { var cy=(ny[0]+ny[1])/2; ny=[cy-maxYSpan/2, cy+maxYSpan/2]; }
     if(nx[0]===nx[1]||ny[0]===ny[1])return;
     x.domain(nx);y.domain(ny);updateAxes();reheatPhysics();scheduleRender();updatePointLabels();
   },{passive:false});
@@ -1237,11 +1249,11 @@ var physicsSettling = false; // true while animating back to real coords after b
 var forceSim = null;
 var physicsNodes = null;          // array of {i, x, y, vx, vy} -- present whenever physics is enabled OR settling
 var physicsNodeByIndex = null;    // Map<pointIndex, node> for O(1) lookup during render/hit-test
-var physicsCollidePadding = 2;    // extra px gap kept between touching points -- user-adjustable via slider
+var physicsCollidePadding = 0;    // extra px gap kept between touching points -- user-adjustable via slider
 var PHYSICS_COLLIDE_STRENGTH = 0.8; // how firmly overlaps are resolved (softer = fewer oscillations in crowded plots)
 var PHYSICS_ANCHOR_STRENGTH = 0.12;  // spring pulling each point back toward its true position while enabled
 var PHYSICS_SETTLE_STRENGTH = 0.3;   // stronger pull used only while settling back after being disabled
-var PHYSICS_ALPHA_DECAY = 0.03;      // cools down over ~a few seconds, then the sim idles (no CPU) until reheated
+var PHYSICS_ALPHA_DECAY = 0.015;     // slower decay = longer, gentler settle before the sim idles (no CPU) until reheated
 var PHYSICS_SETTLE_ALPHA_DECAY = 0.05;
 var PHYSICS_REHEAT_ALPHA = 0.4;
 
