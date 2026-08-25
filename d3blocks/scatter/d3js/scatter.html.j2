@@ -226,6 +226,11 @@ License     : GPL3
       </label>
       <div style="font-size:11px;opacity:0.6;margin-top:6px">Overlapping points push each other apart, then settle back near their real position. Disable to snap back to the original coordinates.</div>
     </div>
+    <div class="slider-row" style="margin-top:12px">
+      <label for="physicsPaddingSlider">Collision spacing <span class="val" id="physicsPaddingVal">2px</span></label>
+      <input type="range" id="physicsPaddingSlider" min="0" max="20" step="1" value="2">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Extra gap kept between overlapping points (works whether force-directed points is on now or later).</div>
+    </div>
   </div>
 </div>
 
@@ -971,7 +976,7 @@ window.addEventListener('mousemove',function(e){
     var ddx=dx*xs/(width||1),ddy=dy*ys/(height||1);
     x.domain([panStart.xDomain[0]-ddx,panStart.xDomain[1]-ddx]);
     y.domain([panStart.yDomain[0]+ddy,panStart.yDomain[1]+ddy]);
-    updateAxes();scheduleRender();return;
+    updateAxes();reheatPhysics();scheduleRender();return;
   }
   var idx=hitTest(e);
   // While a tooltip is pinned, hover only updates the highlight — not the tooltip.
@@ -1042,7 +1047,7 @@ canvas.addEventListener('click',function(e){
   }
 });
 canvas.addEventListener('dblclick',function(){
-  x.domain(x0.slice());y.domain(y0.slice());updateAxes();scheduleRender();updatePointLabels();
+  x.domain(x0.slice());y.domain(y0.slice());updateAxes();reheatPhysics();scheduleRender();updatePointLabels();
 });
 scheduleRender();
 
@@ -1057,7 +1062,7 @@ scheduleRender();
     if(Math.abs(nx[1]-nx[0])>Math.abs(x0[1]-x0[0]))nx=x0.slice();
     if(Math.abs(ny[1]-ny[0])>Math.abs(y0[1]-y0[0]))ny=y0.slice();
     if(nx[0]===nx[1]||ny[0]===ny[1])return;
-    x.domain(nx);y.domain(ny);updateAxes();scheduleRender();updatePointLabels();
+    x.domain(nx);y.domain(ny);updateAxes();reheatPhysics();scheduleRender();updatePointLabels();
   },{passive:false});
 })();
 
@@ -1215,19 +1220,34 @@ function jitteredPoint(i, px, py) {
 // strengthened, so points settle straight back to their true coordinates.
 // Once that settle converges, physics mode is torn down entirely and
 // rendering falls back to plain (jitter-only) positioning.
+//
+// IMPORTANT for CPU usage: the simulation uses a real, nonzero alphaDecay
+// (like any normal d3-force use) so it actually cools down and its
+// internal timer stops once points stop moving -- it does NOT run forever
+// just because the checkbox is checked. In a busy/crowded plot this is
+// also what stops points from wiggling indefinitely: forces are scaled by
+// alpha, so they taper toward zero over a few seconds regardless of
+// whether every last pixel of overlap got resolved. Interactions that move
+// the anchor (pan, zoom, a coordinate-mode transition, or the sliders
+// below) call reheatPhysics() to briefly wake the simulation back up so it
+// re-settles, then it goes quiet again.
 var physicsSupported = typeof d3.forceSimulation === 'function';
 var physicsEnabled = false;
 var physicsSettling = false; // true while animating back to real coords after being turned off
 var forceSim = null;
 var physicsNodes = null;          // array of {i, x, y, vx, vy} -- present whenever physics is enabled OR settling
 var physicsNodeByIndex = null;    // Map<pointIndex, node> for O(1) lookup during render/hit-test
-var PHYSICS_COLLIDE_PADDING = 2;  // extra px gap kept between touching points
+var physicsCollidePadding = 2;    // extra px gap kept between touching points -- user-adjustable via slider
+var PHYSICS_COLLIDE_STRENGTH = 0.8; // how firmly overlaps are resolved (softer = fewer oscillations in crowded plots)
 var PHYSICS_ANCHOR_STRENGTH = 0.12;  // spring pulling each point back toward its true position while enabled
 var PHYSICS_SETTLE_STRENGTH = 0.3;   // stronger pull used only while settling back after being disabled
+var PHYSICS_ALPHA_DECAY = 0.03;      // cools down over ~a few seconds, then the sim idles (no CPU) until reheated
+var PHYSICS_SETTLE_ALPHA_DECAY = 0.05;
+var PHYSICS_REHEAT_ALPHA = 0.4;
 
 function physicsAnchorX(i) { return x(currentXVal[i]); }
 function physicsAnchorY(i) { return y(currentYVal[i]); }
-function physicsRadius(i) { return Math.max(1, baseRadius(jsonData[i])) + PHYSICS_COLLIDE_PADDING; }
+function physicsRadius(i) { return Math.max(1, baseRadius(jsonData[i])) + physicsCollidePadding; }
 
 // A hand-rolled d3-force "force": d3's own forceX/forceY cache their target
 // accessor's result once at initialize() time and never re-read it per
@@ -1267,6 +1287,10 @@ function buildPhysicsNodes() {
 
 function onPhysicsTick() { scheduleRender(); }
 function onPhysicsEnd() {
+  // Fires when alpha decays below alphaMin -- the sim's internal timer
+  // stops itself here, which is exactly what keeps an idle/settled physics
+  // session from costing any CPU: no more ticks means no more scheduled
+  // renders until something calls reheatPhysics() again.
   if (physicsSettling) {
     // Settled back to real coordinates -- drop out of physics mode so
     // rendering goes back to the plain (non-simulated) position path.
@@ -1288,17 +1312,22 @@ function startPhysicsSimulation(settleOnly) {
   if (forceSim) forceSim.stop();
   forceSim = d3.forceSimulation(physicsNodes)
     .alpha(1)
-    // While actively enabled, keep the simulation "hot" indefinitely
-    // (alphaDecay 0) so it stays responsive to pan/zoom/coordinate-mode
-    // changes instead of cooling down and freezing. While settling back
-    // after being disabled, let it decay normally so it converges and the
-    // 'end' event fires, letting us clean up physics state entirely.
-    .alphaDecay(settleOnly ? 0.05 : 0)
+    .alphaDecay(settleOnly ? PHYSICS_SETTLE_ALPHA_DECAY : PHYSICS_ALPHA_DECAY)
     .velocityDecay(0.5)
     .force('anchor', makeAnchorForce(settleOnly ? PHYSICS_SETTLE_STRENGTH : PHYSICS_ANCHOR_STRENGTH))
-    .force('collide', settleOnly ? null : d3.forceCollide(function(n) { return physicsRadius(n.i); }).iterations(2))
+    .force('collide', settleOnly ? null : d3.forceCollide(function(n) { return physicsRadius(n.i); }).strength(PHYSICS_COLLIDE_STRENGTH).iterations(2))
     .on('tick', onPhysicsTick)
     .on('end', onPhysicsEnd);
+}
+
+// Briefly wakes a cooled-down (idle) simulation back up so it re-settles --
+// used whenever something moves the anchor points or changes the collision
+// radii/padding out from under it (pan, zoom, a coordinate-mode
+// transition, or the Physics panel sliders). No-op if physics isn't
+// currently enabled, so it's always safe to call.
+function reheatPhysics() {
+  if (!physicsEnabled || !forceSim) return;
+  forceSim.alpha(Math.max(forceSim.alpha(), PHYSICS_REHEAT_ALPHA)).restart();
 }
 
 function stopPhysicsEntirely() {
@@ -1310,14 +1339,16 @@ function stopPhysicsEntirely() {
 }
 
 // d3.forceCollide snapshots its radius accessor once when the force is
-// (re)assigned, so if the user changes point size (Size mode dropdown or
-// the size-multiplier slider) while physics is running, the collision
-// radii would otherwise stay stale. Re-assigning the force here forces a
-// fresh read of every node's current baseRadius(); harmless / a no-op when
-// physics isn't currently enabled.
+// (re)assigned, so if the user changes point size (Size mode dropdown, the
+// size-multiplier slider, or the collision-padding slider) while physics
+// is running, the collision radii would otherwise stay stale. Re-assigning
+// the force here forces a fresh read of every node's current
+// baseRadius()/padding, then reheats the sim so it actually re-settles to
+// the new spacing instead of sitting frozen at its old (now stale) layout.
 function refreshPhysicsCollisionRadii() {
   if (!physicsEnabled || !forceSim) return;
-  forceSim.force('collide', d3.forceCollide(function(n) { return physicsRadius(n.i); }).iterations(2));
+  forceSim.force('collide', d3.forceCollide(function(n) { return physicsRadius(n.i); }).strength(PHYSICS_COLLIDE_STRENGTH).iterations(2));
+  reheatPhysics();
 }
 
 // Shared by every render/hit-test path that previously called jitteredPoint
@@ -1349,6 +1380,14 @@ function renderPosFor(i, px, py) {
       physicsSettling = true;
       startPhysicsSimulation(true);
     }
+  });
+
+  var paddingSlider = document.getElementById('physicsPaddingSlider');
+  var paddingVal = document.getElementById('physicsPaddingVal');
+  if (paddingSlider) paddingSlider.addEventListener('input', function(e) {
+    physicsCollidePadding = parseFloat(e.target.value) || 0;
+    if (paddingVal) paddingVal.textContent = physicsCollidePadding + 'px';
+    refreshPhysicsCollisionRadii();
   });
 })();
 function transformForIndex(d,xi,yi,scale){scale=typeof scale==='number'?scale:1;return 'translate('+x(d[xi])+','+y(d[yi])+') scale('+scale+')';}
@@ -2288,6 +2327,7 @@ buttons.on('change', function() {
     if (myToken !== coordTransitionToken) return; // superseded by a newer transition; stop
     var rawT = Math.min(1, (now-start)/duration);
     var t = rawT*rawT*(3-2*rawT);
+    reheatPhysics(); // anchor is moving continuously during the transition; keep the sim responsive to it
     renderInterpolatedPoints(fromX,fromY,target[0],target[1],t);
     if(rawT<1) requestAnimationFrame(frame); else { activeCoordIndices = target; updatePointLabels(); }
   }
