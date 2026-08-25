@@ -759,18 +759,20 @@ function densityColor(t) {
   return 'hsl(' + hue + ', 100%, 50%)';
 }
 function computeDensityGrid() {
-  // Bin points at their *live* on-screen positions (currentXVal/currentYVal).
-  // Those stay in sync during coordinate-mode transitions, so the heatmap
-  // morphs with the points instead of jumping to the target coords early.
-  var xd = x.domain(), yd = y.domain();
+  // Bin points at their *live*, rendered on-screen positions. Uses the same
+  // pixel-space + margin culling as rebuildHitGrid (see comment there) so
+  // the heatmap doesn't develop its own empty ring at the edges while
+  // physics is still catching up after a fast zoom/pan step.
   var pts = [];
+  var marginX = physicsNodeByIndex ? width * 0.5 : jitterAmount;
+  var marginY = physicsNodeByIndex ? (height + 1) * 0.5 : jitterAmount;
   for (var i = 0; i < jsonData.length; i++) {
     if (!jsonData[i]) continue;
     var xv = currentXVal[i], yv = currentYVal[i];
     if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
-    if (xv < xd[0] || xv > xd[1] || yv < yd[0] || yv > yd[1]) continue;
     var px = x(xv), py = y(yv);
     var jp = renderPosFor(i, px, py);
+    if (jp.px < -marginX || jp.px > width+marginX || jp.py < -marginY || jp.py > (height+1)+marginY) continue;
     pts.push(jp.px, jp.py);
   }
   if (!pts.length) return null;
@@ -885,16 +887,23 @@ function addHit(i, px, py) {
 function rebuildHitGrid() {
   hitGrid.clear();
   visiblePointIndices.length = 0;
-  // Use live positions (currentXVal/Y) so hit-testing matches drawn points
-  // during and after coordinate-mode transitions.
-  var xd = x.domain(), yd = y.domain();
+  // Cull by RENDERED pixel position (with a margin) instead of raw
+  // data-domain membership. While physics is active, a point's physics
+  // offset can still be catching up after a fast zoom/pan step -- its data
+  // value may have just fallen outside the new domain even though it's
+  // still visually on-screen. Culling on the data check alone would crop
+  // it out immediately (before physics has a chance to move it there),
+  // producing a visible empty band/border around the edges during fast
+  // zooming ("first zoom in, later crop", not crop-then-catch-up).
+  var marginX = physicsNodeByIndex ? width * 0.5 : jitterAmount;
+  var marginY = physicsNodeByIndex ? (height + 1) * 0.5 : jitterAmount;
   for (var i=0; i<jsonData.length; i++) {
     var d=jsonData[i];
     if (!d) continue;
     var xv=currentXVal[i], yv=currentYVal[i];
     if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
-    if (xv<xd[0] || xv>xd[1] || yv<yd[0] || yv>yd[1]) continue;
     var px=x(xv), py=y(yv); var jp=renderPosFor(i,px,py);
+    if (jp.px < -marginX || jp.px > width+marginX || jp.py < -marginY || jp.py > (height+1)+marginY) continue;
     visiblePointIndices.push(i);
     addHit(i,jp.px,jp.py);
   }
@@ -2349,14 +2358,19 @@ buttons.on('change', function() {
 function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
   var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1);
   hitGrid.clear(); visiblePointIndices.length=0;
-  var xd=x.domain(),yd=y.domain();
+  var marginX = physicsNodeByIndex ? width * 0.5 : jitterAmount;
+  var marginY = physicsNodeByIndex ? (height + 1) * 0.5 : jitterAmount;
   for(var i=0;i<jsonData.length;i++){
     var d=jsonData[i]; if(!d)continue;
     var x0v=fromX[i], y0v=fromY[i], x1v=+d[xi1], y1v=+d[yi1];
     var xv=x0v+(x1v-x0v)*t, yv=y0v+(y1v-y0v)*t;
     currentXVal[i]=xv; currentYVal[i]=yv; // keep the live-position cache in sync every frame
-    if(!Number.isFinite(xv)||!Number.isFinite(yv)||xv<xd[0]||xv>xd[1]||yv<yd[0]||yv>yd[1])continue;
-    var px=x(xv),py=y(yv); var jp=renderPosFor(i,px,py); px=jp.px; py=jp.py; var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
+    if(!Number.isFinite(xv)||!Number.isFinite(yv))continue;
+    var px=x(xv),py=y(yv); var jp=renderPosFor(i,px,py); px=jp.px; py=jp.py;
+    // Cull by rendered pixel position, not raw data-domain membership --
+    // see the matching comment in rebuildHitGrid().
+    if (px < -marginX || px > width+marginX || py < -marginY || py > (height+1)+marginY) continue;
+    var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     visiblePointIndices.push(i);
     addHit(i,px,py);
     var shape=currentShapeMode;
