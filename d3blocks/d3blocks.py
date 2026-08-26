@@ -553,9 +553,6 @@ class D3Blocks():
         >>> df = d3.import_example('cancer')
         >>> 
         >>> # Set properties
-        >>> d3.set_node_properties(df)
-        >>> 
-        >>> # Set properties
         >>> d3.scatter(df['tsneX'].values,
         >>>            df['tsneY'].values,
         >>>            x1=df['PC1'].values,
