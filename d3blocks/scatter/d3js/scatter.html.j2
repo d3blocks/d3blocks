@@ -130,7 +130,7 @@ License     : GPL3
     <span id="selectionCount" class="selection-count" style="display:none"></span>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; Shift+drag to add to selection; click a point to toggle it">Select</button>
     <button class="button-switch active" id="densityToggleBtn" type="button" title="Show or hide point-density heatmap">Hide Density</button>
-    <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
+    <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
   </div>
 </div>
 
@@ -294,6 +294,11 @@ License     : GPL3
         </select>
       </div>
     </div>
+    <label class="enrich-var-check" style="margin-top:8px">
+      <input type="checkbox" id="enrichUseFilteredOnly">
+      <span>Use filtered data only</span>
+    </label>
+    <div style="font-size:11px;opacity:0.6;margin-top:2px">When checked, points excluded by Filtering are left out of the analysis entirely (not just the selection, but the background population too).</div>
   </div>
 </div>
 
@@ -2060,11 +2065,11 @@ var sstyle = document.createElement('style'); sstyle.innerHTML = '.search-hit{st
 function toggleTheme() {
   const themeBtn = document.getElementById('themeBtn');
   const isLight = document.body.classList.toggle('light');
-  if (themeBtn) themeBtn.textContent = isLight ? 'Theme: Light' : 'Theme: Dark';
+  if (themeBtn) { themeBtn.textContent = isLight ? '☀' : '🌙'; themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark'; }
   // Density color ramp depends on light/dark — redraw if visible.
   if (typeof drawDensityLayer === 'function') drawDensityLayer();
 }
-const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); themeBtn.textContent = document.body.classList.contains('light') ? 'Theme: Light' : 'Theme: Dark'; }
+const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); var _isLight = document.body.classList.contains('light'); themeBtn.textContent = _isLight ? '☀' : '🌙'; themeBtn.title = _isLight ? 'Theme: Light' : 'Theme: Dark'; }
 window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme(); });
 
 // ---- Density toggle + left-panel sliders (mirrors d3graph density layer) ----
@@ -2216,15 +2221,27 @@ if (exportButton) exportButton.addEventListener('click', function(){
 // variables checked in the Enrichments panel, with any per-variable dtype
 // overrides applied.
 function runSelectionEnrichment() {
-  var n = jsonData.length;
-  var yBits = new Array(n).fill(0);
-  selectedIndices.forEach(function(i){ yBits[i] = 1; });
+  var useFilteredOnlyEl = document.getElementById('enrichUseFilteredOnly');
+  var restrictToVisible = !!(useFilteredOnlyEl && useFilteredOnlyEl.checked);
+
+  // When restricting, COMPACT down to only the included indices rather than
+  // just masking values -- the hypergeometric test's population size (M)
+  // and the ranksum test's sample sizes are read from array length /
+  // non-missing counts, so leaving filtered-out entries in place (even as
+  // undefined) would still inflate the population the significance tests
+  // are computed against.
+  var includedIndices = [];
+  for (var i = 0; i < jsonData.length; i++) {
+    if (restrictToVisible && isPointFiltered(i)) continue;
+    includedIndices.push(i);
+  }
+  var yBits = includedIndices.map(function(i){ return selectedIndices.has(i) ? 1 : 0; });
   var allColumns = buildAllPropertyColumns();
   var columns = {}, dtypeOverrides = {};
   Object.keys(allColumns).forEach(function(k){
     var state = enrichVarState[k];
     if (state && state.enabled === false) return; // excluded by the user
-    columns[k] = allColumns[k];
+    columns[k] = includedIndices.map(function(i){ return allColumns[k][i]; });
     if (state && state.dtypeOverride) dtypeOverrides[k] = state.dtypeOverride;
   });
   var alphaInput = document.getElementById('enrichAlphaInput');
@@ -2232,13 +2249,15 @@ function runSelectionEnrichment() {
   if (!Number.isFinite(alpha) || alpha <= 0 || alpha > 1) alpha = 0.05;
   var multtestSelect = document.getElementById('enrichMultTestSelect');
   var multtest = multtestSelect ? multtestSelect.value : 'holm';
+  var nSelectedEffective = yBits.reduce(function(a,b){ return a+b; }, 0);
   return {
     results: enrichment(columns, yBits, alpha, dtypeOverrides, multtest),
     nCols: Object.keys(columns).length,
-    nSelected: selectedIndices.size,
-    nTotal: n,
+    nSelected: nSelectedEffective,
+    nTotal: includedIndices.length,
     alpha: alpha,
-    multtest: multtest
+    multtest: multtest,
+    restrictedToVisible: restrictToVisible
   };
 }
 
@@ -2502,6 +2521,19 @@ populateEnrichVarList();
 initLayoutPropertyControls();
 populateFilterVarDropdown();
 
+// No dataframe/properties were supplied at all (every point's d[13] is
+// empty) -- Layout's Size/Color/Shape/Label, Filtering, and both
+// Enrichment panels are all driven entirely by per-point properties, so
+// hide them rather than showing controls with nothing to control.
+(function hidePropertyPanelsIfNoData() {
+  if (Object.keys(buildAllPropertyColumns()).length > 0) return;
+  ['layoutPanel', 'filterPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  if (typeof positionSidePanels === 'function') positionSidePanels();
+})();
+
 function formatPValue(p) {
   if (p === 0) return '<1e-300';
   if (p < 0.0001) return p.toExponential(2);
@@ -2512,7 +2544,7 @@ function formatPValue(p) {
 function showAssociationsPanel() {
   var res = runSelectionEnrichment();
   if (nodePanelTitle) nodePanelTitle.textContent = 'Associations for selection';
-  if (nodePanelSub) nodePanelSub.textContent = res.nSelected + ' of ' + res.nTotal + ' points selected \u2014 ' +
+  if (nodePanelSub) nodePanelSub.textContent = res.nSelected + ' of ' + res.nTotal + (res.restrictedToVisible ? ' filtered' : '') + ' points selected \u2014 ' +
     res.results.length + ' significant of ' + res.nCols + ' properties tested (\u03b1=' + res.alpha + ', ' + (res.multtest === 'bonferroni' ? 'Bonferroni' : 'Holm') + '-corrected)';
   if (nodeStatsGrid) {
     if (res.results.length === 0) {
