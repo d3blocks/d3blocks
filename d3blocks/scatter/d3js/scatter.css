@@ -404,6 +404,20 @@
   .assoc-th.num { font-variant-numeric: tabular-nums; }
   .assoc-td { color: var(--text); word-break: break-word; }
   .assoc-td.num { font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 11px;
+  margin: 0 6px 6px 0;
+}
+.filter-chip-x { cursor: pointer; opacity: 0.6; }
+.filter-chip-x:hover { opacity: 1; }
 .enrich-var-row {
   display: flex;
   align-items: center;

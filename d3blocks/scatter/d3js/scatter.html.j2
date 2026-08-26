@@ -41,8 +41,13 @@ License     : GPL3
       left: 10px;
       z-index: 60;
     }
-    #physicsPanel.stats-panel {
+    #filterPanel.stats-panel {
       top: 520px;
+      left: 10px;
+      z-index: 59;
+    }
+    #physicsPanel.stats-panel {
+      top: 660px;
       left: 10px;
       z-index: 58;
     }
@@ -189,6 +194,39 @@ License     : GPL3
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Labels appear when zoomed in</div>
     </div>
     <button class="button-switch" id="layoutResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
+  </div>
+</div>
+
+<!-- Side panel: exclude points by category value. Two-step picker (pick a
+     variable, then check/uncheck its values) so this scales to datasets
+     with many categorical variables without dumping every value of every
+     variable into one giant list. Filters on different variables AND
+     together; unchecked values within one variable are excluded (OR
+     semantics -- any checked value still passes). -->
+<div class="stats-panel collapsed" id="filterPanel">
+  <div class="stats-panel-title">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="filterVarSelect">Variable</label>
+      <select id="filterVarSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Select a variable…</option></select>
+    </div>
+    <div id="filterChecklistWrap" style="display:none;margin-top:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:11px;opacity:0.6">Values to include:</span>
+        <span>
+          <a href="#" id="filterSelectAll" style="font-size:11px">All</a>
+          <span style="opacity:0.4">·</span>
+          <a href="#" id="filterSelectNone" style="font-size:11px">None</a>
+        </span>
+      </div>
+      <div id="filterChecklist" style="max-height:180px;overflow-y:auto"></div>
+    </div>
+    <div id="filterChipsWrap" style="margin-top:12px;display:none">
+      <div style="font-size:11px;opacity:0.6;margin-bottom:4px">Active filters:</div>
+      <div id="filterChips"></div>
+      <button class="button-switch" id="filterClearAllBtn" type="button" style="width:100%;margin-top:8px">Clear All Filters</button>
+    </div>
+    <div id="filterSummary" style="font-size:11px;opacity:0.6;margin-top:10px">No filters active.</div>
   </div>
 </div>
 
@@ -770,6 +808,7 @@ function computeDensityGrid() {
     if (!jsonData[i]) continue;
     var xv = currentXVal[i], yv = currentYVal[i];
     if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
+    if (isPointFiltered(i)) continue;
     var px = x(xv), py = y(yv);
     var jp = renderPosFor(i, px, py);
     if (jp.px < -marginX || jp.px > width+marginX || jp.py < -marginY || jp.py > (height+1)+marginY) continue;
@@ -902,6 +941,7 @@ function rebuildHitGrid() {
     if (!d) continue;
     var xv=currentXVal[i], yv=currentYVal[i];
     if (!Number.isFinite(xv) || !Number.isFinite(yv)) continue;
+    if (isPointFiltered(i)) continue;
     var px=x(xv), py=y(yv); var jp=renderPosFor(i,px,py);
     if (jp.px < -marginX || jp.px > width+marginX || jp.py < -marginY || jp.py > (height+1)+marginY) continue;
     visiblePointIndices.push(i);
@@ -1107,7 +1147,7 @@ function positionSidePanels() {
   var bottomPad = 12;
   var sideRight = 0;
   // Order: Export/Save, then Density Layer, then Layout, then Physics, then Enrichments, then Enrichment Variables
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel || panel.style.display === 'none') return;
     panel.style.top = y + 'px';
@@ -1131,9 +1171,18 @@ function positionSidePanels() {
 window.addEventListener('resize', positionSidePanels);
 window.addEventListener('load', positionSidePanels);
 positionSidePanels();
+// Re-measure one frame later too: the very first synchronous call above can
+// run before the browser's first layout/paint pass has settled (e.g. web
+// font swap, or simply before layout has been computed at all), which can
+// leave #scatter-main's margin-top (and therefore the canvases positioned
+// relative to it) based on a stale/incorrect measurement until something
+// else -- like a user interacting with the page -- forces a reflow. This
+// costs nothing and fixes that without waiting on 'load' (which can be
+// delayed or blocked by the external logo image).
+requestAnimationFrame(positionSidePanels);
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id) {
+  ['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
@@ -1141,7 +1190,7 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['exportPanel', 'densityPanel', 'layoutPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(panelId) {
+['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
@@ -1294,6 +1343,11 @@ function buildPhysicsNodes() {
   for (var i = 0; i < jsonData.length; i++) {
     if (!jsonData[i]) continue;
     if (!Number.isFinite(currentXVal[i]) || !Number.isFinite(currentYVal[i])) continue;
+    // Filtered-out points must not join the simulation at all -- if they
+    // stayed in as nodes, their (invisible) collision force would still
+    // push visible points around, making the plot "bounce" against points
+    // the user can't even see.
+    if (typeof isPointFiltered === 'function' && isPointFiltered(i)) continue;
     var prev = physicsNodeByIndex && physicsNodeByIndex.get(i);
     nodes.push({
       i: i,
@@ -1935,7 +1989,7 @@ function renderSearchResults(query) {
     if (searchResults) { searchResults.innerHTML = ''; searchResults.classList.remove('open'); }
     return;
   }
-  const all = jsonData.map(function(d,i){ return {id: (d && d[6]) ? String(d[6]) : String(i), idx: i, d: d}; });
+  const all = jsonData.map(function(d,i){ return {id: (d && d[6]) ? String(d[6]) : String(i), idx: i, d: d}; }).filter(function(it){ return !isPointFiltered(it.idx); });
   searchMatches = all
     .filter(function(it){ return it.id.toLowerCase().includes(q); })
     .sort(function(a,b){
@@ -2139,7 +2193,7 @@ const exportButton = document.getElementById('exportButton');
 if (exportButton) exportButton.addEventListener('click', function(){
   var indices = selectedIndices.size > 0
     ? Array.from(selectedIndices).sort(function(a,b){return a-b;})
-    : jsonData.map(function(_,i){return i;}).filter(function(i){return !!jsonData[i];});
+    : jsonData.map(function(_,i){return i;}).filter(function(i){return !!jsonData[i] && !isPointFiltered(i);});
   var out = indices.map(function(i){ return pointToExportObject(jsonData[i]); });
   var blob = new Blob([JSON.stringify(out, null, 2)], {type: 'application/json'});
   var url = URL.createObjectURL(blob);
@@ -2214,6 +2268,176 @@ function buildAllPropertyColumns() {
 // dtype override ('' = auto-detect, 'num', or 'cat').
 var enrichVarState = {};
 
+// —— Point filtering (Filtering panel) ——————————————————————————
+// activeFilters[varName] = Set of excluded value-strings (categorical only).
+// A point is filtered out if ANY active filter's excluded set contains its
+// value for that variable -- filters on different variables AND together;
+// unchecked values within one variable are OR'd (checked ones still pass).
+var activeFilters = {};
+var filterSelectedVar = '';
+// Sentinel key representing "missing / NaN" for a variable -- lets a
+// missing value be filtered like any other category, without colliding
+// with a real category unless a dataset genuinely uses this exact string.
+var FILTER_MISSING_KEY = '__FILTER_MISSING__';
+
+function isPointFiltered(i) {
+  var d = jsonData[i];
+  if (!d) return true;
+  var props = d[13];
+  for (var varName in activeFilters) {
+    var excluded = activeFilters[varName];
+    if (!excluded || excluded.size === 0) continue;
+    var v = (props && Object.prototype.hasOwnProperty.call(props, varName)) ? props[varName] : undefined;
+    var key = (v === undefined || v === null || v === '') ? FILTER_MISSING_KEY : String(v);
+    if (excluded.has(key)) return true;
+  }
+  return false;
+}
+
+// Categorical columns only -- numeric/continuous variables don't have
+// "categories" to exclude, and reusing the same dtype classification as
+// Layout/Enrichment keeps all three panels consistent with each other.
+function getFilterableCategoricalColumns() {
+  var columns = buildAllPropertyColumns();
+  var out = {};
+  Object.keys(columns).forEach(function(k){
+    var col = columns[k];
+    if (!col.some(function(v){ return v != null && v !== ''; })) return;
+    var state = enrichVarState[k];
+    var dtype = (state && state.dtypeOverride) || detectColumnDtype(col);
+    if (dtype === 'cat') out[k] = col;
+  });
+  return out;
+}
+
+function populateFilterVarDropdown() {
+  var select = document.getElementById('filterVarSelect');
+  if (!select) return;
+  var prev = filterSelectedVar || select.value;
+  var columns = getFilterableCategoricalColumns();
+  var keys = Object.keys(columns).sort();
+  select.innerHTML = '<option value="">Select a variable…</option>' +
+    keys.map(function(k){ return '<option value="' + escapeHtml(k) + '"' + (k === prev ? ' selected' : '') + '>' + escapeHtml(k) + '</option>'; }).join('');
+  filterSelectedVar = keys.indexOf(prev) >= 0 ? prev : '';
+  select.value = filterSelectedVar;
+  renderFilterChecklist();
+}
+
+function renderFilterChecklist() {
+  var wrap = document.getElementById('filterChecklistWrap');
+  var list = document.getElementById('filterChecklist');
+  if (!wrap || !list) return;
+  if (!filterSelectedVar) { wrap.style.display = 'none'; return; }
+  var allColumns = buildAllPropertyColumns();
+  var col = allColumns[filterSelectedVar];
+  if (!col) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  var counts = {};
+  var missingCount = 0;
+  col.forEach(function(v){
+    if (v == null || v === '') { missingCount++; return; }
+    var key = String(v);
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  var excluded = activeFilters[filterSelectedVar] || new Set();
+  var values = Object.keys(counts).sort();
+  function rowHtml(val, count, displayLabel) {
+    var checked = !excluded.has(val);
+    return '<label class="enrich-var-check" style="justify-content:space-between;padding:3px 0">' +
+      '<span style="display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis"><input type="checkbox" class="filter-value-checkbox" data-value="' + escapeHtml(val) + '"' + (checked ? ' checked' : '') + '>' + escapeHtml(displayLabel) + '</span>' +
+      '<span style="opacity:0.5;font-size:11px;flex-shrink:0;margin-left:6px">(' + count + ')</span>' +
+    '</label>';
+  }
+  var html = values.map(function(val){ return rowHtml(val, counts[val], val); }).join('');
+  if (missingCount > 0) html += rowHtml(FILTER_MISSING_KEY, missingCount, 'Missing / NaN');
+  list.innerHTML = html;
+  list.querySelectorAll('.filter-value-checkbox').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var set = activeFilters[filterSelectedVar] || (activeFilters[filterSelectedVar] = new Set());
+      if (cb.checked) set.delete(cb.dataset.value); else set.add(cb.dataset.value);
+      if (set.size === 0) delete activeFilters[filterSelectedVar];
+      applyFiltersChanged();
+    });
+  });
+}
+
+function renderFilterChips() {
+  var chipsWrap = document.getElementById('filterChipsWrap');
+  var chips = document.getElementById('filterChips');
+  if (!chipsWrap || !chips) return;
+  var varNames = Object.keys(activeFilters).filter(function(k){ return activeFilters[k] && activeFilters[k].size > 0; });
+  if (varNames.length === 0) { chipsWrap.style.display = 'none'; return; }
+  chipsWrap.style.display = '';
+  chips.innerHTML = varNames.map(function(k){
+    var vals = Array.from(activeFilters[k]).map(function(v){ return v === FILTER_MISSING_KEY ? 'Missing/NaN' : v; });
+    var label = escapeHtml(k) + ': excl. ' + vals.map(escapeHtml).join(', ');
+    return '<span class="filter-chip" data-var="' + escapeHtml(k) + '">' + label + ' <span class="filter-chip-x" data-var="' + escapeHtml(k) + '">✕</span></span>';
+  }).join('');
+  chips.querySelectorAll('.filter-chip-x').forEach(function(x){
+    x.addEventListener('click', function(){
+      delete activeFilters[x.dataset.var];
+      applyFiltersChanged();
+    });
+  });
+}
+
+function updateFilterSummary() {
+  var el = document.getElementById('filterSummary');
+  if (!el) return;
+  var total = jsonData.length, shown = 0;
+  for (var i = 0; i < total; i++) if (!isPointFiltered(i)) shown++;
+  var anyActive = Object.keys(activeFilters).some(function(k){ return activeFilters[k] && activeFilters[k].size > 0; });
+  el.textContent = anyActive ? (shown + ' of ' + total + ' points shown') : 'No filters active.';
+}
+
+// Called whenever a filter checkbox/chip changes: refresh this variable's
+// checklist state, the chips overview, the summary count, and re-render
+// the plot (filtered points must disappear from rendering/hit-testing/
+// density immediately).
+function applyFiltersChanged() {
+  renderFilterChecklist();
+  renderFilterChips();
+  updateFilterSummary();
+  // Filtered points must be added to/removed from the physics node set
+  // itself, not just hidden visually -- a simple reheat wouldn't drop
+  // already-simulated nodes for points that just got filtered out.
+  if (physicsEnabled) startPhysicsSimulation(false); else reheatPhysics();
+  scheduleRender();
+  updatePointLabels();
+}
+
+(function wireFilterControls() {
+  var select = document.getElementById('filterVarSelect');
+  if (select) select.addEventListener('change', function(e){
+    filterSelectedVar = e.target.value;
+    renderFilterChecklist();
+  });
+  var selectAll = document.getElementById('filterSelectAll');
+  if (selectAll) selectAll.addEventListener('click', function(e){
+    e.preventDefault();
+    delete activeFilters[filterSelectedVar];
+    applyFiltersChanged();
+  });
+  var selectNone = document.getElementById('filterSelectNone');
+  if (selectNone) selectNone.addEventListener('click', function(e){
+    e.preventDefault();
+    if (!filterSelectedVar) return;
+    var col = buildAllPropertyColumns()[filterSelectedVar];
+    if (!col) return;
+    var all = new Set();
+    var hasMissing = false;
+    col.forEach(function(v){ if (v != null && v !== '') all.add(String(v)); else hasMissing = true; });
+    if (hasMissing) all.add(FILTER_MISSING_KEY);
+    activeFilters[filterSelectedVar] = all;
+    applyFiltersChanged();
+  });
+  var clearAllBtn = document.getElementById('filterClearAllBtn');
+  if (clearAllBtn) clearAllBtn.addEventListener('click', function(){
+    activeFilters = {};
+    applyFiltersChanged();
+  });
+})();
+
 function populateEnrichVarList() {
   var container = document.getElementById('enrichVarList');
   if (!container) return;
@@ -2251,6 +2475,7 @@ function populateEnrichVarList() {
       // Unchecking/rechecking changes which variables are offered in the
       // Layout panel's Size/Color/Shape/Label dropdowns.
       initLayoutPropertyControls();
+      populateFilterVarDropdown();
     });
   });
   container.querySelectorAll('.enrich-var-dtype').forEach(function(sel){
@@ -2264,6 +2489,7 @@ function populateEnrichVarList() {
       // Numeric <-> Category flips which Layout dropdown (Size vs. Shape,
       // both use Color) this variable belongs under, so rebuild those lists.
       initLayoutPropertyControls();
+      populateFilterVarDropdown();
     });
   });
   setTimeout(positionSidePanels, 0);
@@ -2274,6 +2500,7 @@ populateEnrichVarList();
 // detectColumnDtype/enrichVarState, which only exist once associations.js
 // (included above) has loaded and populateEnrichVarList() has run.
 initLayoutPropertyControls();
+populateFilterVarDropdown();
 
 function formatPValue(p) {
   if (p === 0) return '<1e-300';
@@ -2366,6 +2593,7 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     var xv=x0v+(x1v-x0v)*t, yv=y0v+(y1v-y0v)*t;
     currentXVal[i]=xv; currentYVal[i]=yv; // keep the live-position cache in sync every frame
     if(!Number.isFinite(xv)||!Number.isFinite(yv))continue;
+    if(isPointFiltered(i))continue;
     var px=x(xv),py=y(yv); var jp=renderPosFor(i,px,py); px=jp.px; py=jp.py;
     // Cull by rendered pixel position, not raw data-domain membership --
     // see the matching comment in rebuildHitGrid().
@@ -2392,6 +2620,16 @@ function zoom(duration) {
   scheduleRender();
   if(duration&&duration>0)updatePointLabels();
 }
+
+// Guarantee a real render happens once every panel (Layout, Physics,
+// Filtering, Enrichment) has finished initializing, instead of relying
+// solely on the single scheduleRender() issued early in the first script
+// block -- before this later script existed. Calling the draw functions
+// directly (not scheduleRender's rAF-coalesced wrapper) avoids depending on
+// timing/ordering across the three script blocks for that very first paint.
+rebuildHitGrid();
+renderPoints();
+updatePointLabels();
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
