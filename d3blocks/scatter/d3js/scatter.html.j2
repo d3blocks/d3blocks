@@ -136,7 +136,7 @@ License     : GPL3
 
 <!-- Side panel: Export / Save (first in the left stack; collapsed by default) -->
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button class="button-switch" id="exportButton" type="button" title="Export selected points (or all, if none selected)" style="width:100%;margin:4px 0 8px 0">Export</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
@@ -146,7 +146,7 @@ License     : GPL3
 
 <!-- Side panel: density heatmap tuning (directly below Export/Save; shown when density is enabled) -->
 <div class="stats-panel collapsed" id="densityPanel">
-  <div class="stats-panel-title">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <!--
     <div class="physics-control">
@@ -169,7 +169,7 @@ License     : GPL3
 
 <!-- Side panel: Size / Color / Shape (collapsed by default) -->
 <div class="stats-panel collapsed" id="layoutPanel">
-  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="physics-control">
       <label for="layoutSizeSelect">Size</label>
@@ -204,7 +204,7 @@ License     : GPL3
      together; unchecked values within one variable are excluded (OR
      semantics -- any checked value still passes). -->
 <div class="stats-panel collapsed" id="filterPanel">
-  <div class="stats-panel-title">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="physics-control">
       <label for="filterVarSelect">Variable</label>
@@ -237,7 +237,7 @@ License     : GPL3
      dropped and the anchor spring strengthened, so points settle straight
      back to their true coordinates instead of being teleported there. -->
 <div class="stats-panel collapsed" id="physicsPanel">
-  <div class="stats-panel-title">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="physics-control">
       <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
@@ -278,7 +278,7 @@ License     : GPL3
 </div>
 
 <div class="stats-panel collapsed" id="enrichPanel">
-  <div class="stats-panel-title">Statistical Enrichments<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Statistical Enrichments<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button class="button-switch" id="assocButton" type="button" title="Select points first" disabled style="width:100%;margin:4px 0 10px 0">Compute Associations</button>
     <div class="enrich-options-row">
@@ -306,7 +306,7 @@ License     : GPL3
      Statistical Enrichments so the two panels can be collapsed/scrolled
      independently -- the variable list can get long). -->
 <div class="stats-panel collapsed" id="enrichVarsPanel">
-  <div class="stats-panel-title">Enrichment Variables<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Variables<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div style="font-size:11px;opacity:0.6;margin-bottom:8px">Variables to test for significance:</div>
     <div id="enrichVarList"><div class="node-info-placeholder">No properties found in this dataset.</div></div>
@@ -1142,6 +1142,11 @@ scheduleRender();
 // Each panel also gets a max-height of (viewport bottom - its top), so a
 // long Enrichments variable list cannot push the panel off-screen: the
 // .stats-panel-body scrolls internally instead.
+// Single source of truth for left-panel stacking order. Mutable: drag-and-
+// drop reordering (see setupPanelReordering) just splices this array and
+// re-runs positionSidePanels() -- panels are position:fixed with their
+// 'top' computed here, so no DOM reordering is needed to visually reorder.
+var PANEL_ORDER = ['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'];
 function positionSidePanels() {
   var bar = document.querySelector('.top-panel');
   var main = document.getElementById('scatter-main');
@@ -1152,7 +1157,7 @@ function positionSidePanels() {
   var bottomPad = 12;
   var sideRight = 0;
   // Order: Export/Save, then Density Layer, then Layout, then Physics, then Enrichments, then Enrichment Variables
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id){
+  PANEL_ORDER.forEach(function(id){
     var panel = document.getElementById(id);
     if (!panel || panel.style.display === 'none') return;
     panel.style.top = y + 'px';
@@ -1187,7 +1192,7 @@ positionSidePanels();
 requestAnimationFrame(positionSidePanels);
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
-  ['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(id) {
+  PANEL_ORDER.forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
@@ -1195,12 +1200,13 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 // Collapsible side panels (same interaction as index.html.j2 stats-panels)
-['exportPanel', 'densityPanel', 'layoutPanel', 'filterPanel', 'physicsPanel', 'enrichPanel', 'enrichVarsPanel'].forEach(function(panelId) {
+PANEL_ORDER.forEach(function(panelId) {
   var panel = document.getElementById(panelId);
   if (!panel) return;
   var title = panel.querySelector('.stats-panel-title');
   if (!title) return;
   title.addEventListener('click', function () {
+    if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
     var collapsing = !panel.classList.contains('collapsed');
     if (collapsing) {
       if (panel.style.height) {
@@ -1214,6 +1220,48 @@ if (typeof ResizeObserver !== 'undefined') {
     setTimeout(positionSidePanels, 0);
   });
 });
+
+// —— Drag-and-drop panel reordering ——————————————————————————————
+// Panels are position:fixed and stacked purely by PANEL_ORDER (see
+// positionSidePanels), so reordering is just: splice PANEL_ORDER and
+// reflow -- no DOM node moves needed. The title bar is the drag handle
+// (draggable="true" in the markup); dropping panel A onto panel B moves A
+// to B's slot in the order.
+(function setupPanelReordering() {
+  PANEL_ORDER.forEach(function(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    var title = panel.querySelector('.stats-panel-title');
+    if (!title) return;
+    title.addEventListener('dragstart', function(e) {
+      e.dataTransfer.setData('text/plain', panelId);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    title.addEventListener('dragend', function() {
+      title.dataset.justDragged = '1';
+      setTimeout(function(){ title.dataset.justDragged = '0'; }, 0);
+    });
+    panel.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      panel.classList.add('drag-over');
+    });
+    panel.addEventListener('dragleave', function() {
+      panel.classList.remove('drag-over');
+    });
+    panel.addEventListener('drop', function(e) {
+      e.preventDefault();
+      panel.classList.remove('drag-over');
+      var draggedId = e.dataTransfer.getData('text/plain');
+      if (!draggedId || draggedId === panelId) return;
+      var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+      if (from < 0 || to < 0) return;
+      PANEL_ORDER.splice(from, 1);
+      PANEL_ORDER.splice(to, 0, draggedId);
+      positionSidePanels();
+    });
+  });
+})();
 
 // Point state. Rendering is done on a single canvas; this avoids the large
 // DOM and attribute-update cost of one SVG node per datum.
@@ -1994,9 +2042,30 @@ function renderSearchResults(query) {
     if (searchResults) { searchResults.innerHTML = ''; searchResults.classList.remove('open'); }
     return;
   }
-  const all = jsonData.map(function(d,i){ return {id: (d && d[6]) ? String(d[6]) : String(i), idx: i, d: d}; }).filter(function(it){ return !isPointFiltered(it.idx); });
+  // Search the tooltip AND every property that's checked in the Variables
+  // panel (enrichVarState[k].enabled !== false), not just the tooltip --
+  // so a point can be found by any of its checked attributes, not only its
+  // name/label.
+  var searchKeys = Object.keys(enrichVarState).filter(function(k){ return enrichVarState[k].enabled !== false; });
+  const all = jsonData.map(function(d,i){
+    var label = (d && d[6]) ? String(d[6]) : String(i);
+    var matchField = null, matchText = label;
+    var props = d && d[13];
+    var hay = label.toLowerCase();
+    if (hay.includes(q)) { matchField = null; matchText = label; }
+    else if (props) {
+      for (var k = 0; k < searchKeys.length; k++) {
+        var key = searchKeys[k];
+        var v = props[key];
+        if (v == null || v === '') continue;
+        var vs = String(v);
+        if (vs.toLowerCase().includes(q)) { matchField = key; matchText = vs; break; }
+      }
+    }
+    return { id: label, idx: i, d: d, matched: matchField !== null || hay.includes(q), matchField: matchField, matchText: matchText };
+  }).filter(function(it){ return !isPointFiltered(it.idx); });
   searchMatches = all
-    .filter(function(it){ return it.id.toLowerCase().includes(q); })
+    .filter(function(it){ return it.matched; })
     .sort(function(a,b){
       const al = a.id.toLowerCase(), bl = b.id.toLowerCase();
       const ap = al.startsWith(q) ? 0 : 1;
@@ -2013,10 +2082,10 @@ function renderSearchResults(query) {
   if (searchResults) {
     searchResults.innerHTML = searchMatches.map(function(it, i){
       const d = it.d || {};
-      const meta = (d[0] != null && d[1] != null) ? ('x:' + d[0] + ' · y:' + d[1]) : '';
+      var meta = it.matchField ? (escapeHtml(it.matchField) + ': ' + escapeHtml(it.matchText)) : ((d[0] != null && d[1] != null) ? ('x:' + d[0] + ' · y:' + d[1]) : '');
       return '<div class="search-item" data-idx="'+it.idx+'" data-i="'+i+'" style="padding:6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center">' +
-        '<div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + it.id + '</div>' +
-        (meta?('<div style="color:#666;font-size:0.9em;margin-left:8px">'+meta+'</div>'):'') +
+        '<div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHtml(it.id) + '</div>' +
+        (meta?('<div style="color:#666;font-size:0.9em;margin-left:8px;white-space:nowrap">'+meta+'</div>'):'') +
         '</div>';
     }).join('');
     searchResults.classList.add('open');

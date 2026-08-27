@@ -561,11 +561,18 @@
 .stats-panel .stats-panel-title {
   font-weight: bold;
   margin-bottom: 6px;
-  cursor: pointer;
+  cursor: grab;
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.stats-panel .stats-panel-title:active { cursor: grabbing; }
+
+/* Drop-target highlight while dragging a panel over another one. */
+.stats-panel.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
 }
 
 /* Collapsed panels have no body margin left behind, and the title itself
