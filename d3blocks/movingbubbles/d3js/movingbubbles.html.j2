@@ -7,27 +7,17 @@ Licensed    : GPL3
 -->
 
 <!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
 <title>{{ TITLE }}</title>
 
 {{ SUPPORT }}
 
 <style>
-{% include "style.css" %}
-    body { font-size: {{ FONTSIZE }}; }
+{% include "movingbubbles.css" %}
+body { font-size: {{ FONTSIZE }}; }
 .node { stroke-width: 1.5px; }
-#current_day {
-  font-size: 18px;
-  color: #555;
-  text-align: center;
-  margin-bottom: 2px;
-  font-style: italic;
-}
-#current_time {
-  font-size: 42px;
-  color: #666;
-  text-align: center;
-}
 #speed .togglebutton.pause {
   border-right: none;
 }
@@ -38,14 +28,28 @@ Licensed    : GPL3
 </style>
 </head>
 
-<meta charset="utf-8">
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
+{% if showControls == 'true' %}
 
-<body>
-    <div id="main-wrapper">
-    <div id="sidebar">
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+        <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center" style="display:flex;flex-direction:column;align-items:center;line-height:1.2">
     <div id="current_day">&nbsp;</div>
     <div id="current_time">{{ START_TIME }}</div>
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
 
+<!-- Playback: was the always-visible Pause/Slow/Medium/Fast row -->
+<div class="stats-panel collapsed" id="playbackPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Playback<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
     <div id="speed">
         <div class="togglebutton pause" data-val="pause">Pause</div>
         <div class="togglebutton slow" data-val="slow">Slow</div>
@@ -53,15 +57,26 @@ Licensed    : GPL3
         <div class="togglebutton fast" data-val="fast">Fast</div>
         <div class="clr"></div>
     </div>
+  </div>
+</div>
 
-    <b>Color on:</b>
-    	<select id="ColorOptions" onchange="link_color_changed(this.value)">
-    	  <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
-    	  <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
+<!-- Display: was the "Color on:" dropdown -->
+<div class="stats-panel collapsed" id="displayPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <label for="ColorOptions" style="display:block;margin-bottom:4px">Color on</label>
+    <select id="ColorOptions" onchange="link_color_changed(this.value)" style="width:100%;box-sizing:border-box">
+      <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
+      <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
     </select>
+  </div>
+</div>
 
-    <br><br>
-    <b>Filter by date:</b>
+<!-- Filtering: was "Filter by date:" -->
+<div class="stats-panel collapsed" id="filterPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <label style="display:block;margin-bottom:4px">Filter by date</label>
     <div id="date-filter">
         <input type="date" id="dateFilterStart" value="{{ DATE_MIN }}" min="{{ DATE_MIN }}" max="{{ DATE_MAX }}">
         <span>&ndash;</span>
@@ -69,29 +84,32 @@ Licensed    : GPL3
         <br><br>
         <button id="applyDateFilter" class="togglebutton" style="width:auto; float:none; display:inline-block; padding:3px 8px;">Apply</button>
         <button id="resetDateFilter" class="togglebutton" style="width:auto; float:none; display:inline-block; padding:3px 8px;">Reset</button>
-        <div id="dateFilterCount" style="margin-top:6px; font-size:12px; color:#999;"></div>
+        <div id="dateFilterCount" style="margin-top:6px; font-size:12px;"></div>
     </div>
+  </div>
+</div>
 
-    <!-- Create save button -->
-    {{ SAVE_BUTTON_START }}
-        <br><br>
-        <b>Save Chart:</b>
-            <button id="saveButton">Save</button>
-    {{ SAVE_BUTTON_STOP }}
+{{ SAVE_BUTTON_START }}
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button id="saveButton" class="button-switch" style="width:100%;box-sizing:border-box">Save</button>
+  </div>
+</div>
+{{ SAVE_BUTTON_STOP }}
 
+{% endif %}
 
+<div id="noteWrap">
     <div id="note"></div>
-
-        <div id="cite">
-            {{ NOTE }}
-        </div>
-
+    <div id="cite">
+        {{ NOTE }}
     </div>
+</div>
 
+<div id="main-wrapper">
     <div id="chart"></div>
-
-    <div class="clr"></div>
-    </div>
+</div>
 
 
 <script>
@@ -341,7 +359,8 @@ function timer() {
 		  .transition()
 			.duration(600)
 			.style("top", "20px")
-			.style("color", "#000000")
+			.style("color", "var(--text)")
+			.style("opacity", "1")
 			.text(time_notes[notes_index].note);
 	} 
 	
@@ -351,7 +370,7 @@ function timer() {
 		d3.select("#note").transition()
 			.duration(1000)
 			.style("top", "300px")
-			.style("color", "#ffffff");
+			.style("opacity", "0");
 			
 		notes_index += 1;
 		if (notes_index == time_notes.length) {
@@ -536,5 +555,87 @@ function formatTime(m) {
 	d3.select("#current_time").text(t.time);
 }());
 
+// ————————————————————————————————————————————————————————————
+// Floating side panels: position below the top bar, collapsible,
+// drag-and-drop reorderable (same pattern as scatter/sankey/radialgraph).
+// ————————————————————————————————————————————————————————————
+function positionSidePanels() {
+	var topPanel = document.querySelector('.top-panel');
+	var y = 10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0);
+	var bottomPad = 12;
+	document.querySelectorAll('.stats-panel').forEach(function (panel) {
+		if (panel.style.display === 'none') return;
+		panel.style.top = y + 'px';
+		var maxH = Math.max(80, window.innerHeight - y - bottomPad);
+		panel.style.maxHeight = maxH + 'px';
+		y += panel.getBoundingClientRect().height + 10;
+	});
+}
+window.addEventListener('resize', positionSidePanels);
+window.addEventListener('load', positionSidePanels);
+positionSidePanels();
+requestAnimationFrame(positionSidePanels);
+if (typeof ResizeObserver !== 'undefined') {
+	document.querySelectorAll('.stats-panel').forEach(function (panel) {
+		new ResizeObserver(function () { positionSidePanels(); }).observe(panel);
+	});
+}
+
+document.querySelectorAll('.stats-panel-title').forEach(function (title) {
+	title.addEventListener('click', function () {
+		if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+		var panel = title.parentElement, collapsing = !panel.classList.contains('collapsed');
+		if (collapsing) { if (panel.style.height) panel.dataset.expandedHeight = panel.style.height; panel.style.height = ''; }
+		else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
+		panel.classList.toggle('collapsed');
+		positionSidePanels();
+	});
+});
+
+// —— Drag-and-drop panel reordering ——
+(function setupPanelReordering() {
+	document.querySelectorAll('.stats-panel').forEach(function (panel) {
+		var title = panel.querySelector('.stats-panel-title');
+		if (!title) return;
+		title.addEventListener('dragstart', function (e) {
+			e.dataTransfer.setData('text/plain', panel.id);
+			e.dataTransfer.effectAllowed = 'move';
+		});
+		title.addEventListener('dragend', function () {
+			title.dataset.justDragged = '1';
+			setTimeout(function () { title.dataset.justDragged = '0'; }, 0);
+		});
+		panel.addEventListener('dragover', function (e) {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+			panel.classList.add('drag-over');
+		});
+		panel.addEventListener('dragleave', function () { panel.classList.remove('drag-over'); });
+		panel.addEventListener('drop', function (e) {
+			e.preventDefault();
+			panel.classList.remove('drag-over');
+			var draggedId = e.dataTransfer.getData('text/plain');
+			if (!draggedId || draggedId === panel.id) return;
+			var draggedEl = document.getElementById(draggedId);
+			if (!draggedEl || !panel.parentNode) return;
+			panel.parentNode.insertBefore(draggedEl, panel);
+			positionSidePanels();
+		});
+	});
+})();
+
+// —— Theme toggle (button + T key) ——
+function toggleTheme() {
+	var themeBtn = document.getElementById('themeBtn');
+	var isLight = document.body.classList.toggle('light');
+	if (themeBtn) { themeBtn.textContent = isLight ? '☀' : '🌙'; themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark'; }
+}
+var themeBtn = document.getElementById('themeBtn');
+if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+window.addEventListener('keydown', function (e) {
+	if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme();
+});
 
 </script>
+</body>
+</html>

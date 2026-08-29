@@ -1,0 +1,403 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+#main-wrapper {
+  font-family: inconsolata, Monaco, lucida console, Consolas, courier new;
+  width: 1090px;
+}
+#sidebar {
+  width: 259px;
+  float: left;
+  margin-right: 30px;
+  padding-right: 20px;
+  border-right: 1px solid #ccc;
+  height: 730px;
+}
+#current_time {
+  font-size: 50px;
+  color: #666;
+  text-align: center;
+}
+#day_info {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+#chart {
+  float: left;
+}
+#speed {
+  font-family: inconsolata, Monaco, lucida console, Consolas, courier new;
+  font-size: 13px;
+  text-transform: uppercase;
+  margin: 15px 0 20px 25px;
+}
+#speed .togglebutton {
+  padding: 3px;
+  text-align: center;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  float: left;
+  width: 60px;
+}
+#speed .togglebutton.stop {
+  border-right: none;
+}
+#speed .togglebutton.slow {
+  border-right: none;
+}
+#speed .togglebutton.medium {
+  border-left: none;
+}
+#speed .togglebutton.fast {
+  border-left: none;
+}
+#speed .togglebutton.current {
+  color: #fff;
+  background: #000;
+  border: 1px solid #000;
+}
+#note {
+  position: relative;
+  color: #fff;
+  padding-left: 5px;
+  font-family: mercury ssm a, mercury ssm b;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.4em;
+}
+#cite {
+  position: absolute;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+  top: 640px;
+  font-size: 12px;
+  line-height: 1.4em;
+  width: 259px;
+}
+circle {
+}
+.line {
+  stroke-width: 0.1px;
+}
+a {
+  color: #821122;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+}
+a:hover {
+  border-bottom: 1px solid #821122;
+}
+.clr {
+  clear: both;
+}
+
+/* ============================================================
+   Theme + floating-panel UX (matches scatter/sankey/radialgraph)
+   ============================================================ */
+:root {
+  --bg: #12141c;
+  --panel-bg: rgba(28, 30, 40, 0.92);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --text: #dcddde;
+  --text-muted: rgba(220, 221, 222, 0.55);
+  --btn-bg: #3a3a4a;
+  --btn-bg-active: #4a4a5a;
+  --btn-border: #4a4a5a;
+  --btn-text: #dcddde;
+  --section-label: rgba(220, 221, 222, 0.45);
+  --transition: background 0.35s, color 0.25s, border-color 0.25s;
+  --accent: #1ABC9C;
+  --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --topbar-bg: rgba(18, 20, 28, 0.55);
+}
+body.light {
+  --bg: #e4e6ec;
+  --panel-bg: rgba(255, 255, 255, 0.88);
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --text: #2c2c2e;
+  --text-muted: rgba(44, 44, 46, 0.5);
+  --btn-bg: #e8e8ea;
+  --btn-bg-active: #d8d8dc;
+  --btn-border: #c8c8cc;
+  --btn-text: #2c2c2e;
+  --section-label: rgba(44, 44, 46, 0.4);
+  --accent: #1ABC9C;
+  --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  --topbar-bg: rgba(228, 230, 236, 0.6);
+}
+html, body {
+  height: 100%;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+/* Full-bleed chart; floating panels sit on top (same as the other charts). */
+#main-wrapper { width: auto; }
+#chart {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: none;
+}
+#chart svg { display: block; }
+
+/* —— Top bar: logo left, clock center, theme toggle right —— */
+.top-panel {
+  position: fixed;
+  top: 10px; left: 10px; right: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  z-index: 1200;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--topbar-bg);
+  box-shadow: var(--panel-shadow);
+  transition: var(--transition);
+  pointer-events: none;
+}
+.top-panel .top-panel-left { pointer-events: auto; display: flex; align-items: center; }
+.top-panel .top-panel-center { pointer-events: auto; display: flex; justify-content: center; align-items: center; }
+.top-panel .top-panel-right { pointer-events: auto; display: flex; gap: 8px; align-items: center; justify-self: end; }
+.top-panel #current_day, .top-panel #current_time { color: var(--text); text-align: center; transition: var(--transition); }
+.top-panel #current_day { font-size: 13px; color: var(--text-muted); font-style: italic; margin-bottom: 0; }
+.top-panel #current_time { font-size: 28px; }
+
+/* —— Floating collapsible/draggable side panels —— */
+.stats-panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden;
+  top: 10px; left: 10px;
+  z-index: 1000;
+  background: var(--panel-bg);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: var(--panel-shadow);
+  font-family: inconsolata, Monaco, "lucida console", Consolas, "courier new";
+  font-size: 13px;
+  width: 230px;
+  min-width: 180px;
+  max-width: min(600px, calc(100vw - 40px));
+  border: 1px solid var(--panel-border);
+  transition: var(--transition);
+  min-height: 40px;
+  max-height: calc(100vh - 40px);
+}
+.stats-panel.collapsed { resize: none; }
+.stats-panel-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.stats-panel .stats-panel-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stats-panel .stats-panel-title:active { cursor: grabbing; }
+.stats-panel.drag-over { outline: 2px dashed var(--accent); outline-offset: 2px; }
+.stats-panel.collapsed .stats-panel-title { margin-bottom: 0; }
+.stats-panel.collapsed .stats-panel-body { display: none; }
+.stats-panel-toggle { display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; color: inherit; transition: transform 0.15s ease; }
+.stats-panel-toggle svg { width: 12px; height: 12px; display: block; }
+.stats-panel.collapsed .stats-panel-toggle { transform: rotate(-90deg); }
+.stats-panel label, .stats-panel b { color: var(--text); }
+.stats-panel select, .stats-panel input[type="date"] {
+  background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+  border-radius: 5px; padding: 5px 8px; font-size: 13px;
+  font-family: inconsolata, Monaco, "lucida console", Consolas, "courier new";
+}
+
+/* —— Buttons (re-themed .togglebutton + a generic button-switch) —— */
+.button-switch, #speed .togglebutton, #dateFilterStart + span, .stats-panel button {
+  transition: var(--transition);
+}
+#speed { margin: 0; }
+#speed .togglebutton {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+}
+#speed .togglebutton.current {
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+}
+.stats-panel button, #applyDateFilter, #resetDateFilter, #saveButton {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.button-switch {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+  font-size: 1em;
+  font-family: inconsolata, Monaco, "lucida console", Consolas, "courier new";
+}
+.button-switch:active { background: var(--btn-bg-active); }
+#dateFilterCount { color: var(--text-muted) !important; }
+
+/* —— Note/citation overlay: was hardcoded for a permanently-dark page;
+   now theme-aware so it stays legible in light mode too. —— */
+#note { color: var(--text); }
+#cite {
+  border-top: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  /* Was `position:absolute; top:640px` — meaningful only inside the old
+     730px-tall floated sidebar. Now flows normally under #note inside the
+     compact fixed #noteWrap instead. */
+  position: static;
+  top: auto;
+  padding-top: 12px;
+  margin-top: 8px;
+  width: auto;
+}
+#noteWrap {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  width: 280px;
+  z-index: 900;
+  pointer-events: none;
+  font-size: 13px;
+}

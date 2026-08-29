@@ -1261,6 +1261,9 @@ class D3Blocks():
                       figsize = [700, 800],
                       note: str = None,
                       time_notes: str = None,
+                      show_controls: bool = True,
+                      dark_mode: bool = True,
+                      background_color: str = '#12141c',
                       title: str = 'Movingbubbles - D3Blocks',
                       filepath: str = 'movingbubbles.html',
                       showfig: bool = True,
@@ -1347,6 +1350,15 @@ class D3Blocks():
                                "stop_minute": 5,
                                "note": "Enter your note here and it is shown between 1 min and 5 min."}]
                 time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."})
+
+        show_controls : bool, (default: True)
+            True: Show the floating control panels (Playback, Display, Filtering, Export).
+            False: Hide all control panels; only the chart itself is shown.
+        dark_mode : bool, (default: True)
+            True: Dark theme.
+            False: Light theme.
+        background_color : str, (default: '#12141c')
+            Background color used for the dark theme.
 
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
@@ -1464,7 +1476,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, background_color=background_color, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)

@@ -52,6 +52,9 @@ def set_config(config={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['color_method'] = kwargs.get('color_method', "STATE")
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['background_color'] = kwargs.get('background_color', '#12141c')
 
     return config
 
@@ -394,6 +397,10 @@ def write_html(X, config, logger=None):
         'NODE_START_DATE': config['node_start_date'],
         'DATE_MIN': config['date_min'],
         'DATE_MAX': config['date_max'],
+
+        'showControls': str(config['show_controls']).lower(),
+        'darkMode': str(config['dark_mode']).lower(),
+        'COLOR_BACKGROUND': config['background_color'],
 
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
