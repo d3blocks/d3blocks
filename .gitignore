@@ -14,6 +14,7 @@ ppt/
 .pypirc
 depricated
 .claude
+TODO.txt
 
 # Distribution / packaging
 .Python
