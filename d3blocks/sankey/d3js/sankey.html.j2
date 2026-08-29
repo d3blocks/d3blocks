@@ -23,11 +23,9 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 <!-- Top panel (search centered, controls on right) -->
 <div class="top-panel" role="toolbar" aria-label="Top controls">
     <div class="top-panel-left">
-    <div class="top-panel-left">
         <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
-            <img src="{% include '../utils/logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+            <img src="{% include '../../utils/logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
         </a>
-    </div>
     </div>
     <div class="top-panel-center">
         <div class="search-wrap top-search">
@@ -111,6 +109,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
             nodeWidth: {{ node_width }},
             nodePadding: {{ node_padding }},
             nodeStroke: "{{ node_stroke_color }}",
+            // mix-blend-mode "multiply" (the default) darkens overlapping
+            // links toward black -- great on a white background, but
+            // against a dark background it crushes colors to near-black,
+            // making flows barely visible. "screen" does the equivalent
+            // brightening blend instead, so it stays legible in dark mode.
+            linkMixBlendMode: document.body.classList.contains('light') ? 'multiply' : 'screen',
         })
 
         var host = document.getElementById('sankey-main');
@@ -186,7 +190,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
         applyHighlight(i);
     };
     document.addEventListener('click', function(e){
-        if (!e.target.closest('.sankey-node') && !e.target.closest('#sankey-main')) clearHighlight();
+        // Exclude .search-wrap too -- picking a search result calls
+        // applyHighlight() on mousedown, but the click event that follows
+        // still bubbles up to document right after; without this, that
+        // click would immediately clear the highlight it just set,
+        // showing a brief flicker back to the unhighlighted state.
+        if (!e.target.closest('.sankey-node') && !e.target.closest('#sankey-main') && !e.target.closest('.search-wrap')) clearHighlight();
     });
 
     // Lets draw it
@@ -258,6 +267,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
         var themeBtn = document.getElementById('themeBtn');
         var isLight = document.body.classList.toggle('light');
         if (themeBtn) { themeBtn.textContent = isLight ? '☀' : '🌙'; themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark'; }
+        drawchart(); // redraw so linkMixBlendMode (multiply vs. screen) matches the new theme
     }
     var themeBtn = document.getElementById('themeBtn');
     if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
