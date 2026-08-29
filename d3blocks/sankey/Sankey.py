@@ -24,7 +24,7 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['chart'] ='sankey'
     config['title'] = kwargs.get('title', 'Sankey - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'sankey.html'), logger)
-    config['figsize'] = kwargs.get('figsize', [800, 600])
+    config['figsize'] = kwargs.get('figsize', [1024, 768])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['cmap'] = kwargs.get('cmap', 'Set1')

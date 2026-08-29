@@ -1071,7 +1071,7 @@ class D3Blocks():
                fontsize: int = 10,
                title='Sankey - D3blocks',
                filepath='sankey.html',
-               figsize=[800, 600],
+               figsize=[1024, 768],
                showfig=True,
                overwrite=True,
                notebook=False,
