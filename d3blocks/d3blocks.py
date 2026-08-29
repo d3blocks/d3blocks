@@ -1,11 +1,10 @@
 """d3blocks library."""
 import os
 from sys import platform
-
 import pandas as pd
 import requests
 from urllib.parse import urlparse
-import logging
+from pathlib import Path
 import numpy as np
 import zipfile
 import webbrowser
@@ -13,6 +12,7 @@ import random
 import time
 import datazets as dz
 import d3graph as d3network
+import logging
 
 try:
     from d3blocks.elasticgraph.elasticgraph import Elasticgraph
@@ -2793,6 +2793,7 @@ class D3Blocks():
         )
         # Cleaning of data
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
+
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(
@@ -2805,13 +2806,12 @@ class D3Blocks():
                 significance_seed=significance_seed,
             )
         # Set edge properties
-        self.set_edge_properties(
-            df, edge_color=edge_color, edge_opacity=edge_opacity,
-            edge_scaler=edge_scaler, edge_minmax=edge_minmax,
-            min_weight=min_weight,
-        )
+        self.set_edge_properties(df, edge_color=edge_color, edge_opacity=edge_opacity, edge_scaler=edge_scaler, edge_minmax=edge_minmax, min_weight=min_weight)
+
         # Create the plot
         html = self.show()
+
+        # Return
         if return_html:
             return html
 
@@ -3450,6 +3450,9 @@ class D3Blocks():
 
         # Create the plot
         if self.chart is not None:
+            # Copy logo to destination dir
+            utils.copy_logo(Path(self.chart.__file__).resolve().parent / 'd3js')
+            # Create chart
             html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger, **kwargs)
 
         # Display the chart

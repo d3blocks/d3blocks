@@ -16,9 +16,9 @@ from jinja2 import Environment, PackageLoader
 from pathlib import Path
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, copy_logo
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, copy_logo
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -387,6 +387,7 @@ def show(df, **kwargs):
     node_properties = kwargs.get('node_properties', None)
     # Create the data from the input for javascript, include node_properties when provided
     X = get_data_ready_for_d3(df, node_properties=node_properties)
+    
     # Check whether tooltip is available. Otherwise remove the tooltip box.
     if np.all(df['tooltip']==''):
         config['mouseover'] = ''
@@ -396,10 +397,6 @@ def show(df, **kwargs):
         config['mouseover'] = '.on("mouseover", mouseover)'
         config['mousemove'] = '.on("mousemove", mousemove)'
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
-
-    # COPY logo.txt to the working directory
-    dst_dir = Path(__file__).resolve().parent / 'd3js'
-    copy_logo(dst_dir)
 
     # Write to HTML
     return write_html(X, config, logger=logger)

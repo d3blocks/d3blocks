@@ -8,12 +8,11 @@ License     : GPL3
 """
 import numpy as np
 from jinja2 import Environment, PackageLoader
-from pathlib import Path
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, copy_logo
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, copy_logo
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script
 
 
 # %% Set configuration properties
@@ -199,10 +198,6 @@ def show(df, **kwargs):
     # X_nodes = convert_to_json_format(node_properties, logger=logger)
     uicolors = np.unique(list(map(lambda x: node_properties.get(x)['color'], node_properties.keys())))
     custom_colors = np.any(~np.isin(uicolors, '#d3d3d3'))
-
-    # COPY logo.txt to the working directory
-    dst_dir = Path(__file__).resolve().parent / 'd3js'
-    copy_logo(dst_dir)
 
     # Write to HTML
     return write_html(X, config, custom_colors, logger)

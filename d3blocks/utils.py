@@ -32,7 +32,7 @@ def copy_logo(dst_dir):
     # Destination path
     dst = dst_dir / 'logo.txt'
     # Copy when not exists
-    if src.exists() and not dst.is_file():
+    if src.exists() and dst_dir.is_dir() and not dst.is_file():
         shutil.copy2(src, dst)
 
 

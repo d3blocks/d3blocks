@@ -14,3 +14,4 @@ include d3blocks/circlepacking/d3js/*
 include d3blocks/maps/d3js/*
 include d3blocks/elasticgraph/d3js/*
 include d3blocks/radialgraph/d3js/*
+include d3blocks/*
