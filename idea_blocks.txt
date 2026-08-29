@@ -28,38 +28,14 @@ $
 # 
 # NEW FUNCTIONALITIES AND BUGS:
 # 
-# 1.    TimeSeries
-# [x]   Getallen zijn te breed in de grafiek. Afronden op 3 decimalen
-# 
-# 2.    MovingBubbles
-# [x]   Overlap van namen in de circle. Ik dacht dat we dit al opgelost hadden?
-# 
 # 
 ## FEATURES
 # 
 # 1.    Sankey
 #       https://observablehq.com/@d3/sankey
-# [x]   Link color selectiebox om het interactief te maken.
-# [x]   Node alignment selectiebox om het interactief te maken.
 # 
 # 2.    Chord
-# [x]   Change the node color and opacity.
-# [x]   Change the Link/edge color and opacity.
 # [ ]   Highlight the edges/links when hovering.
-# 
-# 3.    d3graph
-# [x]   Uiteinden vd lijn kunnen wijzingen en kleuren
-# 
-# 4.    Scatter
-# [x]   Tooltips toevoegen.
-# [x]   size kunnen wijzigen.
-# [x]   color kunnen wijzigen.
-# [x]   edge-color kunnen wijzigen.
-# [x]   color gradient op class labels.
-# [ ]   Zwart (of kleur optioneel) Axis lijnen toevoegen: https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
-# [ ]   Lichtgrijs Grid toevoegen (optioneel maken).
-# [x]   Dots kunnen laten sliden van punt A (x1, y1) naar punt B (x2, y2). https://stackoverflow.com/questions/38595719/javascript-d3-js-multiple-transitions-of-points-on-a-scatter-plot
-# [ ]   Selectiebox toevoegen zoals: http://pancancer-map.ewi.tudelft.nl/
 # 
 # 5.    Heatmap
 #       Update heatmap met de onderstaande want deze heeft tooltips:
@@ -69,19 +45,6 @@ $
 #       https://observablehq.com/@d3/brushable-scatterplot-matrix
 #       https://medium.com/@xoor/brush-and-zoom-with-d3-js-and-canvas-71859cd28832
 # 
-# 6.    Network
-#       https://bl.ocks.org/GerHobbelt/3104394
-#       http://bl.ocks.org/GerHobbelt/3071239
-# 
-# 7.    Sankey
-# [x]   Custom color the nodes
-# [x]   The node colors are inherited for the edge-colors
-# 
-# 8.     Treemap
-# [x]    Create the chart to fit in D3blocks
-# 
-# 9.     maps
-# [x]    Create the chart to fit in D3blocks
 
 
 
@@ -121,11 +84,6 @@ http://bl.ocks.org/FrissAnalytics/8fcd0a2cdde9fad911ddfcf35abe22df
 
 
 ## TODO
-
-### SCATTER
-https://observablehq.com/@observablehq/plot-delaunay
-
-
 
 ### Chord
 http://bl.ocks.org/nbremer/94db779237655907b907

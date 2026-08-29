@@ -49,12 +49,18 @@ dependencies = [
     'scikit-learn',
 ]
 
+[project.scripts]
+d3blocks = "d3blocks.skills:main"
+
 [project.urls]
 Homepage = "https://erdogant.github.io/d3blocks"
 Download = "https://github.com/erdogant/d3blocks/archive/{version}.tar.gz"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.package-data]
+d3blocks = ["skills/**/*"]
 
 [tool.setuptools.packages.find]
 include = ["d3blocks*"]
