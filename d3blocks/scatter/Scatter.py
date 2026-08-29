@@ -14,13 +14,11 @@ import pandas as pd
 import json
 from jinja2 import Environment, PackageLoader
 from pathlib import Path
-import os
-import time
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, copy_logo
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, copy_logo
 
 
 # %% Set configuration properties
@@ -229,11 +227,6 @@ def set_edge_properties(*args, **kwargs):
 
     if isinstance(size, list): size=np.array(size)
 
-    # if (x1 is None): x1 = x
-    # if (y1 is None): y1 = y
-    # if (x2 is None): x2 = x
-    # if (y2 is None): y2 = y
-
     if (x1 is None): x1 = np.zeros_like(x) * np.nan
     if (y1 is None): y1 = np.zeros_like(x) * np.nan
     if (x2 is None): x2 = np.zeros_like(x) * np.nan
@@ -250,17 +243,6 @@ def set_edge_properties(*args, **kwargs):
     y2 = jitter_func(y2, jitter=jitter)
     x3 = jitter_func(x3, jitter=jitter)
     y3 = jitter_func(y3, jitter=jitter)
-
-    # if jitter is None or jitter is False: jitter=0
-    # if jitter is True: jitter=0.01
-    # if jitter>0:
-    #     if logger is not None: logger.info('Add jitter [%g] to xy-coordinates.' %(jitter))
-    #     x = x + np.random.normal(0, jitter, size=len(x))
-    #     if y is not None: y = y + np.random.normal(0, jitter, size=len(y))
-    #     if x1 is not None: x1 = x1 + np.random.normal(0, jitter, size=len(x1))
-    #     if x2 is not None: x2 = x2 + np.random.normal(0, jitter, size=len(x2))
-    #     if y1 is not None: y1 = y1 + np.random.normal(0, jitter, size=len(y1))
-    #     if y2 is not None: y2 = y2 + np.random.normal(0, jitter, size=len(y2))
 
     # Combine into array
     X = np.c_[x, y]
@@ -309,9 +291,6 @@ def set_edge_properties(*args, **kwargs):
     dict_properties = {}
     for i in range(0, X.shape[0]):
         dict_properties[i] = {'label': labels[i], 'x': X[i][0], 'y': X[i][1], 'x1': X1[i][0], 'y1': X1[i][1], 'x2': X2[i][0], 'y2': X2[i][1], 'x3': X3[i][0], 'y3': X3[i][1], 'color': color[i], 'size': size[i], 'stroke': stroke[i], 'opacity': opacity[i], 'tooltip': tooltip[i]}
-
-    # Create the plot
-    # df = pd.DataFrame(dict_properties).T
 
     # return
     return dict_properties
@@ -372,7 +351,7 @@ def show(df, **kwargs):
     label_radio = kwargs.get('label_radio', None)
     config = update_config(kwargs, logger)
     config = config.copy()
-    
+
     if label_radio is not None:
         config['label_radio'] = label_radio
 
@@ -380,7 +359,6 @@ def show(df, **kwargs):
     df = convert_dataframe_dict(df, frame=True)
 
     # Set the radio button and visibility of the labels
-    # radio1 = (x,y) always present; radio2/3/4 hidden when that coordinate pair is all-NaN
     config['radio_button_visible'] = ["",
                                       ("display:none;" if (np.all(list(map(np.isnan, df['x1'])))) else ""),
                                       ("display:none;" if (np.all(list(map(np.isnan, df['x2'])))) else ""),
@@ -399,15 +377,11 @@ def show(df, **kwargs):
         minvalue = df[['x', 'x1', 'x2', 'x3']].min().min()
         x_spacing = ((maxvalue - minvalue) * spacing)
         config['xlim'] = [minvalue - x_spacing, maxvalue + x_spacing]
-        # x_spacing = (df['x'].max() - df['x'].min()) * spacing
-        # config['xlim'] = [df['x'].min() - x_spacing, df['x'].max() + x_spacing]
     if config['ylim']==[None, None] or len(config['ylim'])==0:
         maxvalue = df[['y', 'y1', 'y2', 'y3']].max().max()
         minvalue = df[['y', 'y1', 'y2', 'y3']].min().min()
         y_spacing = ((maxvalue - minvalue) * spacing)
         config['ylim'] = [minvalue - y_spacing, maxvalue + y_spacing]
-        # y_spacing = (df['y'].max() - df['y'].min()) * spacing
-        # config['ylim'] = [df['y'].min() - y_spacing, df['y'].max() + y_spacing]
 
     # Get node_properties from kwargs (passed by D3Blocks.show)
     node_properties = kwargs.get('node_properties', None)
@@ -422,6 +396,10 @@ def show(df, **kwargs):
         config['mouseover'] = '.on("mouseover", mouseover)'
         config['mousemove'] = '.on("mousemove", mousemove)'
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
+
+    # COPY logo.txt to the working directory
+    dst_dir = Path(__file__).resolve().parent / 'd3js'
+    copy_logo(dst_dir)
 
     # Write to HTML
     return write_html(X, config, logger=logger)

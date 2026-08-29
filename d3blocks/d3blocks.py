@@ -545,13 +545,13 @@ class D3Blocks():
         --------
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>> 
+        >>>
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Scatter')
-        >>> 
+        >>>
         >>> # Import example
         >>> df = d3.import_example('cancer')
-        >>> 
+        >>>
         >>> # Set properties
         >>> d3.scatter(df['tsneX'].values,
         >>>            df['tsneY'].values,
@@ -565,25 +565,25 @@ class D3Blocks():
         >>>            label_radio=['tSNE','PCA'],
         >>>            df=df,
         >>>            )
-        >>> 
+        >>>
 
         Examples
         --------
         >>> import pandas as pd
         >>> import numpy as np
-        >>> 
+        >>>
         >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>> 
+        >>>
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Scatter')
-        >>> 
+        >>>
         >>> # Import example
         >>> df = d3.import_example('cancer')
-        >>> 
+        >>>
         >>> size=(df['survival_months'].fillna(1)/10)
         >>> color=df['labx']
-        >>> 
+        >>>
         >>> tooltip = df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values
         >>> tooltip[0] = r'URL image and Image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
         >>> tooltip[1] = r'Local image: <br><br><PATH TO YOUR IMAGE>'
@@ -597,7 +597,7 @@ class D3Blocks():
         >>> color[1] = 'special'
         >>> color[2] = 'special'
         >>> color[3] = 'special'
-        >>> 
+        >>>
         >>> # Set properties
         >>> d3.scatter(df['tsneX'].values,
         >>>                        df['tsneY'].values,
@@ -612,25 +612,25 @@ class D3Blocks():
         >>>                        label_radio=['tSNE','PCA'],
         >>>                        df=df,
         >>>                        )
-        >>> 
+        >>>
 
         Examples
         --------
         >>> from d3blocks import D3Blocks
         >>> import numpy as np
-        >>> 
+        >>>
         >>> # Initialize
         >>> d3 = D3Blocks(chart='Scatter')
-        >>> 
+        >>>
         >>> # Load example data
         >>> df = d3.import_example('mnist')
-        >>> 
+        >>>
         >>> d3.set_node_properties(df)
-        >>> 
+        >>>
         >>> size = np.random.randint(0, 8, df.shape[0])
         >>> opacity = np.random.randint(0, 8, df.shape[0])/10
         >>> tooltip = df['y'].values.astype(str)
-        >>> 
+        >>>
         >>> # Set all propreties
         >>> d3.set_edge_properties(df['PC1'].values,                   # PC1 x-coordinates
         >>>            df['PC2'].values,                   # PC2 y-coordinates
@@ -646,7 +646,7 @@ class D3Blocks():
         >>>            label_radio=['PCA', 'tSNE'],
         >>>            showfig=False,
         >>>            )
-        >>> 
+        >>>
         >>> d3.show(filepath='scatter_demo.html', label_radio=['PCA', 'tSNE'], showfig=True)
 
         Examples
@@ -1970,7 +1970,7 @@ class D3Blocks():
                 size='degree',
                 opacity='degree',
                 scaler='zscore',
-                directed=False, 
+                directed=False,
                 marker_start=None,
                 marker_end='arrow',
                 marker_color='#808080',
@@ -2241,7 +2241,7 @@ class D3Blocks():
                           show_slider=show_slider,
                           set_slider=set_slider,
                           notebook=notebook,
-                          background_color=background_color, 
+                          background_color=background_color,
                           dark_mode=dark_mode,
                           click=click,
                           sticky=sticky,

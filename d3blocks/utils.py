@@ -19,12 +19,23 @@ import time
 import json
 import d3graph as d3network
 from collections import defaultdict
+import shutil
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 logger = logging.getLogger(__name__)
 
-#%%
+#%% Copy logo
+def copy_logo(dst_dir):
+    # source path
+    src = Path(__file__).resolve().parent / 'logo.txt'
+    # Destination path
+    dst = dst_dir / 'logo.txt'
+    # Copy when not exists
+    if src.exists() and not dst.is_file():
+        shutil.copy2(src, dst)
+
+
 def include_save_to_svg_script(save_button=False, title='d3graph_chart'):
     javascript_code = ""
     show_save_button = ['<!--', '-->']

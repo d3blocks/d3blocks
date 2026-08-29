@@ -439,7 +439,7 @@ df = d3.import_example(data='energy')
 d3.set_node_properties(df, ordering = "ascending")
 d3.set_edge_properties(df, color='target', opacity='target', ordering = "ascending")
 filename =  f"test.html"
-d3.show(filepath = filename)
+html = d3.show(filepath = filename)
 
 
 # %%
