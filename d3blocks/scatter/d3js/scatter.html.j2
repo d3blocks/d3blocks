@@ -900,6 +900,34 @@ var searchHighlightIndex = -1;
 var currentColorAccessor = null;
 var categoricalShapeMap = null, categoricalShapeKey = null;
 
+// Point filtering state + predicate live here (first script block) so that
+// rebuildHitGrid / renderPoints / computeDensityGrid can call isPointFiltered
+// during the early scheduleRender() at the end of this block. The Filtering
+// panel UI in a later script mutates activeFilters; the predicate itself must
+// already exist or the first paint throws ReferenceError.
+// activeFilters[varName] = Set of excluded value-strings (categorical only).
+// A point is filtered out if ANY active filter's excluded set contains its
+// value for that variable -- filters on different variables AND together;
+// unchecked values within one variable are OR'd (checked ones still pass).
+var activeFilters = {};
+// Sentinel key representing "missing / NaN" for a variable -- lets a
+// missing value be filtered like any other category, without colliding
+// with a real category unless a dataset genuinely uses this exact string.
+var FILTER_MISSING_KEY = '__FILTER_MISSING__';
+function isPointFiltered(i) {
+  var d = jsonData[i];
+  if (!d) return true;
+  var props = d[13];
+  for (var varName in activeFilters) {
+    var excluded = activeFilters[varName];
+    if (!excluded || excluded.size === 0) continue;
+    var v = (props && Object.prototype.hasOwnProperty.call(props, varName)) ? props[varName] : undefined;
+    var key = (v === undefined || v === null || v === '') ? FILTER_MISSING_KEY : String(v);
+    if (excluded.has(key)) return true;
+  }
+  return false;
+}
+
 function canvasPointFromEvent(event) {
   var rect = canvas.getBoundingClientRect();
   return {
@@ -2357,30 +2385,10 @@ function buildAllPropertyColumns() {
 var enrichVarState = {};
 
 // —— Point filtering (Filtering panel) ——————————————————————————
-// activeFilters[varName] = Set of excluded value-strings (categorical only).
-// A point is filtered out if ANY active filter's excluded set contains its
-// value for that variable -- filters on different variables AND together;
-// unchecked values within one variable are OR'd (checked ones still pass).
-var activeFilters = {};
+// activeFilters, FILTER_MISSING_KEY, and isPointFiltered are defined in the
+// first script block (near rebuildHitGrid) so the early scheduleRender() can
+// call them. This section only owns the Filtering panel UI state.
 var filterSelectedVar = '';
-// Sentinel key representing "missing / NaN" for a variable -- lets a
-// missing value be filtered like any other category, without colliding
-// with a real category unless a dataset genuinely uses this exact string.
-var FILTER_MISSING_KEY = '__FILTER_MISSING__';
-
-function isPointFiltered(i) {
-  var d = jsonData[i];
-  if (!d) return true;
-  var props = d[13];
-  for (var varName in activeFilters) {
-    var excluded = activeFilters[varName];
-    if (!excluded || excluded.size === 0) continue;
-    var v = (props && Object.prototype.hasOwnProperty.call(props, varName)) ? props[varName] : undefined;
-    var key = (v === undefined || v === null || v === '') ? FILTER_MISSING_KEY : String(v);
-    if (excluded.has(key)) return true;
-  }
-  return false;
-}
 
 // Categorical columns only -- numeric/continuous variables don't have
 // "categories" to exclude, and reusing the same dtype classification as
