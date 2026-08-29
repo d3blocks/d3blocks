@@ -11,16 +11,12 @@
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
 {% if showControls == 'true' %}
 
-<br>
+<div class="top-panel" role="toolbar" aria-label="Top controls">
 <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
         <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
     </a>
 </div>
-
-
-<div class="top-panel" role="toolbar" aria-label="Top controls">
-<div class="top-panel-left"></div>
 <div class="top-panel-center">
   <div class="search-wrap top-search">
     <input class="search-input" id="searchInput" type="search" placeholder="Find a node…" autocomplete="off" spellcheck="false" />
@@ -28,9 +24,9 @@
   </div>
 </div>
 <div class="top-panel-right">
-  <button class="button-switch" id="themeBtn" type="button">{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}</button>
   <button class="button-switch" id="flowDiffButton" type="button">Flow diffusion</button>
   <button class="button-switch" id="rippleBtnTop" type="button">Ripple expand</button>
+  <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
 </div>
 <!-- Hidden anchor button with the id expected by the main script. The visible
      top-panel 'Ripple expand' button will forward clicks to this so the
@@ -39,7 +35,7 @@
 </div>
 
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button id="exportDataButton" class="button-switch">Export Data</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
@@ -47,7 +43,7 @@
 </div>
 
 <div class="stats-panel collapsed" id="layoutPanel">
-  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="radio" name="layoutMode" value="rings" checked> Rings (radial)</label>
     <label><input type="radio" name="layoutMode" value="global"> Global (force)</label>
@@ -79,7 +75,7 @@
 
 {% if showStatsPanel == 'true' %}
 <div class="stats-panel collapsed" id="statsPanel">
-  <div class="stats-panel-title">Network Statistic<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Network Statistic<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="radio" name="statMetric" value="user_default" checked> Default</label>
     <label><input type="radio" name="statMetric" value="node_proba"> Significance</label>
@@ -95,7 +91,7 @@
 {% endif %}
 
 <div class="stats-panel collapsed" id="edgeStatPanel">
-  <div class="stats-panel-title">Edge Statistics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Edge Statistics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="radio" name="edgeStatMode" value="default" checked> Default</label>
     <label><input type="radio" name="edgeStatMode" value="community"> Community</label>
@@ -103,7 +99,7 @@
   </div>
 </div>
 <div class="stats-panel collapsed" id="edgeFilterPanel">
-  <div class="stats-panel-title">Edge Filters<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Edge Filters<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="checkbox" id="crossLinksToggle" checked> Show cross-links</label>
     <label><input type="checkbox" name="edgeDirFilter" value="outbound" checked> Outbound</label>
@@ -187,12 +183,58 @@ function positionSidePanels() {
 	}
 	document.querySelectorAll(".stats-panel-title").forEach(function (title) {
 	  title.addEventListener("click", function () {
+	    if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
 	    var panel = title.parentElement, collapsing = !panel.classList.contains("collapsed");
 	    if (collapsing) { if (panel.style.height) panel.dataset.expandedHeight = panel.style.height; panel.style.height = ""; }
 	    else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
 	    panel.classList.toggle("collapsed"); positionSidePanels();
 	  });
 	});
+
+	// —— Drag-and-drop panel reordering ——————————————————————————
+	// Unlike scatter/sankey, positionSidePanels() here stacks panels by
+	// querying document.querySelectorAll(".stats-panel") in DOM order
+	// (rather than a separate order array), so reordering is done by
+	// physically moving the panel node in the DOM via insertBefore, then
+	// reflowing -- no separate order list to keep in sync.
+	(function setupPanelReordering() {
+	  document.querySelectorAll(".stats-panel").forEach(function (panel) {
+	    var title = panel.querySelector(".stats-panel-title");
+	    if (!title) return;
+	    title.addEventListener("dragstart", function (e) {
+	      e.dataTransfer.setData("text/plain", panel.id);
+	      e.dataTransfer.effectAllowed = "move";
+	    });
+	    title.addEventListener("dragend", function () {
+	      title.dataset.justDragged = "1";
+	      setTimeout(function () { title.dataset.justDragged = "0"; }, 0);
+	    });
+	    panel.addEventListener("dragover", function (e) {
+	      e.preventDefault();
+	      e.dataTransfer.dropEffect = "move";
+	      panel.classList.add("drag-over");
+	    });
+	    panel.addEventListener("dragleave", function () {
+	      panel.classList.remove("drag-over");
+	    });
+	    panel.addEventListener("drop", function (e) {
+	      e.preventDefault();
+	      panel.classList.remove("drag-over");
+	      var draggedId = e.dataTransfer.getData("text/plain");
+	      if (!draggedId || draggedId === panel.id) return;
+	      var draggedEl = document.getElementById(draggedId);
+	      if (!draggedEl || !panel.parentNode) return;
+	      panel.parentNode.insertBefore(draggedEl, panel);
+	      positionSidePanels();
+	    });
+	  });
+	})();
+
+	// —— Theme button: 🌙/☀ instead of text ——————————————————————
+	// Now handled directly in d3_radialgraph.js's toggleTheme() (it sets
+	// themeBtn.textContent based on document.body's 'light' class, not by
+	// reading prior text, so it was safe to change there directly) and via
+	// the initial Jinja-rendered emoji above. Nothing else needed here.
 
 	// —— Node panel resizer: drag to change height, double-click to toggle collapsed ——
 	(function () {

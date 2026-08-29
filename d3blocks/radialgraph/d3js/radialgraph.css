@@ -16,6 +16,9 @@
     --ring-stroke: #fff;
     --section-label: rgba(220, 221, 222, 0.45);
     --transition: background 0.35s, color 0.25s, border-color 0.25s;
+    --accent: #1ABC9C;
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --topbar-bg: rgba(18, 20, 28, 0.55);
   }
   body.light {
     --bg: #e4e6ec;
@@ -33,6 +36,9 @@
     --ghost-stroke: #555;
     --ring-stroke: #333;
     --section-label: rgba(44, 44, 46, 0.4);
+    --accent: #1ABC9C;
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    --topbar-bg: rgba(228, 230, 236, 0.6);
   }
   html, body {
     margin: 0; height: 100%;
@@ -299,11 +305,18 @@
 .stats-panel .stats-panel-title {
   font-weight: bold;
   margin-bottom: 6px;
-  cursor: pointer;
+  cursor: grab;
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.stats-panel .stats-panel-title:active { cursor: grabbing; }
+
+/* Drop-target highlight while dragging a panel over another one. */
+.stats-panel.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
 }
 
 /* Collapsed panels have no body margin left behind, and the title itself
@@ -545,9 +558,18 @@
   align-items: center;
   gap: 12px;
   z-index: 1200;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--topbar-bg);
+  box-shadow: var(--panel-shadow);
+  transition: var(--transition);
   pointer-events: none; /* let individual controls opt-in */
 }
-.top-panel .top-panel-left { pointer-events: none; }
+.top-panel .top-panel-left {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+}
 .top-panel .top-panel-center {
   pointer-events: auto;
   display: flex;
@@ -562,6 +584,14 @@
   justify-self: end;
 }
 .top-panel .button-switch { margin: 0; }
+/* Theme toggle sits at the very right end of the group, set apart from the
+   other action buttons with a small divider so it reads as a distinct,
+   always-in-the-same-place control rather than just another action. */
+.top-panel-right #themeBtn {
+  margin-left: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--btn-border);
+}
 .top-search { width: 440px; max-width: 60vw; }
 .top-search .search-input { width: 100%; }
 

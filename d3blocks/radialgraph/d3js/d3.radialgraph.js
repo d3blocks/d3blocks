@@ -2532,7 +2532,8 @@ function computeNetworkMetrics(nodeIds, edges) {
   // —— Theme (button + T key) ——
   function toggleTheme() {
     const isLight = document.body.classList.toggle("light");
-    themeBtn.textContent = isLight ? "Theme: Light" : "Theme: Dark";
+    themeBtn.textContent = isLight ? "☀" : "🌙";
+    themeBtn.title = isLight ? "Theme: Light" : "Theme: Dark";
     const { nodes, links } = getRenderGraph();
     applyNodeColors(nodes);
     applyNodeSizes(nodes);
