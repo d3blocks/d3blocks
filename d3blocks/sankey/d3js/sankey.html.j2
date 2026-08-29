@@ -15,104 +15,334 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 
     {{ SUPPORT }}
 
+    <style>{% include "sankey.css" %}</style>
 </head>
 
 <body>
 
-    <form>
-        <b>Link-color:</b>
-    	<select id="linkColorOptions" onchange="link_color_changed(this.value)">
-    	  <option value="source" {{ link_color_select_source }}>Source</option>
-    	  <option value="target" {{ link_color_select_target }}>Target</option>
-    	  <option value="source-target" {{ link_color_select_source_target }}>Source-Target</option>
-    	  <option value="{{ color_static }}">Static color</option>
-    	</select>
+<!-- Top panel (search centered, controls on right) -->
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+    <div class="top-panel-left">
+    <div class="top-panel-left">
+        <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+            <img src="{% include '../utils/logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+        </a>
+    </div>
+    </div>
+    <div class="top-panel-center">
+        <div class="search-wrap top-search">
+            <input class="search-input" id="searchInput" type="search" placeholder="Find a node…" autocomplete="off" spellcheck="false" />
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+    <div class="top-panel-right">
+        <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
+    </div>
+</div>
 
-        <b>Align:</b>
-    	<select id="AlignOptions" onchange="align_changed(this.value)">
-    	  <option value="left" {{ align_select_left }}>Left</option>
-    	  <option value="right" {{ align_select_right }}>Right</option>
-    	  <option value="justify" {{ align_select_justify }}>Justify</option>
-    	  <option value="center" {{ align_select_center }}>Center</option>
-    	</select>
+<!-- Side panel: display options (was a plain <form>) -->
+<div class="stats-panel collapsed" id="displayPanel">
+    <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="stats-panel-body">
+        <div class="panel-field">
+            <label for="linkColorOptions">Link color</label>
+            <select id="linkColorOptions">
+                <option value="source" {{ link_color_select_source }}>Source</option>
+                <option value="target" {{ link_color_select_target }}>Target</option>
+                <option value="source-target" {{ link_color_select_source_target }}>Source-Target</option>
+                <option value="{{ color_static }}">Static color</option>
+            </select>
+        </div>
+        <div class="panel-field">
+            <label for="AlignOptions">Align</label>
+            <select id="AlignOptions">
+                <option value="left" {{ align_select_left }}>Left</option>
+                <option value="right" {{ align_select_right }}>Right</option>
+                <option value="justify" {{ align_select_justify }}>Justify</option>
+                <option value="center" {{ align_select_center }}>Center</option>
+            </select>
+        </div>
+    </div>
+</div>
 
-    <!-- Create save button -->
-    {{ SAVE_BUTTON_START }}
-            <button id="saveButton">Save</button>
-    {{ SAVE_BUTTON_STOP }}
+<!-- Side panel: export / save -->
+<div class="stats-panel collapsed" id="exportPanel">
+    <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="stats-panel-body">
+        <button class="button-switch" id="exportButton" type="button" title="Export nodes and links as JSON" style="width:100%;margin:4px 0 8px 0">Export</button>
+        {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0">Save</button>{{ SAVE_BUTTON_STOP }}
+        <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads all nodes and links as JSON.</div>
+    </div>
+</div>
 
+<div id="sankey-main"></div>
 
-    </form>
-    <br>
+<script>
+    {% include "sankey.js" %}
 
+    const data = {{ json_data }}
 
-    <script>
-	{% include "sankey.js" %}
+    const links = data.links.map(({source, target, value}) => ({
+        source: data.nodes[source].name,
+        target: data.nodes[target].name,
+        value
+    }))
 
-	const data = {{ json_data }}
+    // Required for the input selection form
+    let linkColor="{{ link_color }}" // source, target, source-target
+    let align="{{ node_align }}"     // "left", "right", "justify", "center"
+    let chart = null;
 
-        const links = data.links.map(({source, target, value}) => ({
-            source: data.nodes[source].name,
-            target: data.nodes[target].name,
-            value
-        }))
+    function drawchart() {
+        chart = SankeyChart({
+            links
+        }, {
+            nodeGroup: d => d.id, // take the whole id for color
+            align: align,
+            linkColor: linkColor,
+            linkStrokeOpacity: {{ link_stroke_opacity }},
+            format: (value) => `${value.toFixed(1)}`,
+            width: {{ WIDTH }},
+            height: {{ HEIGHT }},
+            marginTop: {{ marginTop }},
+            marginRight: {{ marginRight }},
+            marginBottom: {{ marginBottom }},
+            marginLeft: {{ marginLeft }},
+            nodeWidth: {{ node_width }},
+            nodePadding: {{ node_padding }},
+            nodeStroke: "{{ node_stroke_color }}",
+        })
 
-        // Required for the input selection form
-        let linkColor="{{ link_color }}" // source, target, source-target
-        let align="{{ node_align }}"     // "left", "right", "justify", "center"
+        var host = document.getElementById('sankey-main');
+        host.innerHTML = '';
+        host.append(chart);
+        clearHighlight();
+    }
 
-        // We need to redraw the chart after changing the selection
-        function drawchart() {
+    // ————————————————————————————————————————————————————————————
+    // Styled tooltip (matches scatter's floating tooltip look/behavior)
+    // ————————————————————————————————————————————————————————————
+    var Tooltip = document.createElement('div');
+    Tooltip.style.cssText = 'position:fixed;pointer-events:none;z-index:200;opacity:0;' +
+        'background-color:var(--tooltip-bg,white);color:var(--tooltip-text,#111);' +
+        'border:1px solid rgba(0,0,0,0.15);border-radius:5px;padding:5px 8px;font-size:12px;' +
+        'box-shadow:0 2px 8px rgba(0,0,0,0.15);max-width:280px;white-space:nowrap;' +
+        'font-family:"Helvetica",Arial,sans-serif;transition:opacity 0.1s;';
+    document.body.appendChild(Tooltip);
 
-            // Set all sankey parameters
-            chart = SankeyChart({
-                links
-            }, {
-                //nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
-                nodeGroup: d => d.id, // take the whole id for color
-                align: align,
-                linkColor: linkColor,
-                linkStrokeOpacity: {{ link_stroke_opacity }},
-                format: (value) => `${value.toFixed(1)}`,
-                width: {{ WIDTH }},
-                height: {{ HEIGHT }},
-                marginTop: {{ marginTop }},
-                marginRight: {{ marginRight }},
-                marginBottom: {{ marginBottom }},
-                marginLeft: {{ marginLeft }},
-                nodeWidth: {{ node_width }},
-                nodePadding: {{ node_padding }},
-                nodeStroke: "{{ node_stroke_color }}",
-            })
-    
-      		// To update the chart based on the selection, we remove the chart and create a new one.
-      		for (let svg of document.body.getElementsByTagName("svg")) {
-                svg.remove()
-      		}
-      		
-      		// Now we can again create the chart with the updated parameters
-            document.body.append(chart)
-      		}
-            
-            // Lets draw it 
-            drawchart();
-      
-        // link_color selection changes. Listen if changes are made (onchange=link_color_changed())
-        function link_color_changed(linkColor_value) {
-            //console.log(linkColor_value)
-            linkColor = linkColor_value
-            drawchart();
+    function showTooltip(html, event) {
+        Tooltip.innerHTML = html;
+        Tooltip.style.opacity = 1;
+        Tooltip.style.left = (event.clientX + 14) + 'px';
+        Tooltip.style.top = (event.clientY + 12) + 'px';
+    }
+    function hideTooltip() { Tooltip.style.opacity = 0; }
+
+    function fmt(v) { return (typeof v === 'number') ? v.toFixed(1) : v; }
+
+    window.__sankeyNodeHover__ = function(d, event) { showTooltip('<b>' + d.id + '</b><br>' + fmt(d.value), event); };
+    window.__sankeyNodeMove__  = function(d, event) { showTooltip('<b>' + d.id + '</b><br>' + fmt(d.value), event); };
+    window.__sankeyNodeLeave__ = function() { hideTooltip(); };
+    window.__sankeyLinkHover__ = function(d, event) { showTooltip(d.source.id + ' → ' + d.target.id + '<br>' + fmt(d.value), event); };
+    window.__sankeyLinkMove__  = function(d, event) { showTooltip(d.source.id + ' → ' + d.target.id + '<br>' + fmt(d.value), event); };
+    window.__sankeyLinkLeave__ = function() { hideTooltip(); };
+
+    // ————————————————————————————————————————————————————————————
+    // Click a node: dim everything not connected to it (classic Sankey
+    // focus interaction, in the same spirit as Scatter's select/focus).
+    // Click the same node again, or the background, to clear.
+    // ————————————————————————————————————————————————————————————
+    var highlightedNodeIndex = -1;
+
+    function clearHighlight() {
+        highlightedNodeIndex = -1;
+        if (!chart) return;
+        chart.querySelectorAll('.sankey-node, .sankey-link, .sankey-node-label').forEach(function(el){ el.classList.remove('sankey-dim'); });
+    }
+
+    function applyHighlight(nodeIndex) {
+        if (!chart || !chart.computed) return;
+        var connected = new Set([nodeIndex]);
+        chart.computed.links.forEach(function(l){
+            if (l.source.index === nodeIndex) connected.add(l.target.index);
+            if (l.target.index === nodeIndex) connected.add(l.source.index);
+        });
+        chart.querySelectorAll('.sankey-node, .sankey-node-label').forEach(function(el){
+            var i = parseInt(el.getAttribute('data-node-index'), 10);
+            el.classList.toggle('sankey-dim', !connected.has(i));
+        });
+        chart.querySelectorAll('.sankey-link').forEach(function(el){
+            var si = parseInt(el.querySelector('path').getAttribute('data-source-index'), 10);
+            var ti = parseInt(el.querySelector('path').getAttribute('data-target-index'), 10);
+            el.classList.toggle('sankey-dim', si !== nodeIndex && ti !== nodeIndex);
+        });
+    }
+
+    window.__sankeyNodeClick__ = function(d, event, el) {
+        event.stopPropagation();
+        var i = parseInt(el.getAttribute('data-node-index'), 10);
+        if (highlightedNodeIndex === i) { clearHighlight(); return; }
+        highlightedNodeIndex = i;
+        applyHighlight(i);
+    };
+    document.addEventListener('click', function(e){
+        if (!e.target.closest('.sankey-node') && !e.target.closest('#sankey-main')) clearHighlight();
+    });
+
+    // Lets draw it
+    drawchart();
+
+    document.getElementById('linkColorOptions').addEventListener('change', function(e){
+        linkColor = e.target.value;
+        drawchart();
+    });
+    document.getElementById('AlignOptions').addEventListener('change', function(e){
+        align = e.target.value;
+        drawchart();
+    });
+
+    // ————————————————————————————————————————————————————————————
+    // Search: find a node by name, jump = pulse-highlight it (no
+    // pan/zoom needed -- the whole diagram is already fully visible).
+    // ————————————————————————————————————————————————————————————
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+
+    function renderSearchResults(query) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) { searchResults.innerHTML = ''; searchResults.classList.remove('open'); return; }
+        const matches = data.nodes
+            .map(function(n, i){ return {name: n.name, idx: i}; })
+            .filter(function(n){ return n.name.toLowerCase().includes(q); })
+            .slice(0, 12);
+        if (!matches.length) {
+            searchResults.innerHTML = '<div class="search-item" style="opacity:0.5;cursor:default">No matches</div>';
+            searchResults.classList.add('open');
+            return;
         }
+        searchResults.innerHTML = matches.map(function(m){
+            return '<div class="search-item" data-idx="' + m.idx + '">' + m.name + '</div>';
+        }).join('');
+        searchResults.classList.add('open');
+    }
 
-        // align selection changes. Listen if changes are made (onchange=align_changed())
-        function align_changed(align_value) {
-            align = align_value
-            drawchart();
+    function jumpToNode(nameIdx) {
+        if (!chart || !chart.computed) return;
+        var node = chart.computed.nodes.find(function(n){ return n.id === data.nodes[nameIdx].name; });
+        if (!node) return;
+        var el = chart.querySelector('.sankey-node[data-node-index="' + node.index + '"]');
+        highlightedNodeIndex = node.index;
+        applyHighlight(node.index);
+        if (el) {
+            el.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'center'});
         }
+        searchResults.classList.remove('open');
+        searchInput.value = data.nodes[nameIdx].name;
+        searchInput.blur();
+    }
+
+    searchInput.addEventListener('input', function(){ renderSearchResults(searchInput.value); });
+    searchInput.addEventListener('focus', function(){ if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
+    searchResults.addEventListener('mousedown', function(e){
+        var item = e.target.closest('.search-item');
+        if (!item || !item.dataset.idx) return;
+        e.preventDefault();
+        jumpToNode(parseInt(item.dataset.idx, 10));
+    });
+    document.addEventListener('click', function(e){ if (!e.target.closest('.search-wrap')) searchResults.classList.remove('open'); });
+
+    // ————————————————————————————————————————————————————————————
+    // Theme toggle (button + T key), same behavior as scatter
+    // ————————————————————————————————————————————————————————————
+    function toggleTheme() {
+        var themeBtn = document.getElementById('themeBtn');
+        var isLight = document.body.classList.toggle('light');
+        if (themeBtn) { themeBtn.textContent = isLight ? '☀' : '🌙'; themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark'; }
+    }
+    var themeBtn = document.getElementById('themeBtn');
+    if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+    window.addEventListener('keydown', function(e){
+        if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme();
+    });
+
+    // ————————————————————————————————————————————————————————————
+    // Export: nodes + links as downloadable JSON
+    // ————————————————————————————————————————————————————————————
+    var exportButton = document.getElementById('exportButton');
+    if (exportButton) exportButton.addEventListener('click', function(){
+        var out = { nodes: data.nodes, links: links };
+        var blob = new Blob([JSON.stringify(out, null, 2)], {type: 'application/json'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'sankey_data.json';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    });
+
+    // ————————————————————————————————————————————————————————————
+    // Collapsible + draggable side panels (same pattern as scatter)
+    // ————————————————————————————————————————————————————————————
+    var PANEL_ORDER = ['displayPanel', 'exportPanel'];
+    function positionSidePanels() {
+        var bar = document.querySelector('.top-panel');
+        if (!bar) return;
+        var bottom = bar.getBoundingClientRect().bottom;
+        var y = bottom + 8, bottomPad = 12;
+        PANEL_ORDER.forEach(function(id){
+            var panel = document.getElementById(id);
+            if (!panel || panel.style.display === 'none') return;
+            panel.style.top = y + 'px';
+            var maxH = Math.max(80, window.innerHeight - y - bottomPad);
+            panel.style.maxHeight = maxH + 'px';
+            y += panel.getBoundingClientRect().height + 10;
+        });
+    }
+    window.addEventListener('resize', positionSidePanels);
+    window.addEventListener('load', positionSidePanels);
+    positionSidePanels();
+    requestAnimationFrame(positionSidePanels);
+    if (typeof ResizeObserver !== 'undefined') {
+        PANEL_ORDER.forEach(function(id){
+            var el = document.getElementById(id);
+            if (el) new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
+        });
+    }
+    PANEL_ORDER.forEach(function(panelId){
+        var panel = document.getElementById(panelId);
+        if (!panel) return;
+        var title = panel.querySelector('.stats-panel-title');
+        if (!title) return;
+        title.addEventListener('click', function(){
+            if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+            panel.classList.toggle('collapsed');
+            setTimeout(positionSidePanels, 0);
+        });
+        title.addEventListener('dragstart', function(e){
+            e.dataTransfer.setData('text/plain', panelId);
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        title.addEventListener('dragend', function(){
+            title.dataset.justDragged = '1';
+            setTimeout(function(){ title.dataset.justDragged = '0'; }, 0);
+        });
+        panel.addEventListener('dragover', function(e){ e.preventDefault(); e.dataTransfer.dropEffect = 'move'; panel.classList.add('drag-over'); });
+        panel.addEventListener('dragleave', function(){ panel.classList.remove('drag-over'); });
+        panel.addEventListener('drop', function(e){
+            e.preventDefault();
+            panel.classList.remove('drag-over');
+            var draggedId = e.dataTransfer.getData('text/plain');
+            if (!draggedId || draggedId === panelId) return;
+            var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+            if (from < 0 || to < 0) return;
+            PANEL_ORDER.splice(from, 1);
+            PANEL_ORDER.splice(to, 0, draggedId);
+            positionSidePanels();
+        });
+    });
 
     {{ SAVE_TO_SVG_SCRIPT }}
 
-    </script>
+</script>
 
 </body>
 </html>

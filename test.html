@@ -1,4 +1,218 @@
-(function () {
+<!--
+Library     : d3blocks
+Author      : E.Taskesen, O.Verver
+Mail        : erdogant@gmail.com, oliver@sensibly.nl
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sankey - D3blocks</title>
+
+    
+
+    <style>  :root {
+    /* Dark theme (default) — mirrors scatter.css's flat, non-glassmorphism look. */
+    --bg: #222;
+    --panel-bg: rgba(34, 34, 34, 0.92);
+    --panel-border: rgba(255, 255, 255, 0.15);
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --text: #eee;
+    --text-muted: rgba(238, 238, 238, 0.6);
+    --btn-bg: #333;
+    --btn-bg-active: #3d3d3d;
+    --btn-border: #555;
+    --btn-text: #eee;
+    --tooltip-bg: rgba(34, 34, 34, 0.95);
+    --tooltip-text: #fff;
+    --section-label: rgba(238, 238, 238, 0.5);
+    --search-hover: #1e4d42;
+    --transition: background 0.2s, color 0.2s, border-color 0.25s;
+    --accent: #1ABC9C;
+    --topbar-bg: rgba(34, 34, 34, 0.4);
+    --dim-opacity: 0.12;
+  }
+  body.light {
+    --bg: #fff;
+    --panel-bg: rgba(255, 255, 255, 0.92);
+    --panel-border: rgba(0, 0, 0, 0.1);
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --text: #222;
+    --text-muted: rgba(34, 34, 34, 0.55);
+    --btn-bg: #fff;
+    --btn-bg-active: #eee;
+    --btn-border: #ccc;
+    --btn-text: #222;
+    --tooltip-bg: rgba(255, 255, 255, 0.96);
+    --tooltip-text: #1a1a1a;
+    --section-label: rgba(34, 34, 34, 0.45);
+    --search-hover: #e8f8f5;
+    --accent: #1ABC9C;
+    --topbar-bg: rgba(255, 255, 255, 0.4);
+    --dim-opacity: 0.08;
+  }
+  html, body {
+    margin: 0; height: 100%;
+    background: var(--bg);
+    font-family: "Helvetica", Arial, sans-serif;
+    overflow: auto; transition: var(--transition);
+  }
+
+  /* —— Top bar: logo left, search center, controls right —— */
+  .top-panel {
+    position: fixed; top: 10px; left: 10px; right: 10px;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 12px; z-index: 1200;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--topbar-bg); box-shadow: var(--panel-shadow);
+    transition: var(--transition); pointer-events: none;
+  }
+  .top-panel .top-panel-left { pointer-events: none; }
+  .top-panel .top-panel-center { pointer-events: auto; display: flex; justify-content: center; align-items: center; }
+  .top-panel .top-panel-right { pointer-events: auto; display: flex; gap: 8px; align-items: center; justify-self: end; }
+  .top-panel .button-switch { margin: 0; }
+  .top-search { width: 360px; max-width: 50vw; }
+  .top-search .search-input { width: 100%; }
+
+  .search-wrap { position: relative; margin-bottom: 0; }
+  .search-input {
+    width: 100%; box-sizing: border-box;
+    background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+    border-radius: 6px; padding: 9px 12px; font-size: 13px;
+    font-family: "Helvetica", Arial, sans-serif;
+    outline: none; transition: var(--transition), width 0.2s;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { border-color: var(--accent); }
+  .search-results {
+    position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px;
+    background: var(--panel-bg); border: 1px solid var(--panel-border);
+    border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 20;
+    display: none; box-shadow: var(--dropdown-shadow);
+  }
+  .search-results.open { display: block; }
+  .search-item { padding: 7px 12px; font-size: 12px; color: var(--text); cursor: pointer; border-bottom: 1px solid var(--panel-border); }
+  .search-item:last-child { border-bottom: none; }
+  .search-item:hover, .search-item.active { background: var(--search-hover); }
+  .search-item .meta { opacity: 0.5; font-size: 11px; }
+
+  /* —— Floating collapsible/draggable side panels —— */
+  .stats-panel {
+    position: fixed; display: flex; flex-direction: column;
+    resize: both; overflow: hidden; top: 10px; left: 10px; z-index: 1000;
+    background: var(--panel-bg); color: var(--text); border-radius: 8px;
+    padding: 10px 14px; box-shadow: var(--panel-shadow);
+    font-family: "Helvetica", Arial, sans-serif; font-size: 13px;
+    width: 220px; min-width: 180px; max-width: min(600px, calc(100vw - 40px));
+    border: 1px solid var(--panel-border);
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+    min-height: 40px; max-height: calc(100vh - 40px);
+  }
+  .stats-panel.collapsed { resize: none; }
+  .stats-panel-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .stats-panel .stats-panel-title {
+    font-weight: bold; margin-bottom: 6px; cursor: grab; user-select: none;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .stats-panel .stats-panel-title:active { cursor: grabbing; }
+  .stats-panel.drag-over { outline: 2px dashed var(--accent); outline-offset: 2px; }
+  .stats-panel.collapsed .stats-panel-title { margin-bottom: 0; }
+  .stats-panel.collapsed .stats-panel-body { display: none; }
+  .stats-panel-toggle { display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; color: inherit; transition: transform 0.15s ease; }
+  .stats-panel-toggle svg { width: 12px; height: 12px; display: block; }
+  .stats-panel.collapsed .stats-panel-toggle { transform: rotate(-90deg); }
+  .stats-panel label { display: block; margin: 4px 0; cursor: pointer; }
+  .stats-panel select {
+    width: 100%; box-sizing: border-box; margin-top: 4px;
+    background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+    border-radius: 5px; padding: 5px 8px; font-size: 13px; font-family: "Helvetica", Arial, sans-serif;
+  }
+  .panel-field { margin: 10px 0; }
+  .panel-field label { font-weight: normal; margin-bottom: 3px; }
+
+  .button-switch {
+    display: inline-block; margin: 8px 4px; padding: 6px 16px; border-radius: 6px;
+    border: 1px solid var(--btn-border); background: var(--btn-bg); color: var(--btn-text);
+    cursor: pointer; font-size: 1em; font-family: "Helvetica", Arial, sans-serif; transition: var(--transition);
+  }
+  .button-switch:active { background: var(--btn-bg-active); }
+  .button-switch.active { background: var(--btn-bg-active); border-color: var(--btn-border); color: var(--btn-text); }
+  .stats-panel .button-switch { display: block; width: 100%; text-align: center; margin: 10px 0 0 0; box-sizing: border-box; }
+
+  /* —— Sankey-specific: hover/focus/dim states —— */
+  #sankey-main { display: flex; justify-content: center; margin-top: 90px; padding-bottom: 40px; }
+  #sankey-main svg { display: block; }
+  .sankey-node rect { cursor: pointer; transition: opacity 0.2s; }
+  .sankey-link { transition: opacity 0.2s; }
+  .sankey-dim { opacity: var(--dim-opacity) !important; }
+  .sankey-node-label { fill: var(--text); font-family: "Helvetica", Arial, sans-serif; transition: opacity 0.2s; }</style>
+</head>
+
+<body>
+
+<!-- Top panel (search centered, controls on right) -->
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+    <div class="top-panel-left">
+        <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+            <img src="https://raw.githubusercontent.com/d3blocks/d3blocks/main/logo.png" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+        </a>
+    </div>
+    <div class="top-panel-center">
+        <div class="search-wrap top-search">
+            <input class="search-input" id="searchInput" type="search" placeholder="Find a node…" autocomplete="off" spellcheck="false" />
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+    <div class="top-panel-right">
+        <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
+    </div>
+</div>
+
+<!-- Side panel: display options (was a plain <form>) -->
+<div class="stats-panel collapsed" id="displayPanel">
+    <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="stats-panel-body">
+        <div class="panel-field">
+            <label for="linkColorOptions">Link color</label>
+            <select id="linkColorOptions">
+                <option value="source" >Source</option>
+                <option value="target" >Target</option>
+                <option value="source-target" selected="selected">Source-Target</option>
+                <option value="#d3d3d3">Static color</option>
+            </select>
+        </div>
+        <div class="panel-field">
+            <label for="AlignOptions">Align</label>
+            <select id="AlignOptions">
+                <option value="left" >Left</option>
+                <option value="right" >Right</option>
+                <option value="justify" selected="selected">Justify</option>
+                <option value="center" >Center</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Side panel: export / save -->
+<div class="stats-panel collapsed" id="exportPanel">
+    <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+    <div class="stats-panel-body">
+        <button class="button-switch" id="exportButton" type="button" title="Export nodes and links as JSON" style="width:100%;margin:4px 0 8px 0">Export</button>
+        <button id="saveButton" class="button-switch" style="width:100%;margin:0">Save</button>
+        <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads all nodes and links as JSON.</div>
+    </div>
+</div>
+
+<div id="sankey-main"></div>
+
+<script>
+    (function () {
   'use strict';
 
   class InternMap extends Map {
@@ -2219,7 +2433,7 @@
         });
         // console.log(node_color)
     
-      let CUSTOM_NODE_COLORS = {{ CUSTOM_NODE_COLORS }}; // Set this to true or false as needed
+      let CUSTOM_NODE_COLORS = false; // Set this to true or false as needed
 
       if (CUSTOM_NODE_COLORS) {
           if (G) node.attr("fill", ({index: i}) => node_color[G[i]] );
@@ -2293,7 +2507,7 @@
         // console.log(font_size)
       if (Tl) svg.append("g")
           .attr("font-family", "sans-serif")
-          .attr("font-size", {{ font_size }})
+          .attr("font-size", 10)
           //.attr("font-size", (d, i) => data.nodes[i].fontsize)
           //.attr("font-size", (d, i) => {
           //    console.log(data.nodes[i].fontsize);
@@ -2324,3 +2538,281 @@
   window.sankey = sankey;
 
 })();
+
+    const data = {"nodes":[{"name":"Agricultural_waste", "color":"#d3d3d3", "fontsize":"10"},{"name":"Bio-conversion", "color":"#d3d3d3", "fontsize":"10"},{"name":"Liquid", "color":"#d3d3d3", "fontsize":"10"},{"name":"Losses", "color":"#d3d3d3", "fontsize":"10"},{"name":"Solid", "color":"#d3d3d3", "fontsize":"10"},{"name":"Gas", "color":"#d3d3d3", "fontsize":"10"},{"name":"Biofuel_imports", "color":"#d3d3d3", "fontsize":"10"},{"name":"Biomass_imports", "color":"#d3d3d3", "fontsize":"10"},{"name":"Coal_imports", "color":"#d3d3d3", "fontsize":"10"},{"name":"Coal", "color":"#d3d3d3", "fontsize":"10"},{"name":"Coal_reserves", "color":"#d3d3d3", "fontsize":"10"},{"name":"District_heating", "color":"#d3d3d3", "fontsize":"10"},{"name":"Industry", "color":"#d3d3d3", "fontsize":"10"},{"name":"Heating_and_cooling_-_commercial", "color":"#d3d3d3", "fontsize":"10"},{"name":"Heating_and_cooling_-_homes", "color":"#d3d3d3", "fontsize":"10"},{"name":"Electricity_grid", "color":"#d3d3d3", "fontsize":"10"},{"name":"Over_generation_/_exports", "color":"#d3d3d3", "fontsize":"10"},{"name":"H2_conversion", "color":"#d3d3d3", "fontsize":"10"},{"name":"Road_transport", "color":"#d3d3d3", "fontsize":"10"},{"name":"Agriculture", "color":"#d3d3d3", "fontsize":"10"},{"name":"Rail_transport", "color":"#d3d3d3", "fontsize":"10"},{"name":"Lighting_&_appliances_-_commercial", "color":"#d3d3d3", "fontsize":"10"},{"name":"Lighting_&_appliances_-_homes", "color":"#d3d3d3", "fontsize":"10"},{"name":"Gas_imports", "color":"#d3d3d3", "fontsize":"10"},{"name":"Ngas", "color":"#d3d3d3", "fontsize":"10"},{"name":"Gas_reserves", "color":"#d3d3d3", "fontsize":"10"},{"name":"Thermal_generation", "color":"#d3d3d3", "fontsize":"10"},{"name":"Geothermal", "color":"#d3d3d3", "fontsize":"10"},{"name":"H2", "color":"#d3d3d3", "fontsize":"10"},{"name":"Hydro", "color":"#d3d3d3", "fontsize":"10"},{"name":"International_shipping", "color":"#d3d3d3", "fontsize":"10"},{"name":"Domestic_aviation", "color":"#d3d3d3", "fontsize":"10"},{"name":"International_aviation", "color":"#d3d3d3", "fontsize":"10"},{"name":"National_navigation", "color":"#d3d3d3", "fontsize":"10"},{"name":"Marine_algae", "color":"#d3d3d3", "fontsize":"10"},{"name":"Nuclear", "color":"#d3d3d3", "fontsize":"10"},{"name":"Oil_imports", "color":"#d3d3d3", "fontsize":"10"},{"name":"Oil", "color":"#d3d3d3", "fontsize":"10"},{"name":"Oil_reserves", "color":"#d3d3d3", "fontsize":"10"},{"name":"Other_waste", "color":"#d3d3d3", "fontsize":"10"},{"name":"Pumped_heat", "color":"#d3d3d3", "fontsize":"10"},{"name":"Solar_PV", "color":"#d3d3d3", "fontsize":"10"},{"name":"Solar_Thermal", "color":"#d3d3d3", "fontsize":"10"},{"name":"Solar", "color":"#d3d3d3", "fontsize":"10"},{"name":"Tidal", "color":"#d3d3d3", "fontsize":"10"},{"name":"UK_land_based_bioenergy", "color":"#d3d3d3", "fontsize":"10"},{"name":"Wave", "color":"#d3d3d3", "fontsize":"10"},{"name":"Wind", "color":"#d3d3d3", "fontsize":"10"}], "links":[{"source":0,"target":1,"value":124.729},{"source":1,"target":2,"value":0.597},{"source":1,"target":3,"value":26.862},{"source":1,"target":4,"value":280.322},{"source":1,"target":5,"value":81.144},{"source":6,"target":2,"value":35.0},{"source":7,"target":4,"value":35.0},{"source":8,"target":9,"value":11.606},{"source":10,"target":9,"value":63.965},{"source":9,"target":4,"value":75.571},{"source":11,"target":12,"value":10.639},{"source":11,"target":13,"value":22.505},{"source":11,"target":14,"value":46.184},{"source":15,"target":16,"value":104.453},{"source":15,"target":14,"value":113.726},{"source":15,"target":17,"value":27.14},{"source":15,"target":12,"value":342.165},{"source":15,"target":18,"value":37.797},{"source":15,"target":19,"value":4.412},{"source":15,"target":13,"value":40.858},{"source":15,"target":3,"value":56.691},{"source":15,"target":20,"value":7.863},{"source":15,"target":21,"value":90.008},{"source":15,"target":22,"value":93.494},{"source":23,"target":24,"value":40.719},{"source":25,"target":24,"value":82.233},{"source":5,"target":13,"value":0.129},{"source":5,"target":3,"value":1.401},{"source":5,"target":26,"value":151.891},{"source":5,"target":19,"value":2.096},{"source":5,"target":12,"value":48.58},{"source":27,"target":15,"value":7.013},{"source":17,"target":28,"value":20.897},{"source":17,"target":3,"value":6.242},{"source":28,"target":18,"value":20.897},{"source":29,"target":15,"value":6.995},{"source":2,"target":12,"value":121.066},{"source":2,"target":30,"value":128.69},{"source":2,"target":18,"value":135.835},{"source":2,"target":31,"value":14.458},{"source":2,"target":32,"value":206.267},{"source":2,"target":19,"value":3.64},{"source":2,"target":33,"value":33.218},{"source":2,"target":20,"value":4.413},{"source":34,"target":1,"value":4.375},{"source":24,"target":5,"value":122.952},{"source":35,"target":26,"value":839.978},{"source":36,"target":37,"value":504.287},{"source":38,"target":37,"value":107.703},{"source":37,"target":2,"value":611.99},{"source":39,"target":4,"value":56.587},{"source":39,"target":1,"value":77.81},{"source":40,"target":14,"value":193.026},{"source":40,"target":13,"value":70.672},{"source":41,"target":15,"value":59.901},{"source":42,"target":14,"value":19.263},{"source":43,"target":42,"value":19.263},{"source":43,"target":41,"value":59.901},{"source":4,"target":19,"value":0.882},{"source":4,"target":26,"value":400.12},{"source":4,"target":12,"value":46.477},{"source":26,"target":15,"value":525.531},{"source":26,"target":3,"value":787.129},{"source":26,"target":11,"value":79.329},{"source":44,"target":15,"value":9.452},{"source":45,"target":1,"value":182.01},{"source":46,"target":15,"value":19.013},{"source":47,"target":15,"value":289.366}]}
+
+    const links = data.links.map(({source, target, value}) => ({
+        source: data.nodes[source].name,
+        target: data.nodes[target].name,
+        value
+    }))
+
+    // Required for the input selection form
+    let linkColor="source-target" // source, target, source-target
+    let align="justify"     // "left", "right", "justify", "center"
+    let chart = null;
+
+    function drawchart() {
+        chart = SankeyChart({
+            links
+        }, {
+            nodeGroup: d => d.id, // take the whole id for color
+            align: align,
+            linkColor: linkColor,
+            linkStrokeOpacity: 0.5,
+            format: (value) => `${value.toFixed(1)}`,
+            width: 800,
+            height: 600,
+            marginTop: 5,
+            marginRight: 1,
+            marginBottom: 5,
+            marginLeft: 1,
+            nodeWidth: 15,
+            nodePadding: 15,
+            nodeStroke: "currentColor",
+        })
+
+        var host = document.getElementById('sankey-main');
+        host.innerHTML = '';
+        host.append(chart);
+        clearHighlight();
+    }
+
+    // ————————————————————————————————————————————————————————————
+    // Styled tooltip (matches scatter's floating tooltip look/behavior)
+    // ————————————————————————————————————————————————————————————
+    var Tooltip = document.createElement('div');
+    Tooltip.style.cssText = 'position:fixed;pointer-events:none;z-index:200;opacity:0;' +
+        'background-color:var(--tooltip-bg,white);color:var(--tooltip-text,#111);' +
+        'border:1px solid rgba(0,0,0,0.15);border-radius:5px;padding:5px 8px;font-size:12px;' +
+        'box-shadow:0 2px 8px rgba(0,0,0,0.15);max-width:280px;white-space:nowrap;' +
+        'font-family:"Helvetica",Arial,sans-serif;transition:opacity 0.1s;';
+    document.body.appendChild(Tooltip);
+
+    function showTooltip(html, event) {
+        Tooltip.innerHTML = html;
+        Tooltip.style.opacity = 1;
+        Tooltip.style.left = (event.clientX + 14) + 'px';
+        Tooltip.style.top = (event.clientY + 12) + 'px';
+    }
+    function hideTooltip() { Tooltip.style.opacity = 0; }
+
+    function fmt(v) { return (typeof v === 'number') ? v.toFixed(1) : v; }
+
+    window.__sankeyNodeHover__ = function(d, event) { showTooltip('<b>' + d.id + '</b><br>' + fmt(d.value), event); };
+    window.__sankeyNodeMove__  = function(d, event) { showTooltip('<b>' + d.id + '</b><br>' + fmt(d.value), event); };
+    window.__sankeyNodeLeave__ = function() { hideTooltip(); };
+    window.__sankeyLinkHover__ = function(d, event) { showTooltip(d.source.id + ' → ' + d.target.id + '<br>' + fmt(d.value), event); };
+    window.__sankeyLinkMove__  = function(d, event) { showTooltip(d.source.id + ' → ' + d.target.id + '<br>' + fmt(d.value), event); };
+    window.__sankeyLinkLeave__ = function() { hideTooltip(); };
+
+    // ————————————————————————————————————————————————————————————
+    // Click a node: dim everything not connected to it (classic Sankey
+    // focus interaction, in the same spirit as Scatter's select/focus).
+    // Click the same node again, or the background, to clear.
+    // ————————————————————————————————————————————————————————————
+    var highlightedNodeIndex = -1;
+
+    function clearHighlight() {
+        highlightedNodeIndex = -1;
+        if (!chart) return;
+        chart.querySelectorAll('.sankey-node, .sankey-link, .sankey-node-label').forEach(function(el){ el.classList.remove('sankey-dim'); });
+    }
+
+    function applyHighlight(nodeIndex) {
+        if (!chart || !chart.computed) return;
+        var connected = new Set([nodeIndex]);
+        chart.computed.links.forEach(function(l){
+            if (l.source.index === nodeIndex) connected.add(l.target.index);
+            if (l.target.index === nodeIndex) connected.add(l.source.index);
+        });
+        chart.querySelectorAll('.sankey-node, .sankey-node-label').forEach(function(el){
+            var i = parseInt(el.getAttribute('data-node-index'), 10);
+            el.classList.toggle('sankey-dim', !connected.has(i));
+        });
+        chart.querySelectorAll('.sankey-link').forEach(function(el){
+            var si = parseInt(el.querySelector('path').getAttribute('data-source-index'), 10);
+            var ti = parseInt(el.querySelector('path').getAttribute('data-target-index'), 10);
+            el.classList.toggle('sankey-dim', si !== nodeIndex && ti !== nodeIndex);
+        });
+    }
+
+    window.__sankeyNodeClick__ = function(d, event, el) {
+        event.stopPropagation();
+        var i = parseInt(el.getAttribute('data-node-index'), 10);
+        if (highlightedNodeIndex === i) { clearHighlight(); return; }
+        highlightedNodeIndex = i;
+        applyHighlight(i);
+    };
+    document.addEventListener('click', function(e){
+        if (!e.target.closest('.sankey-node') && !e.target.closest('#sankey-main')) clearHighlight();
+    });
+
+    // Lets draw it
+    drawchart();
+
+    document.getElementById('linkColorOptions').addEventListener('change', function(e){
+        linkColor = e.target.value;
+        drawchart();
+    });
+    document.getElementById('AlignOptions').addEventListener('change', function(e){
+        align = e.target.value;
+        drawchart();
+    });
+
+    // ————————————————————————————————————————————————————————————
+    // Search: find a node by name, jump = pulse-highlight it (no
+    // pan/zoom needed -- the whole diagram is already fully visible).
+    // ————————————————————————————————————————————————————————————
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+
+    function renderSearchResults(query) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) { searchResults.innerHTML = ''; searchResults.classList.remove('open'); return; }
+        const matches = data.nodes
+            .map(function(n, i){ return {name: n.name, idx: i}; })
+            .filter(function(n){ return n.name.toLowerCase().includes(q); })
+            .slice(0, 12);
+        if (!matches.length) {
+            searchResults.innerHTML = '<div class="search-item" style="opacity:0.5;cursor:default">No matches</div>';
+            searchResults.classList.add('open');
+            return;
+        }
+        searchResults.innerHTML = matches.map(function(m){
+            return '<div class="search-item" data-idx="' + m.idx + '">' + m.name + '</div>';
+        }).join('');
+        searchResults.classList.add('open');
+    }
+
+    function jumpToNode(nameIdx) {
+        if (!chart || !chart.computed) return;
+        var node = chart.computed.nodes.find(function(n){ return n.id === data.nodes[nameIdx].name; });
+        if (!node) return;
+        var el = chart.querySelector('.sankey-node[data-node-index="' + node.index + '"]');
+        highlightedNodeIndex = node.index;
+        applyHighlight(node.index);
+        if (el) {
+            el.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'center'});
+        }
+        searchResults.classList.remove('open');
+        searchInput.value = data.nodes[nameIdx].name;
+        searchInput.blur();
+    }
+
+    searchInput.addEventListener('input', function(){ renderSearchResults(searchInput.value); });
+    searchInput.addEventListener('focus', function(){ if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
+    searchResults.addEventListener('mousedown', function(e){
+        var item = e.target.closest('.search-item');
+        if (!item || !item.dataset.idx) return;
+        e.preventDefault();
+        jumpToNode(parseInt(item.dataset.idx, 10));
+    });
+    document.addEventListener('click', function(e){ if (!e.target.closest('.search-wrap')) searchResults.classList.remove('open'); });
+
+    // ————————————————————————————————————————————————————————————
+    // Theme toggle (button + T key), same behavior as scatter
+    // ————————————————————————————————————————————————————————————
+    function toggleTheme() {
+        var themeBtn = document.getElementById('themeBtn');
+        var isLight = document.body.classList.toggle('light');
+        if (themeBtn) { themeBtn.textContent = isLight ? '☀' : '🌙'; themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark'; }
+    }
+    var themeBtn = document.getElementById('themeBtn');
+    if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+    window.addEventListener('keydown', function(e){
+        if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme();
+    });
+
+    // ————————————————————————————————————————————————————————————
+    // Export: nodes + links as downloadable JSON
+    // ————————————————————————————————————————————————————————————
+    var exportButton = document.getElementById('exportButton');
+    if (exportButton) exportButton.addEventListener('click', function(){
+        var out = { nodes: data.nodes, links: links };
+        var blob = new Blob([JSON.stringify(out, null, 2)], {type: 'application/json'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'sankey_data.json';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    });
+
+    // ————————————————————————————————————————————————————————————
+    // Collapsible + draggable side panels (same pattern as scatter)
+    // ————————————————————————————————————————————————————————————
+    var PANEL_ORDER = ['displayPanel', 'exportPanel'];
+    function positionSidePanels() {
+        var bar = document.querySelector('.top-panel');
+        if (!bar) return;
+        var bottom = bar.getBoundingClientRect().bottom;
+        var y = bottom + 8, bottomPad = 12;
+        PANEL_ORDER.forEach(function(id){
+            var panel = document.getElementById(id);
+            if (!panel || panel.style.display === 'none') return;
+            panel.style.top = y + 'px';
+            var maxH = Math.max(80, window.innerHeight - y - bottomPad);
+            panel.style.maxHeight = maxH + 'px';
+            y += panel.getBoundingClientRect().height + 10;
+        });
+    }
+    window.addEventListener('resize', positionSidePanels);
+    window.addEventListener('load', positionSidePanels);
+    positionSidePanels();
+    requestAnimationFrame(positionSidePanels);
+    if (typeof ResizeObserver !== 'undefined') {
+        PANEL_ORDER.forEach(function(id){
+            var el = document.getElementById(id);
+            if (el) new ResizeObserver(function(){ positionSidePanels(); }).observe(el);
+        });
+    }
+    PANEL_ORDER.forEach(function(panelId){
+        var panel = document.getElementById(panelId);
+        if (!panel) return;
+        var title = panel.querySelector('.stats-panel-title');
+        if (!title) return;
+        title.addEventListener('click', function(){
+            if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+            panel.classList.toggle('collapsed');
+            setTimeout(positionSidePanels, 0);
+        });
+        title.addEventListener('dragstart', function(e){
+            e.dataTransfer.setData('text/plain', panelId);
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        title.addEventListener('dragend', function(){
+            title.dataset.justDragged = '1';
+            setTimeout(function(){ title.dataset.justDragged = '0'; }, 0);
+        });
+        panel.addEventListener('dragover', function(e){ e.preventDefault(); e.dataTransfer.dropEffect = 'move'; panel.classList.add('drag-over'); });
+        panel.addEventListener('dragleave', function(){ panel.classList.remove('drag-over'); });
+        panel.addEventListener('drop', function(e){
+            e.preventDefault();
+            panel.classList.remove('drag-over');
+            var draggedId = e.dataTransfer.getData('text/plain');
+            if (!draggedId || draggedId === panelId) return;
+            var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+            if (from < 0 || to < 0) return;
+            PANEL_ORDER.splice(from, 1);
+            PANEL_ORDER.splice(to, 0, draggedId);
+            positionSidePanels();
+        });
+    });
+
+    
+        // SAVE CHART TO SVG
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var svgData = document.querySelector('svg').outerHTML;
+            var blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'Sankey - D3blocks.svg';
+            link.click();
+        });
+        
+
+</script>
+
+</body>
+</html>

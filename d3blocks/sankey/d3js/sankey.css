@@ -1,0 +1,137 @@
+  :root {
+    /* Dark theme (default) — mirrors scatter.css's flat, non-glassmorphism look. */
+    --bg: #222;
+    --panel-bg: rgba(34, 34, 34, 0.92);
+    --panel-border: rgba(255, 255, 255, 0.15);
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --text: #eee;
+    --text-muted: rgba(238, 238, 238, 0.6);
+    --btn-bg: #333;
+    --btn-bg-active: #3d3d3d;
+    --btn-border: #555;
+    --btn-text: #eee;
+    --tooltip-bg: rgba(34, 34, 34, 0.95);
+    --tooltip-text: #fff;
+    --section-label: rgba(238, 238, 238, 0.5);
+    --search-hover: #1e4d42;
+    --transition: background 0.2s, color 0.2s, border-color 0.25s;
+    --accent: #1ABC9C;
+    --topbar-bg: rgba(34, 34, 34, 0.4);
+    --dim-opacity: 0.12;
+  }
+  body.light {
+    --bg: #fff;
+    --panel-bg: rgba(255, 255, 255, 0.92);
+    --panel-border: rgba(0, 0, 0, 0.1);
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --text: #222;
+    --text-muted: rgba(34, 34, 34, 0.55);
+    --btn-bg: #fff;
+    --btn-bg-active: #eee;
+    --btn-border: #ccc;
+    --btn-text: #222;
+    --tooltip-bg: rgba(255, 255, 255, 0.96);
+    --tooltip-text: #1a1a1a;
+    --section-label: rgba(34, 34, 34, 0.45);
+    --search-hover: #e8f8f5;
+    --accent: #1ABC9C;
+    --topbar-bg: rgba(255, 255, 255, 0.4);
+    --dim-opacity: 0.08;
+  }
+  html, body {
+    margin: 0; height: 100%;
+    background: var(--bg);
+    font-family: "Helvetica", Arial, sans-serif;
+    overflow: auto; transition: var(--transition);
+  }
+
+  /* —— Top bar: logo left, search center, controls right —— */
+  .top-panel {
+    position: fixed; top: 10px; left: 10px; right: 10px;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 12px; z-index: 1200;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--topbar-bg); box-shadow: var(--panel-shadow);
+    transition: var(--transition); pointer-events: none;
+  }
+  .top-panel .top-panel-left { pointer-events: none; }
+  .top-panel .top-panel-center { pointer-events: auto; display: flex; justify-content: center; align-items: center; }
+  .top-panel .top-panel-right { pointer-events: auto; display: flex; gap: 8px; align-items: center; justify-self: end; }
+  .top-panel .button-switch { margin: 0; }
+  .top-search { width: 360px; max-width: 50vw; }
+  .top-search .search-input { width: 100%; }
+
+  .search-wrap { position: relative; margin-bottom: 0; }
+  .search-input {
+    width: 100%; box-sizing: border-box;
+    background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+    border-radius: 6px; padding: 9px 12px; font-size: 13px;
+    font-family: "Helvetica", Arial, sans-serif;
+    outline: none; transition: var(--transition), width 0.2s;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { border-color: var(--accent); }
+  .search-results {
+    position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px;
+    background: var(--panel-bg); border: 1px solid var(--panel-border);
+    border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 20;
+    display: none; box-shadow: var(--dropdown-shadow);
+  }
+  .search-results.open { display: block; }
+  .search-item { padding: 7px 12px; font-size: 12px; color: var(--text); cursor: pointer; border-bottom: 1px solid var(--panel-border); }
+  .search-item:last-child { border-bottom: none; }
+  .search-item:hover, .search-item.active { background: var(--search-hover); }
+  .search-item .meta { opacity: 0.5; font-size: 11px; }
+
+  /* —— Floating collapsible/draggable side panels —— */
+  .stats-panel {
+    position: fixed; display: flex; flex-direction: column;
+    resize: both; overflow: hidden; top: 10px; left: 10px; z-index: 1000;
+    background: var(--panel-bg); color: var(--text); border-radius: 8px;
+    padding: 10px 14px; box-shadow: var(--panel-shadow);
+    font-family: "Helvetica", Arial, sans-serif; font-size: 13px;
+    width: 220px; min-width: 180px; max-width: min(600px, calc(100vw - 40px));
+    border: 1px solid var(--panel-border);
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+    min-height: 40px; max-height: calc(100vh - 40px);
+  }
+  .stats-panel.collapsed { resize: none; }
+  .stats-panel-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .stats-panel .stats-panel-title {
+    font-weight: bold; margin-bottom: 6px; cursor: grab; user-select: none;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .stats-panel .stats-panel-title:active { cursor: grabbing; }
+  .stats-panel.drag-over { outline: 2px dashed var(--accent); outline-offset: 2px; }
+  .stats-panel.collapsed .stats-panel-title { margin-bottom: 0; }
+  .stats-panel.collapsed .stats-panel-body { display: none; }
+  .stats-panel-toggle { display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; color: inherit; transition: transform 0.15s ease; }
+  .stats-panel-toggle svg { width: 12px; height: 12px; display: block; }
+  .stats-panel.collapsed .stats-panel-toggle { transform: rotate(-90deg); }
+  .stats-panel label { display: block; margin: 4px 0; cursor: pointer; }
+  .stats-panel select {
+    width: 100%; box-sizing: border-box; margin-top: 4px;
+    background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+    border-radius: 5px; padding: 5px 8px; font-size: 13px; font-family: "Helvetica", Arial, sans-serif;
+  }
+  .panel-field { margin: 10px 0; }
+  .panel-field label { font-weight: normal; margin-bottom: 3px; }
+
+  .button-switch {
+    display: inline-block; margin: 8px 4px; padding: 6px 16px; border-radius: 6px;
+    border: 1px solid var(--btn-border); background: var(--btn-bg); color: var(--btn-text);
+    cursor: pointer; font-size: 1em; font-family: "Helvetica", Arial, sans-serif; transition: var(--transition);
+  }
+  .button-switch:active { background: var(--btn-bg-active); }
+  .button-switch.active { background: var(--btn-bg-active); border-color: var(--btn-border); color: var(--btn-text); }
+  .stats-panel .button-switch { display: block; width: 100%; text-align: center; margin: 10px 0 0 0; box-sizing: border-box; }
+
+  /* —— Sankey-specific: hover/focus/dim states —— */
+  #sankey-main { display: flex; justify-content: center; margin-top: 90px; padding-bottom: 40px; }
+  #sankey-main svg { display: block; }
+  .sankey-node rect { cursor: pointer; transition: opacity 0.2s; }
+  .sankey-link { transition: opacity 0.2s; }
+  .sankey-dim { opacity: var(--dim-opacity) !important; }
+  .sankey-node-label { fill: var(--text); font-family: "Helvetica", Arial, sans-serif; transition: opacity 0.2s; }
