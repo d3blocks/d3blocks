@@ -46,6 +46,7 @@ dependencies = [
     'tqdm',
     'requests',
     'jinja2',
+    'scikit-learn',
 ]
 
 [project.urls]
