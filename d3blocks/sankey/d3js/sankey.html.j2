@@ -24,7 +24,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 <div class="top-panel" role="toolbar" aria-label="Top controls">
     <div class="top-panel-left">
         <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
-            <img src="{% include '../../utils/logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+            <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
         </a>
     </div>
     <div class="top-panel-center">
@@ -216,20 +216,26 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     // ————————————————————————————————————————————————————————————
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
+    let searchActiveIndex = -1;
+    let searchMatches = [];
 
     function renderSearchResults(query) {
         const q = (query || '').trim().toLowerCase();
-        if (!q) { searchResults.innerHTML = ''; searchResults.classList.remove('open'); return; }
-        const matches = data.nodes
+        searchActiveIndex = -1;
+        if (!q) {
+            searchMatches = [];
+            searchResults.innerHTML = ''; searchResults.classList.remove('open'); return;
+        }
+        searchMatches = data.nodes
             .map(function(n, i){ return {name: n.name, idx: i}; })
             .filter(function(n){ return n.name.toLowerCase().includes(q); })
             .slice(0, 12);
-        if (!matches.length) {
+        if (!searchMatches.length) {
             searchResults.innerHTML = '<div class="search-item" style="opacity:0.5;cursor:default">No matches</div>';
             searchResults.classList.add('open');
             return;
         }
-        searchResults.innerHTML = matches.map(function(m){
+        searchResults.innerHTML = searchMatches.map(function(m){
             return '<div class="search-item" data-idx="' + m.idx + '">' + m.name + '</div>';
         }).join('');
         searchResults.classList.add('open');
@@ -252,6 +258,43 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 
     searchInput.addEventListener('input', function(){ renderSearchResults(searchInput.value); });
     searchInput.addEventListener('focus', function(){ if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
+    // Enter previously had NO handler at all. For a standalone (formless)
+    // <input type="search">, some browsers still run a native "clear/
+    // commit" routine on Enter (the input briefly loses/regains state),
+    // which is very likely what looked like the chart "blinking black" --
+    // preventDefault() below stops that native handling outright, and now
+    // Enter actually does something useful (jumps to the active/first
+    // match) instead of silently doing nothing.
+    searchInput.addEventListener('keydown', function(e){
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter' && e.key !== 'Escape') return;
+        if (!searchResults.classList.contains('open') || !searchMatches.length) {
+            if (e.key === 'Enter' && searchInput.value.trim()) {
+                e.preventDefault();
+                renderSearchResults(searchInput.value);
+                if (searchMatches.length) jumpToNode(searchMatches[0].idx);
+            }
+            return;
+        }
+        if (e.key === 'ArrowDown') {
+            e.preventDefault(); searchActiveIndex = Math.min(searchMatches.length - 1, searchActiveIndex + 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault(); searchActiveIndex = Math.max(0, searchActiveIndex - 1);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            var pick = searchMatches[searchActiveIndex >= 0 ? searchActiveIndex : 0];
+            if (pick) jumpToNode(pick.idx);
+            return;
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            searchResults.classList.remove('open'); searchInput.blur();
+            return;
+        }
+        var items = searchResults.querySelectorAll('.search-item');
+        items.forEach(function(el, i){
+            el.classList.toggle('active', i === searchActiveIndex);
+            if (i === searchActiveIndex) el.scrollIntoView({block: 'nearest'});
+        });
+    });
     searchResults.addEventListener('mousedown', function(e){
         var item = e.target.closest('.search-item');
         if (!item || !item.dataset.idx) return;
