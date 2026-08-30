@@ -1303,7 +1303,6 @@ class D3Blocks():
             Size the nodes by specifying per sample_id the size.
                 * 5: set all nodes this this size
                 * {'0': 4, '1': 10, '2': 5, ..}: Specify size for each sample_id
-
         color : int or dictionary. (default: '#808080') or {sample_id i: hex-color}
             Color the nodes by specifying per sample_id the color.
                 * '#000FFF': set all nodes to this color.
@@ -1313,7 +1312,6 @@ class D3Blocks():
             Opacity of the bubbles [0-1].
         stroke : str, (default: '#000000')
             Stroke color of the bubbles.
-
         color_method : str
             Coloring of the nodes.
                 * 'state': Use the colors defined per state as (d3.node_properties).
@@ -1998,14 +1996,18 @@ class D3Blocks():
                 filepath='d3graph.html',
                 cmap='Set2',
                 figsize=[None, None],
+                # Network physics
                 collision=0.5,
                 charge=600,
                 link_tension: float = 1,
+                # Slider properties
                 slider=[None, None],
                 set_slider=0,
                 show_slider=True,
                 click={'fill': None, 'stroke': 'black', 'size': 1.3, 'stroke-width': 3},
+                # GUI properties
                 background_color = '#FFFFFF',
+                show_controls: bool = True,
                 dark_mode = True,
                 sticky: bool = None,
                 node_text_inside: bool = False,
@@ -2016,12 +2018,12 @@ class D3Blocks():
                 density_grid_size: int = 60,
                 density_blur: int = 15,
                 density_opacity: float = 0.8,
+                # Various
+                support='text',
                 notebook=False,
                 showfig=True,
-                support='text',
-                save_button: bool = True,
-                show_controls: bool = True,
-                overwrite=True):
+                overwrite=True,
+                ):
         """d3graph block.
 
         d3graph is integrated in d3blocks and is to create interactive and stand-alone D3 force-directed graphs.
@@ -2165,9 +2167,6 @@ class D3Blocks():
             just hidden, so there's no extra DOM/clutter in the embed. The weight/component
             sliders are controlled separately via show_slider; the Save button specifically
             is also controlled via save_button, independent of this.
-        save_button : bool, (default: True)
-                * True: Save button is shown in the HTML to save the image in svg.
-                * False: No save button is shown in the HTML.
         overwrite : bool, (default: True)
                 * True: Overwrite the html in the destination directory.
                 * False: Do not overwrite destination file but show warning instead.
@@ -2221,6 +2220,7 @@ class D3Blocks():
         * Blog
 
         """
+        save_button = True,
         # Cleaning
         self._clean(clean_config=False)
 

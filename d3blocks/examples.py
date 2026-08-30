@@ -72,8 +72,6 @@ d3.edge_properties['edge_width']
 # d3.chord(df)
 
 # %%
-
-
 # Intialize Treemap
 from d3blocks import D3Blocks
 d3 = D3Blocks(chart='radialgraph', frame=False)
