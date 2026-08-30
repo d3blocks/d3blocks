@@ -116,11 +116,15 @@ body { font-size: {{ FONTSIZE }}; }
 var USER_SPEED = "slow";
 var IS_PAUSED = false;
 var timer_handle = null;
-// —— Continuous playback speed (replaces the old Pause/Slow/Medium/Fast
-// buttons). Slider is 0-100: 0 = stop, 100 = super fast, linearly
-// interpolated in between; default (50) sits in the middle.
-var SPEED_MAX_DELAY = 1000; // slowest (near slider value 0)
-var SPEED_MIN_DELAY = 20;   // super fast (slider value 100)
+// —— Continuous playback speed. Slider is 0-100: 0 = stop, 100 = superfast.
+// Delays come from the Python `speed` dict (injected as `speeds`):
+//   slow      → max delay (left, just after stop)
+//   superfast → min delay (right end of the slider)
+// medium/fast shape the label thresholds only.
+var speeds = {{ SPEED }};
+var SPEED_MAX_DELAY = (speeds && speeds.slow != null) ? +speeds.slow : 1000;
+var SPEED_MIN_DELAY = (speeds && speeds.superfast != null) ? +speeds.superfast
+                    : (speeds && speeds.fast != null) ? +speeds.fast : 20;
 var currentDelay = SPEED_MAX_DELAY - (SPEED_MAX_DELAY - SPEED_MIN_DELAY) * 0.5;
 
 var width = {{ WIDTH }},
@@ -135,7 +139,6 @@ var sched_objs = [],
 // STATE PROPERTIES
 var act_codes = {{ ACT_CODES }};
 var act_counts = {{ ACT_COUNTS }};
-var speeds = {{ SPEED }};
 var time_notes = {{ TIME_NOTES }};
 var notes_index = 0;
 var colorByActivity = {{ COLORBYACTIVITY }} // array of the colors per state
@@ -231,11 +234,17 @@ var force = d3.layout.force()
 	.on("tick", tick)
 	.start();
 
+var circleOpacity = {{ OPACITY }};
+var circleStroke = "{{ STROKE }}";
+
 var circle = svg.selectAll("circle")
 	.data(nodes)
   .enter().append("circle")
 	.attr("r", function(d) { return d.radius; })
-	.style("fill", function(d) { return d.color; });
+	.style("fill", function(d) { return d.color; })
+	.style("opacity", circleOpacity)
+	.style("stroke", circleStroke)
+	.style("stroke-width", 1);
 	// .call(force.drag);
 
 // Track which nodes are currently visible based on the date filter.

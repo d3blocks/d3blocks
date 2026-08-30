@@ -42,7 +42,7 @@ def set_config(config={}, **kwargs):
     config['fontsize'] = kwargs.get('fontsize', 14)
     config['timedelta'] = kwargs.get('timedelta', 'minutes')
     config['standardize'] = kwargs.get('standardize', None)
-    config['speed'] = kwargs.get('speed', {"stop": 100000, "slow": 1000, "medium": 200, "fast": 50})
+    config['speed'] = kwargs.get('speed', {"slow": 1000, "medium": 200, "fast": 50, "superfast": 20})
     config['note'] = kwargs.get('note', None)
     config['time_notes'] = kwargs.get('time_notes', None)
     config['reset_properties'] = kwargs.get('reset_properties', True)
@@ -55,6 +55,8 @@ def set_config(config={}, **kwargs):
     config['show_controls'] = kwargs.get('show_controls', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
     config['background_color'] = kwargs.get('background_color', '#12141c')
+    config['opacity'] = kwargs.get('opacity', 0.6)
+    config['stroke'] = kwargs.get('stroke', '#000000')
 
     return config
 
@@ -401,6 +403,8 @@ def write_html(X, config, logger=None):
         'showControls': str(config['show_controls']).lower(),
         'darkMode': str(config['dark_mode']).lower(),
         'COLOR_BACKGROUND': config['background_color'],
+        'OPACITY': config['opacity'],
+        'STROKE': config['stroke'],
 
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,

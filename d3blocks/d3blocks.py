@@ -1250,6 +1250,8 @@ class D3Blocks():
                       center: str = None,
                       size=5,
                       color=None,
+                      opacity: float = 0.6,
+                      stroke: str = '#000000',
                       cmap: str = 'Set1',
                       color_method: str = 'state',
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
@@ -1257,7 +1259,7 @@ class D3Blocks():
                       fontsize: int = 14,
                       timedelta: str = 'minutes',
                       standardize: str = 'samplewise',
-                      speed: dict = {"slow": 1000, "medium": 200, "fast": 50},
+                      speed: dict = {"slow": 1000, "medium": 200, "fast": 50, "superfast": 20},
                       figsize = [1100, 900],
                       note: str = None,
                       time_notes: str = None,
@@ -1307,6 +1309,10 @@ class D3Blocks():
                 * '#000FFF': set all nodes to this color.
                 * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: Specify color for each sample_id
                 * None: Colors are based on sample_id using the cmap.
+        opacity : float, (default: 0.6)
+            Opacity of the bubbles [0-1].
+        stroke : str, (default: '#000000')
+            Stroke color of the bubbles.
 
         color_method : str
             Coloring of the nodes.
@@ -1335,8 +1341,10 @@ class D3Blocks():
                 * 'relative': Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.
                 * 'minimum': Movements are relative to the minimum time in the dataset.
 
-        speed : dict, (default: {"stop": 100000, "slow": 1000, "medium": 200, "fast": 50})
-            The final html file contains three buttons for speed movements. The lower the value, the faster the time moves.
+        speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50, "superfast": 20})
+            Reference delays (ms) for the playback speed continuum. Lower values move time faster.
+            Keys map to slider regions; ``slow`` is the slowest non-stopped delay and
+            ``superfast`` is the fastest (right end of the slider).
 
         note : str, (default: None)
             A specific note, such as project description can be put on the html page.
@@ -1420,7 +1428,7 @@ class D3Blocks():
         >>> df = d3.import_example('random_time', n=10000, c=300, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
         >>> #
         >>> # Plot
-        >>> d3.movingbubbles(df, speed={"stop": 100000, "slow": 1000, "medium": 200, "fast": 10}, filepath='movingbubbles.html')
+        >>> d3.movingbubbles(df, speed={"slow": 1000, "medium": 200, "fast": 50, "superfast": 20}, filepath='movingbubbles.html')
         >>> #
 
         Examples
@@ -1476,7 +1484,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, background_color=background_color, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, background_color=background_color, opacity=opacity, stroke=stroke, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
