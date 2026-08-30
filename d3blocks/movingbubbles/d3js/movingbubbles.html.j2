@@ -81,7 +81,7 @@ body { font-size: {{ FONTSIZE }}; }
   </div>
 </div>
 
-<!-- Physics: size multiplier (was under Layout) -->
+<!-- Physics: size multiplier + movement tracker -->
 <div class="stats-panel collapsed" id="physicsPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
@@ -90,6 +90,14 @@ body { font-size: {{ FONTSIZE }}; }
       <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Scales all bubble radii (0.25× – 4×)</div>
     </div>
+    <div class="slider-row" style="margin-top:12px">
+      <label for="trackerEnabled" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="trackerEnabled" checked style="accent-color:var(--accent);cursor:pointer">
+        Enable tracker
+      </label>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Draw a trail while a bubble is selected. Trails stay after deselect.</div>
+    </div>
+    <button class="button-switch" id="clearTrailsBtn" type="button" style="width:100%;margin-top:8px;box-sizing:border-box">Clear trails</button>
   </div>
 </div>
 
@@ -280,11 +288,12 @@ svg.on("mousedown", function() {
 	svg.style("cursor", "grabbing");
 });
 svg.on("mouseup", function() { svg.style("cursor", "grab"); });
-// Click empty chart space clears the selected bubble highlight
+// Click empty chart space clears the selected bubble highlight (keeps trails)
 svg.on("click", function() {
 	if (zoomDragged) return;
 	if (selectedNode != null) {
 		selectedNode = null;
+		finalizeTrail();
 		styleSelection();
 	}
 });
@@ -367,6 +376,64 @@ function shapeForNode(d) {
 	return currentShapeMode || "circle";
 }
 
+// Trail layer sits under bubbles so paths don't cover the selection stroke.
+var trailLayer = chartRoot.append("g").attr("class", "trail-layer");
+var trackerEnabled = true;
+var trails = [];       // completed trails (kept after deselect)
+var activeTrail = null; // trail currently being recorded for selectedNode
+var TRAIL_MIN_DIST2 = 4;   // skip points closer than 2px
+var TRAIL_MAX_POINTS = 2500;
+
+function trailPathFromPoints(pts) {
+	if (!pts || !pts.length) return "";
+	var d = "M" + pts[0][0] + "," + pts[0][1];
+	for (var i = 1; i < pts.length; i++) d += "L" + pts[i][0] + "," + pts[i][1];
+	return d;
+}
+function startTrail(node) {
+	if (!trackerEnabled || !node) return;
+	var stroke = node.color || "#1ABC9C";
+	activeTrail = {
+		node: node,
+		points: [[node.x, node.y]],
+		path: trailLayer.append("path")
+			.attr("class", "node-trail")
+			.attr("fill", "none")
+			.attr("stroke", stroke)
+			.attr("stroke-width", 2)
+			.attr("stroke-opacity", 0.8)
+			.attr("stroke-linejoin", "round")
+			.attr("stroke-linecap", "round")
+			.attr("d", "")
+	};
+}
+function finalizeTrail() {
+	if (!activeTrail) return;
+	trails.push(activeTrail);
+	activeTrail = null;
+}
+function updateActiveTrail() {
+	if (!trackerEnabled || !activeTrail || !selectedNode) return;
+	if (activeTrail.node !== selectedNode) return;
+	var n = activeTrail.node;
+	var pts = activeTrail.points;
+	var last = pts[pts.length - 1];
+	var dx = n.x - last[0], dy = n.y - last[1];
+	if (dx * dx + dy * dy < TRAIL_MIN_DIST2) return;
+	pts.push([n.x, n.y]);
+	if (pts.length > TRAIL_MAX_POINTS) pts.shift();
+	activeTrail.path
+		.attr("d", trailPathFromPoints(pts))
+		.attr("stroke", n.color || "#1ABC9C");
+}
+function clearTrails() {
+	finalizeTrail();
+	trailLayer.selectAll("*").remove();
+	trails = [];
+	// If something is still selected and tracker is on, start a fresh trail
+	if (selectedNode && trackerEnabled) startTrail(selectedNode);
+}
+
 var circle = chartRoot.selectAll("path.bubble")
 	.data(nodes)
   .enter().append("path")
@@ -381,6 +448,7 @@ var circle = chartRoot.selectAll("path.bubble")
 
 // Click a bubble to select/highlight it (easier to track). Click the same
 // bubble again or empty chart space to clear. Pan/zoom does not clear.
+// With tracker enabled, a trail is recorded while selected and kept on deselect.
 function styleSelection() {
 	var hasSel = selectedNode != null;
 	circle
@@ -404,7 +472,16 @@ function styleSelection() {
 }
 circle.on("click", function (d) {
 	if (d3.event) d3.event.stopPropagation();
-	selectedNode = (selectedNode === d) ? null : d;
+	if (selectedNode === d) {
+		// deselect: keep trail
+		selectedNode = null;
+		finalizeTrail();
+	} else {
+		// switch or new selection: finalize previous trail, start a new one
+		finalizeTrail();
+		selectedNode = d;
+		startTrail(d);
+	}
 	styleSelection();
 });
 
@@ -622,6 +699,9 @@ function tick(e) {
 	  .attr("y", function(d) { return d.y - d.radius - 4; })
 	  .style("fill", "var(--text)")
 	  .text(function(d) { return currentLabelKey ? labelTextFor(d) : ""; });
+
+  // Append points to the active selection trail
+  updateActiveTrail();
 }
 
 
@@ -1169,6 +1249,23 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener("input", functio
 	var mult = Math.pow(SIZE_MULT_BASE, t);
 	if (sizeMultiplierVal) sizeMultiplierVal.textContent = mult.toFixed(2) + "×";
 	applySizeMultiplier(mult);
+});
+var trackerEnabledCb = document.getElementById("trackerEnabled");
+if (trackerEnabledCb) {
+	trackerEnabled = !!trackerEnabledCb.checked;
+	trackerEnabledCb.addEventListener("change", function () {
+		trackerEnabled = !!trackerEnabledCb.checked;
+		if (!trackerEnabled) {
+			// Stop recording; keep existing trails on screen
+			finalizeTrail();
+		} else if (selectedNode && !activeTrail) {
+			startTrail(selectedNode);
+		}
+	});
+}
+var clearTrailsBtn = document.getElementById("clearTrailsBtn");
+if (clearTrailsBtn) clearTrailsBtn.addEventListener("click", function () {
+	clearTrails();
 });
 var layoutResetBtn = document.getElementById("layoutResetBtn");
 if (layoutResetBtn) layoutResetBtn.addEventListener("click", function () {
