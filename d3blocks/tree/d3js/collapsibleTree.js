@@ -31,6 +31,43 @@
     .attr('class', 'tooltip')
     .style('opacity', 0);
 
+    // Translate so the visible tree bbox is centered in the svg viewport.
+    // Horizontal tree: d.y = depth (x-axis), d.x = sibling rank (y-axis).
+    function centerTree() {
+      if (!root || typeof root.descendants !== 'function') return;
+      var nodes = root.descendants();
+      if (!nodes.length) return;
+
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      nodes.forEach(function(d) {
+        if (d.x < minX) minX = d.x;
+        if (d.x > maxX) maxX = d.x;
+        if (d.y < minY) minY = d.y;
+        if (d.y > maxY) maxY = d.y;
+      });
+
+      // Padding for node radius + labels
+      var pad = 40;
+      minX -= pad;
+      maxX += pad;
+      minY -= pad;
+      maxY += pad + 80;
+
+      var treeW = Math.max(maxY - minY, 1);
+      var treeH = Math.max(maxX - minX, 1);
+      var svgEl = d3.select(el).select('svg');
+      var w = +svgEl.attr('width') || width;
+      var h = +svgEl.attr('height') || height;
+      var tx = (w - treeW) / 2 - minY;
+      var ty = (h - treeH) / 2 - minX;
+
+      if (options.zoomable) {
+        svgEl.call(zoom.transform, d3.zoomIdentity.translate(tx, ty));
+      } else {
+        svg.attr('transform', 'translate(' + tx + ',' + ty + ')');
+      }
+    }
+
     function update(source) {
 
       // Assigns the x and y position for the nodes
@@ -265,6 +302,9 @@
         if (options.collapsed) root.children.forEach(collapse);
         update(root);
 
+        // Center the tree in the viewport on first render
+        centerTree();
+
         // Collapse the node and all it's children
         function collapse(d) {
           if(d.children) {
@@ -279,9 +319,11 @@
           root: root,
           options: options,
           update: update,
-          svg: svg
+          svg: svg,
+          centerTree: centerTree
         };
       },
+
 
       resize: function(width, height) {
         // Resize the canvas
