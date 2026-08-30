@@ -243,6 +243,8 @@ a:hover {
   --accent: #1ABC9C;
   --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   --topbar-bg: rgba(18, 20, 28, 0.55);
+  --dtype-num-color: #6FA8DC;
+  --dtype-cat-color: #E0895C;
 }
 body.light {
   --bg: #e4e6ec;
@@ -258,6 +260,8 @@ body.light {
   --accent: #1ABC9C;
   --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   --topbar-bg: rgba(228, 230, 236, 0.6);
+  --dtype-num-color: #2166AC;
+  --dtype-cat-color: #C0622A;
 }
 html, body {
   height: 100%;
@@ -456,6 +460,58 @@ html, body {
 }
 .button-switch:active { background: var(--btn-bg-active); }
 #dateFilterCount { color: var(--text-muted) !important; }
+
+/* —— Variables panel (numeric / category rows, matches scatter) —— */
+.enrich-var-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--panel-border);
+}
+.enrich-var-row:last-child { border-bottom: none; }
+.enrich-var-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.enrich-var-check input { accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+.enrich-var-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.enrich-var-row.dtype-num .enrich-var-dot { background: var(--dtype-num-color); }
+.enrich-var-row.dtype-cat .enrich-var-dot { background: var(--dtype-cat-color); }
+.enrich-var-row.dtype-num:not(.disabled) .enrich-var-check { color: var(--dtype-num-color); }
+.enrich-var-row.dtype-cat:not(.disabled) .enrich-var-check { color: var(--dtype-cat-color); }
+.enrich-var-row.disabled { opacity: 0.5; }
+.enrich-var-row.disabled .enrich-var-check { color: var(--text-muted); }
+.enrich-var-row.disabled .enrich-var-dot { background: var(--text-muted); }
+.enrich-var-row.disabled .enrich-var-dtype { color: var(--text-muted); }
+.enrich-var-dtype {
+  font-size: 11px;
+  flex-shrink: 0;
+  width: 118px;
+  max-width: 118px;
+  box-sizing: border-box;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 2px 4px;
+  font-family: "Helvetica", Arial, sans-serif;
+}
 
 /* —— Note/citation overlay: was hardcoded for a permanently-dark page;
    now theme-aware so it stays legible in light mode too. —— */

@@ -93,6 +93,15 @@ body { font-size: {{ FONTSIZE }}; }
   </div>
 </div>
 
+<!-- Variables: numeric vs category (drives Layout Size / Color / Shape options) -->
+<div class="stats-panel collapsed" id="varsPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Variables<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div style="font-size:11px;opacity:0.6;margin-bottom:8px">Set each variable to Numeric or Category. Uncheck to hide it from Layout.</div>
+    <div id="varList"><div style="opacity:0.5;font-size:12px">No variables found.</div></div>
+  </div>
+</div>
+
 <!-- Filtering: was "Filter by date:" -->
 <div class="stats-panel collapsed" id="filterPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
@@ -788,16 +797,37 @@ function propKeys() {
 function liveStateName(d) {
 	return actIndexToDesc[String(d.act)] != null ? actIndexToDesc[String(d.act)] : String(d.act);
 }
-function isNumericProp(key) {
-	var nums = 0, total = 0, i, v;
+function propColumnValues(key) {
+	var out = [], i, v;
 	for (i = 0; i < nodes.length; i++) {
 		v = nodes[i].props ? nodes[i].props[key] : null;
+		out.push(v);
+	}
+	return out;
+}
+function detectColumnDtype(values) {
+	var nums = 0, total = 0, i, v;
+	for (i = 0; i < values.length; i++) {
+		v = values[i];
 		if (v == null || v === '') continue;
 		total++;
 		if (typeof v === 'number' && isFinite(v)) nums++;
-		else if (typeof v !== 'boolean' && v !== '' && !isNaN(+v)) nums++;
+		else if (typeof v !== 'boolean' && String(v).trim() !== '' && !isNaN(+v)) nums++;
 	}
-	return total > 0 && nums === total;
+	return (total > 0 && nums === total) ? 'num' : 'cat';
+}
+// Per-variable UI state: enabled + dtype override (num|cat). Mirrors scatter's
+// enrichVarState so Layout Size/Shape respect user classification.
+var varState = {};
+function isNumericProp(key) {
+	// Prefer Variables-panel override; fall back to auto-detect.
+	if (varState[key] && varState[key].dtypeOverride) {
+		return varState[key].dtypeOverride === 'num';
+	}
+	return detectColumnDtype(propColumnValues(key)) === 'num';
+}
+function isVarEnabled(key) {
+	return !varState[key] || varState[key].enabled !== false;
 }
 function numericValues(key) {
 	var out = [], i, v;
@@ -912,16 +942,22 @@ function applySizeMultiplier(mult) {
 }
 
 function initLayoutPropertyControls() {
-	// Populate dropdowns from per-sample property bags (df columns):
-	//   Size  → numeric columns only
-	//   Color → all columns (numeric = continuous scale, categorical = discrete)
-	//   Shape → categorical columns only (Default = circle)
-	//   Label → all columns
+	// Populate dropdowns from per-sample property bags (df columns), filtered
+	// by the Variables panel (enabled + numeric/category):
+	//   Size  → enabled numeric only
+	//   Color → all enabled (numeric = continuous, categorical = discrete)
+	//   Shape → enabled categorical only (Default = circle)
+	//   Label → all enabled
 	var keys = propKeys();
 	var sizeSelect = document.getElementById("layoutSizeSelect");
 	var colorSelect = document.getElementById("layoutColorSelect");
 	var shapeSelect = document.getElementById("layoutShapeSelect");
 	var labelSelect = document.getElementById("layoutLabelSelect");
+
+	var prevSize = sizeSelect ? sizeSelect.value : '';
+	var prevColor = colorSelect ? colorSelect.value : '';
+	var prevShape = shapeSelect ? shapeSelect.value : 'circle';
+	var prevLabel = labelSelect ? labelSelect.value : '';
 
 	function clearDynamic(select, keepFirst) {
 		if (!select) return;
@@ -940,15 +976,85 @@ function initLayoutPropertyControls() {
 		select.appendChild(o);
 	}
 	keys.forEach(function (k) {
-		// Color + Label: every variable. Size: numeric only. Shape: categorical only.
-		// State is treated as categorical even though values are strings.
+		if (!isVarEnabled(k)) return;
+		// State is always categorical for layout purposes.
 		var numeric = (k !== STATE_COL) && isNumericProp(k);
 		if (numeric) addOpt(sizeSelect, k, k);
 		addOpt(colorSelect, k, k);
 		if (!numeric) addOpt(shapeSelect, "prop:" + k, k);
 		addOpt(labelSelect, k, k);
 	});
+
+	function restore(select, prev, fallback, applyFn) {
+		if (!select) return;
+		var ok = Array.prototype.some.call(select.options, function (o) { return o.value === prev; });
+		if (ok) select.value = prev;
+		else {
+			select.value = fallback;
+			if (applyFn) applyFn(fallback);
+		}
+	}
+	restore(sizeSelect, prevSize, '', applySizeMode);
+	restore(colorSelect, prevColor, '', applyColorMode);
+	restore(shapeSelect, prevShape, 'circle', applyShapeMode);
+	restore(labelSelect, prevLabel, '', applyLabelMode);
 }
+
+function escapeHtmlVar(v) {
+	if (v == null) return '';
+	return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function populateVarList() {
+	var container = document.getElementById('varList');
+	if (!container) return;
+	var keys = propKeys();
+	if (!keys.length) {
+		container.innerHTML = '<div style="opacity:0.5;font-size:12px">No variables found.</div>';
+		return;
+	}
+	keys.forEach(function (k) {
+		if (!varState[k]) {
+			var auto = (k === STATE_COL) ? 'cat' : detectColumnDtype(propColumnValues(k));
+			varState[k] = { enabled: true, dtypeOverride: auto };
+		}
+	});
+	var html = '';
+	keys.forEach(function (k) {
+		var state = varState[k];
+		var dtype = state.dtypeOverride || 'cat';
+		var rowClasses = 'enrich-var-row ' + (dtype === 'num' ? 'dtype-num' : 'dtype-cat') + (state.enabled === false ? ' disabled' : '');
+		html += '<div class="' + rowClasses + '" data-key="' + escapeHtmlVar(k) + '">' +
+			'<label class="enrich-var-check"><input type="checkbox" class="enrich-var-checkbox" data-key="' + escapeHtmlVar(k) + '"' +
+			(state.enabled !== false ? ' checked' : '') + '><span class="enrich-var-dot" aria-hidden="true"></span>' +
+			escapeHtmlVar(k) + '</label>' +
+			'<select class="enrich-var-dtype" data-key="' + escapeHtmlVar(k) + '">' +
+			'<option value="num"' + (dtype === 'num' ? ' selected' : '') + '>Numeric</option>' +
+			'<option value="cat"' + (dtype === 'cat' ? ' selected' : '') + '>Category</option>' +
+			'</select></div>';
+	});
+	container.innerHTML = html;
+	container.querySelectorAll('.enrich-var-checkbox').forEach(function (cb) {
+		cb.addEventListener('change', function () {
+			varState[cb.dataset.key].enabled = cb.checked;
+			var row = cb.closest('.enrich-var-row');
+			if (row) row.classList.toggle('disabled', !cb.checked);
+			initLayoutPropertyControls();
+		});
+	});
+	container.querySelectorAll('.enrich-var-dtype').forEach(function (sel) {
+		sel.addEventListener('change', function () {
+			varState[sel.dataset.key].dtypeOverride = sel.value;
+			var row = sel.closest('.enrich-var-row');
+			if (row) {
+				row.classList.remove('dtype-num', 'dtype-cat');
+				row.classList.add(sel.value === 'num' ? 'dtype-num' : 'dtype-cat');
+			}
+			initLayoutPropertyControls();
+		});
+	});
+	if (typeof positionSidePanels === 'function') setTimeout(positionSidePanels, 0);
+}
+populateVarList();
 initLayoutPropertyControls();
 
 var layoutSizeSelect = document.getElementById("layoutSizeSelect");
