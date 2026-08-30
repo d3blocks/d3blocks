@@ -482,10 +482,7 @@ function styleSelection() {
 	var hasSel = selectedNodes.length > 0;
 	circle
 		.classed("selected", function (d) { return isSelected(d); })
-		.style("opacity", function (d) {
-			if (!hasSel) return circleOpacity;
-			return isSelected(d) ? 1 : Math.min(0.22, circleOpacity * 0.4);
-		})
+		.style("opacity", function () { return circleOpacity; })
 		.style("stroke", function (d) {
 			return isSelected(d) ? "#ffffff" : circleStroke;
 		})
@@ -845,14 +842,10 @@ function resetSimulation() {
 		act_counts[act] += 1;
 	});
 
-	// Clear selection and trails
+	// Clear selection (trails are intentionally left alone -- only the
+	// "Clear trails" button should remove them; Reset restarts positions
+	// but the trail history stays visible).
 	selectedNodes = [];
-	if (typeof finalizeAllActiveTrails === 'function') finalizeAllActiveTrails();
-	if (typeof trailLayer !== 'undefined' && trailLayer) {
-		trailLayer.selectAll('*').remove();
-	}
-	trails = [];
-	activeTrails = [];
 	if (typeof styleSelection === 'function') styleSelection();
 
 	// Clock + activity percentages
@@ -872,12 +865,15 @@ function resetSimulation() {
 	}
 
 	force.resume();
-	// Resume from the current speed slider (0 = stay paused)
+	// Reset always stops playback: slider goes to 0 (leftmost/stop) rather
+	// than resuming at whatever speed was previously set.
 	var slider = document.getElementById('speedSlider');
 	if (slider) {
-		applySpeedSlider(slider.value);
-	} else if (!IS_PAUSED) {
-		timer_handle = setTimeout(timer, currentDelay);
+		slider.value = 0;
+		applySpeedSlider(0);
+	} else {
+		IS_PAUSED = true;
+		if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
 	}
 }
 var resetSimBtn = document.getElementById('resetSimBtn');
