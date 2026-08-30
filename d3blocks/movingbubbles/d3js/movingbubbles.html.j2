@@ -337,6 +337,16 @@ var nodes = sched_objs.map(function(o, i) {
 // multiplier / size-by-variable can scale it non-destructively.
 var baseNodeRadii = nodes.map(function(n) { return n.radius; });
 
+// End of the simulation: last datetime event across all samples
+// (sum of activity durations per schedule, then max).
+var simulationEndMinute = 0;
+nodes.forEach(function (n) {
+	var total = 0;
+	for (var i = 0; i < n.sched.length; i++) total += n.sched[i].duration;
+	if (total > simulationEndMinute) simulationEndMinute = total;
+});
+var SIMULATION_ENDED = false;
+
 var force = d3.layout.force()
 	.nodes(nodes)
 	.size([width, height])
@@ -597,7 +607,7 @@ applyDateFilter();
 
 // Update nodes based on activity and duration
 function timer() {
-	if (IS_PAUSED) return;
+	if (IS_PAUSED || SIMULATION_ENDED) return;
 
 	d3.range(nodes.length).map(function(i) {
 		var curr_node = nodes[i],
@@ -665,8 +675,17 @@ function timer() {
 			notes_index = 0;
 		}
 	}
-	
-	
+
+	// Stop when the last datetime event across all samples has passed
+	if (simulationEndMinute > 0 && curr_minute >= simulationEndMinute) {
+		SIMULATION_ENDED = true;
+		IS_PAUSED = true;
+		timer_handle = null;
+		var speedLbl = document.getElementById('speedLabel');
+		if (speedLbl) speedLbl.textContent = 'Finished';
+		return;
+	}
+
 	timer_handle = setTimeout(timer, currentDelay);
 }
 timer_handle = setTimeout(timer, currentDelay);
@@ -775,6 +794,17 @@ function delayForSliderValue(v) {
 function applySpeedSlider(v) {
 	v = +v;
 	var label = document.getElementById('speedLabel');
+	if (SIMULATION_ENDED) {
+		// Stay stopped until Reset; only update the delay for after restart
+		if (label) label.textContent = 'Finished';
+		if (v === 0) {
+			IS_PAUSED = true;
+			if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+		} else {
+			currentDelay = delayForSliderValue(v);
+		}
+		return;
+	}
 	if (label) label.textContent = speedLabelFor(v);
 	if (v === 0) {
 		IS_PAUSED = true;
@@ -799,6 +829,7 @@ function resetSimulation() {
 	if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
 	curr_minute = 0;
 	notes_index = 0;
+	SIMULATION_ENDED = false;
 
 	var k;
 	for (k in act_counts) {
@@ -841,7 +872,11 @@ function resetSimulation() {
 	}
 
 	force.resume();
-	if (!IS_PAUSED) {
+	// Resume from the current speed slider (0 = stay paused)
+	var slider = document.getElementById('speedSlider');
+	if (slider) {
+		applySpeedSlider(slider.value);
+	} else if (!IS_PAUSED) {
 		timer_handle = setTimeout(timer, currentDelay);
 	}
 }
