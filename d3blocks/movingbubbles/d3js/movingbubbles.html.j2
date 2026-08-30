@@ -18,13 +18,6 @@ Licensed    : GPL3
 {% include "movingbubbles.css" %}
 body { font-size: {{ FONTSIZE }}; }
 .node { stroke-width: 1.5px; }
-#speed .togglebutton.pause {
-  border-right: none;
-}
-#speed .togglebutton.slow {
-  border-right: none;
-  border-left: none;
-}
 </style>
 </head>
 
@@ -37,40 +30,42 @@ body { font-size: {{ FONTSIZE }}; }
         <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
     </a>
   </div>
-  <div class="top-panel-center" style="display:flex;flex-direction:column;align-items:center;line-height:1.2">
-    <div id="current_day">&nbsp;</div>
-    <div id="current_time">{{ START_TIME }}</div>
+  <div class="top-panel-center top-speed">
+    <span id="speedLabel" class="top-speed-label">Medium</span>
+    <input type="range" id="speedSlider" min="0" max="100" step="1" value="50" title="Stop (left) to very fast (right)">
   </div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
 
-<!-- Playback: was the always-visible Pause/Slow/Medium/Fast row -->
-<div class="stats-panel collapsed" id="playbackPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Playback<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+{{ SAVE_BUTTON_START }}
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
-    <div id="speed">
-        <div class="togglebutton pause" data-val="pause">Pause</div>
-        <div class="togglebutton slow" data-val="slow">Slow</div>
-        <div class="togglebutton medium" data-val="medium">Medium</div>
-        <div class="togglebutton fast" data-val="fast">Fast</div>
-        <div class="clr"></div>
-    </div>
+    <button id="exportButton" class="button-switch" style="width:100%;box-sizing:border-box;margin-bottom:8px">Export</button>
+    <button id="saveButton" class="button-switch" style="width:100%;box-sizing:border-box">Save</button>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads the current state (position, activity, color) of every bubble as JSON.</div>
   </div>
 </div>
+{{ SAVE_BUTTON_STOP }}
 
-<!-- Display: was the "Color on:" dropdown -->
+<!-- Layout: was "Display" -- Color-on dropdown + node size multiplier -->
 <div class="stats-panel collapsed" id="displayPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label for="ColorOptions" style="display:block;margin-bottom:4px">Color on</label>
     <select id="ColorOptions" onchange="link_color_changed(this.value)" style="width:100%;box-sizing:border-box">
       <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
       <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
     </select>
+    <div class="slider-row" style="margin-top:12px">
+      <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
+      <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+    </div>
   </div>
 </div>
+
 
 <!-- Filtering: was "Filter by date:" -->
 <div class="stats-panel collapsed" id="filterPanel">
@@ -89,15 +84,6 @@ body { font-size: {{ FONTSIZE }}; }
   </div>
 </div>
 
-{{ SAVE_BUTTON_START }}
-<div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
-  <div class="stats-panel-body">
-    <button id="saveButton" class="button-switch" style="width:100%;box-sizing:border-box">Save</button>
-  </div>
-</div>
-{{ SAVE_BUTTON_STOP }}
-
 {% endif %}
 
 <div id="noteWrap">
@@ -105,6 +91,13 @@ body { font-size: {{ FONTSIZE }}; }
     <div id="cite">
         {{ NOTE }}
     </div>
+</div>
+
+<!-- Clock: was in the top bar; now floats above the chart itself, centered,
+     per the top bar now hosting the speed slider instead. -->
+<div id="chartHeader">
+    <div id="current_day">&nbsp;</div>
+    <div id="current_time">{{ START_TIME }}</div>
 </div>
 
 <div id="main-wrapper">
@@ -119,6 +112,12 @@ body { font-size: {{ FONTSIZE }}; }
 var USER_SPEED = "slow";
 var IS_PAUSED = false;
 var timer_handle = null;
+// —— Continuous playback speed (replaces the old Pause/Slow/Medium/Fast
+// buttons). Slider is 0-100: 0 = stop, 100 = very fast, linearly
+// interpolated in between; default (50) sits in the middle.
+var SPEED_MAX_DELAY = 1000; // slowest (near slider value 0)
+var SPEED_MIN_DELAY = 50;   // fastest (slider value 100)
+var currentDelay = SPEED_MAX_DELAY - (SPEED_MAX_DELAY - SPEED_MIN_DELAY) * 0.5;
 
 var width = {{ WIDTH }},
     height = {{ HEIGHT }},
@@ -212,6 +211,11 @@ var nodes = sched_objs.map(function(o, i) {
 		sched: o,
 	}
 });
+
+// Remember each node's original radius so the Layout panel's size
+// multiplier can scale it non-destructively, matching scatter's
+// sizeMultiplier pattern.
+var baseNodeRadii = nodes.map(function(n) { return n.radius; });
 
 var force = d3.layout.force()
 	.nodes(nodes)
@@ -379,9 +383,9 @@ function timer() {
 	}
 	
 	
-	timer_handle = setTimeout(timer, speeds[USER_SPEED]);
+	timer_handle = setTimeout(timer, currentDelay);
 }
-timer_handle = setTimeout(timer, speeds[USER_SPEED]);
+timer_handle = setTimeout(timer, currentDelay);
 
 
 
@@ -453,32 +457,42 @@ function collide(alpha) {
 
 
 
-// Speed / pause toggle
-d3.selectAll(".togglebutton")
-  .on("click", function() {
-	var val = d3.select(this).attr("data-val");
-
-	// Clear all active states
-	d3.select(".pause").classed("current", false);
-	d3.select(".slow").classed("current", false);
-	d3.select(".medium").classed("current", false);
-	d3.select(".fast").classed("current", false);
-
-	// Mark clicked button as active
-	d3.select(this).classed("current", true);
-
-	if (val === "pause") {
+// Continuous speed slider (replaces the old Pause/Slow/Medium/Fast
+// buttons). Note: the old click handler here was bound to ALL
+// .togglebutton elements, which also (buggily) matched the date-filter
+// Apply/Reset buttons -- clicking those used to also stomp USER_SPEED to
+// null. Those buttons have their own dedicated handlers already, so
+// removing this entirely is a clean fix, not just a UI swap.
+function speedLabelFor(v) {
+	if (v == 0) return "Stopped";
+	if (v < 25) return "Slow";
+	if (v < 60) return "Medium";
+	if (v < 90) return "Fast";
+	return "Very fast";
+}
+function delayForSliderValue(v) {
+	return SPEED_MAX_DELAY - (SPEED_MAX_DELAY - SPEED_MIN_DELAY) * (v / 100);
+}
+function applySpeedSlider(v) {
+	v = +v;
+	var label = document.getElementById('speedLabel');
+	if (label) label.textContent = speedLabelFor(v);
+	if (v === 0) {
 		IS_PAUSED = true;
 		if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
-	} else {
-		USER_SPEED = val;
-		if (IS_PAUSED) {
-			// Restart the timer loop
-			IS_PAUSED = false;
-			timer_handle = setTimeout(timer, speeds[USER_SPEED]);
-		}
+		return;
 	}
-});
+	currentDelay = delayForSliderValue(v);
+	if (IS_PAUSED) {
+		IS_PAUSED = false;
+		timer_handle = setTimeout(timer, currentDelay);
+	}
+}
+var speedSlider = document.getElementById('speedSlider');
+if (speedSlider) {
+	speedSlider.addEventListener('input', function (e) { applySpeedSlider(e.target.value); });
+	applySpeedSlider(speedSlider.value);
+}
 
 
 
@@ -570,6 +584,13 @@ function positionSidePanels() {
 		panel.style.maxHeight = maxH + 'px';
 		y += panel.getBoundingClientRect().height + 10;
 	});
+	// Clock now floats above the chart -- keep it just below the top bar,
+	// same measured-height approach as the side panels (logo/font loading
+	// can change the bar's actual height).
+	var chartHeader = document.getElementById('chartHeader');
+	if (chartHeader) {
+		chartHeader.style.top = (10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0)) + 'px';
+	}
 }
 window.addEventListener('resize', positionSidePanels);
 window.addEventListener('load', positionSidePanels);
@@ -623,6 +644,47 @@ document.querySelectorAll('.stats-panel-title').forEach(function (title) {
 		});
 	});
 })();
+
+// —— Layout panel: node size multiplier ——
+// Exponential mapping (t in [-1,1], base 4) matches scatter's size slider:
+// t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x. Scales d.radius itself (not just the
+// rendered <circle r>) so collide()'s physics stays consistent with what's
+// drawn -- otherwise bigger/smaller bubbles would visually overlap or leave
+// gaps that don't match their actual collision boundaries.
+var SIZE_MULT_BASE = 4;
+function applySizeMultiplier(mult) {
+	nodes.forEach(function (n, i) { n.radius = baseNodeRadii[i] * mult; });
+	circle.attr("r", function (d) { return d.radius; });
+}
+var sizeMultiplierSlider = document.getElementById('sizeMultiplierSlider');
+var sizeMultiplierVal = document.getElementById('sizeMultiplierVal');
+if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', function (e) {
+	var t = parseFloat(e.target.value) || 0;
+	var mult = Math.pow(SIZE_MULT_BASE, t);
+	if (sizeMultiplierVal) sizeMultiplierVal.textContent = mult.toFixed(2) + '×';
+	applySizeMultiplier(mult);
+});
+
+// —— Export/Save panel: export current bubble state as JSON ——
+var exportButton = document.getElementById('exportButton');
+if (exportButton) exportButton.addEventListener('click', function () {
+	var out = nodes.map(function (n, i) {
+		var actInfo = act_codes.find(function (c) { return c.index === String(n.act); });
+		return {
+			index: i,
+			activity: actInfo ? actInfo.desc : n.act,
+			x: n.x, y: n.y,
+			radius: n.radius,
+			color: n.color
+		};
+	});
+	var blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+	var url = URL.createObjectURL(blob);
+	var a = document.createElement('a');
+	a.href = url; a.download = 'movingbubbles_state.json';
+	document.body.appendChild(a); a.click(); document.body.removeChild(a);
+	setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+});
 
 // —— Theme toggle (button + T key) ——
 function toggleTheme() {

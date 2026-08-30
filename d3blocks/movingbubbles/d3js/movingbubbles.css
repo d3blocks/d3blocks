@@ -211,6 +211,16 @@ a {
 a:hover {
   border-bottom: 1px solid #821122;
 }
+/* Logo link shouldn't get the generic border-bottom "underline" hack. */
+.top-panel-left a, .top-panel-left a:hover {
+  border-bottom: none;
+}
+/* Category labels (state names + live percentages drawn inside the SVG)
+   had no explicit fill at all, so they used the SVG default (black) --
+   invisible against the new dark theme's background. */
+.actlabel, .actlabel tspan {
+  fill: var(--text);
+}
 .clr {
   clear: both;
 }
@@ -291,6 +301,55 @@ html, body {
 .top-panel #current_day, .top-panel #current_time { color: var(--text); text-align: center; transition: var(--transition); }
 .top-panel #current_day { font-size: 13px; color: var(--text-muted); font-style: italic; margin-bottom: 0; }
 .top-panel #current_time { font-size: 28px; }
+
+/* Speed slider, now the top bar's center control (replaces the old
+   Pause/Slow/Medium/Fast buttons). */
+.top-speed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 320px;
+  max-width: 50vw;
+}
+.top-speed-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 62px;
+  text-align: right;
+}
+.top-speed input[type="range"] {
+  flex: 1 1 auto;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.slider-row { margin-bottom: 8px; }
+.slider-row label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  color: var(--text); font-size: 12px; margin-bottom: 6px;
+}
+.slider-row label .val { opacity: 0.55; font-variant-numeric: tabular-nums; }
+.slider-row input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+/* Clock: floats centered above the chart itself (was in the top bar). A
+   small translucent panel keeps it legible over moving, colorful bubbles
+   regardless of what's directly behind it. */
+#chartHeader {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 950;
+  text-align: center;
+  pointer-events: none;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 4px 18px 6px;
+  box-shadow: var(--panel-shadow);
+  transition: var(--transition);
+}
+#chartHeader #current_day { font-size: 13px; color: var(--text-muted); font-style: italic; margin-bottom: 0; }
+#chartHeader #current_time { font-size: 28px; color: var(--text); }
 
 /* —— Floating collapsible/draggable side panels —— */
 .stats-panel {
