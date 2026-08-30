@@ -372,7 +372,7 @@ html, body {
 #chartHeader #current_day { font-size: 13px; color: var(--text-muted); font-style: italic; margin-bottom: 0; }
 #chartHeader #current_time { font-size: 28px; color: var(--text); }
 
-/* —— Floating collapsible/draggable side panels —— */
+/* —— Floating collapsible/draggable side panels (font/style aligned with scatter.css) —— */
 .stats-panel {
   position: fixed;
   display: flex;
@@ -386,9 +386,9 @@ html, body {
   border-radius: 8px;
   padding: 10px 14px;
   box-shadow: var(--panel-shadow);
-  font-family: inconsolata, Monaco, "lucida console", Consolas, "courier new";
+  font-family: "Helvetica", Arial, sans-serif;
   font-size: 13px;
-  width: 230px;
+  width: 220px;
   min-width: 180px;
   max-width: min(600px, calc(100vw - 40px));
   border: 1px solid var(--panel-border);
@@ -418,7 +418,7 @@ html, body {
 .stats-panel select, .stats-panel input[type="date"] {
   background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
   border-radius: 5px; padding: 5px 8px; font-size: 13px;
-  font-family: inconsolata, Monaco, "lucida console", Consolas, "courier new";
+  font-family: "Helvetica", Arial, sans-serif;
 }
 
 /* —— Buttons (re-themed .togglebutton + a generic button-switch) —— */
@@ -452,7 +452,7 @@ html, body {
   color: var(--btn-text);
   cursor: pointer;
   font-size: 1em;
-  font-family: inconsolata, Monaco, "lucida console", Consolas, "courier new";
+  font-family: "Helvetica", Arial, sans-serif;
 }
 .button-switch:active { background: var(--btn-bg-active); }
 #dateFilterCount { color: var(--text-muted) !important; }
