@@ -348,6 +348,12 @@ html, body {
   accent-color: var(--accent);
   cursor: pointer;
 }
+.top-speed .top-reset-btn {
+  flex: 0 0 auto;
+  padding: 4px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
 .slider-row { margin-bottom: 8px; }
 .slider-row label {
   display: flex; justify-content: space-between; align-items: baseline;

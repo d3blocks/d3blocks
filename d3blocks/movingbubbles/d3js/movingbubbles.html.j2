@@ -34,6 +34,7 @@ body { font-size: {{ FONTSIZE }}; }
     <span class="top-speed-caption">Speed</span>
     <span id="speedLabel" class="top-speed-label">Medium</span>
     <input type="range" id="speedSlider" min="0" max="100" step="1" value="50" title="Playback speed: left = stop, right = super fast">
+    <button class="button-switch top-reset-btn" id="resetSimBtn" type="button" title="Restart the simulation from the beginning">Reset</button>
   </div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
@@ -264,7 +265,7 @@ var chartRoot = svg.append("g").attr("class", "chart-root");
 // Tracks whether the last pointer gesture was a pan/zoom (so a trailing
 // click on empty space does not clear the bubble selection).
 var zoomDragged = false;
-var selectedNode = null;
+var selectedNodes = []; // multi-select: list of node data objects
 
 var zoomBehavior = d3.behavior.zoom()
 	.scaleExtent([0.3, 8])
@@ -288,12 +289,12 @@ svg.on("mousedown", function() {
 	svg.style("cursor", "grabbing");
 });
 svg.on("mouseup", function() { svg.style("cursor", "grab"); });
-// Click empty chart space clears the selected bubble highlight (keeps trails)
+// Click empty chart space clears all selected bubble highlights (keeps trails)
 svg.on("click", function() {
 	if (zoomDragged) return;
-	if (selectedNode != null) {
-		selectedNode = null;
-		finalizeTrail();
+	if (selectedNodes.length) {
+		selectedNodes = [];
+		finalizeAllActiveTrails();
 		styleSelection();
 	}
 });
@@ -379,11 +380,14 @@ function shapeForNode(d) {
 // Trail layer sits under bubbles so paths don't cover the selection stroke.
 var trailLayer = chartRoot.append("g").attr("class", "trail-layer");
 var trackerEnabled = true;
-var trails = [];       // completed trails (kept after deselect)
-var activeTrail = null; // trail currently being recorded for selectedNode
+var trails = [];        // completed trails (kept after deselect)
+var activeTrails = [];  // one active trail per currently selected node
 var TRAIL_MIN_DIST2 = 4;   // skip points closer than 2px
 var TRAIL_MAX_POINTS = 2500;
 
+function isSelected(d) {
+	return selectedNodes.indexOf(d) >= 0;
+}
 function trailPathFromPoints(pts) {
 	if (!pts || !pts.length) return "";
 	var d = "M" + pts[0][0] + "," + pts[0][1];
@@ -392,8 +396,12 @@ function trailPathFromPoints(pts) {
 }
 function startTrail(node) {
 	if (!trackerEnabled || !node) return;
+	// Avoid duplicate active trail for the same node
+	for (var i = 0; i < activeTrails.length; i++) {
+		if (activeTrails[i].node === node) return;
+	}
 	var stroke = node.color || "#1ABC9C";
-	activeTrail = {
+	activeTrails.push({
 		node: node,
 		points: [[node.x, node.y]],
 		path: trailLayer.append("path")
@@ -405,33 +413,44 @@ function startTrail(node) {
 			.attr("stroke-linejoin", "round")
 			.attr("stroke-linecap", "round")
 			.attr("d", "")
-	};
+	});
 }
-function finalizeTrail() {
-	if (!activeTrail) return;
-	trails.push(activeTrail);
-	activeTrail = null;
+function finalizeTrailFor(node) {
+	for (var i = activeTrails.length - 1; i >= 0; i--) {
+		if (activeTrails[i].node === node) {
+			trails.push(activeTrails[i]);
+			activeTrails.splice(i, 1);
+		}
+	}
+}
+function finalizeAllActiveTrails() {
+	for (var i = 0; i < activeTrails.length; i++) trails.push(activeTrails[i]);
+	activeTrails = [];
 }
 function updateActiveTrail() {
-	if (!trackerEnabled || !activeTrail || !selectedNode) return;
-	if (activeTrail.node !== selectedNode) return;
-	var n = activeTrail.node;
-	var pts = activeTrail.points;
-	var last = pts[pts.length - 1];
-	var dx = n.x - last[0], dy = n.y - last[1];
-	if (dx * dx + dy * dy < TRAIL_MIN_DIST2) return;
-	pts.push([n.x, n.y]);
-	if (pts.length > TRAIL_MAX_POINTS) pts.shift();
-	activeTrail.path
-		.attr("d", trailPathFromPoints(pts))
-		.attr("stroke", n.color || "#1ABC9C");
+	if (!trackerEnabled || !activeTrails.length) return;
+	for (var t = 0; t < activeTrails.length; t++) {
+		var trail = activeTrails[t];
+		var n = trail.node;
+		var pts = trail.points;
+		var last = pts[pts.length - 1];
+		var dx = n.x - last[0], dy = n.y - last[1];
+		if (dx * dx + dy * dy < TRAIL_MIN_DIST2) continue;
+		pts.push([n.x, n.y]);
+		if (pts.length > TRAIL_MAX_POINTS) pts.shift();
+		trail.path
+			.attr("d", trailPathFromPoints(pts))
+			.attr("stroke", n.color || "#1ABC9C");
+	}
 }
 function clearTrails() {
-	finalizeTrail();
+	finalizeAllActiveTrails();
 	trailLayer.selectAll("*").remove();
 	trails = [];
-	// If something is still selected and tracker is on, start a fresh trail
-	if (selectedNode && trackerEnabled) startTrail(selectedNode);
+	// Restart trails for any nodes still selected
+	if (trackerEnabled) {
+		for (var i = 0; i < selectedNodes.length; i++) startTrail(selectedNodes[i]);
+	}
 }
 
 var circle = chartRoot.selectAll("path.bubble")
@@ -446,40 +465,40 @@ var circle = chartRoot.selectAll("path.bubble")
 	.style("stroke-width", 1)
 	.style("cursor", "pointer");
 
-// Click a bubble to select/highlight it (easier to track). Click the same
-// bubble again or empty chart space to clear. Pan/zoom does not clear.
-// With tracker enabled, a trail is recorded while selected and kept on deselect.
+// Multi-select: click toggles a bubble in/out of the selection. Click empty
+// chart space clears all. With tracker on, each selected bubble records its
+// own trail; trails are kept when nodes are deselected.
 function styleSelection() {
-	var hasSel = selectedNode != null;
+	var hasSel = selectedNodes.length > 0;
 	circle
-		.classed("selected", function (d) { return d === selectedNode; })
+		.classed("selected", function (d) { return isSelected(d); })
 		.style("opacity", function (d) {
 			if (!hasSel) return circleOpacity;
-			return d === selectedNode ? 1 : Math.min(0.22, circleOpacity * 0.4);
+			return isSelected(d) ? 1 : Math.min(0.22, circleOpacity * 0.4);
 		})
 		.style("stroke", function (d) {
-			return d === selectedNode ? "#ffffff" : circleStroke;
+			return isSelected(d) ? "#ffffff" : circleStroke;
 		})
 		.style("stroke-width", function (d) {
-			return d === selectedNode ? 3.5 : 1;
+			return isSelected(d) ? 3.5 : 1;
 		});
 	if (hasSel) {
-		// Raise selected bubble above the others
-		circle.filter(function (d) { return d === selectedNode; }).each(function () {
+		// Raise selected bubbles above the others
+		circle.filter(function (d) { return isSelected(d); }).each(function () {
 			this.parentNode.appendChild(this);
 		});
 	}
 }
 circle.on("click", function (d) {
 	if (d3.event) d3.event.stopPropagation();
-	if (selectedNode === d) {
-		// deselect: keep trail
-		selectedNode = null;
-		finalizeTrail();
+	var idx = selectedNodes.indexOf(d);
+	if (idx >= 0) {
+		// Toggle off this node; keep its trail
+		selectedNodes.splice(idx, 1);
+		finalizeTrailFor(d);
 	} else {
-		// switch or new selection: finalize previous trail, start a new one
-		finalizeTrail();
-		selectedNode = d;
+		// Add to multi-selection and start a trail
+		selectedNodes.push(d);
 		startTrail(d);
 	}
 	styleSelection();
@@ -773,6 +792,64 @@ if (speedSlider) {
 	speedSlider.addEventListener('input', function (e) { applySpeedSlider(e.target.value); });
 	applySpeedSlider(speedSlider.value);
 }
+
+// Restart simulation from t=0: nodes return to first activity, clock/notes
+// reset, selection + trails cleared, zoom restored. Speed setting is kept.
+function resetSimulation() {
+	if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+	curr_minute = 0;
+	notes_index = 0;
+
+	var k;
+	for (k in act_counts) {
+		if (Object.prototype.hasOwnProperty.call(act_counts, k)) act_counts[k] = 0;
+	}
+	nodes.forEach(function (n) {
+		var act = n.sched[0].act;
+		n.act = act;
+		n.moves = 0;
+		n.next_move_time = n.sched[0].duration;
+		n.x = foci[act].x + Math.random();
+		n.y = foci[act].y + Math.random();
+		act_counts[act] += 1;
+	});
+
+	// Clear selection and trails
+	selectedNodes = [];
+	if (typeof finalizeAllActiveTrails === 'function') finalizeAllActiveTrails();
+	if (typeof trailLayer !== 'undefined' && trailLayer) {
+		trailLayer.selectAll('*').remove();
+	}
+	trails = [];
+	activeTrails = [];
+	if (typeof styleSelection === 'function') styleSelection();
+
+	// Clock + activity percentages
+	label.selectAll('tspan.actpct').text(function (d) {
+		return readablePercent(act_counts[d.index]);
+	});
+	var timeResult = formatTime(0);
+	d3.select('#current_day').html(timeResult.day);
+	d3.select('#current_time').text(timeResult.time);
+	d3.select('#note').style('opacity', '0').text('');
+
+	// Zoom back to default
+	if (typeof zoomBehavior !== 'undefined') {
+		zoomBehavior.scale(1);
+		zoomBehavior.translate([0, 0]);
+		chartRoot.attr('transform', 'translate(0,0)scale(1)');
+	}
+
+	force.resume();
+	if (!IS_PAUSED) {
+		timer_handle = setTimeout(timer, currentDelay);
+	}
+}
+var resetSimBtn = document.getElementById('resetSimBtn');
+if (resetSimBtn) resetSimBtn.addEventListener('click', function (e) {
+	if (e) e.stopPropagation();
+	resetSimulation();
+});
 
 
 
@@ -1257,9 +1334,10 @@ if (trackerEnabledCb) {
 		trackerEnabled = !!trackerEnabledCb.checked;
 		if (!trackerEnabled) {
 			// Stop recording; keep existing trails on screen
-			finalizeTrail();
-		} else if (selectedNode && !activeTrail) {
-			startTrail(selectedNode);
+			finalizeAllActiveTrails();
+		} else {
+			// Resume trails for every currently selected node
+			for (var i = 0; i < selectedNodes.length; i++) startTrail(selectedNodes[i]);
 		}
 	});
 }
