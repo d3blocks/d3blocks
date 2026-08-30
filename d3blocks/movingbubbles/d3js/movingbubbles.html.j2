@@ -31,8 +31,9 @@ body { font-size: {{ FONTSIZE }}; }
     </a>
   </div>
   <div class="top-panel-center top-speed">
+    <span class="top-speed-caption">Speed</span>
     <span id="speedLabel" class="top-speed-label">Medium</span>
-    <input type="range" id="speedSlider" min="0" max="100" step="1" value="50" title="Stop (left) to very fast (right)">
+    <input type="range" id="speedSlider" min="0" max="100" step="1" value="50" title="Playback speed: left = stop, right = super fast">
   </div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
@@ -93,15 +94,18 @@ body { font-size: {{ FONTSIZE }}; }
     </div>
 </div>
 
-<!-- Clock: was in the top bar; now floats above the chart itself, centered,
-     per the top bar now hosting the speed slider instead. -->
+<!-- Clock lives in its own reserved strip above the chart so the SVG
+     never draws underneath it. #chartStage is the exclusive area for
+     the visualization; the clock sits in #chartHeader above that stage. -->
 <div id="chartHeader">
     <div id="current_day">&nbsp;</div>
     <div id="current_time">{{ START_TIME }}</div>
 </div>
 
-<div id="main-wrapper">
-    <div id="chart"></div>
+<div id="chartStage">
+    <div id="main-wrapper">
+        <div id="chart"></div>
+    </div>
 </div>
 
 
@@ -113,10 +117,10 @@ var USER_SPEED = "slow";
 var IS_PAUSED = false;
 var timer_handle = null;
 // —— Continuous playback speed (replaces the old Pause/Slow/Medium/Fast
-// buttons). Slider is 0-100: 0 = stop, 100 = very fast, linearly
+// buttons). Slider is 0-100: 0 = stop, 100 = super fast, linearly
 // interpolated in between; default (50) sits in the middle.
 var SPEED_MAX_DELAY = 1000; // slowest (near slider value 0)
-var SPEED_MIN_DELAY = 50;   // fastest (slider value 100)
+var SPEED_MIN_DELAY = 20;   // super fast (slider value 100)
 var currentDelay = SPEED_MAX_DELAY - (SPEED_MAX_DELAY - SPEED_MIN_DELAY) * 0.5;
 
 var width = {{ WIDTH }},
@@ -465,10 +469,11 @@ function collide(alpha) {
 // removing this entirely is a clean fix, not just a UI swap.
 function speedLabelFor(v) {
 	if (v == 0) return "Stopped";
-	if (v < 25) return "Slow";
-	if (v < 60) return "Medium";
-	if (v < 90) return "Fast";
-	return "Very fast";
+	if (v < 20) return "Slow";
+	if (v < 45) return "Medium";
+	if (v < 70) return "Fast";
+	if (v < 90) return "Very fast";
+	return "Super fast";
 }
 function delayForSliderValue(v) {
 	return SPEED_MAX_DELAY - (SPEED_MAX_DELAY - SPEED_MIN_DELAY) * (v / 100);
@@ -584,12 +589,18 @@ function positionSidePanels() {
 		panel.style.maxHeight = maxH + 'px';
 		y += panel.getBoundingClientRect().height + 10;
 	});
-	// Clock now floats above the chart -- keep it just below the top bar,
-	// same measured-height approach as the side panels (logo/font loading
-	// can change the bar's actual height).
+	// Clock sits in its own strip just below the top bar. Measure its
+	// actual height and push #chartStage below it so the SVG never
+	// overlaps the clock.
 	var chartHeader = document.getElementById('chartHeader');
+	var headerTop = 10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0);
 	if (chartHeader) {
-		chartHeader.style.top = (10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0)) + 'px';
+		chartHeader.style.top = headerTop + 'px';
+	}
+	var chartStage = document.getElementById('chartStage');
+	if (chartStage) {
+		var headerBottom = headerTop + (chartHeader ? chartHeader.getBoundingClientRect().height : 0) + 8;
+		chartStage.style.top = headerBottom + 'px';
 	}
 }
 window.addEventListener('resize', positionSidePanels);

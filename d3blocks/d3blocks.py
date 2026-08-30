@@ -1258,7 +1258,7 @@ class D3Blocks():
                       timedelta: str = 'minutes',
                       standardize: str = 'samplewise',
                       speed: dict = {"slow": 1000, "medium": 200, "fast": 50},
-                      figsize = [700, 800],
+                      figsize = [1100, 900],
                       note: str = None,
                       time_notes: str = None,
                       show_controls: bool = True,

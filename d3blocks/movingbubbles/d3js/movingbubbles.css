@@ -267,11 +267,27 @@ html, body {
   overflow: hidden;
 }
 
-/* Full-bleed chart; floating panels sit on top (same as the other charts). */
-#main-wrapper { width: auto; }
-#chart {
+/* Full-bleed chart stage below the clock strip; floating panels sit on top
+   (same as the other charts). #chartStage owns the area under #chartHeader
+   so the SVG never overlaps the clock. */
+#main-wrapper { width: auto; height: 100%; }
+#chartStage {
   position: fixed;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* top is set in JS from measured header heights so the clock always
+     has exclusive space and the chart never draws underneath it. */
+  top: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#chart {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,15 +324,20 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 320px;
-  max-width: 50vw;
+  width: 360px;
+  max-width: 55vw;
 }
-.top-speed-label {
+.top-speed-caption {
   font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
-  min-width: 62px;
-  text-align: right;
+}
+.top-speed-label {
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  min-width: 72px;
+  text-align: left;
 }
 .top-speed input[type="range"] {
   flex: 1 1 auto;
