@@ -237,10 +237,41 @@ act_codes.forEach(function(code, i) {
 });
 
 
-// Start the SVG
+// Start the SVG. Zoom/pan is visual-only (transform on a root group) so the
+// force layout keeps working in the original coordinate system.
 var svg = d3.select("#chart").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .style("cursor", "grab");
+
+// Transparent hit-area so wheel/drag works over empty chart space too.
+svg.append("rect")
+	.attr("class", "zoom-capture")
+	.attr("width", width)
+	.attr("height", height)
+	.style("fill", "transparent")
+	.style("pointer-events", "all");
+
+var chartRoot = svg.append("g").attr("class", "chart-root");
+
+var zoomBehavior = d3.behavior.zoom()
+	.scaleExtent([0.3, 8])
+	.on("zoom", function() {
+		chartRoot.attr("transform",
+			"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+	});
+
+svg.call(zoomBehavior);
+// Disable the default double-click zoom-in; we use double-click to reset.
+svg.on("dblclick.zoom", null);
+svg.on("dblclick", function() {
+	zoomBehavior.scale(1);
+	zoomBehavior.translate([0, 0]);
+	chartRoot.transition().duration(300)
+		.attr("transform", "translate(0,0)scale(1)");
+});
+svg.on("mousedown", function() { svg.style("cursor", "grabbing"); });
+svg.on("mouseup", function() { svg.style("cursor", "grab"); });
 
 
 data.forEach(function(d) {
@@ -320,7 +351,7 @@ function shapeForNode(d) {
 	return currentShapeMode || "circle";
 }
 
-var circle = svg.selectAll("path.bubble")
+var circle = chartRoot.selectAll("path.bubble")
 	.data(nodes)
   .enter().append("path")
 	.attr("class", "bubble")
@@ -332,7 +363,7 @@ var circle = svg.selectAll("path.bubble")
 	.style("stroke-width", 1);
 
 // Per-bubble text labels (Layout → Label)
-var nodeLabel = svg.selectAll("text.nodelabel")
+var nodeLabel = chartRoot.selectAll("text.nodelabel")
 	.data(nodes)
   .enter().append("text")
 	.attr("class", "nodelabel")
@@ -382,7 +413,7 @@ d3.select("#resetDateFilter").on("click", function() {
 
 // Activity labels (class-scoped selectAll so per-bubble nodelabel <text>
 // elements created earlier are not reused/rebound as category labels).
-var label = svg.selectAll("text.actlabel")
+var label = chartRoot.selectAll("text.actlabel")
 	.data(act_codes)
   .enter().append("text")
 	.attr("class", "actlabel")
