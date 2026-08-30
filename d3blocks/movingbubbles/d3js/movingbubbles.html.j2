@@ -948,6 +948,9 @@ function initLayoutPropertyControls() {
 	//   Color → all enabled (numeric = continuous, categorical = discrete)
 	//   Shape → enabled categorical only (Default = circle)
 	//   Label → all enabled
+	// Always re-applies the active Size/Color/Shape/Label modes so a Numeric↔
+	// Category flip immediately moves a variable between Size and Shape and
+	// rebuilds continuous vs discrete color scales.
 	var keys = propKeys();
 	var sizeSelect = document.getElementById("layoutSizeSelect");
 	var colorSelect = document.getElementById("layoutColorSelect");
@@ -985,19 +988,29 @@ function initLayoutPropertyControls() {
 		addOpt(labelSelect, k, k);
 	});
 
-	function restore(select, prev, fallback, applyFn) {
-		if (!select) return;
-		var ok = Array.prototype.some.call(select.options, function (o) { return o.value === prev; });
-		if (ok) select.value = prev;
-		else {
-			select.value = fallback;
-			if (applyFn) applyFn(fallback);
-		}
+	function hasOption(select, value) {
+		if (!select) return false;
+		return Array.prototype.some.call(select.options, function (o) { return o.value === value; });
 	}
-	restore(sizeSelect, prevSize, '', applySizeMode);
-	restore(colorSelect, prevColor, '', applyColorMode);
-	restore(shapeSelect, prevShape, 'circle', applyShapeMode);
-	restore(labelSelect, prevLabel, '', applyLabelMode);
+	// Restore prior selection when still valid; otherwise fall back. Always
+	// re-apply so Color continuous↔discrete and Size/Shape membership update
+	// the chart immediately after a Variables dtype change.
+	if (sizeSelect) {
+		sizeSelect.value = hasOption(sizeSelect, prevSize) ? prevSize : '';
+		applySizeMode(sizeSelect.value);
+	}
+	if (colorSelect) {
+		colorSelect.value = hasOption(colorSelect, prevColor) ? prevColor : '';
+		applyColorMode(colorSelect.value);
+	}
+	if (shapeSelect) {
+		shapeSelect.value = hasOption(shapeSelect, prevShape) ? prevShape : 'circle';
+		applyShapeMode(shapeSelect.value);
+	}
+	if (labelSelect) {
+		labelSelect.value = hasOption(labelSelect, prevLabel) ? prevLabel : '';
+		applyLabelMode(labelSelect.value);
+	}
 }
 
 function escapeHtmlVar(v) {
@@ -1042,15 +1055,21 @@ function populateVarList() {
 		});
 	});
 	container.querySelectorAll('.enrich-var-dtype').forEach(function (sel) {
-		sel.addEventListener('change', function () {
-			varState[sel.dataset.key].dtypeOverride = sel.value;
+		// change + input so Layout Size/Shape lists update as soon as the
+		// Numeric/Category choice is made (some browsers only fire one).
+		function onDtypeChange() {
+			var key = sel.dataset.key;
+			if (!varState[key]) varState[key] = { enabled: true, dtypeOverride: sel.value };
+			varState[key].dtypeOverride = sel.value;
 			var row = sel.closest('.enrich-var-row');
 			if (row) {
 				row.classList.remove('dtype-num', 'dtype-cat');
 				row.classList.add(sel.value === 'num' ? 'dtype-num' : 'dtype-cat');
 			}
 			initLayoutPropertyControls();
-		});
+		}
+		sel.addEventListener('change', onDtypeChange);
+		sel.addEventListener('input', onDtypeChange);
 	});
 	if (typeof positionSidePanels === 'function') setTimeout(positionSidePanels, 0);
 }
