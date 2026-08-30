@@ -190,7 +190,7 @@ def _set_nodecolor(df, sample_id, color, cmap, logger):
             df.loc[df[sample_id]==key, 'color'] = str(color.get(key))
     elif color is None:
         # Derive colors from cmap based on sample_id
-        colors = colourmap.fromlist(df['sample_id'], cmap=cmap, scheme='hex')[0]
+        colors = colourmap.fromlist(df[sample_id], cmap=cmap, scheme='hex')[0]
         df['color'] = [str(c) for c in colors]
     else:
         # Single hex color string applied to all nodes
@@ -258,11 +258,12 @@ def show(df, **kwargs):
 
     # Transform dataframe into input form for d3
     X = []
+    sid_col = config['columns']['sample_id']
     sid = np.array(list(map(lambda x: labels.get(x)['id'], df[config['columns']['state']].values)))
-    uiid = np.unique(df['sample_id'])
+    uiid = np.unique(df[sid_col])
     for i in uiid:
         # Combine the sample_id with its time in state
-        Iloc=df['sample_id']==i
+        Iloc=df[sid_col]==i
         # Convert NumPy integers to regular Python integers to avoid np.int64 in string representation
         sid_values = [int(x) for x in sid[Iloc]]
         time_values = [int(x) for x in df['time_in_state'].loc[Iloc].values]
@@ -276,11 +277,11 @@ def show(df, **kwargs):
         X.append(tmplist)
 
     # Node size in the same order as the uiid
-    nodedict = dict(zip(df['sample_id'], df['size']))
+    nodedict = dict(zip(df[sid_col], df['size']))
     config['node_size'] = [int(nodedict.get(x)) if isinstance(nodedict.get(x), (np.integer, int)) else nodedict.get(x) for x in uiid]
 
     # Node color in the same order as the uiid
-    nodedict = dict(zip(df['sample_id'], df['color']))
+    nodedict = dict(zip(df[sid_col], df['color']))
     # Convert NumPy strings to regular Python strings for proper JSON serialization
     config['node_color'] = [str(nodedict.get(x)) if nodedict.get(x) is not None else nodedict.get(x) for x in uiid]
 
