@@ -2440,6 +2440,7 @@ class D3Blocks():
              hierarchy = [1, 2, 3, 4, 5, 6, 7, 8],
              margin = {"top": 20, "right": 80, "bottom": 20, "left": 60},
              font = {'size': 10},
+             link_length: int = 180,
              title: str = 'Tree - D3blocks',
              filepath: str = 'tree.html',
              figsize = [960, 700],
@@ -2469,6 +2470,9 @@ class D3Blocks():
         font : dict.
             font properties.
                 * {'size': 10}
+        link_length : int, (default: 180)
+            Horizontal distance between hierarchy levels, in pixels.
+                * 180
         title : String, (default: None)
             Title of the figure.
                 * 'Treemap'
@@ -2601,7 +2605,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Tree', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, hierarchy=hierarchy, link_length=link_length, save_button=save_button, logger=logger)
         # Cleaning of data
         # Convert NumPy types to regular Python types for proper JSON serialization
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)

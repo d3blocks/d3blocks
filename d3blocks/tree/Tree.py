@@ -31,6 +31,7 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['font'] = {**{'size': 10}, **font}
     config['notebook'] = kwargs.get('notebook', False)
     config['hierarchy'] = kwargs.get('hierarchy', [1, 2, 3, 4, 5])
+    config['link_length'] = kwargs.get('link_length', 180)
     config['save_button'] = kwargs.get('save_button', True)
     # return
     return config
@@ -179,6 +180,7 @@ def write_html(X, config, logger=None):
         'marginBottom': config['margin']['bottom'],
         'marginLeft': config['margin']['left'],
         'hierarchy': config['hierarchy'],
+        'link_length': config.get('link_length', 180),
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
