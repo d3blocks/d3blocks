@@ -51,22 +51,47 @@ body { font-size: {{ FONTSIZE }}; }
 </div>
 {{ SAVE_BUTTON_STOP }}
 
-<!-- Layout: was "Display" -- Color-on dropdown + node size multiplier -->
+<!-- Layout: Size / Color / Shape / Label from df columns (scatter-style) -->
 <div class="stats-panel collapsed" id="displayPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
-    <label for="ColorOptions" style="display:block;margin-bottom:4px">Color on</label>
-    <select id="ColorOptions" onchange="link_color_changed(this.value)" style="width:100%;box-sizing:border-box">
-      <option value="STATE" {{ COLOR_STATE_SELECTED }}>State</option>
-      <option value="NODE" {{ COLOR_NODE_SELECTED }}>Sample id</option>
-    </select>
-    <div class="slider-row" style="margin-top:12px">
-      <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
-      <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+    <div class="slider-row">
+      <label for="layoutSizeSelect">Size</label>
+      <select id="layoutSizeSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
     </div>
+    <div class="slider-row">
+      <label for="layoutColorSelect">Color</label>
+      <select id="layoutColorSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Numeric → continuous scale; categorical → discrete colors</div>
+    </div>
+    <div class="slider-row">
+      <label for="layoutShapeSelect">Shape</label>
+      <select id="layoutShapeSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
+        <option value="circle">Default</option>
+      </select>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Map a categorical variable to shapes</div>
+    </div>
+    <div class="slider-row">
+      <label for="layoutLabelSelect">Label</label>
+      <select id="layoutLabelSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
+        <option value="">None</option>
+      </select>
+    </div>
+    <button class="button-switch" id="layoutResetBtn" type="button" style="width:100%;margin-top:8px;box-sizing:border-box">Reset to Default</button>
   </div>
 </div>
 
+<!-- Physics: size multiplier (was under Layout) -->
+<div class="stats-panel collapsed" id="physicsPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="slider-row">
+      <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
+      <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Scales all bubble radii (0.25× – 4×)</div>
+    </div>
+  </div>
+</div>
 
 <!-- Filtering: was "Filter by date:" -->
 <div class="stats-panel collapsed" id="filterPanel">
@@ -146,7 +171,23 @@ var colorByActivity = {{ COLORBYACTIVITY }} // array of the colors per state
 // NODE PROPERTIES
 var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
 var node_color = {{ NODE_COLOR }}; //array of color values, one for each node
+var node_props = {{ NODE_PROPS }}; // per-sample property bags from df columns (Layout panel)
+var PROP_KEYS = {{ PROP_KEYS }};   // ordered list of all selectable variables
+var STATE_COL = {{ STATE_COL }};   // name of the state column (live-updated)
+var SAMPLE_ID_COL = {{ SAMPLE_ID_COL }};
 var color_method = "{{ COLOR_METHOD }}"; //Nodes can be colored based on "STATE" or "NODE"
+// Layout-panel overrides (null = use defaults / color_method)
+var layoutSizeKey = null;
+var layoutColorKey = null;
+var layoutColorScale = null; // function(value) -> color, when layoutColorKey is set
+var currentShapeMode = "circle"; // circle|square|triangle|diamond
+var categoricalShapeMap = null;
+var categoricalShapeKey = null;
+var currentLabelKey = null;
+var sizeMultiplier = 1;
+// act index -> state description (for live state color/label)
+var actIndexToDesc = {};
+act_codes.forEach(function(c) { actIndexToDesc[String(c.index)] = c.desc; });
 
 // DATE FILTER. node_start_date[i] is the "YYYY-MM-DD" date of the first event
 // for the i-th node/sample, aligned with node_size/node_color by index.
@@ -217,18 +258,17 @@ var nodes = sched_objs.map(function(o, i) {
 		x: init_x,
 		y: init_y,
 		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
-		//color: color(act),
-		//color: node_color[i],
         color: (color_method === "STATE" ? color(act) : node_color[i]),
 		moves: 0,
 		next_move_time: o[0].duration,
 		sched: o,
+		props: (node_props && node_props[i]) ? node_props[i] : {},
+		shape: "circle",
 	}
 });
 
 // Remember each node's original radius so the Layout panel's size
-// multiplier can scale it non-destructively, matching scatter's
-// sizeMultiplier pattern.
+// multiplier / size-by-variable can scale it non-destructively.
 var baseNodeRadii = nodes.map(function(n) { return n.radius; });
 
 var force = d3.layout.force()
@@ -244,15 +284,54 @@ var force = d3.layout.force()
 var circleOpacity = {{ OPACITY }};
 var circleStroke = "{{ STROKE }}";
 
-var circle = svg.selectAll("circle")
+// Path-based shapes so Size/Shape Layout controls can change geometry
+// without swapping element types. Collision still uses d.radius.
+function shapePath(shape, r) {
+	if (shape === "square") {
+		var s = r * 1.6;
+		return "M" + (-s/2) + "," + (-s/2) + "h" + s + "v" + s + "h" + (-s) + "Z";
+	}
+	if (shape === "triangle") {
+		var h = r * 1.9;
+		return "M0," + (-h) + "L" + (-h*0.866) + "," + (h*0.5) + "L" + (h*0.866) + "," + (h*0.5) + "Z";
+	}
+	if (shape === "diamond") {
+		var q = r * 1.4;
+		return "M0," + (-q) + "L" + (q*0.75) + ",0L0," + q + "L" + (-q*0.75) + ",0Z";
+	}
+	// circle (default)
+	var c = r;
+	return "M" + (-c) + ",0A" + c + "," + c + " 0 1,0 " + c + ",0A" + c + "," + c + " 0 1,0 " + (-c) + ",0Z";
+}
+function shapeForNode(d) {
+	if (categoricalShapeMap && d.props && categoricalShapeKey && d.props[categoricalShapeKey] != null) {
+		var mapped = categoricalShapeMap[d.props[categoricalShapeKey]];
+		if (mapped) return mapped;
+	}
+	return currentShapeMode || "circle";
+}
+
+var circle = svg.selectAll("path.bubble")
 	.data(nodes)
-  .enter().append("circle")
-	.attr("r", function(d) { return d.radius; })
+  .enter().append("path")
+	.attr("class", "bubble")
+	.attr("d", function(d) { return shapePath(shapeForNode(d), d.radius); })
+	.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
 	.style("fill", function(d) { return d.color; })
 	.style("opacity", circleOpacity)
 	.style("stroke", circleStroke)
 	.style("stroke-width", 1);
-	// .call(force.drag);
+
+// Per-bubble text labels (Layout → Label)
+var nodeLabel = svg.selectAll("text.nodelabel")
+	.data(nodes)
+  .enter().append("text")
+	.attr("class", "nodelabel")
+	.attr("text-anchor", "middle")
+	.style("font-size", "11px")
+	.style("pointer-events", "none")
+	.style("display", "none")
+	.text("");
 
 // Track which nodes are currently visible based on the date filter.
 // Note: this only hides/shows bubbles — the underlying simulation and the
@@ -277,6 +356,10 @@ function applyDateFilter() {
 	});
 
 	circle.style("display", function(d, i) { return node_active[i] ? null : "none"; });
+	nodeLabel.style("display", function(d, i) {
+		if (!node_active[i] || !currentLabelKey) return "none";
+		return null;
+	});
 
 	d3.select("#dateFilterCount").text(visibleCount + " / " + nodes.length + " samples shown");
 }
@@ -288,8 +371,9 @@ d3.select("#resetDateFilter").on("click", function() {
 	applyDateFilter();
 });
 
-// Activity labels
-var label = svg.selectAll("text")
+// Activity labels (class-scoped selectAll so per-bubble nodelabel <text>
+// elements created earlier are not reused/rebound as category labels).
+var label = svg.selectAll("text.actlabel")
 	.data(act_codes)
   .enter().append("text")
 	.attr("class", "actlabel")
@@ -424,13 +508,18 @@ function tick(e) {
 	//	var damper = 1;
 	//}
 
-	if (color_method === "STATE") {
+	// Base color from state/node, unless Layout→Color overrides it.
+	// Special case: coloring by the state column uses the *live* activity.
+	if (layoutColorKey && layoutColorKey === STATE_COL) {
+		o.color = color(curr_act);
+	} else if (layoutColorKey && layoutColorScale && o.props) {
+		var pv = o.props[layoutColorKey];
+		o.color = (pv != null && pv !== '') ? layoutColorScale(pv) : (color_method === "STATE" ? color(curr_act) : node_color[i]);
+	} else if (color_method === "STATE") {
 		o.color = color(curr_act);
 	} else {
 		o.color = node_color[i];
 	}
-	// console.log(color_method)
-    // console.log(o.color)
 
 	o.y += (foci[curr_act].y - o.y) * k * damper;
 	o.x += (foci[curr_act].x - o.x) * k * damper;
@@ -439,8 +528,14 @@ function tick(e) {
   circle
 	  .each(collide(.5))
 	  .style("fill", function(d) { return d.color; })
-	  .attr("cx", function(d) { return d.x; })
-	  .attr("cy", function(d) { return d.y; });
+	  .attr("d", function(d) { return shapePath(shapeForNode(d), d.radius); })
+	  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  nodeLabel
+	  .attr("x", function(d) { return d.x; })
+	  .attr("y", function(d) { return d.y - d.radius - 4; })
+	  .style("fill", "var(--text)")
+	  .text(function(d) { return currentLabelKey ? labelTextFor(d) : ""; });
 }
 
 
@@ -670,24 +765,219 @@ document.querySelectorAll('.stats-panel-title').forEach(function (title) {
 	});
 })();
 
-// —— Layout panel: node size multiplier ——
-// Exponential mapping (t in [-1,1], base 4) matches scatter's size slider:
-// t=-1 -> 0.25x, t=0 -> 1x, t=1 -> 4x. Scales d.radius itself (not just the
-// rendered <circle r>) so collide()'s physics stays consistent with what's
-// drawn -- otherwise bigger/smaller bubbles would visually overlap or leave
-// gaps that don't match their actual collision boundaries.
+// —— Layout panel: Size / Color / Shape / Label from df variables ——
+// Property columns arrive as node_props[i] (same role as scatter's d[13]).
+// Size multiplier (exponential, base 4) still scales whatever base radius
+// the size-variable mode produced, so collide() stays consistent with draw.
+
 var SIZE_MULT_BASE = 4;
-function applySizeMultiplier(mult) {
-	nodes.forEach(function (n, i) { n.radius = baseNodeRadii[i] * mult; });
-	circle.attr("r", function (d) { return d.radius; });
+
+function propKeys() {
+	// Prefer the explicit list from Python (every df variable). Fall back to
+	// scanning node property bags so partial data still works.
+	if (PROP_KEYS && PROP_KEYS.length) return PROP_KEYS.slice();
+	var keys = {}, i, k;
+	for (i = 0; i < nodes.length; i++) {
+		if (!nodes[i].props) continue;
+		for (k in nodes[i].props) {
+			if (Object.prototype.hasOwnProperty.call(nodes[i].props, k)) keys[k] = true;
+		}
+	}
+	return Object.keys(keys).sort();
 }
-var sizeMultiplierSlider = document.getElementById('sizeMultiplierSlider');
-var sizeMultiplierVal = document.getElementById('sizeMultiplierVal');
-if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', function (e) {
+function liveStateName(d) {
+	return actIndexToDesc[String(d.act)] != null ? actIndexToDesc[String(d.act)] : String(d.act);
+}
+function isNumericProp(key) {
+	var nums = 0, total = 0, i, v;
+	for (i = 0; i < nodes.length; i++) {
+		v = nodes[i].props ? nodes[i].props[key] : null;
+		if (v == null || v === '') continue;
+		total++;
+		if (typeof v === 'number' && isFinite(v)) nums++;
+		else if (typeof v !== 'boolean' && v !== '' && !isNaN(+v)) nums++;
+	}
+	return total > 0 && nums === total;
+}
+function numericValues(key) {
+	var out = [], i, v;
+	for (i = 0; i < nodes.length; i++) {
+		v = nodes[i].props ? nodes[i].props[key] : null;
+		if (v == null || v === '') continue;
+		v = (typeof v === 'number') ? v : +v;
+		if (isFinite(v)) out.push(v);
+	}
+	return out;
+}
+function uniquePropValues(key) {
+	var seen = {}, out = [], i, v;
+	for (i = 0; i < nodes.length; i++) {
+		v = nodes[i].props ? nodes[i].props[key] : null;
+		if (v == null || v === '') continue;
+		var s = String(v);
+		if (!seen[s]) { seen[s] = true; out.push(v); }
+	}
+	return out;
+}
+function recomputeRadii() {
+	var mult = sizeMultiplier;
+	if (!layoutSizeKey) {
+		nodes.forEach(function (n, i) { n.radius = baseNodeRadii[i] * mult; });
+	} else {
+		var vals = numericValues(layoutSizeKey);
+		var min = Infinity, max = -Infinity, i, v;
+		for (i = 0; i < vals.length; i++) {
+			if (vals[i] < min) min = vals[i];
+			if (vals[i] > max) max = vals[i];
+		}
+		var domainMin = Math.min(0, min);
+		var span = (max - domainMin) || 1;
+		var MAX_R = 24;
+		nodes.forEach(function (n, i) {
+			v = n.props ? n.props[layoutSizeKey] : null;
+			v = (typeof v === 'number') ? v : +v;
+			if (isFinite(v)) n.radius = Math.max(1, (v - domainMin) / span * MAX_R) * mult;
+			else n.radius = baseNodeRadii[i] * mult;
+		});
+	}
+	circle.attr("d", function (d) { return shapePath(shapeForNode(d), d.radius); });
+}
+function applySizeMode(key) {
+	layoutSizeKey = key || null;
+	recomputeRadii();
+}
+function applyColorMode(key) {
+	layoutColorKey = key || null;
+	layoutColorScale = null;
+	if (!key) return;
+	// State column: live activity colors (handled in tick via color()).
+	if (key === STATE_COL) return;
+	if (isNumericProp(key)) {
+		var vals = numericValues(key);
+		var min = d3.min(vals), max = d3.max(vals);
+		var span = (max - min) || 1;
+		layoutColorScale = function (v) {
+			v = (typeof v === 'number') ? v : +v;
+			if (!isFinite(v)) return "#888";
+			var t = (v - min) / span;
+			// simple sequential ramp (blue → cyan → yellow), no external chroma needed
+			return d3.hsl(210 - t * 150, 0.75, 0.45 + t * 0.15).toString();
+		};
+	} else {
+		var uniq = uniquePropValues(key).map(String);
+		var palette = (d3.scale.category20 && d3.scale.category20().range()) ||
+			["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+		var scale = d3.scale.ordinal().domain(uniq).range(palette);
+		layoutColorScale = function (v) { return scale(String(v)); };
+	}
+}
+function applyShapeMode(val) {
+	// Default = all circles. Any other value is "prop:<categorical column>"
+	// and maps unique category values onto circle/square/triangle/diamond.
+	categoricalShapeMap = null;
+	categoricalShapeKey = null;
+	currentShapeMode = "circle";
+	if (val && val.indexOf("prop:") === 0) {
+		var key = val.slice(5);
+		var uniq = uniquePropValues(key);
+		var names = ["circle", "square", "triangle", "diamond"];
+		categoricalShapeMap = {};
+		uniq.forEach(function (v, i) { categoricalShapeMap[v] = names[i % names.length]; });
+		categoricalShapeKey = key;
+	}
+	circle.attr("d", function (d) { return shapePath(shapeForNode(d), d.radius); });
+}
+function labelTextFor(d) {
+	if (!currentLabelKey) return "";
+	// Live state name follows the bubble as it moves between activities
+	if (currentLabelKey === STATE_COL) return liveStateName(d);
+	if (!d.props) return "";
+	var v = d.props[currentLabelKey];
+	if (v == null || v === "") return "";
+	if (typeof v === "number" && isFinite(v)) return String(Math.round(v * 100) / 100);
+	return String(v);
+}
+function applyLabelMode(key) {
+	currentLabelKey = key || null;
+	nodeLabel
+		.style("display", function (d, i) {
+			if (!currentLabelKey || (node_active && !node_active[i])) return "none";
+			return null;
+		})
+		.text(function (d) { return labelTextFor(d); });
+}
+function applySizeMultiplier(mult) {
+	sizeMultiplier = mult;
+	recomputeRadii();
+}
+
+function initLayoutPropertyControls() {
+	// Populate dropdowns from per-sample property bags (df columns):
+	//   Size  → numeric columns only
+	//   Color → all columns (numeric = continuous scale, categorical = discrete)
+	//   Shape → categorical columns only (Default = circle)
+	//   Label → all columns
+	var keys = propKeys();
+	var sizeSelect = document.getElementById("layoutSizeSelect");
+	var colorSelect = document.getElementById("layoutColorSelect");
+	var shapeSelect = document.getElementById("layoutShapeSelect");
+	var labelSelect = document.getElementById("layoutLabelSelect");
+
+	function clearDynamic(select, keepFirst) {
+		if (!select) return;
+		while (select.options.length > (keepFirst || 1)) select.remove(keepFirst || 1);
+	}
+	clearDynamic(sizeSelect, 1);
+	clearDynamic(colorSelect, 1);
+	clearDynamic(shapeSelect, 1); // keep only "Default"
+	clearDynamic(labelSelect, 1);
+
+	function addOpt(select, value, label) {
+		if (!select) return;
+		var o = document.createElement("option");
+		o.value = value;
+		o.textContent = label;
+		select.appendChild(o);
+	}
+	keys.forEach(function (k) {
+		// Color + Label: every variable. Size: numeric only. Shape: categorical only.
+		// State is treated as categorical even though values are strings.
+		var numeric = (k !== STATE_COL) && isNumericProp(k);
+		if (numeric) addOpt(sizeSelect, k, k);
+		addOpt(colorSelect, k, k);
+		if (!numeric) addOpt(shapeSelect, "prop:" + k, k);
+		addOpt(labelSelect, k, k);
+	});
+}
+initLayoutPropertyControls();
+
+var layoutSizeSelect = document.getElementById("layoutSizeSelect");
+if (layoutSizeSelect) layoutSizeSelect.addEventListener("change", function (e) { applySizeMode(e.target.value); });
+var layoutColorSelect = document.getElementById("layoutColorSelect");
+if (layoutColorSelect) layoutColorSelect.addEventListener("change", function (e) { applyColorMode(e.target.value); });
+var layoutShapeSelect = document.getElementById("layoutShapeSelect");
+if (layoutShapeSelect) layoutShapeSelect.addEventListener("change", function (e) { applyShapeMode(e.target.value); });
+var layoutLabelSelect = document.getElementById("layoutLabelSelect");
+if (layoutLabelSelect) layoutLabelSelect.addEventListener("change", function (e) { applyLabelMode(e.target.value); });
+
+var sizeMultiplierSlider = document.getElementById("sizeMultiplierSlider");
+var sizeMultiplierVal = document.getElementById("sizeMultiplierVal");
+if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener("input", function (e) {
 	var t = parseFloat(e.target.value) || 0;
 	var mult = Math.pow(SIZE_MULT_BASE, t);
-	if (sizeMultiplierVal) sizeMultiplierVal.textContent = mult.toFixed(2) + '×';
+	if (sizeMultiplierVal) sizeMultiplierVal.textContent = mult.toFixed(2) + "×";
 	applySizeMultiplier(mult);
+});
+var layoutResetBtn = document.getElementById("layoutResetBtn");
+if (layoutResetBtn) layoutResetBtn.addEventListener("click", function () {
+	if (layoutSizeSelect) layoutSizeSelect.value = "";
+	if (layoutColorSelect) layoutColorSelect.value = "";
+	if (layoutShapeSelect) layoutShapeSelect.value = "circle";
+	if (layoutLabelSelect) layoutLabelSelect.value = "";
+	applySizeMode("");
+	applyColorMode("");
+	applyShapeMode("circle");
+	applyLabelMode("");
 });
 
 // —— Export/Save panel: export current bubble state as JSON ——
