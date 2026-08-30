@@ -8,6 +8,24 @@ __pycache__/
 
 # Ignore data
 d3blocks/data
+d3blocks/movingbubbles/logo.txt
+d3blocks/radialgraph/logo.txt
+d3blocks/sankey/logo.txt
+d3blocks/scatter/logo.txt
+d3blocks/d3graph/logo.txt
+d3blocks/chord/logo.txt
+d3blocks/circlepacking/logo.txt
+d3blocks/elasticgraph/logo.txt
+d3blocks/heatmap/logo.txt
+d3blocks/imageslider/logo.txt
+d3blocks/maps/logo.txt
+d3blocks/matrix/logo.txt
+d3blocks/particles/logo.txt
+d3blocks/timeseries/logo.txt
+d3blocks/tree/logo.txt
+d3blocks/treemap/logo.txt
+d3blocks/violin/logo.txt
+
 demo/
 libraries/
 ppt/
