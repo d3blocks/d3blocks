@@ -1074,16 +1074,29 @@ function propColumnValues(key) {
 	}
 	return out;
 }
+// dtype detection for a property column, matching the heuristic used in
+// scatter's associations.js: numeric-typed alone is not enough to call a
+// column "continuous" -- small integer-coded categories (e.g. a column
+// with only 0/1/2) are still numeric-typed but should read as categorical.
+// Uses an absolute floor on unique-value count (catches continuous data
+// even with heavy repeats/rounding at modest sample sizes) OR a uniqueness
+// ratio (for small samples where the floor would be too strict).
 function detectColumnDtype(values) {
-	var nums = 0, total = 0, i, v;
+	var present = 0, unique = {}, uniqueCount = 0, i, v, num, key;
 	for (i = 0; i < values.length; i++) {
 		v = values[i];
 		if (v == null || v === '') continue;
-		total++;
-		if (typeof v === 'number' && isFinite(v)) nums++;
-		else if (typeof v !== 'boolean' && String(v).trim() !== '' && !isNaN(+v)) nums++;
+		if (typeof v === 'boolean') return 'cat';
+		num = (typeof v === 'number') ? v : parseFloat(v);
+		if (!isFinite(num) || (typeof v === 'string' && v.trim() !== '' && isNaN(+v))) return 'cat';
+		present++;
+		key = String(num);
+		if (!Object.prototype.hasOwnProperty.call(unique, key)) { unique[key] = true; uniqueCount++; }
 	}
-	return (total > 0 && nums === total) ? 'num' : 'cat';
+	if (present === 0) return 'cat';
+	var MIN_UNIQUE_FOR_NUMERIC = 10;
+	if (uniqueCount >= MIN_UNIQUE_FOR_NUMERIC || uniqueCount / present > 0.6) return 'num';
+	return 'cat';
 }
 // Per-variable UI state: enabled + dtype override (num|cat). Mirrors scatter's
 // enrichVarState so Layout Size/Shape respect user classification.

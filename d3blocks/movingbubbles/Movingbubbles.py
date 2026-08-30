@@ -401,7 +401,7 @@ def show(df, **kwargs):
     config['prop_keys'] = seen
 
     if config['note'] is None:
-        config['note'] = "This is a simulation of multiple states and samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>."
+        config['note'] = "Simulation started."
         config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
 
     if config['time_notes'] is None:
@@ -583,21 +583,22 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
         # Note: The first state per sample_id is depended on the prevous state.
         # timedelta = df[datetime]-df[datetime]
         tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        # timedelta.loc[1:] = tmpdelta.values
-        df['delta'] = tmpdelta
-        # tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        # timedelta.loc[1:] = tmpdelta.values
-        # df['delta'] = timedelta
+        # tmpdelta has length N-1 (diffs between consecutive rows); must be
+        # assigned to rows 1: (row 0 keeps the zero-delta this function
+        # initializes at the top), or this raises a pandas length-mismatch
+        # ValueError -- the 'relative' method was completely broken/crashing
+        # before this fix.
+        df.loc[1:, 'delta'] = tmpdelta
 
         # Note: Last state per sample_id should always be ending and thus 0
-        uisample_id = df['sample_id'].unique()
+        uisample_id = df[sample_id].unique()
         getidx = []
         for sid in uisample_id:
             getidx.append(df[[sample_id, datetime]].loc[df[sample_id]==sid].sort_values(by=[datetime]).index[-1])
         df.loc[getidx, 'delta']=np.nan
         # df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
     elif method=='minimum':
-        df['delta'] = df['datetime'] - df['datetime'].min()
+        df['delta'] = df[datetime] - df[datetime].min()
 
 
     # if NaT is found, set it to 0
