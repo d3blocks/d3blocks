@@ -414,20 +414,24 @@ d3.set_node_properties(df)
 d3.set_edge_properties(df)
 
 # Show chart
-d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
-d3.show(filepath=r'c:\temp\tree.html', margin = {"top": 20, "right": 80, "bottom": 20, "left": 60})
+# d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
+d3.show(filepath=r'c:\temp\tree.html', margin = {"top": 20, "right": 80, "bottom": 20, "left": 60},
+        link_length=180,
+        font={'size':20},
+        dark_mode=True,
+        show_controls=True,
+        )
 
 
 #%%
 # MOVINGBUBBLES
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-# df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
 df['int var'] = np.random.randint(1, 11, size=df.shape[0])
 df['float var'] = np.random.random(size=df.shape[0])
 
-d3.movingbubbles(df, size=5, opacity=0.8)
+d3.movingbubbles(df, size=10, opacity=0.8, stroke='#ffffff')
 
 
 # %% Issue 45
@@ -839,27 +843,15 @@ html = d3.tree(df)
 # html = d3.sankey(df)
 
 # %%
-import pandas as pd
-df = pd.read_csv(r'D:\GITLAB\DATA\organogram.csv', sep=';')
-df['weight'] = df.groupby(['source', 'target'])['source'].transform('count')
-df = df.drop_duplicates()
-iloc = df['source'].str.lower()==df['target'].str.lower()
-df = df.loc[~iloc,:]
-
-# df['weight']=1
-# df = df.loc[0:5]
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-# df = d3.import_example('energy')
-html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
-html = d3.treemap(df, filepath='c://temp//treemap.html')
+df = d3.import_example('energy')
+# html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
+# html = d3.treemap(df, filepath='c://temp//treemap.html')
 html = d3.tree(df, filepath='c://temp//tree.html')
 html = d3.sankey(df)
 
 # %%
-# df = d3.import_example('bigbang')
-# df1 = df.groupby(['source', 'target'])['weight'].sum()
-# df1 = df1.reset_index()
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 
@@ -868,12 +860,19 @@ df = d3.import_example('energy')
 html = d3.circlepacking(df, filepath='c://temp//circlepacking1.html', save_button=True)
 html = d3.sankey(df, filepath=r'c:\temp\sankey.html')
 
-# html = d3.circlepacking(df,
-#                         speed = 750,
-#                         border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
-#                         font = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
-#                         filepath='c://temp//circlepacking.html',
-#                       )
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('energy')
+
+html = d3.circlepacking(df,
+                        speed = 750,
+                        border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
+                        font = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
+                        filepath='c://temp//circlepacking.html',
+                      )
 
 
 # %%
@@ -885,7 +884,7 @@ d3 = D3Blocks()
 df = d3.import_example(data='energy')
 
 # Create the network graph
-d3.d3graph(df, cmap='Set2', dark_mode=False, background_color='#FFF000')
+d3.d3graph(df, cmap='Set2', dark_mode=False, background_color='#FFF000', show_controls=True, showfig=True)
 # Extract the node colors from the network graph.
 node_colors = d3.D3graph.node_properties
 
