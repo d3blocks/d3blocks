@@ -253,10 +253,15 @@ svg.append("rect")
 	.style("pointer-events", "all");
 
 var chartRoot = svg.append("g").attr("class", "chart-root");
+// Tracks whether the last pointer gesture was a pan/zoom (so a trailing
+// click on empty space does not clear the bubble selection).
+var zoomDragged = false;
+var selectedNode = null;
 
 var zoomBehavior = d3.behavior.zoom()
 	.scaleExtent([0.3, 8])
 	.on("zoom", function() {
+		zoomDragged = true;
 		chartRoot.attr("transform",
 			"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 	});
@@ -270,8 +275,19 @@ svg.on("dblclick", function() {
 	chartRoot.transition().duration(300)
 		.attr("transform", "translate(0,0)scale(1)");
 });
-svg.on("mousedown", function() { svg.style("cursor", "grabbing"); });
+svg.on("mousedown", function() {
+	zoomDragged = false;
+	svg.style("cursor", "grabbing");
+});
 svg.on("mouseup", function() { svg.style("cursor", "grab"); });
+// Click empty chart space clears the selected bubble highlight
+svg.on("click", function() {
+	if (zoomDragged) return;
+	if (selectedNode != null) {
+		selectedNode = null;
+		styleSelection();
+	}
+});
 
 
 data.forEach(function(d) {
@@ -360,7 +376,37 @@ var circle = chartRoot.selectAll("path.bubble")
 	.style("fill", function(d) { return d.color; })
 	.style("opacity", circleOpacity)
 	.style("stroke", circleStroke)
-	.style("stroke-width", 1);
+	.style("stroke-width", 1)
+	.style("cursor", "pointer");
+
+// Click a bubble to select/highlight it (easier to track). Click the same
+// bubble again or empty chart space to clear. Pan/zoom does not clear.
+function styleSelection() {
+	var hasSel = selectedNode != null;
+	circle
+		.classed("selected", function (d) { return d === selectedNode; })
+		.style("opacity", function (d) {
+			if (!hasSel) return circleOpacity;
+			return d === selectedNode ? 1 : Math.min(0.22, circleOpacity * 0.4);
+		})
+		.style("stroke", function (d) {
+			return d === selectedNode ? "#ffffff" : circleStroke;
+		})
+		.style("stroke-width", function (d) {
+			return d === selectedNode ? 3.5 : 1;
+		});
+	if (hasSel) {
+		// Raise selected bubble above the others
+		circle.filter(function (d) { return d === selectedNode; }).each(function () {
+			this.parentNode.appendChild(this);
+		});
+	}
+}
+circle.on("click", function (d) {
+	if (d3.event) d3.event.stopPropagation();
+	selectedNode = (selectedNode === d) ? null : d;
+	styleSelection();
+});
 
 // Per-bubble text labels (Layout → Label)
 var nodeLabel = chartRoot.selectAll("text.nodelabel")
