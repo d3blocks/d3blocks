@@ -2866,12 +2866,15 @@ class D3Blocks():
                 margin = {"top": 40, "right": 10, "bottom": 10, "left": 10},
                 border = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
                 font = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
+                show_controls: bool = True,
+                dark_mode: bool = True,
                 title: str = 'Treemap - D3blocks',
                 filepath: str = 'treemap.html',
                 figsize = [1000, 600],
                 showfig: bool = True,
                 overwrite: bool = True,
                 notebook: bool = False,
+                save_button: bool = True,
                 return_html: bool = False,
                 reset_properties: bool = True):
         """Treemap block.
@@ -2895,6 +2898,12 @@ class D3Blocks():
         font : dict.
             font properties.
                 * {'size': 10, 'type':'sans-serif', 'position': 'absolute'}
+        show_controls : bool, (default: True)
+            * True: Show the top bar and left control panels.
+            * False: Hide all GUI controls.
+        dark_mode : bool, (default: True)
+            * True: Start in dark theme.
+            * False: Start in light theme.
         title : String, (default: None)
             Title of the figure.
                 * 'Treemap'
@@ -3010,7 +3019,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Treemap', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=False, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button, logger=logger)
         # Cleaning of data
         # Convert NumPy types to regular Python types for proper JSON serialization
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)

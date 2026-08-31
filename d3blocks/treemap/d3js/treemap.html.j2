@@ -8,114 +8,292 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 -->
 
 <!DOCTYPE html>
-<meta charset="utf-8">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{{ TITLE }}</title>
     {{ SUPPORT }}
+    <style>{% include "treemap.css" %}</style>
 </head>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Create save button -->
-{{ SAVE_BUTTON_START }}
-    <br>
-    <div style="max-width:{{ WIDTH }}px;">
-        <center><button id="saveButton">Save</button></center>
+<!-- Top panel always shown: logo left, theme right -->
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+      <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center"></div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+
+{% if showControls == 'true' %}
+<!-- Side panel: Export / Save -->
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button class="button-switch" id="exportButton" type="button" title="Export hierarchy as JSON" style="width:100%;margin:4px 0 8px 0">Export</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads the hierarchy as JSON. Save downloads the current view as SVG.</div>
+  </div>
+</div>
+
+<!-- Side panel: Physics (layout controls for the treemap) -->
+<div class="stats-panel collapsed" id="physicsPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label>Value mode</label>
+      <div class="mode-row">
+        <label><input type="radio" name="mode" value="size" checked> Size</label>
+        <label><input type="radio" name="mode" value="count"> Count</label>
+      </div>
     </div>
-{{ SAVE_BUTTON_STOP }}
+    <div class="physics-control">
+      <label for="fontSizeSlider">Font size <span class="val" id="fontSizeVal">{{ fontsize }}</span></label>
+      <input type="range" id="fontSizeSlider" min="6" max="24" step="1" value="{{ fontsize }}">
+    </div>
+    <div class="physics-control">
+      <label for="borderWidthSlider">Border width <span class="val" id="borderWidthVal">{{ borderwidth }}</span></label>
+      <input type="range" id="borderWidthSlider" min="0" max="8" step="1" value="{{ borderwidth }}">
+    </div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Size uses weight; Count treats each leaf equally. Adjust label size and cell borders.</div>
+  </div>
+</div>
+{% endif %}
 
-
-<style>
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: auto;
-  position: relative;
-  width: {{ WIDTH }}px;
-}
-div {
-  position: relative;
-  margin-bottom: 30px;
-  z-index: 1;
-}
-form {
-  position: absolute;
-  left: 10px;
-  bottom: -20px;
-  z-index: 2;
-}
-.node {
-  border: {{ bordertype }} {{ borderwidth }}px {{ bordercolor }};
-  font: {{ fontsize }}px {{ fonttype }};
-  position: {{ fontposition }};
-  line-height: 12px;
-  overflow: hidden;
-  text-indent: 2px;
-}
-</style>
-<form>
-  <label><input type="radio" name="mode" value="size" checked> Size</label>
-  <label><input type="radio" name="mode" value="count"> Count</label>
-</form>
+<!-- Main visualization -->
+<div id="treemap-main">
+  <div id="treemap-container"></div>
+</div>
 
 <script>
-	{% include "d3.v4.min.js" %}
+{% include "d3.v4.min.js" %}
 </script>
-
 
 <script>
 'use strict';
 
-const data = {{ json_data }}
-const node_properties = {{ node_properties }}
+const data = {{ json_data }};
+const node_properties = {{ node_properties }};
 
-const margin = {top: {{ marginTop }}, right: {{ marginRight }}, bottom: {{ marginBottom }}, left: {{ marginLeft }}},
-      width = {{ WIDTH }} - margin.left - margin.right,
-      height = {{ HEIGHT }} - margin.top - margin.bottom,
-      color = d3.scaleOrdinal().range(d3.schemeCategory20c);
+const margin = {top: {{ marginTop }}, right: {{ marginRight }}, bottom: {{ marginBottom }}, left: {{ marginLeft }}};
+const width = {{ WIDTH }} - margin.left - margin.right;
+const height = {{ HEIGHT }} - margin.top - margin.bottom;
+const color = d3.scaleOrdinal().range(d3.schemeCategory20c);
+
+let currentFontSize = {{ fontsize }};
+let currentBorderWidth = {{ borderwidth }};
+const borderType = "{{ bordertype }}";
+const borderColor = "{{ bordercolor }}";
+const fontType = "{{ fonttype }}";
+const fontPosition = "{{ fontposition }}";
 
 const treemap = d3.treemap().size([width, height]);
 
-const div = d3.select("body").append("div")
+const container = d3.select("#treemap-container")
     .style("position", "relative")
     .style("width", (width + margin.left + margin.right) + "px")
-    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px");
+
+const div = container.append("div")
+    .style("position", "relative")
+    .style("width", width + "px")
+    .style("height", height + "px")
     .style("left", margin.left + "px")
     .style("top", margin.top + "px");
 
-const root = d3.hierarchy(data, (d) => d.children)
-  .sum((d) => d.size);
+function sumBySize(d) { return d.size; }
+function sumByCount(d) { return d.size ? 1 : 0; }
 
-const tree = treemap(root);
+let valueFn = sumBySize;
+let root = d3.hierarchy(data, (d) => d.children).sum(valueFn);
+let tree = treemap(root);
 
-const node = div.datum(root).selectAll(".node")
+function applyNodeStyle(selection) {
+  selection
+    .style("border", borderType + " " + currentBorderWidth + "px " + borderColor)
+    .style("font", currentFontSize + "px " + fontType)
+    .style("position", fontPosition)
+    .style("line-height", Math.max(12, currentFontSize + 2) + "px");
+}
+
+let node = div.datum(root).selectAll(".node")
     .data(tree.leaves())
   .enter().append("div")
     .attr("class", "node")
     .style("left", (d) => d.x0 + "px")
     .style("top", (d) => d.y0 + "px")
     .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
-    .style("height", (d) => Math.max(0, d.y1 - d.y0  - 1) + "px")
+    .style("height", (d) => Math.max(0, d.y1 - d.y0 - 1) + "px")
     .style("background", (d) => color(d.parent.data.name))
     .text((d) => d.data.name)
-    .attr("title", (d) => node_properties[d.data.name].tooltip || ""); // Add tooltip
+    .attr("title", (d) => (node_properties[d.data.name] && node_properties[d.data.name].tooltip) || "");
 
-d3.selectAll("input").on("change", function change() {
-  const value = this.value === "count"
-      ? (d) => { return d.size ? 1 : 0;}
-      : (d) => { return d.size; };
+applyNodeStyle(node);
 
-  const newRoot = d3.hierarchy(data, (d) => d.children)
-    .sum(value);
+function updateLayout(duration) {
+  root = d3.hierarchy(data, (d) => d.children).sum(valueFn);
+  tree = treemap(root);
+  const sel = node.data(tree.leaves());
+  const t = sel.transition().duration(duration || 0);
+  t.style("left", (d) => d.x0 + "px")
+   .style("top", (d) => d.y0 + "px")
+   .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
+   .style("height", (d) => Math.max(0, d.y1 - d.y0 - 1) + "px");
+  applyNodeStyle(sel);
+}
 
-  node.data(treemap(newRoot).leaves())
-    .transition()
-      .duration(1500)
-      .style("left", (d) => d.x0 + "px")
-      .style("top", (d) => d.y0 + "px")
-      .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
-      .style("height", (d) => Math.max(0, d.y1 - d.y0  - 1) + "px")
+d3.selectAll('input[name="mode"]').on("change", function() {
+  valueFn = this.value === "count" ? sumByCount : sumBySize;
+  updateLayout(1500);
 });
 
+const fontSlider = document.getElementById("fontSizeSlider");
+const fontVal = document.getElementById("fontSizeVal");
+if (fontSlider) {
+  fontSlider.addEventListener("input", function() {
+    currentFontSize = +fontSlider.value;
+    if (fontVal) fontVal.textContent = currentFontSize;
+    applyNodeStyle(node);
+  });
+}
+
+const borderSlider = document.getElementById("borderWidthSlider");
+const borderVal = document.getElementById("borderWidthVal");
+if (borderSlider) {
+  borderSlider.addEventListener("input", function() {
+    currentBorderWidth = +borderSlider.value;
+    if (borderVal) borderVal.textContent = currentBorderWidth;
+    applyNodeStyle(node);
+  });
+}
+
+// Export hierarchy as JSON
+function hierarchyToPlain(d) {
+  if (!d) return null;
+  const out = { name: (d.name != null ? d.name : "") };
+  if (d.size != null) out.size = d.size;
+  if (d.children && d.children.length) out.children = d.children.map(hierarchyToPlain);
+  return out;
+}
+const exportBtn = document.getElementById("exportButton");
+if (exportBtn) {
+  exportBtn.addEventListener("click", function() {
+    const payload = hierarchyToPlain(data);
+    if (!payload) { alert("Data not ready."); return; }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "treemap-export.json";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
+}
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
+// Side panels: position, collapse, reorder (same pattern as scatter/tree)
+(function() {
+  var PANEL_ORDER = ['exportPanel', 'physicsPanel'];
+
+  function positionSidePanels() {
+    var bar = document.querySelector('.top-panel');
+    var main = document.getElementById('treemap-main');
+    if (!bar) return;
+    var bottom = bar.getBoundingClientRect().bottom;
+    if (main) main.style.marginTop = (bottom + 12) + 'px';
+    var y = bottom + 8;
+    var bottomPad = 12;
+    PANEL_ORDER.forEach(function(id) {
+      var panel = document.getElementById(id);
+      if (!panel || panel.style.display === 'none') return;
+      panel.style.top = y + 'px';
+      panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
+      y += panel.getBoundingClientRect().height + 10;
+    });
+  }
+  window.addEventListener('resize', positionSidePanels);
+  window.addEventListener('load', positionSidePanels);
+  positionSidePanels();
+  requestAnimationFrame(positionSidePanels);
+  if (typeof ResizeObserver !== 'undefined') {
+    PANEL_ORDER.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      new ResizeObserver(function() { positionSidePanels(); }).observe(el);
+    });
+  }
+
+  PANEL_ORDER.forEach(function(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    var title = panel.querySelector('.stats-panel-title');
+    if (!title) return;
+    title.addEventListener('click', function() {
+      if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+      var collapsing = !panel.classList.contains('collapsed');
+      if (collapsing) {
+        if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
+        panel.style.height = '';
+      } else if (panel.dataset.expandedHeight) {
+        panel.style.height = panel.dataset.expandedHeight;
+      }
+      panel.classList.toggle('collapsed');
+      setTimeout(positionSidePanels, 0);
+    });
+  });
+
+  (function setupPanelReordering() {
+    PANEL_ORDER.forEach(function(panelId) {
+      var panel = document.getElementById(panelId);
+      if (!panel) return;
+      var title = panel.querySelector('.stats-panel-title');
+      if (!title) return;
+      title.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData('text/plain', panelId);
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      title.addEventListener('dragend', function() {
+        title.dataset.justDragged = '1';
+        setTimeout(function() { title.dataset.justDragged = '0'; }, 0);
+      });
+      panel.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        panel.classList.add('drag-over');
+      });
+      panel.addEventListener('dragleave', function() { panel.classList.remove('drag-over'); });
+      panel.addEventListener('drop', function(e) {
+        e.preventDefault();
+        panel.classList.remove('drag-over');
+        var draggedId = e.dataTransfer.getData('text/plain');
+        if (!draggedId || draggedId === panelId) return;
+        var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+        if (from < 0 || to < 0) return;
+        PANEL_ORDER.splice(from, 1);
+        PANEL_ORDER.splice(to, 0, draggedId);
+        positionSidePanels();
+      });
+    });
+  })();
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    var isLight = document.body.classList.contains('light');
+    var themeBtn = document.getElementById('themeBtn');
+    if (themeBtn) {
+      themeBtn.textContent = isLight ? '☀' : '🌙';
+      themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
+    }
+  }
+  var themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+})();
 </script>
+</body>
+</html>
