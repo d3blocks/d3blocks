@@ -197,7 +197,8 @@ if (exportBtn) {
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
-// Side panels: position, collapse, reorder (same pattern as scatter/tree)
+// Top bar clearance + side panels: position, collapse, reorder
+// Always clear the top panel — even when show_controls is false (no side panels).
 (function() {
   var PANEL_ORDER = ['exportPanel', 'physicsPanel'];
 
@@ -222,6 +223,8 @@ if (exportBtn) {
   positionSidePanels();
   requestAnimationFrame(positionSidePanels);
   if (typeof ResizeObserver !== 'undefined') {
+    var bar = document.querySelector('.top-panel');
+    if (bar) new ResizeObserver(function() { positionSidePanels(); }).observe(bar);
     PANEL_ORDER.forEach(function(id) {
       var el = document.getElementById(id);
       if (!el) return;

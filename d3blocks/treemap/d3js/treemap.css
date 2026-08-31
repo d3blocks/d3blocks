@@ -187,8 +187,16 @@ html, body {
   transition: var(--transition);
   pointer-events: none;
 }
-.top-panel .top-panel-left { pointer-events: none; }
-.top-panel .top-panel-left a { pointer-events: auto; }
+.top-panel .top-panel-left {
+  pointer-events: none;
+  justify-self: start;
+  width: max-content;
+}
+.top-panel .top-panel-left a {
+  pointer-events: auto;
+  display: inline-block;
+  line-height: 0;
+}
 .top-panel .top-panel-center {
   pointer-events: auto;
   display: flex;
@@ -211,6 +219,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Fallback before JS measures the top panel (logo load, font metrics). */
+  margin-top: 80px;
 }
 #treemap-container {
   position: relative;
