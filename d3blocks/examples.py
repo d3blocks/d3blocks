@@ -447,17 +447,12 @@ d3.set_edge_properties(df, color='target', opacity='target', ordering = "ascendi
 # html = d3.show(filepath = filename)
 html = d3.show()
 
-
-# %%
-# import d3blocks
-# print(dir(d3blocks))
-# print(d3blocks.__version__)
-import pandas as pd
-import numpy as np
-
 # %% issue 49
 # https://github.com/d3blocks/d3blocks/issues/49
 # Treemap
+import pandas as pd
+import numpy as np
+
 from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks(chart='treemap', frame=False)
@@ -847,9 +842,9 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
 # html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
-# html = d3.treemap(df, filepath='c://temp//treemap.html')
-html = d3.tree(df, filepath='c://temp//tree.html')
-html = d3.sankey(df)
+html = d3.treemap(df, filepath='c://temp//treemap.html', show_controls=True, dark_mode=True, value='count')
+# html = d3.tree(df, filepath='c://temp//tree.html')
+# html = d3.sankey(df)
 
 # %%
 from d3blocks import D3Blocks
