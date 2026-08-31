@@ -429,11 +429,10 @@ import numpy as np
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
-df['int var'] = np.random.randint(1, 11, size=df.shape[0])
+df['int var'] = np.random.randint(1, 18, size=df.shape[0])
 df['float var'] = np.random.random(size=df.shape[0])
 
-d3.movingbubbles(df, size=10, opacity=0.8, stroke='#ffffff')
-
+d3.movingbubbles(df, size=df['int var'], opacity=df['float var'], stroke='#ffffff')
 
 # %% Issue 45
 from d3blocks import D3Blocks
