@@ -2864,7 +2864,7 @@ class D3Blocks():
     def treemap(self,
                 df: pd.DataFrame,
                 margin = {"top": 40, "right": 10, "bottom": 10, "left": 10},
-                border = {'type': 'solid', 'color': '#FFFFFF', 'width': 1},
+                border = {'type': 'solid', 'color': '#FFFFFF', 'width': 0},
                 font = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
                 show_controls: bool = True,
                 dark_mode: bool = True,
@@ -2894,7 +2894,7 @@ class D3Blocks():
                 * {"top": 40, "right": 10, "bottom": 10, "left": 10}
         border : dict.
             border properties.
-                * {'type': 'solid', 'color': '#FFFFFF', 'width': 1}
+                * {'type': 'solid', 'color': '#FFFFFF', 'width': 0}
         font : dict.
             font properties.
                 * {'size': 10, 'type':'sans-serif', 'position': 'absolute'}

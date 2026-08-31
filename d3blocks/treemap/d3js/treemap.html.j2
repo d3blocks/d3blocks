@@ -17,14 +17,21 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 </head>
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Top panel always shown: logo left, theme right -->
+<!-- Top panel always shown: logo left, mode radios center, theme right -->
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
       <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
     </a>
   </div>
-  <div class="top-panel-center"></div>
+  <div class="top-panel-center">
+{% if showControls == 'true' %}
+    <div class="mode-row top-mode">
+      <label><input type="radio" name="mode" value="size" checked> Size</label>
+      <label><input type="radio" name="mode" value="count"> Count</label>
+    </div>
+{% endif %}
+  </div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
@@ -46,13 +53,6 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="physics-control">
-      <label>Value mode</label>
-      <div class="mode-row">
-        <label><input type="radio" name="mode" value="size" checked> Size</label>
-        <label><input type="radio" name="mode" value="count"> Count</label>
-      </div>
-    </div>
-    <div class="physics-control">
       <label for="fontSizeSlider">Font size <span class="val" id="fontSizeVal">{{ fontsize }}</span></label>
       <input type="range" id="fontSizeSlider" min="6" max="24" step="1" value="{{ fontsize }}">
     </div>
@@ -60,7 +60,7 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
       <label for="borderWidthSlider">Border width <span class="val" id="borderWidthVal">{{ borderwidth }}</span></label>
       <input type="range" id="borderWidthSlider" min="0" max="8" step="1" value="{{ borderwidth }}">
     </div>
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Size uses weight; Count treats each leaf equally. Adjust label size and cell borders.</div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust label size and cell borders.</div>
   </div>
 </div>
 {% endif %}

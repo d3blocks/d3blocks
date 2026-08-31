@@ -29,7 +29,7 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['margin'] = {**{"top": 40, "right": 10, "bottom": 10, "left": 10}, **margin}
     config['font'] = {**{'size': 10, 'type': 'sans-serif', 'position': 'absolute'}, **font}
-    config['border'] = {**{'type': 'solid', 'color': '#FFFFFF', 'width': 1}, **border}
+    config['border'] = {**{'type': 'solid', 'color': '#FFFFFF', 'width': 0}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
     config['show_controls'] = kwargs.get('show_controls', True)
