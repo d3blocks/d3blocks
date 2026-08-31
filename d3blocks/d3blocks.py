@@ -1299,19 +1299,29 @@ class D3Blocks():
             Name of the column with the states.
         center : String, (default: None)
             Center this category.
-        size : int or dictionary. (default: 5) or {sample_id i: size}
-            Size the nodes by specifying per sample_id the size.
-                * 5: set all nodes this this size
-                * {'0': 4, '1': 10, '2': 5, ..}: Specify size for each sample_id
-        color : int or dictionary. (default: '#808080') or {sample_id i: hex-color}
-            Color the nodes by specifying per sample_id the color.
+        size : int, list/array/Series, or dictionary. (default: 5)
+            Size the nodes.
+                * 5: set all nodes to this size.
+                * [4, 10, 5, ...]: array-like of the same length as ``df``, aligned positionally with its rows (same convention as ``d3.scatter``'s ``size``).
+                * {'0': 4, '1': 10, '2': 5, ..}: dict keyed by sample_id value.
+
+        color : int, list/array/Series, or dictionary. (default: '#808080') or {sample_id i: hex-color}
+            Color the nodes.
                 * '#000FFF': set all nodes to this color.
-                * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: Specify color for each sample_id
+                * ['#808080', '#FFF000', ...]: array-like of the same length as ``df``, aligned positionally with its rows.
+                * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: dict keyed by sample_id value.
                 * None: Colors are based on sample_id using the cmap.
-        opacity : float, (default: 0.6)
+        opacity : float, list/array/Series, or dictionary, (default: 0.6)
             Opacity of the bubbles [0-1].
-        stroke : str, (default: '#000000')
+                * 0.6: set all nodes to this opacity.
+                * [0.4, 0.9, ...]: array-like of the same length as ``df``, aligned positionally with its rows.
+                * {'0': 0.4, '1': 0.9, ..}: dict keyed by sample_id value.
+        stroke : str, list/array/Series, or dictionary, (default: '#000000')
             Stroke color of the bubbles.
+                * '#000000': set all nodes to this stroke color.
+                * ['#000000', '#ffffff', ...]: array-like of the same length as ``df``, aligned positionally with its rows.
+                * {'0': '#000000', '1': '#ffffff', ..}: dict keyed by sample_id value.
+
         color_method : str
             Coloring of the nodes.
                 * 'state': Use the colors defined per state as (d3.node_properties).
@@ -1487,7 +1497,7 @@ class D3Blocks():
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
         # Set edge properties
-        self.set_edge_properties(df, timedelta=self.config['timedelta'], state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, color=color, standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
+        self.set_edge_properties(df, timedelta=self.config['timedelta'], state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, color=color, opacity=self.config['opacity'], stroke=self.config['stroke'], standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
         html = self.show()
         if return_html:

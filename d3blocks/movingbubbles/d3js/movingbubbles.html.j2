@@ -189,6 +189,8 @@ var colorByActivity = {{ COLORBYACTIVITY }} // array of the colors per state
 // NODE PROPERTIES
 var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
 var node_color = {{ NODE_COLOR }}; //array of color values, one for each node
+var node_opacity = {{ NODE_OPACITY }}; //array of opacity values, one for each node
+var node_stroke = {{ NODE_STROKE }}; //array of stroke colors, one for each node
 var node_props = {{ NODE_PROPS }}; // per-sample property bags from df columns (Layout panel)
 var PROP_KEYS = {{ PROP_KEYS }};   // ordered list of all selectable variables
 var STATE_COL = {{ STATE_COL }};   // name of the state column (live-updated)
@@ -325,6 +327,8 @@ var nodes = sched_objs.map(function(o, i) {
 		y: init_y,
 		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
         color: (color_method === "STATE" ? color(act) : node_color[i]),
+		opacity: node_opacity[i],
+		stroke: node_stroke[i],
 		moves: 0,
 		next_move_time: o[0].duration,
 		sched: o,
@@ -357,8 +361,6 @@ var force = d3.layout.force()
 	.on("tick", tick)
 	.start();
 
-var circleOpacity = {{ OPACITY }};
-var circleStroke = "{{ STROKE }}";
 
 // Path-based shapes so Size/Shape Layout controls can change geometry
 // without swapping element types. Collision still uses d.radius.
@@ -470,8 +472,8 @@ var circle = chartRoot.selectAll("path.bubble")
 	.attr("d", function(d) { return shapePath(shapeForNode(d), d.radius); })
 	.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
 	.style("fill", function(d) { return d.color; })
-	.style("opacity", circleOpacity)
-	.style("stroke", circleStroke)
+	.style("opacity", function(d) { return d.opacity; })
+	.style("stroke", function(d) { return d.stroke; })
 	.style("stroke-width", 1)
 	.style("cursor", "pointer");
 
@@ -482,9 +484,9 @@ function styleSelection() {
 	var hasSel = selectedNodes.length > 0;
 	circle
 		.classed("selected", function (d) { return isSelected(d); })
-		.style("opacity", function () { return circleOpacity; })
+		.style("opacity", function (d) { return d.opacity; })
 		.style("stroke", function (d) {
-			return isSelected(d) ? "#ffffff" : circleStroke;
+			return isSelected(d) ? "#ffffff" : d.stroke;
 		})
 		.style("stroke-width", function (d) {
 			return isSelected(d) ? 3.5 : 1;

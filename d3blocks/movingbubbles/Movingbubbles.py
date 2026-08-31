@@ -163,31 +163,53 @@ def set_edge_properties(df, **kwargs):
     timedelta = kwargs.get('timedelta', None)
     size = kwargs.get('size', 4)
     color = kwargs.get('color', None)
+    opacity = kwargs.get('opacity', 0.6)
+    stroke = kwargs.get('stroke', '#000000')
     cmap = kwargs.get('cmap', 'Set1')
     dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     logger = kwargs.get('logger', None)
     df = df.copy()
 
-    # Compute delta
-    if isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id):
-        if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
-        df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta if timedelta else 'minutes', logger=logger)
-    else:
+    if not (isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id)):
         raise Exception('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values))
 
-    # Set size per node. Note that sizes are still constant per node!
+    # Set size/color/opacity/stroke per node BEFORE standardize(): array-like
+    # inputs are positionally aligned with the ORIGINAL row order (same
+    # convention as scatter's set_edge_properties), and standardize() can
+    # sort/reset the index depending on method -- attaching these as
+    # dataframe columns first means that reordering carries the correct
+    # value along with each row automatically instead of silently
+    # misaligning a separately-tracked array.
     df = _set_nodesize(df, sample_id, size, logger)
-    # Colol per node
     df = _set_nodecolor(df, sample_id, color, cmap, logger)
+    df = _set_nodeopacity(df, sample_id, opacity, logger)
+    df = _set_nodestroke(df, sample_id, stroke, logger)
+
+    # Compute delta
+    if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
+    df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta if timedelta else 'minutes', logger=logger)
+
     return df
+
+
+def _array_like_len_check(name, values, n):
+    if len(values) != n:
+        raise Exception('[Movingbubbles] Input parameter [%s] as an array/list/Series must have the same length as the input dataframe: expected %d, got %d.' % (name, n, len(values)))
+
 
 def _set_nodecolor(df, sample_id, color, cmap, logger):
     if isinstance(color, dict):
         # Per-node colors supplied as {sample_id: hex}
-        if logger is not None: logger.info('Processing the specified in node colors in dictionary..')
+        if logger is not None: logger.info('Processing the specified node colors as a dictionary..')
         df['color'] = '#808080'
         for key in color.keys():
             df.loc[df[sample_id]==key, 'color'] = str(color.get(key))
+    elif isinstance(color, (list, tuple, np.ndarray, pd.Series)):
+        # Array-like, aligned positionally with the dataframe rows.
+        color_arr = np.asarray(color)
+        _array_like_len_check('color', color_arr, len(df))
+        if logger is not None: logger.info('Processing the specified node colors as an array aligned with the dataframe..')
+        df['color'] = [str(c) for c in color_arr]
     elif color is None:
         # Derive colors from cmap based on sample_id
         colors = colourmap.fromlist(df[sample_id], cmap=cmap, scheme='hex')[0]
@@ -201,18 +223,58 @@ def _set_nodecolor(df, sample_id, color, cmap, logger):
 
 
 def _set_nodesize(df, sample_id, size, logger):
-    # Node size is set to default.
     if isinstance(size, dict):
         # add new column to df with node size for the specified sample_id
-        if logger is not None: logger.info('Processing the specified in node sizes in dictionary..')
+        if logger is not None: logger.info('Processing the specified node sizes as a dictionary..')
         df['size'] = 4
         for key in size.keys():
             df.loc[df[sample_id]==key, 'size'] = size.get(key)
-
-    # If the size column not exists, create one with default size
-    if not np.any(np.isin(df.columns, 'size')):
+    elif isinstance(size, (list, tuple, np.ndarray, pd.Series)):
+        # Array-like, aligned positionally with the dataframe rows.
+        size_arr = np.asarray(size)
+        _array_like_len_check('size', size_arr, len(df))
+        if logger is not None: logger.info('Processing the specified node sizes as an array aligned with the dataframe..')
+        df['size'] = size_arr
+    else:
+        # Scalar: broadcast to all rows
         df['size'] = size
         if logger is not None: logger.info('Set all nodes to size: %s' %(str(size)))
+
+    return df
+
+
+def _set_nodeopacity(df, sample_id, opacity, logger):
+    if isinstance(opacity, dict):
+        if logger is not None: logger.info('Processing the specified node opacities as a dictionary..')
+        df['opacity'] = 0.6
+        for key in opacity.keys():
+            df.loc[df[sample_id]==key, 'opacity'] = opacity.get(key)
+    elif isinstance(opacity, (list, tuple, np.ndarray, pd.Series)):
+        opacity_arr = np.asarray(opacity)
+        _array_like_len_check('opacity', opacity_arr, len(df))
+        if logger is not None: logger.info('Processing the specified node opacities as an array aligned with the dataframe..')
+        df['opacity'] = opacity_arr
+    else:
+        df['opacity'] = opacity
+        if logger is not None: logger.info('Set all nodes to opacity: %s' %(str(opacity)))
+
+    return df
+
+
+def _set_nodestroke(df, sample_id, stroke, logger):
+    if isinstance(stroke, dict):
+        if logger is not None: logger.info('Processing the specified node stroke colors as a dictionary..')
+        df['stroke'] = '#000000'
+        for key in stroke.keys():
+            df.loc[df[sample_id]==key, 'stroke'] = str(stroke.get(key))
+    elif isinstance(stroke, (list, tuple, np.ndarray, pd.Series)):
+        stroke_arr = np.asarray(stroke)
+        _array_like_len_check('stroke', stroke_arr, len(df))
+        if logger is not None: logger.info('Processing the specified node stroke colors as an array aligned with the dataframe..')
+        df['stroke'] = [str(c) for c in stroke_arr]
+    else:
+        df['stroke'] = str(stroke)
+        if logger is not None: logger.info('Set all nodes to stroke: %s' %(stroke))
 
     return df
 
@@ -285,6 +347,14 @@ def show(df, **kwargs):
     # Convert NumPy strings to regular Python strings for proper JSON serialization
     config['node_color'] = [str(nodedict.get(x)) if nodedict.get(x) is not None else nodedict.get(x) for x in uiid]
 
+    # Node opacity in the same order as the uiid
+    nodedict = dict(zip(df[sid_col], df['opacity']))
+    config['node_opacity'] = [float(nodedict.get(x)) for x in uiid]
+
+    # Node stroke color in the same order as the uiid
+    nodedict = dict(zip(df[sid_col], df['stroke']))
+    config['node_stroke'] = [str(nodedict.get(x)) if nodedict.get(x) is not None else nodedict.get(x) for x in uiid]
+
     # Set color codes for the d3js
     df_labels = pd.DataFrame(labels).T
     # Convert NumPy integers to regular Python integers and NumPy strings to regular Python strings for proper JSON serialization
@@ -339,8 +409,10 @@ def show(df, **kwargs):
     reserved_cols = {
         config['columns']['datetime'],
         'delta', 'time_in_state',
-        'size',   # set by _set_nodesize, not an input variable
-        'color',  # generated hex palette, not a data variable
+        'size',    # set by _set_nodesize, not an input variable
+        'color',   # generated hex palette, not a data variable
+        'opacity', # set by _set_nodeopacity, not an input variable
+        'stroke',  # set by _set_nodestroke, not an input variable
     }
     prop_cols = [c for c in df.columns if c not in reserved_cols]
     # Guarantee sample_id and state are listed even if somehow missing from columns
@@ -402,7 +474,7 @@ def show(df, **kwargs):
     config['prop_keys'] = seen
 
     if config['note'] is None:
-        config['note'] = "Simulation started."
+        config['note'] = "This is a simulation of multiple states and samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>."
         config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
 
     if config['time_notes'] is None:
@@ -480,8 +552,8 @@ def write_html(X, config, logger=None):
         'showControls': str(config['show_controls']).lower(),
         'darkMode': str(config['dark_mode']).lower(),
         'COLOR_BACKGROUND': config['background_color'],
-        'OPACITY': config['opacity'],
-        'STROKE': config['stroke'],
+        'NODE_OPACITY': config['node_opacity'],
+        'NODE_STROKE': config['node_stroke'],
 
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,

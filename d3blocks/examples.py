@@ -416,7 +416,7 @@ d3.set_edge_properties(df)
 # Show chart
 # d3.show(hierarchy=[1, 2, 3, 4, 5, 6, 7, 8], filepath=r'c:\temp\tree.html')
 d3.show(filepath=r'c:\temp\tree.html', margin = {"top": 20, "right": 80, "bottom": 20, "left": 60},
-        link_length=180,
+        link_length=120,
         font={'size':20},
         dark_mode=True,
         show_controls=True,
@@ -425,6 +425,7 @@ d3.show(filepath=r'c:\temp\tree.html', margin = {"top": 20, "right": 80, "bottom
 
 #%%
 # MOVINGBUBBLES
+import numpy as np
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
