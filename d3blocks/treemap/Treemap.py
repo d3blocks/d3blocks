@@ -34,6 +34,10 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['save_button'] = kwargs.get('save_button', True)
     config['show_controls'] = kwargs.get('show_controls', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    # 'size' uses weight; 'count' treats each leaf equally
+    config['value'] = kwargs.get('value', 'size')
+    if config['value'] not in ('size', 'count'):
+        config['value'] = 'size'
     # return
     return config
 
@@ -178,6 +182,7 @@ def write_html(X, node_properties, config, logger=None):
         'marginLeft': config['margin']['left'],
         'showControls': str(config.get('show_controls', True)).lower(),
         'darkMode': str(config.get('dark_mode', True)).lower(),
+        'valueMode': config.get('value', 'size'),
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],

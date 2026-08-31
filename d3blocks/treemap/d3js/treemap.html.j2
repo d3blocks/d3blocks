@@ -27,8 +27,8 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
   <div class="top-panel-center">
 {% if showControls == 'true' %}
     <div class="mode-row top-mode">
-      <label><input type="radio" name="mode" value="size" checked> Size</label>
-      <label><input type="radio" name="mode" value="count"> Count</label>
+      <label><input type="radio" name="mode" value="size"{% if valueMode == 'size' %} checked{% endif %}> Size</label>
+      <label><input type="radio" name="mode" value="count"{% if valueMode == 'count' %} checked{% endif %}> Count</label>
     </div>
 {% endif %}
   </div>
@@ -109,7 +109,8 @@ const div = container.append("div")
 function sumBySize(d) { return d.size; }
 function sumByCount(d) { return d.size ? 1 : 0; }
 
-let valueFn = sumBySize;
+const initialMode = "{{ valueMode }}";
+let valueFn = initialMode === "count" ? sumByCount : sumBySize;
 let root = d3.hierarchy(data, (d) => d.children).sum(valueFn);
 let tree = treemap(root);
 
