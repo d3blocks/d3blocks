@@ -1376,6 +1376,9 @@ class D3Blocks():
             False: Light theme.
         background_color : str, (default: '#12141c')
             Background color used for the dark theme.
+        node_text_inside : bool, (default: True)
+            True: Per-bubble labels (Layout -> Label) are centered inside the node, with the text color automatically switched between black/white for contrast against the node's fill color.
+            False: Labels are placed above the node, matching the theme's text color (this was the only behavior previously).
 
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
@@ -1493,7 +1496,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, background_color=background_color, opacity=opacity, stroke=stroke, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, background_color=background_color, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)

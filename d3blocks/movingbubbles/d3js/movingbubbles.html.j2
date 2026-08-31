@@ -26,7 +26,7 @@ body { font-size: {{ FONTSIZE }}; }
 
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
-    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
         <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
     </a>
   </div>
@@ -191,6 +191,20 @@ var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
 var node_color = {{ NODE_COLOR }}; //array of color values, one for each node
 var node_opacity = {{ NODE_OPACITY }}; //array of opacity values, one for each node
 var node_stroke = {{ NODE_STROKE }}; //array of stroke colors, one for each node
+var nodeTextInside = {{ nodeTextInside }}; //true: labels centered inside the node; false: labels above it
+
+// Contrasting black/white text color for labels drawn inside a colored
+// node (luminance-based), matching d3graph's node_text_inside behavior.
+function contrastTextColor(hexColor) {
+	if (!hexColor) return "var(--text)";
+	var hex = String(hexColor).replace('#', '');
+	if (hex.length === 3) hex = hex.split('').map(function (c) { return c + c; }).join('');
+	if (hex.length !== 6) return "var(--text)";
+	var r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+	if (isNaN(r) || isNaN(g) || isNaN(b)) return "var(--text)";
+	var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+	return luminance > 0.55 ? "#000000" : "#ffffff";
+}
 var node_props = {{ NODE_PROPS }}; // per-sample property bags from df columns (Layout panel)
 var PROP_KEYS = {{ PROP_KEYS }};   // ordered list of all selectable variables
 var STATE_COL = {{ STATE_COL }};   // name of the state column (live-updated)
@@ -733,8 +747,9 @@ function tick(e) {
 
   nodeLabel
 	  .attr("x", function(d) { return d.x; })
-	  .attr("y", function(d) { return d.y - d.radius - 4; })
-	  .style("fill", "var(--text)")
+	  .attr("y", function(d) { return nodeTextInside ? d.y : (d.y - d.radius - 4); })
+	  .attr("dominant-baseline", nodeTextInside ? "central" : null)
+	  .style("fill", function(d) { return nodeTextInside ? contrastTextColor(d.color) : "var(--text)"; })
 	  .text(function(d) { return currentLabelKey ? labelTextFor(d) : ""; });
 
   // Append points to the active selection trail
@@ -866,7 +881,11 @@ function resetSimulation() {
 		chartRoot.attr('transform', 'translate(0,0)scale(1)');
 	}
 
-	force.resume();
+	// force.resume() restarts at D3's default alpha (0.1), which cools down
+	// to a stop in only a few seconds -- not enough time for nodes to
+	// settle after being scattered back to their reset positions. A much
+	// higher starting alpha keeps the simulation "hot" for far longer.
+	force.alpha(2);
 	// Reset always stops playback: slider goes to 0 (leftmost/stop) rather
 	// than resuming at whatever speed was previously set.
 	var slider = document.getElementById('speedSlider');

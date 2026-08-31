@@ -55,6 +55,7 @@ def set_config(config={}, **kwargs):
     config['show_controls'] = kwargs.get('show_controls', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
     config['background_color'] = kwargs.get('background_color', '#12141c')
+    config['node_text_inside'] = kwargs.get('node_text_inside', True)
     config['opacity'] = kwargs.get('opacity', 0.6)
     config['stroke'] = kwargs.get('stroke', '#000000')
 
@@ -552,6 +553,7 @@ def write_html(X, config, logger=None):
         'showControls': str(config['show_controls']).lower(),
         'darkMode': str(config['dark_mode']).lower(),
         'COLOR_BACKGROUND': config['background_color'],
+        'nodeTextInside': str(config['node_text_inside']).lower(),
         'NODE_OPACITY': config['node_opacity'],
         'NODE_STROKE': config['node_stroke'],
 
