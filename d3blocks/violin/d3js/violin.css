@@ -186,6 +186,14 @@ html, body {
   gap: 8px;
   align-items: center;
   justify-self: end;
+  z-index: 1201;
+  position: relative;
+}
+.top-panel #themeBtn {
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 1202;
+  position: relative;
 }
 .top-panel .button-switch { margin: 0; }
 

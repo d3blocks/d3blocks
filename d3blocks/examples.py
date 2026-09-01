@@ -15,10 +15,12 @@ d3.violin(x=df['labx'].values,
           fontsize_axis=10,
           fontsize=10,
           size=df['survival_months'].values/10,
-          x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
+          # x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
           filepath=r'c:\temp\violine.html',
           figsize=[None, None],
           df=df,
+          show_controls=True,
+          dark_mode=False
           )
 
 

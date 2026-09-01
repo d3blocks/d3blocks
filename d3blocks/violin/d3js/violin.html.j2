@@ -528,6 +528,30 @@ window.addEventListener('DOMContentLoaded', function () {
   buildChart();
 });
 
+// Theme toggle — always active (even when show_controls=False; top panel stays)
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  var isLight = document.body.classList.contains('light');
+  var btn = document.getElementById('themeBtn');
+  if (btn) {
+    btn.textContent = isLight ? '☀' : '🌙';
+    btn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
+  }
+}
+(function wireThemeBtn() {
+  var themeBtn = document.getElementById('themeBtn');
+  if (!themeBtn) return;
+  themeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleTheme();
+  });
+  // Sync icon with current body class
+  var isLight = document.body.classList.contains('light');
+  themeBtn.textContent = isLight ? '☀' : '🌙';
+  themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
+})();
+
 // Export data as JSON
 var exportBtn = document.getElementById("exportButton");
 if (exportBtn) {
@@ -653,18 +677,6 @@ if (exportBtn) {
       });
     });
   })();
-
-  function toggleTheme() {
-    document.body.classList.toggle('light');
-    var isLight = document.body.classList.contains('light');
-    var themeBtn = document.getElementById('themeBtn');
-    if (themeBtn) {
-      themeBtn.textContent = isLight ? '☀' : '🌙';
-      themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
-    }
-  }
-  var themeBtn = document.getElementById('themeBtn');
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
   // Physics controls
   var sizeMultiplierSlider = document.getElementById("sizeMultiplierSlider");
