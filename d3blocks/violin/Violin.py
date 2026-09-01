@@ -308,13 +308,15 @@ def show(df, **kwargs):
     # Ordering the class labels
     if config['x_order'] is None:
         config['x_order'] = str(list(labels))
-    # None width → fit browser width client-side; keep a numeric fallback for template
+    # None width → fit browser width client-side
+    # None height → 70% of browser window height client-side
+    # Numeric fallbacks are only used before JS measures the viewport.
     config['auto_width'] = config['figsize'][0] is None
     config['auto_height'] = config['figsize'][1] is None
     if config['figsize'][0] is None:
         config['figsize'][0] = max(int(len(labels) * 95), 800)
     if config['figsize'][1] is None:
-        config['figsize'][1] = 400
+        config['figsize'][1] = 600  # fallback ≈ 70% of a typical 900px-tall window
 
     # Check whether tooltip is available. Otherwise remove the tooltip box.
     if np.all(df['tooltip']=='') or np.all(df['tooltip'].isna()):

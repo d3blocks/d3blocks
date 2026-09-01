@@ -148,21 +148,15 @@ var nodeTextInside = ("{{ NODE_TEXT_INSIDE }}" === "true");
 function computePlotSize() {
   var mainEl = document.getElementById('violin-main');
   var availW = (mainEl && mainEl.clientWidth > 0) ? mainEl.clientWidth : Math.max(320, window.innerWidth - 40);
-  var availH;
-  if (mainEl) {
-    var top = mainEl.getBoundingClientRect().top;
-    availH = Math.max(280, window.innerHeight - top - 24);
-  } else {
-    availH = Math.max(280, window.innerHeight - 120);
-  }
   // figsize [None, *] → plot width fills available screen/container width
   if (autoWidth) {
     width = Math.max(120, availW - margin.left - margin.right);
   } else {
     width = baseWidth - margin.left - margin.right;
   }
+  // figsize [*, None] → plot height = 70% of the browser window height
   if (autoHeight) {
-    height = Math.max(120, availH - margin.top - margin.bottom);
+    height = Math.max(120, window.innerHeight * 0.70 - margin.top - margin.bottom);
   } else {
     height = baseHeight - margin.top - margin.bottom;
   }
