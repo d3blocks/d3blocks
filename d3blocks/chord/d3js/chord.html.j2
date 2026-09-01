@@ -12,18 +12,75 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
 <head>
     <meta charset="UTF-8">
     <title>{{ TITLE }}</title>
+    {{ SUPPORT }}
+    <style>{% include "chord.css" %}</style>
 </head>
-<body>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Create save button -->
-{{ SAVE_BUTTON_START }}
-    <div style="max-width:{{ WIDTH }}px;">
-        <center><button id="saveButton">Save</button></center>
+<!-- Top panel always shown: logo left, ordering mode center, theme right -->
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+      <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center">
+{% if showControls == 'true' and ORDERING_MODE != 'custom' %}
+    <div class="mode-row top-mode">
+      <label><input type="radio" name="ordering" value="ascending"{% if ORDERING_MODE == 'ascending' %} checked{% endif %}> Ascending</label>
+      <label><input type="radio" name="ordering" value="descending"{% if ORDERING_MODE == 'descending' %} checked{% endif %}> Descending</label>
+      <label><input type="radio" name="ordering" value="none"{% if ORDERING_MODE == 'none' %} checked{% endif %}> None</label>
     </div>
-{{ SAVE_BUTTON_STOP }}
+{% endif %}
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+
+{% if showControls == 'true' %}
+<!-- Side panel: Export / Save -->
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button class="button-switch" id="exportButton" type="button" title="Export nodes and links as JSON" style="width:100%;margin:4px 0 8px 0">Export</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads the nodes/links as JSON. Save downloads the current view as SVG.</div>
+  </div>
+</div>
+
+<!-- Side panel: Appearance (layout controls for the chord diagram) -->
+<div class="stats-panel collapsed" id="appearancePanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Appearance<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="fontSizeSlider">Font size <span class="val" id="fontSizeVal">{{ FONTSIZE }}</span></label>
+      <input type="range" id="fontSizeSlider" min="6" max="24" step="1" value="{{ FONTSIZE }}">
+    </div>
+    <div class="physics-control">
+      <label for="arrowheadSlider">Arrowhead <span class="val" id="arrowheadVal">{{ ARROWHEAD }}</span></label>
+      <input type="range" id="arrowheadSlider" min="0" max="50" step="1" value="{{ ARROWHEAD }}">
+    </div>
+    <div class="physics-control">
+      <label for="marginSlider">Margin <span class="val" id="marginVal">{{ MARGIN }}</span></label>
+      <input type="range" id="marginSlider" min="20" max="400" step="5" value="{{ MARGIN }}">
+    </div>
+    <div class="physics-control">
+      <label for="textOffsetSlider">Text offset <span class="val" id="textOffsetVal">{{ TEXT_OFFSET }}</span></label>
+      <input type="range" id="textOffsetSlider" min="0" max="60" step="1" value="{{ TEXT_OFFSET }}">
+    </div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust label size, arrowhead, margin, and label offset.</div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Main visualization -->
+<div id="chord-main">
+  <div id="chord-container"></div>
+</div>
 
 <script>
-	{% include "chord.js" %}
+    {% include "chord.js" %}
 
     const jsonData = {{ json_data }};
 
@@ -33,27 +90,187 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
         value,
         opacity,
         color,
-    }))
+    }));
+
+    let chordChart = null;
 
     document.addEventListener('DOMContentLoaded', function () {
-        window.Chord({
+        chordChart = window.Chord({
             data,
-			nodes: jsonData.nodes,
+            nodes: jsonData.nodes,
+            container: 'chord-container',
             width: {{ WIDTH }},
             height: {{ HEIGHT }},
             margin: {{ MARGIN }},
             textOffset: {{ TEXT_OFFSET }},
+            fontsize: {{ FONTSIZE }},
+            arrowhead: {{ ARROWHEAD }},
+            orderingMode: "{{ ORDERING_MODE }}",
+            customOrder: {{ ORDERING_CUSTOM }},
         });
     });
 
-
     {{ SAVE_TO_SVG_SCRIPT }}
 
+    // Export nodes/links as JSON
+    const exportBtn = document.getElementById("exportButton");
+    if (exportBtn) {
+      exportBtn.addEventListener("click", function() {
+        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "chord-export.json";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+      });
+    }
 
+    // Appearance sliders: live-update the chart without a full reload
+    const fontSlider = document.getElementById("fontSizeSlider");
+    const fontVal = document.getElementById("fontSizeVal");
+    if (fontSlider) {
+      fontSlider.addEventListener("input", function() {
+        if (fontVal) fontVal.textContent = fontSlider.value;
+        if (chordChart) chordChart.setFontSize(fontSlider.value);
+      });
+    }
+
+    const arrowheadSlider = document.getElementById("arrowheadSlider");
+    const arrowheadVal = document.getElementById("arrowheadVal");
+    if (arrowheadSlider) {
+      arrowheadSlider.addEventListener("input", function() {
+        if (arrowheadVal) arrowheadVal.textContent = arrowheadSlider.value;
+        if (chordChart) chordChart.setArrowhead(arrowheadSlider.value);
+      });
+    }
+
+    const marginSlider = document.getElementById("marginSlider");
+    const marginVal = document.getElementById("marginVal");
+    if (marginSlider) {
+      marginSlider.addEventListener("input", function() {
+        if (marginVal) marginVal.textContent = marginSlider.value;
+        if (chordChart) chordChart.setMargin(marginSlider.value);
+      });
+    }
+
+    const textOffsetSlider = document.getElementById("textOffsetSlider");
+    const textOffsetVal = document.getElementById("textOffsetVal");
+    if (textOffsetSlider) {
+      textOffsetSlider.addEventListener("input", function() {
+        if (textOffsetVal) textOffsetVal.textContent = textOffsetSlider.value;
+        if (chordChart) chordChart.setTextOffset(textOffsetSlider.value);
+      });
+    }
+
+    // Ordering radios
+    document.querySelectorAll('input[name="ordering"]').forEach(function(el) {
+      el.addEventListener("change", function() {
+        if (chordChart) chordChart.setOrdering(this.value);
+      });
+    });
+
+    // Top bar clearance + side panels: position, collapse, reorder
+    // Always clear the top panel — even when show_controls is false (no side panels).
+    (function() {
+      var PANEL_ORDER = ['exportPanel', 'appearancePanel'];
+
+      function positionSidePanels() {
+        var bar = document.querySelector('.top-panel');
+        var main = document.getElementById('chord-main');
+        if (!bar) return;
+        var bottom = bar.getBoundingClientRect().bottom;
+        if (main) main.style.marginTop = (bottom + 12) + 'px';
+        var y = bottom + 8;
+        var bottomPad = 12;
+        PANEL_ORDER.forEach(function(id) {
+          var panel = document.getElementById(id);
+          if (!panel || panel.style.display === 'none') return;
+          panel.style.top = y + 'px';
+          panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
+          y += panel.getBoundingClientRect().height + 10;
+        });
+      }
+      window.addEventListener('resize', positionSidePanels);
+      window.addEventListener('load', positionSidePanels);
+      positionSidePanels();
+      requestAnimationFrame(positionSidePanels);
+      if (typeof ResizeObserver !== 'undefined') {
+        var bar = document.querySelector('.top-panel');
+        if (bar) new ResizeObserver(function() { positionSidePanels(); }).observe(bar);
+        PANEL_ORDER.forEach(function(id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          new ResizeObserver(function() { positionSidePanels(); }).observe(el);
+        });
+      }
+
+      PANEL_ORDER.forEach(function(panelId) {
+        var panel = document.getElementById(panelId);
+        if (!panel) return;
+        var title = panel.querySelector('.stats-panel-title');
+        if (!title) return;
+        title.addEventListener('click', function() {
+          if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+          var collapsing = !panel.classList.contains('collapsed');
+          if (collapsing) {
+            if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
+            panel.style.height = '';
+          } else if (panel.dataset.expandedHeight) {
+            panel.style.height = panel.dataset.expandedHeight;
+          }
+          panel.classList.toggle('collapsed');
+          setTimeout(positionSidePanels, 0);
+        });
+      });
+
+      (function setupPanelReordering() {
+        PANEL_ORDER.forEach(function(panelId) {
+          var panel = document.getElementById(panelId);
+          if (!panel) return;
+          var title = panel.querySelector('.stats-panel-title');
+          if (!title) return;
+          title.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', panelId);
+            e.dataTransfer.effectAllowed = 'move';
+          });
+          title.addEventListener('dragend', function() {
+            title.dataset.justDragged = '1';
+            setTimeout(function() { title.dataset.justDragged = '0'; }, 0);
+          });
+          panel.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            panel.classList.add('drag-over');
+          });
+          panel.addEventListener('dragleave', function() { panel.classList.remove('drag-over'); });
+          panel.addEventListener('drop', function(e) {
+            e.preventDefault();
+            panel.classList.remove('drag-over');
+            var draggedId = e.dataTransfer.getData('text/plain');
+            if (!draggedId || draggedId === panelId) return;
+            var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+            if (from < 0 || to < 0) return;
+            PANEL_ORDER.splice(from, 1);
+            PANEL_ORDER.splice(to, 0, draggedId);
+            positionSidePanels();
+          });
+        });
+      })();
+
+      function toggleTheme() {
+        document.body.classList.toggle('light');
+        var isLight = document.body.classList.contains('light');
+        var themeBtn = document.getElementById('themeBtn');
+        if (themeBtn) {
+          themeBtn.textContent = isLight ? '☀' : '🌙';
+          themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
+        }
+      }
+      var themeBtn = document.getElementById('themeBtn');
+      if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+    })();
 </script>
-<div id="chart"></div>
-
-{{ SUPPORT }}
 
 </body>
 </html>

@@ -841,10 +841,12 @@ html = d3.tree(df)
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('energy')
-# html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
+
+html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
 html = d3.treemap(df, filepath='c://temp//treemap.html', show_controls=True, dark_mode=True, value='count')
-# html = d3.tree(df, filepath='c://temp//tree.html')
-# html = d3.sankey(df)
+html = d3.tree(df, filepath='c://temp//tree.html')
+html = d3.sankey(df)
+html = d3.chord(df)
 
 # %%
 from d3blocks import D3Blocks

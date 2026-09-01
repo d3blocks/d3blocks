@@ -1208,10 +1208,6 @@
     return 0;
   }
 
-  function defaultArrowheadRadius() {
-    return {{ ARROWHEAD }};
-  }
-
   function ribbon(headRadius) {
     var source = defaultSource,
         target = defaultTarget,
@@ -1306,8 +1302,9 @@
     return ribbon;
   }
 
-  function ribbonArrow() {
-    return ribbon(defaultArrowheadRadius);
+  function ribbonArrow(headRadius) {
+    var hr = headRadius == null ? {{ ARROWHEAD }} : headRadius;
+    return ribbon(function() { return hr; });
   }
 
   function ascending(a, b) {
@@ -1732,8 +1729,17 @@
     return arc;
   }
 
-  function generateChord({data, nodes, width= 954, height = width, margin = 150, textOffset = 5}) {
-      {{ ORDERING }}
+  // Compute the ordered list of unique node names used around the ring.
+  function computeChordNames(data, orderingMode, customOrder) {
+      const all = Array.from(new Set(data.flatMap(d => [d.source, d.target])));
+      if (orderingMode === 'ascending') return all.sort(ascending);
+      if (orderingMode === 'descending') return all.sort(descending);
+      if (orderingMode === 'custom' && customOrder && customOrder.length) return customOrder.slice();
+      return all;
+  }
+
+  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null}) {
+      const names = computeChordNames(data, orderingMode, customOrder);
       // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
       const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
       const node_opacity = new Map(nodes.map(n => [n.name, n.opacity]));    // GET NODE OPACITY
@@ -1782,7 +1788,7 @@
 
       const chords = chord(matrix);
 
-      const ribbon = ribbonArrow()
+      const ribbon = ribbonArrow(arrowhead)
           .radius(innerRadius - 1)
           .padAngle(1 / innerRadius);
 
@@ -1823,7 +1829,7 @@
       }
 
       const group = svg.append("g")
-          .attr("font-size", {{ FONTSIZE }})
+          .attr("font-size", fontsize)
           .attr("font-family", "sans-serif")
           .selectAll("g")
           .data(chords.groups)
@@ -1894,9 +1900,42 @@
       return svg.node();
   }
 
-  window.Chord = function ({data, nodes, width, height, margin, textOffset}) {
-      const svg = generateChord({data, nodes, width, height, margin, textOffset});
-      document.body.append(svg);
+  window.Chord = function (opts) {
+      const state = Object.assign({
+          width: 954,
+          height: 954,
+          margin: 150,
+          textOffset: 5,
+          fontsize: 10,
+          arrowhead: 10,
+          orderingMode: 'ascending',
+          customOrder: null,
+      }, opts);
+
+      const containerEl = typeof opts.container === 'string'
+          ? document.getElementById(opts.container)
+          : (opts.container || document.body);
+
+      function render() {
+          if (!containerEl) return;
+          containerEl.innerHTML = '';
+          const svg = generateChord(state);
+          containerEl.appendChild(svg);
+      }
+
+      render();
+
+      // Public controller returned so the surrounding page (GUI panels) can
+      // update the chart live without a full reload.
+      return {
+          setFontSize: function (v) { state.fontsize = +v; render(); },
+          setArrowhead: function (v) { state.arrowhead = +v; render(); },
+          setMargin: function (v) { state.margin = +v; render(); },
+          setTextOffset: function (v) { state.textOffset = +v; render(); },
+          setOrdering: function (mode) { state.orderingMode = mode; render(); },
+          getState: function () { return state; },
+          render: render,
+      };
   };
 
 })();

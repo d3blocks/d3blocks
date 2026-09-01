@@ -34,6 +34,8 @@ def set_config(config={}, **kwargs):
     config['save_button'] = kwargs.get('save_button', True)
     config['margin'] = kwargs.get('margin', 150)  # Margin around the chord diagram
     config['text_offset'] = kwargs.get('text_offset', 5)  # Additional offset for text labels
+    config['show_controls'] = kwargs.get('show_controls', True)  # Show the top bar and left control panels
+    config['dark_mode'] = kwargs.get('dark_mode', True)  # Start in dark theme
     # return
     return config
 
@@ -259,21 +261,26 @@ def write_html(X, config, logger=None):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
-    ORDERING = ''
-    if isinstance(config['ordering'], str) and config['ordering']=='ascending':
-        ORDERING = 'const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending)'
-    elif isinstance(config['ordering'], str) and config['ordering']=='descending':
-        ORDERING = 'const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(descending)'
+
+    # Ordering is expressed as a mode ('ascending'/'descending'/'none'/'custom') plus an
+    # optional custom order array, instead of a raw JS snippet, so the GUI ordering
+    # control (top panel) can switch modes live without a full page reload.
+    ORDERING_MODE = 'none'
+    ORDERING_CUSTOM = 'null'
+    if isinstance(config['ordering'], str) and config['ordering'] == 'ascending':
+        ORDERING_MODE = 'ascending'
+    elif isinstance(config['ordering'], str) and config['ordering'] == 'descending':
+        ORDERING_MODE = 'descending'
     elif isinstance(config['ordering'], (list, np.ndarray)):
         # Make some checks first.
         clean_labels = pre_processing(config['ordering'])
         if len(np.unique(clean_labels)) < len(clean_labels): raise Exception('The ordering should be a unique list of labels.')
         # Do the formatting
         formatted_strings = [f"'{item}'" if "'" not in item else f'"{item}"' for item in clean_labels]
-        result_string = '[' + ', '.join(formatted_strings) + ']'
-        ORDERING = 'const names = Array.from(' + result_string + ');'
+        ORDERING_MODE = 'custom'
+        ORDERING_CUSTOM = '[' + ', '.join(formatted_strings) + ']'
     else:
-        ORDERING = 'const names = Array.from(new Set(data.flatMap(d => [d.source, d.target])))'
+        ORDERING_MODE = 'none'
 
     content = {
         'json_data': X,
@@ -282,13 +289,16 @@ def write_html(X, config, logger=None):
         'HEIGHT': config['figsize'][1],
         'FONTSIZE': config['fontsize'],
         'ARROWHEAD': config['arrowhead'],
-        'ORDERING': ORDERING,
+        'ORDERING_MODE': ORDERING_MODE,
+        'ORDERING_CUSTOM': ORDERING_CUSTOM,
         'MARGIN': config['margin'],
         'TEXT_OFFSET': config['text_offset'],
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'showControls': 'true' if config.get('show_controls', True) else 'false',
+        'darkMode': 'true' if config.get('dark_mode', True) else 'false',
     }
 
     try:
