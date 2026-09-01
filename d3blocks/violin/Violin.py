@@ -43,6 +43,7 @@ def set_config(config={}, **kwargs):
     config['save_button'] = kwargs.get('save_button', True)
     config['show_controls'] = kwargs.get('show_controls', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['node_text_inside'] = kwargs.get('node_text_inside', True)
     # Return
     return config
 
@@ -376,6 +377,7 @@ def write_html(X, config, logger=None):
         'showControls': 'true' if show_controls else 'false',
         'darkMode': 'true' if dark_mode else 'false',
         'PROPERTY_KEYS_JSON': __import__('json').dumps(config.get('property_keys', [])),
+        'NODE_TEXT_INSIDE': 'true' if config.get('node_text_inside', True) else 'false',
     }
 
     try:

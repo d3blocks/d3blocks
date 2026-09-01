@@ -135,6 +135,7 @@ var margin = {top: 10, right: 30, bottom: 40, left: 50},
 
 var data = {{ json_data }};
 var propertyKeys = {{ PROPERTY_KEYS_JSON }};  // column names from df (server-side)
+var nodeTextInside = ("{{ NODE_TEXT_INSIDE }}" === "true");
 
 var currentBins = {{ BINS }};
 var currentFontSize = {{ FONTSIZE_AXIS_NUM }};
@@ -154,6 +155,9 @@ var currentLabelKey = '';      // '' | '__tooltip__' | property key
 var svgRoot, svg, yScale, xScale, xNumScale;
 var sizeScale = null;          // d3 scale when size driven by numeric property
 var colorScale = null;         // d3 scale when color driven by property
+var zoomBehavior = null;
+var currentZoomTransform = null;  // preserved across physics/layout rebuilds
+var zoomLayer = null;
 
 var SHAPE_MAP = {
   circle: d3.symbolCircle,
@@ -202,34 +206,73 @@ function pointLabel(d) {
 }
 
 function buildChart() {
+  // Keep current zoom if we already have one (physics/layout rebuilds must not reset it)
+  if (svgRoot && zoomBehavior) {
+    try {
+      currentZoomTransform = d3.zoomTransform(svgRoot.node());
+    } catch (e) { /* keep previous currentZoomTransform */ }
+  }
+
   d3.select("#my_dataviz").selectAll("*").remove();
 
-  var fullW = width + margin.left + margin.right;
-  var fullH = height + margin.top + margin.bottom;
+  // Plot size (actual chart)
+  var plotW = width + margin.left + margin.right;
+  var plotH = height + margin.top + margin.bottom;
+
+  // Viewport behind the figure: fill available space so pan/zoom has room
+  // without forcing a huge figsize. Fall back to a padded plot size.
+  var mainEl = document.getElementById('violin-main');
+  var availW = (mainEl && mainEl.clientWidth) ? mainEl.clientWidth : (window.innerWidth - 40);
+  var availH = window.innerHeight - 100;
+  if (mainEl) {
+    var top = mainEl.getBoundingClientRect().top;
+    availH = Math.max(plotH, window.innerHeight - top - 20);
+  }
+  var viewW = Math.max(plotW, availW);
+  var viewH = Math.max(plotH, availH);
+
+  // Center the plot inside the larger viewport
+  var offsetX = Math.max(0, (viewW - plotW) / 2);
+  var offsetY = Math.max(0, (viewH - plotH) / 2);
 
   svgRoot = d3.select("#my_dataviz")
     .append("svg")
-    .attr("width", fullW)
-    .attr("height", fullH)
-    .style("overflow", "hidden");
+    .attr("width", viewW)
+    .attr("height", viewH)
+    .style("overflow", "hidden")
+    .style("display", "block");
 
-  // Zoom must NOT overwrite the margin translate. Structure:
-  //   svgRoot > zoomLayer (d3.zoom transform) > svg (margin translate) > plot
-  var zoomLayer = svgRoot.append("g").attr("class", "zoom-layer");
+  // Structure: svgRoot > zoomLayer (zoom) > plotRoot (centering + margin) > content
+  zoomLayer = svgRoot.append("g").attr("class", "zoom-layer");
 
-  var zoomBehavior = d3.zoom()
-    .scaleExtent([0.4, 12])
-    .extent([[0, 0], [fullW, fullH]])
-    // Generous pan range so zoomed content can be moved back into view
-    .translateExtent([[-fullW, -fullH], [fullW * 2, fullH * 2]])
+  zoomBehavior = d3.zoom()
+    .scaleExtent([0.25, 16])
+    .extent([[0, 0], [viewW, viewH]])
+    // Large pan range relative to the viewport so zoomed content stays reachable
+    .translateExtent([[-viewW * 2, -viewH * 2], [viewW * 3, viewH * 3]])
     .on("zoom", function () {
-      zoomLayer.attr("transform", d3.event.transform);
+      currentZoomTransform = d3.event.transform;
+      zoomLayer.attr("transform", currentZoomTransform);
     });
 
   svgRoot.call(zoomBehavior).on("dblclick.zoom", null);
 
+  // Invisible hit-rect so the whole viewport is zoomable, not only painted pixels
+  zoomLayer.append("rect")
+    .attr("class", "zoom-hit")
+    .attr("width", viewW)
+    .attr("height", viewH)
+    .attr("fill", "none")
+    .attr("pointer-events", "all");
+
   svg = zoomLayer.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform",
+      "translate(" + (offsetX + margin.left) + "," + (offsetY + margin.top) + ")");
+
+  // Restore previous zoom after rebuild
+  if (currentZoomTransform) {
+    svgRoot.call(zoomBehavior.transform, currentZoomTransform);
+  }
 
   yScale = d3.scaleLinear()
     .domain([minY, maxY])
@@ -314,10 +357,17 @@ function buildChart() {
   };
 
   var mousemove = function(d) {
+    // Position relative to #my_dataviz using pointer client coords so zoom/pan
+    // and the large viewport do not push the tooltip far from the point.
+    var container = document.getElementById("my_dataviz");
+    var rect = container.getBoundingClientRect();
+    var mx = d3.event.clientX - rect.left;
+    var my = d3.event.clientY - rect.top;
+    var offset = 12;
     Tooltip
       .html(d.tooltip || "")
-      .style("left", (d3.mouse(this)[0] + 70) + "px")
-      .style("top", (d3.mouse(this)[1]) + "px");
+      .style("left", (mx + offset) + "px")
+      .style("top", (my + offset) + "px");
   };
 
   var mouseleave = function(d) {
@@ -388,8 +438,16 @@ function buildChart() {
       .enter()
       .append("text")
         .attr("class", "point-label")
-        .attr("x", function(d) { return xScale(d.x) + xScale.bandwidth() / 2 - d._jx + pointRadius(d) + 3; })
-        .attr("y", function(d) { return yScale(+d.y) + 3; })
+        .attr("text-anchor", nodeTextInside ? "middle" : "start")
+        .attr("dominant-baseline", nodeTextInside ? "central" : "auto")
+        .attr("x", function(d) {
+          var cx = xScale(d.x) + xScale.bandwidth() / 2 - d._jx;
+          return nodeTextInside ? cx : (cx + pointRadius(d) + 3);
+        })
+        .attr("y", function(d) {
+          var cy = yScale(+d.y);
+          return nodeTextInside ? cy : (cy + 3);
+        })
         .style("font-size", "10px")
         .style("fill", "var(--text)")
         .style("pointer-events", "none")
