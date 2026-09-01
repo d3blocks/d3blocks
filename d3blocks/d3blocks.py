@@ -245,6 +245,9 @@ class D3Blocks():
                cmap: str = 'inferno',
                bins: int = 50,
                ylim = [None, None],
+               jitter: int = 40,
+               show_controls: bool = True,
+               dark_mode: bool = True,
                title: str = 'Violin - D3blocks',
                filepath = 'violin.html',
                figsize = [None, None],
@@ -297,6 +300,14 @@ class D3Blocks():
         ylim : tuple, (default: [None, None])
             Limit the width of the y-axis [min, max].
                 *  [None, None] : The width is determined based on the min-max value range.
+        jitter : int, (default: 40)
+            Horizontal jitter width applied to the individual points.
+        show_controls : bool, (default: True)
+            * True: Show the top bar and left control panels (Export/Save, Physics).
+            * False: Hide all GUI controls.
+        dark_mode : bool, (default: True)
+            * True: Start in dark theme.
+            * False: Start in light theme.
         title : String, (default: None)
             Title of the figure.
                 * 'Violin Chart'
@@ -395,7 +406,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Violin', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, jitter=jitter, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button, logger=logger)
         # Remvove quotes from source-target node_properties
         self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], fontsize=self.config['fontsize'], logger=logger)
         # Set default label properties

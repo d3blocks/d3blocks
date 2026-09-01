@@ -38,7 +38,11 @@ def set_config(config={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
     config['fontsize_axis'] = '"' + str(kwargs.get('fontsize_axis', 12)) + 'px"'
+    config['fontsize_axis_num'] = kwargs.get('fontsize_axis', 12)
+    config['jitter'] = kwargs.get('jitter', 40)
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
     # Return
     return config
 
@@ -253,6 +257,11 @@ def write_html(X, config, logger=None):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+    # Ensure new GUI keys have defaults (backwards compatible)
+    show_controls = config.get('show_controls', True)
+    dark_mode = config.get('dark_mode', True)
+    jitter = config.get('jitter', 40)
+    fontsize_axis_num = config.get('fontsize_axis_num', 12)
     content = {
         'json_data': X,
         'TITLE': config['title'],
@@ -263,6 +272,8 @@ def write_html(X, config, logger=None):
         'X_ORDER': config['x_order'],
         'BINS': config['bins'],
         'FONTSIZE_AXIS': config['fontsize_axis'],
+        'FONTSIZE_AXIS_NUM': fontsize_axis_num,
+        'JITTER': jitter,
         'WIDTH_FIG': config['figsize'][0],
         'HEIGHT_FIG': config['figsize'][1],
         'MOUSEOVER': config['mouseover'],
@@ -272,6 +283,8 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'showControls': 'true' if show_controls else 'false',
+        'darkMode': 'true' if dark_mode else 'false',
     }
 
     try:

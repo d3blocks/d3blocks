@@ -9,191 +9,362 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 
 <!DOCTYPE html>
 <html lang="en">
-<!--<svg width="900" height="600"></svg>-->
 <head>
     <meta charset="UTF-8">
     <title>{{ TITLE }}</title>
     {{ SUPPORT }}
+    <style>{% include "violin.css" %}</style>
 </head>
-<body>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Create save button -->
-{{ SAVE_BUTTON_START }}
-    <div style="max-width:{{ WIDTH }}px;">
-        <center><button id="saveButton">Save</button></center>
+<!-- Top panel always shown: logo left, theme right -->
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+      <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center"></div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+
+{% if showControls == 'true' %}
+<!-- Side panel: Export / Save -->
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button class="button-switch" id="exportButton" type="button" title="Export data as JSON" style="width:100%;margin:4px 0 8px 0">Export</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads the plot data as JSON. Save downloads the current view as SVG.</div>
+  </div>
+</div>
+
+<!-- Side panel: Physics (layout controls for the violin) -->
+<div class="stats-panel collapsed" id="physicsPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="binsSlider">Bins <span class="val" id="binsVal">{{ BINS }}</span></label>
+      <input type="range" id="binsSlider" min="5" max="80" step="1" value="{{ BINS }}">
     </div>
-{{ SAVE_BUTTON_STOP }}
+    <div class="physics-control">
+      <label for="fontSizeSlider">Axis font size <span class="val" id="fontSizeVal">{{ FONTSIZE_AXIS_NUM }}</span></label>
+      <input type="range" id="fontSizeSlider" min="8" max="24" step="1" value="{{ FONTSIZE_AXIS_NUM }}">
+    </div>
+    <div class="physics-control">
+      <label for="jitterSlider">Jitter width <span class="val" id="jitterVal">{{ JITTER }}</span></label>
+      <input type="range" id="jitterSlider" min="0" max="80" step="1" value="{{ JITTER }}">
+    </div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust bin resolution, axis labels and point jitter.</div>
+  </div>
+</div>
+{% endif %}
 
+<!-- Main visualization -->
+<div id="violin-main">
+  <div id="my_dataviz"></div>
+</div>
 
 <script>
 {% include "d3.v4.min.js" %}
 {% include "d3-scale-chromatic.v1.min.js" %}
 </script>
 
-<!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
-
-<!-- Circle are black when hovered-->
-<style>
-.myCircle:hover {
-  stroke: black;
-}
-</style>
-
-
 <script>
+'use strict';
 
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 40},
+var margin = {top: 10, right: 30, bottom: 40, left: 50},
     width = {{ WIDTH_FIG }} - margin.left - margin.right,
     height = {{ HEIGHT_FIG }} - margin.top - margin.bottom;
 
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
+var data = {{ json_data }};
+
+var currentBins = {{ BINS }};
+var currentFontSize = {{ FONTSIZE_AXIS_NUM }};
+var currentJitter = {{ JITTER }};
+var minY = {{ MIN_Y }};
+var maxY = {{ MAX_Y }};
+var xOrder = {{ X_ORDER }};
+
+var svgRoot, svg, yScale, xScale, xNumScale;
+
+function buildChart() {
+  d3.select("#my_dataviz").selectAll("*").remove();
+
+  svgRoot = d3.select("#my_dataviz")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    .call(d3.zoom().on("zoom", function () { svg.attr("transform", d3.event.transform) }))
-    .on("dblclick.zoom", null)
-    .append("g")
+    .call(d3.zoom().on("zoom", function () {
+      svg.attr("transform", d3.event.transform);
+    }))
+    .on("dblclick.zoom", null);
+
+  svg = svgRoot.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// Load data and let's do it.
-var data = {{ json_data }}
+  // Y scale
+  yScale = d3.scaleLinear()
+    .domain([minY, maxY])
+    .range([height, 0]);
+  svg.append("g")
+    .attr("class", "axis")
+    .style("font-size", currentFontSize + "px")
+    .call(d3.axisLeft(yScale));
 
-window.addEventListener('DOMContentLoaded', function () {
+  // X scale
+  xScale = d3.scaleBand()
+    .range([0, width])
+    .domain(xOrder)
+    .padding(0.05);
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + height + ")")
+    .style("font-size", currentFontSize + "px")
+    .call(d3.axisBottom(xScale));
 
-    // Build and Show the Y scale
-    var y = d3.scaleLinear()
-      .domain([{{MIN_Y}}, {{MAX_Y}}])          // Note that here the Y scale is set manually
-      .range([height, 0])
-    svg.append("g")
-      .style("font-size", {{FONTSIZE_AXIS}})
-      .call(d3.axisLeft(y))
-    
-    // Build and Show the X scale. It is a band scale like for a boxplot: each group has an dedicated RANGE on the axis. This range has a length of x.bandwidth
-    var x = d3.scaleBand()
-      .range([ 0, width ])
-      .domain({{ X_ORDER }})
-      .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
-    svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-	  .style("font-size", {{FONTSIZE_AXIS}})
-      .call(d3.axisBottom(x))
-    
-    // Features of the histogram
-    var histogram = d3.histogram()
-          .domain(y.domain())
-          .thresholds(y.ticks({{ BINS }}))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
-          .value(d => d)
-    
-    // Compute the binning for each group of the dataset
-    var sumstat = d3.nest()  // nest function allows to group the calculation per level of a factor
-      .key(function(d) { return d.x;})
-      .rollup(function(d) {   // For each key..
-        input = d.map(function(g) { return g.y;})    // Keep the variable called y
-        bins = histogram(input)   // And compute the binning on it.
-        return(bins)
-      })
-      .entries(data)
-    
-    // What is the biggest number of value in a bin? We need it cause this value will have a width of 100% of the bandwidth.
-    var maxNum = 0
-    for ( i in sumstat ){
-      allBins = sumstat[i].value
-      lengths = allBins.map(function(a){return a.length;})
-      longuest = d3.max(lengths)
-      if (longuest > maxNum) { maxNum = longuest }
-    }
-    
-    // The maximum width of a violin must be x.bandwidth = the width dedicated to a group
-    var xNum = d3.scaleLinear()
-      .range([0, x.bandwidth()])
-      .domain([-maxNum,maxNum])
-    
-    // Add the shape to this svg!
-    svg
-      .selectAll("myViolin")
-      .data(sumstat)
-      .enter()        // So now we are working group per group
-      .append("g")
-        .attr("transform", function(d){ return("translate(" + x(d.key) +" ,0)") } ) // Translation on the right to be at the group position
-      .append("path")
-          .datum(function(d){ return(d.value)})     // So now we are working bin per bin
-          .style("stroke", "none")
-          .style("fill","grey")
-          .attr("d", d3.area()
-              .x0( xNum(0) )
-              .x1(function(d){ return(xNum(d.length)) } )
-              .y(function(d){ return(y(d.x0)) } )
-              .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
-          )
-    
+  // Histogram
+  var histogram = d3.histogram()
+    .domain(yScale.domain())
+    .thresholds(yScale.ticks(currentBins))
+    .value(function(d) { return d; });
 
-    // create a tooltip with the box ****************************
-    var Tooltip = d3.select("#my_dataviz")
-      .append("div")
-      .style("opacity", 0)
-      .attr("class", "tooltip")
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "2px")
-      .style("border-radius", "5px")
-      .style("padding", "5px")
-      .style("position", "absolute")
-    
-    // Three function that change the tooltip when user hover / move / leave a cell
-    var mouseover = function(d) {
+  var sumstat = d3.nest()
+    .key(function(d) { return d.x; })
+    .rollup(function(d) {
+      var input = d.map(function(g) { return +g.y; });
+      return histogram(input);
+    })
+    .entries(data);
+
+  var maxNum = 0;
+  for (var i in sumstat) {
+    var allBins = sumstat[i].value;
+    var lengths = allBins.map(function(a) { return a.length; });
+    var longest = d3.max(lengths);
+    if (longest > maxNum) { maxNum = longest; }
+  }
+
+  xNumScale = d3.scaleLinear()
+    .range([0, xScale.bandwidth()])
+    .domain([-maxNum, maxNum]);
+
+  // Violin shapes
+  svg.selectAll("myViolin")
+    .data(sumstat)
+    .enter()
+    .append("g")
+      .attr("transform", function(d) { return "translate(" + xScale(d.key) + ",0)"; })
+    .append("path")
+      .datum(function(d) { return d.value; })
+      .style("stroke", "none")
+      .style("fill", "grey")
+      .attr("d", d3.area()
+        .x0(xNumScale(0))
+        .x1(function(d) { return xNumScale(d.length); })
+        .y(function(d) { return yScale(d.x0); })
+        .curve(d3.curveCatmullRom)
+      );
+
+  // Tooltip
+  var Tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip");
+
+  var mouseover = function(d) {
     Tooltip
       .style("opacity", 1)
-      .style("font-size", d.fontsize+"px"); // Set font size of the tooltip
-    
-    // Increases size of the dot with 0.5
+      .style("font-size", d.fontsize + "px");
     d3.select(this)
-      .style("r",  d.size + (0.5*d.size))
-      .style("opacity", 0.8)
-      ;
-    }
-    
-    var mousemove = function(d) {
+      .style("r", d.size + (0.5 * d.size))
+      .style("opacity", 0.8);
+  };
+
+  var mousemove = function(d) {
     Tooltip
       .html(d.tooltip)
-    //  .html("Exact value: " + d[6])
-      .style("left", (d3.mouse(this)[0]+70) + "px")
-      .style("top", (d3.mouse(this)[1]) + "px")
-    }
-    
-    var mouseleave = function(d) {
-    Tooltip
-      .style("opacity", 0)
-    // Back to orignal dot-size
-    d3.select(this)
-      .style("r",  d[3])
-    }
-    
-    // **********************************************************
+      .style("left", (d3.mouse(this)[0] + 70) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px");
+  };
 
+  var mouseleave = function(d) {
+    Tooltip.style("opacity", 0);
+    d3.select(this).style("r", d.size);
+  };
 
-    // Add individual points with jitter
-    var jitterWidth = 40
-    svg
-      .selectAll("indPoints")
-      .data(data)
-      .enter()
-      .append("circle")
-        .attr("class", "myCircle")                        // Edge-color turns black when when hovered
-        .attr("cx", function(d){return(x(d.x) + x.bandwidth()/2 - Math.random()*jitterWidth )})
-        .attr("cy", function(d){return(y(d.y))})
-        .attr("r", function(d){ return(d.size)})          // size
-        .style("fill", function(d){ return(d.color)})     // fill color
-        .attr("stroke", function(d){ return(d.stroke)})   // edge color
-        .attr("opacity", function(d){ return(d.opacity)}) // opacity
-        {{ MOUSEOVER }}
-        {{ MOUSEMOVE }}
-        {{ MOUSELEAVE }}
+  // Points with jitter
+  svg.selectAll("indPoints")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("class", "myCircle")
+      .attr("cx", function(d) {
+        return xScale(d.x) + xScale.bandwidth() / 2 - Math.random() * currentJitter;
+      })
+      .attr("cy", function(d) { return yScale(+d.y); })
+      .attr("r", function(d) { return d.size; })
+      .style("fill", function(d) { return d.color; })
+      .attr("stroke", function(d) { return d.stroke; })
+      .attr("opacity", function(d) { return d.opacity; })
+      {{ MOUSEOVER }}
+      {{ MOUSEMOVE }}
+      {{ MOUSELEAVE }};
+}
 
-})
+window.addEventListener('DOMContentLoaded', function () {
+  buildChart();
+});
+
+// Export data as JSON
+var exportBtn = document.getElementById("exportButton");
+if (exportBtn) {
+  exportBtn.addEventListener("click", function() {
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "violin-export.json";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
+}
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
+// Top bar clearance + side panels: position, collapse, reorder
+(function() {
+  var PANEL_ORDER = ['exportPanel', 'physicsPanel'];
+
+  function positionSidePanels() {
+    var bar = document.querySelector('.top-panel');
+    var main = document.getElementById('violin-main');
+    if (!bar) return;
+    var bottom = bar.getBoundingClientRect().bottom;
+    if (main) main.style.marginTop = (bottom + 12) + 'px';
+    var y = bottom + 8;
+    var bottomPad = 12;
+    PANEL_ORDER.forEach(function(id) {
+      var panel = document.getElementById(id);
+      if (!panel || panel.style.display === 'none') return;
+      panel.style.top = y + 'px';
+      panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
+      y += panel.getBoundingClientRect().height + 10;
+    });
+  }
+  window.addEventListener('resize', positionSidePanels);
+  window.addEventListener('load', positionSidePanels);
+  positionSidePanels();
+  requestAnimationFrame(positionSidePanels);
+  if (typeof ResizeObserver !== 'undefined') {
+    var bar = document.querySelector('.top-panel');
+    if (bar) new ResizeObserver(function() { positionSidePanels(); }).observe(bar);
+    PANEL_ORDER.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      new ResizeObserver(function() { positionSidePanels(); }).observe(el);
+    });
+  }
+
+  PANEL_ORDER.forEach(function(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    var title = panel.querySelector('.stats-panel-title');
+    if (!title) return;
+    title.addEventListener('click', function() {
+      if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+      var collapsing = !panel.classList.contains('collapsed');
+      if (collapsing) {
+        if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
+        panel.style.height = '';
+      } else if (panel.dataset.expandedHeight) {
+        panel.style.height = panel.dataset.expandedHeight;
+      }
+      panel.classList.toggle('collapsed');
+      setTimeout(positionSidePanels, 0);
+    });
+  });
+
+  (function setupPanelReordering() {
+    PANEL_ORDER.forEach(function(panelId) {
+      var panel = document.getElementById(panelId);
+      if (!panel) return;
+      var title = panel.querySelector('.stats-panel-title');
+      if (!title) return;
+      title.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData('text/plain', panelId);
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      title.addEventListener('dragend', function() {
+        title.dataset.justDragged = '1';
+        setTimeout(function() { title.dataset.justDragged = '0'; }, 0);
+      });
+      panel.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        panel.classList.add('drag-over');
+      });
+      panel.addEventListener('dragleave', function() { panel.classList.remove('drag-over'); });
+      panel.addEventListener('drop', function(e) {
+        e.preventDefault();
+        panel.classList.remove('drag-over');
+        var draggedId = e.dataTransfer.getData('text/plain');
+        if (!draggedId || draggedId === panelId) return;
+        var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+        if (from < 0 || to < 0) return;
+        PANEL_ORDER.splice(from, 1);
+        PANEL_ORDER.splice(to, 0, draggedId);
+        positionSidePanels();
+      });
+    });
+  })();
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    var isLight = document.body.classList.contains('light');
+    var themeBtn = document.getElementById('themeBtn');
+    if (themeBtn) {
+      themeBtn.textContent = isLight ? '☀' : '🌙';
+      themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
+    }
+  }
+  var themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+  // Physics controls – rebuild chart on change
+  var binsSlider = document.getElementById("binsSlider");
+  var binsVal = document.getElementById("binsVal");
+  if (binsSlider) {
+    binsSlider.addEventListener("input", function() {
+      currentBins = +binsSlider.value;
+      if (binsVal) binsVal.textContent = currentBins;
+      buildChart();
+    });
+  }
+
+  var fontSlider = document.getElementById("fontSizeSlider");
+  var fontVal = document.getElementById("fontSizeVal");
+  if (fontSlider) {
+    fontSlider.addEventListener("input", function() {
+      currentFontSize = +fontSlider.value;
+      if (fontVal) fontVal.textContent = currentFontSize;
+      buildChart();
+    });
+  }
+
+  var jitterSlider = document.getElementById("jitterSlider");
+  var jitterVal = document.getElementById("jitterVal");
+  if (jitterSlider) {
+    jitterSlider.addEventListener("input", function() {
+      currentJitter = +jitterSlider.value;
+      if (jitterVal) jitterVal.textContent = currentJitter;
+      buildChart();
+    });
+  }
+})();
 </script>
+</body>
+</html>
