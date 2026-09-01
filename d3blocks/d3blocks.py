@@ -256,7 +256,8 @@ class D3Blocks():
                notebook: bool = False,
                save_button: bool = True,
                return_html: bool = False,
-               reset_properties: bool = True):
+               reset_properties: bool = True,
+               df = None):
         """Violin block.
 
         The Violin plot allows to visualize the distribution of a numeric variable for one or several groups.
@@ -308,6 +309,10 @@ class D3Blocks():
         dark_mode : bool, (default: True)
             * True: Start in dark theme.
             * False: Start in light theme.
+        df : pd.DataFrame, (default: None)
+            Optional property table with one row per sample (same length as x/y).
+            Columns become interactive Layout controls (size, color, shape, label),
+            same workflow as scatter.
         title : String, (default: None)
             Title of the figure.
                 * 'Violin Chart'
@@ -407,10 +412,15 @@ class D3Blocks():
         self.chart = set_chart_func('Violin', logger)
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, jitter=jitter, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button, logger=logger)
-        # Remvove quotes from source-target node_properties
-        self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], fontsize=self.config['fontsize'], logger=logger)
-        # Set default label properties
-        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+        # Optional df → per-point properties for Layout panel (same as scatter)
+        props = None
+        if df is not None:
+            self.node_properties = self.chart.set_node_properties(df, logger=logger)
+            props = self.node_properties
+        # Edge properties (attach properties so filters keep rows aligned)
+        self.edge_properties = self.chart.set_edge_properties(x, y, config=self.config, color=color, size=size, stroke=stroke, opacity=opacity, tooltip=tooltip, cmap=self.config['cmap'], x_order=self.config['x_order'], fontsize=self.config['fontsize'], properties=props, logger=logger)
+        # Set default label properties (category colors) when no df was given
+        if props is None and (self.config['reset_properties'] or (not hasattr(self, 'node_properties'))):
             self.set_node_properties(np.unique(self.edge_properties['x'].values), cmap=self.config['cmap'])
         # Create the plot
         html = self.show()

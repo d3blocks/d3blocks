@@ -14,6 +14,25 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     <title>{{ TITLE }}</title>
     {{ SUPPORT }}
     <style>{% include "violin.css" %}</style>
+    <style>
+    /* Floating left panels: overlays do not shift the plot by default;
+       positionSidePanels() also sets a left margin on #violin-main so the
+       chart stays clear of the panel column when controls are shown. */
+    #exportPanel.stats-panel { top: 80px; left: 10px; z-index: 65; }
+    #layoutPanel.stats-panel { top: 180px; left: 10px; z-index: 60; }
+    #physicsPanel.stats-panel { top: 280px; left: 10px; z-index: 58; }
+    .stats-panel select {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 4px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 13px;
+    }
+    </style>
 </head>
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
 
@@ -41,7 +60,42 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
   </div>
 </div>
 
-<!-- Side panel: Physics (layout controls for the violin) -->
+<!-- Side panel: Layout (size / color / shape / label) — columns from df, same as scatter -->
+<div class="stats-panel collapsed" id="layoutPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="layoutSizeSelect">Size</label>
+      <select id="layoutSizeSelect"><option value="">Default</option></select>
+    </div>
+    <div class="physics-control">
+      <label for="layoutColorSelect">Color</label>
+      <select id="layoutColorSelect"><option value="">Default</option></select>
+    </div>
+    <div class="physics-control">
+      <label for="layoutShapeSelect">Shape</label>
+      <select id="layoutShapeSelect">
+        <option value="circle">Circle</option>
+        <option value="square">Square</option>
+        <option value="triangle">Triangle</option>
+        <option value="diamond">Diamond</option>
+        <option value="cross">Cross</option>
+        <option value="star">Star</option>
+      </select>
+    </div>
+    <div class="physics-control">
+      <label for="layoutLabelSelect">Label</label>
+      <select id="layoutLabelSelect">
+        <option value="">None</option>
+        <option value="__tooltip__">Name / tooltip</option>
+      </select>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Point labels from df columns or tooltip</div>
+    </div>
+    <button class="button-switch" id="layoutResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
+  </div>
+</div>
+
+<!-- Side panel: Physics -->
 <div class="stats-panel collapsed" id="physicsPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
@@ -75,12 +129,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 <script>
 'use strict';
 
-// set the dimensions and margins of the graph
 var margin = {top: 10, right: 30, bottom: 40, left: 50},
     width = {{ WIDTH_FIG }} - margin.left - margin.right,
     height = {{ HEIGHT_FIG }} - margin.top - margin.bottom;
 
 var data = {{ json_data }};
+var propertyKeys = {{ PROPERTY_KEYS_JSON }};  // column names from df (server-side)
 
 var currentBins = {{ BINS }};
 var currentFontSize = {{ FONTSIZE_AXIS_NUM }};
@@ -89,24 +143,94 @@ var minY = {{ MIN_Y }};
 var maxY = {{ MAX_Y }};
 var xOrder = {{ X_ORDER }};
 
+// Layout state — keys refer to d.properties columns when set from df
+var currentSizeKey = '';       // '' = default size field; else properties[key]
+var currentColorKey = '';      // '' = default color field; else properties[key]
+var currentShapeMode = 'circle'; // fixed shape name OR categorical property key
+var categoricalShapeMap = null;
+var categoricalShapeKey = null;
+var currentLabelKey = '';      // '' | '__tooltip__' | property key
+
 var svgRoot, svg, yScale, xScale, xNumScale;
+var sizeScale = null;          // d3 scale when size driven by numeric property
+var colorScale = null;         // d3 scale when color driven by property
+
+var SHAPE_MAP = {
+  circle: d3.symbolCircle,
+  square: d3.symbolSquare,
+  triangle: d3.symbolTriangle,
+  diamond: d3.symbolDiamond,
+  cross: d3.symbolCross,
+  star: d3.symbolStar
+};
+var SHAPE_NAMES = Object.keys(SHAPE_MAP);
+
+function propVal(d, key) {
+  if (!key || !d || !d.properties) return null;
+  return d.properties[key];
+}
+
+function pointRadius(d) {
+  if (currentSizeKey && sizeScale) {
+    var v = propVal(d, currentSizeKey);
+    if (v != null && isFinite(+v)) return sizeScale(+v);
+  }
+  return +d.size || 5;
+}
+
+function pointFill(d) {
+  if (currentColorKey && colorScale) {
+    var v = propVal(d, currentColorKey);
+    if (v != null) return colorScale(v);
+  }
+  return d.color;
+}
+
+function pointShape(d) {
+  if (categoricalShapeMap && categoricalShapeKey) {
+    var v = propVal(d, categoricalShapeKey);
+    if (v != null && categoricalShapeMap[v]) return categoricalShapeMap[v];
+  }
+  return currentShapeMode;
+}
+
+function pointLabel(d) {
+  if (!currentLabelKey) return '';
+  if (currentLabelKey === '__tooltip__') return d.tooltip || '';
+  var v = propVal(d, currentLabelKey);
+  return v != null ? String(v) : '';
+}
 
 function buildChart() {
   d3.select("#my_dataviz").selectAll("*").remove();
 
+  var fullW = width + margin.left + margin.right;
+  var fullH = height + margin.top + margin.bottom;
+
   svgRoot = d3.select("#my_dataviz")
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .call(d3.zoom().on("zoom", function () {
-      svg.attr("transform", d3.event.transform);
-    }))
-    .on("dblclick.zoom", null);
+    .attr("width", fullW)
+    .attr("height", fullH)
+    .style("overflow", "hidden");
 
-  svg = svgRoot.append("g")
+  // Zoom must NOT overwrite the margin translate. Structure:
+  //   svgRoot > zoomLayer (d3.zoom transform) > svg (margin translate) > plot
+  var zoomLayer = svgRoot.append("g").attr("class", "zoom-layer");
+
+  var zoomBehavior = d3.zoom()
+    .scaleExtent([0.4, 12])
+    .extent([[0, 0], [fullW, fullH]])
+    // Generous pan range so zoomed content can be moved back into view
+    .translateExtent([[-fullW, -fullH], [fullW * 2, fullH * 2]])
+    .on("zoom", function () {
+      zoomLayer.attr("transform", d3.event.transform);
+    });
+
+  svgRoot.call(zoomBehavior).on("dblclick.zoom", null);
+
+  svg = zoomLayer.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // Y scale
   yScale = d3.scaleLinear()
     .domain([minY, maxY])
     .range([height, 0]);
@@ -115,7 +239,6 @@ function buildChart() {
     .style("font-size", currentFontSize + "px")
     .call(d3.axisLeft(yScale));
 
-  // X scale
   xScale = d3.scaleBand()
     .range([0, width])
     .domain(xOrder)
@@ -126,7 +249,6 @@ function buildChart() {
     .style("font-size", currentFontSize + "px")
     .call(d3.axisBottom(xScale));
 
-  // Histogram
   var histogram = d3.histogram()
     .domain(yScale.domain())
     .thresholds(yScale.ticks(currentBins))
@@ -152,7 +274,7 @@ function buildChart() {
     .range([0, xScale.bandwidth()])
     .domain([-maxNum, maxNum]);
 
-  // Violin shapes
+  // Violin body
   svg.selectAll("myViolin")
     .data(sumstat)
     .enter()
@@ -178,41 +300,101 @@ function buildChart() {
   var mouseover = function(d) {
     Tooltip
       .style("opacity", 1)
-      .style("font-size", d.fontsize + "px");
-    d3.select(this)
-      .style("r", d.size + (0.5 * d.size))
-      .style("opacity", 0.8);
+      .style("font-size", (d.fontsize || 12) + "px");
+    var el = d3.select(this);
+    if (el.classed("myCircle")) {
+      el.style("r", pointRadius(d) * 1.5).style("opacity", 0.8);
+    } else {
+      el.attr("transform", function(dd) {
+        var cx = xScale(dd.x) + xScale.bandwidth() / 2 - (dd._jx || 0);
+        var cy = yScale(+dd.y);
+        return "translate(" + cx + "," + cy + ") scale(1.5)";
+      }).style("opacity", 0.8);
+    }
   };
 
   var mousemove = function(d) {
     Tooltip
-      .html(d.tooltip)
+      .html(d.tooltip || "")
       .style("left", (d3.mouse(this)[0] + 70) + "px")
       .style("top", (d3.mouse(this)[1]) + "px");
   };
 
   var mouseleave = function(d) {
     Tooltip.style("opacity", 0);
-    d3.select(this).style("r", d.size);
+    var el = d3.select(this);
+    if (el.classed("myCircle")) {
+      el.style("r", pointRadius(d)).style("opacity", d.opacity);
+    } else {
+      el.attr("transform", function(dd) {
+        var cx = xScale(dd.x) + xScale.bandwidth() / 2 - (dd._jx || 0);
+        var cy = yScale(+dd.y);
+        return "translate(" + cx + "," + cy + ")";
+      }).style("opacity", d.opacity);
+    }
   };
 
-  // Points with jitter
-  svg.selectAll("indPoints")
-    .data(data)
-    .enter()
-    .append("circle")
-      .attr("class", "myCircle")
-      .attr("cx", function(d) {
-        return xScale(d.x) + xScale.bandwidth() / 2 - Math.random() * currentJitter;
-      })
-      .attr("cy", function(d) { return yScale(+d.y); })
-      .attr("r", function(d) { return d.size; })
-      .style("fill", function(d) { return d.color; })
-      .attr("stroke", function(d) { return d.stroke; })
-      .attr("opacity", function(d) { return d.opacity; })
-      {{ MOUSEOVER }}
-      {{ MOUSEMOVE }}
-      {{ MOUSELEAVE }};
+  // Precompute jitter so hover can restore position
+  data.forEach(function(d) {
+    d._jx = Math.random() * currentJitter;
+  });
+
+  // Draw points: circle only when every point is a circle; otherwise paths
+  var anyNonCircle = data.some(function(d) { return pointShape(d) !== 'circle'; });
+
+  if (!anyNonCircle) {
+    svg.selectAll("indPoints")
+      .data(data)
+      .enter()
+      .append("circle")
+        .attr("class", "myCircle")
+        .attr("cx", function(d) { return xScale(d.x) + xScale.bandwidth() / 2 - d._jx; })
+        .attr("cy", function(d) { return yScale(+d.y); })
+        .attr("r", function(d) { return pointRadius(d); })
+        .style("fill", function(d) { return pointFill(d); })
+        .attr("stroke", function(d) { return d.stroke; })
+        .attr("opacity", function(d) { return d.opacity; })
+        {{ MOUSEOVER }}
+        {{ MOUSEMOVE }}
+        {{ MOUSELEAVE }};
+  } else {
+    svg.selectAll("indPoints")
+      .data(data)
+      .enter()
+      .append("path")
+        .attr("class", "mySymbol")
+        .attr("d", function(d) {
+          var t = SHAPE_MAP[pointShape(d)] || d3.symbolCircle;
+          var r = pointRadius(d);
+          return d3.symbol().type(t).size(Math.PI * r * r)();
+        })
+        .attr("transform", function(d) {
+          var cx = xScale(d.x) + xScale.bandwidth() / 2 - d._jx;
+          var cy = yScale(+d.y);
+          return "translate(" + cx + "," + cy + ")";
+        })
+        .style("fill", function(d) { return pointFill(d); })
+        .attr("stroke", function(d) { return d.stroke; })
+        .attr("opacity", function(d) { return d.opacity; })
+        {{ MOUSEOVER }}
+        {{ MOUSEMOVE }}
+        {{ MOUSELEAVE }};
+  }
+
+  // Labels
+  if (currentLabelKey) {
+    svg.selectAll("indLabels")
+      .data(data)
+      .enter()
+      .append("text")
+        .attr("class", "point-label")
+        .attr("x", function(d) { return xScale(d.x) + xScale.bandwidth() / 2 - d._jx + pointRadius(d) + 3; })
+        .attr("y", function(d) { return yScale(+d.y) + 3; })
+        .style("font-size", "10px")
+        .style("fill", "var(--text)")
+        .style("pointer-events", "none")
+        .text(function(d) { return pointLabel(d); });
+  }
 }
 
 window.addEventListener('DOMContentLoaded', function () {
@@ -236,8 +418,9 @@ if (exportBtn) {
 {{ SAVE_TO_SVG_SCRIPT }}
 
 // Top bar clearance + side panels: position, collapse, reorder
+// Also push the chart right so it does not sit under the left panel column.
 (function() {
-  var PANEL_ORDER = ['exportPanel', 'physicsPanel'];
+  var PANEL_ORDER = ['exportPanel', 'layoutPanel', 'physicsPanel'];
 
   function positionSidePanels() {
     var bar = document.querySelector('.top-panel');
@@ -247,13 +430,24 @@ if (exportBtn) {
     if (main) main.style.marginTop = (bottom + 12) + 'px';
     var y = bottom + 8;
     var bottomPad = 12;
+    var sideRight = 0;
     PANEL_ORDER.forEach(function(id) {
       var panel = document.getElementById(id);
       if (!panel || panel.style.display === 'none') return;
       panel.style.top = y + 'px';
       panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
-      y += panel.getBoundingClientRect().height + 10;
+      var rect = panel.getBoundingClientRect();
+      sideRight = Math.max(sideRight, rect.right);
+      y += rect.height + 10;
     });
+    // Keep chart clear of left panels (same idea as scatter nodePanel inset)
+    if (main) {
+      var gap = 12;
+      var leftInset = sideRight > 0 ? Math.ceil(sideRight) + gap : 0;
+      main.style.marginLeft = leftInset + 'px';
+      main.style.width = 'calc(100% - ' + leftInset + 'px)';
+      main.style.boxSizing = 'border-box';
+    }
   }
   window.addEventListener('resize', positionSidePanels);
   window.addEventListener('load', positionSidePanels);
@@ -334,7 +528,7 @@ if (exportBtn) {
   var themeBtn = document.getElementById('themeBtn');
   if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
-  // Physics controls – rebuild chart on change
+  // Physics controls
   var binsSlider = document.getElementById("binsSlider");
   var binsVal = document.getElementById("binsVal");
   if (binsSlider) {
@@ -362,6 +556,151 @@ if (exportBtn) {
       currentJitter = +jitterSlider.value;
       if (jitterVal) jitterVal.textContent = currentJitter;
       buildChart();
+    });
+  }
+
+  // —— Layout from df property columns (scatter workflow) ——
+  function collectPropertyColumns() {
+    var numericKeys = {};
+    var categoricalKeys = {};
+    var allKeys = {};
+    // Prefer scanning live data.properties
+    data.forEach(function(d) {
+      if (!d || !d.properties) return;
+      Object.keys(d.properties).forEach(function(k) {
+        var v = d.properties[k];
+        if (v == null) return;
+        allKeys[k] = true;
+        if (typeof v === 'number' && isFinite(v)) numericKeys[k] = true;
+        else categoricalKeys[k] = true;
+      });
+    });
+    // Fallback: server-provided column names (when properties were set from df)
+    if (propertyKeys && propertyKeys.length && Object.keys(allKeys).length === 0) {
+      propertyKeys.forEach(function(k) { allKeys[k] = true; categoricalKeys[k] = true; });
+    } else if (propertyKeys && propertyKeys.length) {
+      propertyKeys.forEach(function(k) { if (!allKeys[k]) { allKeys[k] = true; categoricalKeys[k] = true; } });
+    }
+    return { numeric: Object.keys(numericKeys).sort(), categorical: Object.keys(categoricalKeys).sort(), all: Object.keys(allKeys).sort() };
+  }
+
+  function applySizeMode(key) {
+    currentSizeKey = key || '';
+    sizeScale = null;
+    if (currentSizeKey) {
+      var vals = data.map(function(d) { return +propVal(d, currentSizeKey); }).filter(function(v) { return isFinite(v); });
+      if (vals.length) {
+        var mn = d3.min(vals), mx = d3.max(vals);
+        sizeScale = d3.scaleLinear().domain([mn, mx]).range([3, 18]).clamp(true);
+      }
+    }
+    buildChart();
+  }
+
+  function applyColorMode(key) {
+    currentColorKey = key || '';
+    colorScale = null;
+    if (currentColorKey) {
+      var vals = data.map(function(d) { return propVal(d, currentColorKey); }).filter(function(v) { return v != null; });
+      var numeric = vals.every(function(v) { return typeof v === 'number' && isFinite(v); });
+      if (numeric && vals.length) {
+        colorScale = d3.scaleSequential(d3.interpolateViridis).domain([d3.min(vals), d3.max(vals)]);
+      } else {
+        var uniq = Array.from(new Set(vals));
+        colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(uniq);
+      }
+    }
+    buildChart();
+  }
+
+  function applyShapeMode(val) {
+    categoricalShapeMap = null;
+    categoricalShapeKey = null;
+    if (!val || SHAPE_MAP[val]) {
+      currentShapeMode = val || 'circle';
+      buildChart();
+      return;
+    }
+    // Treat as categorical property key
+    currentShapeMode = 'circle';
+    categoricalShapeKey = val;
+    var uniq = Array.from(new Set(data.map(function(d) { return propVal(d, val); }).filter(function(v) { return v != null; })));
+    categoricalShapeMap = {};
+    uniq.forEach(function(v, i) { categoricalShapeMap[v] = SHAPE_NAMES[i % SHAPE_NAMES.length]; });
+    buildChart();
+  }
+
+  function applyLabelMode(key) {
+    currentLabelKey = key || '';
+    buildChart();
+  }
+
+  function populateLayoutSelects() {
+    var cols = collectPropertyColumns();
+    var sizeSelect = document.getElementById('layoutSizeSelect');
+    var colorSelect = document.getElementById('layoutColorSelect');
+    var shapeSelect = document.getElementById('layoutShapeSelect');
+    var labelSelect = document.getElementById('layoutLabelSelect');
+
+    function fill(select, keys, keepFirstN) {
+      if (!select) return;
+      var keep = keepFirstN || 1;
+      while (select.options.length > keep) select.remove(keep);
+      keys.forEach(function(k) {
+        var opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = k;
+        select.appendChild(opt);
+      });
+    }
+
+    // Size: numeric columns
+    fill(sizeSelect, cols.numeric, 1);
+    // Color: all property columns
+    fill(colorSelect, cols.all, 1);
+    // Shape: keep fixed shapes, then add categorical columns
+    if (shapeSelect) {
+      while (shapeSelect.options.length > 6) shapeSelect.remove(6);
+      cols.categorical.forEach(function(k) {
+        var opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = k + ' (column)';
+        shapeSelect.appendChild(opt);
+      });
+    }
+    // Label: keep None + tooltip, then all columns
+    if (labelSelect) {
+      while (labelSelect.options.length > 2) labelSelect.remove(2);
+      cols.all.forEach(function(k) {
+        var opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = k;
+        labelSelect.appendChild(opt);
+      });
+    }
+  }
+
+  populateLayoutSelects();
+
+  var layoutSizeSelect = document.getElementById('layoutSizeSelect');
+  if (layoutSizeSelect) layoutSizeSelect.addEventListener('change', function(e) { applySizeMode(e.target.value); });
+  var layoutColorSelect = document.getElementById('layoutColorSelect');
+  if (layoutColorSelect) layoutColorSelect.addEventListener('change', function(e) { applyColorMode(e.target.value); });
+  var layoutShapeSelect = document.getElementById('layoutShapeSelect');
+  if (layoutShapeSelect) layoutShapeSelect.addEventListener('change', function(e) { applyShapeMode(e.target.value); });
+  var layoutLabelSelect = document.getElementById('layoutLabelSelect');
+  if (layoutLabelSelect) layoutLabelSelect.addEventListener('change', function(e) { applyLabelMode(e.target.value); });
+  var layoutResetBtn = document.getElementById('layoutResetBtn');
+  if (layoutResetBtn) {
+    layoutResetBtn.addEventListener('click', function() {
+      if (layoutSizeSelect) layoutSizeSelect.value = '';
+      if (layoutColorSelect) layoutColorSelect.value = '';
+      if (layoutShapeSelect) layoutShapeSelect.value = 'circle';
+      if (layoutLabelSelect) layoutLabelSelect.value = '';
+      applySizeMode('');
+      applyColorMode('');
+      applyShapeMode('circle');
+      applyLabelMode('');
     });
   }
 })();

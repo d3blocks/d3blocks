@@ -66,7 +66,66 @@ def set_labels(labels, logger=None):
 
 
 def set_node_properties(*args, **kwargs):
-    """Set the node properties."""
+    """Set per-point properties for the Violin (same workflow as scatter).
+
+    Accepts one of:
+      * None -> returns None
+      * pandas.DataFrame with rows matching datapoints; columns become properties
+      * dict of column -> array-like (length matches datapoints)
+      * list of dicts where each dict is per-point properties
+
+    Returns
+    -------
+    dict_properties : dict
+        Mapping from integer index to property dict for that datapoint.
+    """
+    logger = kwargs.get('logger', None)
+    properties = None
+    if len(args) >= 1:
+        properties = args[0]
+    else:
+        properties = kwargs.get('properties', None)
+
+    if properties is None:
+        return None
+
+    if isinstance(properties, pd.DataFrame):
+        df = properties.reset_index(drop=True)
+        dict_props = {}
+        for i in range(len(df)):
+            row = df.iloc[i].to_dict()
+            for k, v in list(row.items()):
+                if pd.isna(v):
+                    row[k] = None
+            dict_props[i] = row
+        return dict_props
+
+    if isinstance(properties, dict):
+        first = next(iter(properties.values()))
+        length = len(first)
+        dict_props = {}
+        for i in range(length):
+            p = {}
+            for k, v in properties.items():
+                try:
+                    val = v[i]
+                except Exception:
+                    val = None
+                p[k] = None if (val is None or (isinstance(val, float) and np.isnan(val))) else val
+            dict_props[i] = p
+        return dict_props
+
+    if isinstance(properties, (list, tuple)):
+        dict_props = {}
+        for i, it in enumerate(properties):
+            if isinstance(it, dict):
+                dict_props[i] = it
+            else:
+                dict_props[i] = {'value': it}
+        return dict_props
+
+    if logger is not None:
+        logger.info('Could not parse properties for violin; ignoring.')
     return None
 
 
@@ -100,6 +159,14 @@ def set_edge_properties(*args, **kwargs):
         'Set1','Set2','rainbow','bwr','binary','seismic','Blues','Reds','Pastel1','Paired','twilight','hsv'
     fontsize : int, optional (default: 12)
         Text fontsize.
+    properties : dict, list of dicts, or pd.DataFrame, (default: None)
+        User-defined properties for each datapoint (same workflow as scatter).
+        Every column becomes a property offered in the Layout panel to drive
+        size (numeric), color (numeric or categorical), shape (categorical),
+        or label.
+            * None: No additional properties.
+            * {'age': [22, 41], 'labx': ['A', 'B']}: dict of array-like, same length as (x, y).
+            * pd.DataFrame with same number of rows as (x, y).
 
     Returns
     -------
@@ -121,6 +188,7 @@ def set_edge_properties(*args, **kwargs):
     cmap = kwargs.get('cmap', 'inferno')
     fontsize = kwargs.get('fontsize', 12)
     x_order = kwargs.get('x_order', None)
+    properties = kwargs.get('properties', None)
     logger = kwargs.get('logger', None)
 
     # Make checks
@@ -149,6 +217,26 @@ def set_edge_properties(*args, **kwargs):
 
     # Convert to dataframe
     df = pd.DataFrame({'x': x, 'y': y, 'color': color, 'size': size, 'stroke': stroke, 'opacity': opacity, 'tooltip': tooltip, 'fontsize': fontsize})
+
+    # Attach per-point properties (aligned with x/y before filtering so masks stay in sync).
+    # Accept either:
+    #   - index -> dict (output of set_node_properties(df))  ← scatter workflow
+    #   - column-oriented dict / DataFrame / list of dicts
+    n = len(df)
+    props_col = [None] * n
+    if properties is not None:
+        props_map = None
+        if isinstance(properties, dict) and len(properties) > 0:
+            first_val = next(iter(properties.values()))
+            # Already index -> property-dict (from set_node_properties)
+            if isinstance(first_val, dict):
+                props_map = properties
+        if props_map is None:
+            props_map = set_node_properties(properties, logger=logger)
+        if props_map is not None:
+            for i in range(n):
+                props_col[i] = props_map.get(i) or props_map.get(str(i))
+    df['_properties'] = props_col
 
     # Remove NaN values
     Irem = df['y'].isna()
@@ -234,8 +322,10 @@ def show(df, **kwargs):
         config['mousemove'] = '.on("mousemove", mousemove)'
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
 
-    # Create the data from the input of javascript
-    X = get_data_ready_for_d3(df)
+    # Create the data from the input of javascript (include df/node properties for Layout)
+    node_properties = kwargs.get('node_properties', None)
+    X, prop_keys = get_data_ready_for_d3(df, node_properties=node_properties)
+    config['property_keys'] = prop_keys
     # Write to HTML
     return write_html(X, config, logger)
 
@@ -285,6 +375,7 @@ def write_html(X, config, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         'showControls': 'true' if show_controls else 'false',
         'darkMode': 'true' if dark_mode else 'false',
+        'PROPERTY_KEYS_JSON': __import__('json').dumps(config.get('property_keys', [])),
     }
 
     try:
@@ -301,22 +392,86 @@ def write_html(X, config, logger=None):
     return html
 
 
-def get_data_ready_for_d3(df):
+def get_data_ready_for_d3(df, node_properties=None):
     """Convert the source-target data into d3 compatible data.
 
     Parameters
     ----------
     df : pd.DataFrame()
-        Input data.
+        Input data (edge_properties).
+    node_properties : dict, optional
+        Index -> property dict. Used when properties were not already
+        stored on df as '_properties' (scatter-compatible path).
 
     Returns
     -------
     X : str.
-        Converted data into a string that is d3 compatible.
-
+        JSON list of records. Each record includes a ``properties`` object
+        (or null) so the Layout panel can drive size/color/shape/label from
+        DataFrame columns.
     """
-    df['y']=df['y'].astype(str)
-    # Set x, y
-    X = df[['x', 'y', 'color', 'size', 'stroke', 'opacity', 'tooltip', 'fontsize']].to_json(orient='records')
-    # Return
-    return X
+    out = df.copy()
+    out['y'] = out['y'].astype(str)
+
+    def _has_props(series):
+        if series is None:
+            return False
+        for v in series:
+            if isinstance(v, dict) and len(v) > 0:
+                return True
+        return False
+
+    if '_properties' not in out.columns or not _has_props(out['_properties']):
+        if node_properties is not None:
+            # Accept DataFrame, index->dict, or column-oriented inputs
+            if isinstance(node_properties, pd.DataFrame):
+                props_map = set_node_properties(node_properties)
+            elif isinstance(node_properties, dict) and len(node_properties) > 0:
+                first_val = next(iter(node_properties.values()))
+                if isinstance(first_val, dict):
+                    props_map = node_properties  # index -> prop dict
+                else:
+                    props_map = set_node_properties(node_properties)
+            else:
+                props_map = set_node_properties(node_properties)
+            if props_map is not None:
+                out['_properties'] = [
+                    props_map.get(i) or props_map.get(str(i))
+                    for i in range(len(out))
+                ]
+            else:
+                out['_properties'] = [None] * len(out)
+        elif '_properties' not in out.columns:
+            out['_properties'] = [None] * len(out)
+
+    def _json_safe(v):
+        if v is None:
+            return None
+        if isinstance(v, (np.integer,)):
+            return int(v)
+        if isinstance(v, (np.floating,)):
+            if np.isnan(v):
+                return None
+            return float(v)
+        if isinstance(v, float) and np.isnan(v):
+            return None
+        if isinstance(v, (np.bool_,)):
+            return bool(v)
+        return v
+
+    records = []
+    prop_keys = set()
+    cols = ['x', 'y', 'color', 'size', 'stroke', 'opacity', 'tooltip', 'fontsize']
+    for i in range(len(out)):
+        row = {c: _json_safe(out.iloc[i][c]) for c in cols}
+        prop = out.iloc[i]['_properties'] if '_properties' in out.columns else None
+        if prop is not None and isinstance(prop, dict):
+            clean = {k: _json_safe(v) for k, v in prop.items()}
+            row['properties'] = clean
+            prop_keys.update(clean.keys())
+        else:
+            row['properties'] = None
+        records.append(row)
+
+    import json
+    return json.dumps(records), sorted(prop_keys)
