@@ -308,8 +308,11 @@ def show(df, **kwargs):
     # Ordering the class labels
     if config['x_order'] is None:
         config['x_order'] = str(list(labels))
+    # None width → fit browser width client-side; keep a numeric fallback for template
+    config['auto_width'] = config['figsize'][0] is None
+    config['auto_height'] = config['figsize'][1] is None
     if config['figsize'][0] is None:
-        config['figsize'][0] = len(labels) * 95
+        config['figsize'][0] = max(int(len(labels) * 95), 800)
     if config['figsize'][1] is None:
         config['figsize'][1] = 400
 
@@ -378,6 +381,8 @@ def write_html(X, config, logger=None):
         'darkMode': 'true' if dark_mode else 'false',
         'PROPERTY_KEYS_JSON': __import__('json').dumps(config.get('property_keys', [])),
         'NODE_TEXT_INSIDE': 'true' if config.get('node_text_inside', True) else 'false',
+        'AUTO_WIDTH': 'true' if config.get('auto_width', False) else 'false',
+        'AUTO_HEIGHT': 'true' if config.get('auto_height', False) else 'false',
     }
 
     try:

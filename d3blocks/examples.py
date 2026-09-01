@@ -17,7 +17,7 @@ d3.violin(x=df['labx'].values,
           size=df['survival_months'].values/10,
           x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
           filepath=r'c:\temp\violine.html',
-          figsize=[1500, 700],
+          figsize=[None, None],
           df=df,
           )
 

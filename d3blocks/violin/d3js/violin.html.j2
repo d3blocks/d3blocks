@@ -100,6 +100,10 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="physics-control">
+      <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.00×</span></label>
+      <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+    </div>
+    <div class="physics-control">
       <label for="binsSlider">Bins <span class="val" id="binsVal">{{ BINS }}</span></label>
       <input type="range" id="binsSlider" min="5" max="80" step="1" value="{{ BINS }}">
     </div>
@@ -111,7 +115,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
       <label for="jitterSlider">Jitter width <span class="val" id="jitterVal">{{ JITTER }}</span></label>
       <input type="range" id="jitterSlider" min="0" max="80" step="1" value="{{ JITTER }}">
     </div>
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust bin resolution, axis labels and point jitter.</div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust point size, bin resolution, axis labels and jitter.</div>
   </div>
 </div>
 {% endif %}
@@ -129,13 +133,40 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 <script>
 'use strict';
 
-var margin = {top: 10, right: 30, bottom: 40, left: 50},
-    width = {{ WIDTH_FIG }} - margin.left - margin.right,
-    height = {{ HEIGHT_FIG }} - margin.top - margin.bottom;
+var margin = {top: 10, right: 30, bottom: 40, left: 50};
+var baseWidth = {{ WIDTH_FIG }};
+var baseHeight = {{ HEIGHT_FIG }};
+var autoWidth = ("{{ AUTO_WIDTH }}" === "true");
+var autoHeight = ("{{ AUTO_HEIGHT }}" === "true");
+var width = baseWidth - margin.left - margin.right;
+var height = baseHeight - margin.top - margin.bottom;
 
 var data = {{ json_data }};
 var propertyKeys = {{ PROPERTY_KEYS_JSON }};  // column names from df (server-side)
 var nodeTextInside = ("{{ NODE_TEXT_INSIDE }}" === "true");
+
+function computePlotSize() {
+  var mainEl = document.getElementById('violin-main');
+  var availW = (mainEl && mainEl.clientWidth > 0) ? mainEl.clientWidth : Math.max(320, window.innerWidth - 40);
+  var availH;
+  if (mainEl) {
+    var top = mainEl.getBoundingClientRect().top;
+    availH = Math.max(280, window.innerHeight - top - 24);
+  } else {
+    availH = Math.max(280, window.innerHeight - 120);
+  }
+  // figsize [None, *] → plot width fills available screen/container width
+  if (autoWidth) {
+    width = Math.max(120, availW - margin.left - margin.right);
+  } else {
+    width = baseWidth - margin.left - margin.right;
+  }
+  if (autoHeight) {
+    height = Math.max(120, availH - margin.top - margin.bottom);
+  } else {
+    height = baseHeight - margin.top - margin.bottom;
+  }
+}
 
 var currentBins = {{ BINS }};
 var currentFontSize = {{ FONTSIZE_AXIS_NUM }};
@@ -174,12 +205,24 @@ function propVal(d, key) {
   return d.properties[key];
 }
 
+// Global size multiplier (Physics panel) — same mapping as scatter
+var sizeMultiplier = 1;
+function sizeMultiplierFromSlider(t) {
+  var min = 0.05, max = 8;
+  var u = (t + 1) / 2;
+  return min * Math.pow(max / min, u);
+}
+
 function pointRadius(d) {
+  var base;
   if (currentSizeKey && sizeScale) {
     var v = propVal(d, currentSizeKey);
-    if (v != null && isFinite(+v)) return sizeScale(+v);
+    if (v != null && isFinite(+v)) base = sizeScale(+v);
+    else base = +d.size || 5;
+  } else {
+    base = +d.size || 5;
   }
-  return +d.size || 5;
+  return Math.max(0.5, base * sizeMultiplier);
 }
 
 function pointFill(d) {
@@ -215,15 +258,17 @@ function buildChart() {
 
   d3.select("#my_dataviz").selectAll("*").remove();
 
+  // Resolve plot size (auto width/height use the available screen area)
+  computePlotSize();
+
   // Plot size (actual chart)
   var plotW = width + margin.left + margin.right;
   var plotH = height + margin.top + margin.bottom;
 
-  // Viewport behind the figure: fill available space so pan/zoom has room
-  // without forcing a huge figsize. Fall back to a padded plot size.
+  // Viewport behind the figure: at least the plot, expand to available area
   var mainEl = document.getElementById('violin-main');
-  var availW = (mainEl && mainEl.clientWidth) ? mainEl.clientWidth : (window.innerWidth - 40);
-  var availH = window.innerHeight - 100;
+  var availW = (mainEl && mainEl.clientWidth > 0) ? mainEl.clientWidth : Math.max(plotW, window.innerWidth - 40);
+  var availH = plotH;
   if (mainEl) {
     var top = mainEl.getBoundingClientRect().top;
     availH = Math.max(plotH, window.innerHeight - top - 20);
@@ -253,9 +298,18 @@ function buildChart() {
     .on("zoom", function () {
       currentZoomTransform = d3.event.transform;
       zoomLayer.attr("transform", currentZoomTransform);
+      // Keep labels at constant screen size (vector-sharp, no overlap blow-up)
+      updateLabelScreenScale();
     });
 
-  svgRoot.call(zoomBehavior).on("dblclick.zoom", null);
+  svgRoot.call(zoomBehavior);
+  // Double-click resets zoom/pan to the original start view
+  svgRoot.on("dblclick.zoom", null);
+  svgRoot.on("dblclick.reset", function () {
+    currentZoomTransform = d3.zoomIdentity;
+    svgRoot.transition().duration(350)
+      .call(zoomBehavior.transform, d3.zoomIdentity);
+  });
 
   // Invisible hit-rect so the whole viewport is zoomable, not only painted pixels
   zoomLayer.append("rect")
@@ -431,7 +485,8 @@ function buildChart() {
         {{ MOUSELEAVE }};
   }
 
-  // Labels
+  // Labels — placed in plot space but counter-scaled by 1/k so they stay
+  // constant screen size under zoom (sharp SVG text, less overlap when zooming in)
   if (currentLabelKey) {
     svg.selectAll("indLabels")
       .data(data)
@@ -440,19 +495,39 @@ function buildChart() {
         .attr("class", "point-label")
         .attr("text-anchor", nodeTextInside ? "middle" : "start")
         .attr("dominant-baseline", nodeTextInside ? "central" : "auto")
-        .attr("x", function(d) {
-          var cx = xScale(d.x) + xScale.bandwidth() / 2 - d._jx;
-          return nodeTextInside ? cx : (cx + pointRadius(d) + 3);
-        })
-        .attr("y", function(d) {
-          var cy = yScale(+d.y);
-          return nodeTextInside ? cy : (cy + 3);
-        })
-        .style("font-size", "10px")
+        .style("font-size", "11px")
         .style("fill", "var(--text)")
         .style("pointer-events", "none")
+        .style("text-rendering", "geometricPrecision")
         .text(function(d) { return pointLabel(d); });
+    updateLabelScreenScale();
   }
+}
+
+function zoomK() {
+  return (currentZoomTransform && currentZoomTransform.k) ? currentZoomTransform.k : 1;
+}
+
+function labelTransform(d) {
+  var cx = xScale(d.x) + xScale.bandwidth() / 2 - (d._jx || 0);
+  var cy = yScale(+d.y);
+  var s = 1 / zoomK();
+  return "translate(" + cx + "," + cy + ") scale(" + s + ")";
+}
+
+function updateLabelScreenScale() {
+  if (!svg) return;
+  var k = zoomK();
+  svg.selectAll(".point-label")
+    .attr("transform", labelTransform)
+    .attr("x", function(d) {
+      if (nodeTextInside) return 0;
+      // Local units ≈ screen px after counter-scale; offset past scaled marker
+      return pointRadius(d) * k + 10;
+    })
+    .attr("y", function() {
+      return nodeTextInside ? 0 : 4;
+    });
 }
 
 window.addEventListener('DOMContentLoaded', function () {
@@ -508,6 +583,17 @@ if (exportBtn) {
     }
   }
   window.addEventListener('resize', positionSidePanels);
+  // Refit plot when figsize width/height were None (auto screen fit)
+  if (autoWidth || autoHeight) {
+    var resizeTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        positionSidePanels();
+        buildChart();
+      }, 150);
+    });
+  }
   window.addEventListener('load', positionSidePanels);
   positionSidePanels();
   requestAnimationFrame(positionSidePanels);
@@ -587,6 +673,17 @@ if (exportBtn) {
   if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
   // Physics controls
+  var sizeMultiplierSlider = document.getElementById("sizeMultiplierSlider");
+  var sizeMultiplierVal = document.getElementById("sizeMultiplierVal");
+  if (sizeMultiplierSlider) {
+    sizeMultiplierSlider.addEventListener("input", function(e) {
+      var t = +e.target.value;
+      sizeMultiplier = sizeMultiplierFromSlider(t);
+      if (sizeMultiplierVal) sizeMultiplierVal.textContent = sizeMultiplier.toFixed(2) + "×";
+      buildChart();
+    });
+  }
+
   var binsSlider = document.getElementById("binsSlider");
   var binsVal = document.getElementById("binsVal");
   if (binsSlider) {

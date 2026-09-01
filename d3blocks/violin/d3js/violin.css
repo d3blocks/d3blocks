@@ -222,4 +222,9 @@ html, body {
 }
 .axis text {
   fill: var(--axis-color);
+  text-rendering: geometricPrecision;
+}
+.point-label {
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
 }
