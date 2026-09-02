@@ -1738,7 +1738,7 @@
       return all;
   }
 
-  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null, darkMode = true, zoomScale = 1, onZoomChange = null}) {
+  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null, darkMode = true, zoomScale = 1, linkStyle = 'bundled', onZoomChange = null}) {
       const names = computeChordNames(data, orderingMode, customOrder);
       // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
       const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
@@ -1801,6 +1801,34 @@
           .radius(innerRadius - 1)
           .padAngle(1 / innerRadius);
 
+      // Single-edge path: thin quadratic curve from source mid-angle to target
+      // mid-angle through the origin (classic chord-as-edge style, cf. Bostock /
+      // Jason Davies hierarchical edge examples without the hierarchy bundling).
+      const singleRadius = innerRadius - 1;
+      function singleEdgePath(d) {
+          const sa = (d.source.startAngle + d.source.endAngle) / 2 - Math.PI / 2;
+          const ta = (d.target.startAngle + d.target.endAngle) / 2 - Math.PI / 2;
+          const x0 = singleRadius * Math.cos(sa);
+          const y0 = singleRadius * Math.sin(sa);
+          const x1 = singleRadius * Math.cos(ta);
+          const y1 = singleRadius * Math.sin(ta);
+          // Control point pulled toward centre for a soft arc; self-loops get a
+          // small offset so they remain visible.
+          if (d.source.index === d.target.index) {
+              const mid = sa + 0.15;
+              const cr = singleRadius * 0.55;
+              return `M${x0},${y0}Q${cr * Math.cos(mid)},${cr * Math.sin(mid)},${x1},${y1}`;
+          }
+          return `M${x0},${y0}Q0,0,${x1},${y1}`;
+      }
+
+      // Stroke width for single mode scales mildly with value so stronger flows
+      // read thicker, but stay in a thin-line range.
+      const maxVal = Math.max(1, ...chords.map(c => c.source.value));
+      function singleStrokeWidth(d) {
+          return 1.2 + 3.5 * (d.source.value / maxVal);
+      }
+
       // Container for the per-link gradients (source-color -> target-color).
       const defs = svg.append("defs");
       const gradientRadius = innerRadius - 1;
@@ -1815,7 +1843,7 @@
           const targetColor = node_colors.get(names[d.target.index]);
 
           // Position the gradient stops at the mid-angle of the source and
-          // target arcs so the color transitions across the ribbon.
+          // target arcs so the color transitions across the ribbon / edge.
           const sourceAngle = (d.source.startAngle + d.source.endAngle) / 2 - Math.PI / 2;
           const targetAngle = (d.target.startAngle + d.target.endAngle) / 2 - Math.PI / 2;
           const x1 = gradientRadius * Math.cos(sourceAngle);
@@ -1873,8 +1901,9 @@
       const groupPaths = group.selectAll("path");
       const groupTexts = group.selectAll("text");
 
+      const isSingle = linkStyle === "single";
+
       const linkGroup = zoomLayer.append("g")
-          //.attr("fill-opacity", 0.75) // OPACITY OF LINES
           .selectAll("path")
           .data(chords)
           .join("path")
@@ -1884,11 +1913,13 @@
           // backgrounds so ribbon colors stay visible/bright in dark mode.
           .style("mix-blend-mode", darkMode ? "screen" : "multiply")
           .style("cursor", "pointer")
-          //.attr("fill", d => color_func(names[d.target.index]))
-          //.attr("fill", d => link_color(d.source.index, d.target.index))             // COLORS LINKS (FLAT, deprecated)
-          .attr("fill", (d, i) => create_link_gradient(d, i))                          // COLORS LINKS (GRADIENT: source -> target)
-          .attr("fill-opacity", d => link_opacity(d.source.index, d.target.index))    // OPACITY LINKS
-          .attr("d", ribbon);
+          .attr("fill", isSingle ? "none" : ((d, i) => create_link_gradient(d, i)))
+          .attr("fill-opacity", isSingle ? null : (d => link_opacity(d.source.index, d.target.index)))
+          .attr("stroke", isSingle ? ((d, i) => create_link_gradient(d, i)) : null)
+          .attr("stroke-opacity", isSingle ? (d => link_opacity(d.source.index, d.target.index)) : null)
+          .attr("stroke-width", isSingle ? singleStrokeWidth : null)
+          .attr("stroke-linecap", isSingle ? "round" : null)
+          .attr("d", isSingle ? singleEdgePath : ribbon);
 
       linkGroup.append("title")
           .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`);
@@ -1908,7 +1939,9 @@
               .style("opacity", null)
               .style("stroke", null)
               .style("stroke-width", null)
-              .attr("fill-opacity", baseLinkOpacity);
+              .attr("fill-opacity", isSingle ? null : baseLinkOpacity)
+              .attr("stroke-opacity", isSingle ? baseLinkOpacity : null)
+              .attr("stroke-width", isSingle ? singleStrokeWidth : null);
           groupPaths.style("opacity", null).style("cursor", "pointer");
           groupTexts.style("opacity", null).style("font-weight", null);
       }
@@ -1917,12 +1950,13 @@
           active = d;
           linkGroup
               .style("opacity", p => p === d ? 1 : 0.4)
-              .attr("fill-opacity", p => p === d ? baseLinkOpacity(p) : 0.4);
+              .attr("fill-opacity", isSingle ? null : (p => p === d ? baseLinkOpacity(p) : 0.4))
+              .attr("stroke-opacity", isSingle ? (p => p === d ? baseLinkOpacity(p) : 0.4) : null);
           linkGroup.filter(p => p === d)
               .raise()
               .style("stroke", darkMode ? "#ffffff" : "#000000")
-              .style("stroke-width", 1.25);
-          groupPaths.style("opacity", g => (g.index === d.source.index || g.index === d.target.index) ? 1 : 0.15);
+              .style("stroke-width", isSingle ? 3 : 1.25);
+          groupPaths.style("opacity", g => (g.index === d.source.index || g.index === d.target.index) ? 1 : 0.4);
           groupTexts
               .style("opacity", g => (g.index === d.source.index || g.index === d.target.index) ? 1 : 0.3)
               .style("font-weight", g => (g.index === d.source.index || g.index === d.target.index) ? "bold" : null);
@@ -1933,10 +1967,12 @@
           active = {type: 'group', index: idx};
           linkGroup
               .style("opacity", p => (p.source.index === idx || p.target.index === idx) ? 1 : 0.1)
-              .attr("fill-opacity", p => (p.source.index === idx || p.target.index === idx) ? baseLinkOpacity(p) : 0.1)
+              .attr("fill-opacity", isSingle ? null : (p => (p.source.index === idx || p.target.index === idx) ? baseLinkOpacity(p) : 0.1))
+              .attr("stroke-opacity", isSingle ? (p => (p.source.index === idx || p.target.index === idx) ? baseLinkOpacity(p) : 0.1) : null)
               .style("stroke", null)
-              .style("stroke-width", null);
-          // Raise connected ribbons so they sit on top of dimmed ones
+              .style("stroke-width", null)
+              .attr("stroke-width", isSingle ? singleStrokeWidth : null);
+          // Raise connected edges so they sit on top of dimmed ones
           linkGroup.filter(p => p.source.index === idx || p.target.index === idx).raise();
           groupPaths.style("opacity", gg => gg.index === idx ? 1 : 0.15);
           groupTexts
@@ -2092,6 +2128,7 @@
           customOrder: null,
           darkMode: true,
           zoomScale: 1,
+          linkStyle: 'bundled',
       }, opts);
 
       const containerEl = typeof opts.container === 'string'
@@ -2121,6 +2158,7 @@
           setMargin: function (v) { state.margin = +v; render(); },
           setTextOffset: function (v) { state.textOffset = +v; render(); },
           setOrdering: function (mode) { state.orderingMode = mode; render(); },
+          setLinkStyle: function (style) { state.linkStyle = style === 'single' ? 'single' : 'bundled'; render(); },
           setDarkMode: function (isDark) { state.darkMode = !!isDark; render(); },
           getState: function () { return state; },
           render: render,

@@ -510,7 +510,7 @@ d3 = D3Blocks(chart='Chord', frame=False)
 df = d3.import_example('energy')
 #
 # Node properties
-d3.set_node_properties(df, opacity=0.2, cmap='tab20')
+d3.set_node_properties(df, opacity=0.9, cmap='tab20')
 d3.set_edge_properties(df, color='source', opacity='source')
 #
 # Show the chart

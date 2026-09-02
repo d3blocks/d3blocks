@@ -72,6 +72,19 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
     <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust label size, arrowhead, margin, and label offset.</div>
   </div>
 </div>
+
+<!-- Side panel: Physics / link style -->
+<div class="stats-panel collapsed" id="physicsPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div style="font-weight:600;margin:4px 0 6px 0;font-size:12px">Link style</div>
+    <div class="mode-row">
+      <label><input type="radio" name="linkStyle" value="bundled" checked> Bundled</label>
+      <label><input type="radio" name="linkStyle" value="single"> Single</label>
+    </div>
+    <div style="font-size:11px;opacity:0.6;margin-top:8px">Bundled draws thick chord ribbons. Single draws one thin curve per connection (edge style).</div>
+  </div>
+</div>
 {% endif %}
 
 <!-- Main visualization -->
@@ -172,10 +185,17 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
       });
     });
 
+    // Link style radios (bundled ribbons vs single edges)
+    document.querySelectorAll('input[name="linkStyle"]').forEach(function(el) {
+      el.addEventListener("change", function() {
+        if (chordChart) chordChart.setLinkStyle(this.value);
+      });
+    });
+
     // Top bar clearance + side panels: position, collapse, reorder
     // Always clear the top panel — even when show_controls is false (no side panels).
     (function() {
-      var PANEL_ORDER = ['exportPanel', 'appearancePanel'];
+      var PANEL_ORDER = ['exportPanel', 'appearancePanel', 'physicsPanel'];
 
       function positionSidePanels() {
         var bar = document.querySelector('.top-panel');
