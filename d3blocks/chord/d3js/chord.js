@@ -1916,8 +1916,8 @@
       function highlightChord(d) {
           active = d;
           linkGroup
-              .style("opacity", p => p === d ? 1 : 0.15)
-              .attr("fill-opacity", p => p === d ? baseLinkOpacity(p) : 0.15);
+              .style("opacity", p => p === d ? 1 : 0.4)
+              .attr("fill-opacity", p => p === d ? baseLinkOpacity(p) : 0.4);
           linkGroup.filter(p => p === d)
               .raise()
               .style("stroke", darkMode ? "#ffffff" : "#000000")
@@ -1967,21 +1967,113 @@
           if (active !== null) clearHighlight();
       });
 
-      // --- Mouse-wheel zoom: scale the whole zoom-layer around the origin
-      // (the chord circle is always centered on the SVG's viewBox origin).
+      // --- Zoom + pan:
+      // Mouse-wheel zooms (scale) around the origin; drag pans (translate).
+      // Double-click resets both zoom and pan. The chord is centered on the
+      // SVG viewBox origin; transform is applied to the shared zoom-layer.
       let currentZoom = zoomScale;
-      zoomLayer.attr("transform", `scale(${currentZoom})`);
+      let panX = 0, panY = 0;
+
+      function applyTransform() {
+          zoomLayer.attr("transform", `translate(${panX},${panY}) scale(${currentZoom})`);
+      }
+      applyTransform();
+
       svg.node().addEventListener("wheel", function (event) {
           event.preventDefault();
           const factor = Math.exp(-event.deltaY * 0.0015);
           currentZoom = Math.min(8, Math.max(0.25, currentZoom * factor));
-          zoomLayer.attr("transform", `scale(${currentZoom})`);
+          applyTransform();
           if (typeof onZoomChange === "function") onZoomChange(currentZoom);
       }, {passive: false});
-      // Double-click resets the zoom level back to 1x.
-      svg.node().addEventListener("dblclick", function () {
+
+      // Drag to pan (with small movement threshold so pure clicks on
+      // ribbons/arcs still fire their highlight handlers cleanly).
+      let dragging = false;
+      let dragStarted = false;
+      let lastX = 0, lastY = 0;
+      const DRAG_THRESHOLD = 4; // px before we treat it as a pan
+      const svgEl = svg.node();
+
+      function onPointerDown(event) {
+          if (event.button !== undefined && event.button !== 0) return;
+          dragging = true;
+          dragStarted = false;
+          lastX = event.clientX;
+          lastY = event.clientY;
+      }
+      function onPointerMove(event) {
+          if (!dragging) return;
+          const dx = event.clientX - lastX;
+          const dy = event.clientY - lastY;
+          if (!dragStarted) {
+              if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+              dragStarted = true;
+              svgEl.style.cursor = "grabbing";
+          }
+          lastX = event.clientX;
+          lastY = event.clientY;
+          panX += dx;
+          panY += dy;
+          applyTransform();
+      }
+      function onPointerUp(event) {
+          if (!dragging) return;
+          // If we actually panned, suppress the following click so highlight
+          // handlers don't fire after a drag.
+          if (dragStarted) {
+              event.stopPropagation();
+              const suppress = function (e) { e.stopPropagation(); e.preventDefault(); };
+              svgEl.addEventListener("click", suppress, {capture: true, once: true});
+          }
+          dragging = false;
+          dragStarted = false;
+          svgEl.style.cursor = "grab";
+      }
+
+      svgEl.style.cursor = "grab";
+      svgEl.addEventListener("mousedown", onPointerDown);
+      window.addEventListener("mousemove", onPointerMove);
+      window.addEventListener("mouseup", onPointerUp);
+      // Touch support
+      svgEl.addEventListener("touchstart", function (event) {
+          if (event.touches.length !== 1) return;
+          const t = event.touches[0];
+          dragging = true;
+          dragStarted = false;
+          lastX = t.clientX;
+          lastY = t.clientY;
+      }, {passive: true});
+      window.addEventListener("touchmove", function (event) {
+          if (!dragging || event.touches.length !== 1) return;
+          const t = event.touches[0];
+          const dx = t.clientX - lastX;
+          const dy = t.clientY - lastY;
+          if (!dragStarted) {
+              if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+              dragStarted = true;
+          }
+          lastX = t.clientX;
+          lastY = t.clientY;
+          panX += dx;
+          panY += dy;
+          applyTransform();
+      }, {passive: true});
+      window.addEventListener("touchend", function () {
+          dragging = false;
+          dragStarted = false;
+      });
+      window.addEventListener("touchcancel", function () {
+          dragging = false;
+          dragStarted = false;
+      });
+
+      // Double-click resets zoom and pan.
+      svgEl.addEventListener("dblclick", function () {
           currentZoom = 1;
-          zoomLayer.attr("transform", `scale(${currentZoom})`);
+          panX = 0;
+          panY = 0;
+          applyTransform();
           if (typeof onZoomChange === "function") onZoomChange(currentZoom);
       });
 
