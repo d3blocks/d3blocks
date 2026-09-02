@@ -315,9 +315,17 @@ act_codes.forEach(function(code, i) {
 
 // Start the SVG. Zoom/pan is visual-only (transform on a root group) so the
 // force layout keeps working in the original coordinate system.
+// The SVG uses a viewBox (not fixed width/height attrs) so it fills the
+// #chartStage container at 1× zoom, and zoomed/panned content can spill
+// beyond the figsize box into surrounding page space (overflow:visible on
+// the SVG and its ancestors). The force layout still works in the original
+// width×height coordinate space — foci, fociRadius, center_pt are unchanged.
 var svg = d3.select("#chart").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("viewBox", "0 0 " + width + " " + height)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "100%")
+    .style("overflow", "visible")
     .style("cursor", "grab");
 
 // Transparent hit-area so wheel/drag works over empty chart space too.

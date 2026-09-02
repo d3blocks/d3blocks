@@ -286,7 +286,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 #chart {
   position: relative;
@@ -296,8 +296,20 @@ html, body {
   align-items: center;
   justify-content: center;
   float: none;
+  overflow: visible;
 }
-#chart svg { display: block; }
+/* SVG fills the stage at rest but lets zoomed/panned content spill
+   beyond the figsize box into surrounding page space. */
+#chart svg {
+  display: block;
+  overflow: visible;
+  /* width/height attributes from Python set the coordinate system;
+     the rendered box expands to fill the stage at 1× zoom. */
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+}
 
 /* —— Top bar: logo left, clock center, theme toggle right —— */
 .top-panel {
