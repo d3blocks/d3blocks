@@ -18,6 +18,44 @@ Licensed    : GPL3
 {% include "movingbubbles.css" %}
 body { font-size: {{ FONTSIZE }}; }
 .node { stroke-width: 1.5px; }
+
+/* ── Time-scrubber (lives inside the top bar center cell) ───── */
+#timeSlider {
+  flex: 1 1 auto;
+  accent-color: var(--accent);
+  cursor: pointer;
+  /* progress-fill via linear-gradient background updated from JS */
+  background: linear-gradient(to right, var(--accent) 0%, var(--btn-bg) 0%) no-repeat;
+  background-size: 100% 4px;
+  background-position: 0 50%;
+  border-radius: 4px;
+  -webkit-appearance: none;
+  height: 18px;  /* tall enough for a comfortable hit-area */
+}
+#timeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--panel-bg);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+#timeSlider::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--panel-bg);
+}
+#timeSliderPct {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 </style>
 </head>
 
@@ -31,10 +69,11 @@ body { font-size: {{ FONTSIZE }}; }
     </a>
   </div>
   <div class="top-panel-center top-speed">
-    <span class="top-speed-caption">Speed</span>
-    <span id="speedLabel" class="top-speed-label">Medium</span>
-    <input type="range" id="speedSlider" min="0" max="100" step="1" value="50" title="Playback speed: left = stop, right = super fast">
-    <button class="button-switch top-reset-btn" id="resetSimBtn" type="button" title="Restart the simulation from the beginning">Reset</button>
+    <button class="button-switch top-reset-btn" id="resetSimBtn" type="button" title="Restart the simulation from the beginning">↺</button>
+    <input type="range" id="timeSlider" min="0" max="1000" step="1" value="0"
+           title="Drag to jump to any point in the simulation">
+    <span id="timeSliderPct">0%</span>
+    <button class="button-switch" id="playPauseBtn" type="button" title="Play / Pause">⏸</button>
   </div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
@@ -87,6 +126,11 @@ body { font-size: {{ FONTSIZE }}; }
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Physics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <div class="slider-row">
+      <label for="speedSlider">Speed <span class="val" id="speedLabel">Medium</span></label>
+      <input type="range" id="speedSlider" min="0" max="100" step="1" value="50" title="Playback speed: left = stop, right = super fast">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">0 = stopped · 100 = super fast</div>
+    </div>
+    <div class="slider-row" style="margin-top:12px">
       <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
       <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Scales all bubble radii (0.25× – 4×)</div>
@@ -99,6 +143,13 @@ body { font-size: {{ FONTSIZE }}; }
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Draw a trail while a bubble is selected. Trails stay after deselect.</div>
     </div>
     <button class="button-switch" id="clearTrailsBtn" type="button" style="width:100%;margin-top:8px;box-sizing:border-box">Clear trails</button>
+    <div class="slider-row" style="margin-top:12px">
+      <label for="loopEnabled" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="loopEnabled" style="accent-color:var(--accent);cursor:pointer">
+        Loop continuously
+      </label>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Automatically restart when the simulation ends.</div>
+    </div>
   </div>
 </div>
 
@@ -691,6 +742,13 @@ function timer() {
 
 	// Stop when the last datetime event across all samples has passed
 	if (simulationEndMinute > 0 && curr_minute >= simulationEndMinute) {
+		var loopCb = document.getElementById('loopEnabled');
+		if (loopCb && loopCb.checked) {
+			// Loop: restart immediately at the current speed (don't reset the
+			// speed slider to 0 the way a manual Reset does).
+			resetSimulation(true);
+			return;
+		}
 		SIMULATION_ENDED = true;
 		IS_PAUSED = true;
 		timer_handle = null;
@@ -838,8 +896,10 @@ if (speedSlider) {
 }
 
 // Restart simulation from t=0: nodes return to first activity, clock/notes
-// reset, selection + trails cleared, zoom restored. Speed setting is kept.
-function resetSimulation() {
+// reset, selection + trails cleared, zoom restored.
+// keepSpeed=true: resume immediately at current delay (used by loop mode).
+// keepSpeed=false/omitted: speed slider goes to 0 (manual Reset behaviour).
+function resetSimulation(keepSpeed) {
 	if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
 	curr_minute = 0;
 	notes_index = 0;
@@ -886,16 +946,30 @@ function resetSimulation() {
 	// settle after being scattered back to their reset positions. A much
 	// higher starting alpha keeps the simulation "hot" for far longer.
 	force.alpha(2);
-	// Reset always stops playback: slider goes to 0 (leftmost/stop) rather
-	// than resuming at whatever speed was previously set.
-	var slider = document.getElementById('speedSlider');
-	if (slider) {
-		slider.value = 0;
-		applySpeedSlider(0);
+
+	if (keepSpeed) {
+		// Loop mode: keep the current speed and immediately resume ticking.
+		IS_PAUSED = false;
+		timer_handle = setTimeout(timer, currentDelay);
+		var speedLbl = document.getElementById('speedLabel');
+		if (speedLbl) {
+			var slider = document.getElementById('speedSlider');
+			if (speedLbl) speedLbl.textContent = speedLabelFor(slider ? +slider.value : 50);
+		}
 	} else {
-		IS_PAUSED = true;
-		if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+		// Manual Reset: stop playback, slider goes to 0.
+		var slider = document.getElementById('speedSlider');
+		if (slider) {
+			slider.value = 0;
+			applySpeedSlider(0);
+		} else {
+			IS_PAUSED = true;
+			if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+		}
 	}
+
+	// Sync time-slider to position 0
+	updateTimeSlider();
 }
 var resetSimBtn = document.getElementById('resetSimBtn');
 if (resetSimBtn) resetSimBtn.addEventListener('click', function (e) {
@@ -1442,6 +1516,224 @@ if (exportButton) exportButton.addEventListener('click', function () {
 	document.body.appendChild(a); a.click(); document.body.removeChild(a);
 	setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
 });
+
+// ══════════════════════════════════════════════════════════════════
+// TIME SCRUBBER — progress bar that tracks curr_minute and lets
+// users drag to any point in the simulation.
+//
+// Scrubbing to an arbitrary minute is done by replaying all node
+// schedules from t=0 up to the target minute in one synchronous
+// pass (no rendering between steps), then letting the force layout
+// and the next tick() call render the resulting state.
+// ══════════════════════════════════════════════════════════════════
+
+var TIME_SLIDER_STEPS = 1000; // resolution of the <input range>
+var _sliderDragging = false;  // true while the user holds the thumb
+
+// Compute the correct act + moves + next_move_time for a single node
+// at a given target minute, starting from scratch. Pure function —
+// does not mutate anything.
+function nodeStateAtMinute(n, targetMinute) {
+	var moves = 0;
+	var next_move_time = n.sched[0].duration;
+	var act = n.sched[0].act;
+	while (moves < n.sched.length - 1 && next_move_time <= targetMinute) {
+		moves += 1;
+		act = n.sched[moves].act;
+		next_move_time += n.sched[moves].duration;
+	}
+	return { act: act, moves: moves, next_move_time: next_move_time };
+}
+
+// Jump the simulation state to targetMinute without animating the
+// intermediate steps. Used by scrubbing and also called at the end
+// of resetSimulation to sync the slider.
+function scrubToMinute(targetMinute) {
+	if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+
+	targetMinute = Math.max(0, Math.min(targetMinute, simulationEndMinute));
+
+	// Reset act_counts to zero then replay up to targetMinute
+	var k;
+	for (k in act_counts) {
+		if (Object.prototype.hasOwnProperty.call(act_counts, k)) act_counts[k] = 0;
+	}
+
+	nodes.forEach(function (n) {
+		var s = nodeStateAtMinute(n, targetMinute);
+		n.act  = s.act;
+		n.moves = s.moves;
+		n.next_move_time = s.next_move_time;
+		// Do NOT snap x/y — let the force layout pull each bubble
+		// smoothly toward its new focus so nothing teleports or explodes.
+		act_counts[n.act] += 1;
+	});
+
+	curr_minute = targetMinute;
+
+	// Rewind notes_index to the last note whose window started at or
+	// before curr_minute so notes stay in sync after a scrub.
+	notes_index = 0;
+	for (var ni = 0; ni < time_notes.length; ni++) {
+		if (time_notes[ni].start_minute <= curr_minute) notes_index = ni;
+		else break;
+	}
+	// Hide the note overlay; it will reappear naturally on next tick
+	d3.select('#note').style('opacity', '0').text('');
+
+	// Update clock display
+	var timeResult = formatTime(curr_minute);
+	d3.select('#current_day').html(timeResult.day);
+	d3.select('#current_time').text(timeResult.time);
+
+	// Update activity percentage labels
+	label.selectAll('tspan.actpct').text(function (d) {
+		return readablePercent(act_counts[d.index]);
+	});
+
+	// Wake up the force layout so bubbles drift to their new foci
+	SIMULATION_ENDED = false;
+	force.alpha(1.5);
+	force.resume();
+
+	// If simulation reached the end, mark it done (unless looping)
+	if (simulationEndMinute > 0 && curr_minute >= simulationEndMinute) {
+		var loopCb = document.getElementById('loopEnabled');
+		if (!(loopCb && loopCb.checked)) {
+			SIMULATION_ENDED = true;
+			IS_PAUSED = true;
+			var speedLbl = document.getElementById('speedLabel');
+			if (speedLbl) speedLbl.textContent = 'Finished';
+		}
+	} else if (!IS_PAUSED) {
+		// Resume ticking at the current speed
+		timer_handle = setTimeout(timer, currentDelay);
+	}
+}
+
+// Keep the slider thumb position and percentage label in sync with
+// curr_minute. Called from timer() each tick and from resetSimulation().
+function updateTimeSlider() {
+	if (_sliderDragging) return; // don't fight the user's thumb
+	var slider = document.getElementById('timeSlider');
+	var pctEl  = document.getElementById('timeSliderPct');
+	if (!slider || simulationEndMinute <= 0) return;
+	var ratio = Math.min(1, curr_minute / simulationEndMinute);
+	slider.value = Math.round(ratio * TIME_SLIDER_STEPS);
+	var pct = Math.round(ratio * 100);
+	if (pctEl) pctEl.textContent = pct + '%';
+	// Update the CSS progress-fill behind the thumb
+	slider.style.background =
+		'linear-gradient(to right, var(--accent) ' + pct + '%, var(--btn-bg) ' + pct + '%) no-repeat';
+	slider.style.backgroundSize  = '100% 4px';
+	slider.style.backgroundPosition = '0 50%';
+}
+
+// Wire up the time slider
+(function () {
+	var slider = document.getElementById('timeSlider');
+	var pctEl  = document.getElementById('timeSliderPct');
+	if (!slider) return;
+	slider.max = TIME_SLIDER_STEPS;
+
+	// While dragging: update clock display and percentage live, but don't
+	// commit (no scrub) until mouseup/touchend so it feels lightweight.
+	slider.addEventListener('input', function () {
+		_sliderDragging = true;
+		var ratio = slider.value / TIME_SLIDER_STEPS;
+		var previewMinute = Math.round(ratio * simulationEndMinute);
+		var pct = Math.round(ratio * 100);
+		if (pctEl) pctEl.textContent = pct + '%';
+		// Preview clock
+		var t = formatTime(previewMinute);
+		d3.select('#current_day').html(t.day);
+		d3.select('#current_time').text(t.time);
+		// Update fill
+		slider.style.background =
+			'linear-gradient(to right, var(--accent) ' + pct + '%, var(--btn-bg) ' + pct + '%) no-repeat';
+		slider.style.backgroundSize  = '100% 4px';
+		slider.style.backgroundPosition = '0 50%';
+	});
+
+	// On release: commit the scrub
+	function onRelease() {
+		if (!_sliderDragging) return;
+		_sliderDragging = false;
+		var ratio = slider.value / TIME_SLIDER_STEPS;
+		var targetMinute = Math.round(ratio * simulationEndMinute);
+		scrubToMinute(targetMinute);
+	}
+	slider.addEventListener('change',   onRelease);
+	slider.addEventListener('mouseup',  onRelease);
+	slider.addEventListener('touchend', onRelease);
+}());
+
+// Patch timer() to call updateTimeSlider() each tick.
+// We do this by wrapping the existing setTimeout call so we don't
+// need to re-open the timer function body.
+var _origTimer = timer;
+timer = function () {
+	_origTimer.apply(this, arguments);
+	// updateTimeSlider runs after _origTimer, so curr_minute is already
+	// incremented and SIMULATION_ENDED is set if applicable.
+	updateTimeSlider();
+};
+
+// ══════════════════════════════════════════════════════════════════
+// LOOP CHECKBOX — no extra logic needed here; the checkbox is read
+// inside timer()'s end-of-simulation block above.
+// ══════════════════════════════════════════════════════════════════
+
+// —— Play / Pause button ——
+function updatePlayPauseBtn() {
+	var btn = document.getElementById('playPauseBtn');
+	if (!btn) return;
+	if (SIMULATION_ENDED) {
+		btn.textContent = '↺'; btn.title = 'Restart';
+	} else if (IS_PAUSED) {
+		btn.textContent = '▶'; btn.title = 'Play';
+	} else {
+		btn.textContent = '⏸'; btn.title = 'Pause';
+	}
+}
+var playPauseBtn = document.getElementById('playPauseBtn');
+if (playPauseBtn) {
+	playPauseBtn.addEventListener('click', function (e) {
+		if (e) e.stopPropagation();
+		if (SIMULATION_ENDED) {
+			// Act as a restart when the simulation has ended
+			resetSimulation(false);
+			return;
+		}
+		if (IS_PAUSED) {
+			// Resume: use current speed slider value (or default to medium if 0)
+			var slider = document.getElementById('speedSlider');
+			var v = slider ? +slider.value : 50;
+			if (v === 0) { v = 50; if (slider) slider.value = 50; }
+			IS_PAUSED = false;
+			currentDelay = delayForSliderValue(v);
+			var lbl = document.getElementById('speedLabel');
+			if (lbl) lbl.textContent = speedLabelFor(v);
+			timer_handle = setTimeout(timer, currentDelay);
+		} else {
+			IS_PAUSED = true;
+			if (timer_handle) { clearTimeout(timer_handle); timer_handle = null; }
+		}
+		updatePlayPauseBtn();
+	});
+}
+// Keep the button icon in sync whenever IS_PAUSED changes via the speed slider too
+var _origApplySpeedSlider = applySpeedSlider;
+applySpeedSlider = function (v) {
+	_origApplySpeedSlider(v);
+	updatePlayPauseBtn();
+};
+// Also sync after resetSimulation calls applySpeedSlider
+var _origResetSimulation = resetSimulation;
+resetSimulation = function (keepSpeed) {
+	_origResetSimulation(keepSpeed);
+	updatePlayPauseBtn();
+};
 
 // —— Theme toggle (button + T key) ——
 function toggleTheme() {
