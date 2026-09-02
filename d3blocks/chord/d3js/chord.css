@@ -223,15 +223,20 @@ html, body {
   justify-content: center;
   /* Fallback before JS measures the top panel (logo load, font metrics). */
   margin-top: 80px;
+  /* Allow zoomed SVG content to expand beyond the figsize box into page space */
+  overflow: visible;
 }
 #chord-container {
   position: relative;
   margin: 0 auto;
+  /* Do not clip the SVG when zoom scales content past the fixed width/height */
+  overflow: visible;
 }
 #chord-container svg {
   display: block;
-  max-width: 100%;
+  max-width: none; /* allow visual size > figsize when zoomed (overflow visible) */
   height: auto;
+  overflow: visible;
 }
 #chord-container text {
   fill: var(--text);

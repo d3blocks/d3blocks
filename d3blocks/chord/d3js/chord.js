@@ -1779,7 +1779,12 @@
       const svg = create("svg")
           .attr("width", width)
           .attr("height", height)
-          .attr("viewBox", [-width / 2, -height / 2, width, height]);
+          .attr("viewBox", [-width / 2, -height / 2, width, height])
+          // Allow zoomed content to paint outside the fixed figsize box so the
+          // chart can expand into surrounding page space (more fullscreen on zoom)
+          // while figsize still controls the initial SVG size and chord geometry.
+          .attr("overflow", "visible")
+          .style("overflow", "visible");
 
       // All chart content (arcs, labels, ribbons) lives inside this group so it
       // can be scaled as a single unit for mouse-wheel zoom, centered on the origin.
@@ -1888,28 +1893,31 @@
       linkGroup.append("title")
           .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`);
 
-      // --- Click-to-highlight: clicking a ribbon (line) highlights that
-      // connection and its two endpoint nodes, dimming everything else.
-      // Clicking the same ribbon again, or clicking empty space, clears it.
+      // --- Click-to-highlight:
+      // - Click a ribbon → highlight that single connection + its two nodes.
+      // - Click an outer arc (group) → highlight all ribbons connected to that
+      //   node and dim everything else.
+      // Click the same item again, or empty space, to clear.
       const baseLinkOpacity = d => link_opacity(d.source.index, d.target.index);
-      let activeChord = null;
+      // active can be a chord datum, or {type:'group', index:n}
+      let active = null;
 
       function clearHighlight() {
-          activeChord = null;
+          active = null;
           linkGroup
               .style("opacity", null)
               .style("stroke", null)
               .style("stroke-width", null)
               .attr("fill-opacity", baseLinkOpacity);
-          groupPaths.style("opacity", null);
+          groupPaths.style("opacity", null).style("cursor", "pointer");
           groupTexts.style("opacity", null).style("font-weight", null);
       }
 
       function highlightChord(d) {
-          activeChord = d;
+          active = d;
           linkGroup
-              .style("opacity", p => p === d ? 1 : 0.4)
-              .attr("fill-opacity", p => p === d ? baseLinkOpacity(p) : 0.4);
+              .style("opacity", p => p === d ? 1 : 0.15)
+              .attr("fill-opacity", p => p === d ? baseLinkOpacity(p) : 0.15);
           linkGroup.filter(p => p === d)
               .raise()
               .style("stroke", darkMode ? "#ffffff" : "#000000")
@@ -1920,14 +1928,43 @@
               .style("font-weight", g => (g.index === d.source.index || g.index === d.target.index) ? "bold" : null);
       }
 
+      function highlightGroup(g) {
+          const idx = g.index;
+          active = {type: 'group', index: idx};
+          linkGroup
+              .style("opacity", p => (p.source.index === idx || p.target.index === idx) ? 1 : 0.1)
+              .attr("fill-opacity", p => (p.source.index === idx || p.target.index === idx) ? baseLinkOpacity(p) : 0.1)
+              .style("stroke", null)
+              .style("stroke-width", null);
+          // Raise connected ribbons so they sit on top of dimmed ones
+          linkGroup.filter(p => p.source.index === idx || p.target.index === idx).raise();
+          groupPaths.style("opacity", gg => gg.index === idx ? 1 : 0.15);
+          groupTexts
+              .style("opacity", gg => gg.index === idx ? 1 : 0.25)
+              .style("font-weight", gg => gg.index === idx ? "bold" : null);
+      }
+
+      function isActiveGroup(g) {
+          return active && active.type === 'group' && active.index === g.index;
+      }
+
       linkGroup.on("click", function (event, d) {
           event.stopPropagation();
-          if (activeChord === d) clearHighlight();
+          if (active === d) clearHighlight();
           else highlightChord(d);
       });
 
+      // Click outer arc (group path) → highlight all its connected lines
+      groupPaths
+          .style("cursor", "pointer")
+          .on("click", function (event, d) {
+              event.stopPropagation();
+              if (isActiveGroup(d)) clearHighlight();
+              else highlightGroup(d);
+          });
+
       svg.on("click", function () {
-          if (activeChord !== null) clearHighlight();
+          if (active !== null) clearHighlight();
       });
 
       // --- Mouse-wheel zoom: scale the whole zoom-layer around the origin
