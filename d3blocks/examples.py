@@ -733,7 +733,7 @@ from d3blocks import D3Blocks
 import numpy as np
 
 # Initialize
-d3 = D3Blocks(verbose=10)
+d3 = D3Blocks()
 
 # Import example
 df = d3.import_example('energy')

@@ -1738,7 +1738,7 @@
       return all;
   }
 
-  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null}) {
+  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null, darkMode = true, zoomScale = 1, onZoomChange = null}) {
       const names = computeChordNames(data, orderingMode, customOrder);
       // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
       const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
@@ -1780,6 +1780,10 @@
           .attr("width", width)
           .attr("height", height)
           .attr("viewBox", [-width / 2, -height / 2, width, height]);
+
+      // All chart content (arcs, labels, ribbons) lives inside this group so it
+      // can be scaled as a single unit for mouse-wheel zoom, centered on the origin.
+      const zoomLayer = svg.append("g").attr("class", "zoom-layer");
 
       const chord = chordDirected()
           .padAngle(10 / innerRadius)
@@ -1828,7 +1832,7 @@
           return `url(#${gradId})`;
       }
 
-      const group = svg.append("g")
+      const group = zoomLayer.append("g")
           .attr("font-size", fontsize)
           .attr("font-family", "sans-serif")
           .selectAll("g")
@@ -1861,41 +1865,88 @@
     
     // console.log(data)
     
-      svg.append("g")
+      const groupPaths = group.selectAll("path");
+      const groupTexts = group.selectAll("text");
+
+      const linkGroup = zoomLayer.append("g")
           //.attr("fill-opacity", 0.75) // OPACITY OF LINES
           .selectAll("path")
           .data(chords)
           .join("path")
-          .style("mix-blend-mode", "multiply")
+          // "multiply" reads correctly against a light/white page background, but
+          // against a dark background it multiplies every ribbon color toward
+          // black. "screen" gives the equivalent lightening effect on dark
+          // backgrounds so ribbon colors stay visible/bright in dark mode.
+          .style("mix-blend-mode", darkMode ? "screen" : "multiply")
+          .style("cursor", "pointer")
           //.attr("fill", d => color_func(names[d.target.index]))
           //.attr("fill", d => link_color(d.source.index, d.target.index))             // COLORS LINKS (FLAT, deprecated)
           .attr("fill", (d, i) => create_link_gradient(d, i))                          // COLORS LINKS (GRADIENT: source -> target)
           .attr("fill-opacity", d => link_opacity(d.source.index, d.target.index))    // OPACITY LINKS
-          .attr("d", ribbon)
-          .append("title")
-          .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`)
-//		  .on("mouseover", mousover)
-//		  .on("mouseout", mouseout)
-          ;
+          .attr("d", ribbon);
 
-//	  function mousover(event, d) {
-//		link.style("mix-blend-mode", null);
-//		d3.select(this).attr("font-weight", "bold");
-//		d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", "#00f").raise();
-//		d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", "#00f").attr("font-weight", "bold");
-//		d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", "#f00").raise();
-//		d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", "#f00").attr("font-weight", "bold");
-//	  }
-//
-//	  function mouseout(event, d) {
-//		link.style("mix-blend-mode", "multiply");
-//		d3.select(this).attr("font-weight", null);
-//		d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", null);
-//		d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", null).attr("font-weight", null);
-//		d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", null);
-//		d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", null).attr("font-weight", null);
-//	  }
+      linkGroup.append("title")
+          .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`);
 
+      // --- Click-to-highlight: clicking a ribbon (line) highlights that
+      // connection and its two endpoint nodes, dimming everything else.
+      // Clicking the same ribbon again, or clicking empty space, clears it.
+      const baseLinkOpacity = d => link_opacity(d.source.index, d.target.index);
+      let activeChord = null;
+
+      function clearHighlight() {
+          activeChord = null;
+          linkGroup
+              .style("opacity", null)
+              .style("stroke", null)
+              .style("stroke-width", null)
+              .attr("fill-opacity", baseLinkOpacity);
+          groupPaths.style("opacity", null);
+          groupTexts.style("opacity", null).style("font-weight", null);
+      }
+
+      function highlightChord(d) {
+          activeChord = d;
+          linkGroup
+              .style("opacity", p => p === d ? 1 : 0.4)
+              .attr("fill-opacity", p => p === d ? baseLinkOpacity(p) : 0.4);
+          linkGroup.filter(p => p === d)
+              .raise()
+              .style("stroke", darkMode ? "#ffffff" : "#000000")
+              .style("stroke-width", 1.25);
+          groupPaths.style("opacity", g => (g.index === d.source.index || g.index === d.target.index) ? 1 : 0.15);
+          groupTexts
+              .style("opacity", g => (g.index === d.source.index || g.index === d.target.index) ? 1 : 0.3)
+              .style("font-weight", g => (g.index === d.source.index || g.index === d.target.index) ? "bold" : null);
+      }
+
+      linkGroup.on("click", function (event, d) {
+          event.stopPropagation();
+          if (activeChord === d) clearHighlight();
+          else highlightChord(d);
+      });
+
+      svg.on("click", function () {
+          if (activeChord !== null) clearHighlight();
+      });
+
+      // --- Mouse-wheel zoom: scale the whole zoom-layer around the origin
+      // (the chord circle is always centered on the SVG's viewBox origin).
+      let currentZoom = zoomScale;
+      zoomLayer.attr("transform", `scale(${currentZoom})`);
+      svg.node().addEventListener("wheel", function (event) {
+          event.preventDefault();
+          const factor = Math.exp(-event.deltaY * 0.0015);
+          currentZoom = Math.min(8, Math.max(0.25, currentZoom * factor));
+          zoomLayer.attr("transform", `scale(${currentZoom})`);
+          if (typeof onZoomChange === "function") onZoomChange(currentZoom);
+      }, {passive: false});
+      // Double-click resets the zoom level back to 1x.
+      svg.node().addEventListener("dblclick", function () {
+          currentZoom = 1;
+          zoomLayer.attr("transform", `scale(${currentZoom})`);
+          if (typeof onZoomChange === "function") onZoomChange(currentZoom);
+      });
 
       return svg.node();
   }
@@ -1910,6 +1961,8 @@
           arrowhead: 10,
           orderingMode: 'ascending',
           customOrder: null,
+          darkMode: true,
+          zoomScale: 1,
       }, opts);
 
       const containerEl = typeof opts.container === 'string'
@@ -1919,7 +1972,13 @@
       function render() {
           if (!containerEl) return;
           containerEl.innerHTML = '';
-          const svg = generateChord(state);
+          const svg = generateChord(Object.assign({}, state, {
+              // Zoom changes (mouse wheel / double-click reset) are cheap and
+              // handled entirely inside generateChord via this callback, so we
+              // just keep `state.zoomScale` in sync without triggering a
+              // full re-render on every wheel tick.
+              onZoomChange: function (scale) { state.zoomScale = scale; },
+          }));
           containerEl.appendChild(svg);
       }
 
@@ -1933,6 +1992,7 @@
           setMargin: function (v) { state.margin = +v; render(); },
           setTextOffset: function (v) { state.textOffset = +v; render(); },
           setOrdering: function (mode) { state.orderingMode = mode; render(); },
+          setDarkMode: function (isDark) { state.darkMode = !!isDark; render(); },
           getState: function () { return state; },
           render: render,
       };
