@@ -1738,7 +1738,7 @@
       return all;
   }
 
-  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null, darkMode = true, zoomScale = 1, linkStyle = 'bundled', onZoomChange = null}) {
+  function generateChord({data, nodes, width = 954, height = width, margin = 150, textOffset = 5, fontsize = 10, arrowhead = 10, orderingMode = 'ascending', customOrder = null, darkMode = true, zoomScale = 1, linkStyle = 'bundled', bundleStrength = 0.85, onZoomChange = null}) {
       const names = computeChordNames(data, orderingMode, customOrder);
       // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
       const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
@@ -1805,6 +1805,12 @@
       // mid-angle through the origin (classic chord-as-edge style, cf. Bostock /
       // Jason Davies hierarchical edge examples without the hierarchy bundling).
       const singleRadius = innerRadius - 1;
+      // bundleStrength in [0, 1]:
+      //   0 = control point at the midpoint of the two endpoints (edges stay
+      //       near the rim, almost unbundled)
+      //   1 = control point at the origin (edges dive through the centre,
+      //       maximum visual bundling)
+      const beta = Math.max(0, Math.min(1, +bundleStrength || 0));
       function singleEdgePath(d) {
           const sa = (d.source.startAngle + d.source.endAngle) / 2 - Math.PI / 2;
           const ta = (d.target.startAngle + d.target.endAngle) / 2 - Math.PI / 2;
@@ -1812,14 +1818,19 @@
           const y0 = singleRadius * Math.sin(sa);
           const x1 = singleRadius * Math.cos(ta);
           const y1 = singleRadius * Math.sin(ta);
-          // Control point pulled toward centre for a soft arc; self-loops get a
-          // small offset so they remain visible.
+          // Self-loops: keep a small offset arc, scaled by beta so low bundle
+          // strength still shows a short bump along the rim.
           if (d.source.index === d.target.index) {
               const mid = sa + 0.15;
-              const cr = singleRadius * 0.55;
+              const cr = singleRadius * (0.85 - 0.45 * beta);
               return `M${x0},${y0}Q${cr * Math.cos(mid)},${cr * Math.sin(mid)},${x1},${y1}`;
           }
-          return `M${x0},${y0}Q0,0,${x1},${y1}`;
+          // Interpolate control point between chord midpoint and origin.
+          const mx = (x0 + x1) / 2;
+          const my = (y0 + y1) / 2;
+          const cx = mx * (1 - beta);
+          const cy = my * (1 - beta);
+          return `M${x0},${y0}Q${cx},${cy},${x1},${y1}`;
       }
 
       // Stroke width for single mode scales mildly with value so stronger flows
@@ -2129,6 +2140,7 @@
           darkMode: true,
           zoomScale: 1,
           linkStyle: 'bundled',
+          bundleStrength: 0.85,
       }, opts);
 
       const containerEl = typeof opts.container === 'string'
@@ -2159,6 +2171,7 @@
           setTextOffset: function (v) { state.textOffset = +v; render(); },
           setOrdering: function (mode) { state.orderingMode = mode; render(); },
           setLinkStyle: function (style) { state.linkStyle = style === 'single' ? 'single' : 'bundled'; render(); },
+          setBundleStrength: function (v) { state.bundleStrength = Math.max(0, Math.min(1, +v)); render(); },
           setDarkMode: function (isDark) { state.darkMode = !!isDark; render(); },
           getState: function () { return state; },
           render: render,

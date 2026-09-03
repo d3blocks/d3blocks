@@ -82,7 +82,11 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
       <label><input type="radio" name="linkStyle" value="bundled" checked> Bundled</label>
       <label><input type="radio" name="linkStyle" value="single"> Single</label>
     </div>
-    <div style="font-size:11px;opacity:0.6;margin-top:8px">Bundled draws thick chord ribbons. Single draws one thin curve per connection (edge style).</div>
+    <div class="physics-control" id="bundleStrengthControl" style="margin-top:12px">
+      <label for="bundleStrengthSlider">Bundle strength <span class="val" id="bundleStrengthVal">0.85</span></label>
+      <input type="range" id="bundleStrengthSlider" min="0" max="1" step="0.01" value="0.85">
+    </div>
+    <div style="font-size:11px;opacity:0.6;margin-top:8px">Bundled draws thick chord ribbons. Single draws one thin curve per connection. Bundle strength pulls single edges toward the centre (0 = near the rim, 1 = through the centre).</div>
   </div>
 </div>
 {% endif %}
@@ -189,8 +193,23 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
     document.querySelectorAll('input[name="linkStyle"]').forEach(function(el) {
       el.addEventListener("change", function() {
         if (chordChart) chordChart.setLinkStyle(this.value);
+        // Bundle strength only applies to single edges
+        var bsc = document.getElementById("bundleStrengthControl");
+        if (bsc) bsc.style.opacity = this.value === "single" ? "1" : "0.45";
       });
     });
+
+    const bundleSlider = document.getElementById("bundleStrengthSlider");
+    const bundleVal = document.getElementById("bundleStrengthVal");
+    if (bundleSlider) {
+      // Start slightly dimmed while default mode is bundled
+      var bsc0 = document.getElementById("bundleStrengthControl");
+      if (bsc0) bsc0.style.opacity = "0.45";
+      bundleSlider.addEventListener("input", function() {
+        if (bundleVal) bundleVal.textContent = (+bundleSlider.value).toFixed(2);
+        if (chordChart) chordChart.setBundleStrength(bundleSlider.value);
+      });
+    }
 
     // Top bar clearance + side panels: position, collapse, reorder
     // Always clear the top panel — even when show_controls is false (no side panels).
