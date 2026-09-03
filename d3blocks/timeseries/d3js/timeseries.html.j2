@@ -16,7 +16,7 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 {{ SUPPORT }}
 
 <style>
-    {% include "style.css" %}
+    {% include "timeseries.css" %}
     body {font: {{ FONTSIZE }} sans-serif; }
 </style>
 </head>
@@ -32,7 +32,7 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 
 <script>
 {% include "d3.v3.js" %}
-{% include "script.js" %}
+{% include "timeseries.js" %}
 
     // Load data and let's do it.
     var data = {{ json_data }}
