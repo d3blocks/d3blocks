@@ -1550,11 +1550,13 @@ class D3Blocks():
                    cmap='Set1',
                    title='Timeseries - D3blocks',
                    filepath='timeseries.html',
-                   figsize=[1200, 500],
+                   figsize=[None, None],
                    showfig=True,
                    overwrite=True,
                    notebook=False,
                    save_button: bool = True,
+                   show_controls: bool = True,
+                   dark_mode: bool = True,
                    return_html: bool = False,
                    reset_properties=True,
                    ):
@@ -1596,7 +1598,8 @@ class D3Blocks():
                 * None: Return HTML
         figsize : tuple
             Size of the figure in the browser, [width, height].
-                * [1200, 500]
+                * [None, None]: Auto-size to fill available screen width/height (recommended).
+                * [1200, 500]: Fixed size.
         showfig : bool, (default: True)
                 * True: Open browser-window.
                 * False: Do not open browser-window.
@@ -1609,6 +1612,12 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        show_controls : bool, (default: True)
+                * True: Show the top bar and left control panels (Export/Save, Appearance).
+                * False: Hide all GUI controls.
+        dark_mode : bool, (default: True)
+                * True: Start in dark theme.
+                * False: Start in light theme.
         return_html : bool, (default: False)
                 * True: Return html
                 * False: Nothing is returned
@@ -1676,7 +1685,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df.columns.values, cmap=self.config['cmap'], whitelist=self.config['whitelist'], datetime=self.config['datetime'])

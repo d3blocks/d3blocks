@@ -24,7 +24,7 @@ def set_config(config={}, **kwargs):
     config['chart'] ='timeseries'
     config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'), logger)
-    config['figsize'] = kwargs.get('figsize', [1200, 500])
+    config['figsize'] = kwargs.get('figsize', [None, None])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
     config['fontsize'] = kwargs.get('fontsize', 10)
@@ -37,6 +37,8 @@ def set_config(config={}, **kwargs):
     config['columns'] = kwargs.get('columns', {'datetime': config['datetime']})
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
     # return
     return config
 
@@ -241,18 +243,23 @@ def write_html(X, config, logger=None):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+    # Handle figsize None -> null for JS
+    width = config['figsize'][0] if config['figsize'][0] is not None else 'null'
+    height = config['figsize'][1] if config['figsize'][1] is not None else 'null'
     content = {
         'json_data': X,
         'COLOR': config['color'],
         'TITLE': config['title'],
-        'FONTSIZE': str(config['fontsize']) + 'px',
+        'FONTSIZE': config['fontsize'],
         'DT_FORMAT': config['dt_format_js'],
-        'WIDTH': config['figsize'][0],
-        'HEIGHT': config['figsize'][1],
+        'WIDTH': width,
+        'HEIGHT': height,
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'showControls': 'true' if config.get('show_controls', True) else 'false',
+        'darkMode': 'true' if config.get('dark_mode', True) else 'false',
     }
 
     try:

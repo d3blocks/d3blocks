@@ -12,23 +12,71 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 <head>
 <meta charset="utf-8">
 <title>{{ TITLE }}</title>
-
 {{ SUPPORT }}
-
-<style>
-    {% include "timeseries.css" %}
-    body {font: {{ FONTSIZE }} sans-serif; }
-</style>
+<style>{% include "timeseries.css" %}</style>
 </head>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Create save button -->
-{{ SAVE_BUTTON_START }}
-    <div style="max-width:{{ WIDTH }}px;">
-        <center><button id="saveButton">Save</button></center>
+<!-- Top panel: logo left, theme right -->
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+      <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center"></div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+
+{% if showControls == 'true' %}
+<!-- Side panel: Export / Save -->
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Save downloads the current view as SVG.</div>
+  </div>
+</div>
+
+<!-- Side panel: Appearance -->
+<div class="stats-panel collapsed" id="appearancePanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Appearance<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="fontSizeSlider">Font size <span class="val" id="fontSizeVal">{{ FONTSIZE }}</span></label>
+      <input type="range" id="fontSizeSlider" min="8" max="24" step="1" value="{{ FONTSIZE }}">
     </div>
-{{ SAVE_BUTTON_STOP }}
+    <div class="physics-control">
+      <label for="strokeWidthSlider">Line width <span class="val" id="strokeWidthVal">1.5</span></label>
+      <input type="range" id="strokeWidthSlider" min="0.5" max="5" step="0.1" value="1.5">
+    </div>
+    <div style="font-weight:600;margin:8px 0 4px 0;font-size:12px">Interpolation</div>
+    <div class="mode-row">
+      <label><input type="radio" name="interp" value="basis" checked> Basis</label>
+      <label><input type="radio" name="interp" value="linear"> Linear</label>
+      <label><input type="radio" name="interp" value="step"> Step</label>
+    </div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Adjust label size, stroke width and line interpolation.</div>
+  </div>
+</div>
 
-<body>
+<!-- Side panel: View / Zoom -->
+<div class="stats-panel collapsed" id="viewPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">View<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button class="button-switch" id="resetZoomBtn" type="button" style="width:100%;margin:4px 0 8px 0">Reset zoom</button>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Scroll wheel zooms the time axis. Drag the bottom brush to select a range. Double-click the chart to reset.</div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Main visualization -->
+<div id="timeseries-main">
+  <div id="timeseries-container"></div>
+  <div id="timeseries-hint" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-muted);pointer-events:none;white-space:nowrap">Scroll to zoom · brush bottom to select range · click legend to toggle series · double-click to reset</div>
+</div>
 
 <script>
 {% include "d3.v3.js" %}
@@ -37,16 +85,172 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
     // Load data and let's do it.
     var data = {{ json_data }}
 
+    let timeseriesChart = null;
+
     window.addEventListener('DOMContentLoaded', function () {
-      timeseries(data, {
+      timeseriesChart = timeseries(data, {
           COLOR: [{{ COLOR }}],
           TITLE: "{{ TITLE }}",
-          DT_FORMAT: "{{ DT_FORMAT }}"
+          DT_FORMAT: "{{ DT_FORMAT }}",
+          WIDTH: {{ WIDTH }},
+          HEIGHT: {{ HEIGHT }},
+          FONTSIZE: {{ FONTSIZE }}
       });
     })
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
+    // Appearance sliders
+    const fontSlider = document.getElementById("fontSizeSlider");
+    const fontVal = document.getElementById("fontSizeVal");
+    if (fontSlider) {
+      fontSlider.addEventListener("input", function() {
+        if (fontVal) fontVal.textContent = fontSlider.value;
+        if (timeseriesChart) timeseriesChart.setFontSize(+fontSlider.value);
+      });
+    }
+
+    const strokeSlider = document.getElementById("strokeWidthSlider");
+    const strokeVal = document.getElementById("strokeWidthVal");
+    if (strokeSlider) {
+      strokeSlider.addEventListener("input", function() {
+        if (strokeVal) strokeVal.textContent = (+strokeSlider.value).toFixed(1);
+        if (timeseriesChart) timeseriesChart.setStrokeWidth(+strokeSlider.value);
+      });
+    }
+
+    document.querySelectorAll('input[name="interp"]').forEach(function(el) {
+      el.addEventListener("change", function() {
+        if (timeseriesChart) timeseriesChart.setInterpolation(this.value);
+      });
+    });
+
+    const resetBtn = document.getElementById("resetZoomBtn");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", function() {
+        if (timeseriesChart) timeseriesChart.resetZoom();
+      });
+    }
+
+    // Top bar clearance + side panels: position, collapse, reorder
+    (function() {
+      var PANEL_ORDER = ['exportPanel', 'appearancePanel', 'viewPanel'];
+
+      function positionSidePanels() {
+        var bar = document.querySelector('.top-panel');
+        var main = document.getElementById('timeseries-main');
+        if (!bar) return;
+        var bottom = bar.getBoundingClientRect().bottom;
+        if (main) main.style.marginTop = (bottom + 12) + 'px';
+        var y = bottom + 8;
+        var bottomPad = 12;
+        PANEL_ORDER.forEach(function(id) {
+          var panel = document.getElementById(id);
+          if (!panel || panel.style.display === 'none') return;
+          panel.style.top = y + 'px';
+          panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
+          y += panel.getBoundingClientRect().height + 10;
+        });
+        // Give main chart left padding so it does not sit under the panels
+        var maxPanelRight = 0;
+        PANEL_ORDER.forEach(function(id) {
+          var panel = document.getElementById(id);
+          if (!panel || panel.style.display === 'none') return;
+          var r = panel.getBoundingClientRect().right;
+          if (r > maxPanelRight) maxPanelRight = r;
+        });
+        if (main && maxPanelRight > 0) {
+          main.style.paddingLeft = (maxPanelRight + 12) + 'px';
+        } else if (main) {
+          main.style.paddingLeft = '12px';
+        }
+        // Notify chart of available size
+        if (timeseriesChart && timeseriesChart.resize) {
+          timeseriesChart.resize();
+        }
+      }
+      window.addEventListener('resize', positionSidePanels);
+      window.addEventListener('load', positionSidePanels);
+      positionSidePanels();
+      requestAnimationFrame(positionSidePanels);
+      if (typeof ResizeObserver !== 'undefined') {
+        var bar = document.querySelector('.top-panel');
+        if (bar) new ResizeObserver(function() { positionSidePanels(); }).observe(bar);
+        PANEL_ORDER.forEach(function(id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          new ResizeObserver(function() { positionSidePanels(); }).observe(el);
+        });
+      }
+
+      PANEL_ORDER.forEach(function(panelId) {
+        var panel = document.getElementById(panelId);
+        if (!panel) return;
+        var title = panel.querySelector('.stats-panel-title');
+        if (!title) return;
+        title.addEventListener('click', function() {
+          if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
+          var collapsing = !panel.classList.contains('collapsed');
+          if (collapsing) {
+            if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
+            panel.style.height = '';
+          } else if (panel.dataset.expandedHeight) {
+            panel.style.height = panel.dataset.expandedHeight;
+          }
+          panel.classList.toggle('collapsed');
+          setTimeout(positionSidePanels, 0);
+        });
+      });
+
+      (function setupPanelReordering() {
+        PANEL_ORDER.forEach(function(panelId) {
+          var panel = document.getElementById(panelId);
+          if (!panel) return;
+          var title = panel.querySelector('.stats-panel-title');
+          if (!title) return;
+          title.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', panelId);
+            e.dataTransfer.effectAllowed = 'move';
+          });
+          title.addEventListener('dragend', function() {
+            title.dataset.justDragged = '1';
+            setTimeout(function() { title.dataset.justDragged = '0'; }, 0);
+          });
+          panel.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            panel.classList.add('drag-over');
+          });
+          panel.addEventListener('dragleave', function() { panel.classList.remove('drag-over'); });
+          panel.addEventListener('drop', function(e) {
+            e.preventDefault();
+            panel.classList.remove('drag-over');
+            var draggedId = e.dataTransfer.getData('text/plain');
+            if (!draggedId || draggedId === panelId) return;
+            var from = PANEL_ORDER.indexOf(draggedId), to = PANEL_ORDER.indexOf(panelId);
+            if (from < 0 || to < 0) return;
+            PANEL_ORDER.splice(from, 1);
+            PANEL_ORDER.splice(to, 0, draggedId);
+            positionSidePanels();
+          });
+        });
+      })();
+
+      function toggleTheme() {
+        document.body.classList.toggle('light');
+        var isLight = document.body.classList.contains('light');
+        var themeBtn = document.getElementById('themeBtn');
+        if (themeBtn) {
+          themeBtn.textContent = isLight ? '☀' : '🌙';
+          themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
+        }
+        if (timeseriesChart && timeseriesChart.setDarkMode) {
+          timeseriesChart.setDarkMode(!isLight);
+        }
+      }
+      var themeBtn = document.getElementById('themeBtn');
+      if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+    })();
 </script>
 
 </body>
