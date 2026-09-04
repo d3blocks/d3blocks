@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <style type="text/css">
-        {% include "styles.css" %}
+        {% include "elasticgraph.css" %}
     </style>
     <script>
         {% include "d3.v2.js" %}
-        {% include "d3graphscript.js" %}
+        {% include "elasticgraph.js" %}
 
         window.addEventListener('DOMContentLoaded', function () {
             d3graphscript({{ json_data }}, {

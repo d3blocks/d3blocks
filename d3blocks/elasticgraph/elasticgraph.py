@@ -85,8 +85,8 @@ class Elasticgraph:
         # Set paths
         self.D3graph.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         self.D3graph.config['d3_library'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/d3.v2.js'))
-        self.D3graph.config['d3_script'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/elasticgraph_script.js'))
-        self.D3graph.config['css'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/style.css'))
+        self.D3graph.config['d3_script'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/elasticgraph.js'))
+        self.D3graph.config['css'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/elasticgraph.css'))
         logger.info('Initializing Elasticgraph..')
 
     def graph(self,
