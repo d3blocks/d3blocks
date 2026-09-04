@@ -1613,7 +1613,7 @@ class D3Blocks():
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
         show_controls : bool, (default: True)
-                * True: Show the top bar and left control panels (Export/Save, Appearance).
+                * True: Show the top bar and left control panels (Export/Save, Filtering, Appearance).
                 * False: Hide all GUI controls.
         dark_mode : bool, (default: True)
                 * True: Start in dark theme.

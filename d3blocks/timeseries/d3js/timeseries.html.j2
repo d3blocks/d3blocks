@@ -6,7 +6,6 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b7917d4172
 -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +16,6 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 </head>
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Top panel: logo left, theme right -->
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
@@ -31,16 +29,28 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 </div>
 
 {% if showControls == 'true' %}
-<!-- Side panel: Export / Save -->
 <div class="stats-panel collapsed" id="exportPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
+    <button class="button-switch" id="exportDataBtn" type="button" title="Export series data as CSV" style="width:100%;margin:0 0 8px 0">Export</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch" style="width:100%;margin:0 0 4px 0">Save</button>{{ SAVE_BUTTON_STOP }}
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Save downloads the current view as SVG.</div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads the data as CSV. Save downloads the current view as SVG.</div>
   </div>
 </div>
 
-<!-- Side panel: Appearance -->
+<div class="stats-panel collapsed" id="filteringPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="filter-actions">
+      <button class="button-switch" id="filterAllBtn" type="button">All</button>
+      <button class="button-switch" id="filterNoneBtn" type="button">None</button>
+    </div>
+    <div id="filterList"></div>
+    <button class="button-switch" id="resetZoomBtn" type="button" style="width:100%;margin:10px 0 4px 0">Reset zoom</button>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px">Toggle series visibility. Scroll wheel zooms · brush selects range · double-click resets.</div>
+  </div>
+</div>
+
 <div class="stats-panel collapsed" id="appearancePanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Appearance<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
@@ -62,29 +72,19 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
   </div>
 </div>
 
-<!-- Side panel: View / Zoom -->
-<div class="stats-panel collapsed" id="viewPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">View<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
-  <div class="stats-panel-body">
-    <button class="button-switch" id="resetZoomBtn" type="button" style="width:100%;margin:4px 0 8px 0">Reset zoom</button>
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Scroll wheel zooms the time axis. Drag the bottom brush to select a range. Double-click the chart to reset.</div>
-  </div>
-</div>
 {% endif %}
 
-<!-- Main visualization -->
+<div id="ts-tooltip"></div>
 <div id="timeseries-main">
   <div id="timeseries-container"></div>
-  <div id="timeseries-hint" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-muted);pointer-events:none;white-space:nowrap">Scroll to zoom · brush bottom to select range · click legend to toggle series · double-click to reset</div>
+  <div id="timeseries-hint" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-muted);pointer-events:none;white-space:nowrap">Scroll to zoom · brush bottom to select range · Filtering panel to toggle series · double-click to reset</div>
 </div>
 
 <script>
 {% include "d3.v3.js" %}
 {% include "timeseries.js" %}
 
-    // Load data and let's do it.
     var data = {{ json_data }}
-
     let timeseriesChart = null;
 
     window.addEventListener('DOMContentLoaded', function () {
@@ -100,7 +100,6 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 
 {{ SAVE_TO_SVG_SCRIPT }}
 
-    // Appearance sliders
     const fontSlider = document.getElementById("fontSizeSlider");
     const fontVal = document.getElementById("fontSizeVal");
     if (fontSlider) {
@@ -109,7 +108,6 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
         if (timeseriesChart) timeseriesChart.setFontSize(+fontSlider.value);
       });
     }
-
     const strokeSlider = document.getElementById("strokeWidthSlider");
     const strokeVal = document.getElementById("strokeWidthVal");
     if (strokeSlider) {
@@ -118,23 +116,38 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
         if (timeseriesChart) timeseriesChart.setStrokeWidth(+strokeSlider.value);
       });
     }
-
     document.querySelectorAll('input[name="interp"]').forEach(function(el) {
       el.addEventListener("change", function() {
         if (timeseriesChart) timeseriesChart.setInterpolation(this.value);
       });
     });
-
     const resetBtn = document.getElementById("resetZoomBtn");
     if (resetBtn) {
       resetBtn.addEventListener("click", function() {
         if (timeseriesChart) timeseriesChart.resetZoom();
       });
     }
+    const exportDataBtn = document.getElementById("exportDataBtn");
+    if (exportDataBtn) {
+      exportDataBtn.addEventListener("click", function() {
+        if (timeseriesChart) timeseriesChart.exportData();
+      });
+    }
+    const filterAllBtn = document.getElementById("filterAllBtn");
+    if (filterAllBtn) {
+      filterAllBtn.addEventListener("click", function() {
+        if (timeseriesChart) timeseriesChart.setAllVisible(true);
+      });
+    }
+    const filterNoneBtn = document.getElementById("filterNoneBtn");
+    if (filterNoneBtn) {
+      filterNoneBtn.addEventListener("click", function() {
+        if (timeseriesChart) timeseriesChart.setAllVisible(false);
+      });
+    }
 
-    // Top bar clearance + side panels: position, collapse, reorder
     (function() {
-      var PANEL_ORDER = ['exportPanel', 'appearancePanel', 'viewPanel'];
+      var PANEL_ORDER = ['exportPanel', 'filteringPanel', 'appearancePanel'];
 
       function positionSidePanels() {
         var bar = document.querySelector('.top-panel');
@@ -151,7 +164,6 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
           panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
           y += panel.getBoundingClientRect().height + 10;
         });
-        // Give main chart left padding so it does not sit under the panels
         var maxPanelRight = 0;
         PANEL_ORDER.forEach(function(id) {
           var panel = document.getElementById(id);
@@ -164,10 +176,7 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
         } else if (main) {
           main.style.paddingLeft = '12px';
         }
-        // Notify chart of available size
-        if (timeseriesChart && timeseriesChart.resize) {
-          timeseriesChart.resize();
-        }
+        if (timeseriesChart && timeseriesChart.resize) timeseriesChart.resize();
       }
       window.addEventListener('resize', positionSidePanels);
       window.addEventListener('load', positionSidePanels);
@@ -244,14 +253,11 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
           themeBtn.textContent = isLight ? '☀' : '🌙';
           themeBtn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
         }
-        if (timeseriesChart && timeseriesChart.setDarkMode) {
-          timeseriesChart.setDarkMode(!isLight);
-        }
+        if (timeseriesChart && timeseriesChart.setDarkMode) timeseriesChart.setDarkMode(!isLight);
       }
       var themeBtn = document.getElementById('themeBtn');
       if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
     })();
 </script>
-
 </body>
 </html>
