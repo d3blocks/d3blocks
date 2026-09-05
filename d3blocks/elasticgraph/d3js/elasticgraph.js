@@ -474,7 +474,8 @@ function d3graphscript(
     const g = d.group;
     let s = expand[g] || 0;
 
-    if (single_click_expand && s != 2) return (expand[g] = 2);
+    var _sce = (window._singleClickExpand !== undefined) ? window._singleClickExpand : single_click_expand;
+    if (_sce && s != 2) return (expand[g] = 2);
 
     // it's no use 'expanding the intergroup links only' for nodes which only have 1 outside link for real:
     if (d.ig_link_count < 2) {
@@ -1120,7 +1121,15 @@ function d3graphscript(
   // Hull offset requires a full re-init — expose so the slider can call restart.
   window._applyHullOffset = function(v) {
     off = v;
-    init(net);  // re-run the draw with the new hull offset
+    init(net);
+  };
+  // Node size: update all node circle radii live.
+  window._applyNodeSize = function(r) {
+    window._nodeSizeOverride = r;
+    d3.selectAll('#graph-container circle.node').attr('r', function(d) {
+      return d.size > 0 ? r * Math.sqrt(d.size) + r : r;
+    });
+    d3.selectAll('#graph-container circle.leaf').attr('r', r);
   };
 
   return { force, force2, zoomBehavior };

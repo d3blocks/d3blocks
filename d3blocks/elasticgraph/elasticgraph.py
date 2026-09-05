@@ -346,6 +346,7 @@ class Elasticgraph:
 
         """
         cfg = self.D3graph.config
+        _charge_abs = abs(cfg['charge'])
         content = {
             'json_data': json_data,
             'title': cfg['network_title'],
@@ -356,7 +357,8 @@ class Elasticgraph:
             'debug': cfg['debug'],
             'single_click_expand': cfg['single_click_expand'],
             'collision': cfg['collision'],
-            'charge': -abs(cfg['charge']),
+            'charge': -_charge_abs,        # negative for d3graphscript
+            'charge_abs': _charge_abs,     # positive for the slider
             'sticky': cfg['sticky'],
             'label_zoom_threshold': cfg['label_zoom_threshold'],
             'show_controls': cfg.get('show_controls', True),

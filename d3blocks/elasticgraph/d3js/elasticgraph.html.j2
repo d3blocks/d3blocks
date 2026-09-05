@@ -10,196 +10,154 @@ Chart       : Elasticgraph (elastic force-directed network)
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
-    <style type="text/css">
-        {% include "elasticgraph.css" %}
-    </style>
+    <style>{% include "elasticgraph.css" %}</style>
 </head>
 <body{% if not dark_mode %} class="light"{% endif %}>
 
-<!-- ── Top panel: logo left · dark-mode toggle right ───────────── -->
-<div class="top-panel" role="toolbar" aria-label="Top controls">
+<!-- ── Top bar ──────────────────────────────────────────────────── -->
+<div class="top-panel">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
       <img src="{% include 'logo.txt' %}" alt="D3Blocks"
-           style="width:150px;height:auto;display:block;pointer-events:auto" />
+           style="width:150px;height:auto;display:block">
     </a>
   </div>
   <div class="top-panel-center"></div>
   <div class="top-panel-right">
-    <button class="button-switch" id="themeBtn" type="button"
-            title="{% if not dark_mode %}Theme: Light{% else %}Theme: Dark{% endif %}">
+    <button class="button-switch" id="themeBtn" type="button">
       {% if not dark_mode %}☀{% else %}🌙{% endif %}
     </button>
   </div>
 </div>
 
 {% if show_controls %}
-<!-- ── Side panel: Export / Save ───────────────────────────────── -->
+<!-- ── Panel: Export / Save ─────────────────────────────────────── -->
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">
+  <div class="stats-panel-title" draggable="true">
     Export / Save
-    <span class="stats-panel-toggle" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-           stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </span>
+    <span class="stats-panel-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
   </div>
   <div class="stats-panel-body">
     {% if save_button %}
-    <button id="saveSvgBtn" class="button-switch" style="width:100%;margin:4px 0"
-            type="button" title="Save the current view as SVG">💾 Save SVG</button>
+    <button id="saveSvgBtn" class="button-switch" style="width:100%;margin:4px 0" type="button">💾 Save SVG</button>
     {% endif %}
-    <button id="saveJsonBtn" class="button-switch" style="width:100%;margin:4px 0"
-            type="button" title="Export graph data as JSON">⬇ Export JSON</button>
-    <p class="panel-note">Save downloads the graph as SVG. Export downloads the node/edge data as JSON.</p>
+    <button id="saveJsonBtn" class="button-switch" style="width:100%;margin:4px 0" type="button">⬇ Export JSON</button>
   </div>
 </div>
 
-<!-- ── Side panel: Physics ─────────────────────────────────────── -->
+<!-- ── Panel: Physics ───────────────────────────────────────────── -->
 <div class="stats-panel collapsed" id="physicsPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">
+  <div class="stats-panel-title" draggable="true">
     Physics
-    <span class="stats-panel-toggle" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-           stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </span>
+    <span class="stats-panel-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
   </div>
   <div class="stats-panel-body">
     <div class="physics-control">
-      <label for="chargeSlider">Charge <span id="chargeVal">{{ charge }}</span></label>
-      <input type="range" id="chargeSlider" min="100" max="5000" step="50"
-             value="{{ charge }}">
+      <label>Charge <span id="chargeVal">{{ charge_abs }}</span></label>
+      <input type="range" id="chargeSlider" min="50" max="5000" step="50" value="{{ charge_abs }}">
     </div>
     <div class="physics-control">
-      <label for="collisionSlider">Collision <span id="collisionVal">{{ collision }}</span></label>
-      <input type="range" id="collisionSlider" min="0.1" max="3.0" step="0.1"
-             value="{{ collision }}">
+      <label>Collision <span id="collisionVal">{{ collision }}</span></label>
+      <input type="range" id="collisionSlider" min="0.1" max="3.0" step="0.1" value="{{ collision }}">
     </div>
     <div class="physics-control">
-      <label for="hullSlider">Hull offset <span id="hullVal">{{ hull_offset }}</span></label>
-      <input type="range" id="hullSlider" min="0" max="60" step="1"
-             value="{{ hull_offset }}">
+      <label>Hull offset <span id="hullVal">{{ hull_offset }}</span></label>
+      <input type="range" id="hullSlider" min="0" max="60" step="1" value="{{ hull_offset }}">
     </div>
-    <p class="panel-note">Physics sliders restart the simulation with new values.</p>
   </div>
 </div>
 
-<!-- ── Side panel: Display ─────────────────────────────────────── -->
+<!-- ── Panel: Display ───────────────────────────────────────────── -->
 <div class="stats-panel collapsed" id="displayPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">
+  <div class="stats-panel-title" draggable="true">
     Display
-    <span class="stats-panel-toggle" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-           stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </span>
+    <span class="stats-panel-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
   </div>
   <div class="stats-panel-body">
-    <label>
-      <input type="checkbox" id="toggleLabels" checked> Show labels
-    </label>
-    <label>
-      <input type="checkbox" id="toggleEdgeLabels" checked> Show edge labels
-    </label>
-    <label>
-      <input type="checkbox" id="toggleSticky" {% if sticky %}checked{% endif %}> Sticky nodes
-    </label>
+    <label><input type="checkbox" id="toggleLabels" checked> Show labels</label>
+    <label><input type="checkbox" id="toggleEdgeLabels" checked> Show edge labels</label>
+    <label><input type="checkbox" id="toggleSticky" {% if sticky %}checked{% endif %}> Sticky nodes</label>
+    <label><input type="checkbox" id="toggleSingleClick" {% if single_click_expand %}checked{% endif %}> Single-click expand</label>
     <hr>
     <div class="physics-control">
-      <label for="labelSizeSlider">Label size <span id="labelSizeVal">12</span> px</label>
-      <input type="range" id="labelSizeSlider" min="6" max="32" step="1" value="12">
+      <label>Label size <span id="labelSizeVal">{{ point_radius + 8 }}</span> px</label>
+      <input type="range" id="labelSizeSlider" min="6" max="32" step="1" value="{{ point_radius + 8 }}">
     </div>
     <div class="physics-control">
-      <label for="labelZoomSlider">Hide labels below zoom <span id="labelZoomVal">{{ label_zoom_threshold }}</span></label>
-      <input type="range" id="labelZoomSlider" min="0.1" max="2.0" step="0.05"
-             value="{{ label_zoom_threshold }}">
+      <label>Node size <span id="nodeSizeVal">{{ point_radius }}</span></label>
+      <input type="range" id="nodeSizeSlider" min="1" max="30" step="1" value="{{ point_radius }}">
     </div>
-    <button id="resetZoomBtn" class="button-switch" style="width:100%;margin-top:8px"
-            type="button">⌖ Reset zoom</button>
-    <button id="unpinAllBtn"  class="button-switch" style="width:100%;margin-top:4px"
-            type="button">📌 Unpin all nodes</button>
-    <p class="panel-note">Single-click a cluster to expand it; right-click a pinned node to release it.</p>
+    <div class="physics-control">
+      <label>Hide labels below zoom <span id="labelZoomVal">{{ label_zoom_threshold }}</span></label>
+      <input type="range" id="labelZoomSlider" min="0.1" max="2.0" step="0.05" value="{{ label_zoom_threshold }}">
+    </div>
+    <hr>
+    <button id="resetZoomBtn" class="button-switch" style="width:100%;margin:2px 0" type="button">⌖ Reset zoom</button>
+    <button id="unpinAllBtn"  class="button-switch" style="width:100%;margin:2px 0" type="button">📌 Unpin all nodes</button>
+    <p class="panel-note">Right-click a pinned node to release it.</p>
   </div>
 </div>
 {% endif %}
 
-<!-- ── Graph host ───────────────────────────────────────────────── -->
+<!-- ── Graph host ────────────────────────────────────────────────── -->
 <div id="graph-container"></div>
 
-<!-- ── D3 v2 + elasticgraph ────────────────────────────────────── -->
-<script>
-{% include "d3.v2.js" %}
-</script>
-<script>
-{% include "elasticgraph.js" %}
-</script>
+<script>{% include "d3.v2.js" %}</script>
+<script>{% include "elasticgraph.js" %}</script>
 
 <script>
-/* ── Init graph ──────────────────────────────────────────────────── */
 'use strict';
 
-// Keep a reference to the force objects so panel controls can call
-// into them after init. d3graphscript() returns {force, force2, zoomBehavior}.
-let _graphHandle = null;
-
+/* ── Init graph ─────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', function () {
-  _graphHandle = d3graphscript({{ json_data }}, {
-    width:                0,   // 0 → auto-sized from #graph-container
+  d3graphscript({{ json_data }}, {
+    width:                0,
     height:               0,
     dr:                   {{ point_radius }},
     off:                  {{ hull_offset }},
     debug:                {{ debug }},
-    single_click_expand:  {{ single_click_expand|int }},
+    single_click_expand:  {{ single_click_expand | int }},
     collision:            {{ collision }},
-    charge:               {{ charge }},
-    sticky:               {{ sticky|int }},
+    charge:               {{ charge }},           // already negative
+    sticky:               {{ sticky | int }},
     label_zoom_threshold: {{ label_zoom_threshold }}
   });
+
+  // Set initial label-size override to match the slider's starting value
+  window._labelSizeOverride = {{ point_radius + 8 }};
+  window._stickyOverride      = {{ sticky | int }} === 1;
+  window._singleClickExpand   = {{ single_click_expand | int }} === 1;
+  window._labelZoomThreshold  = {{ label_zoom_threshold }};
+  window._collisionOverride   = {{ collision }};
 });
 
-/* ── Panel infrastructure (collapse, drag-reorder, position) ─────── */
+/* ── Panel infrastructure ───────────────────────────────────────── */
 (function () {
   var PANEL_ORDER = ['exportPanel', 'physicsPanel', 'displayPanel'];
 
   function positionSidePanels() {
-    var bar  = document.querySelector('.top-panel');
-    var gc   = document.getElementById('graph-container');
-    if (!bar) return;
-
-    // Push the graph container to the right of all visible panels.
+    var bar = document.querySelector('.top-panel');
+    var gc  = document.getElementById('graph-container');
     var panelW = 0;
     PANEL_ORDER.forEach(function (id) {
       var p = document.getElementById(id);
-      if (p && p.style.display !== 'none') {
-        var r = p.getBoundingClientRect();
-        panelW = Math.max(panelW, r.right);
-      }
+      if (p) panelW = Math.max(panelW, p.getBoundingClientRect().right);
     });
-    if (gc) {
-      gc.style.left = (panelW > 0 ? panelW + 8 : 0) + 'px';
-    }
+    if (gc) gc.style.left = (panelW > 0 ? panelW + 8 : 0) + 'px';
 
-    var topBottom = bar.getBoundingClientRect().bottom;
-    var y         = topBottom + 8;
-    var bottomPad = 12;
+    var y = bar ? bar.getBoundingClientRect().bottom + 8 : 60;
     PANEL_ORDER.forEach(function (id) {
-      var panel = document.getElementById(id);
-      if (!panel || panel.style.display === 'none') return;
-      panel.style.top       = y + 'px';
-      panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
-      y += panel.getBoundingClientRect().height + 10;
+      var p = document.getElementById(id);
+      if (!p) return;
+      p.style.top = y + 'px';
+      p.style.maxHeight = Math.max(80, window.innerHeight - y - 12) + 'px';
+      y += p.getBoundingClientRect().height + 10;
     });
   }
 
   window.addEventListener('resize', positionSidePanels);
   window.addEventListener('load',   positionSidePanels);
-  positionSidePanels();
   requestAnimationFrame(positionSidePanels);
-
   if (typeof ResizeObserver !== 'undefined') {
     var bar = document.querySelector('.top-panel');
     if (bar) new ResizeObserver(positionSidePanels).observe(bar);
@@ -210,20 +168,14 @@ window.addEventListener('DOMContentLoaded', function () {
   }
 
   // Collapse toggle
-  PANEL_ORDER.forEach(function (panelId) {
-    var panel = document.getElementById(panelId);
-    if (!panel) return;
-    var title = panel.querySelector('.stats-panel-title');
-    if (!title) return;
+  PANEL_ORDER.forEach(function (id) {
+    var panel = document.getElementById(id); if (!panel) return;
+    var title = panel.querySelector('.stats-panel-title'); if (!title) return;
     title.addEventListener('click', function () {
       if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
       var collapsing = !panel.classList.contains('collapsed');
-      if (collapsing) {
-        if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
-        panel.style.height = '';
-      } else if (panel.dataset.expandedHeight) {
-        panel.style.height = panel.dataset.expandedHeight;
-      }
+      if (collapsing && panel.style.height) panel.dataset.expandedHeight = panel.style.height;
+      else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
       panel.classList.toggle('collapsed');
       setTimeout(positionSidePanels, 0);
     });
@@ -231,10 +183,8 @@ window.addEventListener('DOMContentLoaded', function () {
 
   // Drag-reorder
   PANEL_ORDER.forEach(function (panelId) {
-    var panel = document.getElementById(panelId);
-    if (!panel) return;
-    var title = panel.querySelector('.stats-panel-title');
-    if (!title) return;
+    var panel = document.getElementById(panelId); if (!panel) return;
+    var title = panel.querySelector('.stats-panel-title'); if (!title) return;
     title.addEventListener('dragstart', function (e) {
       e.dataTransfer.setData('text/plain', panelId);
       e.dataTransfer.effectAllowed = 'move';
@@ -243,100 +193,115 @@ window.addEventListener('DOMContentLoaded', function () {
       title.dataset.justDragged = '1';
       setTimeout(function () { title.dataset.justDragged = '0'; }, 0);
     });
-    panel.addEventListener('dragover', function (e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      panel.classList.add('drag-over');
-    });
+    panel.addEventListener('dragover', function (e) { e.preventDefault(); panel.classList.add('drag-over'); });
     panel.addEventListener('dragleave', function () { panel.classList.remove('drag-over'); });
     panel.addEventListener('drop', function (e) {
-      e.preventDefault();
-      panel.classList.remove('drag-over');
+      e.preventDefault(); panel.classList.remove('drag-over');
       var from = PANEL_ORDER.indexOf(e.dataTransfer.getData('text/plain'));
       var to   = PANEL_ORDER.indexOf(panelId);
       if (from < 0 || to < 0 || from === to) return;
-      PANEL_ORDER.splice(from, 1);
-      PANEL_ORDER.splice(to, 0, PANEL_ORDER[from] || panelId);
+      var item = PANEL_ORDER.splice(from, 1)[0];
+      PANEL_ORDER.splice(to, 0, item);
       positionSidePanels();
     });
   });
 
-  /* ── Theme toggle ──────────────────────────────────────────────── */
-  function toggleTheme() {
+  // Theme toggle
+  document.getElementById('themeBtn').addEventListener('click', function () {
     document.body.classList.toggle('light');
-    var isLight = document.body.classList.contains('light');
-    var btn = document.getElementById('themeBtn');
-    if (btn) {
-      btn.textContent = isLight ? '☀' : '🌙';
-      btn.title       = isLight ? 'Theme: Light' : 'Theme: Dark';
-    }
-  }
-  var themeBtn = document.getElementById('themeBtn');
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+    var light = document.body.classList.contains('light');
+    this.textContent = light ? '☀' : '🌙';
+    // Refresh label colours (they read --text from body style at render time)
+    if (window._applyLabelSize) window._applyLabelSize(window._labelSizeOverride || 12);
+  });
 })();
 
-/* ── Display panel controls ─────────────────────────────────────── */
+/* ── Physics sliders ────────────────────────────────────────────── */
 (function () {
-  function wire(id, fn) {
-    var el = document.getElementById(id);
-    if (el) el.addEventListener(el.type === 'checkbox' || el.tagName === 'INPUT' && el.type === 'checkbox' ? 'change' : 'input', fn);
-    return el;
-  }
-  function wireSlider(sliderId, valId, fn) {
-    var sl = document.getElementById(sliderId), vl = document.getElementById(valId);
-    if (!sl) return;
-    sl.addEventListener('input', function () {
-      if (vl) vl.textContent = sl.value;
-      fn(parseFloat(sl.value));
+  function sl(id, valId, fn) {
+    var el = document.getElementById(id), vl = document.getElementById(valId);
+    if (!el) return;
+    el.addEventListener('input', function () {
+      if (vl) vl.textContent = parseFloat(el.value).toFixed(el.step < 1 ? 1 : 0);
+      fn(parseFloat(el.value));
     });
   }
 
-  // Label size
-  wireSlider('labelSizeSlider', 'labelSizeVal', function(v) {
+  // Charge — live: force.charge(-v).start()
+  sl('chargeSlider', 'chargeVal', function (v) {
+    if (window._applyCharge) window._applyCharge(v);
+  });
+
+  // Collision — update override then reheat sim
+  sl('collisionSlider', 'collisionVal', function (v) {
+    window._collisionOverride = v;
+    if (window._applyCollision) window._applyCollision();
+  });
+
+  // Hull offset — full redraw via _applyHullOffset
+  sl('hullSlider', 'hullVal', function (v) {
+    if (window._applyHullOffset) window._applyHullOffset(v);
+  });
+})();
+
+/* ── Display controls ───────────────────────────────────────────── */
+(function () {
+  function sl(id, valId, fn) {
+    var el = document.getElementById(id), vl = document.getElementById(valId);
+    if (!el) return;
+    el.addEventListener('input', function () {
+      if (vl) vl.textContent = parseFloat(el.value).toFixed(el.step < 1 ? 2 : 0);
+      fn(parseFloat(el.value));
+    });
+  }
+  function cb(id, fn) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('change', function () { fn(el.checked); });
+  }
+
+  // Label size (px)
+  sl('labelSizeSlider', 'labelSizeVal', function (v) {
     if (window._applyLabelSize) window._applyLabelSize(v);
   });
 
+  // Node size (dr / point_radius)
+  sl('nodeSizeSlider', 'nodeSizeVal', function (v) {
+    if (window._applyNodeSize) window._applyNodeSize(v);
+  });
+
   // Label zoom threshold
-  wireSlider('labelZoomSlider', 'labelZoomVal', function(v) {
+  sl('labelZoomSlider', 'labelZoomVal', function (v) {
     window._labelZoomThreshold = v;
   });
 
-  // Show/hide all labels
-  wire('toggleLabels', function() {
-    var el = document.getElementById('toggleLabels');
+  // Show/hide labels
+  cb('toggleLabels', function (on) {
     var svg = document.querySelector('#graph-container svg');
-    if (svg) svg.classList.toggle('labels-force-hidden', !el.checked);
+    if (svg) svg.classList.toggle('labels-force-hidden', !on);
   });
 
   // Show/hide edge labels
-  wire('toggleEdgeLabels', function() {
-    var el = document.getElementById('toggleEdgeLabels');
+  cb('toggleEdgeLabels', function (on) {
     var svg = document.querySelector('#graph-container svg');
-    if (svg) svg.classList.toggle('edge-labels-hidden', !el.checked);
+    if (svg) svg.classList.toggle('edge-labels-hidden', !on);
   });
 
-  // Sticky toggle — dragended() reads window._stickyOverride live
-  wire('toggleSticky', function() {
-    var el = document.getElementById('toggleSticky');
-    window._stickyOverride = el.checked;
-  });
-  // Set initial value from template
-  window._stickyOverride = {{ sticky|int }} === 1;
+  // Sticky — dragended() reads window._stickyOverride live
+  cb('toggleSticky', function (on) { window._stickyOverride = on; });
 
-  // Reset zoom — use the stored zoomBehavior ref
-  var resetZoomBtn = document.getElementById('resetZoomBtn');
-  if (resetZoomBtn) resetZoomBtn.addEventListener('click', function () {
-    var z = window._zoomBehavior;
-    var svg = d3.select('#graph-container svg');
-    if (z && svg) {
-      z.translate([0,0]).scale(1);
-      svg.transition().duration(400).call(z.event);
-    }
+  // Single-click expand — toggle the behaviour flag read by the click handler
+  cb('toggleSingleClick', function (on) { window._singleClickExpand = on; });
+
+  // Reset zoom
+  var resetBtn = document.getElementById('resetZoomBtn');
+  if (resetBtn) resetBtn.addEventListener('click', function () {
+    var z = window._zoomBehavior, svg = d3.select('#graph-container svg');
+    if (z && svg) { z.translate([0,0]).scale(1); svg.transition().duration(400).call(z.event); }
   });
 
-  // Unpin all nodes
-  var unpinAllBtn = document.getElementById('unpinAllBtn');
-  if (unpinAllBtn) unpinAllBtn.addEventListener('click', function () {
+  // Unpin all
+  var unpinBtn = document.getElementById('unpinAllBtn');
+  if (unpinBtn) unpinBtn.addEventListener('click', function () {
     d3.selectAll('#graph-container circle.node').each(function (d) {
       if (d) d.fixed = 0;
       d3.select(this).style('stroke-dasharray', null);
@@ -345,82 +310,41 @@ window.addEventListener('DOMContentLoaded', function () {
   });
 })();
 
-/* ── Physics panel controls ─────────────────────────────────────── */
-(function () {
-  function wireSlider(sliderId, valId, fn) {
-    var sl = document.getElementById(sliderId), vl = document.getElementById(valId);
-    if (!sl) return;
-    sl.addEventListener('input', function () {
-      if (vl) vl.textContent = sl.value;
-      fn(parseFloat(sl.value));
-    });
-  }
-
-  // Charge — live: calls window._applyCharge() which does force.charge().start()
-  wireSlider('chargeSlider', 'chargeVal', function(v) {
-    if (window._applyCharge) window._applyCharge(v);
-  });
-
-  // Collision — stored in window._collisionOverride; force reads it in linkDistance()
-  wireSlider('collisionSlider', 'collisionVal', function(v) {
-    window._collisionOverride = v;
-    if (window._applyCollision) window._applyCollision();
-  });
-
-  // Hull offset — requires redraw via window._applyHullOffset()
-  wireSlider('hullSlider', 'hullVal', function(v) {
-    if (window._applyHullOffset) window._applyHullOffset(v);
-  });
-})();
-
 /* ── Export / Save ──────────────────────────────────────────────── */
 (function () {
-  // Save SVG
-  var saveSvgBtn = document.getElementById('saveSvgBtn');
-  if (saveSvgBtn) {
-    saveSvgBtn.addEventListener('click', function () {
-      var svg = document.querySelector('#graph-container svg');
-      if (!svg) { alert('Graph not ready.'); return; }
-      var serializer = new XMLSerializer();
-      var source = serializer.serializeToString(svg);
-      if (!source.match(/^<svg[^>]+xmlns=/)) {
-        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-      }
-      var blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'elasticgraph.svg';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  var saveSvg = document.getElementById('saveSvgBtn');
+  if (saveSvg) saveSvg.addEventListener('click', function () {
+    var svg = document.querySelector('#graph-container svg');
+    if (!svg) { alert('Graph not ready.'); return; }
+    var s = new XMLSerializer().serializeToString(svg);
+    if (!s.match(/^<svg[^>]+xmlns=/)) s = s.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+    var a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([s], {type:'image/svg+xml'})),
+      download: 'elasticgraph.svg'
     });
-  }
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
 
-  // Export JSON
-  var saveJsonBtn = document.getElementById('saveJsonBtn');
-  if (saveJsonBtn) {
-    saveJsonBtn.addEventListener('click', function () {
-      var payload = {{ json_data }};
-      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'elasticgraph-data.json';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  var saveJson = document.getElementById('saveJsonBtn');
+  if (saveJson) saveJson.addEventListener('click', function () {
+    var a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([JSON.stringify({{ json_data }}, null, 2)], {type:'application/json'})),
+      download: 'elasticgraph-data.json'
     });
-  }
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
 })();
 
-/* ── Extra CSS for force-hidden labels ──────────────────────────── */
+/* ── Extra CSS ──────────────────────────────────────────────────── */
 (function () {
-  var style = document.createElement('style');
-  style.textContent = [
-    'svg.labels-force-hidden text.label,',
-    'svg.labels-force-hidden text.edge-label { display: none; }',
-    'svg.edge-labels-hidden text.edge-label { display: none; }'
-  ].join('\n');
-  document.head.appendChild(style);
+  var s = document.createElement('style');
+  s.textContent =
+    'svg.labels-force-hidden text.label,' +
+    'svg.labels-force-hidden text.edge-label { display:none }' +
+    'svg.edge-labels-hidden text.edge-label { display:none }';
+  document.head.appendChild(s);
 })();
 </script>
 </body>

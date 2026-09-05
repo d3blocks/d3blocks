@@ -1691,6 +1691,8 @@ class D3Blocks():
             self.set_node_properties(df.columns.values, cmap=self.config['cmap'], whitelist=self.config['whitelist'], datetime=self.config['datetime'])
         # Set edge properties
         self.set_edge_properties(df, dt_format=self.config['dt_format'], datetime=self.config['datetime'], logger=logger)
+        # Add logo
+        utils.copy_logo(Path("./timeseries") / "d3js")
         # Create the plot
         html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Display the chart
@@ -2342,9 +2344,9 @@ class D3Blocks():
                      group='cluster',
                      title='Elasticgraph - D3blocks',
                      filepath='Elasticgraph.html',
-                     figsize=[1500, 1500],
+                     figsize=[None, None],
                      collision=0.5,
-                     charge=1000,
+                     charge=500,
                      size=4,
                      hull_offset=15,
                      single_click_expand=False,
@@ -2352,6 +2354,8 @@ class D3Blocks():
                      label_zoom_threshold=0.4,
                      notebook=False,
                      showfig=True,
+                     show_controls: bool = True,
+                     dark_mode: bool = True,
                      save_button: bool = True,
                      return_html: bool = False,
                      overwrite=True):
@@ -2480,13 +2484,15 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
         # Initialize network d3-elasticgraph-network
-        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold)
+        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
+        # Add logo
+        utils.copy_logo(Path("./elasticgraph") / "d3js")
         # Open the webbrowser
-        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite)
+        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
         # Create the plot
         if return_html:
             return html
