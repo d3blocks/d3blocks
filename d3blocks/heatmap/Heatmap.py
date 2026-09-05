@@ -10,6 +10,7 @@ from ismember import ismember
 import colourmap
 import numpy as np
 import os
+import re
 
 try:
     from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script
@@ -39,6 +40,8 @@ def set_config(config={}, **kwargs):
     config['fontsize_mouseover'] = kwargs.get('fontsize_mouseover', config['fontsize'] + 8)
     config['scaler'] = kwargs.get('scaler', 'zscore')
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
 
     if config['description'] is None: config['description']=''
     if config['cmap'] in ['schemeCategory10', 'schemeAccent', 'schemeDark2', 'schemePaired', 'schemePastel2', 'schemePastel1', 'schemeSet1', 'schemeSet2', 'schemeSet3', 'schemeTableau10']:
@@ -236,21 +239,60 @@ def write_html(json_data, config, logger=None):
     # Import in the file
     with open(d3_script, 'r', encoding="utf8", errors='ignore') as file: html = file.read()
 
+    # Logo (data URI) for top panel
+    logo_path = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/logo.txt'))
+    logo_data = ''
+    if os.path.isfile(logo_path):
+        with open(logo_path, 'r', encoding='utf8', errors='ignore') as f:
+            logo_data = f.read().strip()
+
+    show_controls = config.get('show_controls', True)
+    dark_mode = config.get('dark_mode', True)
+    body_class = []
+    if not dark_mode:
+        body_class.append('light')
+    if show_controls:
+        body_class.append('has-controls')
+    body_class_str = ' '.join(body_class)
+
+    # Named CSS colors → hex for the color input
+    named = {
+        'red': '#ff0000', 'black': '#000000', 'white': '#ffffff',
+        'blue': '#0000ff', 'green': '#008000', 'orange': '#ffa500',
+        'yellow': '#ffff00', 'purple': '#800080', 'gray': '#808080',
+        'grey': '#808080', 'steelblue': '#4682b4',
+    }
+    stroke = str(config['stroke'])
+    stroke_hex = named.get(stroke.lower(), stroke if stroke.startswith('#') else '#ff0000')
+
     # Read the d3 html with script file
-    html = html.replace('$DESCRIPTION$', str(config['description']))
+    html = html.replace('$DESCRIPTION$', str(config['description'] or ''))
     html = html.replace('$TITLE$', str(config['title']))
     html = html.replace('$WIDTH$', str(config['figsize'][0]))
     html = html.replace('$WIDTH_DROPDOWN$', str(int(config['figsize'][0] + 200)))
     html = html.replace('$HEIGHT$', str(config['figsize'][1]))
-    html = html.replace('$STROKE$', str(config['stroke']))
+    html = html.replace('$STROKE$', stroke)
+    html = html.replace('$STROKE_HEX$', stroke_hex)
     html = html.replace('$FONTSIZE$', str(config['fontsize']))
     html = html.replace('$FONTSIZE_MOUSEOVER$', str(config['fontsize_mouseover']))
-    html = html.replace('$DATA_PATH$', filename)
-    html = html.replace('$SUPPORT$', config['support'])
+    html = html.replace('$DATA_PATH$', filename or '')
+    html = html.replace('$SUPPORT$', config.get('support') or '')
     html = html.replace('$SAVE_TO_SVG_SCRIPT$', save_script)
     html = html.replace('$SAVE_BUTTON_START$', show_save_button[0])
     html = html.replace('$SAVE_BUTTON_STOP$', show_save_button[1])
     html = html.replace('$DATA_COMES_HERE$', json_data)
+    html = html.replace('$LOGO$', logo_data)
+    html = html.replace('$BODY_CLASS$', body_class_str)
+    html = html.replace('$THEME_TITLE$', 'Theme: Light' if not dark_mode else 'Theme: Dark')
+    html = html.replace('$THEME_ICON$', '☀' if not dark_mode else '🌙')
+    html = html.replace('$SHOW_CONTROLS_JS$', 'true' if show_controls else 'false')
+    html = html.replace('$DARK_MODE_JS$', 'true' if dark_mode else 'false')
+    if show_controls:
+        html = html.replace('$CONTROLS_START$', '')
+        html = html.replace('$CONTROLS_STOP$', '')
+    else:
+        # Strip everything between the control markers (inclusive of markers)
+        html = re.sub(r'\$CONTROLS_START\$.*?\$CONTROLS_STOP\$', '', html, flags=re.DOTALL)
 
     # Write to html
     write_html_file(config, html, logger)
