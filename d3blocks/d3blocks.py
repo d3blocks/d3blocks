@@ -3092,7 +3092,7 @@ class D3Blocks():
                       zoom: str = 'click',
                       speed: int = 750,
                       border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
-                      font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
+                      font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro'},
                       title: str = 'Circlepacking - D3blocks',
                       filepath: str = 'Circlepacking.html',
                       figsize = [900, 1920],
@@ -3100,6 +3100,8 @@ class D3Blocks():
                       overwrite: bool = True,
                       notebook: bool = False,
                       save_button: bool = True,
+                      show_controls: bool = True,
+                      dark_mode: bool = True,
                       return_html: bool = False,
                       reset_properties: bool = True,
                       ):
@@ -3160,6 +3162,12 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        show_controls : bool, (default: True)
+                * True: Show top bar, export panel, and display controls.
+                * False: Chart only (no chrome).
+        dark_mode : bool, (default: True)
+                * True: Dark theme by default.
+                * False: Light theme by default.
         return_html : bool, (default: False)
                 * True: Return html
                 * False: Nothing is returned
@@ -3242,7 +3250,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
         # Cleaning of data
         # Convert NumPy types to regular Python types for proper JSON serialization
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
