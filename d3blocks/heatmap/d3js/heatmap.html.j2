@@ -302,21 +302,8 @@ body.has-controls #heatmap-container {
 .search-item:hover, .search-item.active { background: var(--btn-bg); }
 
 /* Heatmap chart styles */
-#heatmap-container {
-  position: absolute;
-  inset: 0;
-  overflow: auto;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-body.has-controls #heatmap-container {
-  top: 64px;
-}
 #heatmap-container svg {
   font: $FONTSIZE$px sans-serif;
-  display: block;
-  margin: 0 auto;
 }
 .axis path, .axis line {
   fill: none;
@@ -450,22 +437,29 @@ var x = d3.scale.ordinal().rangeBands([0, width]),
     z = d3.scale.linear().domain([0, 4]).clamp(true),
     c = d3.scale.category10().domain(d3.range(10));
 
+// Full-viewport SVG so zoom/pan is not clipped to the chart box
+var containerEl = document.getElementById("heatmap-container");
+var svgW = containerEl.clientWidth || (width + margin.left + margin.right);
+var svgH = containerEl.clientHeight || (height + margin.top + margin.bottom);
+var baseTx = Math.max(margin.left, (svgW - width) / 2);
+var baseTy = Math.max(margin.top, (svgH - height) / 2);
+
 var zoomBehavior = d3.behavior.zoom()
-  .scaleExtent([0.3, 8])
+  .scaleExtent([0.2, 12])
   .on("zoom", function () {
     chartG.attr("transform",
-      "translate(" + (margin.left + d3.event.translate[0]) + "," + (margin.top + d3.event.translate[1]) + ")" +
+      "translate(" + (baseTx + d3.event.translate[0]) + "," + (baseTy + d3.event.translate[1]) + ")" +
       " scale(" + d3.event.scale + ")");
   });
 
 var svgRoot = d3.select("#heatmap-container").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", "100%")
+    .attr("height", "100%")
     .call(zoomBehavior)
     .on("dblclick.zoom", null);
 
 var chartG = svgRoot.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + baseTx + "," + baseTy + ")");
 
 var data =
 	$DATA_COMES_HERE$
@@ -643,7 +637,7 @@ var data =
   if (resetBtn) {
     resetBtn.addEventListener("click", function() {
       zoomBehavior.scale(1).translate([0, 0]);
-      chartG.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      chartG.attr("transform", "translate(" + baseTx + "," + baseTy + ")");
     });
   }
 
