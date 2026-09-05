@@ -6,227 +6,589 @@ Github      : https://github.com/d3blocks/d3blocks
 Licensed    : GPL3
 Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
 -->
-	<!DOCTYPE html>
-	<html lang="en">
-	<head>
-	  <meta charset="UTF-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>{{ TITLE }}</title>
-      <script>
-    	  {% include "d3.v6.min.js" %}
-      </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ TITLE }}</title>
+  <style>{% include "circlepacking.css" %}</style>
+  <script>{% include "d3.v6.min.js" %}</script>
+  <script>{% include "lodash.min.js" %}</script>
+  {{ SUPPORT }}
+</head>
+<body class="{% if darkMode == 'false' %}light {% endif %}{% if showControls == 'true' %}has-controls{% endif %}">
 
-      <script>
-    	  {% include "lodash.min.js" %}
-      </script>
+{% if showControls == 'true' %}
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
+      <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center">
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find a circle…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="resetBtn" type="button" title="Reset view">Reset</button>
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
 
-	{{ SUPPORT }}
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button id="exportDataButton" class="button-switch">Export Data</button>
+    {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
+  </div>
+</div>
 
-	</head>
+<div class="stats-panel collapsed" id="displayPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div style="margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;opacity:0.55">Zoom trigger</div>
+    <label><input type="radio" name="zoomMode" value="click" {% if ZOOM == 'click' %}checked{% endif %}> Click</label>
+    <label><input type="radio" name="zoomMode" value="mouseover" {% if ZOOM == 'mouseover' %}checked{% endif %}> Mouseover</label>
 
-	<body>
+    <div class="physics-control">
+      <label for="speedSlider">Zoom speed (ms) <span id="speedVal">{{ SPEED }}</span></label>
+      <input type="range" id="speedSlider" min="100" max="2500" step="50" value="{{ SPEED }}" />
+    </div>
 
-    <!-- Create save button -->
-    {{ SAVE_BUTTON_START }}
-        <div style="max-width:{{ HEIGHT }}px;">
-            <center><button id="saveButton">Save</button></center>
-        </div>
-    {{ SAVE_BUTTON_STOP }}
+    <div class="physics-control">
+      <label for="paddingSlider">Padding <span id="paddingVal">{{ borderpadding }}</span></label>
+      <input type="range" id="paddingSlider" min="0" max="40" step="1" value="{{ borderpadding }}" />
+    </div>
 
-	  
-	  <script>
-		  const height = {{ WIDTH }};
-		  const width = {{ HEIGHT }};
-		  const lineHeight = 40
+    <div class="physics-control">
+      <label for="fontSizeSlider">Font size <span id="fontSizeVal">{{ fontsize }}</span></label>
+      <input type="range" id="fontSizeSlider" min="8" max="48" step="1" value="{{ fontsize }}" />
+    </div>
 
-		pack = data => d3.pack()
-			.size([width, height])
-			.padding({{ borderpadding }})
-		  (d3.hierarchy(data)
-			.sum(d => d.value)
-			.sort((a, b) => b.value - a.value))
+    <div class="physics-control">
+      <label for="borderWidthSlider">Border width <span id="borderWidthVal">{{ borderwidth }}</span></label>
+      <input type="range" id="borderWidthSlider" min="0" max="6" step="0.5" value="{{ borderwidth }}" />
+    </div>
+  </div>
+</div>
+{% endif %}
 
-		color = d3.scaleLinear()
-			.domain([0, 5])
-			.range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
-			.interpolate(d3.interpolateHcl)
+<div id="circlepacking-container"></div>
+<div id="hint">click / hover a circle to zoom · move outside to reset</div>
 
-		function buildTree(nodes, links) {
-		  // https://stackoverflow.com/a/68209716
-		  const map = new Map(nodes.map((o) => [o.name, { ...o, children: [] }]));
-		  for (let { source, target } of links)
-			map.get(source).children.push(map.get(target));
-		  return map;
-		}
+<script>
+  const linksData = {{ json_data }};
+  const nodeProperties = {{ json_nodes }};
+  const chartConfig = {
+    width: {{ WIDTH }},
+    height: {{ HEIGHT }},
+    speed: {{ SPEED }},
+    zoom: "{{ ZOOM }}",
+    bordercolor: "{{ bordercolor }}",
+    borderwidth: {{ borderwidth }},
+    borderfill: "{{ borderfill }}",
+    borderpadding: {{ borderpadding }},
+    fontsize: {{ fontsize }},
+    fontcolor: "{{ fontcolor }}",
+    fonttype: "{{ fonttype }}",
+    fontoutlinecolor: "{{ fontoutlinecolor }}",
+    darkMode: {{ darkMode }},
+    showControls: {{ showControls }}
+  };
+</script>
+<script>
+(function () {
+  const height = chartConfig.width;
+  const width = chartConfig.height;
+  let zoomSpeed = chartConfig.speed;
+  let zoomTrigger = chartConfig.zoom;
+  let borderPadding = chartConfig.borderpadding;
+  let borderWidth = chartConfig.borderwidth;
+  let fontSize = chartConfig.fontsize;
 
+  function pack(data) {
+    return d3.pack()
+      .size([width, height])
+      .padding(borderPadding)
+      (d3.hierarchy(data)
+        .sum(d => d.value)
+        .sort((a, b) => b.value - a.value));
+  }
 
-		// Define chart
-		function createChart() {
-        // Replace the data import
-        const links = {{ json_data }} ;
-        const node_properties = {{ json_nodes }} ;
+  function isLightTheme() {
+    return document.body.classList.contains("light");
+  }
 
-		// Generate nodes from links
-		// const nodes = _.uniq(links.flatMap((x) => [x.source, x.target])).map((name) => ({ name, value: 1 }));
-		const nodes = _.uniq(links.flatMap((x) => [x.source, x.target])).map((name) => ({ name, value: Math.max(1, node_properties[name].value) })); // Use the actual value from node_properties 
-		const tree = buildTree(nodes, links);
-		const data = Array.from(buildTree(nodes, links).values())[0];
+  // Depth color scale and SVG backdrop track the active theme.
+  function depthColor() {
+    if (isLightTheme()) {
+      return d3.scaleLinear()
+        .domain([0, 5])
+        .range(["hsl(210,45%,92%)", "hsl(220,40%,55%)"])
+        .interpolate(d3.interpolateHcl);
+    }
+    return d3.scaleLinear()
+      .domain([0, 5])
+      .range(["hsl(220,35%,28%)", "hsl(210,50%,55%)"])
+      .interpolate(d3.interpolateHcl);
+  }
 
+  function svgBackdrop() {
+    // Transparent so the page theme background shows through (no chart backdrop).
+    return "transparent";
+  }
 
-	function chart(data) {
+  function leafFill() {
+    return isLightTheme() ? "#ffffff" : "#1a1e2e";
+  }
 
-	  const root = pack(data);
-	  let focus = root;
-	  let view;
-	  let transitioning = false;
-	  let delay = 1000
+  function labelFill() {
+    // Theme-aware label color; never use a transitional intermediate value
+    return isLightTheme() ? "#2c2c2e" : "#dcddde";
+  }
 
-	  const svg = d3
-		.create("svg")
-		.attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
-		.style("display", "block")
-		.style("margin", "0 -14px")
-		.style("background", color(0))
-		.style("cursor", "pointer")
-		.on("mousemove", function (event, d) {
-		  if (transitioning || event.target.tagName != "svg") return;
-		  zoom(event, root);
-		});
+  function resetView() {
+    if (!root || !svg) return;
+    zoom({ stopPropagation: function () {} }, root);
+  }
 
-	  const node = svg
-		.append("g")
-		.selectAll("circle")
-		.data(root.descendants().slice(1))
-		.join("circle")
-		.attr("fill", (d) => (d.children ? color(d.depth) : "{{ borderfill }}"))
-		.attr("pointer-events", (d) => (!d.children ? "none" : null))
-		.on("mouseover", function (event, d) { d3.select(this).attr("stroke", "{{ bordercolor }}").attr("stroke-width", "{{ borderwidth }}"); })
-		.on("mouseout", function (event, d) { d3.select(this).attr("stroke", null).attr("stroke-width", null); })
-		.on("{{ ZOOM }}", function (event, d) {
-			if (transitioning || focus === d) return;
-			event.stopPropagation();
-			zoom(event, d);
-		});
+  function buildTree(nodes, links) {
+    const map = new Map(nodes.map((o) => [o.name, { ...o, children: [] }]));
+    for (let { source, target } of links)
+      map.get(source).children.push(map.get(target));
+    return map;
+  }
 
-	  const textOutlineColor = "{{ fontoutlinecolor }}"; /* white outline */
-	  const textOutlineRadius = 0.6; /* width of outline in pixels */
-	  const label = svg
-		.append("g")
-		.style("font", "{{ fontsize }}px {{ fonttype }}")
-		.style("fill", "{{ fontcolor }}")
-		.style("text-shadow", () => {
-		  const n = Math.ceil(
-			2 * Math.PI * textOutlineRadius
-		  ); /* number of shadows */
-		  let str = "";
-		  for (
-			let i = 0;
-			i < n;
-			i++ /* append shadows in n evenly distributed directions */
-		  ) {
-			const theta = (2 * Math.PI * i) / n;
-			str +=
-			  textOutlineRadius * Math.cos(theta) +
-			  "px " +
-			  textOutlineRadius * Math.sin(theta) +
-			  "px 0 " +
-			  textOutlineColor +
-			  (i == n - 1 ? "" : ",");
-		  }
-		  return str;
-		})
-		// .attr("stroke", "white")
-		// .attr("stroke-width", 0.3)
-		// .attr("stroke-linejoin", "round")
-		.attr("pointer-events", "none")
-		.attr("text-anchor", "middle")
-		.selectAll("text")
-		.data(root.descendants())
-		.join("text")
-		.attr("font-weight", 900)
-		.style("fill-opacity", (d) => (d.parent === root ? 1 : 0))
-		.style("display", (d) => (d.parent === root ? "inline" : "none"))
-		.text((d) => d.data.name);
+  const nodes = _.uniq(linksData.flatMap((x) => [x.source, x.target])).map((name) => ({
+    name,
+    value: Math.max(1, (nodeProperties[name] && nodeProperties[name].value) || 1)
+  }));
+  const data = Array.from(buildTree(nodes, linksData).values())[0];
 
-	  //console.log(root)
-	  zoomTo([root.x, root.y, root.r * 2]);
+  let root, focus, view, transitioning = false;
+  const delay = 1000;
+  let svg, node, label;
+  let currentRoot = null;
 
-	  function zoomTo(v) {
-//	  console.log(v)
-		const k = height / v[2];
+  function zoomTo(v) {
+    const k = height / v[2];
+    view = v;
+    label.attr("transform", (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+    node.attr("transform", (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+    node.attr("r", (d) => d.r * k);
+  }
 
-		view = v;
+  function labelVisible(d) {
+    // Standard circle-packing: only direct children of the focused node.
+    // If the focus is a leaf (e.g. from search), show that leaf's own label
+    // so the name is still readable — never both parent + children at once.
+    if (focus && !focus.children) return d === focus;
+    return d.parent === focus;
+  }
 
-		label.attr(
-		  "transform",
-		  (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
-		);
-		node.attr(
-		  "transform",
-		  (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
-		);
-		node.attr("r", (d) => d.r * k);
-	  }
+  function zoom(event, d) {
+    event.stopPropagation();
+    focus = d;
+    const transition = svg
+      .transition()
+      .duration(zoomSpeed)
+      .tween("zoom", () => {
+        const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + 15]);
+        return (t) => zoomTo(i(t));
+      });
 
-	  function zoom(event, d) {
-		event.stopPropagation();
-		const focus0 = focus;
+    label
+      .filter(function (d) {
+        return labelVisible(d) || this.style.display === "inline";
+      })
+      .transition(transition)
+      .style("fill-opacity", (d) => (labelVisible(d) ? 1 : 0))
+      .on("start", function (d) {
+        transitioning = true;
+        if (labelVisible(d)) this.style.display = "inline";
+      })
+      .on("end", function (d) {
+        setTimeout(() => { transitioning = false; }, delay);
+        if (!labelVisible(d)) this.style.display = "none";
+      });
+  }
 
-		focus = d;
+  function attachZoomHandlers() {
+    if (!node || !svg) return;
 
-		const transition = svg
-		  .transition()
-		  .duration({{ SPEED }})
-		  .tween("zoom", (d) => {
-			const i = d3.interpolateZoom(view, [
-			  focus.x,
-			  focus.y,
-			  focus.r * 2 + 15
-			]);
-			return (t) => zoomTo(i(t));
-		  });
+    // Clear ALL prior zoom/stroke/reset handlers (namespaced + bare).
+    // Using only .on("click", null) left residual mouseover.zoom / mousemove
+    // listeners, so switching mouseover → click still reset on hover.
+    node.on(".zoom", null).on(".stroke", null).on("click", null).on("mouseover", null).on("mouseout", null);
+    svg.on(".zoom", null).on("click", null).on("mousemove", null);
 
-		label
-		  .filter(function (d) {
-			return d.parent === focus || this.style.display === "inline";
-		  })
-		  .transition(transition)
-		  .style("fill-opacity", (d) => (d.parent === focus ? 1 : 0))
-		  .on("start", function (d) {
-			transitioning = true;
-			if (d.parent === focus) {
-			  this.style.display = "inline";
-			}
-		  })
-		  .on("end", function (d) {
-			// transitioning = false;
-			setTimeout(() => {
-			  transitioning = false;
-			}, delay);
-			if (d.parent !== focus) {
-			  this.style.display = "none";
-			}
-		  });
-	  }
+    // Hover stroke always (independent of zoom trigger)
+    node
+      .on("mouseover.stroke", function () {
+        d3.select(this).attr("stroke", chartConfig.bordercolor).attr("stroke-width", borderWidth);
+      })
+      .on("mouseout.stroke", function () {
+        d3.select(this).attr("stroke", null).attr("stroke-width", null);
+      });
 
-	  return svg.node();
-	}
+    if (zoomTrigger === "mouseover") {
+      node.on("mouseover.zoom", function (event, d) {
+        if (transitioning || focus === d) return;
+        event.stopPropagation();
+        zoom(event, d);
+      });
+      // Reset to root when pointer is on empty SVG background
+      svg.on("mousemove.zoom", function (event) {
+        if (transitioning || event.target.tagName != "svg") return;
+        zoom(event, root);
+      });
+    } else {
+      // click mode
+      node.on("click.zoom", function (event, d) {
+        if (transitioning || focus === d) return;
+        event.stopPropagation();
+        zoom(event, d);
+      });
+      svg.on("click.zoom", function (event) {
+        if (transitioning) return;
+        // Only reset when the click lands on the SVG itself, not a circle
+        if (event.target.tagName !== "svg") return;
+        zoom(event, root);
+      });
+    }
+  }
 
+  function applyThemeToChart() {
+    if (!svg || !node) return;
+    const color = depthColor();
+    svg.style("background", svgBackdrop());
+    node.attr("fill", (d) => (d.children ? color(d.depth) : leafFill()));
+    if (label) {
+      // Set fill on the group; no CSS transition so color does not flash
+      d3.select(label.node() && label.node().parentNode ? label.node().parentNode : null)
+        .style("fill", labelFill())
+        .style("transition", "none");
+      // Also set on each text in case selection is the texts themselves
+      svg.selectAll("text").style("fill", labelFill()).style("transition", "none");
+    }
+  }
 
-        {{ SAVE_TO_SVG_SCRIPT }}
+  function rebuildChart() {
+    const container = document.getElementById("circlepacking-container");
+    container.innerHTML = "";
 
+    root = pack(data);
+    focus = root;
+    currentRoot = root;
 
-		//	  console.log(data)
-		// Call the chart function to create and append the SVG
-		const svgNode = chart(data);
-		// Append the generated SVG node to the body
-		document.body.appendChild(svgNode);
-		}
+    const color = depthColor();
 
-		// Call the createChart function to execute the chart creation logic
-		createChart();    
+    svg = d3
+      .create("svg")
+      .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
+      .style("display", "block")
+      .style("margin", "0")
+      .style("background", svgBackdrop())
+      .style("cursor", "pointer")
+      .style("max-width", "100%")
+      .style("max-height", "100%");
 
-	  </script>
-	</body>
-	</html>
+    node = svg
+      .append("g")
+      .selectAll("circle")
+      .data(root.descendants().slice(1))
+      .join("circle")
+      .attr("fill", (d) => (d.children ? color(d.depth) : leafFill()))
+      .attr("pointer-events", (d) => (!d.children ? "none" : null))
+      .attr("data-name", (d) => d.data.name);
 
+    // No outline/text-shadow; theme-aware fill from the start (no white→black flash)
+    label = svg
+      .append("g")
+      .style("font", fontSize + "px " + chartConfig.fonttype)
+      .style("fill", labelFill())
+      .style("transition", "none")
+      .attr("pointer-events", "none")
+      .attr("text-anchor", "middle")
+      .selectAll("text")
+      .data(root.descendants())
+      .join("text")
+      .attr("font-weight", 900)
+      .style("fill", labelFill())
+      .style("transition", "none")
+      .style("fill-opacity", (d) => (d.parent === root ? 1 : 0))
+      .style("display", (d) => (d.parent === root ? "inline" : "none"))
+      .text((d) => d.data.name);
+
+    attachZoomHandlers();
+    zoomTo([root.x, root.y, root.r * 2]);
+    container.appendChild(svg.node());
+  }
+
+  {{ SAVE_TO_SVG_SCRIPT }}
+
+  rebuildChart();
+
+  // —— Reset view ————————————————————————————————————————————————
+  const resetBtn = document.getElementById("resetBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", function () {
+      resetView();
+    });
+  }
+
+  // —— Theme toggle ——————————————————————————————————————————————
+  const themeBtn = document.getElementById("themeBtn");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", function () {
+      document.body.classList.toggle("light");
+      const isLight = document.body.classList.contains("light");
+      themeBtn.textContent = isLight ? "☀" : "🌙";
+      themeBtn.title = isLight ? "Theme: Light" : "Theme: Dark";
+      applyThemeToChart();
+    });
+  }
+
+  // —— Display panel controls ——————————————————————————————————————
+  const speedSlider = document.getElementById("speedSlider");
+  if (speedSlider) {
+    speedSlider.addEventListener("input", function () {
+      zoomSpeed = +this.value;
+      document.getElementById("speedVal").textContent = zoomSpeed;
+    });
+  }
+
+  document.querySelectorAll('input[name="zoomMode"]').forEach(function (radio) {
+    radio.addEventListener("change", function () {
+      if (!this.checked) return;
+      zoomTrigger = this.value;
+      attachZoomHandlers();
+    });
+  });
+
+  const paddingSlider = document.getElementById("paddingSlider");
+  if (paddingSlider) {
+    paddingSlider.addEventListener("change", function () {
+      borderPadding = +this.value;
+      document.getElementById("paddingVal").textContent = borderPadding;
+      rebuildChart();
+    });
+    paddingSlider.addEventListener("input", function () {
+      document.getElementById("paddingVal").textContent = this.value;
+    });
+  }
+
+  const fontSizeSlider = document.getElementById("fontSizeSlider");
+  if (fontSizeSlider) {
+    fontSizeSlider.addEventListener("input", function () {
+      fontSize = +this.value;
+      document.getElementById("fontSizeVal").textContent = fontSize;
+      if (svg) {
+        svg.selectAll("g").filter(function () {
+          return this.querySelector("text");
+        }).style("font", fontSize + "px " + chartConfig.fonttype);
+      }
+    });
+  }
+
+  const borderWidthSlider = document.getElementById("borderWidthSlider");
+  if (borderWidthSlider) {
+    borderWidthSlider.addEventListener("input", function () {
+      borderWidth = +this.value;
+      document.getElementById("borderWidthVal").textContent = borderWidth;
+    });
+  }
+
+  // —— Search ——————————————————————————————————————————————————————
+  function focusNodeByName(name) {
+    if (!root || !svg || !node) return false;
+    // Match exact name on the live hierarchy (not a stale list)
+    const target = root.descendants().find(function (d) {
+      return d.data && d.data.name === name;
+    });
+    if (!target) return false;
+
+    // Cancel any in-flight zoom so search always responds
+    svg.interrupt();
+    node.interrupt();
+    if (label) label.interrupt();
+    transitioning = false;
+
+    // Always zoom to the matched node itself (leaves included — do not
+    // substitute the parent, which made search land on the wrong circle).
+    zoom({ stopPropagation: function () {} }, target);
+
+    // Brief highlight so the user can see which circle was found
+    node.attr("stroke", null).attr("stroke-width", null);
+    node.filter(function (d) { return d === target; })
+      .attr("stroke", chartConfig.bordercolor || "#1ABC9C")
+      .attr("stroke-width", Math.max(2, borderWidth * 2));
+    setTimeout(function () {
+      node.filter(function (d) { return d === target; })
+        .attr("stroke", null)
+        .attr("stroke-width", null);
+    }, Math.max(600, zoomSpeed + 100));
+
+    return true;
+  }
+
+  const searchInput = document.getElementById("searchInput");
+  const searchResults = document.getElementById("searchResults");
+  if (searchInput && searchResults) {
+    // Prefer names from the live hierarchy when available; fall back to flat list
+    function getSearchNames() {
+      if (root) {
+        return root.descendants().map(function (d) { return d.data.name; });
+      }
+      return nodes.map(function (n) { return n.name; });
+    }
+
+    searchInput.addEventListener("input", function () {
+      const q = this.value.trim().toLowerCase();
+      searchResults.innerHTML = "";
+      if (!q) { searchResults.classList.remove("open"); return; }
+      const matches = getSearchNames().filter(function (n) {
+        return n && n.toLowerCase().includes(q);
+      }).slice(0, 12);
+      if (!matches.length) { searchResults.classList.remove("open"); return; }
+      matches.forEach(function (name) {
+        const item = document.createElement("div");
+        item.className = "search-item";
+        item.textContent = name;
+        // mousedown fires before input blur, so the click is not lost
+        item.addEventListener("mousedown", function (e) {
+          e.preventDefault();
+          searchInput.value = name;
+          searchResults.classList.remove("open");
+          focusNodeByName(name);
+        });
+        searchResults.appendChild(item);
+      });
+      searchResults.classList.add("open");
+    });
+
+    // Enter key: zoom to the first match
+    searchInput.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter") return;
+      const q = this.value.trim().toLowerCase();
+      if (!q) return;
+      const matches = getSearchNames().filter(function (n) {
+        return n && n.toLowerCase().includes(q);
+      });
+      if (!matches.length) return;
+      // Prefer exact match, else first partial
+      const exact = matches.find(function (n) { return n.toLowerCase() === q; });
+      const name = exact || matches[0];
+      searchInput.value = name;
+      searchResults.classList.remove("open");
+      focusNodeByName(name);
+    });
+
+    searchInput.addEventListener("blur", function () {
+      setTimeout(function () { searchResults.classList.remove("open"); }, 150);
+    });
+  }
+
+  // —— Export Data ————————————————————————————————————————————————
+  const exportDataBtn = document.getElementById("exportDataButton");
+  if (exportDataBtn) {
+    exportDataBtn.addEventListener("click", function () {
+      try {
+        const payload = { links: linksData, nodes: nodeProperties };
+        const dataStr = JSON.stringify(payload, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "{{ TITLE }}_data.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("Export failed", err);
+        alert("Failed to export data.");
+      }
+    });
+  }
+
+  // —— Side panel positioning & collapse / reorder ————————————————
+  function positionSidePanels() {
+    var panels = Array.from(document.querySelectorAll(".stats-panel"));
+    var topPanel = document.querySelector(".top-panel");
+    var y = 10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0);
+    panels.forEach(function (panel) {
+      panel.style.top = y + "px";
+      panel.style.left = "10px";
+      panel.style.maxHeight = "calc(100vh - " + Math.round(y + 10) + "px)";
+      y += panel.getBoundingClientRect().height + 8;
+    });
+  }
+
+  window.addEventListener("DOMContentLoaded", positionSidePanels);
+  window.addEventListener("resize", positionSidePanels);
+  if (window.ResizeObserver) {
+    var o = new ResizeObserver(positionSidePanels);
+    document.querySelectorAll(".stats-panel").forEach(function (p) { o.observe(p); });
+    var tp = document.querySelectorAll(".top-panel");
+    tp.forEach(function (p) { o.observe(p); });
+  }
+
+  document.querySelectorAll(".stats-panel-title").forEach(function (title) {
+    title.addEventListener("click", function () {
+      if (title.dataset.justDragged === "1") { title.dataset.justDragged = "0"; return; }
+      var panel = title.parentElement;
+      var collapsing = !panel.classList.contains("collapsed");
+      if (collapsing) {
+        if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
+        panel.style.height = "";
+      } else if (panel.dataset.expandedHeight) {
+        panel.style.height = panel.dataset.expandedHeight;
+      }
+      panel.classList.toggle("collapsed");
+      positionSidePanels();
+    });
+  });
+
+  (function setupPanelReordering() {
+    document.querySelectorAll(".stats-panel").forEach(function (panel) {
+      var title = panel.querySelector(".stats-panel-title");
+      if (!title) return;
+      title.addEventListener("dragstart", function (e) {
+        e.dataTransfer.setData("text/plain", panel.id);
+        e.dataTransfer.effectAllowed = "move";
+      });
+      title.addEventListener("dragend", function () {
+        title.dataset.justDragged = "1";
+        setTimeout(function () { title.dataset.justDragged = "0"; }, 0);
+      });
+      panel.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        panel.classList.add("drag-over");
+      });
+      panel.addEventListener("dragleave", function () {
+        panel.classList.remove("drag-over");
+      });
+      panel.addEventListener("drop", function (e) {
+        e.preventDefault();
+        panel.classList.remove("drag-over");
+        var draggedId = e.dataTransfer.getData("text/plain");
+        if (!draggedId || draggedId === panel.id) return;
+        var draggedEl = document.getElementById(draggedId);
+        if (!draggedEl || !panel.parentNode) return;
+        panel.parentNode.insertBefore(draggedEl, panel);
+        positionSidePanels();
+      });
+    });
+  })();
+
+  // Initial layout after paint
+  requestAnimationFrame(positionSidePanels);
+})();
+</script>
+</body>
+</html>
