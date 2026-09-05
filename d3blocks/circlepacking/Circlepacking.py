@@ -34,6 +34,8 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
     # return
     return config
 
@@ -179,6 +181,10 @@ def write_html(X, config, node_properties, logger=None):
     width = 'window.screen.width' if config['figsize'][0] is None else config['figsize'][0]
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
 
+    # Jinja expects lowercase 'true'/'false' JSON-style strings for template conditionals
+    show_controls = 'true' if config.get('show_controls', True) else 'false'
+    dark_mode = 'true' if config.get('dark_mode', True) else 'false'
+
     content = {
         'json_data': X,
         'json_nodes': node_properties,
@@ -199,6 +205,8 @@ def write_html(X, config, node_properties, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'showControls': show_controls,
+        'darkMode': dark_mode,
     }
 
     try:
