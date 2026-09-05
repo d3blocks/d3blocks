@@ -1548,7 +1548,7 @@ class D3Blocks():
                    whitelist=None,
                    fontsize=10,
                    cmap='Set1',
-                   title='Timeseries - D3blocks',
+                   title='D3Blocks',
                    filepath='timeseries.html',
                    figsize=[None, None],
                    showfig=True,

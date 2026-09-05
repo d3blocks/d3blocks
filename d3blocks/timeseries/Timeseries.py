@@ -22,7 +22,7 @@ def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
     logger = kwargs.get('logger', None)
     config['chart'] ='timeseries'
-    config['title'] = kwargs.get('title', 'Timeseries - D3blocks')
+    config['title'] = kwargs.get('title', 'D3blocks')
     config['filepath'] = set_path(kwargs.get('filepath', 'timeseries.html'), logger)
     config['figsize'] = kwargs.get('figsize', [None, None])
     config['showfig'] = kwargs.get('showfig', True)
