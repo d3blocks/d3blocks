@@ -379,26 +379,57 @@ function d3graphscript(
     edge_label;
   const pathgen = d3.svg.line().interpolate("basis");
   const fill = d3.scale.category20();
-  const body = d3.select("body");
-  const vis = body.append("svg").attr("width", width).attr("height", height).style('display', 'block');
+
+  // Mount into #graph-container if present, otherwise fall back to <body>.
+  // This lets the host page position the SVG beside the side panels.
+  const hostEl = document.getElementById("graph-container") || document.body;
+  const body = d3.select(hostEl);
+
+  // Use the container's live dimensions (set by CSS / JS panel layout).
+  // When width/height are passed as 0 or the container has no explicit size,
+  // fall back to the viewport so the graph is never invisible.
+  function getContainerSize() {
+    const w = hostEl.clientWidth  || window.innerWidth;
+    const h = hostEl.clientHeight || window.innerHeight;
+    return { w, h };
+  }
+  let sz = getContainerSize();
+  // Override caller-supplied width/height with the live container size so the
+  // graph fills the available area regardless of the Python figsize setting.
+  width  = sz.w;
+  height = sz.h;
+
+  const vis = body.append("svg")
+    .attr("width",  "100%")
+    .attr("height", "100%")
+    .style("display", "block");
 
   // Everything gets appended into this <g> instead of directly onto the svg, so the zoom
   // behaviour below can transform (scale/translate) the whole graph as one unit without
   // touching the underlying force-layout coordinates at all.
   const zoomRoot = vis.append("g");
 
-  vis.call(
-    d3.behavior.zoom().on("zoom", () => {
-      zoomRoot.attr(
-        "transform",
-        "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"
-      );
-      // hide labels once zoomed out past the threshold - a single class toggle is much
-      // cheaper than touching every text element on every zoom/pan tick, and CSS handles
-      // hiding all of them at once.
-      vis.classed("labels-hidden", d3.event.scale < label_zoom_threshold);
-    })
-  );
+  const zoomBehavior = d3.behavior.zoom().on("zoom", () => {
+    zoomRoot.attr(
+      "transform",
+      "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"
+    );
+    // hide labels once zoomed out past the threshold - a single class toggle is much
+    // cheaper than touching every text element on every zoom/pan tick, and CSS handles
+    // hiding all of them at once.
+    var _lzt = (window._labelZoomThreshold !== undefined) ? window._labelZoomThreshold : label_zoom_threshold;
+      vis.classed("labels-hidden", d3.event.scale < _lzt);
+  });
+  vis.call(zoomBehavior);
+
+  // Resize: keep the force layout centred when the window is resized.
+  window.addEventListener("resize", function() {
+    sz = getContainerSize();
+    width  = sz.w;
+    height = sz.h;
+    if (window._forceRef)  window._forceRef.size([width, height]).resume();
+    if (window._force2Ref) window._force2Ref.size([width, height]).resume();
+  });
 
   const defaultRadius = 4
   const scaling = dr / defaultRadius
@@ -486,7 +517,8 @@ function d3graphscript(
 
   function dragended(d) {
     d3.select(this).classed("dragging", false);
-    if (sticky) {
+    var _effectiveSticky = (window._stickyOverride !== undefined) ? window._stickyOverride : sticky;
+    if (_effectiveSticky) {
       d.fixed = 1; // permanently pinned
       d3.select(this).style("stroke-dasharray", "4,2");
     } else {
@@ -542,11 +574,12 @@ function d3graphscript(
       .force()
       .nodes(net.nodes)
       .links(net.links)
-      .size([width, height])
+      .size([getContainerSize().w, getContainerSize().h])
       .linkDistance((l) => {
         const n1 = l.source;
         const n2 = l.target;
-        const collisionFactor = collision / 0.5; // 0.5 is the baseline/default
+        const _col = (window._collisionOverride !== undefined) ? window._collisionOverride : collision;
+        const collisionFactor = _col / 0.5; // 0.5 is the baseline/default
 
         const inSameGroup = n1.group == n2.group;
         if (inSameGroup) {
@@ -579,7 +612,7 @@ function d3graphscript(
       .force()
       .nodes(net.helper_nodes)
       .links(net.helper_links)
-      .size([width, height])
+      .size([getContainerSize().w, getContainerSize().h])
       .linkDistance(function (l) {
         var lr = l.g_ref;
         if (lr.source.size > 0 || lr.target.size > 0) return 20;
@@ -601,6 +634,10 @@ function d3graphscript(
       .friction(0.95)
       .start()
       .stop(); // and immediately stop! force.tick will drive this one every tick!
+
+    // Expose for panel controls / resize handler
+    window._forceRef  = force;
+    window._force2Ref = force2;
 
     hullg.selectAll("path.hull").remove();
     hull = hullg
@@ -651,7 +688,7 @@ function d3graphscript(
       .attr("pointer-events", "none");
     // (re)apply to both newly entered and pre-existing labels, same pattern as hlink above
     edge_label
-      .style("fill", (d) => d.ref.label_color || "#808080")
+      .style("fill", (d) => d.ref.label_color || getComputedStyle(document.body).getPropertyValue("--text-muted").trim() || "#aaa")
       .style(
         "font-size",
         (d) => (d.ref.label_fontsize ? d.ref.label_fontsize + "px" : "8px")
@@ -736,8 +773,8 @@ function d3graphscript(
       .attr("pointer-events", "none");
     // (re)apply styling to both newly entered and pre-existing labels, same as hlink above
     label
-      .style("fill", (d) => d.node_fontcolor || "#333")
-      .style("font-size", (d) => (d.node_fontsize ? d.node_fontsize + "px" : "12px"))
+      .style("fill", (d) => d.node_fontcolor || getComputedStyle(document.body).getPropertyValue("--text").trim() || "#eee")
+      .style("font-size", (d) => { var sz = window._labelSizeOverride || (d.node_fontsize ? d.node_fontsize : 12); return sz + "px"; })
       .text((d) => d.node_name || d.name || "group " + d.group);
 
     var drag_in_progress = false;
@@ -1059,4 +1096,32 @@ function d3graphscript(
   }
 
   parseJson(data);
+
+  // Expose internals for panel controls (Physics sliders, unpin, reset-zoom).
+  window._forceRef = force;
+  window._force2Ref = force2;
+  window._zoomBehavior = zoomBehavior;
+
+  // ── Live control API exposed for the side panels ──────────────────────────
+  // Called by the physics sliders in the HTML template.
+  window._applyCharge = function(v) {
+    force.charge(-Math.abs(v)).start();
+  };
+  window._applyCollision = function() {
+    // collision is used inside linkDistance() — reheat the sim without resetting positions
+    force.resume();
+  };
+  // Called by label-size slider: updates all text.label and text.edge-label live.
+  window._applyLabelSize = function(px) {
+    window._labelSizeOverride = px;
+    d3.selectAll('#graph-container text.label').style('font-size', px + 'px');
+    d3.selectAll('#graph-container text.edge-label').style('font-size', Math.max(7, px - 2) + 'px');
+  };
+  // Hull offset requires a full re-init — expose so the slider can call restart.
+  window._applyHullOffset = function(v) {
+    off = v;
+    init(net);  // re-run the draw with the new hull offset
+  };
+
+  return { force, force2, zoomBehavior };
 }

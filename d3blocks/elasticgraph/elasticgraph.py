@@ -65,7 +65,7 @@ class Elasticgraph:
     * Fork Ger Hobbelts (Block 3104394): https://bl.ocks.org/GerHobbelt/3104394
     """
 
-    def __init__(self, radius: int = 4, hull_offset: int = 15, collision: float = 0.8, charge: int = 1000, sticky: bool = True, label_zoom_threshold: float = 0.4, verbose: int = 20, single_click_expand: bool = True) -> None:
+    def __init__(self, radius: int = 4, hull_offset: int = 15, collision: float = 0.8, charge: int = 1000, sticky: bool = True, label_zoom_threshold: float = 0.4, verbose: int = 20, single_click_expand: bool = True, show_controls: bool = True, dark_mode: bool = True, save_button: bool = True) -> None:
         """Initialize elasticgraph."""
         self.D3graph = d3graph()
         # Cleaning
@@ -82,6 +82,9 @@ class Elasticgraph:
         self.D3graph.config['sticky'] = sticky
         self.D3graph.config['label_zoom_threshold'] = label_zoom_threshold
         self.D3graph.config['single_click_expand'] = single_click_expand
+        self.D3graph.config['show_controls'] = show_controls
+        self.D3graph.config['dark_mode'] = dark_mode
+        self.D3graph.config['save_button'] = save_button
         # Set paths
         self.D3graph.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         self.D3graph.config['d3_library'] = os.path.abspath(os.path.join(self.D3graph.config['curpath'], 'd3js/d3.v2.js'))
@@ -141,12 +144,15 @@ class Elasticgraph:
         self.D3graph.set_node_properties(color=group, scaler=scaler)
 
     def show(self,
-             figsize: Tuple[int, int] = (1500, 800),
+             figsize=(None, None),
              title: str = 'elasticgraph',
              filepath: str = 'elasticgraph.html',
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
+             show_controls: bool = None,
+             dark_mode: bool = None,
+             save_button: bool = None,
              ) -> None:
         """Build and show the graph.
 
@@ -184,8 +190,14 @@ class Elasticgraph:
         self.D3graph.config['network_title'] = title
         self.D3graph.config['showfig'] = showfig
         self.D3graph.config['notebook'] = notebook
+        if show_controls is not None:
+            self.D3graph.config['show_controls'] = show_controls
+        if dark_mode is not None:
+            self.D3graph.config['dark_mode'] = dark_mode
+        if save_button is not None:
+            self.D3graph.config['save_button'] = save_button
         self.D3graph.set_path(filepath)
-
+        
         # Ensure numeric node properties are always float, not int. If a user manually
         # overrides a value (e.g. node_properties['Wind']['size'] = 5), an int here mixes
         # dtypes with the rest of the (float) column and causes inconsistent typing all the
@@ -333,19 +345,23 @@ class Elasticgraph:
         None.
 
         """
+        cfg = self.D3graph.config
         content = {
             'json_data': json_data,
-            'title': self.D3graph.config['network_title'],
-            'width': self.D3graph.config['figsize'][0],
-            'height': self.D3graph.config['figsize'][1],
-            'point_radius': self.D3graph.config['point_radius'],
-            'hull_offset': self.D3graph.config['hull_offset'],
-            'debug': self.D3graph.config['debug'],
-            'single_click_expand': self.D3graph.config['single_click_expand'],
-            'collision': self.D3graph.config['collision'],
-            'charge': self.D3graph.config['charge'],
-            'sticky': self.D3graph.config['sticky'],
-            'label_zoom_threshold': self.D3graph.config['label_zoom_threshold'],
+            'title': cfg['network_title'],
+            'width': cfg['figsize'][0] or 0,
+            'height': cfg['figsize'][1] or 0,
+            'point_radius': cfg['point_radius'],
+            'hull_offset': cfg['hull_offset'],
+            'debug': cfg['debug'],
+            'single_click_expand': cfg['single_click_expand'],
+            'collision': cfg['collision'],
+            'charge': -abs(cfg['charge']),
+            'sticky': cfg['sticky'],
+            'label_zoom_threshold': cfg['label_zoom_threshold'],
+            'show_controls': cfg.get('show_controls', True),
+            'dark_mode': cfg.get('dark_mode', True),
+            'save_button': cfg.get('save_button', True),
         }
 
         try:
