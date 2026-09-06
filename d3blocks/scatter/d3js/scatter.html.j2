@@ -105,6 +105,41 @@ License     : GPL3
     #my_dataviz {
       display: none;
     }
+    /* Coordinate-mode radios: fixed under the x-axis (bottom of plot).
+       Must sit above the canvas (z-index 3) so clicks register. */
+    #coordModeForm {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 6px;
+      z-index: 25;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      pointer-events: none; /* only the inner control is clickable */
+    }
+    #coordModeForm .coord-mode-inner {
+      display: inline-block;
+      pointer-events: auto;
+      background: var(--panel-bg, rgba(34,34,34,0.85));
+      border: 1px solid var(--panel-border, rgba(255,255,255,0.12));
+      border-radius: 8px;
+      padding: 6px 14px;
+      box-shadow: var(--panel-shadow, 0 2px 8px rgba(0,0,0,0.25));
+      font-family: "Helvetica", Arial, sans-serif;
+      font-size: 13px;
+      color: var(--text, #eee);
+    }
+    #coordModeForm label {
+      cursor: pointer;
+      margin: 0 6px;
+      color: var(--text, #eee);
+    }
+    body.light #coordModeForm .coord-mode-inner {
+      background: rgba(255,255,255,0.92);
+      color: #222;
+    }
+    body.light #coordModeForm label { color: #222; }
     </style>
 
 </head>
@@ -330,14 +365,12 @@ License     : GPL3
 </script>
 
 
-<form>
-    <div style="max-width:{{ WIDTH }}px;">
-        <center>
+<form id="coordModeForm">
+    <div class="coord-mode-inner">
         	<input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
         	<input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
         	<input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
         	<input type="radio" name="radio_states" value="radiobutton4" style="{{ RADIO_VISIBLE4 }}"> <label> {{ RADIO_LABEL4 }} </label>
-        </center>
     </div>
 </form>
 
