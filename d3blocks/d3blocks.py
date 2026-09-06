@@ -1682,10 +1682,10 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
-        # Add logo
-        utils.copy_logo(Path("./timeseries") / "d3js")
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
+        # copy logo
+        utils.copy_logo(Path(self.chart.__file__).resolve().parent / 'd3js')
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
         # Set node properties
