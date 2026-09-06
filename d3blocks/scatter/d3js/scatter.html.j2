@@ -61,20 +61,25 @@ License     : GPL3
       left: 10px;
       z-index: 54;
     }
-    /* Keep the fixed-size scatterplot centered in the viewport */
+    /* Fullscreen plot area (fills viewport under the top panel).
+       SVG must NOT use CSS width/height 100% — that scales the SVG
+       coordinate system independently of the canvas pixel grid. */
     #scatter-main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 64px; /* fallback; JS sets exact top + size from top-panel */
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-      position: relative;
-      margin-top: 80px;
+      overflow: hidden;
     }
     #scatterSvg {
       display: block;
-      margin: 0 auto;
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
       /* Axis ticks + point labels live here. Must render above the density
          heatmap (z-index 1) so labels stay legible; points themselves
          (z-index 2) still render on top of both. */
@@ -84,8 +89,7 @@ License     : GPL3
     #scatterDensityCanvas {
       position: absolute;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
       /* Density layer sits at the very back: behind the axis/labels and
          behind the data points (z-index 2 and 3). */
       z-index: 1;
@@ -94,15 +98,12 @@ License     : GPL3
     #scatterCanvas {
       position: absolute;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
       z-index: 3;
       pointer-events: auto;
     }
     #my_dataviz {
-      width: 100%;
-      display: flex;
-      justify-content: center;
+      display: none;
     }
     </style>
 
@@ -367,9 +368,30 @@ License     : GPL3
 
 // Use the main scatter SVG (must not use d3.select("svg") — the Layout
 // panel chevron is also an <svg> and comes first in the DOM).
-var svg = d3.select("#scatterSvg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height")-1;
+var svg = d3.select("#scatterSvg");
+// Fullscreen: size from viewport (under top panel), not fixed figsize box
+function viewportPlotSize() {
+  var bar = document.querySelector('.top-panel');
+  var top = bar ? bar.getBoundingClientRect().bottom : 0;
+  return {
+    top: top,
+    width: Math.max(100, window.innerWidth),
+    height: Math.max(100, window.innerHeight - top)
+  };
+}
+var _vp0 = viewportPlotSize();
+var width = _vp0.width;
+var height = Math.max(100, _vp0.height) - 1;
+svg.attr("width", width).attr("height", height + 1)
+  .style("width", width + "px").style("height", (height + 1) + "px");
+(function(){
+  var main = document.getElementById('scatter-main');
+  if (main) {
+    main.style.top = _vp0.top + 'px';
+    main.style.width = _vp0.width + 'px';
+    main.style.height = _vp0.height + 'px';
+  }
+})();
 
 var k = height / width,
     x0 = [{{MIN_X}}, {{MAX_X}}],
@@ -379,7 +401,7 @@ var k = height / width,
     z = d3.scaleOrdinal(d3.schemeCategory10);
 
 var xAxis = d3.axisTop(x).ticks(12),
-    yAxis = d3.axisRight(y).ticks(12 * height / width);
+    yAxis = d3.axisRight(y).ticks(Math.max(4, Math.round(12 * height / width)));
 
 // create a tooltip with the box ****************************
 // Fixed positioning + pageX/pageY so the box tracks the cursor next to the point
@@ -780,6 +802,39 @@ function sizeScatterCanvases() {
   densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   canvasCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
+function resizeScatterToViewport() {
+  var vp = viewportPlotSize();
+  var main = document.getElementById('scatter-main');
+  if (main) {
+    main.style.top = vp.top + 'px';
+    main.style.left = '0px';
+    main.style.right = '0px';
+    main.style.bottom = '0px';
+    main.style.width = vp.width + 'px';
+    main.style.height = vp.height + 'px';
+    main.style.marginTop = '0px';
+  }
+  width = Math.max(100, vp.width);
+  height = Math.max(100, vp.height) - 1;
+  svg.attr("width", width).attr("height", height + 1);
+  // Clear any CSS sizing that would rescale SVG independently of canvas
+  svg.style("width", width + "px").style("height", (height + 1) + "px");
+  x.range([0, width]);
+  y.range([height, 0]);
+  try {
+    yAxis.ticks(Math.max(4, Math.round(12 * height / Math.max(width, 1))));
+    svg.select(".axis--x").attr("transform", "translate(0," + (height - 10) + ")");
+    if (typeof updateAxes === "function") updateAxes();
+  } catch (err) { /* axes may not exist yet */ }
+  sizeScatterCanvases();
+  // Only redraw once live coordinate caches + label layer exist
+  if (typeof currentXVal !== "undefined" && currentXVal && typeof currentYVal !== "undefined" && currentYVal) {
+    if (typeof scheduleRender === "function") scheduleRender();
+  }
+  if (typeof labelGroup !== "undefined" && labelGroup && typeof updatePointLabels === "function") {
+    updatePointLabels();
+  }
+}
 sizeScatterCanvases();
 
 // ---- Point-density heatmap (ported from d3graph.js density layer) ----
@@ -802,6 +857,7 @@ function densityColor(t) {
   return 'hsl(' + hue + ', 100%, 50%)';
 }
 function computeDensityGrid() {
+  if (typeof currentXVal === "undefined" || !currentXVal) return null;
   // Bin points at their *live*, rendered on-screen positions. Uses the same
   // pixel-space + margin culling as rebuildHitGrid (see comment there) so
   // the heatmap doesn't develop its own empty ring at the edges while
@@ -957,6 +1013,9 @@ function addHit(i, px, py) {
   bucket.push(i);
 }
 function rebuildHitGrid() {
+  if (typeof currentXVal === "undefined" || !currentXVal || typeof currentYVal === "undefined" || !currentYVal) {
+    return;
+  }
   hitGrid.clear();
   visiblePointIndices.length = 0;
   // Cull by RENDERED pixel position (with a margin) instead of raw
@@ -1003,6 +1062,7 @@ function drawSymbol(ctx,shape,r) {
   var q=r*.45;ctx.moveTo(-r,-q);ctx.lineTo(-q,-q);ctx.lineTo(-q,-r);ctx.lineTo(q,-r);ctx.lineTo(q,-q);ctx.lineTo(r,-q);ctx.lineTo(r,q);ctx.lineTo(q,q);ctx.lineTo(q,r);ctx.lineTo(-q,r);ctx.lineTo(-q,q);ctx.lineTo(-r,q);ctx.closePath();
 }
 function renderPoints() {
+  if (typeof currentXVal === "undefined" || !currentXVal) return;
   var ctx=canvasCtx; ctx.clearRect(0,0,width,height+1); rebuildHitGrid();
   drawDensityLayer();
   // Draw from live positions so density + points stay aligned (including
@@ -1180,7 +1240,10 @@ function positionSidePanels() {
   var main = document.getElementById('scatter-main');
   if (!bar) return;
   var bottom = bar.getBoundingClientRect().bottom;
-  if (main) main.style.marginTop = (bottom + 12) + 'px';
+  if (main) {
+    main.style.top = bottom + 'px';
+    main.style.marginTop = '0px';
+  }
   var y = bottom + 8;
   var bottomPad = 12;
   var sideRight = 0;
@@ -1206,18 +1269,20 @@ function positionSidePanels() {
     nodePanelEl.style.right = '10px';
   }
 }
-window.addEventListener('resize', positionSidePanels);
-window.addEventListener('load', positionSidePanels);
+window.addEventListener('resize', function() {
+  positionSidePanels();
+  if (typeof resizeScatterToViewport === 'function') resizeScatterToViewport();
+});
+window.addEventListener('load', function() {
+  positionSidePanels();
+  if (typeof resizeScatterToViewport === 'function') resizeScatterToViewport();
+});
 positionSidePanels();
-// Re-measure one frame later too: the very first synchronous call above can
-// run before the browser's first layout/paint pass has settled (e.g. web
-// font swap, or simply before layout has been computed at all), which can
-// leave #scatter-main's margin-top (and therefore the canvases positioned
-// relative to it) based on a stale/incorrect measurement until something
-// else -- like a user interacting with the page -- forces a reflow. This
-// costs nothing and fixes that without waiting on 'load' (which can be
-// delayed or blocked by the external logo image).
-requestAnimationFrame(positionSidePanels);
+// Defer first fullscreen size until after layout + data arrays (currentXVal) exist.
+requestAnimationFrame(function() {
+  positionSidePanels();
+  if (typeof resizeScatterToViewport === 'function') resizeScatterToViewport();
+});
 // Side panels are user-resizable; keep the bottom panel clear as they change width.
 if (typeof ResizeObserver !== 'undefined') {
   PANEL_ORDER.forEach(function(id) {
@@ -1655,6 +1720,7 @@ function isZoomedInEnough() {
 }
 
 function updatePointLabels() {
+  if (typeof labelGroup === "undefined" || !labelGroup) return;
   if (!currentLabelKey || !isZoomedInEnough()) {
     labelGroup.selectAll('text').remove();
     return;
@@ -2305,6 +2371,12 @@ if (exportButton) exportButton.addEventListener('click', function(){
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
 });
+
+// Final fullscreen size after all state (currentXVal, physics, UI) is ready
+if (typeof resizeScatterToViewport === 'function') {
+  resizeScatterToViewport();
+  requestAnimationFrame(function(){ resizeScatterToViewport(); });
+}
 
 // Shared association / enrichment engine (pure stats; no scatter DOM).
 // Same embedding pattern as scatter.css.
