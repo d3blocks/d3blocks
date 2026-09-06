@@ -11,11 +11,13 @@ from ismember import ismember
 import numpy as np
 import pandas as pd
 import os
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment
+from pathlib import Path
+
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script
+    from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, copy_logo
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script
+    from utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, copy_logo
 
 
 # %% Set configuration properties
@@ -242,6 +244,10 @@ def write_html(X, config, logger=None):
     None.
 
     """
+    # Copy logo
+    dst_dir = Path(__file__).resolve().parent / 'd3js'
+    copy_logo(dst_dir)
+
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     # Handle figsize None -> null for JS

@@ -1684,8 +1684,6 @@ class D3Blocks():
         self._clean(clean_config=False)
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
-        # copy logo
-        utils.copy_logo(Path(self.chart.__file__).resolve().parent / 'd3js')
         # Store properties
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
         # Set node properties
@@ -2491,8 +2489,6 @@ class D3Blocks():
         df = df.copy()
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
-        # Add logo
-        utils.copy_logo(Path("./elasticgraph") / "d3js")
         # Initialize network d3-elasticgraph-network
         self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
         # Convert vector to adjmat

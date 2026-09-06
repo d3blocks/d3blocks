@@ -15,6 +15,11 @@ import webbrowser
 import time
 from sys import platform
 from pathlib import Path
+from jinja2 import FileSystemLoader
+try:
+    import d3blocks.utils as utils
+except:
+    import utils
 
 logger = logging.getLogger(__name__)
 
@@ -366,8 +371,11 @@ class Elasticgraph:
             'save_button': cfg.get('save_button', True),
         }
 
+        # Copy logo
+        dst_dir = Path(__file__).resolve().parent / 'd3js'
+        utils.copy_logo(dst_dir)
+
         # Use FileSystemLoader pointed at the elasticgraph/d3js directory to ensure templates and includes (e.g. logo.txt) are found
-        from jinja2 import FileSystemLoader
         d3js_path = os.path.abspath(os.path.join(cfg['curpath'], 'd3js'))
         jinja_env = Environment(loader=FileSystemLoader(d3js_path))
         index_template = jinja_env.get_template('elasticgraph.html.j2')
