@@ -5,42 +5,139 @@ Licensed    : GPL3
 Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_template.html
 -->
 <!DOCTYPE html>
-<meta charset="utf-8">
+<html lang="en">
 <head>
-    <!-- Load d3.js -->
-    <!-- <script src="https://d3js.org/d3.v6.js"></script> -->
-    <script> {% include "d3.v6.min.js" %} </script>
-    
-	{{ SUPPORT }}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ TITLE }}</title>
+<script>{% include "d3.v6.min.js" %}</script>
+{{ SUPPORT }}
+<style>
+{% include "maps.css" %}
 
+/* Maps-specific */
+#maps-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+body.has-controls #maps-container {
+  top: 64px;
+}
+#maps-container svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.tooltip {
+  opacity: 0;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  position: absolute;
+  pointer-events: none;
+  font-size: 12px;
+  z-index: 2000;
+  box-shadow: var(--panel-shadow);
+  transition: opacity 0.15s;
+}
+.logo-text {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo-text:hover { color: var(--accent); }
+#legendG .legend-label {
+  fill: var(--text);
+  font-size: 10px;
+}
+#legendG .legend-stroke {
+  stroke: var(--text);
+}
+</style>
 </head>
+<body class="{% if dark_mode == false or dark_mode == 'false' %}light {% endif %}{% if show_controls == false or show_controls == 'false' %}{% else %}has-controls{% endif %}">
 
-<!-- Create save button -->
-{{ SAVE_BUTTON_START }}
-    <div style="max-width:{{ WIDTH }}px;">
-        <center><button id="saveButton">Save</button></center>
+{% if show_controls != false and show_controls != 'false' %}
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
+      <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block">
+    </a>
+  </div>
+  <div class="top-panel-center">
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find a location…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
     </div>
-{{ SAVE_BUTTON_STOP }}
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="resetZoomBtn" type="button" title="Reset zoom">Reset</button>
+    <button class="button-switch" id="themeBtn" type="button" title="{% if dark_mode == false or dark_mode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if dark_mode == false or dark_mode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
 
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <button id="exportDataButton" class="button-switch">Export Data</button>
+    {{ SAVE_BUTTON_START }}
+    <button id="saveButton" class="button-switch">Save</button>
+    {{ SAVE_BUTTON_STOP }}
+  </div>
+</div>
 
-<!-- Create an element where the map will take place -->
-<!-- <svg id="my_dataviz" width="1630" height="2350"></svg> -->
-<svg id="my_dataviz"></svg>
+<div class="stats-panel collapsed" id="displayPanel">
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="markerOpacitySlider">Marker opacity <span id="markerOpacityVal">0.40</span></label>
+      <input type="range" id="markerOpacitySlider" min="0.05" max="1" step="0.05" value="0.40" />
+    </div>
+    <div class="physics-control">
+      <label for="markerSizeSlider">Marker size <span id="markerSizeVal">1.0</span>×</label>
+      <input type="range" id="markerSizeSlider" min="0.3" max="3" step="0.1" value="1.0" />
+    </div>
+    <div class="physics-control">
+      <label for="landOpacitySlider">Land opacity <span id="landOpacityVal">—</span></label>
+      <input type="range" id="landOpacitySlider" min="0.05" max="1" step="0.05" value="0.60" />
+    </div>
+    <label><input type="checkbox" id="showLegendChk" checked> Show size legend</label>
+  </div>
+</div>
+{% endif %}
+
+<div id="maps-container"><svg id="my_dataviz"></svg></div>
+<div id="hint">scroll to zoom · drag to pan · hover a marker for details</div>
 
 <script>
+const chartConfig = {
+  width: {{ WIDTH }},
+  height: {{ HEIGHT }},
+  showControls: {% if show_controls == false or show_controls == 'false' %}false{% else %}true{% endif %},
+  darkMode: {% if dark_mode == false or dark_mode == 'false' %}false{% else %}true{% endif %}
+};
 
+const container = document.getElementById("maps-container");
+const width = container.clientWidth || (typeof chartConfig.width === "number" ? chartConfig.width : window.innerWidth);
+const height = container.clientHeight || (typeof chartConfig.height === "number" ? chartConfig.height : window.innerHeight);
 
-// The svg
-const svg = d3.select("svg"),
-    width = window.innerWidth * 0.9,
-    height = window.innerHeight  * 0.9;
+const svg = d3.select("#my_dataviz")
+  .attr("width", width)
+  .attr("height", height);
 
-    const dataGeo = {% include "world.geojson" %}
-    const data = {{ json_data }}
-    const data_countries = {{ json_countries }}
+const mapLayer = svg.append("g").attr("class", "map-layer");
+const markerLayer = svg.append("g").attr("class", "marker-layer");
+const legendG = svg.append("g").attr("id", "legendG");
 
+const dataGeo = {% include "world.geojson" %};
+const data = {{ json_data }};
+const data_countries = {{ json_countries }};
 
-// Create a color map from the data_countries array
 let country_color = {};
 let country_linewidth = {};
 let country_opacity = {};
@@ -55,188 +152,325 @@ data_countries.forEach(item => {
   country_stroke[item.name] = item.stroke;
 });
 
-//	console.log(data)
-let bounds = d3.geoBounds(dataGeo);
+const worldOpacityDefault = country_opacity["World"] != null ? +country_opacity["World"] : 0.6;
+let landOpacity = worldOpacityDefault;
+let markerOpacity = 0.4;
+let markerSizeScale = 1.0;
 
-// Calculate the center of France
-let center = [
-  (bounds[0][0] + bounds[1][0]) / 2,
-  (bounds[0][1] + bounds[1][1]) / 2
-];
-
-    // Set the width and height of the SVG
-svg.attr("width", width)
-   .attr("height", height);
-
-// Map and projection
 const projection = d3.geoMercator()
-    .center([0,20])                // GPS of location to zoom on
-//    .center(center)                // GPS of location to zoom on
-    .scale(200)                       // This is like the zoom
-    .translate([ width/2, height/2 ])
+  .center([0, 20])
+  .scale(Math.min(width, height) / 5)
+  .translate([width / 2, height / 2]);
 
-  // Create a color scale
-  const color = d3.scaleOrdinal()
-    .domain(data.map(d => d.name))
-    .range(d3.schemePaired);
+const pathGenerator = d3.geoPath().projection(projection);
 
-  // Add a scale for bubble size
-  const valueExtent = d3.extent(data, d => +d.size)
-  const size = d3.scaleSqrt()
-    .domain(valueExtent)  // What's in the data
-    .range([ 1, 50])  // Size in pixel
+const valueExtent = d3.extent(data, d => +d.size);
+const sizeScale = d3.scaleSqrt()
+  .domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent)
+  .range([1, 50]);
 
-  // Draw the entire map
-  svg.append("g")
-      .selectAll("path")
-      .data(dataGeo.features)
-      .join("path")
-        .attr("fill", country_color['World'])
-        .attr("d", d3.geoPath().projection(projection) )
-      .style("stroke", country_stroke['World'])
-      .style("opacity", country_opacity['World'])
-      .style("stroke-dasharray", country_line['World'] === 'dashed' ? "5" : "0");
+function markerRadius(d) {
+  return sizeScale(+d.size) * markerSizeScale;
+}
 
+// World base
+mapLayer.append("g")
+  .attr("class", "world")
+  .selectAll("path")
+  .data(dataGeo.features)
+  .join("path")
+    .attr("fill", country_color["World"] || "#D3D3D3")
+    .attr("d", pathGenerator)
+    .style("stroke", country_stroke["World"] || "#5A5A5A")
+    .style("opacity", landOpacity)
+    .style("stroke-dasharray", country_line["World"] === "dashed" ? "5" : "0");
 
-// Get all country names
+// Highlighted countries
 const country_names = data_countries.map(item => item.name);
-// Get the geo features for the overlapping country names (to prevent error when having typos)
-let countries = dataGeo.features.filter(d => country_names.includes(d.properties.name));
+const countries = dataGeo.features.filter(d => country_names.includes(d.properties.name));
 
+mapLayer.append("g")
+  .attr("class", "countries")
+  .selectAll("path")
+  .data(countries)
+  .join("path")
+    .attr("d", d => pathGenerator(d))
+    .attr("fill", d => country_color[d.properties.name])
+    .attr("stroke", d => country_stroke[d.properties.name])
+    .attr("stroke-width", d => country_linewidth[d.properties.name])
+    .attr("opacity", d => country_opacity[d.properties.name])
+    .attr("stroke-dasharray", d => country_line[d.properties.name] === "dashed" ? "5" : "0");
 
-// Create a geoPath generator
-let pathGenerator = d3.geoPath().projection(projection);
-// Create a dashed line for each country
-countries.forEach(country => {
-  svg.append("path")
-    .attr("d", pathGenerator(country))
-    .attr("fill", country_color[country.properties.name]) // Use the color from country_color
-    .attr("stroke", country_stroke[country.properties.name])
-    .attr("stroke-width", country_linewidth[country.properties.name]) // Use the linewidth from country_linewidth
-    .attr("opacity", country_opacity[country.properties.name]) // Use the opacity from country_opacity
-    //.attr("stroke-dasharray", "5,5");  // This creates a dashed line
-    .attr("stroke-dasharray", country_line[country.properties.name] === 'dashed' ? "5" : "0");
+// Zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.5, 100])
+  .on("zoom", (event) => {
+    mapLayer.attr("transform", event.transform);
+    markerLayer.attr("transform", event.transform);
+  });
+svg.call(zoom);
 
-});
+// Tooltip
+const Tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "tooltip");
 
+const mouseover = () => Tooltip.style("opacity", 1);
+const mousemove = (event, d) => {
+  Tooltip
+    .html((d.label ? d.label + "<br>" : "") + "lon: " + d.lon + "<br>lat: " + d.lat + (d.size != null ? "<br>size: " + d.size : ""))
+    .style("left", (event.pageX + 12) + "px")
+    .style("top", (event.pageY + 12) + "px");
+};
+const mouseleave = () => Tooltip.style("opacity", 0);
 
-
-    // Define the zoom behavior
-    const zoom = d3.zoom()
-    .scaleExtent([1, 100]) // This control how much you can unzoom (x1) and zoom (x100)
-    .on("zoom", function(event) {
-        svg.selectAll('path') // To prevent stroke width from scaling
-           .attr('transform', event.transform);
-        svg.selectAll('circle')
-           .attr('transform', event.transform);
-    });
-
-  // Apply the zoom behavior to the svg
-  svg.call(zoom);
-
-
-    // create a tooltip
-    const Tooltip = d3.select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0.5)
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "2px")
-      .style("border-radius", "5px")
-      .style("padding", "5px")
-      .style("position", "absolute");
-
-    // Three function that change the tooltip when user hover / move / leave a cell
-    const mouseover = function(event, d) { Tooltip.style("opacity", 1) }
-    var mousemove = function(event, d) {
-      Tooltip
-        .html(d.label + "<br>" + "long: " + d.lon + "<br>" + "lat: " + d.lat)
-        .style("left", (event.x) + "px")
-        .style("top", (event.y) + "px")
-    }
-    var mouseleave = function(event, d) { Tooltip.style("opacity", 0) }
-
-  // Add circles:
-  svg
-    .selectAll("myCircles")
-    .data(data.sort((a,b) => +b.size - +a.size))
-    .join("circle")
-      .attr("cx", d => projection([+d.lon, +d.lat])[0])
-      .attr("cy", d => projection([+d.lon, +d.lat])[1])
-      .attr("r", d => size(+d.size))
-      //.style("fill", d => color(d.label))
-      .style("fill", d => d.color)
-      .attr("stroke", d=> {if (d.size>2000) {return "black"} else {return "none"}  })
-      .attr("stroke-width", 1)
-      .attr("fill-opacity", .4)
-      .on("mouseover", mouseover)
-      .on("mousemove", mousemove)
-      .on("mouseleave", mouseleave)
-
-
-
-  // Add title and explanation
-//  svg
-//    .append("text")
-//      .attr("text-anchor", "end")
-//      .style("fill", "black")
-//      .attr("x", width - 10)
-//      .attr("y", height - 30)
-//      .attr("width", 90)
-//      .html("WHERE SURFERS LIVE")
-//      .style("font-size", 14)
-
-
-  // --------------- //
-  // ADD LEGEND //
-  // --------------- //
-
-// Add legend: circles
-// Get the min, mean, and max values of 'size' in the data
-const nExtent = d3.extent(data, d => +d.size);
-const nMean = d3.mean(data, d => +d.size);
-
-// Create an array with these values
-const valuesToShow = [nExtent[0], nMean, nExtent[1]];
-//const valuesToShow = [100,4000,15000]
-const xCircle = 40
-const xLabel = 90
-svg
-  .selectAll("legend")
-  .data(valuesToShow)
+// Markers
+const circles = markerLayer
+  .selectAll("circle")
+  .data(data.slice().sort((a, b) => +b.size - +a.size))
   .join("circle")
-    .attr("cx", xCircle)
-    .attr("cy", d => height - 100)
-    .attr("r", d => size(Math.sqrt(d)))
-    .style("fill", "none")
-    .attr("stroke", "black")
+    .attr("cx", d => projection([+d.lon, +d.lat])[0])
+    .attr("cy", d => projection([+d.lon, +d.lat])[1])
+    .attr("r", d => markerRadius(d))
+    .style("fill", d => d.color)
+    .attr("stroke", d => (+d.size > 2000 ? "var(--text)" : "none"))
+    .attr("stroke-width", 1)
+    .attr("fill-opacity", markerOpacity)
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave);
 
-// Add legend: segments
-svg
-  .selectAll("legend")
-  .data(valuesToShow)
-  .join("line")
-    .attr('x1', d => xCircle + size(Math.sqrt(d)))
-    .attr('x2', xLabel)
-    .attr('y1', (d, i) =>  height - 100 + size(Math.sqrt(d))) // separate segments by 30 pixels
-    .attr('y2', (d, i) =>  height - 100 + size(Math.sqrt(d))) // separate segments by 30 pixels
-    .attr('stroke', 'black')
-    .style('stroke-dasharray', ('2,2'))
+function drawLegend() {
+  legendG.selectAll("*").remove();
+  const show = document.getElementById("showLegendChk");
+  if (show && !show.checked) return;
+  if (!data.length) return;
 
-// Add legend: labels
-svg
-  .selectAll("legend")
-  .data(valuesToShow)
-  .join("text")
-    .attr('x', xLabel)
-    .attr('y', (d, i) =>  height - 100 + size(Math.sqrt(d))) // separate labels by 30 pixels
-    .text(d => d.toFixed(1)) // round the legend value on 1 decimal
-    .style("font-size", 10)
-    .attr('alignment-baseline', 'middle')
+  const nExtent = d3.extent(data, d => +d.size);
+  const nMean = d3.mean(data, d => +d.size);
+  const valuesToShow = [nExtent[0], nMean, nExtent[1]].filter(v => v != null && !isNaN(v));
+  const xCircle = 40;
+  const xLabel = 90;
+  const baseY = height - 40;
 
+  legendG.selectAll("legend-circle")
+    .data(valuesToShow)
+    .join("circle")
+      .attr("class", "legend-stroke")
+      .attr("cx", xCircle)
+      .attr("cy", baseY)
+      .attr("r", d => markerRadius({ size: d }))
+      .style("fill", "none")
+      .attr("stroke", "currentColor")
+      .style("color", "var(--text)");
+
+  legendG.selectAll("legend-line")
+    .data(valuesToShow)
+    .join("line")
+      .attr("class", "legend-stroke")
+      .attr("x1", d => xCircle + markerRadius({ size: d }))
+      .attr("x2", xLabel)
+      .attr("y1", d => baseY + markerRadius({ size: d }))
+      .attr("y2", d => baseY + markerRadius({ size: d }))
+      .attr("stroke", "currentColor")
+      .style("color", "var(--text)")
+      .style("stroke-dasharray", "2,2");
+
+  legendG.selectAll("legend-text")
+    .data(valuesToShow)
+    .join("text")
+      .attr("class", "legend-label")
+      .attr("x", xLabel)
+      .attr("y", d => baseY + markerRadius({ size: d }))
+      .text(d => (+d).toFixed(1))
+      .attr("alignment-baseline", "middle");
+}
+drawLegend();
+
+// —— Controls ————————————————————————————————————————————————
+const themeBtn = document.getElementById("themeBtn");
+if (themeBtn) {
+  themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("light");
+    const isLight = document.body.classList.contains("light");
+    themeBtn.textContent = isLight ? "☀" : "🌙";
+    themeBtn.title = isLight ? "Theme: Light" : "Theme: Dark";
+  });
+}
+
+const resetBtn = document.getElementById("resetZoomBtn");
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
+    svg.transition().duration(400).call(zoom.transform, d3.zoomIdentity);
+  });
+}
+
+const moSlider = document.getElementById("markerOpacitySlider");
+if (moSlider) {
+  document.getElementById("markerOpacityVal").textContent = (+moSlider.value).toFixed(2);
+  moSlider.addEventListener("input", function () {
+    markerOpacity = +this.value;
+    document.getElementById("markerOpacityVal").textContent = markerOpacity.toFixed(2);
+    circles.attr("fill-opacity", markerOpacity);
+  });
+}
+
+const msSlider = document.getElementById("markerSizeSlider");
+if (msSlider) {
+  document.getElementById("markerSizeVal").textContent = (+msSlider.value).toFixed(1);
+  msSlider.addEventListener("input", function () {
+    markerSizeScale = +this.value;
+    document.getElementById("markerSizeVal").textContent = markerSizeScale.toFixed(1);
+    circles.attr("r", d => markerRadius(d));
+    drawLegend();
+  });
+}
+
+const loSlider = document.getElementById("landOpacitySlider");
+if (loSlider) {
+  loSlider.value = landOpacity;
+  document.getElementById("landOpacityVal").textContent = landOpacity.toFixed(2);
+  loSlider.addEventListener("input", function () {
+    landOpacity = +this.value;
+    document.getElementById("landOpacityVal").textContent = landOpacity.toFixed(2);
+    mapLayer.select(".world").selectAll("path").style("opacity", landOpacity);
+  });
+}
+
+const legendChk = document.getElementById("showLegendChk");
+if (legendChk) {
+  legendChk.addEventListener("change", drawLegend);
+}
+
+// Search markers by label
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+if (searchInput && searchResults) {
+  const labeled = data.filter(d => d.label);
+  searchInput.addEventListener("input", function () {
+    const q = this.value.trim().toLowerCase();
+    searchResults.innerHTML = "";
+    if (!q) { searchResults.classList.remove("open"); return; }
+    const matches = labeled.filter(d => String(d.label).toLowerCase().includes(q)).slice(0, 12);
+    if (!matches.length) { searchResults.classList.remove("open"); return; }
+    matches.forEach(d => {
+      const item = document.createElement("div");
+      item.className = "search-item";
+      item.textContent = d.label;
+      item.addEventListener("mousedown", e => {
+        e.preventDefault();
+        searchInput.value = d.label;
+        searchResults.classList.remove("open");
+        focusMarker(d);
+      });
+      searchResults.appendChild(item);
+    });
+    searchResults.classList.add("open");
+  });
+  searchInput.addEventListener("blur", () => {
+    setTimeout(() => searchResults.classList.remove("open"), 150);
+  });
+}
+
+function focusMarker(d) {
+  const [x, y] = projection([+d.lon, +d.lat]);
+  const scale = 4;
+  const t = d3.zoomIdentity
+    .translate(width / 2, height / 2)
+    .scale(scale)
+    .translate(-x, -y);
+  svg.transition().duration(600).call(zoom.transform, t);
+  circles
+    .attr("stroke", c => (c === d ? "var(--accent)" : (+c.size > 2000 ? "var(--text)" : "none")))
+    .attr("stroke-width", c => (c === d ? 3 : 1));
+  setTimeout(() => {
+    circles
+      .attr("stroke", c => (+c.size > 2000 ? "var(--text)" : "none"))
+      .attr("stroke-width", 1);
+  }, 2000);
+}
+
+// Export data
+const exportBtn = document.getElementById("exportDataButton");
+if (exportBtn) {
+  exportBtn.addEventListener("click", () => {
+    try {
+      const payload = { markers: data, countries: data_countries };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "{{ TITLE|replace(' ', '_') }}_data.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to export data.");
+    }
+  });
+}
+
+// Side panel chrome (collapse / drag reorder / stack under top bar)
+function positionSidePanels() {
+  const panels = Array.prototype.slice.call(document.querySelectorAll(".stats-panel"));
+  const topPanel = document.querySelector(".top-panel");
+  let y = 10 + (topPanel ? topPanel.getBoundingClientRect().height + 8 : 0);
+  panels.forEach(panel => {
+    panel.style.top = y + "px";
+    panel.style.left = "10px";
+    panel.style.maxHeight = "calc(100vh - " + Math.round(y + 10) + "px)";
+    y += panel.getBoundingClientRect().height + 8;
+  });
+}
+window.addEventListener("DOMContentLoaded", positionSidePanels);
+window.addEventListener("resize", positionSidePanels);
+if (window.ResizeObserver) {
+  const o = new ResizeObserver(positionSidePanels);
+  document.querySelectorAll(".stats-panel").forEach(p => o.observe(p));
+  document.querySelectorAll(".top-panel").forEach(p => o.observe(p));
+}
+document.querySelectorAll(".stats-panel-title").forEach(title => {
+  title.addEventListener("click", () => {
+    if (title.dataset.justDragged === "1") { title.dataset.justDragged = "0"; return; }
+    title.parentElement.classList.toggle("collapsed");
+    positionSidePanels();
+  });
+});
+(function setupPanelReordering() {
+  document.querySelectorAll(".stats-panel").forEach(panel => {
+    const title = panel.querySelector(".stats-panel-title");
+    if (!title) return;
+    title.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", panel.id);
+      e.dataTransfer.effectAllowed = "move";
+    });
+    title.addEventListener("dragend", () => {
+      title.dataset.justDragged = "1";
+      setTimeout(() => { title.dataset.justDragged = "0"; }, 0);
+    });
+    panel.addEventListener("dragover", e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      panel.classList.add("drag-over");
+    });
+    panel.addEventListener("dragleave", () => panel.classList.remove("drag-over"));
+    panel.addEventListener("drop", e => {
+      e.preventDefault();
+      panel.classList.remove("drag-over");
+      const draggedId = e.dataTransfer.getData("text/plain");
+      if (!draggedId || draggedId === panel.id) return;
+      const draggedEl = document.getElementById(draggedId);
+      if (!draggedEl || !panel.parentNode) return;
+      panel.parentNode.insertBefore(draggedEl, panel);
+      positionSidePanels();
+    });
+  });
+})();
+requestAnimationFrame(positionSidePanels);
 
 {{ SAVE_TO_SVG_SCRIPT }}
-
 </script>
-
+</body>
+</html>

@@ -32,6 +32,8 @@ def set_config(config={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
     # return
     return config
 
@@ -221,10 +223,12 @@ def write_html(json_countries, json_data, config, logger=None):
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
-        'SUPPORT': config['support'],
+        'SUPPORT': config.get('support') or '',
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'show_controls': config.get('show_controls', True),
+        'dark_mode': config.get('dark_mode', True),
     }
 
     try:

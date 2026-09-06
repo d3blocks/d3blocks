@@ -1724,6 +1724,8 @@ class D3Blocks():
                 overwrite=True,
                 notebook=False,
                 save_button: bool = True,
+                show_controls: bool = True,
+                dark_mode: bool = True,
                 return_html: bool = False,
                 reset_properties=True,
                 ):
@@ -1786,6 +1788,12 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        show_controls : bool, (default: True)
+                * True: Show top bar, export panel, and display controls.
+                * False: Chart only (no chrome).
+        dark_mode : bool, (default: True)
+                * True: Dark theme by default.
+                * False: Light theme by default.
         return_html : bool, (default: False)
                 * True: Return html
                 * False: Nothing is returned
@@ -1888,7 +1896,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Heatmap', logger)
         # Store properties
-        self.config = self.chart.set_config(scaler=scaler, fontsize=fontsize, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, stroke=stroke, cmap=cmap, cluster_params=cluster_params, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(scaler=scaler, fontsize=fontsize, fontsize_mouseover=fontsize_mouseover, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, stroke=stroke, cmap=cmap, cluster_params=cluster_params, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])
@@ -3092,7 +3100,7 @@ class D3Blocks():
                       zoom: str = 'click',
                       speed: int = 750,
                       border = {'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5},
-                      font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro'},
+                      font: dict = {'size': 20, 'color': '#000000', 'type': 'Source Serif Pro', 'outlinecolor': '#FFFFFF'},
                       title: str = 'Circlepacking - D3blocks',
                       filepath: str = 'Circlepacking.html',
                       figsize = [900, 1920],
@@ -3280,6 +3288,8 @@ class D3Blocks():
              overwrite: bool = True,
              notebook: bool = False,
              save_button: bool = True,
+             show_controls: bool = True,
+             dark_mode: bool = True,
              return_html: bool = False,
              reset_properties: bool = True,
              ):
@@ -3343,6 +3353,12 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        show_controls : bool, (default: True)
+                * True: Show top bar, export panel, and display controls.
+                * False: Chart only (no chrome).
+        dark_mode : bool, (default: True)
+                * True: Dark theme by default.
+                * False: Light theme by default.
         return_html : bool, (default: False)
                 * True: Return html
                 * False: Nothing is returned
@@ -3427,7 +3443,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Maps', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, cmap=cmap, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, cmap=cmap, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
         # Cleaning of data
         # df = utils.pre_processing(df, logger=logger)
         # Set default label properties
