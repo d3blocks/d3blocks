@@ -1682,6 +1682,8 @@ class D3Blocks():
         """
         # Cleaning
         self._clean(clean_config=False)
+        # Add logo
+        utils.copy_logo(Path("./timeseries") / "d3js")
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
         # Store properties
@@ -1691,8 +1693,6 @@ class D3Blocks():
             self.set_node_properties(df.columns.values, cmap=self.config['cmap'], whitelist=self.config['whitelist'], datetime=self.config['datetime'])
         # Set edge properties
         self.set_edge_properties(df, dt_format=self.config['dt_format'], datetime=self.config['datetime'], logger=logger)
-        # Add logo
-        utils.copy_logo(Path("./timeseries") / "d3js")
         # Create the plot
         html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
         # Display the chart
