@@ -9,6 +9,8 @@ __pycache__/
 # Ignore data
 d3blocks/data
 d3blocks/*/logo.txt
+d3blocks/maps/d3js/geo/*
+d3blocks/maps/d3js/geojson.zip
 
 demo/
 libraries/
