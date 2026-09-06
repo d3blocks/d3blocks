@@ -275,6 +275,13 @@ License     : GPL3
       <input type="range" id="physicsPaddingSlider" min="0" max="20" step="1" value="0">
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Extra gap kept between overlapping points (works whether force-directed points is on now or later).</div>
     </div>
+    <div class="physics-control" style="margin-top:12px">
+      <label for="hideAxesCheckbox" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0">
+        <input type="checkbox" id="hideAxesCheckbox">
+        <span>Hide axes</span>
+      </label>
+      <div style="font-size:11px;opacity:0.6;margin-top:6px">Hide the X and Y axis lines and tick labels.</div>
+    </div>
   </div>
 </div>
 
@@ -1091,6 +1098,13 @@ function renderPoints() {
   }
 }
 function updateAxes(){svg.select(".axis--x").call(xAxis);svg.select(".axis--y").call(yAxis);}
+// Y-axis sits just to the right of the floating left panels (viewport x == SVG x
+// because #scatter-main is fixed to the left edge of the window).
+var yAxisOffsetX = 10;
+function positionYAxis(sideRight) {
+  yAxisOffsetX = Math.max(10, Math.ceil(sideRight || 0) + 8);
+  svg.select(".axis--y").attr("transform", "translate(" + yAxisOffsetX + ",0)");
+}
 
 canvas.addEventListener('mousedown',function(e){
   if(e.button!==0)return;
@@ -1268,6 +1282,8 @@ function positionSidePanels() {
     nodePanelEl.style.left = leftInset + 'px';
     nodePanelEl.style.right = '10px';
   }
+  // Keep y-axis clear of the left panel stack
+  if (typeof positionYAxis === 'function') positionYAxis(sideRight);
 }
 window.addEventListener('resize', function() {
   positionSidePanels();
@@ -1585,14 +1601,40 @@ function renderPosFor(i, px, py) {
 
 (function wirePhysicsControls() {
   var checkbox = document.getElementById('physicsForceCheckbox');
+  var paddingSlider = document.getElementById('physicsPaddingSlider');
+  var paddingVal = document.getElementById('physicsPaddingVal');
+  var jitterSlider = document.getElementById('jitterSlider');
+
+  function setForceLinkedControls(forceOn) {
+    // Force-directed: collision spacing is the spacing tool; jitter is N/A
+    if (jitterSlider) {
+      jitterSlider.disabled = !!forceOn;
+      jitterSlider.title = forceOn
+        ? 'Jitter is disabled while force-directed points is on'
+        : '';
+    }
+    if (paddingSlider) {
+      paddingSlider.disabled = !forceOn;
+      paddingSlider.title = forceOn
+        ? ''
+        : 'Enable force-directed points to adjust collision spacing';
+    }
+  }
+
+  // Initial: force off → jitter on, collision spacing off
+  setForceLinkedControls(false);
+
   if (!checkbox) return;
   if (!physicsSupported) {
     checkbox.disabled = true;
     checkbox.title = 'Force simulation is unavailable (d3-force not loaded).';
+    setForceLinkedControls(false);
     return;
   }
   checkbox.addEventListener('change', function(e) {
-    if (e.target.checked) {
+    var on = !!e.target.checked;
+    setForceLinkedControls(on);
+    if (on) {
       physicsEnabled = true;
       physicsSettling = false;
       startPhysicsSimulation(false);
@@ -1603,13 +1645,24 @@ function renderPosFor(i, px, py) {
     }
   });
 
-  var paddingSlider = document.getElementById('physicsPaddingSlider');
-  var paddingVal = document.getElementById('physicsPaddingVal');
   if (paddingSlider) paddingSlider.addEventListener('input', function(e) {
+    if (paddingSlider.disabled) return;
     physicsCollidePadding = parseFloat(e.target.value) || 0;
     if (paddingVal) paddingVal.textContent = physicsCollidePadding + 'px';
     refreshPhysicsCollisionRadii();
   });
+})();
+
+(function wireHideAxesCheckbox() {
+  var hideAxesChk = document.getElementById('hideAxesCheckbox');
+  if (!hideAxesChk) return;
+  function applyAxesVisibility() {
+    var hide = !!hideAxesChk.checked;
+    svg.select('.axis--x').style('display', hide ? 'none' : null);
+    svg.select('.axis--y').style('display', hide ? 'none' : null);
+  }
+  hideAxesChk.addEventListener('change', applyAxesVisibility);
+  applyAxesVisibility();
 })();
 function transformForIndex(d,xi,yi,scale){scale=typeof scale==='number'?scale:1;return 'translate('+x(d[xi])+','+y(d[yi])+') scale('+scale+')';}
 function symbolPathForRadius(r,shapeName){var s=d3.symbol().type(SHAPE_MAP[shapeName]||d3.symbolCircle).size(Math.PI*r*r);return s();}
