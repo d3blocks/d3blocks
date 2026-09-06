@@ -4019,7 +4019,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph']):
+        if np.isin(chart, ['RadialGraph', 'Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))
