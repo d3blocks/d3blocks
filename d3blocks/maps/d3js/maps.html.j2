@@ -58,6 +58,10 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
       <label for="landOpacitySlider">Land opacity <span id="landOpacityVal">—</span></label>
       <input type="range" id="landOpacitySlider" min="0.05" max="1" step="0.05" value="0.60" />
     </div>
+    <div class="physics-control">
+      <label for="borderWidthSlider">Border width <span id="borderWidthVal">—</span></label>
+      <input type="range" id="borderWidthSlider" min="0" max="5" step="0.1" value="0.5" />
+    </div>
     <label><input type="checkbox" id="showLegendChk" checked> Show size legend</label>
     <label><input type="checkbox" id="countryHoverChk" checked> Country hover (name + border)</label>
   </div>
@@ -106,7 +110,9 @@ data_countries.forEach(item => {
 });
 
 const worldOpacityDefault = country_opacity["World"] != null ? +country_opacity["World"] : 0.6;
+const worldLinewidthDefault = country_linewidth["World"] != null ? +country_linewidth["World"] : 0.5;
 let landOpacity = worldOpacityDefault;
+let borderWidth = worldLinewidthDefault;
 let markerOpacity = 0.4;
 let markerSizeScale = 1.0;
 let countryHoverEnabled = true;
@@ -128,9 +134,10 @@ function markerRadius(d) {
 }
 
 const worldStrokeDefault = country_stroke["World"] || "#5A5A5A";
-const worldLinewidthDefault = country_linewidth["World"] != null ? +country_linewidth["World"] : 0.5;
 const highlightStroke = "var(--accent, #5b9bd5)";
-const highlightWidth = 2.5;
+function hoverBorderWidth() {
+  return Math.max(borderWidth * 2.5, borderWidth + 1.5, 2);
+}
 
 // World base (all countries — hover targets)
 const worldPaths = mapLayer.append("g")
@@ -142,7 +149,7 @@ const worldPaths = mapLayer.append("g")
     .attr("fill", country_color["World"] || "#D3D3D3")
     .attr("d", pathGenerator)
     .style("stroke", worldStrokeDefault)
-    .style("stroke-width", worldLinewidthDefault)
+    .style("stroke-width", borderWidth)
     .style("opacity", landOpacity)
     .style("stroke-dasharray", country_line["World"] === "dashed" ? "5" : "0")
     .style("cursor", "default");
@@ -183,14 +190,32 @@ function countryName(d) {
   return (d && d.properties && d.properties.name) ? d.properties.name : "";
 }
 
+function baseBorderWidth(name) {
+  // Scale custom country borders relative to the World default when the slider moves
+  if (name && country_linewidth[name] != null && name !== "World" && worldLinewidthDefault > 0) {
+    return borderWidth * (+country_linewidth[name] / worldLinewidthDefault);
+  }
+  return borderWidth;
+}
+
 function restoreCountryStroke(sel) {
   sel.each(function (d) {
     const name = countryName(d);
     const isCustom = name && country_color[name] != null && name !== "World";
     d3.select(this)
       .style("stroke", isCustom ? (country_stroke[name] || worldStrokeDefault) : worldStrokeDefault)
-      .style("stroke-width", isCustom ? (country_linewidth[name] != null ? country_linewidth[name] : worldLinewidthDefault) : worldLinewidthDefault)
+      .style("stroke-width", baseBorderWidth(name))
       .classed("country-hover", false);
+  });
+}
+
+function applyBorderWidth() {
+  worldPaths.style("stroke-width", function (d) {
+    return this.classList.contains("country-hover") ? hoverBorderWidth() : borderWidth;
+  });
+  customPaths.style("stroke-width", function (d) {
+    const name = countryName(d);
+    return this.classList.contains("country-hover") ? hoverBorderWidth() : baseBorderWidth(name);
   });
 }
 
@@ -200,7 +225,7 @@ function countryMouseover(event, d) {
   if (!name) return;
   d3.select(this)
     .style("stroke", highlightStroke)
-    .style("stroke-width", highlightWidth)
+    .style("stroke-width", hoverBorderWidth())
     .classed("country-hover", true)
     .raise();
   Tooltip.style("opacity", 1);
@@ -355,6 +380,17 @@ if (loSlider) {
     landOpacity = +this.value;
     document.getElementById("landOpacityVal").textContent = landOpacity.toFixed(2);
     mapLayer.select(".world").selectAll("path").style("opacity", landOpacity);
+  });
+}
+
+const bwSlider = document.getElementById("borderWidthSlider");
+if (bwSlider) {
+  bwSlider.value = borderWidth;
+  document.getElementById("borderWidthVal").textContent = borderWidth.toFixed(1);
+  bwSlider.addEventListener("input", function () {
+    borderWidth = +this.value;
+    document.getElementById("borderWidthVal").textContent = borderWidth.toFixed(1);
+    applyBorderWidth();
   });
 }
 
