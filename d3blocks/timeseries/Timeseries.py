@@ -10,6 +10,7 @@ import colourmap
 from ismember import ismember
 import numpy as np
 import pandas as pd
+import os
 from jinja2 import Environment, PackageLoader
 try:
     from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script
@@ -262,11 +263,10 @@ def write_html(X, config, logger=None):
         'darkMode': 'true' if config.get('dark_mode', True) else 'false',
     }
 
-    try:
-        jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
-    except:
-        jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.timeseries', package_path='d3js'))
-
+    # Use FileSystemLoader pointed at the timeseries/d3js directory to ensure templates and includes (e.g. logo.txt) are found
+    from jinja2 import FileSystemLoader
+    d3js_path = os.path.abspath(os.path.join(config['curpath'], 'timeseries', 'd3js'))
+    jinja_env = Environment(loader=FileSystemLoader(d3js_path))
     index_template = jinja_env.get_template('timeseries.html.j2')
     # index_file = Path(config['filepath'])
     # # index_file.write_text(index_template.render(content))

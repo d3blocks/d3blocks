@@ -2491,14 +2491,14 @@ class D3Blocks():
         df = df.copy()
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
+        # Add logo
+        utils.copy_logo(Path("./elasticgraph") / "d3js")
         # Initialize network d3-elasticgraph-network
         self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
-        # Add logo
-        utils.copy_logo(Path("./elasticgraph") / "d3js")
         # Open the webbrowser
         html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
         # Create the plot
@@ -3570,11 +3570,15 @@ class D3Blocks():
 
     def display(self, html):
         """Display."""
-        if self.config['notebook']:
-            import IPython
+        if self.config.get('notebook'):
+            try:
+                import IPython
+            except Exception:
+                logger.warning('IPython is not installed; cannot display in notebook. Returning without displaying.')
+                return None
             logger.info('Display in notebook using IPython.')
             IPython.display.display(IPython.display.HTML(html))
-        elif self.config['filepath'] is not None:
+        elif self.config.get('filepath') is not None:
             # Open the webbrowser
             self.open_browser(logger=logger)
         else:

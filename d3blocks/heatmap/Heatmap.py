@@ -28,7 +28,7 @@ def set_config(config={}, **kwargs):
     config['figsize'] = kwargs.get('figsize', [720, 720])
     config['showfig'] = kwargs.get('showfig', True)
     config['overwrite'] = kwargs.get('overwrite', True)
-    config['color'] = kwargs.get('color', 'cluster')
+    config['color'] = kwargs.get('color', None)
     config['description'] = kwargs.get('description', '')
     config['stroke'] = kwargs.get('stroke', 'red')
     config['notebook'] = kwargs.get('notebook', False)
@@ -168,12 +168,16 @@ def set_colors(df, **kwargs):
     node_properties['classlabel'] = [0] * node_properties.shape[0]
     node_properties['color'] = '#000000'
 
-    if isinstance(config['color'], str) and config['color']=='cluster':
+    if isinstance(config.get('color'), str) and config.get('color')=='cluster':
         # Cluster the nodes
         try:
             from clusteval import clusteval
-        except:
-            raise Exception('clusteval needs to be pip installed first. Tip: pip install clusteval')
+        except Exception:
+            if logger is not None:
+                logger.warning('clusteval is not installed; skipping clustering and using default colors. Tip: pip install clusteval')
+            else:
+                print('Warning: clusteval is not installed; skipping clustering and using default colors. Tip: pip install clusteval')
+            return node_properties
         # Initialize
         plot_param = config['cluster_params'].pop('plot', False)
         ce = clusteval(**config['cluster_params'])

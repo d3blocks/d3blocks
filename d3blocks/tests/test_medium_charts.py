@@ -339,3 +339,22 @@ def test_cancer_dataset():
         print(f"❌ Cancer dataset test failed: {e}")
         print(f"🔍 Error details: {type(e).__name__}: {str(e)}")
         assert False
+
+
+if __name__ == "__main__":
+    # You can run individual tests or all tests
+    test_cancer_dataset()
+    test_movingbubbles()
+    test_timeseries()
+    test_circlepacking()
+    test_treemap()
+    test_tree()
+    test_heatmap()
+    test_chord()
+    test_sankey()
+    test_elasticgraph()
+    test_d3graph_customization()
+    test_d3graph_basic()
+    
+    
+    

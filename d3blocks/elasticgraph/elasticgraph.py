@@ -366,10 +366,10 @@ class Elasticgraph:
             'save_button': cfg.get('save_button', True),
         }
 
-        try:
-            jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
-        except:
-            jinja_env = Environment(loader=PackageLoader(package_name='d3blocks.elasticgraph', package_path='d3js'))
+        # Use FileSystemLoader pointed at the elasticgraph/d3js directory to ensure templates and includes (e.g. logo.txt) are found
+        from jinja2 import FileSystemLoader
+        d3js_path = os.path.abspath(os.path.join(cfg['curpath'], 'd3js'))
+        jinja_env = Environment(loader=FileSystemLoader(d3js_path))
         index_template = jinja_env.get_template('elasticgraph.html.j2')
         html = index_template.render(content)
 
