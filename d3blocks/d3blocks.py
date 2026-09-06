@@ -3273,17 +3273,21 @@ class D3Blocks():
             return html
 
     def maps(self,
-             df,
+             df=None,
              size=10,
              color='#0981D1',
              opacity=0.8,
              label='',
-             countries = {'World': {'color':'#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
-                          'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5}},
+             countries=None,
+             country_names=None,
+             country_colors=None,
+             country_opacity=None,
+             country_values=None,
+             map_name: str = 'world',
              cmap='Set2',
              title: str = 'Maps - D3blocks',
              filepath: str = 'maps.html',
-             figsize = None,
+             figsize=None,
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
@@ -3295,147 +3299,85 @@ class D3Blocks():
              ):
         """Maps block.
 
-        The Maps chart is a visualization to plot the World and color and mark countries together with circles for highlighs.
-        For demonstration purposes, the "surfspots" can be used.
-        The javascript code is forked from Mike Bostock and then Pythonized.
+        Interactive world map with optional country coloring (choropleth) and
+        lon/lat markers. Country coloring follows the same idea as the worldmap
+        package: pass names (fuzzy-matched to the map) plus optional colors,
+        opacity, or numeric values.
 
         Parameters
         ----------
-        df : pd.DataFrame()
-            Input data containing the following columns:
-                * 'lon', 'lat', 'label', 'size', 'opacity'
-        size : str (default: 10)
-            Size of the nodes:
-                * 10 : Same size for all scatter points
-                * [10, 4, 30, ..]
-        color : str (default: '#0981D1')
-            Hex color of the scatter points:
-                * '#0981D1': Same color for all scatter points
-                * ['Netherlands', 'Australia', 'Austrialia', ..]
-                * ['#000FFF', '#000000', '#000000', ..]
-        opacity : str (default: 0.8)
-            Opacity of the scatter points:
-                * 0.8 : Same opacity for all scatter points
-                * [0.8, 0.6, ..]
-        label : str (default: '')
-            Label of the scatter points:
-                * '' : Same label for all scatter points
-                * ['Amsterdam', 'New York', ..]
-        countries : dict.
-            border properties of the countries. The world are the properties of the entire map. Each country can be changed accordingly.
-                * {'World': {'color':'#D3D3D3', 'opacity': 0.3, 'line': 'none', 'linewidth': 1}},
-                * color: color for the country
-                * opacity: opacity of the country
-                * line: ['dashed', 'none'], line of the country
-                * linewidth: width of the line
-        title : String, (default: None)
-            Title of the figure.
-                * 'Circlepacking'
-        filepath : String, (Default: user temp directory)
-                * File path to save the output.
-                * Temporarily path: 'd3blocks.html'
-                * Relative path: './d3blocks.html'
-                * Absolute path: 'c://temp//d3blocks.html'
-                * None: Return HTML
-        figsize : tuple
-            Size of the figure in the browser, [width, height].
-                * [1000, 1200]
-                * None or [None, None]: Use the screen resolution.
-        showfig : bool, (default: True)
-                * True: Open browser-window.
-                * False: Do not open browser-window.
-        overwrite : bool, (default: True)
-                * True: Overwrite the html in the destination directory.
-                * False: Do not overwrite destination file but show warning instead.
-        notebook : bool
-                * True: Use IPython to show chart in notebook.
-                * False: Do not use IPython.
+        df : pd.DataFrame or None
+            Marker data with columns ``lon``, ``lat``, and optionally
+            ``label``, ``size``, ``opacity``, ``color``.
+            None or empty → country-only map (no markers).
+        size, color, opacity, label :
+            Marker defaults (see previous docs). Used when building node properties.
+        countries : dict or None
+            Explicit country styling::
+                {'World': {'color': '#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
+                 'Netherlands': {'color': '#000FFF', 'opacity': 0.8}}
+            Ignored when ``country_names`` is provided.
+        country_names : list of str or None
+            Countries to color (worldmap-style). Fuzzy-matched to GeoJSON names.
+        country_colors : list of str or None
+            Hex colors or category labels for each name (via ``cmap``).
+        country_opacity : float, list, or None
+            Opacity per country. If None and ``country_values`` is set, opacity
+            is scaled from the values.
+        country_values : list of float or None
+            Numeric values → sequential colors/opacity.
+        map_name : str, (default: 'world')
+            Map geometry. Currently only ``'world'``; regional maps (e.g.
+            ``'netherlands'``) are planned next.
+        cmap : str
+            Colormap for markers and/or country colors.
+        title, filepath, figsize, showfig, overwrite, notebook :
+            Standard figure options.
         save_button : bool, (default: True)
-                * True: Save button is shown in the HTML to save the image in svg.
-                * False: No save button is shown in the HTML.
+            Show Save (SVG) control.
         show_controls : bool, (default: True)
-                * True: Show top bar, export panel, and display controls.
-                * False: Chart only (no chrome).
+            Top bar + side panels.
         dark_mode : bool, (default: True)
-                * True: Dark theme by default.
-                * False: Light theme by default.
+            Default theme.
         return_html : bool, (default: False)
-                * True: Return html
-                * False: Nothing is returned
+            Return HTML string.
         reset_properties : bool, (default: True)
-                * True: Reset the node_properties at each run.
-                * False: Use the d3.node_properties()
+            Rebuild node properties each call.
 
         Returns
         -------
-        d3.node_properties: DataFrame of dictionary
-             Contains properties of the unique input label/nodes/samples.
-
-        d3.edge_properties: DataFrame of dictionary
-             Contains properties of the unique input edges/links.
-
-        d3.config: dictionary
-             Contains configuration properties.
+        HTML string if return_html else None.
+        Side effects: sets ``node_properties``, ``edge_properties``, ``config``.
 
         Examples
         --------
-        >>> # Load d3blocks
         >>> from d3blocks import D3Blocks
-        >>> #
-        >>> # Initialize
         >>> d3 = D3Blocks()
-        >>> #
-        >>> # Load example data
+        >>> # Markers only
         >>> df = d3.import_example('surfspots')
-        >>> #
-        >>> # Plot
         >>> d3.maps(df)
-        >>> #
-
-        Examples
-        --------
-        >>> # Load d3blocks
-        >>> from d3blocks import D3Blocks
-        >>> #
-        >>> # Initialize
-        >>> d3 = D3Blocks()
-        >>> #
-        >>> # Load example data
-        >>> df = d3.import_example('surfspots')
-        >>> #
-        >>> # Plot
-        >>> d3.maps(df, color=df['label'].values, cmap='Set2')
-        >>> #
-        >>> html = d3.maps(df, color=df['label'].values, countries = {'World': {'color':'#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
-        >>>                                                                 'Netherlands': {'color': '#000FFF', 'opacity': 0.5, 'line': 'none', 'linewidth': 1},
-        >>>                                                                 'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
-        >>>                                                                 'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
-        >>>                                                                 })
-
-        Examples
-        --------
-        >>> # Load library
-        >>> from d3blocks import D3Blocks
-        >>> #
-        >>> # Initialize
+        >>>
+        >>> # Country coloring (worldmap-style) without markers
+        >>> d3.maps(country_names=['Netherlands', 'France', 'Germany'], cmap='Set1')
+        >>>
+        >>> # Countries + values (opacity scaled) + markers
+        >>> d3.maps(df,
+        ...         country_names=['Netherlands', 'Australia', 'USA'],
+        ...         country_values=[10, 5, 20],
+        ...         cmap='Blues')
+        >>>
+        >>> # Explicit countries dict
+        >>> d3.maps(df, countries={
+        ...     'World': {'color': '#D3D3D3', 'opacity': 0.4, 'line': 'none', 'linewidth': 0.1},
+        ...     'Netherlands': {'color': '#000FFF', 'opacity': 0.5},
+        ...     'France': {'color': '#FFA500', 'opacity': 1, 'line': 'dashed', 'linewidth': 2},
+        ... })
+        >>>
+        >>> # Stepwise workflow
         >>> d3 = D3Blocks(chart='maps', frame=False)
-        >>> #
-        >>> # Import example
-        >>> df = d3.import_example('surfspots', overwrite=True)
-        >>> #
-        >>> # Set node properties
         >>> d3.set_node_properties(df)
-        >>> d3.node_properties
-        >>> #
-        >>> # Set edge properties
-        >>> d3.set_edge_properties({'Australia': {'color': '#008000', 'opacity': 0.3, 'line': 'dashed', 'linewidth': 5},
-        >>>                         'Netherlands': {'color': '#000FFF', 'line': 'dashed'},
-        >>>                         })
-        >>> d3.edge_properties
-        >>> #
-        >>> # Show chart
+        >>> d3.set_edge_properties(country_names=['Netherlands', 'Belgium'], cmap='Set2')
         >>> d3.show()
-        >>> #
 
         """
         # Cleaning
@@ -3443,18 +3385,37 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Maps', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, cmap=cmap, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
-        # Cleaning of data
-        # df = utils.pre_processing(df, logger=logger)
-        # Set default label properties
+        self.config = self.chart.set_config(
+            config=self.config, cmap=cmap, filepath=filepath, title=title,
+            showfig=showfig, overwrite=overwrite, figsize=figsize,
+            reset_properties=reset_properties, notebook=notebook,
+            save_button=save_button, show_controls=show_controls,
+            dark_mode=dark_mode, map_name=map_name, logger=logger,
+        )
+        # Markers (optional)
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], size=size, color=color, opacity=opacity, label=label)
-        # Set edge properties
-        self.set_edge_properties(countries)
+        # Countries: worldmap-style names take precedence over the countries dict
+        if country_names is not None:
+            self.set_edge_properties(
+                country_names=country_names,
+                country_colors=country_colors,
+                country_opacity=country_opacity,
+                country_values=country_values,
+                cmap=self.config['cmap'],
+                map_name=map_name,
+            )
+        else:
+            if countries is None:
+                countries = {
+                    'World': {'color': '#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
+                }
+            self.set_edge_properties(countries)
         # Create the plot
         html = self.show()
         if return_html:
             return html
+
 
     def set_edge_properties(self, *args, **kwargs):
         """Set edge properties.
