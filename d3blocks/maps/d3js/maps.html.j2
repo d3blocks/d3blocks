@@ -12,63 +12,15 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
 <title>{{ TITLE }}</title>
 <script>{% include "d3.v6.min.js" %}</script>
 {{ SUPPORT }}
-<style>
-{% include "maps.css" %}
-
-/* Maps-specific */
-#maps-container {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-body.has-controls #maps-container {
-  top: 64px;
-}
-#maps-container svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.tooltip {
-  opacity: 0;
-  background: var(--tooltip-bg);
-  color: var(--tooltip-text);
-  border: 1px solid var(--panel-border);
-  border-radius: 6px;
-  padding: 6px 10px;
-  position: absolute;
-  pointer-events: none;
-  font-size: 12px;
-  z-index: 2000;
-  box-shadow: var(--panel-shadow);
-  transition: opacity 0.15s;
-}
-.logo-text {
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.02em;
-  color: var(--text);
-  text-decoration: none;
-}
-.logo-text:hover { color: var(--accent); }
-#legendG .legend-label {
-  fill: var(--text);
-  font-size: 10px;
-}
-#legendG .legend-stroke {
-  stroke: var(--text);
-}
-</style>
+<style>{% include "maps.css" %}</style>
 </head>
 <body class="{% if dark_mode == false or dark_mode == 'false' %}light {% endif %}{% if show_controls == false or show_controls == 'false' %}{% else %}has-controls{% endif %}">
 
 {% if show_controls != false and show_controls != 'false' %}
 <div class="top-panel" role="toolbar" aria-label="Top controls">
-  <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
       <img src="{% include 'logo.txt' %}" alt="D3Blocks" style="width:150px;height:auto;display:block">
     </a>
-  </div>
   <div class="top-panel-center">
     <div class="search-wrap top-search">
       <input class="search-input" id="searchInput" type="search" placeholder="Find a location…" autocomplete="off" spellcheck="false" />

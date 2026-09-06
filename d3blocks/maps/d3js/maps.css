@@ -284,3 +284,40 @@ body.has-controls #maps-container {
 }
 .search-item:last-child { border-bottom: none; }
 .search-item:hover, .search-item.active { background: var(--btn-bg); }
+
+/* Tooltip */
+.tooltip {
+  opacity: 0;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  position: absolute;
+  pointer-events: none;
+  font-size: 12px;
+  z-index: 2000;
+  box-shadow: var(--panel-shadow);
+  transition: opacity 0.15s;
+}
+
+/* Logo text (top bar) */
+.logo-text {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo-text:hover { color: var(--accent); }
+
+/* Size legend */
+#legendG .legend-label {
+  fill: var(--text);
+  font-size: 10px;
+}
+#legendG .legend-stroke {
+  stroke: var(--text);
+}
+
+
