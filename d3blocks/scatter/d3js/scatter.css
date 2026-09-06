@@ -681,6 +681,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .top-panel .top-panel-right {
   pointer-events: auto;
@@ -703,5 +705,5 @@
 }
 .selection-count:hover { background: var(--btn-bg-active); }
 #selectModeBtn { white-space: nowrap; }
-.top-search { width: 440px; max-width: 60vw; }
+.top-search { width: 360px; max-width: 40vw; }
 .top-search .search-input { width: 100%; }

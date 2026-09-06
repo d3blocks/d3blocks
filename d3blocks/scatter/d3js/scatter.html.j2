@@ -105,41 +105,37 @@ License     : GPL3
     #my_dataviz {
       display: none;
     }
-    /* Coordinate-mode radios: fixed under the x-axis (bottom of plot).
-       Must sit above the canvas (z-index 3) so clicks register. */
+    /* Coordinate-mode radios in the top bar, to the right of search */
     #coordModeForm {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 6px;
-      z-index: 25;
       margin: 0;
       padding: 0;
-      text-align: center;
-      pointer-events: none; /* only the inner control is clickable */
+      pointer-events: auto;
+      flex-shrink: 0;
     }
     #coordModeForm .coord-mode-inner {
-      display: inline-block;
-      pointer-events: auto;
-      background: var(--panel-bg, rgba(34,34,34,0.85));
-      border: 1px solid var(--panel-border, rgba(255,255,255,0.12));
-      border-radius: 8px;
-      padding: 6px 14px;
-      box-shadow: var(--panel-shadow, 0 2px 8px rgba(0,0,0,0.25));
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2px 4px;
+      background: var(--btn-bg, rgba(255,255,255,0.08));
+      border: 1px solid var(--btn-border, rgba(255,255,255,0.15));
+      border-radius: 6px;
+      padding: 4px 10px;
       font-family: "Helvetica", Arial, sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text, #eee);
+      white-space: nowrap;
     }
     #coordModeForm label {
       cursor: pointer;
-      margin: 0 6px;
+      margin: 0 4px 0 2px;
       color: var(--text, #eee);
     }
-    body.light #coordModeForm .coord-mode-inner {
-      background: rgba(255,255,255,0.92);
-      color: #222;
+    #coordModeForm input[type="radio"] {
+      margin: 0;
+      vertical-align: middle;
+      cursor: pointer;
     }
-    body.light #coordModeForm label { color: #222; }
     </style>
 
 </head>
@@ -160,6 +156,14 @@ License     : GPL3
         <input class="search-input" id="searchInput" type="search" placeholder="Find a point…" autocomplete="off" spellcheck="false" />
         <div class="search-results" id="searchResults"></div>
         </div>
+        <form id="coordModeForm" title="Coordinate set">
+            <div class="coord-mode-inner">
+                <input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton4" style="{{ RADIO_VISIBLE4 }}"> <label> {{ RADIO_LABEL4 }} </label>
+            </div>
+        </form>
     </div>
 
   <div class="top-panel-right">
@@ -363,16 +367,6 @@ License     : GPL3
 <script>
 	{% include "d3.v4.min.js" %}
 </script>
-
-
-<form id="coordModeForm">
-    <div class="coord-mode-inner">
-        	<input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
-        	<input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
-        	<input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
-        	<input type="radio" name="radio_states" value="radiobutton4" style="{{ RADIO_VISIBLE4 }}"> <label> {{ RADIO_LABEL4 }} </label>
-    </div>
-</form>
 
 
 <!-- Create a div where the graph will take place -->
