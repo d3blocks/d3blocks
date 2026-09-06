@@ -117,12 +117,42 @@ let markerOpacity = 0.4;
 let markerSizeScale = 1.0;
 let countryHoverEnabled = true;
 
+// Base projection — zoom updates scale/translate (not an SVG group transform)
+const baseScale = Math.min(width, height) / 5;
+const baseTranslate = [width / 2, height / 2];
+
 const projection = d3.geoMercator()
   .center([0, 20])
-  .scale(Math.min(width, height) / 5)
-  .translate([width / 2, height / 2]);
+  .scale(baseScale)
+  .translate(baseTranslate);
 
 const pathGenerator = d3.geoPath().projection(projection);
+
+function projectPoint(lon, lat) {
+  const p = projection([+lon, +lat]);
+  return p || [null, null];
+}
+
+function applyZoomTransform(t) {
+  projection
+    .scale(baseScale * t.k)
+    .translate([baseTranslate[0] * t.k + t.x, baseTranslate[1] * t.k + t.y]);
+  redrawMap();
+}
+
+function redrawMap() {
+  if (typeof worldPaths !== "undefined") {
+    worldPaths.attr("d", pathGenerator);
+  }
+  if (typeof customPaths !== "undefined") {
+    customPaths.attr("d", pathGenerator);
+  }
+  if (typeof circles !== "undefined") {
+    circles
+      .attr("cx", d => projectPoint(d.lon, d.lat)[0])
+      .attr("cy", d => projectPoint(d.lon, d.lat)[1]);
+  }
+}
 
 const valueExtent = d3.extent(data, d => +d.size);
 const sizeScale = d3.scaleSqrt()
@@ -172,13 +202,11 @@ const customPaths = mapLayer.append("g")
     .attr("stroke-dasharray", d => country_line[d.properties.name] === "dashed" ? "5" : "0")
     .style("cursor", "default");
 
-// Zoom
+// Zoom: update projection (paths/markers redraw in geographic space).
+// Borders and marker radii stay in screen pixels — not scaled like a PNG.
 const zoom = d3.zoom()
-  .scaleExtent([0.5, 100])
-  .on("zoom", (event) => {
-    mapLayer.attr("transform", event.transform);
-    markerLayer.attr("transform", event.transform);
-  });
+  .scaleExtent([0.5, 80])
+  .on("zoom", (event) => applyZoomTransform(event.transform));
 svg.call(zoom);
 
 // Tooltip
@@ -268,14 +296,14 @@ const mousemove = (event, d) => {
 };
 const mouseleave = () => Tooltip.style("opacity", 0);
 
-// Markers
+// Markers (radius is screen pixels; position follows projection on zoom)
 const circles = markerLayer
   .selectAll("circle")
   .data(data.slice().sort((a, b) => +b.size - +a.size))
   .join("circle")
     .attr("class", "marker-circle")
-    .attr("cx", d => projection([+d.lon, +d.lat])[0])
-    .attr("cy", d => projection([+d.lon, +d.lat])[1])
+    .attr("cx", d => projectPoint(d.lon, d.lat)[0])
+    .attr("cy", d => projectPoint(d.lon, d.lat)[1])
     .attr("r", d => markerRadius(d))
     .style("fill", d => d.color)
     .attr("stroke", d => (+d.size > 2000 ? "var(--text)" : "none"))
@@ -350,6 +378,8 @@ if (resetBtn) {
     svg.transition().duration(400).call(zoom.transform, d3.zoomIdentity);
   });
 }
+// Identity transform → base projection (also runs once so state is consistent)
+applyZoomTransform(d3.zoomIdentity);
 
 const moSlider = document.getElementById("markerOpacitySlider");
 if (moSlider) {
@@ -450,12 +480,17 @@ if (searchInput && searchResults) {
 }
 
 function focusMarker(d) {
-  const [x, y] = projection([+d.lon, +d.lat]);
-  const scale = 4;
+  // Project at base (k=1) so the zoom transform math matches applyZoomTransform
+  const baseProj = d3.geoMercator()
+    .center([0, 20])
+    .scale(baseScale)
+    .translate(baseTranslate);
+  const p = baseProj([+d.lon, +d.lat]);
+  if (!p) return;
+  const k = 8;
   const t = d3.zoomIdentity
-    .translate(width / 2, height / 2)
-    .scale(scale)
-    .translate(-x, -y);
+    .translate(width / 2 - k * p[0], height / 2 - k * p[1])
+    .scale(k);
   svg.transition().duration(600).call(zoom.transform, t);
   circles
     .attr("stroke", c => (c === d ? "var(--accent)" : (+c.size > 2000 ? "var(--text)" : "none")))
