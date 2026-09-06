@@ -28,6 +28,7 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
     </div>
   </div>
   <div class="top-panel-right">
+    <button class="button-switch" id="backWorldBtn" type="button" title="Back to world map" style="display:none">← World</button>
     <button class="button-switch" id="resetZoomBtn" type="button" title="Reset zoom">Reset</button>
     <button class="button-switch" id="themeBtn" type="button" title="{% if dark_mode == false or dark_mode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if dark_mode == false or dark_mode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
@@ -95,8 +96,11 @@ const mapLayer = svg.append("g").attr("class", "map-layer");
 const markerLayer = svg.append("g").attr("class", "marker-layer");
 const legendG = svg.append("g").attr("id", "legendG");
 
-const dataGeoAll = {{ GEOJSON }};
-const mapName = "{{ MAP_NAME }}";
+let dataGeoAll = {{ GEOJSON }};
+const worldGeoAll = {{ WORLD_GEOJSON }};
+let mapName = "{{ MAP_NAME }}";
+const drillIndex = {{ DRILL_INDEX }};
+const geoFetchBase = "{{ GEO_FETCH_BASE }}";
 const data = {{ json_data }};
 const data_countries = {{ json_countries }};
 
@@ -253,7 +257,109 @@ function bindCountryHover(sel) {
     .on("mouseover", countryMouseover)
     .on("mousemove", countryMousemove)
     .on("mouseleave", countryMouseleave)
-    .style("cursor", countryHoverEnabled ? "pointer" : "default");
+    .on("click", countryClick)
+    .style("cursor", countryHoverEnabled || mapName === "world" ? "pointer" : "default");
+}
+
+function updateChromeForMapLevel() {
+  const backBtn = document.getElementById("backWorldBtn");
+  if (backBtn) {
+    backBtn.style.display = mapName === "world" ? "none" : "inline-block";
+  }
+  const overseasLabel = document.getElementById("overseasLabel");
+  if (overseasLabel) {
+    overseasLabel.style.display = mapName === "world" ? "none" : "";
+  }
+  const hint = document.getElementById("hint");
+  if (hint) {
+    hint.textContent = mapName === "world"
+      ? "scroll to zoom · drag to pan · click a country to open its regions · hover for name"
+      : "scroll to zoom · drag to pan · hover a region · use ← World to go back";
+  }
+}
+
+function resolveDrillMapKey(countryName) {
+  if (!countryName) return null;
+  if (drillIndex && drillIndex[countryName]) return drillIndex[countryName];
+  // fallback: slug match
+  const slug = String(countryName).trim().toLowerCase().replace(/\s+/g, "_");
+  if (drillIndex) {
+    for (const k of Object.keys(drillIndex)) {
+      if (String(drillIndex[k]).replace(/\s+/g, "_") === slug) return drillIndex[k];
+      if (k.toLowerCase() === countryName.toLowerCase()) return drillIndex[k];
+    }
+  }
+  return null;
+}
+
+let drillLoading = false;
+function countryClick(event, d) {
+  if (mapName !== "world") return;
+  if (event && event.defaultPrevented) return;
+  const name = countryName(d);
+  const key = resolveDrillMapKey(name);
+  if (!key || key === "world") return;
+  event.stopPropagation();
+  drillToMap(key, name);
+}
+
+function drillToMap(key, label) {
+  if (drillLoading) return;
+  drillLoading = true;
+  const stem = String(key).replace(/\s+/g, "_");
+  // Load via <script> so file:// pages work (fetch is blocked by CORS).
+  // Files are prepared next to the HTML from Maps._geo_dir() as geo/<stem>.js
+  const base = (geoFetchBase && geoFetchBase.endsWith("/")) ? geoFetchBase : (geoFetchBase || "geo") + "/";
+  const src = base + stem + ".js";
+  const hint = document.getElementById("hint");
+  if (hint) hint.textContent = "Loading " + (label || key) + "…";
+
+  // Drop previous loader if any
+  const old = document.getElementById("d3blocks-geo-loader");
+  if (old) old.remove();
+
+  const script = document.createElement("script");
+  script.id = "d3blocks-geo-loader";
+  script.async = false;
+  script.onload = function () {
+    const geo = window.__D3BLOCKS_GEO__;
+    try { delete window.__D3BLOCKS_GEO__; } catch (e) { window.__D3BLOCKS_GEO__ = undefined; }
+    script.remove();
+    if (!geo || !geo.features) {
+      drillLoading = false;
+      if (hint) hint.textContent = "Could not load map for " + (label || key);
+      setTimeout(updateChromeForMapLevel, 2500);
+      return;
+    }
+    dataGeoAll = geo;
+    mapName = key;
+    includeOverseas = true;
+    const overseasChk = document.getElementById("includeOverseasChk");
+    if (overseasChk) overseasChk.checked = true;
+    updateChromeForMapLevel();
+    rebuildMapPaths();
+    drillLoading = false;
+  };
+  script.onerror = function () {
+    script.remove();
+    drillLoading = false;
+    console.error("Failed to load regional map script", src);
+    if (hint) {
+      hint.textContent = "Could not load map for " + (label || key) +
+        " — expected " + src + " (re-run d3.maps to regenerate geo/*.js from _geo_dir()).";
+    }
+    setTimeout(updateChromeForMapLevel, 4000);
+  };
+  script.src = src;
+  document.head.appendChild(script);
+}
+
+function backToWorld() {
+  dataGeoAll = worldGeoAll;
+  mapName = "world";
+  includeOverseas = true;
+  updateChromeForMapLevel();
+  rebuildMapPaths();
 }
 
 function rebuildMapPaths() {
@@ -471,7 +577,17 @@ if (resetBtn) {
   });
 }
 // Build paths for active features (mainland by default) and fit projection
+updateChromeForMapLevel();
 rebuildMapPaths();
+
+const backWorldBtn = document.getElementById("backWorldBtn");
+if (backWorldBtn) {
+  backWorldBtn.addEventListener("click", function () {
+    backToWorld();
+  });
+  // Show back if we started on a regional map
+  if (mapName !== "world") backWorldBtn.style.display = "inline-block";
+}
 
 const moSlider = document.getElementById("markerOpacitySlider");
 if (moSlider) {

@@ -57,6 +57,8 @@ _MAP_NAME_ALIASES = {
     'uk': 'united kingdom',
     'gb': 'united kingdom',
     'great britain': 'united kingdom',
+    'england': 'united kingdom',
+    'britain': 'united kingdom',
 }
 
 
@@ -863,6 +865,110 @@ def show(countries, **kwargs):
     return write_html(json_countries, json_data, config, logger)
 
 
+def build_world_drill_index(logger=None):
+    """Map world-country display names → regional map_name keys for drill-down.
+
+    Uses exact / alias matches only (no fuzzy) to avoid false links
+    (e.g. England → Greenland).
+    """
+    ensure_geo_data(logger=logger)
+    known_lower = {n.lower(): n for n in _discover_map_names()}
+    drill = {}
+    try:
+        world = load_geojson('world', include_overseas=True, logger=logger)
+    except Exception:
+        return drill
+
+    def resolve(label):
+        low = str(label).strip().lower()
+        if low in _MAP_NAME_ALIASES:
+            target = _MAP_NAME_ALIASES[low]
+            if target != 'world' and target in known_lower:
+                return known_lower[target]
+            if target in known_lower:
+                return known_lower[target]
+        if low in known_lower:
+            return known_lower[low]
+        # file-stem style
+        stem = low.replace(' ', '_')
+        for k, v in known_lower.items():
+            if k.replace(' ', '_') == stem:
+                return v
+        return None
+
+    for feat in world.get('features') or []:
+        name = (feat.get('properties') or {}).get('name')
+        if not name:
+            continue
+        key = resolve(name)
+        if key and key != 'world':
+            drill[name] = key
+    return drill
+
+
+def _prepare_geo_js_for_html(filepath, logger=None):
+    """Expose regional maps next to the HTML for file:// drill-down.
+
+    Browsers block ``fetch()`` of local files from ``file://`` pages (CORS).
+    Loading via ``<script src="geo/country.js">`` works. This function:
+
+    1. Reads geometries from ``_geo_dir()`` (package cache).
+    2. Writes ``window.__D3BLOCKS_GEO__ = <FeatureCollection>;`` JS wrappers
+       into ``<html_dir>/geo/<map>.js`` (once; skipped when already present).
+
+    Returns the relative base ``'geo/'`` for the HTML page.
+    """
+    ensure_geo_data(logger=logger)
+    src_dir = os.path.abspath(_geo_dir())
+    if not os.path.isdir(src_dir):
+        return 'geo/'
+
+    if filepath:
+        html_dir = os.path.dirname(os.path.abspath(str(filepath)))
+    else:
+        html_dir = os.getcwd()
+    if not html_dir:
+        html_dir = os.getcwd()
+
+    dest_dir = os.path.join(html_dir, 'geo')
+    os.makedirs(dest_dir, exist_ok=True)
+
+    written = 0
+    skipped = 0
+    for fn in os.listdir(src_dir):
+        if not fn.endswith('.geojson'):
+            continue
+        stem = fn[:-8]  # strip .geojson
+        js_name = stem + '.js'
+        dest_js = os.path.join(dest_dir, js_name)
+        src_geo = os.path.join(src_dir, fn)
+        # Skip if JS exists and is newer or same size-ish
+        if os.path.isfile(dest_js) and os.path.getmtime(dest_js) >= os.path.getmtime(src_geo):
+            skipped += 1
+            continue
+        try:
+            with open(src_geo, 'r', encoding='utf-8') as f:
+                payload = f.read()
+            with open(dest_js, 'w', encoding='utf-8') as f:
+                f.write('window.__D3BLOCKS_GEO__=')
+                f.write(payload)
+                f.write(';\n')
+            written += 1
+        except Exception as e:
+            if logger is not None:
+                logger.warning('Could not write %s: %s' % (dest_js, e))
+
+    if logger is not None:
+        logger.info(
+            'Geo JS for drill-down: %s (wrote %d, skipped %d; source %s)'
+            % (dest_dir, written, skipped, src_dir)
+        )
+    elif written:
+        print('[maps] Prepared %d regional map scripts in %s' % (written, dest_dir))
+
+    return 'geo/'
+
+
 def write_html(json_countries, json_data, config, logger=None):
     """Write html."""
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
@@ -875,10 +981,20 @@ def write_html(json_countries, json_data, config, logger=None):
         # Always embed full geometry; the UI checkbox filters overseas client-side.
         geo = load_geojson(map_name, include_overseas=True, logger=logger)
         geojson_str = json.dumps(geo, separators=(',', ':'))
+        # Always embed world so Back can restore without another fetch
+        if normalize_map_name(map_name) == 'world':
+            world_geojson_str = geojson_str
+        else:
+            world_geo = load_geojson('world', include_overseas=True, logger=logger)
+            world_geojson_str = json.dumps(world_geo, separators=(',', ':'))
+        drill_index = build_world_drill_index(logger=logger)
     except Exception as e:
         if logger is not None:
             logger.error('Failed to load map geometry for %r: %s' % (map_name, e))
         raise
+
+    filepath = config.get('filepath', None)
+    geo_fetch_base = _prepare_geo_js_for_html(filepath, logger=logger)
 
     content = {
         'json_countries': json_countries,
@@ -893,8 +1009,12 @@ def write_html(json_countries, json_data, config, logger=None):
         'show_controls': config.get('show_controls', True),
         'dark_mode': config.get('dark_mode', True),
         'GEOJSON': geojson_str,
+        'WORLD_GEOJSON': world_geojson_str,
         'MAP_NAME': normalize_map_name(map_name),
         'include_overseas': include_overseas,
+        'DRILL_INDEX': json.dumps(drill_index, separators=(',', ':')),
+        # Relative geo/ next to HTML; JS wrappers built from _geo_dir()
+        'GEO_FETCH_BASE': geo_fetch_base,
     }
 
     try:

@@ -1,11 +1,18 @@
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-
 # Default: mainland only
-d3.maps(country_names=['Zeeland', 'Overijssel'], map_name='netherlands', cmap='Set1')
+df = d3.import_example('surfspots')
+d3.maps(df)
+# d3.maps(country_names=['Netherlands', 'France', 'Germany'], cmap='Set1')
 
+# %%
+
+
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+# Default: mainland only
+d3.maps(country_names=['Zeeland', 'Overijssel'], map_name='netherlands', cmap='Set1', include_overseas=False)
 # Keep overseas territories
-d3.maps(map_name='netherlands', include_overseas=True)
 d3.maps(map_name='France', include_overseas=False)
 
 # %%
@@ -13,28 +20,6 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 d3.maps(country_names=['Zeeland', 'Overijssel'], map_name='netherlands', cmap='Set1')
 d3.maps(map_name='usa', cmap='Set1')
-
-# %%
-
-# Load library
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks()
-
-d3.maps(map_name='netherlands', cmap='Set1')
-# d3.maps(df, country_names=['Netherlands', 'USA'], country_values=[10, 20], cmap='Blues')
-
-# %%
-
-from d3blocks import D3Blocks
-d3 = D3Blocks()
-
-# Dutch provinces
-d3.maps(
-    country_names=['Zeeland', 'Overijssel', 'Flevoland'],
-    map_name='netherlands',
-    cmap='Set1',
-)
 
 # %%
 # Load library
