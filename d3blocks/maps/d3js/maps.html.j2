@@ -107,12 +107,13 @@ body.has-controls #maps-container {
       <input type="range" id="landOpacitySlider" min="0.05" max="1" step="0.05" value="0.60" />
     </div>
     <label><input type="checkbox" id="showLegendChk" checked> Show size legend</label>
+    <label><input type="checkbox" id="countryHoverChk" checked> Country hover (name + border)</label>
   </div>
 </div>
 {% endif %}
 
 <div id="maps-container"><svg id="my_dataviz"></svg></div>
-<div id="hint">scroll to zoom · drag to pan · hover a marker for details</div>
+<div id="hint">scroll to zoom · drag to pan · hover a country or marker for details</div>
 
 <script>
 const chartConfig = {
@@ -156,6 +157,7 @@ const worldOpacityDefault = country_opacity["World"] != null ? +country_opacity[
 let landOpacity = worldOpacityDefault;
 let markerOpacity = 0.4;
 let markerSizeScale = 1.0;
+let countryHoverEnabled = true;
 
 const projection = d3.geoMercator()
   .center([0, 20])
@@ -173,33 +175,43 @@ function markerRadius(d) {
   return sizeScale(+d.size) * markerSizeScale;
 }
 
-// World base
-mapLayer.append("g")
+const worldStrokeDefault = country_stroke["World"] || "#5A5A5A";
+const worldLinewidthDefault = country_linewidth["World"] != null ? +country_linewidth["World"] : 0.5;
+const highlightStroke = "var(--accent, #5b9bd5)";
+const highlightWidth = 2.5;
+
+// World base (all countries — hover targets)
+const worldPaths = mapLayer.append("g")
   .attr("class", "world")
   .selectAll("path")
   .data(dataGeo.features)
   .join("path")
+    .attr("class", "country-path")
     .attr("fill", country_color["World"] || "#D3D3D3")
     .attr("d", pathGenerator)
-    .style("stroke", country_stroke["World"] || "#5A5A5A")
+    .style("stroke", worldStrokeDefault)
+    .style("stroke-width", worldLinewidthDefault)
     .style("opacity", landOpacity)
-    .style("stroke-dasharray", country_line["World"] === "dashed" ? "5" : "0");
+    .style("stroke-dasharray", country_line["World"] === "dashed" ? "5" : "0")
+    .style("cursor", "default");
 
-// Highlighted countries
+// Highlighted countries (custom styling overlays)
 const country_names = data_countries.map(item => item.name);
-const countries = dataGeo.features.filter(d => country_names.includes(d.properties.name));
+const countries = dataGeo.features.filter(d => country_names.includes(d.properties.name) && d.properties.name !== "World");
 
-mapLayer.append("g")
+const customPaths = mapLayer.append("g")
   .attr("class", "countries")
   .selectAll("path")
   .data(countries)
   .join("path")
+    .attr("class", "country-path")
     .attr("d", d => pathGenerator(d))
     .attr("fill", d => country_color[d.properties.name])
     .attr("stroke", d => country_stroke[d.properties.name])
     .attr("stroke-width", d => country_linewidth[d.properties.name])
     .attr("opacity", d => country_opacity[d.properties.name])
-    .attr("stroke-dasharray", d => country_line[d.properties.name] === "dashed" ? "5" : "0");
+    .attr("stroke-dasharray", d => country_line[d.properties.name] === "dashed" ? "5" : "0")
+    .style("cursor", "default");
 
 // Zoom
 const zoom = d3.zoom()
@@ -215,6 +227,61 @@ const Tooltip = d3.select("body")
   .append("div")
   .attr("class", "tooltip");
 
+function countryName(d) {
+  return (d && d.properties && d.properties.name) ? d.properties.name : "";
+}
+
+function restoreCountryStroke(sel) {
+  sel.each(function (d) {
+    const name = countryName(d);
+    const isCustom = name && country_color[name] != null && name !== "World";
+    d3.select(this)
+      .style("stroke", isCustom ? (country_stroke[name] || worldStrokeDefault) : worldStrokeDefault)
+      .style("stroke-width", isCustom ? (country_linewidth[name] != null ? country_linewidth[name] : worldLinewidthDefault) : worldLinewidthDefault)
+      .classed("country-hover", false);
+  });
+}
+
+function countryMouseover(event, d) {
+  if (!countryHoverEnabled) return;
+  const name = countryName(d);
+  if (!name) return;
+  d3.select(this)
+    .style("stroke", highlightStroke)
+    .style("stroke-width", highlightWidth)
+    .classed("country-hover", true)
+    .raise();
+  Tooltip.style("opacity", 1);
+}
+
+function countryMousemove(event, d) {
+  if (!countryHoverEnabled) return;
+  const name = countryName(d);
+  if (!name) return;
+  Tooltip
+    .html(name)
+    .style("left", (event.pageX + 12) + "px")
+    .style("top", (event.pageY + 12) + "px");
+}
+
+function countryMouseleave(event, d) {
+  restoreCountryStroke(d3.select(this));
+  // Only hide tooltip if not over a marker (marker handlers manage their own)
+  if (!event.relatedTarget || !event.relatedTarget.classList || !event.relatedTarget.classList.contains("marker-circle")) {
+    Tooltip.style("opacity", 0);
+  }
+}
+
+worldPaths
+  .on("mouseover", countryMouseover)
+  .on("mousemove", countryMousemove)
+  .on("mouseleave", countryMouseleave);
+
+customPaths
+  .on("mouseover", countryMouseover)
+  .on("mousemove", countryMousemove)
+  .on("mouseleave", countryMouseleave);
+
 const mouseover = () => Tooltip.style("opacity", 1);
 const mousemove = (event, d) => {
   Tooltip
@@ -229,6 +296,7 @@ const circles = markerLayer
   .selectAll("circle")
   .data(data.slice().sort((a, b) => +b.size - +a.size))
   .join("circle")
+    .attr("class", "marker-circle")
     .attr("cx", d => projection([+d.lon, +d.lat])[0])
     .attr("cy", d => projection([+d.lon, +d.lat])[1])
     .attr("r", d => markerRadius(d))
@@ -236,6 +304,7 @@ const circles = markerLayer
     .attr("stroke", d => (+d.size > 2000 ? "var(--text)" : "none"))
     .attr("stroke-width", 1)
     .attr("fill-opacity", markerOpacity)
+    .style("cursor", "pointer")
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave);
@@ -340,6 +409,26 @@ if (loSlider) {
 const legendChk = document.getElementById("showLegendChk");
 if (legendChk) {
   legendChk.addEventListener("change", drawLegend);
+}
+
+const countryHoverChk = document.getElementById("countryHoverChk");
+if (countryHoverChk) {
+  countryHoverEnabled = countryHoverChk.checked;
+  countryHoverChk.addEventListener("change", function () {
+    countryHoverEnabled = this.checked;
+    if (!countryHoverEnabled) {
+      restoreCountryStroke(worldPaths);
+      restoreCountryStroke(customPaths);
+      Tooltip.style("opacity", 0);
+    }
+    const cursor = countryHoverEnabled ? "pointer" : "default";
+    worldPaths.style("cursor", cursor);
+    customPaths.style("cursor", cursor);
+  });
+  if (countryHoverEnabled) {
+    worldPaths.style("cursor", "pointer");
+    customPaths.style("cursor", "pointer");
+  }
 }
 
 // Search markers by label
