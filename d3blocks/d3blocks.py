@@ -3284,6 +3284,7 @@ class D3Blocks():
              country_opacity=None,
              country_values=None,
              map_name: str = 'world',
+             include_overseas: bool = True,
              cmap='Set2',
              title: str = 'Maps - D3blocks',
              filepath: str = 'maps.html',
@@ -3327,8 +3328,16 @@ class D3Blocks():
         country_values : list of float or None
             Numeric values → sequential colors/opacity.
         map_name : str, (default: 'world')
-            Map geometry. Currently only ``'world'``; regional maps (e.g.
-            ``'netherlands'``) are planned next.
+            Map geometry to load.
+                * ``'world'``: country-level world map
+                * Any country name or ISO code for admin-1 regions, e.g.
+                  ``'netherlands'``, ``'NL'``, ``'germany'``, ``'US'``, ``'japan'``
+            Full catalog: ``Maps.list_map_names()`` (~240 regional maps).
+            Region names: ``Maps.list_country_names(map_name)``.
+        include_overseas : bool, (default: False)
+            For regional maps, keep distant overseas territories (e.g. Caribbean
+            islands for the Netherlands). When False, only the main landmass
+            cluster is shown so the map fills the view.
         cmap : str
             Colormap for markers and/or country colors.
         title, filepath, figsize, showfig, overwrite, notebook :
@@ -3360,6 +3369,10 @@ class D3Blocks():
         >>> # Country coloring (worldmap-style) without markers
         >>> d3.maps(country_names=['Netherlands', 'France', 'Germany'], cmap='Set1')
         >>>
+        >>> # Regional map: Dutch provinces
+        >>> d3.maps(country_names=['Zeeland', 'Overijssel', 'Flevoland'],
+        ...         map_name='netherlands', cmap='Set1')
+        >>>
         >>> # Countries + values (opacity scaled) + markers
         >>> d3.maps(df,
         ...         country_names=['Netherlands', 'Australia', 'USA'],
@@ -3390,7 +3403,8 @@ class D3Blocks():
             showfig=showfig, overwrite=overwrite, figsize=figsize,
             reset_properties=reset_properties, notebook=notebook,
             save_button=save_button, show_controls=show_controls,
-            dark_mode=dark_mode, map_name=map_name, logger=logger,
+            dark_mode=dark_mode, map_name=map_name,
+            include_overseas=include_overseas, logger=logger,
         )
         # Markers (optional)
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
@@ -3404,6 +3418,7 @@ class D3Blocks():
                 country_values=country_values,
                 cmap=self.config['cmap'],
                 map_name=map_name,
+                include_overseas=include_overseas,
             )
         else:
             if countries is None:

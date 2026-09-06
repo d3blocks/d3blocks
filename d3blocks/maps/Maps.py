@@ -44,32 +44,387 @@ _COUNTRY_ALIASES = {
 }
 
 
-def _geojson_path():
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), 'd3js', 'world.geojson')
+# Built-in short aliases (ISO and common names). Full catalog is discovered
+# from maps/d3js/geo/*.geojson + iso_to_map.json.
+_MAP_NAME_ALIASES = {
+    'world': 'world',
+    'nl': 'netherlands',
+    'holland': 'netherlands',
+    'the netherlands': 'netherlands',
+    'us': 'united states of america',
+    'usa': 'united states of america',
+    'united states': 'united states of america',
+    'uk': 'united kingdom',
+    'gb': 'united kingdom',
+    'great britain': 'united kingdom',
+}
 
 
-def list_country_names(map_name='world'):
-    """Return official country names available for the given map.
+# Regional admin-1 geometries (downloaded once, then cached on disk)
+GEO_ZIP_URL = 'https://github.com/d3blocks/geojson/raw/refs/heads/main/geojson.zip'
+
+
+def _d3js_dir():
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), 'd3js')
+
+
+def _geo_dir():
+    return os.path.join(_d3js_dir(), 'geo')
+
+
+def _geo_zip_path():
+    return os.path.join(_d3js_dir(), 'geojson.zip')
+
+
+def _geo_data_ready():
+    """True if regional geo files are already present on disk."""
+    geo_dir = _geo_dir()
+    marker = os.path.join(geo_dir, 'iso_to_map.json')
+    if not os.path.isfile(marker):
+        return False
+    try:
+        for fn in os.listdir(geo_dir):
+            if fn.endswith('.geojson'):
+                return True
+    except OSError:
+        return False
+    return False
+
+
+def download_geo_data(url=None, force=False, logger=None):
+    """Download and extract regional GeoJSON archive if missing.
+
+    Parameters
+    ----------
+    url : str, optional
+        Zip URL. Default: ``GEO_ZIP_URL`` (d3blocks/geojson).
+    force : bool, optional
+        Re-download and re-extract even when files already exist.
+    logger : optional
+        Logger for status messages.
+
+    Returns
+    -------
+    str
+        Path to the extracted ``d3js/geo`` directory.
+    """
+    import urllib.request
+    import zipfile
+
+    url = url or GEO_ZIP_URL
+    geo_dir = _geo_dir()
+    zip_path = _geo_zip_path()
+    d3js = _d3js_dir()
+
+    if not force and _geo_data_ready():
+        if logger is not None:
+            logger.info('Geo data already present: %s' % geo_dir)
+        return geo_dir
+
+    os.makedirs(d3js, exist_ok=True)
+
+    # Download zip only if missing (unless force)
+    if force or not os.path.isfile(zip_path):
+        msg = 'Downloading geo data from %s' % url
+        if logger is not None:
+            logger.info(msg)
+        else:
+            print('[maps] ' + msg)
+        try:
+            urllib.request.urlretrieve(url, zip_path)
+        except Exception as e:
+            raise RuntimeError(
+                'Failed to download geo data from %s (%s). '
+                'Place geojson files under %s manually.' % (url, e, geo_dir)
+            ) from e
+    else:
+        if logger is not None:
+            logger.info('Using cached zip: %s' % zip_path)
+
+    if not os.path.isfile(zip_path):
+        raise FileNotFoundError('Geo zip not found: %s' % zip_path)
+
+    if logger is not None:
+        logger.info('Extracting geo data to %s' % d3js)
+    else:
+        print('[maps] Extracting geo data…')
+
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Archive layout: geo/*.geojson, geo/iso_to_map.json → d3js/geo/
+        zf.extractall(d3js)
+
+    if not _geo_data_ready():
+        raise RuntimeError(
+            'Geo data extract finished but %s is incomplete. '
+            'Check the zip structure (expected geo/*.geojson).' % geo_dir
+        )
+
+    if logger is not None:
+        n = sum(1 for fn in os.listdir(geo_dir) if fn.endswith('.geojson'))
+        logger.info('Geo data ready: %d regional maps in %s' % (n, geo_dir))
+    return geo_dir
+
+
+def ensure_geo_data(logger=None):
+    """Ensure regional geo files exist; download+extract once if needed."""
+    return download_geo_data(force=False, logger=logger)
+
+
+def _load_iso_map():
+    """ISO-3166-1 alpha-2 → map_name from extracted admin-1 files."""
+    ensure_geo_data()
+    path = os.path.join(_geo_dir(), 'iso_to_map.json')
+    if not os.path.isfile(path):
+        return {}
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def _discover_map_names():
+    """Scan d3js/geo for regional map names. Always includes 'world'."""
+    ensure_geo_data()
+    names = ['world']
+    geo_dir = _geo_dir()
+    if os.path.isdir(geo_dir):
+        try:
+            for fn in sorted(os.listdir(geo_dir)):
+                if fn.endswith('.geojson'):
+                    names.append(fn[:-8].replace('_', ' '))
+        except OSError:
+            pass
+    seen = set()
+    out = []
+    for n in names:
+        if n not in seen:
+            seen.add(n)
+            out.append(n)
+    return out
+
+
+def list_map_names():
+    """Return available map names (world + every regional admin-1 map)."""
+    return _discover_map_names()
+
+
+def normalize_map_name(map_name='world'):
+    """Normalize user map_name / ISO code to a canonical key.
+
+    Accepts full names (``'netherlands'``), ISO codes (``'NL'``), and a few
+    short aliases (``'usa'``, ``'uk'``).
+    """
+    key = (map_name or 'world').strip().lower()
+    if key == 'world':
+        return 'world'
+
+    # Built-in aliases
+    if key in _MAP_NAME_ALIASES:
+        key = _MAP_NAME_ALIASES[key]
+        if key == 'world':
+            return 'world'
+
+    # Discover maps from disk (inline — avoids NameError if module partially reloaded)
+    known = _discover_map_names()
+    known_lower = {n.lower(): n for n in known}
+
+    # Exact
+    if key in known_lower:
+        return known_lower[key]
+
+    # ISO-2 code (e.g. 'DE', 'fr')
+    iso_map = _load_iso_map()
+    iso_key = key.upper()
+    if iso_key in iso_map:
+        return iso_map[iso_key]
+
+    # Underscore form of file stem
+    stem = key.replace(' ', '_')
+    for n in known:
+        if n.replace(' ', '_') == stem:
+            return n
+
+    # Fuzzy against known map names
+    hits = difflib.get_close_matches(key, list(known_lower.keys()), n=1, cutoff=0.75)
+    if hits:
+        return known_lower[hits[0]]
+
+    raise ValueError(
+        "Unknown map_name=%r. Use Maps.list_map_names() to see all %d maps, "
+        "or pass an ISO code like 'NL', 'US', 'DE'." % (map_name, len(known))
+    )
+
+
+def _geojson_path(map_name='world'):
+    """Return filesystem path to the GeoJSON for map_name."""
+    name = normalize_map_name(map_name)
+    d3js = _d3js_dir()
+    if name == 'world':
+        path = os.path.join(d3js, 'world.geojson')
+    else:
+        ensure_geo_data()
+        fname = name.replace(' ', '_') + '.geojson'
+        path = os.path.join(d3js, 'geo', fname)
+    if not os.path.isfile(path):
+        raise FileNotFoundError('GeoJSON not found for map_name=%r (%s)' % (map_name, path))
+    return path
+
+
+def _geom_coords(geom):
+    """Yield all coordinate pairs from a GeoJSON geometry."""
+    if geom is None:
+        return
+    gtype = geom.get('type')
+    coords = geom.get('coordinates')
+    if not gtype or coords is None:
+        return
+    if gtype == 'Point':
+        yield coords[0], coords[1]
+    elif gtype in ('MultiPoint', 'LineString'):
+        for c in coords:
+            yield c[0], c[1]
+    elif gtype in ('MultiLineString', 'Polygon'):
+        for ring in coords:
+            for c in ring:
+                yield c[0], c[1]
+    elif gtype == 'MultiPolygon':
+        for poly in coords:
+            for ring in poly:
+                for c in ring:
+                    yield c[0], c[1]
+    elif gtype == 'GeometryCollection':
+        for g in geom.get('geometries') or []:
+            for xy in _geom_coords(g):
+                yield xy
+
+
+def _feature_centroid(feat):
+    """Rough geographic centroid (mean of coordinates)."""
+    xs, ys = [], []
+    for x, y in _geom_coords(feat.get('geometry') or {}):
+        xs.append(x)
+        ys.append(y)
+    if not xs:
+        return None
+    return (sum(xs) / len(xs), sum(ys) / len(ys))
+
+
+def _haversine_km(a, b):
+    """Great-circle distance in km between (lon, lat) pairs."""
+    lon1, lat1 = a
+    lon2, lat2 = b
+    r = 6371.0
+    p1, p2 = np.radians(lat1), np.radians(lat2)
+    dphi = np.radians(lat2 - lat1)
+    dlmb = np.radians(lon2 - lon1)
+    h = np.sin(dphi / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dlmb / 2) ** 2
+    return float(2 * r * np.arcsin(np.sqrt(min(1.0, h))))
+
+
+def filter_main_landmass(features, gap_km=1200.0, logger=None):
+    """Keep the main contiguous region cluster; drop distant overseas parts.
+
+    Builds a graph of features whose centroids are within ``gap_km``, then
+    keeps the connected component with the most members (ties → more
+    coordinate mass). This removes e.g. Caribbean islands from the
+    Netherlands view so ``fitExtent`` zooms to the European mainland.
+
+    Parameters
+    ----------
+    features : list of GeoJSON Feature
+    gap_km : float
+        Max centroid distance to treat two regions as connected.
+    logger : optional
+
+    Returns
+    -------
+    list of Feature
+    """
+    if not features or len(features) <= 1:
+        return features
+
+    centroids = [_feature_centroid(f) for f in features]
+    valid = [i for i, c in enumerate(centroids) if c is not None]
+    if len(valid) <= 1:
+        return features
+
+    # Adjacency by centroid distance
+    neighbors = {i: [] for i in valid}
+    for ai, i in enumerate(valid):
+        for j in valid[ai + 1:]:
+            if _haversine_km(centroids[i], centroids[j]) <= gap_km:
+                neighbors[i].append(j)
+                neighbors[j].append(i)
+
+    # Seed = region with most neighbors (mainland density), not largest area
+    # (Alaska would otherwise dominate the US).
+    seed = max(valid, key=lambda i: (len(neighbors[i]), len(list(_geom_coords(features[i].get('geometry') or {})))))
+
+    # BFS connected component
+    cluster = set()
+    stack = [seed]
+    while stack:
+        i = stack.pop()
+        if i in cluster:
+            continue
+        cluster.add(i)
+        stack.extend(neighbors[i])
+
+    kept = [features[i] for i in sorted(cluster)]
+    dropped = len(features) - len(kept)
+    if dropped and logger is not None:
+        dropped_names = [
+            features[i].get('properties', {}).get('name', '?')
+            for i in range(len(features)) if i not in cluster
+        ]
+        logger.info(
+            'Excluded %d overseas/distant region(s) from map fit: %s'
+            % (dropped, ', '.join(dropped_names[:12]) + ('…' if dropped > 12 else ''))
+        )
+    return kept
+
+
+def load_geojson(map_name='world', include_overseas=False, gap_km=1200.0, logger=None):
+    """Load FeatureCollection for the given map.
+
+    Parameters
+    ----------
+    map_name : str
+        World or regional map key / ISO code.
+    include_overseas : bool, optional
+        If False (default for regional maps), drop regions that are far from
+        the main landmass cluster (e.g. Bonaire when mapping the Netherlands).
+        Ignored for ``map_name='world'``.
+    gap_km : float, optional
+        Distance threshold for the main-landmass cluster.
+    logger : optional
+    """
+    with open(_geojson_path(map_name), 'r', encoding='utf-8') as f:
+        geo = json.load(f)
+
+    name = normalize_map_name(map_name)
+    if name != 'world' and not include_overseas:
+        feats = geo.get('features') or []
+        filtered = filter_main_landmass(feats, gap_km=gap_km, logger=logger)
+        if len(filtered) < len(feats):
+            geo = {'type': 'FeatureCollection', 'features': filtered}
+    return geo
+
+
+def list_country_names(map_name='world', include_overseas=False):
+    """Return official region/country names available for the given map.
 
     Parameters
     ----------
     map_name : str, optional
-        Map identifier. Currently only ``'world'`` is supported (GeoJSON).
+        Map identifier, e.g. ``'world'``, ``'netherlands'``, ``'usa'``.
+    include_overseas : bool, optional
+        If False, names follow the main-landmass filter (same as the plot).
 
     Returns
     -------
     list of str
-        Sorted country / region names from the map geometry.
+        Sorted feature names from the map geometry.
     """
-    map_name = (map_name or 'world').lower()
-    if map_name != 'world':
-        raise ValueError(
-            "Only map_name='world' is supported for now. "
-            "Regional maps (e.g. 'netherlands') will be added later."
-        )
-    path = _geojson_path()
-    with open(path, 'r', encoding='utf-8') as f:
-        geo = json.load(f)
+    geo = load_geojson(map_name, include_overseas=include_overseas)
     names = sorted({
         feat.get('properties', {}).get('name')
         for feat in geo.get('features', [])
@@ -78,7 +433,7 @@ def list_country_names(map_name='world'):
     return names
 
 
-def match_country_names(names, map_name='world', cutoff=0.8, logger=None):
+def match_country_names(names, map_name='world', cutoff=0.8, include_overseas=False, logger=None):
     """Fuzzy-match requested names to official map feature names.
 
     Parameters
@@ -99,7 +454,7 @@ def match_country_names(names, map_name='world', cutoff=0.8, logger=None):
     report : dict
         ``{'matched': [(input, official), ...], 'unmatched': [input, ...]}``
     """
-    official = list_country_names(map_name=map_name)
+    official = list_country_names(map_name=map_name, include_overseas=include_overseas)
     official_lower = {n.lower(): n for n in official}
     matched = []
     report = {'matched': [], 'unmatched': []}
@@ -112,8 +467,8 @@ def match_country_names(names, map_name='world', cutoff=0.8, logger=None):
         key = str(raw).strip()
         low = key.lower()
 
-        # 1) alias table
-        if low in _COUNTRY_ALIASES:
+        # 1) alias table (world-level aliases only; e.g. USA, Holland→Netherlands)
+        if normalize_map_name(map_name) == 'world' and low in _COUNTRY_ALIASES:
             alias_target = _COUNTRY_ALIASES[low]
             if alias_target.lower() in official_lower:
                 official_name = official_lower[alias_target.lower()]
@@ -154,6 +509,7 @@ def countries_from_names(country_names,
                          values=None,
                          cmap='Set2',
                          map_name='world',
+                         include_overseas=False,
                          world_color='#D3D3D3',
                          world_opacity=0.6,
                          linewidth=1,
@@ -189,7 +545,7 @@ def countries_from_names(country_names,
     """
     country_names = list(country_names) if country_names is not None else []
     n = len(country_names)
-    matched, report = match_country_names(country_names, map_name=map_name, logger=logger)
+    matched, report = match_country_names(country_names, map_name=map_name, include_overseas=include_overseas, logger=logger)
 
     # Colors
     if colors is None:
@@ -283,6 +639,7 @@ def set_config(config={}, **kwargs):
     config['show_controls'] = kwargs.get('show_controls', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
     config['map_name'] = kwargs.get('map_name', 'world')
+    config['include_overseas'] = kwargs.get('include_overseas', False)
     return config
 
 
@@ -330,6 +687,7 @@ def set_edge_properties(X=None, **kwargs):
             values=kwargs.get('country_values', None),
             cmap=cmap,
             map_name=map_name,
+            include_overseas=kwargs.get('include_overseas', False),
             logger=logger,
         )
 
@@ -511,6 +869,17 @@ def write_html(json_countries, json_data, config, logger=None):
     width = 'window.screen.width' if config['figsize'][0] is None else config['figsize'][0]
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
 
+    map_name = config.get('map_name', 'world')
+    include_overseas = bool(config.get('include_overseas', False))
+    try:
+        # Always embed full geometry; the UI checkbox filters overseas client-side.
+        geo = load_geojson(map_name, include_overseas=True, logger=logger)
+        geojson_str = json.dumps(geo, separators=(',', ':'))
+    except Exception as e:
+        if logger is not None:
+            logger.error('Failed to load map geometry for %r: %s' % (map_name, e))
+        raise
+
     content = {
         'json_countries': json_countries,
         'json_data': json_data,
@@ -523,6 +892,9 @@ def write_html(json_countries, json_data, config, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         'show_controls': config.get('show_controls', True),
         'dark_mode': config.get('dark_mode', True),
+        'GEOJSON': geojson_str,
+        'MAP_NAME': normalize_map_name(map_name),
+        'include_overseas': include_overseas,
     }
 
     try:

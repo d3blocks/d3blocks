@@ -64,6 +64,9 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
     </div>
     <label><input type="checkbox" id="showLegendChk" checked> Show size legend</label>
     <label><input type="checkbox" id="countryHoverChk" checked> Country hover (name + border)</label>
+    <label id="overseasLabel" {% if MAP_NAME == 'world' %}style="display:none"{% endif %}>
+      <input type="checkbox" id="includeOverseasChk" {% if include_overseas %}checked{% endif %}> Include overseas
+    </label>
   </div>
 </div>
 {% endif %}
@@ -76,7 +79,8 @@ const chartConfig = {
   width: {{ WIDTH }},
   height: {{ HEIGHT }},
   showControls: {% if show_controls == false or show_controls == 'false' %}false{% else %}true{% endif %},
-  darkMode: {% if dark_mode == false or dark_mode == 'false' %}false{% else %}true{% endif %}
+  darkMode: {% if dark_mode == false or dark_mode == 'false' %}false{% else %}true{% endif %},
+  includeOverseas: {% if include_overseas %}true{% else %}false{% endif %}
 };
 
 const container = document.getElementById("maps-container");
@@ -91,7 +95,8 @@ const mapLayer = svg.append("g").attr("class", "map-layer");
 const markerLayer = svg.append("g").attr("class", "marker-layer");
 const legendG = svg.append("g").attr("id", "legendG");
 
-const dataGeo = {% include "world.geojson" %};
+const dataGeoAll = {{ GEOJSON }};
+const mapName = "{{ MAP_NAME }}";
 const data = {{ json_data }};
 const data_countries = {{ json_countries }};
 
@@ -116,17 +121,85 @@ let borderWidth = worldLinewidthDefault;
 let markerOpacity = 0.4;
 let markerSizeScale = 1.0;
 let countryHoverEnabled = true;
+let includeOverseas = mapName === "world" ? true : !!chartConfig.includeOverseas;
 
-// Base projection — zoom updates scale/translate (not an SVG group transform)
-const baseScale = Math.min(width, height) / 5;
-const baseTranslate = [width / 2, height / 2];
+// —— Overseas / main-landmass filter (mirrors Maps.filter_main_landmass) ——
+function geomCoords(geom, out) {
+  if (!geom) return;
+  const t = geom.type, c = geom.coordinates;
+  if (t === "Point") out.push(c);
+  else if (t === "MultiPoint" || t === "LineString") c.forEach(p => out.push(p));
+  else if (t === "MultiLineString" || t === "Polygon") c.forEach(r => r.forEach(p => out.push(p)));
+  else if (t === "MultiPolygon") c.forEach(poly => poly.forEach(r => r.forEach(p => out.push(p))));
+  else if (t === "GeometryCollection") (geom.geometries || []).forEach(g => geomCoords(g, out));
+}
+function featureCentroid(f) {
+  const pts = [];
+  geomCoords(f.geometry, pts);
+  if (!pts.length) return null;
+  let x = 0, y = 0;
+  pts.forEach(p => { x += p[0]; y += p[1]; });
+  return [x / pts.length, y / pts.length];
+}
+function haversineKm(a, b) {
+  const R = 6371, toR = Math.PI / 180;
+  const p1 = a[1] * toR, p2 = b[1] * toR;
+  const dphi = (b[1] - a[1]) * toR, dlmb = (b[0] - a[0]) * toR;
+  const h = Math.sin(dphi / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dlmb / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function filterMainLandmass(features, gapKm) {
+  gapKm = gapKm == null ? 1200 : gapKm;
+  if (!features || features.length <= 1) return features || [];
+  const centroids = features.map(featureCentroid);
+  const valid = [];
+  centroids.forEach((c, i) => { if (c) valid.push(i); });
+  if (valid.length <= 1) return features;
+  const neighbors = {};
+  valid.forEach(i => { neighbors[i] = []; });
+  for (let a = 0; a < valid.length; a++) {
+    for (let b = a + 1; b < valid.length; b++) {
+      const i = valid[a], j = valid[b];
+      if (haversineKm(centroids[i], centroids[j]) <= gapKm) {
+        neighbors[i].push(j);
+        neighbors[j].push(i);
+      }
+    }
+  }
+  let seed = valid[0], best = -1;
+  valid.forEach(i => {
+    const score = neighbors[i].length;
+    if (score > best) { best = score; seed = i; }
+  });
+  const cluster = new Set();
+  const stack = [seed];
+  while (stack.length) {
+    const i = stack.pop();
+    if (cluster.has(i)) continue;
+    cluster.add(i);
+    neighbors[i].forEach(j => { if (!cluster.has(j)) stack.push(j); });
+  }
+  return features.filter((_, i) => cluster.has(i));
+}
 
-const projection = d3.geoMercator()
-  .center([0, 20])
-  .scale(baseScale)
-  .translate(baseTranslate);
+function activeFeatures() {
+  if (mapName === "world" || includeOverseas) return dataGeoAll.features;
+  return filterMainLandmass(dataGeoAll.features, 1200);
+}
 
+// Projection fitted to the *active* geometry (world or regional).
+const projection = d3.geoMercator();
 const pathGenerator = d3.geoPath().projection(projection);
+const pad = 24;
+let baseScale = 1;
+let baseTranslate = [width / 2, height / 2];
+
+function refitProjection(features) {
+  const fc = { type: "FeatureCollection", features: features };
+  projection.fitExtent([[pad, pad], [width - pad, height - pad]], fc);
+  baseScale = projection.scale();
+  baseTranslate = projection.translate().slice();
+}
 
 function projectPoint(lon, lat) {
   const p = projection([+lon, +lat]);
@@ -169,38 +242,63 @@ function hoverBorderWidth() {
   return Math.max(borderWidth * 2.5, borderWidth + 1.5, 2);
 }
 
-// World base (all countries — hover targets)
-const worldPaths = mapLayer.append("g")
-  .attr("class", "world")
-  .selectAll("path")
-  .data(dataGeo.features)
-  .join("path")
-    .attr("class", "country-path")
-    .attr("fill", country_color["World"] || "#D3D3D3")
-    .attr("d", pathGenerator)
-    .style("stroke", worldStrokeDefault)
-    .style("stroke-width", borderWidth)
-    .style("opacity", landOpacity)
-    .style("stroke-dasharray", country_line["World"] === "dashed" ? "5" : "0")
-    .style("cursor", "default");
-
-// Highlighted countries (custom styling overlays)
+const worldGroup = mapLayer.append("g").attr("class", "world");
+const customGroup = mapLayer.append("g").attr("class", "countries");
+let worldPaths;
+let customPaths;
 const country_names = data_countries.map(item => item.name);
-const countries = dataGeo.features.filter(d => country_names.includes(d.properties.name) && d.properties.name !== "World");
 
-const customPaths = mapLayer.append("g")
-  .attr("class", "countries")
-  .selectAll("path")
-  .data(countries)
-  .join("path")
-    .attr("class", "country-path")
-    .attr("d", d => pathGenerator(d))
-    .attr("fill", d => country_color[d.properties.name])
-    .attr("stroke", d => country_stroke[d.properties.name])
-    .attr("stroke-width", d => country_linewidth[d.properties.name])
-    .attr("opacity", d => country_opacity[d.properties.name])
-    .attr("stroke-dasharray", d => country_line[d.properties.name] === "dashed" ? "5" : "0")
-    .style("cursor", "default");
+function bindCountryHover(sel) {
+  sel
+    .on("mouseover", countryMouseover)
+    .on("mousemove", countryMousemove)
+    .on("mouseleave", countryMouseleave)
+    .style("cursor", countryHoverEnabled ? "pointer" : "default");
+}
+
+function rebuildMapPaths() {
+  const feats = activeFeatures();
+  refitProjection(feats);
+
+  worldPaths = worldGroup
+    .selectAll("path")
+    .data(feats, d => d.properties && d.properties.name)
+    .join("path")
+      .attr("class", "country-path")
+      .attr("fill", country_color["World"] || "#D3D3D3")
+      .attr("d", pathGenerator)
+      .style("stroke", worldStrokeDefault)
+      .style("stroke-width", borderWidth)
+      .style("opacity", landOpacity)
+      .style("stroke-dasharray", country_line["World"] === "dashed" ? "5" : "0");
+
+  const highlighted = feats.filter(d =>
+    d.properties && country_names.includes(d.properties.name) && d.properties.name !== "World"
+  );
+  customPaths = customGroup
+    .selectAll("path")
+    .data(highlighted, d => d.properties && d.properties.name)
+    .join("path")
+      .attr("class", "country-path")
+      .attr("d", pathGenerator)
+      .attr("fill", d => country_color[d.properties.name])
+      .attr("stroke", d => country_stroke[d.properties.name])
+      .attr("stroke-width", d => country_linewidth[d.properties.name])
+      .attr("opacity", d => country_opacity[d.properties.name])
+      .attr("stroke-dasharray", d => country_line[d.properties.name] === "dashed" ? "5" : "0");
+
+  if (typeof countryMouseover === "function") {
+    bindCountryHover(worldPaths);
+    bindCountryHover(customPaths);
+  }
+  if (typeof applyBorderWidth === "function") applyBorderWidth();
+  // Reset zoom to fitted view
+  if (typeof zoom !== "undefined" && svg) {
+    svg.call(zoom.transform, d3.zoomIdentity);
+  } else {
+    redrawMap();
+  }
+}
 
 // Zoom: update projection (paths/markers redraw in geographic space).
 // Borders and marker radii stay in screen pixels — not scaled like a PNG.
@@ -238,13 +336,17 @@ function restoreCountryStroke(sel) {
 }
 
 function applyBorderWidth() {
-  worldPaths.style("stroke-width", function (d) {
-    return this.classList.contains("country-hover") ? hoverBorderWidth() : borderWidth;
-  });
-  customPaths.style("stroke-width", function (d) {
-    const name = countryName(d);
-    return this.classList.contains("country-hover") ? hoverBorderWidth() : baseBorderWidth(name);
-  });
+  if (worldPaths) {
+    worldPaths.style("stroke-width", function () {
+      return this.classList.contains("country-hover") ? hoverBorderWidth() : borderWidth;
+    });
+  }
+  if (customPaths) {
+    customPaths.style("stroke-width", function (d) {
+      const name = countryName(d);
+      return this.classList.contains("country-hover") ? hoverBorderWidth() : baseBorderWidth(name);
+    });
+  }
 }
 
 function countryMouseover(event, d) {
@@ -276,16 +378,6 @@ function countryMouseleave(event, d) {
     Tooltip.style("opacity", 0);
   }
 }
-
-worldPaths
-  .on("mouseover", countryMouseover)
-  .on("mousemove", countryMousemove)
-  .on("mouseleave", countryMouseleave);
-
-customPaths
-  .on("mouseover", countryMouseover)
-  .on("mousemove", countryMousemove)
-  .on("mouseleave", countryMouseleave);
 
 const mouseover = () => Tooltip.style("opacity", 1);
 const mousemove = (event, d) => {
@@ -378,8 +470,8 @@ if (resetBtn) {
     svg.transition().duration(400).call(zoom.transform, d3.zoomIdentity);
   });
 }
-// Identity transform → base projection (also runs once so state is consistent)
-applyZoomTransform(d3.zoomIdentity);
+// Build paths for active features (mainland by default) and fit projection
+rebuildMapPaths();
 
 const moSlider = document.getElementById("markerOpacitySlider");
 if (moSlider) {
@@ -435,18 +527,23 @@ if (countryHoverChk) {
   countryHoverChk.addEventListener("change", function () {
     countryHoverEnabled = this.checked;
     if (!countryHoverEnabled) {
-      restoreCountryStroke(worldPaths);
-      restoreCountryStroke(customPaths);
+      if (worldPaths) restoreCountryStroke(worldPaths);
+      if (customPaths) restoreCountryStroke(customPaths);
       Tooltip.style("opacity", 0);
     }
     const cursor = countryHoverEnabled ? "pointer" : "default";
-    worldPaths.style("cursor", cursor);
-    customPaths.style("cursor", cursor);
+    if (worldPaths) worldPaths.style("cursor", cursor);
+    if (customPaths) customPaths.style("cursor", cursor);
   });
-  if (countryHoverEnabled) {
-    worldPaths.style("cursor", "pointer");
-    customPaths.style("cursor", "pointer");
-  }
+}
+
+const overseasChk = document.getElementById("includeOverseasChk");
+if (overseasChk) {
+  includeOverseas = overseasChk.checked;
+  overseasChk.addEventListener("change", function () {
+    includeOverseas = this.checked;
+    rebuildMapPaths();
+  });
 }
 
 // Search markers by label
@@ -482,7 +579,6 @@ if (searchInput && searchResults) {
 function focusMarker(d) {
   // Project at base (k=1) so the zoom transform math matches applyZoomTransform
   const baseProj = d3.geoMercator()
-    .center([0, 20])
     .scale(baseScale)
     .translate(baseTranslate);
   const p = baseProj([+d.lon, +d.lat]);

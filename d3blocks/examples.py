@@ -1,3 +1,53 @@
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Default: mainland only
+d3.maps(country_names=['Zeeland', 'Overijssel'], map_name='netherlands', cmap='Set1')
+
+# Keep overseas territories
+d3.maps(map_name='netherlands', include_overseas=True)
+d3.maps(map_name='France', include_overseas=False)
+
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+d3.maps(country_names=['Zeeland', 'Overijssel'], map_name='netherlands', cmap='Set1')
+d3.maps(map_name='usa', cmap='Set1')
+
+# %%
+
+# Load library
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+
+d3.maps(map_name='netherlands', cmap='Set1')
+# d3.maps(df, country_names=['Netherlands', 'USA'], country_values=[10, 20], cmap='Blues')
+
+# %%
+
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+# Dutch provinces
+d3.maps(
+    country_names=['Zeeland', 'Overijssel', 'Flevoland'],
+    map_name='netherlands',
+    cmap='Set1',
+)
+
+# %%
+# Load library
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('stormofswords') # 'stormofswords'
+# Create force-directed-network (without cluster labels)
+html = d3.circlepacking(df)
+
+
 # %% Fontsize in violin map
 # Import example dataset
 from d3blocks import D3Blocks
@@ -66,6 +116,7 @@ d3.scatter(df['tsneX'].values,
                        scale=True,
                        label_radio=['tSNE','PCA'],
                        df=df,
+                       # figsize = [None, None],
                        )
 
 # %%
@@ -80,6 +131,7 @@ df = d3.import_example('socialmedia')
 df = df[0:2000]
 df["weight"] = np.random.randint(1, 101, size=len(df))
 # d3.set_edge_properties(df)
+
 # radialgraph
 d3.radialgraph(df, expand_all_on_load=False, edge_minmax=[0.5, 20])
 d3.node_properties['@k9hXVu2Rzmastodon.social']
@@ -89,7 +141,8 @@ d3.edge_properties['edge_width']
 # d3.edge_properties['edge_width']
 
 # radialgraph
-# d3.d3graph(df)
+d3.d3graph(df)
+# d3.elasticgraph(df)
 
 # # radialgraph
 # d3.sankey(df)
@@ -206,21 +259,6 @@ html = d3.radialgraph(
     return_html=True,
 )
 print('Wrote radialgraph_minimal.html (minimal chrome, light theme)')
-
-# %%
-# ----------------------------------------------------------------------
-# 5. Edit node properties then re-show (same pattern as Tree / Chord)
-# ----------------------------------------------------------------------
-d3 = D3Blocks(chart='radialgraph', frame=False)
-d3.set_node_properties(df, center='Solar', color='cluster', size='degree')
-# After set_node_properties, keys are node names
-if 'Solar' in d3.node_properties:
-    d3.node_properties['Solar']['color'] = '#FF0000'
-    d3.node_properties['Solar']['size'] = 25
-d3.set_edge_properties(df)
-html = d3.show(filepath='radialgraph_edited.html', showfig=True, return_html=True)
-print('Wrote radialgraph_edited.html (Solar forced red/large)')
-
 
 
 # %%
@@ -518,11 +556,11 @@ d3.show()
 #
 # Make some edits to highlight the Nuclear node
 # d3.node_properties
-d3.node_properties.get('Nuclear')['color']='#ff0000'
-d3.node_properties.get('Nuclear')['opacity']=1
-# Show the chart
-#
-d3.show()
+# d3.node_properties.get('Nuclear')['color']='#ff0000'
+# d3.node_properties.get('Nuclear')['opacity']=1
+# # Show the chart
+# #
+# d3.show()
 
 # Make edits to highlight the Nuclear Edge
 # d3.edge_properties.loc[(d3.edge_properties['source'] == 'Nuclear') & (d3.edge_properties['target'] == 'Thermal generation'), 'color'] = '#ff0000'
@@ -694,7 +732,7 @@ d3.movingbubbles(df, size=5, filepath='c://temp/movingbubbles.html', save_button
 
 # maps
 df = d3.import_example('surfspots')
-df = df.iloc[0:100,:]
+# df = df.iloc[0:100,:]
 html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2')
 html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2', save_button=False)
 html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cmap='Set2', save_button=True)
@@ -869,10 +907,10 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
-html = d3.treemap(df, filepath='c://temp//treemap.html', show_controls=True, dark_mode=True, value='count')
-html = d3.tree(df, filepath='c://temp//tree.html')
-html = d3.sankey(df)
-html = d3.chord(df)
+# html = d3.treemap(df, filepath='c://temp//treemap.html', show_controls=True, dark_mode=True, value='count')
+# html = d3.tree(df, filepath='c://temp//tree.html')
+# html = d3.sankey(df)
+# html = d3.chord(df)
 
 # %%
 from d3blocks import D3Blocks
@@ -2066,20 +2104,20 @@ d3.set_node_properties(df.columns)
 # d3.node_properties
 d3.node_properties.get('wind_speed')['color'] = '#000000'
 # d3.node_properties
-d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S')
+d3.set_edge_properties(df, datetime='date', dt_format='%Y-%m-%d')
 # d3.edge_properties
 # Show
 d3.show(title='Timeseries with adjusted configurations.', showfig=True, filepath='c://temp/timeseries.html')
 
 # or
 
-from d3blocks import D3Blocks
-# Initialize
-d3 = D3Blocks(chart='Timeseries', frame=True)
-# Import example
-df = d3.import_example('climate')
-# Show
-d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d %H:%M:%S', fontsize=10, figsize=[850, 500])
+# from d3blocks import D3Blocks
+# # Initialize
+# d3 = D3Blocks(chart='Timeseries', frame=True)
+# # Import example
+# df = d3.import_example('climate')
+# # Show
+# d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', fontsize=10, figsize=[850, 500])
 
 
 # %% Moving bubbles
