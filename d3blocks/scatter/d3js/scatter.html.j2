@@ -152,25 +152,25 @@ License     : GPL3
     </div>
 
     <div class="top-panel-center">
-        <div class="search-wrap top-search">
-        <input class="search-input" id="searchInput" type="search" placeholder="Find a point…" autocomplete="off" spellcheck="false" />
-        <div class="search-results" id="searchResults"></div>
-        </div>
         <form id="coordModeForm" title="Coordinate set">
             <div class="coord-mode-inner">
-                <input type="radio" name="radio_states" value="radiobutton1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label> {{ RADIO_LABEL1 }} </label>
-                <input type="radio" name="radio_states" value="radiobutton2" style="{{ RADIO_VISIBLE2 }}"> <label> {{ RADIO_LABEL2 }} </label>
-                <input type="radio" name="radio_states" value="radiobutton3" style="{{ RADIO_VISIBLE3 }}"> <label> {{ RADIO_LABEL3 }} </label>
-                <input type="radio" name="radio_states" value="radiobutton4" style="{{ RADIO_VISIBLE4 }}"> <label> {{ RADIO_LABEL4 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton1" id="radio_states_1" style="{{ RADIO_VISIBLE1 }}" checked="checked"> <label for="radio_states_1"> {{ RADIO_LABEL1 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton2" id="radio_states_2" style="{{ RADIO_VISIBLE2 }}"> <label for="radio_states_2"> {{ RADIO_LABEL2 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton3" id="radio_states_3" style="{{ RADIO_VISIBLE3 }}"> <label for="radio_states_3"> {{ RADIO_LABEL3 }} </label>
+                <input type="radio" name="radio_states" value="radiobutton4" id="radio_states_4" style="{{ RADIO_VISIBLE4 }}"> <label for="radio_states_4"> {{ RADIO_LABEL4 }} </label>
             </div>
         </form>
     </div>
 
   <div class="top-panel-right">
     <span id="selectionCount" class="selection-count" style="display:none"></span>
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; Shift+drag to add to selection; click a point to toggle it">Select</button>
     <button class="button-switch active" id="densityToggleBtn" type="button" title="Show or hide point-density heatmap">Hide Density</button>
-    <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
   </div>
 </div>
 
@@ -2178,6 +2178,29 @@ if (nodePanelClose) nodePanelClose.addEventListener('click', closeNodePanel);
 })();
 
 // —— Search & jump (basic, adapted from radialgraph) ——
+
+// Show coordinate radios only when more than one (x,y) set is available
+(function hideCoordFormIfSingle() {
+  var form = document.getElementById('coordModeForm');
+  if (!form) return;
+  var radios = form.querySelectorAll('input[name="radio_states"]');
+  var visible = 0;
+  radios.forEach(function(r) {
+    var lab = r.id ? form.querySelector('label[for="' + r.id + '"]') : null;
+    if (!lab) {
+      var n = r.nextSibling;
+      while (n && n.nodeType !== 1) n = n.nextSibling;
+      if (n && n.tagName === 'LABEL') lab = n;
+    }
+    if (r.style.display === 'none') {
+      if (lab) lab.style.display = 'none';
+      return;
+    }
+    visible += 1;
+  });
+  if (visible <= 1) form.style.display = 'none';
+})();
+
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 let searchActiveIndex = -1;

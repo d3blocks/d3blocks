@@ -675,7 +675,15 @@
   transition: var(--transition);
   pointer-events: none; /* let individual controls opt-in */
 }
-.top-panel .top-panel-left { pointer-events: none; }
+.top-panel .top-panel-left {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: start;
+  min-width: 0;
+}
+.top-panel .top-panel-left > a { pointer-events: auto; flex-shrink: 0; }
 .top-panel .top-panel-center {
   pointer-events: auto;
   display: flex;
@@ -705,5 +713,16 @@
 }
 .selection-count:hover { background: var(--btn-bg-active); }
 #selectModeBtn { white-space: nowrap; }
-.top-search { width: 360px; max-width: 40vw; }
+/* Compact on the right; expands on focus */
+.top-search {
+  width: 110px;
+  max-width: 22vw;
+  flex-shrink: 0;
+  transition: width 0.2s ease;
+}
+.top-search:focus-within {
+  width: 260px;
+  max-width: 40vw;
+}
 .top-search .search-input { width: 100%; }
+.top-panel-right .top-search { margin-left: 4px; }
