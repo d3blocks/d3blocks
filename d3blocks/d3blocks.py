@@ -114,8 +114,9 @@ class D3Blocks():
                   spacing: int = 8,
                   cmap: str = 'Turbo',
                   color_background: str = '#000000',
-                  shape: str = 'square',
+                  shape: str = 'circle',
                   mouse_radius: float = 50,
+                  square_scale: float = 1.5,
                   title: str = 'Particles - D3blocks',
                   filepath: str = 'particles.html',
                   figsize = [900, 200],
@@ -157,6 +158,9 @@ class D3Blocks():
         mouse_radius : float, optional (default: 50)
             Radius of the invisible mouse disturbance that pushes particles
             aside on hover. Larger = wider disturbance; smaller = tighter.
+        square_scale : float, optional (default: 1.5)
+            Size multiplier for square particles (width/height = radius * square_scale).
+            Only used when ``shape='square'``. The original look uses 1.5.
         title : str, optional (default: None)
             Title of the figure.
         filepath : str, optional (default: user temp directory)
@@ -167,6 +171,7 @@ class D3Blocks():
                 * None: Return HTML content.
         figsize : tuple, optional (default: (800, 600))
             Size of the figure in the browser, [width, height].
+            Use ``[None, None]`` (or either dim ``None``) to fill the full browser window.
         showfig : bool, optional (default: True)
             Open the window to show the particles.
         notebook : bool, optional
@@ -239,6 +244,7 @@ class D3Blocks():
             _shape = 'circle'
         self.config['shape'] = _shape
         self.config['mouse_radius'] = float(mouse_radius) if mouse_radius is not None else 50.0
+        self.config['square_scale'] = float(square_scale) if square_scale is not None else 1.5
         self.chart = eval('Particles')
 
         # Create the plot
@@ -247,6 +253,7 @@ class D3Blocks():
         self.display(html)
         if return_html:
             return html
+
 
     def violin(self,
                x,

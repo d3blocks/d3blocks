@@ -144,23 +144,27 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     	.attr("result", "gooey");
     
     // Particle shape: "circle" (default) or "square"
+    // Square look matches the original: size rTarget*1.5, top-left at (x, y)
     var particleShape = "{{ SHAPE }}";
     if (particleShape !== "square" && particleShape !== "rect") particleShape = "circle";
     var useSquare = particleShape === "square" || particleShape === "rect";
+    var squareScale = {{ SQUARE_SCALE }};
+    if (!isFinite(squareScale) || squareScale <= 0) squareScale = 1.5;
 
     var particle = svg.append("g")
     		.attr("class", "particles")
     		//.style("filter", "url(#gooey)")
     	.selectAll(useSquare ? "rect" : "circle").data(pixels)
     		.enter()
-    		.append(useSquare ? "rect" : "circle");
+    		.append(useSquare ? "rect" : "circle")
+        .classed("mouse", function(d, i) { return i == 0; });
 
     if (useSquare) {
       particle
-        .attr("x", function(d) { return d.x - d.rTarget; })
-        .attr("y", function(d) { return d.y - d.rTarget; })
-        .attr("width", function(d) { return d.rTarget * 2; })
-        .attr("height", function(d) { return d.rTarget * 2; });
+        .attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; })
+        .attr("width", function(d) { return d.rTarget * squareScale; })
+        .attr("height", function(d) { return d.rTarget * squareScale; });
     } else {
       particle
         .attr("cx", function(d) { return d.x; })
@@ -179,8 +183,8 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     function ticked() {
       if (useSquare) {
         particle
-          .attr("x", function(d) { return d.x - d.rTarget; })
-          .attr("y", function(d) { return d.y - d.rTarget; })
+          .attr("x", function(d) { return d.x; })
+          .attr("y", function(d) { return d.y; })
           .style("fill", function(d){ return color(d.x); });
       } else {
         particle
