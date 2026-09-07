@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 import json
 from jinja2 import Environment, PackageLoader
-from pathlib import Path
 
 try:
     from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
