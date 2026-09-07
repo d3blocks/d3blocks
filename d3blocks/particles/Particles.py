@@ -66,6 +66,8 @@ def write_html(X, config, logger):
         'FONTSIZE': config['fontsize'],
         'SPACING': config['spacing'],
         'CMAP': config['cmap'],
+        'SHAPE': config.get('shape', 'circle'),
+        'MOUSE_RADIUS': config.get('mouse_radius', 50),
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],

@@ -114,6 +114,8 @@ class D3Blocks():
                   spacing: int = 8,
                   cmap: str = 'Turbo',
                   color_background: str = '#000000',
+                  shape: str = 'circle',
+                  mouse_radius: float = 50,
                   title: str = 'Particles - D3blocks',
                   filepath: str = 'particles.html',
                   figsize = [900, 200],
@@ -148,6 +150,13 @@ class D3Blocks():
                 * 'Turbo', 'Rainbow', 'Blues', 'Reds', 'Inferno', 'Magma'
         color_background : str, optional (default: '#000000')
             Background color.
+        shape : str, optional (default: 'circle')
+            Particle shape.
+                * 'circle': round particles
+                * 'square' (or 'rect'): square particles
+        mouse_radius : float, optional (default: 50)
+            Radius of the invisible mouse disturbance that pushes particles
+            aside on hover. Larger = wider disturbance; smaller = tighter.
         title : str, optional (default: None)
             Title of the figure.
         filepath : str, optional (default: user temp directory)
@@ -222,6 +231,14 @@ class D3Blocks():
         self.config['spacing'] = spacing
         self.config['notebook'] = notebook
         self.config['save_button'] = save_button
+        # Normalize shape: circle (default) | square
+        _shape = (shape or 'circle').strip().lower()
+        if _shape in ('square', 'rect', 'rectangle', 'box'):
+            _shape = 'square'
+        else:
+            _shape = 'circle'
+        self.config['shape'] = _shape
+        self.config['mouse_radius'] = float(mouse_radius) if mouse_radius is not None else 50.0
         self.chart = eval('Particles')
 
         # Create the plot

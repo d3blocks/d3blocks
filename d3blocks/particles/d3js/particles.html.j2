@@ -93,7 +93,7 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     	y: height / 2,
     	xTarget: width + 100,
     	yTarget: height / 2,
-    	rTarget: 50
+    	rTarget: {{ MOUSE_RADIUS }}
     };
     
     // Combine mouse node with pixel nodes
@@ -121,21 +121,31 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     	.attr("values", "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7")
     	.attr("result", "gooey");
     
-    // Circles that form the text
-    var circle = svg.append("g")
-    		.attr("class", "circles")
+    // Particle shape: "circle" (default) or "square"
+    var particleShape = "{{ SHAPE }}";
+    if (particleShape !== "square" && particleShape !== "rect") particleShape = "circle";
+    var useSquare = particleShape === "square" || particleShape === "rect";
+
+    var particle = svg.append("g")
+    		.attr("class", "particles")
     		//.style("filter", "url(#gooey)")
-    	.selectAll("circle").data(pixels)
+    	.selectAll(useSquare ? "rect" : "circle").data(pixels)
     		.enter()
-    		//.append("circle")
-        .append("rect")
-        .classed("mouse", function(d, i) { return i == 0; })
-        .attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; })
-        .attr("width", function(d) { return d.rTarget * 1.5; })
-        .attr("height", function(d) { return d.rTarget * 1.5; })
-    
-    
+    		.append(useSquare ? "rect" : "circle");
+
+    if (useSquare) {
+      particle
+        .attr("x", function(d) { return d.x - d.rTarget; })
+        .attr("y", function(d) { return d.y - d.rTarget; })
+        .attr("width", function(d) { return d.rTarget * 2; })
+        .attr("height", function(d) { return d.rTarget * 2; });
+    } else {
+      particle
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; })
+        .attr("r", function(d) { return d.rTarget; });
+    }
+
     // Nodes want to form the text but won't overlap
     var simulation = d3.forceSimulation(nodes)
     	.velocityDecay(0.2)
@@ -143,14 +153,19 @@ Forked      : Ian Johnson; http://bl.ocks.org/enjalot/f973a941606aa38fed321fbce0
     	.force("y", d3.forceY(function(d) { return d.yTarget; }).strength(collisionStrength))
     	.force("collide", d3.forceCollide().radius(function(d) { return d.rTarget; }))
     	.on("tick", ticked);
-    
+
     function ticked() {
-    	circle
-        .attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; })
-        .style("fill", function(d){
-          return color(d.x)
-        })
+      if (useSquare) {
+        particle
+          .attr("x", function(d) { return d.x - d.rTarget; })
+          .attr("y", function(d) { return d.y - d.rTarget; })
+          .style("fill", function(d){ return color(d.x); });
+      } else {
+        particle
+          .attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; })
+          .style("fill", function(d){ return color(d.x); });
+      }
     }
     
    

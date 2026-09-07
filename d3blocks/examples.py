@@ -1,6 +1,6 @@
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-d3.particles('R2D2', fontsize=60, radius=1, spacing=4, collision=0.1)
+d3.particles('R2D2', fontsize=60, radius=1, spacing=4, collision=0.05, mouse_radius=30, shape='square', cmap='Turbo')
 
 # %%
 from d3blocks import D3Blocks
