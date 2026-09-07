@@ -114,7 +114,7 @@ class D3Blocks():
                   spacing: int = 8,
                   cmap: str = 'Turbo',
                   color_background: str = '#000000',
-                  shape: str = 'circle',
+                  shape: str = 'square',
                   mouse_radius: float = 50,
                   title: str = 'Particles - D3blocks',
                   filepath: str = 'particles.html',

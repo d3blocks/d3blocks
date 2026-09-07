@@ -55,11 +55,18 @@ def write_html(X, config, logger):
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
 
+    figsize = config.get('figsize') or [None, None]
+    if not isinstance(figsize, (list, tuple)) or len(figsize) < 2:
+        figsize = [None, None]
+    # null in JS → use full browser viewport
+    width_js = 'null' if figsize[0] is None else int(figsize[0])
+    height_js = 'null' if figsize[1] is None else int(figsize[1])
+
     content = {
         'json_data': X,
         'TITLE': config['title'],
-        'WIDTH': config['figsize'][0],
-        'HEIGHT': config['figsize'][1],
+        'WIDTH': width_js,
+        'HEIGHT': height_js,
         'COLOR_BACKGROUND': config['color_background'],
         'RADIUS': config['radius'],
         'COLLISION': config['collision'],
