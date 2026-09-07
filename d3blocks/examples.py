@@ -1,5 +1,10 @@
 from d3blocks import D3Blocks
 d3 = D3Blocks()
+d3.particles('R2D2', fontsize=60, radius=1, spacing=4, collision=0.1)
+
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
 # Default: mainland only
 df = d3.import_example('surfspots')
 d3.maps(df)
@@ -67,7 +72,7 @@ import numpy as np
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(chart='Scatter')
+d3 = D3Blocks(chart='Scatter', title='D3Blocks')
 
 # Import example
 df = d3.import_example('cancer')
@@ -101,7 +106,6 @@ d3.scatter(df['tsneX'].values,
                        scale=True,
                        label_radio=['tSNE','PCA'],
                        df=df,
-                       # figsize = [None, None],
                        )
 
 # %%
@@ -1698,8 +1702,8 @@ opacity=[0.7, 0.8, 0.8]
 tooltip=['1st datapoint', '2nd datapoint', '3th datapoint']
 
 # Set all propreties
-d3.scatter(x,              # tSNE x-coordinates
-           y,              # tSNE y-coordinates
+d3.scatter(x=x,              # tSNE x-coordinates
+           y=y,              # tSNE y-coordinates
            x1=x1,         # PC1 x-coordinates
            y1=y1,         # PC2 y-coordinates
            x2=x2,         # PC1 x-coordinates
@@ -1712,7 +1716,6 @@ d3.scatter(x,              # tSNE x-coordinates
            cmap='tab20',                # Colormap
            scale=False,                  # Scale the datapoints
            label_radio=['(x, y)', '(x1, y1)', '(x2, y2)'],
-           figsize=[1024, 768],
            filepath='c://temp//scatter_demo.html',
            )
 
@@ -1909,7 +1912,7 @@ d3.set_edge_properties(df['tsneX'].values,
                         y1=df['PC2'].values,
                         # size=df['survival_months'].fillna(1).values / 10,
                         size=10,
-                        color=df.index.values,
+                        color=df.index.values.astype(str),
                         tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
                         c_gradient = '#FFFFFF',
                         stroke = None,
@@ -1933,9 +1936,16 @@ d3 = D3Blocks(chart='Scatter', frame=False)
 # Import example
 df = d3.import_example('cancer')
 # Edge properties
-d3.set_edge_properties(df['tsneX'].values, df['tsneY'].values, x1=df['PC1'].values, y1=df['PC2'].values, label_radio=['tSNE','PCA'], size=df['survival_months'].fillna(1).values / 10, color=df.index.values, tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values, scale=True)
+d3.set_edge_properties(df['tsneX'].values, df['tsneY'].values,
+                       # x1=df['PC1'].values,
+                       # y1=df['PC2'].values,
+                       label_radio=['tSNE','PCA'],
+                       size=df['survival_months'].fillna(1).values / 10,
+                       color=df.index.values.astype(str),
+                       tooltip=df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).str[0:4].values,
+                       scale=True)
 # Show the chart
-d3.show(filepath='c://temp//scatter_demo.html', figsize=[600, 400])
+d3.show(filepath='c://temp//scatter_demo.html')
 
 
 from d3blocks import D3Blocks
@@ -1956,7 +1966,7 @@ d3.scatter(df['tsneX'].values,
            x1=df['PC1'].values,
            y1=df['PC2'].values,
            size=size,
-           color=df.index.values,
+           color=df.index.values.astype(str),
            tooltip=tooltip,
            filepath='c://temp//scatter_transitions1.html')
 
@@ -1966,7 +1976,7 @@ d3.scatter(df['tsneX'].values,
            y1=df['PC2'].values,
            label_radio=['tSNE','PCA'],
            size=size,
-           color=df.index.values,
+           color=df.index.values.astype(str),
            tooltip=tooltip,
            scale=True,
            figsize=[600, 400],
@@ -1980,7 +1990,7 @@ d3.scatter(df['tsneX'].values,
            y2=df['PC1'].values,
            label_radio=['tSNE', 'PCA', 'Magic'],
            size=size,
-           color=df.index.values,
+           color=df.index.values.astype(str),
            tooltip=tooltip,
            scale=True,
            filepath='c://temp//scatter_transitions2.html')
@@ -1993,7 +2003,7 @@ d3.scatter(df['tsneX'].values,
             x2=df['PC2'].values,
             y2=df['PC1'].values,
             size=size,
-            color=df.index.values,
+            color=df.index.values.astype(str),
             tooltip=tooltip,
             scale=True,
             filepath='c://temp//scatter_transitions10.html')
@@ -2007,7 +2017,7 @@ d3.scatter(df['tsneX'].values,
            y2=df['PC1'].values,
            label_radio=['tSNE', 'PCA', 'PCA_reverse'],
            size=size,
-           color=df.index.values,
+           color=df.index.values.astype(str),
            tooltip=tooltip,
            scale=True,
            figsize=[1024, 768],
