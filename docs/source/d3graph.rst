@@ -48,33 +48,6 @@ Default
 
 
 
-Change scaler
-''''''''''''''''''''''''
-
-
-.. raw:: html
-
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example2.html" height="700px" width="700px", frameBorder="0"></iframe>
-
-
-Change node properties
-''''''''''''''''''''''''
-
-
-.. raw:: html
-
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example3.html" height="700px" width="700px", frameBorder="0"></iframe>
-
-
-Change Edge properties
-''''''''''''''''''''''''
-
-.. raw:: html
-
-   <iframe src="https://erdogant.github.io\docs\d3blocks\d3graph_example4.html" height="700px" width="700px", frameBorder="0"></iframe>
-
-
-
 Social Media Example
 ''''''''''''''''''''''''
 

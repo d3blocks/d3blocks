@@ -1,3 +1,57 @@
+# %%
+# =============================================================================
+# D3GRAPH
+# =============================================================================
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example(data='energy')
+
+d3.d3graph(df,
+           filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\d3graph_example1.html',
+           )
+
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Load example data
+df = d3.import_example('socialmedia')
+# Slice first 10000 rows
+df = df[0:1500]
+
+# Create network using default
+d3.d3graph(df, filepath='d3graph.html', showfig=False)
+
+d3.d3graph(df, 
+           density_grid_size=60,
+           density_blur=10,
+           density_opacity=0.6,
+           dark_mode=True,
+           show_density=True,
+           filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\d3graph_socialmedia.html',
+           )
+
+
+# %%
+# =============================================================================
+# SANKEY
+# =============================================================================
+# Initialize
+from d3blocks import D3Blocks
+# Sankey chart
+d3 = D3Blocks()
+# Get example data
+df = d3.import_example(data='energy')
+# Create chart
+html = d3.sankey(df,
+                 filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\sankey.html',
+                 )
+# %%
 # =============================================================================
 # CIRCLEPACKING
 # =============================================================================
@@ -12,10 +66,7 @@ html = d3.circlepacking(df,
                         filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\circlepacking_energy.html',
                         )
 
-
 # %%
-
-
 # =============================================================================
 # # MAPS
 # =============================================================================

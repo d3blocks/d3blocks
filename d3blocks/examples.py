@@ -1,3 +1,10 @@
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('surfspots')
+d3.maps(df, filepath=r'c:/temp/test/')
+
+# %%
 # Scatter
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -10,13 +17,6 @@ d3 = D3Blocks()
 d3.particles('D3Blocks', fontsize=60, radius=1, spacing=4, collision=0.05, mouse_radius=20, shape='square', cmap='Turbo', figsize=[900, 200])
 # d3.particles('D3Blocks', spacing=8, shape='square', square_scale=1.5)
 
-# %%
-from d3blocks import D3Blocks
-d3 = D3Blocks()
-# Default: mainland only
-df = d3.import_example('surfspots')
-d3.maps(df)
-# d3.maps(country_names=['Netherlands', 'France', 'Germany'], cmap='Set1')
 
 # %%
 
@@ -944,7 +944,7 @@ df = d3.import_example(data='energy')
 # Create the network graph
 d3.d3graph(df, cmap='Set2', dark_mode=False, background_color='#FFF000', show_controls=True, showfig=True)
 # Extract the node colors from the network graph.
-node_colors = d3.D3graph.node_properties
+# node_colors = d3.D3graph.node_properties
 
 # %%
 

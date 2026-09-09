@@ -3428,26 +3428,20 @@ class D3Blocks():
             dark_mode=dark_mode, map_name=map_name,
             include_overseas=include_overseas, logger=logger,
         )
+
         # Markers (optional)
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'], size=size, color=color, opacity=opacity, label=label)
+
         # Countries: worldmap-style names take precedence over the countries dict
         if country_names is not None:
             self.set_edge_properties(
-                country_names=country_names,
-                country_colors=country_colors,
-                country_opacity=country_opacity,
-                country_values=country_values,
-                cmap=self.config['cmap'],
-                map_name=map_name,
-                include_overseas=include_overseas,
-            )
+                country_names=country_names, country_colors=country_colors, country_opacity=country_opacity, country_values=country_values,
+                cmap=self.config['cmap'], map_name=map_name, include_overseas=include_overseas)
         else:
-            if countries is None:
-                countries = {
-                    'World': {'color': '#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
-                }
+            if countries is None: countries = {'World': {'color': '#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1}}
             self.set_edge_properties(countries)
+
         # Create the plot
         html = self.show()
         if return_html:
