@@ -14,9 +14,9 @@ import os
 import time
 import re
 try:
-    from .. utils import set_path, write_html_file, include_save_to_svg_script
+    from .. utils import set_path, write_html_file, include_save_to_svg_script, set_logo
 except:
-    from utils import set_path, write_html_file, include_save_to_svg_script
+    from utils import set_path, write_html_file, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -105,6 +105,10 @@ def show(config, logger):
     # Do stuff like rescale image if required to the same size.
     img_before = config['img_before']
     img_after = config['img_after']
+
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Write to HTML
     return write_html(img_before, img_after, config, logger)
 
@@ -143,6 +147,7 @@ def write_html(img_before, img_after, config, logger):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

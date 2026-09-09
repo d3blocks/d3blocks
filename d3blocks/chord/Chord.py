@@ -12,9 +12,9 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script, set_logo
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script, set_logo
 
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
@@ -238,6 +238,9 @@ def show(df, **kwargs):
     df['source_id'] = list(map(lambda x: node_properties.get(x)['id'], df['source']))
     df['target_id'] = list(map(lambda x: node_properties.get(x)['id'], df['target']))
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Create the data from the input of javascript
     X = get_data_ready_for_d3(df, node_properties)
     # Write to HTML
@@ -299,6 +302,7 @@ def write_html(X, config, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         'showControls': 'true' if config.get('show_controls', True) else 'false',
         'darkMode': 'true' if config.get('dark_mode', True) else 'false',
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

@@ -13,6 +13,7 @@ import time
 import datazets as dz
 import d3graph as d3network
 import logging
+import base64
 
 try:
     from d3blocks.elasticgraph.elasticgraph import Elasticgraph
@@ -87,7 +88,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, chart: str = None, frame: bool = True, verbose: (int, str) = 'info', support: str = 'text') -> None:
+    def __init__(self, chart: str = None, frame: bool = True, verbose: (int, str) = 'info', support: str = 'text', logo: str = None) -> None:
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
@@ -105,6 +106,8 @@ class D3Blocks():
         self.config['support'] = utils.get_support(support)
         self.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
         self.logger = logger
+        # Optional instance-level title → particles logo in charts
+        self.logo = logo
 
     def particles(self,
                   text: str,
@@ -751,7 +754,7 @@ class D3Blocks():
         self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, reset_properties=reset_properties, notebook=notebook, jitter=jitter, save_button=save_button, logger=logger)
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, x3, y3, size, color, tooltip, logger)
-        # Set node properties\
+        # Set node properties
         if df is not None:
             self.set_node_properties(df)
         else:
@@ -1105,9 +1108,9 @@ class D3Blocks():
         self.config['notebook'] = notebook
         self.config['figsize'] = figsize
         self.config['save_button'] = False
+        self.config['logo'] = self.logo
         self.chart = eval('Imageslider')
         # if self.config['filepath'] is None: raise Exception('filepath can not be None.')
-
         # Preprocessing
         self.config = Imageslider.preprocessing(self.config, logger=logger)
         # Create the plot
@@ -1716,9 +1719,8 @@ class D3Blocks():
         # Set edge properties
         self.set_edge_properties(df, dt_format=self.config['dt_format'], datetime=self.config['datetime'], logger=logger)
         # Create the plot
-        html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger)
-        # Display the chart
-        self.display(html)
+        html = self.show()
+        # Return
         if return_html:
             return html
 
@@ -2520,7 +2522,7 @@ class D3Blocks():
         # Create default graph
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
         # Open the webbrowser
-        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
+        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button, logo=self.logo)
         # Create the plot
         if return_html:
             return html
@@ -3578,8 +3580,8 @@ class D3Blocks():
 
         # Create the plot
         if self.chart is not None:
-            # Copy logo to destination dir
-            utils.copy_logo(Path(self.chart.__file__).resolve().parent / 'd3js')
+            # Set logo
+            self.config['logo'] = self.logo
             # Create chart
             html = self.chart.show(self.edge_properties, config=self.config, node_properties=self.node_properties, logger=logger, **kwargs)
 

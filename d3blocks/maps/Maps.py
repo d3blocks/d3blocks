@@ -14,9 +14,9 @@ import json
 import difflib
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script, set_logo
 except Exception:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script, set_logo
 
 
 # Common aliases → GeoJSON feature names (world.geojson uses short forms like "USA")
@@ -862,6 +862,9 @@ def show(countries, **kwargs):
     countries.reset_index(inplace=True, drop=True)
     json_countries = convert_to_json_format(countries, logger=logger)
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     return write_html(json_countries, json_data, config, logger)
 
 
@@ -1015,6 +1018,7 @@ def write_html(json_countries, json_data, config, logger=None):
         'DRILL_INDEX': json.dumps(drill_index, separators=(',', ':')),
         # Relative geo/ next to HTML; JS wrappers built from _geo_dir()
         'GEO_FETCH_BASE': geo_fetch_base,
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

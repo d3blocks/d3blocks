@@ -22,19 +22,68 @@ from collections import defaultdict
 import shutil
 import logging
 
+
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 logger = logging.getLogger(__name__)
 
 #%% Copy logo
-def copy_logo(dst_dir):
-    # source path
-    src = Path(__file__).resolve().parent / 'logo.txt'
-    # Destination path
-    dst = dst_dir / 'logo.txt'
-    # Copy when not exists
-    if src.exists() and dst_dir.is_dir() and not dst.is_file():
-        shutil.copy2(src, dst)
+# def copy_logo(dst_dir):
+#     # source path
+#     src = Path(__file__).resolve().parent / 'logo.txt'
+#     # Destination path
+#     dst = dst_dir / 'logo.txt'
+#     # Copy when not exists
+#     if src.exists() and dst_dir.is_dir() and not dst.is_file():
+#         shutil.copy2(src, dst)
 
+def convert_logo(filepath="logo.png"):
+    from PIL import Image
+    import base64
+    import io
+
+    img = Image.open(filepath).convert("RGBA")
+    # Resize to 600 px wide while preserving aspect ratio.
+    target_w = 600
+    target_h = round(img.height * target_w / img.width)
+    resized = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
+
+    # Encode to WebP in memory
+    buffer = io.BytesIO()
+    
+    # Try lossless first
+    resized.save(buffer, "WEBP", lossless=True, method=6)
+    data = buffer.getvalue()
+    
+    # If too large, try progressively lower quality
+    if len(data) > 200 * 1024:
+        for quality in [95, 90, 85, 80, 75]:
+            buffer = io.BytesIO()
+            resized.save(buffer, "WEBP", quality=quality, method=6)
+            data = buffer.getvalue()
+            if len(data) < 200 * 1024:
+                break
+    
+    # Base64 text stored in variable
+    base64_logo = base64.b64encode(data).decode("ascii")
+    # Return
+    return base64_logo
+
+def set_logo(filepath='logo.txt'):
+    # Read base64 text from logo.txt
+    base64_logo = ''
+    if filepath is None or not os.path.isfile(filepath):
+        filepath = 'logo.txt'
+
+    ext = os.path.splitext(filepath)[1].lower()
+    IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff"}
+    if ext in IMAGE_EXTS:
+        base64_logo = convert_logo(filepath)
+        base64_logo = 'data:image/png;base64,' + base64_logo
+    elif os.path.isfile(filepath):
+        base64_logo = Path("logo.txt").read_text().strip()
+    
+    # Return
+    return base64_logo
 
 def include_save_to_svg_script(save_button=False, title='d3graph_chart'):
     javascript_code = ""

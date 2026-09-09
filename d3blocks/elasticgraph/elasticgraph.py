@@ -8,12 +8,9 @@ License     : GPL3
 """
 import logging
 import os
-from typing import List, Union, Tuple
+from typing import List, Union
 from d3graph import d3graph, json_create, data_checks, make_graph
-from jinja2 import Environment, PackageLoader
-import webbrowser
-import time
-from sys import platform
+from jinja2 import Environment
 from pathlib import Path
 from jinja2 import FileSystemLoader
 try:
@@ -158,6 +155,7 @@ class Elasticgraph:
              show_controls: bool = None,
              dark_mode: bool = None,
              save_button: bool = None,
+             logo: str = 'logo.txt',
              ) -> None:
         """Build and show the graph.
 
@@ -195,6 +193,8 @@ class Elasticgraph:
         self.D3graph.config['network_title'] = title
         self.D3graph.config['showfig'] = showfig
         self.D3graph.config['notebook'] = notebook
+        self.D3graph.config['logo'] = logo
+
         if show_controls is not None:
             self.D3graph.config['show_controls'] = show_controls
         if dark_mode is not None:
@@ -351,6 +351,9 @@ class Elasticgraph:
 
         """
         cfg = self.D3graph.config
+        # Set logo
+        logo_base64 = utils.set_logo(filepath=cfg.get('logo', None))
+
         _charge_abs = abs(cfg['charge'])
         content = {
             'json_data': json_data,
@@ -369,11 +372,11 @@ class Elasticgraph:
             'show_controls': cfg.get('show_controls', True),
             'dark_mode': cfg.get('dark_mode', True),
             'save_button': cfg.get('save_button', True),
+            'LOGO_BASE64': logo_base64,
         }
 
         # Copy logo
         dst_dir = Path(__file__).resolve().parent / 'd3js'
-        utils.copy_logo(dst_dir)
 
         # Use FileSystemLoader pointed at the elasticgraph/d3js directory to ensure templates and includes (e.g. logo.txt) are found
         d3js_path = os.path.abspath(os.path.join(cfg['curpath'], 'd3js'))

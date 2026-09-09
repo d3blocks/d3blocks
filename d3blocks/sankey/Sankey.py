@@ -10,9 +10,9 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, set_logo
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -199,6 +199,9 @@ def show(df, **kwargs):
     uicolors = np.unique(list(map(lambda x: node_properties.get(x)['color'], node_properties.keys())))
     custom_colors = np.any(~np.isin(uicolors, '#d3d3d3'))
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Write to HTML
     return write_html(X, config, custom_colors, logger)
 
@@ -253,6 +256,7 @@ def write_html(X, config, custom_colors, logger=None):
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
         'SUPPORT': config['support'],
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

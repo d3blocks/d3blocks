@@ -15,9 +15,9 @@ from jinja2 import Environment
 from pathlib import Path
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, copy_logo
+    from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, set_logo
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, copy_logo
+    from utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -225,6 +225,9 @@ def show(df, **kwargs):
     vals = df.to_string(header=True, index=False, index_names=False).split('\n')
     X = [';'.join(ele.split()) for ele in vals]
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Write to HTML
     return write_html(X, config, logger)
 
@@ -246,7 +249,6 @@ def write_html(X, config, logger=None):
     """
     # Copy logo
     dst_dir = Path(__file__).resolve().parent / 'd3js'
-    copy_logo(dst_dir)
 
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
@@ -267,6 +269,7 @@ def write_html(X, config, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         'showControls': 'true' if config.get('show_controls', True) else 'false',
         'darkMode': 'true' if config.get('dark_mode', True) else 'false',
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     # Use FileSystemLoader pointed at the timeseries/d3js directory to ensure templates and includes (e.g. logo.txt) are found

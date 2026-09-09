@@ -15,9 +15,9 @@ import json
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -396,6 +396,9 @@ def show(df, **kwargs):
         config['mouseover'] = '.on("mouseover", mouseover)'
         config['mousemove'] = '.on("mousemove", mousemove)'
         config['mouseleave'] = '.on("mouseleave", mouseleave)'
+    
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
 
     # Write to HTML
     return write_html(X, config, logger=logger)
@@ -443,6 +446,7 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

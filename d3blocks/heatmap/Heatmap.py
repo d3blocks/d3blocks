@@ -13,9 +13,9 @@ import os
 import re
 
 try:
-    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script
+    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script, set_logo
 except:
-    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script
+    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -65,6 +65,8 @@ def show(df, **kwargs):
     if df.get('weight', None) is not None:
         df['weight'] = normalize(df['weight'].values, scaler=config['scaler'])
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
     # Prepare the data
     json_data = get_data_ready_for_d3(df, node_properties)
     # Create the html file
@@ -244,11 +246,11 @@ def write_html(json_data, config, logger=None):
     with open(d3_script, 'r', encoding="utf8", errors='ignore') as file: html = file.read()
 
     # Logo (data URI) for top panel
-    logo_path = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/logo.txt'))
-    logo_data = ''
-    if os.path.isfile(logo_path):
-        with open(logo_path, 'r', encoding='utf8', errors='ignore') as f:
-            logo_data = f.read().strip()
+    # logo_path = os.path.abspath(os.path.join(config['curpath'], 'heatmap/d3js/logo.txt'))
+    # logo_data = ''
+    # if os.path.isfile(logo_path):
+    #     with open(logo_path, 'r', encoding='utf8', errors='ignore') as f:
+    #         logo_data = f.read().strip()
 
     show_controls = config.get('show_controls', True)
     dark_mode = config.get('dark_mode', True)
@@ -285,18 +287,23 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$SAVE_BUTTON_START$', show_save_button[0])
     html = html.replace('$SAVE_BUTTON_STOP$', show_save_button[1])
     html = html.replace('$DATA_COMES_HERE$', json_data)
-    html = html.replace('$LOGO$', logo_data)
+    # html = html.replace('$LOGO$', logo_data)
     html = html.replace('$BODY_CLASS$', body_class_str)
     html = html.replace('$THEME_TITLE$', 'Theme: Light' if not dark_mode else 'Theme: Dark')
     html = html.replace('$THEME_ICON$', '☀' if not dark_mode else '🌙')
     html = html.replace('$SHOW_CONTROLS_JS$', 'true' if show_controls else 'false')
     html = html.replace('$DARK_MODE_JS$', 'true' if dark_mode else 'false')
+    html = html.replace('$LOGO_BASE64$', config['logo_base64'])
+
     if show_controls:
         html = html.replace('$CONTROLS_START$', '')
         html = html.replace('$CONTROLS_STOP$', '')
     else:
         # Strip everything between the control markers (inclusive of markers)
         html = re.sub(r'\$CONTROLS_START\$.*?\$CONTROLS_STOP\$', '', html, flags=re.DOTALL)
+
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
 
     # Write to html
     write_html_file(config, html, logger)

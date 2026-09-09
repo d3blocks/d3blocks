@@ -9,9 +9,9 @@ License     : GPL3
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script, set_logo
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -146,6 +146,9 @@ def show(df, **kwargs):
     if is_circular(df, logger):
         logger.warning("The dataframe contains circularity or self-link which can not be handled by this chart!")
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Write to HTML
     return write_html(X, config, node_properties, logger)
 
@@ -207,6 +210,7 @@ def write_html(X, config, node_properties, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         'showControls': show_controls,
         'darkMode': dark_mode,
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

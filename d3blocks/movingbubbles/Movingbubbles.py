@@ -19,9 +19,9 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -483,6 +483,9 @@ def show(df, **kwargs):
     # Convert to json format
     config['time_notes'] = json.dumps(config['time_notes'])
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Write to HTML
     return write_html(X, config, logger)
 
@@ -561,6 +564,7 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
+        'LOGO_BASE64': config['logo_base64'],
 
     }
 

@@ -33,15 +33,9 @@ import networkx as nx
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import (
-        convert_dataframe_dict, set_path, pre_processing,
-        update_config, write_html_file, include_save_to_svg_script,
-    )
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
 except Exception:
-    from utils import (
-        convert_dataframe_dict, set_path, pre_processing,
-        update_config, write_html_file, include_save_to_svg_script,
-    )
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
 
 # d3graph is already a d3blocks dependency. Reused for node/edge property
 # computation and for network_significance() - not for rendering.
@@ -433,6 +427,9 @@ def show(df, **kwargs):
     if resolved_center is not None:
         config['center'] = resolved_center
 
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     X = str(X).replace("'", '"')
     return write_html(X, config, logger)
 
@@ -473,6 +470,7 @@ def write_html(X, config, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         # expose the expand-on-load flag to the client template
         'expandAllOnLoad': 'true' if config.get('expand_all_on_load', False) else 'false',
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:

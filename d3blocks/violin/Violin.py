@@ -15,9 +15,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script, set_logo
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script, set_logo
 
 
 # %% Set configuration properties
@@ -332,6 +332,10 @@ def show(df, **kwargs):
     node_properties = kwargs.get('node_properties', None)
     X, prop_keys = get_data_ready_for_d3(df, node_properties=node_properties)
     config['property_keys'] = prop_keys
+
+    # Set logo
+    config['logo_base64'] = set_logo(filepath=config['logo'])
+
     # Write to HTML
     return write_html(X, config, logger)
 
@@ -385,6 +389,7 @@ def write_html(X, config, logger=None):
         'NODE_TEXT_INSIDE': 'true' if config.get('node_text_inside', True) else 'false',
         'AUTO_WIDTH': 'true' if config.get('auto_width', False) else 'false',
         'AUTO_HEIGHT': 'true' if config.get('auto_height', False) else 'false',
+        'LOGO_BASE64': config['logo_base64'],
     }
 
     try:
