@@ -1,3 +1,238 @@
+# =============================================================================
+# CIRCLEPACKING
+# =============================================================================
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('stormofswords') # 'stormofswords'
+# Create force-directed-network (without cluster labels)
+html = d3.circlepacking(df,
+                        filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\circlepacking_energy.html',
+                        )
+
+
+# %%
+
+
+# =============================================================================
+# # MAPS
+# =============================================================================
+
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+# Default: mainland only
+df = d3.import_example('surfspots')
+d3.maps(df,
+        filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\maps_surfspots.html',
+        )
+
+# %%
+# =============================================================================
+# # TREEMAP
+# =============================================================================
+
+# Load d3blocks
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Load example data
+df = d3.import_example('energy')
+# df = d3.import_example('animals')
+#
+# Plot
+d3.treemap(df,
+           filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\treemap.html',
+           )
+
+# %%
+# =============================================================================
+# # TREE
+# =============================================================================
+
+# Load d3blocks
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Load example data
+df = d3.import_example('energy')
+#
+# Plot
+d3.tree(df,
+        filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\tree.html',
+        )
+
+# %%
+# =============================================================================
+# # VIOLIN
+# =============================================================================
+
+# Load d3blocks
+from d3blocks import D3Blocks
+#
+# Initialize
+d3 = D3Blocks()
+#
+# Import example dataset
+df = d3.import_example('cancer')
+#
+# Set some input variables.
+tooltip = df['labx'].values + ' <br /> Survival: ' + df['survival_months'].astype(str).values
+# fontsize = df['age'].values
+# fontsize = 16  # Set one fontsize for all nodes
+#
+# Create the chart
+d3.violin(x=df['labx'].values, y=df['age'].values, tooltip=tooltip, bins=50,
+          size=df['survival_months'].values/10, x_order=['acc','kich', 'brca','lgg','blca','coad','ov'],
+          filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\violine.html',
+          figsize=[1200, 600],
+          )
+          
+# %%
+# =============================================================================
+# # SCATTER
+# =============================================================================
+import pandas as pd
+import numpy as np
+
+# Load d3blocks
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Scatter')
+
+# Load example data
+df = d3.import_example('mnist')
+# df['cluster_labels'] = df['cluster_labels'].astype(str)
+size = np.random.randint(0, 8, df.shape[0])
+opacity = np.random.randint(0, 8, df.shape[0])/10
+tooltip = df['y'].values.astype(str)
+
+# Set all propreties
+d3.scatter(df['PC1'].values,                   # PC1 x-coordinates
+           df['PC2'].values,                   # PC2 y-coordinates
+           x1=df['tsne_1'].values,             # tSNE x-coordinates
+           y1=df['tsne_2'].values,             # tSNE y-coordinates
+           color=df['y'].values.astype(str),   # Hex-colors or classlabels
+           tooltip=tooltip,                    # Tooltip
+           size=size,                          # Node size
+           opacity=opacity,                    # Opacity
+           stroke='#000000',
+           cmap='tab20',                       # Colormap
+           scale=True,                         # Scale the datapoints
+           label_radio=['PCA', 'tSNE'],
+           showfig=True,
+           filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\scatter.html',
+
+           )
+
+
+
+# Load d3blocks
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Scatter')
+
+# Import example
+df = d3.import_example('cancer')
+
+size=(df['survival_months'].fillna(1)/10)
+color=df['labx']
+
+tooltip = df['labx'].values + ' <br> Survival: ' + df['survival_months'].astype(str).str[0:4].values
+tooltip[0] = r'URL image and Image: <br><br> https://www.topdesk.com/en/wp-content/media/sites/30/SD-memes-Paper-jam-2.jpg <br> <br> With great audio too: <br><br> https://samplelib.com/mp3/sample-12s.mp3'
+tooltip[1] = r'Local image: <br><br><PATH TO YOUR IMAGE>'
+tooltip[2] = r'URL audio file: <br><br> https://samplelib.com/mp3/sample-3s.mp3'
+tooltip[3] = r'local audio file: <br><br> /data/50_speakers_audio/Speaker_0000/Speaker_0000_00030.wav'
+size[0]=30
+size[1]=30
+size[2]=30
+size[3]=30
+color[0] = 'special'
+color[1] = 'special'
+color[2] = 'special'
+color[3] = 'special'
+
+# Set properties
+d3.scatter(df['tsneX'].values,
+                       df['tsneY'].values,
+                       x1=df['PC1'].values,
+                       y1=df['PC2'].values,
+                       size=size,
+                       color=color,
+                       stroke='#000000',
+                       opacity=0.5,
+                       tooltip=tooltip,
+                       scale=True,
+                       label_radio=['tSNE','PCA'],
+                       df=df,
+                       filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\scatter_transitions2.html',
+                       )
+
+
+from d3blocks import D3Blocks
+import numpy as np
+
+# Initialize
+d3 = D3Blocks(chart='Scatter')
+
+# Load example data
+df = d3.import_example('mnist')
+
+d3.set_node_properties(df)
+
+size = np.random.randint(0, 8, df.shape[0])
+opacity = np.random.randint(0, 8, df.shape[0])/10
+tooltip = df['y'].values.astype(str)
+
+# Set all propreties
+d3.set_edge_properties(df['PC1'].values,                   # PC1 x-coordinates
+           df['PC2'].values,                   # PC2 y-coordinates
+           x1=df['tsne_1'].values,             # tSNE x-coordinates
+           y1=df['tsne_2'].values,             # tSNE y-coordinates
+           color=df['y'].values.astype(str),   # Hex-colors or classlabels
+           tooltip=tooltip,                    # Tooltip
+           size=size,                          # Node size
+           opacity=opacity,                    # Opacity
+           stroke='#000000',
+           cmap='tab20',                       # Colormap
+           )
+
+d3.show(label_radio=['PCA', 'tSNE'],
+        filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\scatter_transitions3.html',
+        scale=True,                         # Scale the datapoints
+        showfig=True,
+        )
+
+
+# %%
+
+
+# =============================================================================
+# # HEATMAP
+# =============================================================================
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+# Import example
+# df = d3.import_example('bigbang')
+df = d3.import_example('stormofswords')
+# df = d3.import_example('energy')
+# df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
+
+d3.heatmap(df,
+           filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\heatmap.html',
+           )
+
+# %%
+
 
 # =============================================================================
 # MOVINGBUBBLES
@@ -11,7 +246,8 @@ df['int var'] = np.random.randint(1, 18, size=df.shape[0])
 df['float var'] = np.random.random(size=df.shape[0])
 
 d3.movingbubbles(df, size=df['int var'], opacity=df['float var'], stroke='#ffffff',
-                 filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\movingbubbles.html')
+                 filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\movingbubbles.html',
+                 )
 
 # %%
 
