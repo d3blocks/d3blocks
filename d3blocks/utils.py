@@ -68,11 +68,11 @@ def convert_logo(filepath="logo.png"):
     # Return
     return base64_logo
 
-def set_logo(filepath='logo.txt'):
+def set_logo(filepath=None):
     # Read base64 text from logo.txt
     base64_logo = ''
     if filepath is None or not os.path.isfile(filepath):
-        filepath = 'logo.txt'
+        filepath = Path(__file__).resolve().parent / 'logo.txt'
 
     ext = os.path.splitext(filepath)[1].lower()
     IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff"}
@@ -80,8 +80,8 @@ def set_logo(filepath='logo.txt'):
         base64_logo = convert_logo(filepath)
         base64_logo = 'data:image/png;base64,' + base64_logo
     elif os.path.isfile(filepath):
-        base64_logo = Path("logo.txt").read_text().strip()
-    
+        base64_logo = Path(filepath).read_text().strip()
+
     # Return
     return base64_logo
 
