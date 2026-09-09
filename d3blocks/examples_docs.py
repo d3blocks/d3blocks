@@ -1,3 +1,21 @@
+
+# =============================================================================
+# MOVINGBUBBLES
+# =============================================================================
+
+import numpy as np
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('random_time', n=1000, c=100, date_start="1-1-2000 00:10:05", date_stop="1-1-2000 23:59:59")
+df['int var'] = np.random.randint(1, 18, size=df.shape[0])
+df['float var'] = np.random.random(size=df.shape[0])
+
+d3.movingbubbles(df, size=df['int var'], opacity=df['float var'], stroke='#ffffff',
+                 filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\movingbubbles.html')
+
+# %%
+
+
 # Load d3blocks
 from d3blocks import D3Blocks
 
@@ -7,7 +25,8 @@ d3 = D3Blocks(chart='Timeseries', frame=False)
 # Import example
 df = d3.import_example('climate')
 # Show
-d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', title='Timeseries with adjusted configurations', filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\timeseries.html')
+d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', title='Timeseries with adjusted configurations',
+              filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\timeseries.html')
 
 # %%
 from d3blocks import D3Blocks
@@ -21,7 +40,6 @@ filepath = r'D:\REPOS\erdogant.github.io\docs\d3blocks\radialgraph_quickstart.ht
 html = d3.radialgraph(df, showfig=True, return_html=True, figsize=[750, 750], filepath=filepath)
 print('Wrote radialgraph_energy.html (center auto = highest degree)')
 
-# %%
 # ----------------------------------------------------------------------
 # 2. Explicit focus node
 # ----------------------------------------------------------------------
@@ -40,8 +58,6 @@ html = d3.radialgraph(
     figsize=[750, 750],
 )
 print('Wrote radialgraph_solar.html (center=Solar)')
-
-# %%
 
 
 # ----------------------------------------------------------------------
@@ -82,8 +98,6 @@ html = d3.radialgraph(
     return_html=True,
 )
 print('Wrote radialgraph_minimal.html (minimal chrome, light theme)')
-
-# %%
 
 
 # ----------------------------------------------------------------------
@@ -199,8 +213,6 @@ d3.d3graph(df, filepath='degree_graph.html')
 
 
 # %%
-
-
 # =============================================================================
 # D3BLOCKS - ELASTICGRAPH
 # =============================================================================
