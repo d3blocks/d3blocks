@@ -1,7 +1,16 @@
+# Scatter
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-d3.particles('R2D2', fontsize=60, radius=1, spacing=4, collision=0.05, mouse_radius=30, shape='square', cmap='Turbo', figsize=[900, 200])
-d3.particles('D3Blocks', spacing=8, shape='square', square_scale=1.5)
+df = d3.import_example('climate')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html')
+
+# %%
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+d3.particles('R2D2', fontsize=60, radius=1, spacing=4, collision=0.05, mouse_radius=20, shape='square', cmap='Turbo', figsize=[900, 200])
+# d3.particles('D3Blocks', spacing=8, shape='square', square_scale=1.5)
+
+# %%
 
 # %%
 from d3blocks import D3Blocks
@@ -888,7 +897,7 @@ html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', size='sum')
 d3.node_properties
 
 # html = d3.treemap(df)
-html = d3.tree(df)
+# html = d3.tree(df)
 # html = d3.sankey(df)
 
 # %%
@@ -1128,23 +1137,6 @@ d3.D3graph.set_node_properties(color='cluster')
 d3.D3graph.show()
 
 
-
-# %% d3graph
-import pandas as pd
-from d3blocks import D3Blocks
-
-# Initialize
-d3 = D3Blocks()
-
-# Load example data
-df = pd.read_csv(r'C:\temp\rules_sample_38.csv')
-df.rename(columns={'antecedents': 'source', 'consequents': 'target', 'lift': 'weight'}, inplace=True)
-
-# Set edge properties
-d3.D3graph.set_edge_properties(minmax_distance=[50, 100])
-
-# Plot
-d3.d3graph(df, filepath='c:/temp/d3graph.html')
 
 
 # %%
@@ -1475,9 +1467,9 @@ df = d3.import_example('stormofswords')
 df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'], symmetric=True)
 
 # d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel=[1,1,1,2,2,2,3])
-d3.heatmap(df, filepath='c:/temp/heatmap.html', classlabel='cluster', stroke='red', vmax=1, figsize=(400, 400))
-html = d3.heatmap(df, filepath=None, notebook=False)
-d3.heatmap(df, notebook=True)
+d3.heatmap(df, filepath='c:/temp/heatmap.html', stroke='red')
+# html = d3.heatmap(df, filepath=None, notebook=False)
+# d3.heatmap(df, notebook=True)
 
 
 # %% Notebook examples
