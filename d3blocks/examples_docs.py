@@ -1,6 +1,15 @@
+# Load d3blocks
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks(chart='Timeseries', frame=False)
+
+# Import example
+df = d3.import_example('climate')
+# Show
+d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', title='Timeseries with adjusted configurations', filepath=r'D:\REPOS\erdogant.github.io\docs\d3blocks\timeseries.html')
+
 # %%
-
-
 from d3blocks import D3Blocks
 
 # ----------------------------------------------------------------------
