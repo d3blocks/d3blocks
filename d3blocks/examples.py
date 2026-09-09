@@ -7,10 +7,8 @@ html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\te
 # %%
 from d3blocks import D3Blocks
 d3 = D3Blocks()
-d3.particles('R2D2', fontsize=60, radius=1, spacing=4, collision=0.05, mouse_radius=20, shape='square', cmap='Turbo', figsize=[900, 200])
+d3.particles('D3Blocks', fontsize=60, radius=1, spacing=4, collision=0.05, mouse_radius=20, shape='square', cmap='Turbo', figsize=[900, 200])
 # d3.particles('D3Blocks', spacing=8, shape='square', square_scale=1.5)
-
-# %%
 
 # %%
 from d3blocks import D3Blocks
