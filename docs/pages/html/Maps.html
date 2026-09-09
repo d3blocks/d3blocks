@@ -132,187 +132,104 @@
 <h1>Maps<a class="headerlink" href="#maps" title="Link to this heading"></a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="d3blocks.d3blocks.D3Blocks.maps">
-<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#0981D1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'Australia':</span> <span class="pre">{'color':</span> <span class="pre">'#008000',</span> <span class="pre">'line':</span> <span class="pre">'dashed',</span> <span class="pre">'linewidth':</span> <span class="pre">5,</span> <span class="pre">'opacity':</span> <span class="pre">0.3},</span> <span class="pre">'World':</span> <span class="pre">{'color':</span> <span class="pre">'#D3D3D3',</span> <span class="pre">'line':</span> <span class="pre">'none',</span> <span class="pre">'linewidth':</span> <span class="pre">1,</span> <span class="pre">'opacity':</span> <span class="pre">0.6}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Maps</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'maps.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.maps" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">D3Blocks.</span></span><span class="sig-name descname"><span class="pre">maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#0981D1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'world'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_overseas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Maps</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'maps.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_controls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#d3blocks.d3blocks.D3Blocks.maps" title="Link to this definition"></a></dt>
 <dd><p>Maps block.</p>
-<p>The Maps chart is a visualization to plot the World and color and mark countries together with circles for highlighs.
-For demonstration purposes, the “surfspots” can be used.
-The javascript code is forked from Mike Bostock and then Pythonized.</p>
+<p>Interactive world map with optional country coloring (choropleth) and
+lon/lat markers. Country coloring follows the same idea as the worldmap
+package: pass names (fuzzy-matched to the map) plus optional colors,
+opacity, or numeric values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>(</em><em>)</em>) – <dl class="simple">
-<dt>Input data containing the following columns:</dt><dd><ul>
-<li><p>’lon’, ‘lat’, ‘label’, ‘size’, ‘opacity’</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em> or </em><em>None</em>) – Marker data with columns <code class="docutils literal notranslate"><span class="pre">lon</span></code>, <code class="docutils literal notranslate"><span class="pre">lat</span></code>, and optionally
+<code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, <code class="docutils literal notranslate"><span class="pre">opacity</span></code>, <code class="docutils literal notranslate"><span class="pre">color</span></code>.
+None or empty → country-only map (no markers).</p></li>
+<li><p><strong>size</strong> – Marker defaults (see previous docs). Used when building node properties.</p></li>
+<li><p><strong>color</strong> – Marker defaults (see previous docs). Used when building node properties.</p></li>
+<li><p><strong>opacity</strong> – Marker defaults (see previous docs). Used when building node properties.</p></li>
+<li><p><strong>label</strong> – Marker defaults (see previous docs). Used when building node properties.</p></li>
+<li><p><strong>countries</strong> (<em>dict</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Explicit country styling::</dt><dd><dl class="simple">
+<dt>{‘World’: {‘color’: ‘#D3D3D3’, ‘opacity’: 0.6, ‘line’: ‘none’, ‘linewidth’: 1},</dt><dd><p>’Netherlands’: {‘color’: ‘#000FFF’, ‘opacity’: 0.8}}</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Ignored when <code class="docutils literal notranslate"><span class="pre">country_names</span></code> is provided.</p>
+</p></li>
+<li><p><strong>country_names</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>None</em>) – Countries to color (worldmap-style). Fuzzy-matched to GeoJSON names.</p></li>
+<li><p><strong>country_colors</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>None</em>) – Hex colors or category labels for each name (via <code class="docutils literal notranslate"><span class="pre">cmap</span></code>).</p></li>
+<li><p><strong>country_opacity</strong> (<em>float</em><em>, </em><em>list</em><em>, or </em><em>None</em>) – Opacity per country. If None and <code class="docutils literal notranslate"><span class="pre">country_values</span></code> is set, opacity
+is scaled from the values.</p></li>
+<li><p><strong>country_values</strong> (<em>list</em><em> of </em><em>float</em><em> or </em><em>None</em>) – Numeric values → sequential colors/opacity.</p></li>
+<li><p><strong>map_name</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'world'</em><em>)</em>) – <dl class="simple">
+<dt>Map geometry to load.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'world'</span></code>: country-level world map</p></li>
+<li><p>Any country name or ISO code for admin-1 regions, e.g.
+<code class="docutils literal notranslate"><span class="pre">'netherlands'</span></code>, <code class="docutils literal notranslate"><span class="pre">'NL'</span></code>, <code class="docutils literal notranslate"><span class="pre">'germany'</span></code>, <code class="docutils literal notranslate"><span class="pre">'US'</span></code>, <code class="docutils literal notranslate"><span class="pre">'japan'</span></code></p></li>
 </ul>
 </dd>
 </dl>
+<p>Full catalog: <code class="docutils literal notranslate"><span class="pre">Maps.list_map_names()</span></code> (~240 regional maps).
+Region names: <code class="docutils literal notranslate"><span class="pre">Maps.list_country_names(map_name)</span></code>.</p>
 </p></li>
-<li><p><strong>size</strong> (<em>str</em><em> (</em><em>default: 10</em><em>)</em>) – <dl class="simple">
-<dt>Size of the nodes:</dt><dd><ul>
-<li><p>10 : Same size for all scatter points</p></li>
-<li><p>[10, 4, 30, ..]</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>color</strong> (<em>str</em><em> (</em><em>default: '#0981D1'</em><em>)</em>) – <dl class="simple">
-<dt>Hex color of the scatter points:</dt><dd><ul>
-<li><p>’#0981D1’: Same color for all scatter points</p></li>
-<li><p>[‘Netherlands’, ‘Australia’, ‘Austrialia’, ..]</p></li>
-<li><p>[‘#000FFF’, ‘#000000’, ‘#000000’, ..]</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>opacity</strong> (<em>str</em><em> (</em><em>default: 0.8</em><em>)</em>) – <dl class="simple">
-<dt>Opacity of the scatter points:</dt><dd><ul>
-<li><p>0.8 : Same opacity for all scatter points</p></li>
-<li><p>[0.8, 0.6, ..]</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>label</strong> (<em>str</em><em> (</em><em>default: ''</em><em>)</em>) – <dl class="simple">
-<dt>Label of the scatter points:</dt><dd><ul>
-<li><p>’’ : Same label for all scatter points</p></li>
-<li><p>[‘Amsterdam’, ‘New York’, ..]</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>countries</strong> (<em>dict.</em>) – <dl class="simple">
-<dt>border properties of the countries. The world are the properties of the entire map. Each country can be changed accordingly.</dt><dd><ul>
-<li><p>{‘World’: {‘color’:’#D3D3D3’, ‘opacity’: 0.3, ‘line’: ‘none’, ‘linewidth’: 1}},</p></li>
-<li><p>color: color for the country</p></li>
-<li><p>opacity: opacity of the country</p></li>
-<li><p>line: [‘dashed’, ‘none’], line of the country</p></li>
-<li><p>linewidth: width of the line</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>title</strong> (<em>String</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
-<dt>Title of the figure.</dt><dd><ul>
-<li><p>’Circlepacking’</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>filepath</strong> (<em>String</em><em>, </em><em>(</em><em>Default: user temp directory</em><em>)</em>) – <ul>
-<li><p>File path to save the output.</p></li>
-<li><p>Temporarily path: ‘d3blocks.html’</p></li>
-<li><p>Relative path: ‘./d3blocks.html’</p></li>
-<li><p>Absolute path: ‘c://temp//d3blocks.html’</p></li>
-<li><p>None: Return HTML</p></li>
-</ul>
-</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – <dl class="simple">
-<dt>Size of the figure in the browser, [width, height].</dt><dd><ul>
-<li><p>[1000, 1200]</p></li>
-<li><p>None or [None, None]: Use the screen resolution.</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
-<li><p>True: Open browser-window.</p></li>
-<li><p>False: Do not open browser-window.</p></li>
-</ul>
-</p></li>
-<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
-<li><p>True: Overwrite the html in the destination directory.</p></li>
-<li><p>False: Do not overwrite destination file but show warning instead.</p></li>
-</ul>
-</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – <ul>
-<li><p>True: Use IPython to show chart in notebook.</p></li>
-<li><p>False: Do not use IPython.</p></li>
-</ul>
-</p></li>
-<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
-<li><p>True: Save button is shown in the HTML to save the image in svg.</p></li>
-<li><p>False: No save button is shown in the HTML.</p></li>
-</ul>
-</p></li>
-<li><p><strong>return_html</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – <ul>
-<li><p>True: Return html</p></li>
-<li><p>False: Nothing is returned</p></li>
-</ul>
-</p></li>
-<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – <ul>
-<li><p>True: Reset the node_properties at each run.</p></li>
-<li><p>False: Use the d3.node_properties()</p></li>
-</ul>
-</p></li>
+<li><p><strong>include_overseas</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – For regional maps, keep distant overseas territories (e.g. Caribbean
+islands for the Netherlands). When False, only the main landmass
+cluster is shown so the map fills the view.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em>) – Colormap for markers and/or country colors.</p></li>
+<li><p><strong>title</strong> – Standard figure options.</p></li>
+<li><p><strong>filepath</strong> – Standard figure options.</p></li>
+<li><p><strong>figsize</strong> – Standard figure options.</p></li>
+<li><p><strong>showfig</strong> – Standard figure options.</p></li>
+<li><p><strong>overwrite</strong> – Standard figure options.</p></li>
+<li><p><strong>notebook</strong> – Standard figure options.</p></li>
+<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Show Save (SVG) control.</p></li>
+<li><p><strong>show_controls</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Top bar + side panels.</p></li>
+<li><p><strong>dark_mode</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Default theme.</p></li>
+<li><p><strong>return_html</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Return HTML string.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Rebuild node properties each call.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input label/nodes/samples.</p></li>
-<li><p><strong>d3.edge_properties</strong> (<em>DataFrame of dictionary</em>) – Contains properties of the unique input edges/links.</p></li>
-<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Contains configuration properties.</p></li>
+<li><p><em>HTML string if return_html else None.</em></p></li>
+<li><p><strong>Side effects</strong> (sets <code class="docutils literal notranslate"><span class="pre">node_properties</span></code>, <code class="docutils literal notranslate"><span class="pre">edge_properties</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code>.)</p></li>
 </ul>
 </p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Markers only</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'surfspots'</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-</pre></div>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load d3blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'surfspots'</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'Set2'</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">countries</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'World'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span><span class="s1">'#D3D3D3'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="s1">'Netherlands'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#000FFF'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="s1">'France'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#FFA500'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'dashed'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="s1">'Australia'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#008000'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'dashed'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                                                                <span class="p">})</span>
-</pre></div>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load library</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Country coloring (worldmap-style) without markers</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">country_names</span><span class="o">=</span><span class="p">[</span><span class="s1">'Netherlands'</span><span class="p">,</span> <span class="s1">'France'</span><span class="p">,</span> <span class="s1">'Germany'</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'Set1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Regional map: Dutch provinces</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">country_names</span><span class="o">=</span><span class="p">[</span><span class="s1">'Zeeland'</span><span class="p">,</span> <span class="s1">'Overijssel'</span><span class="p">,</span> <span class="s1">'Flevoland'</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="n">map_name</span><span class="o">=</span><span class="s1">'netherlands'</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'Set1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Countries + values (opacity scaled) + markers</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">country_names</span><span class="o">=</span><span class="p">[</span><span class="s1">'Netherlands'</span><span class="p">,</span> <span class="s1">'Australia'</span><span class="p">,</span> <span class="s1">'USA'</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="n">country_values</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="n">cmap</span><span class="o">=</span><span class="s1">'Blues'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Explicit countries dict</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">maps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">countries</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">'World'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#D3D3D3'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">'Netherlands'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#000FFF'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">'France'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#FFA500'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'dashed'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Stepwise workflow</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">chart</span><span class="o">=</span><span class="s1">'maps'</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import example</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">import_example</span><span class="p">(</span><span class="s1">'surfspots'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set node properties</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_node_properties</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set edge properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">({</span><span class="s1">'Australia'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#008000'</span><span class="p">,</span> <span class="s1">'opacity'</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'dashed'</span><span class="p">,</span> <span class="s1">'linewidth'</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                        <span class="s1">'Netherlands'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="s1">'#000FFF'</span><span class="p">,</span> <span class="s1">'line'</span><span class="p">:</span> <span class="s1">'dashed'</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                        <span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">edge_properties</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show chart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">set_edge_properties</span><span class="p">(</span><span class="n">country_names</span><span class="o">=</span><span class="p">[</span><span class="s1">'Netherlands'</span><span class="p">,</span> <span class="s1">'Belgium'</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'Set2'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
 </dd></dl>
