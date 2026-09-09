@@ -161,8 +161,9 @@ class Elasticgraph:
 
         Parameters
         ----------
-        figsize : tuple, (default: (1500, 800))
+        figsize : tuple, (default: (None, None))
             Size of the figure in the browser, [width, height].
+            Use ``(None, None)`` (default) for full-screen; or e.g. ``(1500, 800)`` for a fixed size.
         title : String, (default: None)
             Title of the figure.
         filepath : String, (Default: user temp directory)
@@ -358,8 +359,8 @@ class Elasticgraph:
         content = {
             'json_data': json_data,
             'title': cfg['network_title'],
-            'width': cfg['figsize'][0] or 0,
-            'height': cfg['figsize'][1] or 0,
+            'width': (cfg.get('figsize') or [None, None])[0] or 0,
+            'height': (cfg.get('figsize') or [None, None])[1] or 0,
             'point_radius': cfg['point_radius'],
             'hull_offset': cfg['hull_offset'],
             'debug': cfg['debug'],

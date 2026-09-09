@@ -111,8 +111,9 @@ Chart       : Elasticgraph (elastic force-directed network)
 /* ── Init graph ─────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', function () {
   d3graphscript({{ json_data }}, {
-    width:                0,
-    height:               0,
+    // 0 / null → full viewport; explicit figsize still supported
+    width:                {{ width if width else 0 }},
+    height:               {{ height if height else 0 }},
     dr:                   {{ point_radius }},
     off:                  {{ hull_offset }},
     debug:                {{ debug }},
@@ -137,13 +138,14 @@ window.addEventListener('DOMContentLoaded', function () {
 
   function positionSidePanels() {
     var bar = document.querySelector('.top-panel');
-    var gc  = document.getElementById('graph-container');
-    var panelW = 0;
-    PANEL_ORDER.forEach(function (id) {
-      var p = document.getElementById(id);
-      if (p) panelW = Math.max(panelW, p.getBoundingClientRect().right);
-    });
-    if (gc) gc.style.left = (panelW > 0 ? panelW + 8 : 0) + 'px';
+    // Graph stays full-viewport; side panels float over it (same as maps/scatter)
+    var gc = document.getElementById('graph-container');
+    if (gc) {
+      gc.style.left = '0';
+      gc.style.right = '0';
+      gc.style.top = '0';
+      gc.style.bottom = '0';
+    }
 
     var y = bar ? bar.getBoundingClientRect().bottom + 8 : 60;
     PANEL_ORDER.forEach(function (id) {

@@ -385,19 +385,17 @@ function d3graphscript(
   const hostEl = document.getElementById("graph-container") || document.body;
   const body = d3.select(hostEl);
 
-  // Use the container's live dimensions (set by CSS / JS panel layout).
-  // When width/height are passed as 0 or the container has no explicit size,
-  // fall back to the viewport so the graph is never invisible.
+  // Fullscreen by default: use the container / viewport size.
+  // Explicit positive width/height (from figsize) still work as a fixed size.
   function getContainerSize() {
-    const w = hostEl.clientWidth  || window.innerWidth;
-    const h = hostEl.clientHeight || window.innerHeight;
-    return { w, h };
+    const w = hostEl.clientWidth  || window.innerWidth  || document.documentElement.clientWidth  || 900;
+    const h = hostEl.clientHeight || window.innerHeight || document.documentElement.clientHeight || 600;
+    return { w: Math.max(100, w), h: Math.max(100, h) };
   }
   let sz = getContainerSize();
-  // Override caller-supplied width/height with the live container size so the
-  // graph fills the available area regardless of the Python figsize setting.
-  width  = sz.w;
-  height = sz.h;
+  // 0 / null / missing → fill viewport; otherwise keep the explicit figsize
+  if (!width  || width  <= 0) width  = sz.w;
+  if (!height || height <= 0) height = sz.h;
 
   const vis = body.append("svg")
     .attr("width",  "100%")
@@ -571,6 +569,17 @@ function d3graphscript(
     if (force) force.stop();
     net = network(data, net, expand);
 
+    // Charge helper: density-aware so large graphs do not pin nodes to the edges.
+    // Tuned for ~50 nodes; denser graphs get weaker per-node repulsion (sqrt scale).
+    function chargeFor(d) {
+      const n = (net && net.nodes && net.nodes.length) ? net.nodes.length : 50;
+      const densityScale = Math.sqrt(50 / Math.max(10, n));
+      const base = charge * scaling * densityScale;
+      // Group placeholders repel a bit stronger so clusters stay separated
+      if (d.size > 0) return base * 2;
+      return base;
+    }
+
     force = d3.layout
       .force()
       .nodes(net.nodes)
@@ -591,13 +600,11 @@ function d3graphscript(
           return 40 * scaling * collisionFactor;
         }
       })
-      .gravity(1.0) // gravity+charge tweaked to ensure good 'grouped' view (e.g. green group not smack between blue&orange, ...
-      .charge((d) => {
-        // ... charge is important to turn single-linked groups to the outside
-        if (d.size > 0) return charge * 2 * scaling; // group node
-        return charge * scaling; // 'regular node'
-      })
-      .friction(0.7) // friction adjusted to get dampened display
+      // Gravity kept moderate so charge/cohesion can form clusters instead of
+      // slamming everything to the center or the outer rim of the viewport.
+      .gravity(0.35)
+      .charge(chargeFor)
+      .friction(0.75)
       .start();
 
     /*
@@ -639,6 +646,18 @@ function d3graphscript(
     // Expose for panel controls / resize handler
     window._forceRef  = force;
     window._force2Ref = force2;
+
+    // If the container was not laid out yet (0×0 / very small), re-measure next frame
+    // so the force field matches the real viewport and nodes do not settle on a wrong edge.
+    requestAnimationFrame(function() {
+      const s2 = getContainerSize();
+      if (s2.w > 50 && s2.h > 50) {
+        width = s2.w;
+        height = s2.h;
+        if (force)  force.size([width, height]);
+        if (force2) force2.size([width, height]);
+      }
+    });
 
     hullg.selectAll("path.hull").remove();
     hull = hullg
@@ -1106,7 +1125,15 @@ function d3graphscript(
   // ── Live control API exposed for the side panels ──────────────────────────
   // Called by the physics sliders in the HTML template.
   window._applyCharge = function(v) {
-    force.charge(-Math.abs(v)).start();
+    // Keep the same charge model as init (per-node, density-scaled, groups 2x)
+    charge = -Math.abs(v);
+    const n = (net && net.nodes && net.nodes.length) ? net.nodes.length : 50;
+    const densityScale = Math.sqrt(50 / Math.max(10, n));
+    force.charge(function(d) {
+      const base = charge * scaling * densityScale;
+      if (d.size > 0) return base * 2;
+      return base;
+    }).start();
   };
   window._applyCollision = function() {
     // collision is used inside linkDistance() — reheat the sim without resetting positions
