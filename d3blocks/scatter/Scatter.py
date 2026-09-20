@@ -40,6 +40,8 @@ def set_config(config={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['jitter'] = kwargs.get('jitter', None)
     config['save_button'] = kwargs.get('save_button', True)
+    config['show_controls'] = kwargs.get('show_controls', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     # Return
     return config
 
@@ -421,6 +423,9 @@ def write_html(X, config, logger=None):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+    # Ensure new GUI keys have defaults (backwards compatible)
+    show_controls = config.get('show_controls', True)
+    show_top_panel = config.get('show_top_panel', True)
     content = {
         'json_data': X,
         'COLOR_BACKGROUND': config['color_background'],
@@ -447,6 +452,8 @@ def write_html(X, config, logger=None):
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
         'LOGO_BASE64': config['logo_base64'],
+        'showControls': 'true' if show_controls else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
     }
 
     try:

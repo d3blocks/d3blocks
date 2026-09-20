@@ -2,14 +2,14 @@
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('surfspots')
-d3.maps(df, filepath=r'c:/temp/test/')
+d3.maps(df, filepath=r'c:/temp/test/', show_controls=True, dark_mode=False)
 
 # %%
-# Scatter
+# timeseries
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('climate')
-html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html')
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html', show_controls=False)
 
 # %%
 from d3blocks import D3Blocks
@@ -64,7 +64,7 @@ d3.violin(x=df['labx'].values,
           filepath=r'c:\temp\violine.html',
           figsize=[None, None],
           df=df,
-          show_controls=True,
+          show_controls=False,
           dark_mode=False
           )
 
@@ -77,7 +77,7 @@ import numpy as np
 from d3blocks import D3Blocks
 
 # Initialize
-d3 = D3Blocks(chart='Scatter', title='D3Blocks')
+d3 = D3Blocks(chart='Scatter')
 
 # Import example
 df = d3.import_example('cancer')
@@ -111,6 +111,8 @@ d3.scatter(df['tsneX'].values,
                        scale=True,
                        label_radio=['tSNE','PCA'],
                        df=df,
+                       show_side_panel=True,
+                       show_top_panel=False,
                        )
 
 # %%
