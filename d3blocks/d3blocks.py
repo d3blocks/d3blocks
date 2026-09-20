@@ -476,7 +476,7 @@ class D3Blocks():
                 tooltip=None,
                 cmap='tab20',
                 scale=False,
-                color_background='#ffffff',
+                color_background=None,
                 label_radio=['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'],
                 xlim=[None, None],
                 ylim=[None, None],
@@ -545,6 +545,10 @@ class D3Blocks():
                 * 'tab20c', 'Set1', 'Set2', 'rainbow', 'bwr', 'binary', 'seismic', 'Blues', 'Reds', 'Pastel1', 'Paired', 'twilight', 'hsv'
         scale: Bool, optional
             Scale datapoints. The default is False.
+        color_background : str or None, (default: None)
+            Page background color.
+                * None: Use the dark/light theme background (``--bg``); toggle with the theme button.
+                * Hex string (e.g. ``'#f5f5f5'``): Fixed background color and light-mode UI chrome.
         label_radio: List ['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)']
             The labels used for the radiobuttons.
         set_xlim : tuple, (default: [None, None])

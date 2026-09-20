@@ -15,10 +15,17 @@ License     : GPL3
     {{ SUPPORT }}
 
     <style>
-      body { background: {{ COLOR_BACKGROUND }} }
       .search-hit{stroke:#ff9900!important;stroke-width:3px!important}
     </style>
     <style>{% include "scatter.css" %}</style>
+{% if useCustomBackground == 'true' and COLOR_BACKGROUND %}
+    <!-- After scatter.css so this wins over body.light { --bg: #fff } -->
+    <style>
+      body.light {
+        --bg: {{ COLOR_BACKGROUND }};
+      }
+    </style>
+{% endif %}
 
     <style>
     /* Floating left layout panel (d3graph-style): overlays the plot, does not shift it.
@@ -140,7 +147,7 @@ License     : GPL3
 
 </head>
 
-<body>
+<body{% if useCustomBackground == 'true' %} class="light"{% endif %}>
 
 {% if showTopPanel == 'true' %}
 <!-- Top panel (search centered, controls on right) -->

@@ -35,7 +35,8 @@ def set_config(config={}, **kwargs):
     config['ylim'] = kwargs.get('ylim', [None, None])
     config['xlim'] = kwargs.get('xlim', [None, None])
     config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'])
-    config['color_background'] = kwargs.get('color_background', '#ffffff')
+    # None → theme --bg (dark/light). Hex → custom page background + light UI.
+    config['color_background'] = kwargs.get('color_background', None)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
     config['jitter'] = kwargs.get('jitter', None)
@@ -426,9 +427,14 @@ def write_html(X, config, logger=None):
     # Ensure new GUI keys have defaults (backwards compatible)
     show_controls = config.get('show_controls', True)
     show_top_panel = config.get('show_top_panel', True)
+    color_background = config.get('color_background', None)
+    # Empty string / None → theme-driven background; any non-empty value is a fixed hex.
+    if color_background is None or (isinstance(color_background, str) and color_background.strip() == ''):
+        color_background = None
     content = {
         'json_data': X,
-        'COLOR_BACKGROUND': config['color_background'],
+        'COLOR_BACKGROUND': color_background if color_background else '',
+        'useCustomBackground': 'true' if color_background else 'false',
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
