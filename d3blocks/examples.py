@@ -113,7 +113,8 @@ d3.scatter(df['tsneX'].values,
                        df=df,
                        show_controls=True,
                        show_top_panel=True,
-                       color_background='#0E1117',
+                       dark_mode=True,
+                       color_background=['#0E1117', '#FFFFFF'],
                        )
 
 # %%

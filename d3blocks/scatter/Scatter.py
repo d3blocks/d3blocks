@@ -20,6 +20,33 @@ except:
     from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo
 
 
+# Theme defaults for center / top / side panel backgrounds (match scatter.css --bg).
+_DEFAULT_BG_DARK = '#222222'
+_DEFAULT_BG_LIGHT = '#ffffff'
+
+
+def _resolve_color_background(color_background):
+    """Normalize color_background to (dark_hex, light_hex).
+
+    Accepts:
+      * None → theme defaults
+      * [dark, light] list/tuple of two hex strings
+      * single hex str → same color for both modes (backwards compatible)
+    """
+    if color_background is None:
+        return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+    if isinstance(color_background, str):
+        c = color_background.strip()
+        if not c:
+            return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+        return c, c
+    if isinstance(color_background, (list, tuple)) and len(color_background) >= 2:
+        dark = color_background[0] if color_background[0] else _DEFAULT_BG_DARK
+        light = color_background[1] if color_background[1] else _DEFAULT_BG_LIGHT
+        return dark, light
+    return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+
+
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration setting."""
@@ -35,8 +62,10 @@ def set_config(config={}, **kwargs):
     config['ylim'] = kwargs.get('ylim', [None, None])
     config['xlim'] = kwargs.get('xlim', [None, None])
     config['label_radio'] = kwargs.get('label_radio', ['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'])
-    # None → theme --bg (dark/light). Hex → custom page background + light UI.
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    # None → defaults matching scatter.css (--bg dark #222, light #fff).
     config['color_background'] = kwargs.get('color_background', None)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
     config['jitter'] = kwargs.get('jitter', None)
@@ -427,14 +456,13 @@ def write_html(X, config, logger=None):
     # Ensure new GUI keys have defaults (backwards compatible)
     show_controls = config.get('show_controls', True)
     show_top_panel = config.get('show_top_panel', True)
-    color_background = config.get('color_background', None)
-    # Empty string / None → theme-driven background; any non-empty value is a fixed hex.
-    if color_background is None or (isinstance(color_background, str) and color_background.strip() == ''):
-        color_background = None
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = _resolve_color_background(config.get('color_background', None))
     content = {
         'json_data': X,
-        'COLOR_BACKGROUND': color_background if color_background else '',
-        'useCustomBackground': 'true' if color_background else 'false',
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
+        'darkMode': 'true' if dark_mode else 'false',
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],

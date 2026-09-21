@@ -18,14 +18,28 @@ License     : GPL3
       .search-hit{stroke:#ff9900!important;stroke-width:3px!important}
     </style>
     <style>{% include "scatter.css" %}</style>
-{% if useCustomBackground == 'true' and COLOR_BACKGROUND %}
-    <!-- After scatter.css so this wins over body.light { --bg: #fff } -->
+    <!-- Center + top panel + side panels: per-theme backgrounds.
+         Theme toggle (body.light) switches which color is used. -->
     <style>
+      body {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .top-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .stats-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
       body.light {
-        --bg: {{ COLOR_BACKGROUND }};
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .top-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .stats-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
       }
     </style>
-{% endif %}
 
     <style>
     /* Floating left layout panel (d3graph-style): overlays the plot, does not shift it.
@@ -147,7 +161,7 @@ License     : GPL3
 
 </head>
 
-<body{% if useCustomBackground == 'true' %} class="light"{% endif %}>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
 
 {% if showTopPanel == 'true' %}
 <!-- Top panel (search centered, controls on right) -->
