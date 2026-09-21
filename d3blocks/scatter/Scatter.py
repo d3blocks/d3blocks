@@ -431,18 +431,27 @@ def write_html(X, config, logger=None):
     show_top_panel = config.get('show_top_panel', True)
     dark_mode = config.get('dark_mode', True)
     bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
+    # figsize may be [None, None] (viewport-sized). SVG attributes require a
+    # valid length — never the string "None". JS overwrites with viewport size.
+    fig_w = config['figsize'][0]
+    fig_h = config['figsize'][1]
+    svg_w = 800 if fig_w is None else fig_w
+    svg_h = 600 if fig_h is None else fig_h
+    # Axis limits: Jinja must emit JS null, not the identifier None.
+    def _js_num(v):
+        return 'null' if v is None else v
     content = {
         'json_data': X,
         'COLOR_BACKGROUND_DARK': bg_dark,
         'COLOR_BACKGROUND_LIGHT': bg_light,
         'darkMode': 'true' if dark_mode else 'false',
         'TITLE': config['title'],
-        'WIDTH': config['figsize'][0],
-        'HEIGHT': config['figsize'][1],
-        'MIN_X': config['xlim'][0],
-        'MAX_X': config['xlim'][1],
-        'MIN_Y': config['ylim'][0],
-        'MAX_Y': config['ylim'][1],
+        'WIDTH': svg_w,
+        'HEIGHT': svg_h,
+        'MIN_X': _js_num(config['xlim'][0]),
+        'MAX_X': _js_num(config['xlim'][1]),
+        'MIN_Y': _js_num(config['ylim'][0]),
+        'MAX_Y': _js_num(config['ylim'][1]),
         'RADIO_LABEL1': config['label_radio'][0],
         'RADIO_LABEL2': config['label_radio'][1],
         'RADIO_LABEL3': config['label_radio'][2],
