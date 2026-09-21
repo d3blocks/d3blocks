@@ -675,6 +675,10 @@
   transition: var(--transition);
   pointer-events: none; /* let individual controls opt-in */
 }
+/* Light mode: no dark drop-shadow under the white top bar */
+body.light .top-panel {
+  box-shadow: none;
+}
 .top-panel .top-panel-left {
   pointer-events: auto;
   display: flex;
