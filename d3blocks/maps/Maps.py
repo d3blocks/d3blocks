@@ -14,9 +14,9 @@ import json
 import difflib
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script, set_logo, resolve_color_background
 except Exception:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, convert_to_json_format, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # Common aliases → GeoJSON feature names (world.geojson uses short forms like "USA")
@@ -638,8 +638,11 @@ def set_config(config={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    config['color_background'] = kwargs.get('color_background', None)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     config['map_name'] = kwargs.get('map_name', 'world')
     config['include_overseas'] = kwargs.get('include_overseas', False)
     return config
@@ -999,9 +1002,16 @@ def write_html(json_countries, json_data, config, logger=None):
     filepath = config.get('filepath', None)
     geo_fetch_base = _prepare_geo_js_for_html(filepath, logger=logger)
 
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
+
     content = {
         'json_countries': json_countries,
         'json_data': json_data,
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
@@ -1009,8 +1019,9 @@ def write_html(json_countries, json_data, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
-        'show_controls': config.get('show_controls', True),
-        'dark_mode': config.get('dark_mode', True),
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
+        'darkMode': 'true' if dark_mode else 'false',
         'GEOJSON': geojson_str,
         'WORLD_GEOJSON': world_geojson_str,
         'MAP_NAME': normalize_map_name(map_name),

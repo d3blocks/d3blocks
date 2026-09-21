@@ -13,14 +13,26 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
 <script>{% include "d3.v6.min.js" %}</script>
 {{ SUPPORT }}
 <style>{% include "maps.css" %}</style>
+<!-- Center + top panel + side panels: per-theme backgrounds.
+     Theme toggle (body.light) switches which color is used. -->
+<style>
+  body { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body .top-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body .stats-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body.light { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .top-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .stats-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+</style>
 </head>
-<body class="{% if dark_mode == false or dark_mode == 'false' %}light {% endif %}{% if show_controls == false or show_controls == 'false' %}{% else %}has-controls{% endif %}">
+<body class="{% if darkMode == 'false' %}light {% endif %}{% if showTopPanel == 'true' %}has-top-panel{% endif %}">
 
-{% if show_controls != false and show_controls != 'false' %}
+{% if showTopPanel == 'true' %}
 <div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
       <img src="{{ LOGO_BASE64 }}" alt="D3Blocks" style="width:150px;height:auto;display:block">
     </a>
+  </div>
   <div class="top-panel-center">
     <div class="search-wrap top-search">
       <input class="search-input" id="searchInput" type="search" placeholder="Find a location…" autocomplete="off" spellcheck="false" />
@@ -30,12 +42,14 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
   <div class="top-panel-right">
     <button class="button-switch" id="backWorldBtn" type="button" title="Back to world map" style="display:none">← World</button>
     <button class="button-switch" id="resetZoomBtn" type="button" title="Reset zoom">Reset</button>
-    <button class="button-switch" id="themeBtn" type="button" title="{% if dark_mode == false or dark_mode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if dark_mode == false or dark_mode == 'false' %}☀{% else %}🌙{% endif %}</button>
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
+{% endif %}
 
+{% if showSidePanel == 'true' %}
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button id="exportDataButton" class="button-switch">Export Data</button>
     {{ SAVE_BUTTON_START }}
@@ -79,8 +93,9 @@ Forked      : Mike Bostock; https://d3-graph-gallery.com/graph/bubblemap_templat
 const chartConfig = {
   width: {{ WIDTH }},
   height: {{ HEIGHT }},
-  showControls: {% if show_controls == false or show_controls == 'false' %}false{% else %}true{% endif %},
-  darkMode: {% if dark_mode == false or dark_mode == 'false' %}false{% else %}true{% endif %},
+  showSidePanel: {% if showSidePanel == 'false' %}false{% else %}true{% endif %},
+  showTopPanel: {% if showTopPanel == 'false' %}false{% else %}true{% endif %},
+  darkMode: {% if darkMode == 'false' %}false{% else %}true{% endif %},
   includeOverseas: {% if include_overseas %}true{% else %}false{% endif %}
 };
 

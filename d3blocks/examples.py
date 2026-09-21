@@ -1,18 +1,30 @@
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('surfspots')
+
+d3.maps(
+          df=df,
+          show_side_panel=False,
+          show_top_panel=True,
+          dark_mode=False,
+          color_background='streamlit',
+          )
+
+# %%
 # Import example dataset
 from d3blocks import D3Blocks
 
 # Initialize
 d3 = D3Blocks()
 
-df = d3.import_example('cancer')
+df = d3.import_example('energy')
 
 # Create the chart
-d3.violin(x=df['labx'].values,
-          y=df['age'].values,
+d3.heatmap(
           df=df,
           show_side_panel=False,
-          show_top_panel=True,
-          dark_mode=False,
+          show_top_panel=False,
+          dark_mode=True,
           # color_background='streamlit',
           )
 

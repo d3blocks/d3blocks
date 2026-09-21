@@ -51,7 +51,7 @@ html, body {
   overflow: hidden;
 }
 /* Leave room for the fixed top panel */
-body.has-controls #maps-container {
+body.has-top-panel #maps-container {
   top: 64px;
 }
 #maps-container svg {
@@ -217,6 +217,10 @@ body.has-controls #maps-container {
   transition: var(--transition);
   pointer-events: none;
 }
+/* Light mode: no drop shadow so a white/light bar does not sit under a dark shadow. */
+body.light .top-panel {
+  box-shadow: none;
+}
 .top-panel .top-panel-left {
   pointer-events: auto;
   display: flex;
@@ -257,8 +261,8 @@ body.has-controls #maps-container {
 }
 .search-input::placeholder { color: var(--text-muted); }
 .search-input:focus { border-color: #5b9bd5; }
-.top-search { width: 360px; max-width: 50vw; }
-.top-search .search-input { width: 100%; }
+.top-search { width: 360px; max-width: 50vw; margin-bottom: 0; }
+.top-search .search-input { width: 100%; padding: 6px 12px; font-size: 1em; }
 .search-results {
   position: absolute;
   left: 0;

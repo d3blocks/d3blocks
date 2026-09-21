@@ -1811,7 +1811,9 @@ class D3Blocks():
                 overwrite=True,
                 notebook=False,
                 save_button: bool = True,
-                show_controls: bool = True,
+                show_side_panel: bool = True,
+                show_top_panel: bool = True,
+                color_background=None,
                 dark_mode: bool = True,
                 return_html: bool = False,
                 reset_properties=True,
@@ -1875,9 +1877,18 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
-        show_controls : bool, (default: True)
-                * True: Show top bar, export panel, and display controls.
-                * False: Chart only (no chrome).
+        show_side_panel : bool, (default: True)
+                * True: Show the left side panels (Export / Save, Display).
+                * False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+                * True: Show the top bar (logo, search, reset, theme).
+                * False: Hide the top bar.
+        color_background : list or str or None, (default: None)
+            Background colors for page, top panel, and side panels.
+                * None: theme defaults
+                * [dark_hex, light_hex]: per-theme backgrounds
+                * 'streamlit' / 'darkblue': named presets
+                * single hex: same color for both themes
         dark_mode : bool, (default: True)
                 * True: Dark theme by default.
                 * False: Light theme by default.
@@ -1983,7 +1994,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Heatmap', logger)
         # Store properties
-        self.config = self.chart.set_config(scaler=scaler, fontsize=fontsize, fontsize_mouseover=fontsize_mouseover, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, stroke=stroke, cmap=cmap, cluster_params=cluster_params, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
+        self.config = self.chart.set_config(scaler=scaler, fontsize=fontsize, fontsize_mouseover=fontsize_mouseover, config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, color=color, description=description, stroke=stroke, cmap=cmap, cluster_params=cluster_params, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, color_background=color_background, dark_mode=dark_mode, logger=logger)
         # Set default label properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=self.config['cmap'])
@@ -3407,7 +3418,9 @@ class D3Blocks():
              overwrite: bool = True,
              notebook: bool = False,
              save_button: bool = True,
-             show_controls: bool = True,
+             show_side_panel: bool = True,
+             show_top_panel: bool = True,
+             color_background=None,
              dark_mode: bool = True,
              return_html: bool = False,
              reset_properties: bool = True,
@@ -3458,8 +3471,18 @@ class D3Blocks():
             Standard figure options.
         save_button : bool, (default: True)
             Show Save (SVG) control.
-        show_controls : bool, (default: True)
-            Top bar + side panels.
+        show_side_panel : bool, (default: True)
+            * True: Show the left side panels (Export / Save, Display).
+            * False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+            * True: Show the top bar (logo, search, reset, theme).
+            * False: Hide the top bar.
+        color_background : list or str or None, (default: None)
+            Background colors for page, top panel, and side panels.
+                * None: theme defaults
+                * [dark_hex, light_hex]: per-theme backgrounds
+                * 'streamlit' / 'darkblue': named presets
+                * single hex: same color for both themes
         dark_mode : bool, (default: True)
             Default theme.
         return_html : bool, (default: False)
@@ -3516,7 +3539,8 @@ class D3Blocks():
             config=self.config, cmap=cmap, filepath=filepath, title=title,
             showfig=showfig, overwrite=overwrite, figsize=figsize,
             reset_properties=reset_properties, notebook=notebook,
-            save_button=save_button, show_controls=show_controls,
+            save_button=save_button, show_side_panel=show_side_panel,
+            show_top_panel=show_top_panel, color_background=color_background,
             dark_mode=dark_mode, map_name=map_name,
             include_overseas=include_overseas, logger=logger,
         )
