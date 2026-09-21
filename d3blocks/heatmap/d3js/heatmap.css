@@ -54,7 +54,7 @@ html, body {
   overflow: hidden;
 }
 /* Leave room for the fixed top panel so the chart is not clipped under it */
-body.has-controls #heatmap-container {
+body.has-top-panel #heatmap-container {
   top: 64px;
 }
 #heatmap-container svg {
@@ -220,6 +220,10 @@ body.has-controls #heatmap-container {
   transition: var(--transition);
   pointer-events: none;
 }
+/* Light mode: no drop shadow so a white/light bar does not sit under a dark shadow. */
+body.light .top-panel {
+  box-shadow: none;
+}
 .top-panel .top-panel-left {
   pointer-events: auto;
   display: flex;
@@ -260,7 +264,8 @@ body.has-controls #heatmap-container {
 }
 .search-input::placeholder { color: var(--text-muted); }
 .search-input:focus { border-color: #5b9bd5; }
-.top-search { width: 360px; max-width: 50vw; }
+.top-search { width: 360px; max-width: 50vw; margin-bottom: 0; }
+.top-search .search-input { padding: 6px 12px; font-size: 1em; }
 .top-search .search-input { width: 100%; }
 .search-results {
   position: absolute;

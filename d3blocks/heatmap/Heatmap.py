@@ -13,9 +13,9 @@ import os
 import re
 
 try:
-    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script, set_logo
+    from .. utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script, set_logo
+    from utils import set_path, set_labels, write_html_file, pre_processing, update_config, vec2adjmat, scale, normalize, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -40,8 +40,11 @@ def set_config(config={}, **kwargs):
     config['fontsize_mouseover'] = kwargs.get('fontsize_mouseover', config['fontsize'] + 8)
     config['scaler'] = kwargs.get('scaler', 'zscore')
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    config['color_background'] = kwargs.get('color_background', None)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
 
     if config['description'] is None: config['description']=''
     if config['cmap'] in ['schemeCategory10', 'schemeAccent', 'schemeDark2', 'schemePaired', 'schemePastel2', 'schemePastel1', 'schemeSet1', 'schemeSet2', 'schemeSet3', 'schemeTableau10']:
@@ -252,13 +255,15 @@ def write_html(json_data, config, logger=None):
     #     with open(logo_path, 'r', encoding='utf8', errors='ignore') as f:
     #         logo_data = f.read().strip()
 
-    show_controls = config.get('show_controls', True)
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
     dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     body_class = []
     if not dark_mode:
         body_class.append('light')
-    if show_controls:
-        body_class.append('has-controls')
+    if show_top_panel:
+        body_class.append('has-top-panel')
     body_class_str = ' '.join(body_class)
 
     # Named CSS colors → hex for the color input
@@ -287,20 +292,27 @@ def write_html(json_data, config, logger=None):
     html = html.replace('$SAVE_BUTTON_START$', show_save_button[0])
     html = html.replace('$SAVE_BUTTON_STOP$', show_save_button[1])
     html = html.replace('$DATA_COMES_HERE$', json_data)
-    # html = html.replace('$LOGO$', logo_data)
     html = html.replace('$BODY_CLASS$', body_class_str)
     html = html.replace('$THEME_TITLE$', 'Theme: Light' if not dark_mode else 'Theme: Dark')
     html = html.replace('$THEME_ICON$', '☀' if not dark_mode else '🌙')
-    html = html.replace('$SHOW_CONTROLS_JS$', 'true' if show_controls else 'false')
+    html = html.replace('$SHOW_SIDE_PANEL_JS$', 'true' if show_side_panel else 'false')
+    html = html.replace('$SHOW_TOP_PANEL_JS$', 'true' if show_top_panel else 'false')
     html = html.replace('$DARK_MODE_JS$', 'true' if dark_mode else 'false')
+    html = html.replace('$COLOR_BACKGROUND_DARK$', bg_dark)
+    html = html.replace('$COLOR_BACKGROUND_LIGHT$', bg_light)
     html = html.replace('$LOGO_BASE64$', config['logo_base64'])
 
-    if show_controls:
-        html = html.replace('$CONTROLS_START$', '')
-        html = html.replace('$CONTROLS_STOP$', '')
+    # Independent top / side panel markers
+    if show_top_panel:
+        html = html.replace('$TOP_PANEL_START$', '')
+        html = html.replace('$TOP_PANEL_STOP$', '')
     else:
-        # Strip everything between the control markers (inclusive of markers)
-        html = re.sub(r'\$CONTROLS_START\$.*?\$CONTROLS_STOP\$', '', html, flags=re.DOTALL)
+        html = re.sub(r'\$TOP_PANEL_START\$.*?\$TOP_PANEL_STOP\$', '', html, flags=re.DOTALL)
+    if show_side_panel:
+        html = html.replace('$SIDE_PANEL_START$', '')
+        html = html.replace('$SIDE_PANEL_STOP$', '')
+    else:
+        html = re.sub(r'\$SIDE_PANEL_START\$.*?\$SIDE_PANEL_STOP\$', '', html, flags=re.DOTALL)
 
     # Set logo
     config['logo_base64'] = set_logo(filepath=config['logo'])
