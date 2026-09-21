@@ -13,7 +13,6 @@ import time
 import datazets as dz
 import d3graph as d3network
 import logging
-import base64
 
 try:
     from d3blocks.elasticgraph.elasticgraph import Elasticgraph
@@ -58,6 +57,7 @@ logger = logging.getLogger(__name__)
 if not logger.hasHandlers():
     logging.basicConfig(level=logging.INFO, format='[{asctime}] [{name}] [{levelname}] {msg}', style='{', datefmt='%d-%m-%Y %H:%M:%S')
 
+
 #%%
 class D3Blocks():
     """D3Blocks.
@@ -88,7 +88,7 @@ class D3Blocks():
 
     """
 
-    def __init__(self, chart: str = None, frame: bool = True, verbose: (int, str) = 'info', support: str = 'text', logo: str = None) -> None:
+    def __init__(self, chart: str = None, frame: bool = True, support: str = 'text', logo: str = None, verbose: (int, str) = 'info') -> None:
         """Initialize d3blocks with user-defined parameters."""
         # Set the logger
         if chart is not None: chart = str.capitalize(chart)
