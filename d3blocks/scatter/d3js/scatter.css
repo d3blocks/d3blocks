@@ -717,16 +717,26 @@ body.light .top-panel {
 }
 .selection-count:hover { background: var(--btn-bg-active); }
 #selectModeBtn { white-space: nowrap; }
-/* Compact on the right; expands on focus */
+/* Compact on the right; expands on focus.
+   Match button-switch height/padding so Find sits on the same baseline. */
 .top-search {
   width: 110px;
   max-width: 22vw;
   flex-shrink: 0;
   transition: width 0.2s ease;
+  margin-bottom: 0; /* override .search-wrap's 6px which shifts it off-center */
+  display: flex;
+  align-items: center;
 }
 .top-search:focus-within {
   width: 260px;
   max-width: 40vw;
 }
-.top-search .search-input { width: 100%; }
-.top-panel-right .top-search { margin-left: 4px; }
+.top-search .search-input {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 1em;
+  line-height: normal;
+  box-sizing: border-box;
+}
+.top-panel-right .top-search { margin-left: 4px; margin-bottom: 0; }
