@@ -19,6 +19,26 @@ Licensed    : GPL3
 body { font-size: {{ FONTSIZE }}; }
 .node { stroke-width: 1.5px; }
 
+/* Center + top panel + side panels: per-theme backgrounds */
+body {
+  background: {{ COLOR_BACKGROUND_DARK }};
+}
+body .top-panel {
+  background: {{ COLOR_BACKGROUND_DARK }};
+}
+body .stats-panel {
+  background: {{ COLOR_BACKGROUND_DARK }};
+}
+body.light {
+  background: {{ COLOR_BACKGROUND_LIGHT }};
+}
+body.light .top-panel {
+  background: {{ COLOR_BACKGROUND_LIGHT }};
+}
+body.light .stats-panel {
+  background: {{ COLOR_BACKGROUND_LIGHT }};
+}
+
 /* ── Time-scrubber (lives inside the top bar center cell) ───── */
 #timeSlider {
   flex: 1 1 auto;
@@ -60,8 +80,8 @@ body { font-size: {{ FONTSIZE }}; }
 </head>
 
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
-{% if showControls == 'true' %}
 
+{% if showTopPanel == 'true' %}
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
@@ -79,7 +99,9 @@ body { font-size: {{ FONTSIZE }}; }
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
+{% endif %}
 
+{% if showSidePanel == 'true' %}
 {{ SAVE_BUTTON_START }}
 <div class="stats-panel collapsed" id="exportPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>

@@ -1359,9 +1359,10 @@ class D3Blocks():
                       figsize = [1024, 768],
                       note: str = None,
                       time_notes: str = None,
-                      show_controls: bool = True,
+                      show_side_panel: bool = True,
+                      show_top_panel: bool = True,
                       dark_mode: bool = True,
-                      background_color: str = '#12141c',
+                      color_background=None,
                       node_text_inside: bool = True,
                       title: str = 'Movingbubbles - D3Blocks',
                       filepath: str = 'movingbubbles.html',
@@ -1464,14 +1465,18 @@ class D3Blocks():
                                "note": "Enter your note here and it is shown between 1 min and 5 min."}]
                 time_notes.append({"start_minute": 6, "stop_minute": 10, "note": "Enter your second note here and it is shown between 6 min and 10 min."})
 
-        show_controls : bool, (default: True)
-            True: Show the floating control panels (Playback, Display, Filtering, Export).
-            False: Hide all control panels; only the chart itself is shown.
+        show_side_panel : bool, (default: True)
+            True: Show left side panels (Export / Save, Layout, Physics, Variables, Filtering).
+            False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+            True: Show the top bar (logo, time scrubber, play/pause, theme).
+            False: Hide the top bar.
         dark_mode : bool, (default: True)
-            True: Dark theme.
-            False: Light theme.
-        background_color : str, (default: '#12141c')
-            Background color used for the dark theme.
+            True: Start in dark theme.
+            False: Start in light theme.
+        color_background : list of str, str, or None, (default: None)
+            Backgrounds for center / top / side panels as ``[dark_hex, light_hex]``.
+            Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
         node_text_inside : bool, (default: True)
             True: Per-bubble labels (Layout -> Label) are centered inside the node, with the text color automatically switched between black/white for contrast against the node's fill color.
             False: Labels are placed above the node, matching the theme's text color (this was the only behavior previously).
@@ -1592,7 +1597,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, background_color=background_color, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)

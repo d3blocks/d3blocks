@@ -19,9 +19,9 @@ import json
 import random
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -52,9 +52,16 @@ def set_config(config={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['color_method'] = kwargs.get('color_method', "STATE")
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
-    config['background_color'] = kwargs.get('background_color', '#12141c')
+    # Prefer color_background; accept legacy background_color as single-hex fallback.
+    if 'color_background' in kwargs:
+        config['color_background'] = kwargs.get('color_background')
+    elif 'background_color' in kwargs and kwargs.get('background_color') is not None:
+        config['color_background'] = kwargs.get('background_color')
+    else:
+        config['color_background'] = None
     config['node_text_inside'] = kwargs.get('node_text_inside', True)
     config['opacity'] = kwargs.get('opacity', 0.6)
     config['stroke'] = kwargs.get('stroke', '#000000')
@@ -519,6 +526,7 @@ def write_html(X, config, logger=None):
     config['color_method'] = config['color_method'].upper()
     SELECTED_STATE = {'STATE': '', 'NODE': ''}
     SELECTED_STATE[config['color_method']] = 'selected="selected"'
+    bg_dark, bg_light = resolve_color_background(config.get('color_background'))
 
     content = {
         'json_data': X,
@@ -553,10 +561,12 @@ def write_html(X, config, logger=None):
         'DATE_MIN': config['date_min'],
         'DATE_MAX': config['date_max'],
 
-        'showControls': str(config['show_controls']).lower(),
-        'darkMode': str(config['dark_mode']).lower(),
-        'COLOR_BACKGROUND': config['background_color'],
-        'nodeTextInside': str(config['node_text_inside']).lower(),
+        'showSidePanel': 'true' if config.get('show_side_panel', True) else 'false',
+        'showTopPanel': 'true' if config.get('show_top_panel', True) else 'false',
+        'darkMode': 'true' if config.get('dark_mode', True) else 'false',
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
+        'nodeTextInside': str(config.get('node_text_inside', True)).lower(),
         'NODE_OPACITY': config['node_opacity'],
         'NODE_STROKE': config['node_stroke'],
 

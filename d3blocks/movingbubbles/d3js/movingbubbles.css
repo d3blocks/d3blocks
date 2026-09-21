@@ -327,6 +327,10 @@ html, body {
   transition: var(--transition);
   pointer-events: none;
 }
+/* Light mode: no dark drop-shadow under the white top bar */
+body.light .top-panel {
+  box-shadow: none;
+}
 .top-panel .top-panel-left { pointer-events: auto; display: flex; align-items: center; }
 .top-panel .top-panel-center { pointer-events: auto; display: flex; justify-content: center; align-items: center; }
 .top-panel .top-panel-right { pointer-events: auto; display: flex; gap: 8px; align-items: center; justify-self: end; }
@@ -438,9 +442,22 @@ html, body {
 .stats-panel.collapsed .stats-panel-toggle { transform: rotate(-90deg); }
 .stats-panel label, .stats-panel b { color: var(--text); }
 .stats-panel select, .stats-panel input[type="date"] {
-  background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
-  border-radius: 5px; padding: 5px 8px; font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 4px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
   font-family: "Helvetica", Arial, sans-serif;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.stats-panel select:focus, .stats-panel input[type="date"]:focus {
+  border-color: var(--accent);
 }
 
 /* —— Buttons (re-themed .togglebutton + a generic button-switch) —— */
