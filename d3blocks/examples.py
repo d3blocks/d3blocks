@@ -33,8 +33,6 @@ d3.treemap(df,
           )
 
 # %%
-
-
 # Sankey
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -42,11 +40,11 @@ d3 = D3Blocks()
 df = d3.import_example(data='energy')
 
 # Set properties
-d3.sankey(df,
-          show_side_panel=False,
-          show_top_panel=True,
-          dark_mode=True,
-          color_background='streamlit',
+d3.chord(df,
+          show_side_panel=True,
+          show_top_panel=False,
+          dark_mode=False,
+          # color_background='streamlit',
           )
 
 # %%

@@ -12,9 +12,9 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script, set_logo
+    from .. utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script, set_logo
+    from utils import set_colors, pre_processing, convert_dataframe_dict, set_path, update_config, set_labels, create_unique_dataframe, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
@@ -34,8 +34,12 @@ def set_config(config={}, **kwargs):
     config['save_button'] = kwargs.get('save_button', True)
     config['margin'] = kwargs.get('margin', 150)  # Margin around the chord diagram
     config['text_offset'] = kwargs.get('text_offset', 5)  # Additional offset for text labels
-    config['show_controls'] = kwargs.get('show_controls', True)  # Show the top bar and left control panels
-    config['dark_mode'] = kwargs.get('dark_mode', True)  # Start in dark theme
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    # None → defaults matching chord.css (--bg dark #222, light #fff).
+    config['color_background'] = kwargs.get('color_background', None)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     # return
     return config
 
@@ -285,8 +289,17 @@ def write_html(X, config, logger=None):
     else:
         ORDERING_MODE = 'none'
 
+    # Ensure new GUI keys have defaults (backwards compatible)
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
+
     content = {
         'json_data': X,
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
+        'darkMode': 'true' if dark_mode else 'false',
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
@@ -300,8 +313,8 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
-        'showControls': 'true' if config.get('show_controls', True) else 'false',
-        'darkMode': 'true' if config.get('dark_mode', True) else 'false',
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
         'LOGO_BASE64': config['logo_base64'],
     }
 

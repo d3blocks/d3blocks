@@ -814,7 +814,9 @@ class D3Blocks():
               save_button=True,
               margin=150,
               text_offset=5,
-              show_controls: bool = True,
+              show_side_panel: bool = True,
+              show_top_panel: bool = True,
+              color_background=None,
               dark_mode: bool = True,
               return_html: bool = False,
               reset_properties=True,
@@ -899,9 +901,18 @@ class D3Blocks():
         text_offset : int, (default: 5)
                 * Additional offset for text labels in pixels.
                 * Larger values move labels further from the chord arcs.
-        show_controls : bool, (default: True)
-                * True: Show the top bar and left control panels (export/save, appearance).
-                * False: Hide all GUI controls.
+        show_side_panel : bool, (default: True)
+                * True: Show the left side panels (Export / Save, Appearance, Physics).
+                * False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+                * True: Show the top bar (logo, ordering radios, theme).
+                * False: Hide the top bar.
+        color_background : list or str or None, (default: None)
+            Background colors for page, top panel, and side panels.
+                * None: theme defaults (#222222 dark, #ffffff light)
+                * [dark_hex, light_hex]: per-theme backgrounds
+                * 'streamlit' / 'darkblue': named presets
+                * single hex: same color for both themes
         dark_mode : bool, (default: True)
                 * True: Start in dark theme.
                 * False: Start in light theme.
@@ -1015,7 +1026,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Chord', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, save_button=save_button, margin=margin, text_offset=text_offset, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, fontsize=fontsize, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, notebook=notebook, ordering=ordering, arrowhead=arrowhead, save_button=save_button, margin=margin, text_offset=text_offset, show_side_panel=show_side_panel, show_top_panel=show_top_panel, color_background=color_background, dark_mode=dark_mode, logger=logger)
         # Set node properties
         if reset_properties or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, cmap=cmap)
