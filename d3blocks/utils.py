@@ -82,16 +82,22 @@ def include_save_to_svg_script(save_button=False, title='d3graph_chart'):
 
     if save_button:
         javascript_code = """
-        // SAVE CHART TO SVG
-        document.getElementById('saveButton').addEventListener('click', function () {
-            var svgData = document.querySelector('svg').outerHTML;
-            var blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
-            var url = URL.createObjectURL(blob);
-            var link = document.createElement('a');
-            link.href = url;
-            link.download = '{{ title }}.svg';
-            link.click();
-        });
+        // SAVE CHART TO SVG (no-op when #saveButton is absent, e.g. show_side_panel=False)
+        (function () {
+            var _saveBtn = document.getElementById('saveButton');
+            if (!_saveBtn) return;
+            _saveBtn.addEventListener('click', function () {
+                var svgEl = document.querySelector('svg');
+                if (!svgEl) return;
+                var svgData = svgEl.outerHTML;
+                var blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                link.href = url;
+                link.download = '{{ title }}.svg';
+                link.click();
+            });
+        })();
         """
         javascript_code = javascript_code.replace("{{ title }}", title)
         show_save_button = ['', '']

@@ -626,8 +626,11 @@ var nodeLabel = chartRoot.selectAll("text.nodelabel")
 var node_active = nodes.map(function() { return true; });
 
 function applyDateFilter() {
-	var startVal = document.getElementById('dateFilterStart').value;
-	var endVal = document.getElementById('dateFilterEnd').value;
+	var startEl = document.getElementById('dateFilterStart');
+	var endEl = document.getElementById('dateFilterEnd');
+	if (!startEl || !endEl) return;
+	var startVal = startEl.value;
+	var endVal = endEl.value;
 	if (!startVal || !endVal) return;
 
 	var startDate = new Date(startVal);
@@ -652,8 +655,11 @@ function applyDateFilter() {
 
 d3.select("#applyDateFilter").on("click", applyDateFilter);
 d3.select("#resetDateFilter").on("click", function() {
-	document.getElementById('dateFilterStart').value = DATE_MIN;
-	document.getElementById('dateFilterEnd').value = DATE_MAX;
+	var startEl = document.getElementById('dateFilterStart');
+	var endEl = document.getElementById('dateFilterEnd');
+	if (!startEl || !endEl) return;
+	startEl.value = DATE_MIN;
+	endEl.value = DATE_MAX;
 	applyDateFilter();
 });
 
