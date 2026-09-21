@@ -14,10 +14,33 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
     <title>{{ TITLE }}</title>
     {{ SUPPORT }}
     <style>{% include "treemap.css" %}</style>
+    <!-- Center + top panel + side panels: per-theme backgrounds.
+         Theme toggle (body.light) switches which color is used. -->
+    <style>
+      body {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .top-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .stats-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body.light {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .top-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .stats-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+    </style>
 </head>
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Top panel always shown: logo left, mode radios center, theme right -->
+{% if showTopPanel == 'true' %}
+<!-- Top panel: logo left, mode radios center, theme right -->
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
@@ -25,19 +48,18 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
     </a>
   </div>
   <div class="top-panel-center">
-{% if showControls == 'true' %}
     <div class="mode-row top-mode">
       <label><input type="radio" name="mode" value="size"{% if valueMode == 'size' %} checked{% endif %}> Size</label>
       <label><input type="radio" name="mode" value="count"{% if valueMode == 'count' %} checked{% endif %}> Count</label>
     </div>
-{% endif %}
   </div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
+{% endif %}
 
-{% if showControls == 'true' %}
+{% if showSidePanel == 'true' %}
 <!-- Side panel: Export / Save -->
 <div class="stats-panel collapsed" id="exportPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
@@ -199,15 +221,14 @@ if (exportBtn) {
 {{ SAVE_TO_SVG_SCRIPT }}
 
 // Top bar clearance + side panels: position, collapse, reorder
-// Always clear the top panel — even when show_controls is false (no side panels).
+// When top panel is absent, treat its height as 0 (do not return early).
 (function() {
   var PANEL_ORDER = ['exportPanel', 'physicsPanel'];
 
   function positionSidePanels() {
     var bar = document.querySelector('.top-panel');
     var main = document.getElementById('treemap-main');
-    if (!bar) return;
-    var bottom = bar.getBoundingClientRect().bottom;
+    var bottom = bar ? bar.getBoundingClientRect().bottom : 0;
     if (main) main.style.marginTop = (bottom + 12) + 'px';
     var y = bottom + 8;
     var bottomPad = 12;

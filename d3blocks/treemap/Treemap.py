@@ -9,9 +9,9 @@ License     : GPL3
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, vec2flare, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -32,8 +32,12 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['border'] = {**{'type': 'solid', 'color': '#FFFFFF', 'width': 0}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    # None → defaults matching treemap.css (--bg dark #222, light #fff).
+    config['color_background'] = kwargs.get('color_background', None)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     # 'size' uses weight; 'count' treats each leaf equally
     config['value'] = kwargs.get('value', 'size')
     if config['value'] not in ('size', 'count'):
@@ -163,6 +167,11 @@ def write_html(X, node_properties, config, logger=None):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+    # Ensure new GUI keys have defaults (backwards compatible)
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     # Set width and height to screen resolution if None.
     width = 'window.screen.width' if config['figsize'][0] is None else config['figsize'][0]
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
@@ -170,6 +179,9 @@ def write_html(X, node_properties, config, logger=None):
     content = {
         'json_data': X,
         'node_properties': node_properties,
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
+        'darkMode': 'true' if dark_mode else 'false',
         'TITLE': config['title'],
         'WIDTH': width,
         'HEIGHT': height,
@@ -183,8 +195,8 @@ def write_html(X, node_properties, config, logger=None):
         'marginRight': config['margin']['right'],
         'marginBottom': config['margin']['bottom'],
         'marginLeft': config['margin']['left'],
-        'showControls': str(config.get('show_controls', True)).lower(),
-        'darkMode': str(config.get('dark_mode', True)).lower(),
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
         'valueMode': config.get('value', 'size'),
         'SUPPORT': config['support'],
         'SAVE_TO_SVG_SCRIPT': save_script,

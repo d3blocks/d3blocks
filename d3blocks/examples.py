@@ -1,3 +1,23 @@
+# Import example dataset
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+df = d3.import_example('cancer')
+
+# Create the chart
+d3.violin(x=df['labx'].values,
+          y=df['age'].values,
+          df=df,
+          show_side_panel=False,
+          show_top_panel=True,
+          dark_mode=False,
+          # color_background='streamlit',
+          )
+
+
+# %%
 # Sankey
 from d3blocks import D3Blocks
 d3 = D3Blocks()
@@ -5,11 +25,11 @@ d3 = D3Blocks()
 df = d3.import_example(data='energy')
 
 # Set properties
-d3.tree(df,
+d3.treemap(df,
           show_side_panel=True,
           show_top_panel=True,
           dark_mode=True,
-          # color_background='streamlit',
+          color_background='streamlit',
           )
 
 # %%

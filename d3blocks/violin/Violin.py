@@ -15,9 +15,9 @@ from pathlib import Path
 import os
 import time
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -41,8 +41,12 @@ def set_config(config={}, **kwargs):
     config['fontsize_axis_num'] = kwargs.get('fontsize_axis', 12)
     config['jitter'] = kwargs.get('jitter', 40)
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    # None → defaults matching violin.css (--bg dark #222, light #fff).
+    config['color_background'] = kwargs.get('color_background', None)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     config['node_text_inside'] = kwargs.get('node_text_inside', True)
     # Return
     return config
@@ -358,12 +362,17 @@ def write_html(X, config, logger=None):
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
     # Ensure new GUI keys have defaults (backwards compatible)
-    show_controls = config.get('show_controls', True)
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
     dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     jitter = config.get('jitter', 40)
     fontsize_axis_num = config.get('fontsize_axis_num', 12)
     content = {
         'json_data': X,
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
+        'darkMode': 'true' if dark_mode else 'false',
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
         'HEIGHT': config['figsize'][1],
@@ -383,8 +392,8 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
-        'showControls': 'true' if show_controls else 'false',
-        'darkMode': 'true' if dark_mode else 'false',
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
         'PROPERTY_KEYS_JSON': __import__('json').dumps(config.get('property_keys', [])),
         'NODE_TEXT_INSIDE': 'true' if config.get('node_text_inside', True) else 'false',
         'AUTO_WIDTH': 'true' if config.get('auto_width', False) else 'false',

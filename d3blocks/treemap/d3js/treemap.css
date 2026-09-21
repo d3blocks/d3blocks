@@ -187,6 +187,11 @@ html, body {
   transition: var(--transition);
   pointer-events: none;
 }
+/* Light mode: no drop shadow so a white/light bar does not sit under a dark shadow. */
+body.light .top-panel {
+  box-shadow: none;
+}
+
 .top-panel .top-panel-left {
   pointer-events: none;
   justify-self: start;

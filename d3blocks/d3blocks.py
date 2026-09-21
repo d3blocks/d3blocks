@@ -273,7 +273,9 @@ class D3Blocks():
                bins: int = 50,
                ylim = [None, None],
                jitter: int = 40,
-               show_controls: bool = True,
+               show_side_panel: bool = True,
+               show_top_panel: bool = True,
+               color_background = None,
                dark_mode: bool = True,
                node_text_inside: bool = True,
                title: str = 'Violin - D3blocks',
@@ -331,9 +333,18 @@ class D3Blocks():
                 *  [None, None] : The width is determined based on the min-max value range.
         jitter : int, (default: 40)
             Horizontal jitter width applied to the individual points.
-        show_controls : bool, (default: True)
-            * True: Show the top bar and left control panels (Export/Save, Physics).
-            * False: Hide all GUI controls.
+        show_side_panel : bool, (default: True)
+            * True: Show the left side panels (Export / Save, Layout, Physics).
+            * False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+            * True: Show the top bar (logo, theme).
+            * False: Hide the top bar.
+        color_background : list or str or None, (default: None)
+            Background colors for page, top panel, and side panels.
+                * None: theme defaults (#222222 dark, #ffffff light)
+                * [dark_hex, light_hex]: per-theme backgrounds
+                * 'streamlit' / 'darkblue': named presets
+                * single hex: same color for both themes
         dark_mode : bool, (default: True)
             * True: Start in dark theme.
             * False: Start in light theme.
@@ -442,7 +453,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Violin', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, jitter=jitter, show_controls=show_controls, dark_mode=dark_mode, node_text_inside=node_text_inside, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, bins=bins, ylim=ylim, x_order=x_order, reset_properties=reset_properties, notebook=notebook, fontsize=fontsize, fontsize_axis=fontsize_axis, jitter=jitter, show_side_panel=show_side_panel, show_top_panel=show_top_panel, color_background=color_background, dark_mode=dark_mode, node_text_inside=node_text_inside, save_button=save_button, logger=logger)
         # Optional df → per-point properties for Layout panel (same as scatter)
         props = None
         if df is not None:
@@ -3004,7 +3015,9 @@ class D3Blocks():
                 border = {'type': 'solid', 'color': '#FFFFFF', 'width': 0},
                 font = {'size': 10, 'type': 'sans-serif', 'position': 'absolute'},
                 value: str = 'size',
-                show_controls: bool = True,
+                show_side_panel: bool = True,
+                show_top_panel: bool = True,
+                color_background = None,
                 dark_mode: bool = True,
                 title: str = 'Treemap - D3blocks',
                 filepath: str = 'treemap.html',
@@ -3040,9 +3053,18 @@ class D3Blocks():
             Default treemap value mode for cell sizing.
                 * 'size': Use edge weight / size.
                 * 'count': Treat each leaf equally.
-        show_controls : bool, (default: True)
-            * True: Show the top bar and left control panels.
-            * False: Hide all GUI controls.
+        show_side_panel : bool, (default: True)
+            * True: Show the left side panels (Export / Save, Physics).
+            * False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+            * True: Show the top bar (logo, Size/Count radios, theme).
+            * False: Hide the top bar.
+        color_background : list or str or None, (default: None)
+            Background colors for page, top panel, and side panels.
+                * None: theme defaults (#222222 dark, #ffffff light)
+                * [dark_hex, light_hex]: per-theme backgrounds
+                * 'streamlit' / 'darkblue': named presets
+                * single hex: same color for both themes
         dark_mode : bool, (default: True)
             * True: Start in dark theme.
             * False: Start in light theme.
@@ -3161,7 +3183,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Treemap', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, value=value, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, margin=margin, reset_properties=reset_properties, notebook=notebook, value=value, show_side_panel=show_side_panel, show_top_panel=show_top_panel, color_background=color_background, dark_mode=dark_mode, save_button=save_button, logger=logger)
         # Cleaning of data
         # Convert NumPy types to regular Python types for proper JSON serialization
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)
