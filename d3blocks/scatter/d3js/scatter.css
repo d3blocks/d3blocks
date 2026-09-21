@@ -625,6 +625,26 @@
   box-sizing: border-box;
 }
 
+/* Panel dropdowns (Layout, Filtering, Enrichments) — match button-switch theme */
+.stats-panel select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 4px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: "Helvetica", Arial, sans-serif;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.stats-panel select:focus {
+  border-color: var(--accent);
+}
+
 .stats-panel .button-switch {
   display: block;
   width: 100%;
