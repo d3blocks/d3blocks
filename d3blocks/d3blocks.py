@@ -2786,11 +2786,11 @@ class D3Blocks():
                      significance_n_top: int = 100,
                      significance_n_random: int = 1000,
                      significance_seed: int = None,
-                     show_stats_panel: bool = True,
-                     show_node_panel: bool = True,
-                     show_controls: bool = True,
+                     show_side_panel: bool = True,
+                     show_top_panel: bool = True,
+                     show_bottom_panel: bool = True,
                      dark_mode: bool = True,
-                     background_color: str = '#12141c',
+                     color_background=None,
                      font={'size': 10},
                      title: str = 'RadialGraph - D3blocks',
                      filepath: str = 'radialgraph.html',
@@ -2869,14 +2869,17 @@ class D3Blocks():
         significance_n_top : int, (default: 100)
         significance_n_random : int, (default: 1000)
         significance_seed : int, (default: None)
-        show_stats_panel : bool, (default: True)
-            Show the Network Statistic side panel.
-        show_node_panel : bool, (default: True)
-            Show the Node Info / detail panel.
-        show_controls : bool, (default: True)
-            Show the full side-panel chrome.
+        show_side_panel : bool, (default: True)
+            Show left side panels (Export, Layout, Network Statistic, Edge panels).
+        show_top_panel : bool, (default: True)
+            Show the top bar (logo, search, flow/ripple, theme).
+        show_bottom_panel : bool, (default: True)
+            Show the bottom node-detail panel.
         dark_mode : bool, (default: True)
-        background_color : str, (default: '#12141c')
+            Start in dark theme when True; light theme when False.
+        color_background : list of str, str, or None, (default: None)
+            Backgrounds for center / top / side panels as ``[dark_hex, light_hex]``.
+            Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
         font : dict.
             font properties.
                 * {'size': 10}
@@ -2947,9 +2950,12 @@ class D3Blocks():
             significance_n_top=significance_n_top,
             significance_n_random=significance_n_random,
             significance_seed=significance_seed,
-            show_stats_panel=show_stats_panel, show_node_panel=show_node_panel,
-            show_controls=show_controls, dark_mode=dark_mode,
-            background_color=background_color, logger=logger,
+            show_side_panel=show_side_panel,
+            show_top_panel=show_top_panel,
+            show_bottom_panel=show_bottom_panel,
+            dark_mode=dark_mode,
+            color_background=color_background,
+            logger=logger,
         )
         # Cleaning of data
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)

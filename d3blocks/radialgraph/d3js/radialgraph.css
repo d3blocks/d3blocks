@@ -565,6 +565,10 @@
   transition: var(--transition);
   pointer-events: none; /* let individual controls opt-in */
 }
+/* Light mode: no dark drop-shadow under the white top bar */
+body.light .top-panel {
+  box-shadow: none;
+}
 .top-panel .top-panel-left {
   pointer-events: auto;
   display: flex;
@@ -592,8 +596,20 @@
   padding-left: 14px;
   border-left: 1px solid var(--btn-border);
 }
-.top-search { width: 440px; max-width: 60vw; }
-.top-search .search-input { width: 100%; }
+.top-search {
+  width: 440px;
+  max-width: 60vw;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+.top-search .search-input {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 1em;
+  line-height: normal;
+  box-sizing: border-box;
+}
 
 /* Small tweak so the fixed canvas and bottom hint don't overlap the top-panel */
 #radialgraph-container { top: 0; }

@@ -2101,6 +2101,8 @@ function formatPropertyValue(v) {
 }
 
 function showNodePanel(d) {
+  // No-op when the bottom point panel is not in the DOM.
+  if (!nodePanel) return;
   // Stop any audio still playing in the bottom panel from a previous point.
   if (nodeStatsGrid) {
     nodeStatsGrid.querySelectorAll('audio').forEach(function(a) {
@@ -2113,9 +2115,9 @@ function showNodePanel(d) {
   var titlePlain = rawTip.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   if (!titlePlain) titlePlain = (d && d[0] != null ? String(d[0]) : 'Point');
   if (titlePlain.length > 100) titlePlain = titlePlain.slice(0, 97) + '\u2026';
-  nodePanelTitle.textContent = titlePlain;
+  if (nodePanelTitle) nodePanelTitle.textContent = titlePlain;
   const sub = (d && d[0] != null && d[1] != null) ? `x: ${d[0]}, y: ${d[1]}` : '';
-  nodePanelSub.textContent = sub;
+  if (nodePanelSub) nodePanelSub.textContent = sub;
 
   if (nodeStatsGrid) {
     var html = '<div class="node-info-grid">';

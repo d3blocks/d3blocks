@@ -923,7 +923,8 @@ def resolve_color_background(color_background):
 
     Accepts:
       * None → theme defaults
-      * 'streamlit' → theme streamlit
+      * 'streamlit' → Streamlit app theme
+      * 'darkblue' → dark navy / soft light blue-gray
       * [dark, light] list/tuple of two hex strings
       * single hex str → same color for both modes (backwards compatible)
     """
@@ -934,7 +935,9 @@ def resolve_color_background(color_background):
     if color_background is None:
         return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
     if isinstance(color_background, str) and color_background == 'streamlit':
-            return "#0E1117", "#FFFFFF"
+        return "#0E1117", "#FFFFFF"
+    if isinstance(color_background, str) and color_background == 'darkblue':
+        return "#12141c", "#e8eef5"
     if isinstance(color_background, str):
         c = color_background.strip()
         if not c:

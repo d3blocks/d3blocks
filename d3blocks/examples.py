@@ -129,7 +129,7 @@ d3.scatter(df['tsneX'].values,
                        show_side_panel=True,
                        show_top_panel=True,
                        dark_mode=True,
-                       # color_background='streamlit',
+                       color_background='streamlit',
                        )
 
 # %%
@@ -189,7 +189,8 @@ d3.set_edge_properties(df)
 d3.edge_properties
 
 # Show chart
-d3.show()
+d3.show(show_bottom_panel=False,
+        show_side_panel=True,)
 
 # %%
 # Import
@@ -217,7 +218,7 @@ from d3blocks import D3Blocks
 # ----------------------------------------------------------------------
 d3 = D3Blocks()
 df = d3.import_example('socialmedia')
-df = df[0:2000]
+df = df[0:500]
 html = d3.radialgraph(df, showfig=True, return_html=True, significance_n_random=50, significance_test='hits_hub')
 print('Wrote radialgraph_energy.html (center auto = highest degree)')
 
@@ -225,6 +226,11 @@ print('Wrote radialgraph_energy.html (center auto = highest degree)')
 # ----------------------------------------------------------------------
 # 2. Explicit focus node
 # ----------------------------------------------------------------------
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('socialmedia')
+df = df[0:500]
+
 d3 = D3Blocks()
 html = d3.radialgraph(
     df,
@@ -234,6 +240,10 @@ html = d3.radialgraph(
     filepath='radialgraph_solar.html',
     showfig=True,
     return_html=True,
+    show_top_panel=True,
+    show_side_panel=True,
+    show_bottom_panel=True,
+    color_background='streamlit',
 )
 print('Wrote radialgraph_solar.html (center=Solar)')
 

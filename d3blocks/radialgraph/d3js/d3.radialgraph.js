@@ -2058,6 +2058,7 @@ function computeNetworkMetrics(nodeIds, edges) {
   }
 
   function renderNodeStats(node) {
+    if (!nodeStatsGrid) return;
     const rows = ["degree", "betweenness", "closeness", "pagerank", "hub", "authority"]
       .map(
         (key) => `
@@ -2080,6 +2081,7 @@ function computeNetworkMetrics(nodeIds, edges) {
   }
 
   function renderImportance(node) {
+    if (!nodeImportance) return;
     const items = computeImportanceBreakdown(node);
     const pr = node.pagerank || 0;
     let html = `
@@ -2105,13 +2107,15 @@ function computeNetworkMetrics(nodeIds, edges) {
   }
 
   function showNodePanel(d) {
+    // No-op when bottom panel is omitted (show_bottom_panel=False).
+    if (!nodePanel) return;
     const node = model.nodesById.get(d.id) || d;
     selectedNodeId = node.id;
-    nodePanelTitle.textContent = node.tooltip || node.id;
+    if (nodePanelTitle) nodePanelTitle.textContent = node.tooltip || node.id;
     const parts = [];
     parts.push(node.id === model.rootId ? "focus node" : `hop depth ${node.depth != null ? node.depth : "—"}`);
     if (node.community != null) parts.push(`community C${node.community}`);
-    nodePanelSub.textContent = parts.join(" · ");
+    if (nodePanelSub) nodePanelSub.textContent = parts.join(" · ");
     renderNodeStats(node);
     renderImportance(node);
     nodePanel.classList.add("open");
@@ -2119,7 +2123,7 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   function closeNodePanel() {
     selectedNodeId = null;
-    nodePanel.classList.remove("open");
+    if (nodePanel) nodePanel.classList.remove("open");
   }
 
   if (nodePanelClose) nodePanelClose.addEventListener("click", closeNodePanel);
@@ -2426,7 +2430,7 @@ function computeNetworkMetrics(nodeIds, edges) {
     // Reveal shortest path from current root so the node is visible
     model.revealPath(id);
     allExpanded = false;
-    expandAllBtn.textContent = "Expand all";
+    if (expandAllBtn) expandAllBtn.textContent = "Expand all";
     // Recompute metrics for the new expanded frontier and refresh visuals
     recomputeMetrics();
     flowCache.key = null;
@@ -2438,13 +2442,16 @@ function computeNetworkMetrics(nodeIds, edges) {
     // the current view as-is but reveal the node and highlight it so the
     // user can spot it within the current context.
 
-    searchResults.classList.remove("open");
-    searchInput.value = id;
-    searchInput.blur();
+    if (searchResults) searchResults.classList.remove("open");
+    if (searchInput) {
+      searchInput.value = id;
+      searchInput.blur();
+    }
   }
 
   function renderSearchResults(query) {
-    const q = query.trim().toLowerCase();
+    if (!searchResults) return;
+    const q = (query || "").trim().toLowerCase();
     searchActiveIndex = -1;
     if (!q) {
       searchMatches = [];
@@ -2481,59 +2488,65 @@ function computeNetworkMetrics(nodeIds, edges) {
     searchResults.classList.add("open");
   }
 
-  searchInput.addEventListener("input", () => renderSearchResults(searchInput.value));
-  searchInput.addEventListener("focus", () => {
-    if (searchInput.value.trim()) renderSearchResults(searchInput.value);
-  });
-  searchInput.addEventListener("keydown", (e) => {
-    if (!searchResults.classList.contains("open") || !searchMatches.length) {
-      if (e.key === "Enter" && searchInput.value.trim()) {
-        // Exact or first match
-        const q = searchInput.value.trim();
-        const exact = model.nodesById.has(q) ? q : searchMatches[0] || Array.from(model.nodesById.keys()).find((id) => id.toLowerCase() === q.toLowerCase());
-        if (exact) jumpToNode(exact);
-      }
-      return;
-    }
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      searchActiveIndex = Math.min(searchMatches.length - 1, searchActiveIndex + 1);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      searchActiveIndex = Math.max(0, searchActiveIndex - 1);
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      const id = searchMatches[searchActiveIndex >= 0 ? searchActiveIndex : 0];
-      if (id) jumpToNode(id);
-      return;
-    } else if (e.key === "Escape") {
-      searchResults.classList.remove("open");
-      searchInput.blur();
-      return;
-    } else {
-      return;
-    }
-    searchResults.querySelectorAll(".search-item").forEach((el, i) => {
-      el.classList.toggle("active", i === searchActiveIndex);
-      if (i === searchActiveIndex) el.scrollIntoView({ block: "nearest" });
+  if (searchInput) {
+    searchInput.addEventListener("input", () => renderSearchResults(searchInput.value));
+    searchInput.addEventListener("focus", () => {
+      if (searchInput.value.trim()) renderSearchResults(searchInput.value);
     });
-  });
-  searchResults.addEventListener("mousedown", (e) => {
-    // mousedown so we fire before input blur closes the list
-    const item = e.target.closest(".search-item");
-    if (!item || !item.dataset.id) return;
-    e.preventDefault();
-    jumpToNode(item.dataset.id);
-  });
+    searchInput.addEventListener("keydown", (e) => {
+      if (!searchResults || !searchResults.classList.contains("open") || !searchMatches.length) {
+        if (e.key === "Enter" && searchInput.value.trim()) {
+          // Exact or first match
+          const q = searchInput.value.trim();
+          const exact = model.nodesById.has(q) ? q : searchMatches[0] || Array.from(model.nodesById.keys()).find((id) => id.toLowerCase() === q.toLowerCase());
+          if (exact) jumpToNode(exact);
+        }
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        searchActiveIndex = Math.min(searchMatches.length - 1, searchActiveIndex + 1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        searchActiveIndex = Math.max(0, searchActiveIndex - 1);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const id = searchMatches[searchActiveIndex >= 0 ? searchActiveIndex : 0];
+        if (id) jumpToNode(id);
+        return;
+      } else if (e.key === "Escape") {
+        searchResults.classList.remove("open");
+        searchInput.blur();
+        return;
+      } else {
+        return;
+      }
+      searchResults.querySelectorAll(".search-item").forEach((el, i) => {
+        el.classList.toggle("active", i === searchActiveIndex);
+        if (i === searchActiveIndex) el.scrollIntoView({ block: "nearest" });
+      });
+    });
+  }
+  if (searchResults) {
+    searchResults.addEventListener("mousedown", (e) => {
+      // mousedown so we fire before input blur closes the list
+      const item = e.target.closest(".search-item");
+      if (!item || !item.dataset.id) return;
+      e.preventDefault();
+      jumpToNode(item.dataset.id);
+    });
+  }
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".search-wrap")) searchResults.classList.remove("open");
+    if (searchResults && !e.target.closest(".search-wrap")) searchResults.classList.remove("open");
   });
 
   // —— Theme (button + T key) ——
   function toggleTheme() {
     const isLight = document.body.classList.toggle("light");
-    themeBtn.textContent = isLight ? "☀" : "🌙";
-    themeBtn.title = isLight ? "Theme: Light" : "Theme: Dark";
+    if (themeBtn) {
+      themeBtn.textContent = isLight ? "☀" : "🌙";
+      themeBtn.title = isLight ? "Theme: Light" : "Theme: Dark";
+    }
     const { nodes, links } = getRenderGraph();
     applyNodeColors(nodes);
     applyNodeSizes(nodes);
@@ -2711,6 +2724,25 @@ function computeNetworkMetrics(nodeIds, edges) {
       if (isFlowMode()) startFlowAnimation();
     });
   });
+
+  // Top-panel Flow diffusion (and any host UI) can switch mode without
+  // relying on side-panel radios, which are absent when show_side_panel=False.
+  window.setRadialEdgeStatMode = function (mode) {
+    edgeStatMode = mode || "default";
+    flowCache.key = null;
+    stopFlowAnimation();
+    update();
+    if (isFlowMode()) startFlowAnimation();
+    // Keep side-panel radios in sync when they exist.
+    document.querySelectorAll('input[name="edgeStatMode"]').forEach((radio) => {
+      radio.checked = radio.value === edgeStatMode;
+    });
+    const flowBtnEl = document.getElementById("flowDiffButton");
+    if (flowBtnEl) flowBtnEl.classList.toggle("active", edgeStatMode === "flow-home");
+  };
+  window.getRadialEdgeStatMode = function () {
+    return edgeStatMode;
+  };
 
   syncRingSpacingControls();
 

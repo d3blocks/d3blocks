@@ -33,9 +33,9 @@ import networkx as nx
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 except Exception:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 # d3graph is already a d3blocks dependency. Reused for node/edge property
 # computation and for network_significance() - not for rendering.
@@ -102,13 +102,22 @@ def set_config(config={}, font={}, **kwargs):
     config['edge_minmax'] = kwargs.get('edge_minmax', [0.5, 15])
     config['min_weight'] = kwargs.get('min_weight', 1.0)
 
-    # Panel visibility - same default-True convention as d3graph.show_slider /
-    # show_controls.
-    config['show_stats_panel'] = kwargs.get('show_stats_panel', True)
-    config['show_node_panel'] = kwargs.get('show_node_panel', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # Panel visibility (chart_ui_conventions).
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
+    # Bottom node-detail panel (formerly show_node_panel).
+    config['show_bottom_panel'] = kwargs.get(
+        'show_bottom_panel',
+        kwargs.get('show_node_panel', True),  # backwards compatible alias
+    )
     config['dark_mode'] = kwargs.get('dark_mode', True)
-    config['background_color'] = kwargs.get('background_color', '#12141c')
+    # Prefer color_background; accept legacy background_color as single-hex fallback.
+    if 'color_background' in kwargs:
+        config['color_background'] = kwargs.get('color_background')
+    elif 'background_color' in kwargs and kwargs.get('background_color') is not None:
+        config['color_background'] = kwargs.get('background_color')
+    else:
+        config['color_background'] = None
 
     # Optional significance testing (Python-side, via d3graph).
     # None = skip (default). One of _SIGNIFICANCE_STATS to run
@@ -441,6 +450,10 @@ def write_html(X, config, logger=None):
     )
     width = 'window.innerWidth' if config['figsize'][0] is None else config['figsize'][0]
     height = 'null' if config['figsize'][1] is None else config['figsize'][1]
+    bg_dark, bg_light = resolve_color_background(config.get('color_background'))
+    show_side = config.get('show_side_panel', True)
+    show_top = config.get('show_top_panel', True)
+    show_bottom = config.get('show_bottom_panel', True)
 
     content = {
         'json_data': X,
@@ -458,11 +471,16 @@ def write_html(X, config, logger=None):
         'linkDistance': config.get('link_distance', 40),
         'linkStrength': 'null' if config.get('link_strength') is None else config.get('link_strength'),
         'sticky': 'true' if config.get('sticky', True) else 'false',
-        'showStatsPanel': 'true' if config.get('show_stats_panel', True) else 'false',
-        'showNodePanel': 'true' if config.get('show_node_panel', True) else 'false',
-        'showControls': 'true' if config.get('show_controls', True) else 'false',
+        'showSidePanel': 'true' if show_side else 'false',
+        'showTopPanel': 'true' if show_top else 'false',
+        'showBottomPanel': 'true' if show_bottom else 'false',
+        # Client JS still reads these names; keep in sync with the panel flags.
+        'showStatsPanel': 'true' if show_side else 'false',
+        'showNodePanel': 'true' if show_bottom else 'false',
+        'showControls': 'true' if show_side else 'false',
         'darkMode': 'true' if config.get('dark_mode', True) else 'false',
-        'backgroundColor': config.get('background_color', '#12141c'),
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
         'SIGNIFICANCE_ALPHA': config.get('significance_alpha', 0.05),
         'SUPPORT': config.get('support', ''),
         'SAVE_TO_SVG_SCRIPT': save_script,

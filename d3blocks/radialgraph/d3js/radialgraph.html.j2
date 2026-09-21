@@ -6,11 +6,32 @@
 <title>{{ TITLE }}</title>
 {{ SUPPORT }}
 <style>{% include "radialgraph.css" %}</style>
+<!-- Center + top panel + side panels: per-theme backgrounds -->
+<style>
+  body {
+    background: {{ COLOR_BACKGROUND_DARK }};
+  }
+  body .top-panel {
+    background: {{ COLOR_BACKGROUND_DARK }};
+  }
+  body .stats-panel {
+    background: {{ COLOR_BACKGROUND_DARK }};
+  }
+  body.light {
+    background: {{ COLOR_BACKGROUND_LIGHT }};
+  }
+  body.light .top-panel {
+    background: {{ COLOR_BACKGROUND_LIGHT }};
+  }
+  body.light .stats-panel {
+    background: {{ COLOR_BACKGROUND_LIGHT }};
+  }
+</style>
 <script>{% include "d3.v7.min.js" %}</script>
 </head>
 <body{% if darkMode == 'false' %} class="light"{% endif %}>
-{% if showControls == 'true' %}
 
+{% if showTopPanel == 'true' %}
 <div class="top-panel" role="toolbar" aria-label="Top controls">
 <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
@@ -33,9 +54,11 @@
      existing handlers in d3.radialgraph.js continue to work. -->
 <button id="rippleBtn" style="display:none;" aria-hidden="true"></button>
 </div>
+{% endif %}
 
+{% if showSidePanel == 'true' %}
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export/ Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button id="exportDataButton" class="button-switch">Export Data</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
@@ -73,7 +96,6 @@
   </div>
 </div>
 
-{% if showStatsPanel == 'true' %}
 <div class="stats-panel collapsed" id="statsPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Network Statistic<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
@@ -88,7 +110,6 @@
     <label><input type="radio" name="statMetric" value="network_clustering"> Network Clustering</label>
   </div>
 </div>
-{% endif %}
 
 <div class="stats-panel collapsed" id="edgeStatPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Edge Statistics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
@@ -108,12 +129,12 @@
     <label><input type="checkbox" id="hideIsolatedToggle"> Hide nodes without edges</label>
   </div>
 </div>
-
 {% endif %}
+
 <div id="radialgraph-container"></div>
 <div class="radialgraph-tooltip" id="radialgraph-tooltip"></div>
 <div id="hint">tap to expand/collapse · double-tap to focus · drag · scroll/pinch to zoom</div>
-{% if showNodePanel == 'true' %}
+{% if showBottomPanel == 'true' %}
 <div id="nodePanel" role="dialog" aria-label="Node details">
   <div id="nodePanelResizer" class="node-panel-resizer" title="Drag to resize" aria-hidden="false"></div>
   <div class="node-panel-header">
@@ -337,35 +358,30 @@ if (exportDataBtn) {
   });
 }
 
-// Flow diffusion top-button: toggle the edgeStatMode between 'flow-home' and the default
+// Flow diffusion top-button: works with or without the side-panel radios
+// (show_side_panel=False still keeps this control functional).
 const flowBtn = document.getElementById('flowDiffButton');
 if (flowBtn) {
-  // initialize visual state if script set flow mode prior
-  try { if (typeof edgeStatMode !== 'undefined' && edgeStatMode === 'flow-home') flowBtn.classList.add('active'); } catch(e){}
   flowBtn.addEventListener('click', function () {
     try {
-      // Use the existing radio change handlers in d3.radialgraph.js by toggling
-      // a hidden 'flow-home' radio and dispatching a change event. This keeps
-      // all metric recomputation and animation startup in one place.
-      const flowRadio = document.querySelector('input[name="edgeStatMode"][value="flow-home"]');
-      const defaultRadio = document.querySelector('input[name="edgeStatMode"][value="default"]');
-      if (!flowRadio) {
-        console.warn('flow radio not present');
+      if (typeof window.setRadialEdgeStatMode === 'function') {
+        const cur = typeof window.getRadialEdgeStatMode === 'function'
+          ? window.getRadialEdgeStatMode()
+          : 'default';
+        window.setRadialEdgeStatMode(cur === 'flow-home' ? 'default' : 'flow-home');
         return;
       }
+      // Fallback when main script has not exposed the API yet: toggle radios if present.
+      const flowRadio = document.querySelector('input[name="edgeStatMode"][value="flow-home"]');
+      const defaultRadio = document.querySelector('input[name="edgeStatMode"][value="default"]');
+      if (!flowRadio) return;
       if (flowRadio.checked) {
-        // turn off flow: select default radio
         if (defaultRadio) {
           defaultRadio.checked = true;
           defaultRadio.dispatchEvent(new Event('change', { bubbles: true }));
-        } else {
-          // fallback: uncheck flow and manually trigger update
-          flowRadio.checked = false;
-          flowRadio.dispatchEvent(new Event('change', { bubbles: true }));
         }
         flowBtn.classList.remove('active');
       } else {
-        // turn on flow by checking the hidden radio and firing change
         flowRadio.checked = true;
         flowRadio.dispatchEvent(new Event('change', { bubbles: true }));
         flowBtn.classList.add('active');
