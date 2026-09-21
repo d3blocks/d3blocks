@@ -488,7 +488,7 @@ class D3Blocks():
                 overwrite=True,
                 notebook=False,
                 save_button: bool = True,
-                show_controls: bool = True,
+                show_side_panel: bool = True,
                 show_top_panel: bool = True,
                 return_html: bool = False,
                 reset_properties=True,
@@ -586,7 +586,7 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
-        show_controls : bool, (default: True)
+        show_side_panel : bool, (default: True)
                 * True: Show the left control panels (Export, Density, Layout, Filtering, Physics, Enrichments).
                 * False: Hide the left control panels.
         show_top_panel : bool, (default: True)
@@ -770,7 +770,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Scatter', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, dark_mode=dark_mode, reset_properties=reset_properties, notebook=notebook, jitter=jitter, save_button=save_button, show_controls=show_controls, show_top_panel=show_top_panel, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, cmap=cmap, scale=scale, ylim=ylim, xlim=xlim, label_radio=label_radio, color_background=color_background, dark_mode=dark_mode, reset_properties=reset_properties, notebook=notebook, jitter=jitter, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, logger=logger)
         # Check exceptions
         Scatter.check_exceptions(x, y, x1, y1, x2, y2, x3, y3, size, color, tooltip, logger)
         # Set node properties

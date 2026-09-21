@@ -111,10 +111,10 @@ d3.scatter(df['tsneX'].values,
                        scale=True,
                        label_radio=['tSNE','PCA'],
                        df=df,
-                       show_controls=True,
+                       show_side_panel=True,
                        show_top_panel=True,
                        dark_mode=True,
-                       color_background=['#0E1117', '#FFFFFF'],
+                       # color_background='streamlit',
                        )
 
 # %%
