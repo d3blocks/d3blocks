@@ -476,7 +476,7 @@ class D3Blocks():
                 tooltip=None,
                 cmap='tab20',
                 scale=False,
-                color_background=["#0E1117", "#FFFFFF"],
+                color_background=["#222222", "#FFFFFF"],
                 dark_mode: bool = True,
                 label_radio=['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'],
                 xlim=[None, None],
@@ -549,7 +549,8 @@ class D3Blocks():
         color_background : list of str or None, (default: None)
             Background colors for the plot center, top bar, and side panels,
             one per theme: ``[dark_hex, light_hex]``.
-                * None: Defaults ``["#0E1117", "#FFFFFF"],`` (dark / light theme).
+                * None: Defaults ``["#0E1117", "#FFFFFF"]`` (dark / light theme).
+                * 'streamlit': ``["#0E1117", "#FFFFFF"]`` (dark / light theme).
                 * ``['#1a1a2e', '#e8f0fe']``: Custom dark and light backgrounds.
             Switching theme (``dark_mode`` or the UI toggle) picks the matching
             color automatically. Text, axis, and chrome still follow the theme.

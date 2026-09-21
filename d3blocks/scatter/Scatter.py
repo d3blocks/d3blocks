@@ -19,22 +19,23 @@ try:
 except:
     from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo
 
-
-# Theme defaults for center / top / side panel backgrounds (match scatter.css --bg).
-_DEFAULT_BG_DARK = '#222222'
-_DEFAULT_BG_LIGHT = '#ffffff'
-
-
 def _resolve_color_background(color_background):
     """Normalize color_background to (dark_hex, light_hex).
 
     Accepts:
       * None → theme defaults
+      * 'streamlit' → theme streamlit
       * [dark, light] list/tuple of two hex strings
       * single hex str → same color for both modes (backwards compatible)
     """
+    # Theme defaults for center / top / side panel backgrounds (match scatter.css --bg).
+    _DEFAULT_BG_DARK = '#222222'
+    _DEFAULT_BG_LIGHT = '#ffffff'
+
     if color_background is None:
         return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+    if isinstance(color_background, str) and color_background == 'streamlit':
+            return "#0E1117", "#FFFFFF"
     if isinstance(color_background, str):
         c = color_background.strip()
         if not c:
