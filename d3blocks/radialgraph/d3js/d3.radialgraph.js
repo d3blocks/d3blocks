@@ -2641,12 +2641,15 @@ function computeNetworkMetrics(nodeIds, edges) {
   });
 
   // —— Layout mode (radios) ——
+  // All of these live in the side panel; guard so show_side_panel=False
+  // does not throw and abort later top-panel wiring (ripple, flow API, etc.).
   const ringSpacingSlider = document.getElementById("ringSpacingSlider");
   const ringSpacingVal = document.getElementById("ringSpacingVal");
   const autoRingSpacingToggle = document.getElementById("autoRingSpacingToggle");
   const crossLinksToggle = document.getElementById("crossLinksToggle");
 
   function syncRingSpacingControls() {
+    if (!ringSpacingSlider || !autoRingSpacingToggle) return;
     const disabled = !layout.localMode || autoRingSpacingToggle.checked;
     ringSpacingSlider.disabled = disabled;
     ringSpacingSlider.style.opacity = disabled ? "0.45" : "1";
@@ -2662,41 +2665,49 @@ function computeNetworkMetrics(nodeIds, edges) {
     });
   });
 
-  ringSpacingSlider.addEventListener("input", () => {
-    const v = +ringSpacingSlider.value;
-    ringSpacingVal.textContent = v;
-    layout.ringSpacing = v;
-    if (layout.localMode) {
-      layout.setMode(true, model.nodesById.get(model.rootId));
-      layout.simulation.alpha(0.6).restart();
-    }
-  });
+  if (ringSpacingSlider) {
+    ringSpacingSlider.addEventListener("input", () => {
+      const v = +ringSpacingSlider.value;
+      if (ringSpacingVal) ringSpacingVal.textContent = v;
+      layout.ringSpacing = v;
+      if (layout.localMode) {
+        layout.setMode(true, model.nodesById.get(model.rootId));
+        layout.simulation.alpha(0.6).restart();
+      }
+    });
+  }
 
-  autoRingSpacingToggle.addEventListener("change", () => {
-    layout.useAutoRingSpacing = autoRingSpacingToggle.checked;
-    syncRingSpacingControls();
-    if (layout.localMode) {
-      // Recompute radii (if turning auto on) or fall back to the flat
-      // multiplier (if turning it off) and re-settle.
-      const { nodes: visNodes } = model.getVisibleGraph();
-      if (layout.useAutoRingSpacing) layout.ringRadii = layout._computeAutoRingRadii(visNodes);
-      layout.setMode(true, model.nodesById.get(model.rootId));
-      layout.simulation.alpha(0.6).restart();
-    }
-  });
+  if (autoRingSpacingToggle) {
+    autoRingSpacingToggle.addEventListener("change", () => {
+      layout.useAutoRingSpacing = autoRingSpacingToggle.checked;
+      syncRingSpacingControls();
+      if (layout.localMode) {
+        // Recompute radii (if turning auto on) or fall back to the flat
+        // multiplier (if turning it off) and re-settle.
+        const { nodes: visNodes } = model.getVisibleGraph();
+        if (layout.useAutoRingSpacing) layout.ringRadii = layout._computeAutoRingRadii(visNodes);
+        layout.setMode(true, model.nodesById.get(model.rootId));
+        layout.simulation.alpha(0.6).restart();
+      }
+    });
+  }
 
-  crossLinksToggle.addEventListener("change", () => {
-    showCrossLinks = crossLinksToggle.checked;
-    update();
-    layout.simulation.alpha(0.4).restart();
-  });
+  if (crossLinksToggle) {
+    crossLinksToggle.addEventListener("change", () => {
+      showCrossLinks = crossLinksToggle.checked;
+      update();
+      layout.simulation.alpha(0.4).restart();
+    });
+  }
 
   const hideIsolatedToggle = document.getElementById("hideIsolatedToggle");
-  hideIsolatedToggle.addEventListener("change", () => {
-    hideIsolatedNodes = hideIsolatedToggle.checked;
-    update();
-    layout.simulation.alpha(0.4).restart();
-  });
+  if (hideIsolatedToggle) {
+    hideIsolatedToggle.addEventListener("change", () => {
+      hideIsolatedNodes = hideIsolatedToggle.checked;
+      update();
+      layout.simulation.alpha(0.4).restart();
+    });
+  }
 
   document.querySelectorAll('input[name="edgeDirFilter"]').forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
