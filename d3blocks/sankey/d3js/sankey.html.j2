@@ -16,11 +16,33 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     {{ SUPPORT }}
 
     <style>{% include "sankey.css" %}</style>
+    <!-- Center + top panel + side panels: per-theme backgrounds -->
+    <style>
+      body {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .top-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .stats-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body.light {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .top-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .stats-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+    </style>
 </head>
 
-<body>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
 
-<!-- Top panel (search centered, controls on right) -->
+{% if showTopPanel == 'true' %}
+<!-- Top panel (search centered, theme last on right) -->
 <div class="top-panel" role="toolbar" aria-label="Top controls">
     <div class="top-panel-left">
         <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
@@ -34,10 +56,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
         </div>
     </div>
     <div class="top-panel-right">
-        <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
+        <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
     </div>
 </div>
+{% endif %}
 
+{% if showSidePanel == 'true' %}
 <!-- Side panel: display options (was a plain <form>) -->
 <div class="stats-panel collapsed" id="displayPanel">
     <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Display<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
@@ -72,6 +96,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
         <div style="font-size:11px;opacity:0.6;margin-top:6px">Export downloads all nodes and links as JSON.</div>
     </div>
 </div>
+{% endif %}
 
 <div id="sankey-main"></div>
 
@@ -201,11 +226,13 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     // Lets draw it
     drawchart();
 
-    document.getElementById('linkColorOptions').addEventListener('change', function(e){
+    var linkColorOptions = document.getElementById('linkColorOptions');
+    if (linkColorOptions) linkColorOptions.addEventListener('change', function(e){
         linkColor = e.target.value;
         drawchart();
     });
-    document.getElementById('AlignOptions').addEventListener('change', function(e){
+    var alignOptions = document.getElementById('AlignOptions');
+    if (alignOptions) alignOptions.addEventListener('change', function(e){
         align = e.target.value;
         drawchart();
     });
@@ -220,6 +247,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     let searchMatches = [];
 
     function renderSearchResults(query) {
+        if (!searchInput || !searchResults) return;
         const q = (query || '').trim().toLowerCase();
         searchActiveIndex = -1;
         if (!q) {
@@ -251,11 +279,14 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
         if (el) {
             el.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'center'});
         }
-        searchResults.classList.remove('open');
-        searchInput.value = data.nodes[nameIdx].name;
-        searchInput.blur();
+        if (searchResults) searchResults.classList.remove('open');
+        if (searchInput) {
+            searchInput.value = data.nodes[nameIdx].name;
+            searchInput.blur();
+        }
     }
 
+    if (searchInput) {
     searchInput.addEventListener('input', function(){ renderSearchResults(searchInput.value); });
     searchInput.addEventListener('focus', function(){ if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
     // Enter previously had NO handler at all. For a standalone (formless)
@@ -295,13 +326,14 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
             if (i === searchActiveIndex) el.scrollIntoView({block: 'nearest'});
         });
     });
-    searchResults.addEventListener('mousedown', function(e){
+    if (searchResults) searchResults.addEventListener('mousedown', function(e){
         var item = e.target.closest('.search-item');
         if (!item || !item.dataset.idx) return;
         e.preventDefault();
         jumpToNode(parseInt(item.dataset.idx, 10));
     });
-    document.addEventListener('click', function(e){ if (!e.target.closest('.search-wrap')) searchResults.classList.remove('open'); });
+    document.addEventListener('click', function(e){ if (searchResults && !e.target.closest('.search-wrap')) searchResults.classList.remove('open'); });
+    } // end if (searchInput)
 
     // ————————————————————————————————————————————————————————————
     // Theme toggle (button + T key), same behavior as scatter
@@ -338,8 +370,9 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     var PANEL_ORDER = ['displayPanel', 'exportPanel'];
     function positionSidePanels() {
         var bar = document.querySelector('.top-panel');
-        if (!bar) return;
-        var bottom = bar.getBoundingClientRect().bottom;
+        var bottom = bar ? bar.getBoundingClientRect().bottom : 0;
+        var main = document.getElementById('sankey-main');
+        if (main) main.style.marginTop = (bottom ? Math.max(16, bottom + 16) : 16) + 'px';
         var y = bottom + 8, bottomPad = 12;
         PANEL_ORDER.forEach(function(id){
             var panel = document.getElementById(id);

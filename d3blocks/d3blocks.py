@@ -1156,6 +1156,10 @@ class D3Blocks():
                overwrite=True,
                notebook=False,
                save_button: bool = True,
+               show_side_panel: bool = True,
+               show_top_panel: bool = True,
+               dark_mode: bool = True,
+               color_background=None,
                return_html: bool = False,
                reset_properties=True,
                ):
@@ -1221,6 +1225,18 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        show_side_panel : bool, (default: True)
+                * True: Show the left side panels (Display, Export / Save).
+                * False: Hide the left side panels.
+        show_top_panel : bool, (default: True)
+                * True: Show the top panel (logo, search, theme).
+                * False: Hide the top panel.
+        dark_mode : bool, (default: True)
+                * True: Start in dark theme.
+                * False: Start in light theme.
+        color_background : list of str or None, (default: None)
+            Background colors for plot center, top bar, and side panels:
+            ``[dark_hex, light_hex]``. None → ``['#222222', '#ffffff']``.
         return_html : bool, (default: False)
                 * True: Return html
                 * False: Nothing is returned
@@ -1309,7 +1325,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Sankey', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=save_button, fontsize=fontsize, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, link=link, node=node, margin=margin, reset_properties=reset_properties, notebook=notebook, save_button=save_button, fontsize=fontsize, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, logger=logger)
         # Cleaning of data
         # df = utils.pre_processing(df, clean_source_target=True)
         # Set default label properties

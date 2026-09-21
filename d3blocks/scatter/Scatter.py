@@ -15,37 +15,9 @@ import json
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo
+    from .. utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo
-
-def _resolve_color_background(color_background):
-    """Normalize color_background to (dark_hex, light_hex).
-
-    Accepts:
-      * None → theme defaults
-      * 'streamlit' → theme streamlit
-      * [dark, light] list/tuple of two hex strings
-      * single hex str → same color for both modes (backwards compatible)
-    """
-    # Theme defaults for center / top / side panel backgrounds (match scatter.css --bg).
-    _DEFAULT_BG_DARK = '#222222'
-    _DEFAULT_BG_LIGHT = '#ffffff'
-
-    if color_background is None:
-        return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
-    if isinstance(color_background, str) and color_background == 'streamlit':
-            return "#0E1117", "#FFFFFF"
-    if isinstance(color_background, str):
-        c = color_background.strip()
-        if not c:
-            return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
-        return c, c
-    if isinstance(color_background, (list, tuple)) and len(color_background) >= 2:
-        dark = color_background[0] if color_background[0] else _DEFAULT_BG_DARK
-        light = color_background[1] if color_background[1] else _DEFAULT_BG_LIGHT
-        return dark, light
-    return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+    from utils import set_colors, convert_dataframe_dict, set_path, update_config, write_html_file, jitter_func, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -458,7 +430,7 @@ def write_html(X, config, logger=None):
     show_side_panel = config.get('show_side_panel', True)
     show_top_panel = config.get('show_top_panel', True)
     dark_mode = config.get('dark_mode', True)
-    bg_dark, bg_light = _resolve_color_background(config.get('color_background', None))
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     content = {
         'json_data': X,
         'COLOR_BACKGROUND_DARK': bg_dark,

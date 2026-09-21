@@ -26,16 +26,7 @@ import logging
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 logger = logging.getLogger(__name__)
 
-#%% Copy logo
-# def copy_logo(dst_dir):
-#     # source path
-#     src = Path(__file__).resolve().parent / 'logo.txt'
-#     # Destination path
-#     dst = dst_dir / 'logo.txt'
-#     # Copy when not exists
-#     if src.exists() and dst_dir.is_dir() and not dst.is_file():
-#         shutil.copy2(src, dst)
-
+# %%
 def convert_logo(filepath="logo.png"):
     from PIL import Image
     import base64
@@ -925,3 +916,32 @@ def get_support(support):
 
     # Return
     return script
+
+
+def resolve_color_background(color_background):
+    """Normalize color_background to (dark_hex, light_hex).
+
+    Accepts:
+      * None → theme defaults
+      * 'streamlit' → theme streamlit
+      * [dark, light] list/tuple of two hex strings
+      * single hex str → same color for both modes (backwards compatible)
+    """
+    # Theme defaults for center / top / side panel backgrounds (match scatter.css --bg).
+    _DEFAULT_BG_DARK = '#222222'
+    _DEFAULT_BG_LIGHT = '#ffffff'
+
+    if color_background is None:
+        return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+    if isinstance(color_background, str) and color_background == 'streamlit':
+            return "#0E1117", "#FFFFFF"
+    if isinstance(color_background, str):
+        c = color_background.strip()
+        if not c:
+            return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+        return c, c
+    if isinstance(color_background, (list, tuple)) and len(color_background) >= 2:
+        dark = color_background[0] if color_background[0] else _DEFAULT_BG_DARK
+        light = color_background[1] if color_background[1] else _DEFAULT_BG_LIGHT
+        return dark, light
+    return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT

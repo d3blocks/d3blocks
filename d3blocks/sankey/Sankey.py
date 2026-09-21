@@ -10,10 +10,9 @@ import numpy as np
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, set_logo
-
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, convert_to_json_format, include_save_to_svg_script, set_logo, resolve_color_background
 
 # %% Set configuration properties
 def set_config(config={}, link={}, node={}, margin={}, **kwargs):
@@ -34,6 +33,10 @@ def set_config(config={}, link={}, node={}, margin={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
     config['fontsize'] = kwargs.get('fontsize', 10)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
+    config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['color_background'] = kwargs.get('color_background', None)
     # return
     return config
 
@@ -223,6 +226,10 @@ def write_html(X, config, custom_colors, logger=None):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     content = {
         'json_data': X,
 
@@ -257,6 +264,11 @@ def write_html(X, config, custom_colors, logger=None):
         'SAVE_BUTTON_STOP': show_save_button[1],
         'SUPPORT': config['support'],
         'LOGO_BASE64': config['logo_base64'],
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
+        'darkMode': 'true' if dark_mode else 'false',
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
     }
 
     try:
