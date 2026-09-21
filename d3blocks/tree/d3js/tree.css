@@ -184,6 +184,10 @@ html, body {
   transition: var(--transition);
   pointer-events: none;
 }
+/* Light mode: no dark drop-shadow under the white top bar */
+body.light .top-panel {
+  box-shadow: none;
+}
 .top-panel .top-panel-left { pointer-events: none; }
 .top-panel .top-panel-left a { pointer-events: auto; }
 .top-panel .top-panel-center {
@@ -200,8 +204,21 @@ html, body {
   justify-self: end;
 }
 .top-panel .button-switch { margin: 0; }
-.top-search { width: 440px; max-width: 60vw; }
-.top-search .search-input { width: 100%; }
+/* Match button-switch height/padding so Find sits on the same baseline. */
+.top-search {
+  width: 440px;
+  max-width: 60vw;
+  margin-bottom: 0; /* override .search-wrap's 6px which shifts it off-center */
+  display: flex;
+  align-items: center;
+}
+.top-search .search-input {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 1em;
+  line-height: normal;
+  box-sizing: border-box;
+}
 
 #tree-main {
   width: 100%;

@@ -3,14 +3,30 @@ from d3blocks import D3Blocks
 d3 = D3Blocks()
 
 df = d3.import_example(data='energy')
-html = d3.sankey(df, filepath=None, fontsize=12, return_html=True)
+
+# Set properties
+d3.tree(df,
+          show_side_panel=True,
+          show_top_panel=True,
+          dark_mode=True,
+          # color_background='streamlit',
+          )
+
+# %%
+
+
+# Sankey
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+
+df = d3.import_example(data='energy')
 
 # Set properties
 d3.sankey(df,
           show_side_panel=False,
           show_top_panel=True,
           dark_mode=True,
-          # color_background='streamlit',
+          color_background='streamlit',
           )
 
 # %%
@@ -190,7 +206,8 @@ d3.edge_properties
 
 # Show chart
 d3.show(show_bottom_panel=False,
-        show_side_panel=True,)
+        show_side_panel=True,
+        )
 
 # %%
 # Import
