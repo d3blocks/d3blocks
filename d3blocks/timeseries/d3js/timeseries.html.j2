@@ -13,9 +13,20 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
 <title>{{ TITLE }}</title>
 {{ SUPPORT }}
 <style>{% include "timeseries.css" %}</style>
+<!-- Center + top panel + side panels: per-theme backgrounds.
+     Theme toggle (body.light) switches which color is used. -->
+<style>
+  body { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body .top-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body .stats-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body.light { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .top-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .stats-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+</style>
 </head>
-<body{% if darkMode == 'false' %} class="light"{% endif %}>
+<body class="{% if darkMode == 'false' %}light {% endif %}{% if showTopPanel == 'true' %}has-top-panel{% endif %}">
 
+{% if showTopPanel == 'true' %}
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks">
@@ -27,8 +38,9 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
+{% endif %}
 
-{% if showControls == 'true' %}
+{% if showSidePanel == 'true' %}
 <div class="stats-panel collapsed" id="exportPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
@@ -87,7 +99,10 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
     var data = {{ json_data }}
     let timeseriesChart = null;
 
+{{ SAVE_TO_SVG_SCRIPT }}
+
     window.addEventListener('DOMContentLoaded', function () {
+      // ── Build chart ──────────────────────────────────────────────────────
       timeseriesChart = timeseries(data, {
           COLOR: [{{ COLOR }}],
           TITLE: "{{ TITLE }}",
@@ -96,55 +111,55 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
           HEIGHT: {{ HEIGHT }},
           FONTSIZE: {{ FONTSIZE }}
       });
-    })
 
-{{ SAVE_TO_SVG_SCRIPT }}
+      // ── Appearance controls ──────────────────────────────────────────────
+      var fontSlider = document.getElementById("fontSizeSlider");
+      var fontVal    = document.getElementById("fontSizeVal");
+      if (fontSlider) {
+        fontSlider.addEventListener("input", function() {
+          if (fontVal) fontVal.textContent = fontSlider.value;
+          if (timeseriesChart) timeseriesChart.setFontSize(+fontSlider.value);
+        });
+      }
+      var strokeSlider = document.getElementById("strokeWidthSlider");
+      var strokeVal    = document.getElementById("strokeWidthVal");
+      if (strokeSlider) {
+        strokeSlider.addEventListener("input", function() {
+          if (strokeVal) strokeVal.textContent = (+strokeSlider.value).toFixed(1);
+          if (timeseriesChart) timeseriesChart.setStrokeWidth(+strokeSlider.value);
+        });
+      }
+      document.querySelectorAll('input[name="interp"]').forEach(function(el) {
+        el.addEventListener("change", function() {
+          if (timeseriesChart) timeseriesChart.setInterpolation(this.value);
+        });
+      });
 
-    const fontSlider = document.getElementById("fontSizeSlider");
-    const fontVal = document.getElementById("fontSizeVal");
-    if (fontSlider) {
-      fontSlider.addEventListener("input", function() {
-        if (fontVal) fontVal.textContent = fontSlider.value;
-        if (timeseriesChart) timeseriesChart.setFontSize(+fontSlider.value);
-      });
-    }
-    const strokeSlider = document.getElementById("strokeWidthSlider");
-    const strokeVal = document.getElementById("strokeWidthVal");
-    if (strokeSlider) {
-      strokeSlider.addEventListener("input", function() {
-        if (strokeVal) strokeVal.textContent = (+strokeSlider.value).toFixed(1);
-        if (timeseriesChart) timeseriesChart.setStrokeWidth(+strokeSlider.value);
-      });
-    }
-    document.querySelectorAll('input[name="interp"]').forEach(function(el) {
-      el.addEventListener("change", function() {
-        if (timeseriesChart) timeseriesChart.setInterpolation(this.value);
-      });
-    });
-    const resetBtn = document.getElementById("resetZoomBtn");
-    if (resetBtn) {
-      resetBtn.addEventListener("click", function() {
-        if (timeseriesChart) timeseriesChart.resetZoom();
-      });
-    }
-    const exportDataBtn = document.getElementById("exportDataBtn");
-    if (exportDataBtn) {
-      exportDataBtn.addEventListener("click", function() {
-        if (timeseriesChart) timeseriesChart.exportData();
-      });
-    }
-    const filterAllBtn = document.getElementById("filterAllBtn");
-    if (filterAllBtn) {
-      filterAllBtn.addEventListener("click", function() {
-        if (timeseriesChart) timeseriesChart.setAllVisible(true);
-      });
-    }
-    const filterNoneBtn = document.getElementById("filterNoneBtn");
-    if (filterNoneBtn) {
-      filterNoneBtn.addEventListener("click", function() {
-        if (timeseriesChart) timeseriesChart.setAllVisible(false);
-      });
-    }
+      // ── Filtering / zoom controls ────────────────────────────────────────
+      var resetBtn = document.getElementById("resetZoomBtn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function() {
+          if (timeseriesChart) timeseriesChart.resetZoom();
+        });
+      }
+      var exportDataBtn = document.getElementById("exportDataBtn");
+      if (exportDataBtn) {
+        exportDataBtn.addEventListener("click", function() {
+          if (timeseriesChart) timeseriesChart.exportData();
+        });
+      }
+      var filterAllBtn = document.getElementById("filterAllBtn");
+      if (filterAllBtn) {
+        filterAllBtn.addEventListener("click", function() {
+          if (timeseriesChart) timeseriesChart.setAllVisible(true);
+        });
+      }
+      var filterNoneBtn = document.getElementById("filterNoneBtn");
+      if (filterNoneBtn) {
+        filterNoneBtn.addEventListener("click", function() {
+          if (timeseriesChart) timeseriesChart.setAllVisible(false);
+        });
+      }
 
     (function() {
       var PANEL_ORDER = ['exportPanel', 'filteringPanel', 'appearancePanel'];
@@ -152,29 +167,26 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
       function positionSidePanels() {
         var bar = document.querySelector('.top-panel');
         var main = document.getElementById('timeseries-main');
-        if (!bar) return;
-        var bottom = bar.getBoundingClientRect().bottom;
-        if (main) main.style.marginTop = (bottom + 12) + 'px';
+        // Missing top bar → height 0 (do not return early). Side panels stack under the bar.
+        var bottom = bar ? bar.getBoundingClientRect().bottom : 0;
+        if (main) {
+          main.style.top = bottom + 'px';
+          main.style.marginTop = '0px';
+        }
         var y = bottom + 8;
         var bottomPad = 12;
+        var sideRight = 0;
         PANEL_ORDER.forEach(function(id) {
           var panel = document.getElementById(id);
           if (!panel || panel.style.display === 'none') return;
           panel.style.top = y + 'px';
           panel.style.maxHeight = Math.max(80, window.innerHeight - y - bottomPad) + 'px';
-          y += panel.getBoundingClientRect().height + 10;
+          var rect = panel.getBoundingClientRect();
+          sideRight = Math.max(sideRight, rect.right);
+          y += rect.height + 10;
         });
-        var maxPanelRight = 0;
-        PANEL_ORDER.forEach(function(id) {
-          var panel = document.getElementById(id);
-          if (!panel || panel.style.display === 'none') return;
-          var r = panel.getBoundingClientRect().right;
-          if (r > maxPanelRight) maxPanelRight = r;
-        });
-        if (main && maxPanelRight > 0) {
-          main.style.paddingLeft = (maxPanelRight + 12) + 'px';
-        } else if (main) {
-          main.style.paddingLeft = '12px';
+        if (main) {
+          main.style.paddingLeft = sideRight > 0 ? (sideRight + 12) + 'px' : '12px';
         }
         if (timeseriesChart && timeseriesChart.resize) timeseriesChart.resize();
       }
@@ -197,13 +209,24 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
         if (!panel) return;
         var title = panel.querySelector('.stats-panel-title');
         if (!title) return;
-        title.addEventListener('click', function() {
+        // Track pointer movement so a real drag does not also toggle collapse.
+        var downX = 0, downY = 0;
+        title.addEventListener('mousedown', function(e) {
+          downX = e.clientX; downY = e.clientY;
+          title.dataset.justDragged = '0';
+        });
+        title.addEventListener('click', function(e) {
           if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
-          var collapsing = !panel.classList.contains('collapsed');
-          if (collapsing) {
+          if (Math.abs(e.clientX - downX) > 5 || Math.abs(e.clientY - downY) > 5) return;
+          // Currently collapsed → about to expand: restore saved height if any.
+          // Currently expanded  → about to collapse: save height and clear inline style.
+          var isCollapsed = panel.classList.contains('collapsed');
+          if (!isCollapsed) {
+            // About to collapse: save any user-resized height.
             if (panel.style.height) panel.dataset.expandedHeight = panel.style.height;
             panel.style.height = '';
           } else if (panel.dataset.expandedHeight) {
+            // About to expand: restore previously saved height.
             panel.style.height = panel.dataset.expandedHeight;
           }
           panel.classList.toggle('collapsed');
@@ -258,6 +281,8 @@ Forked      : Mike Bostock; https://bl.ocks.org/mbostock/34f08d5e11952a80609169b
       var themeBtn = document.getElementById('themeBtn');
       if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
     })();
+
+    }); // end DOMContentLoaded
 </script>
 </body>
 </html>

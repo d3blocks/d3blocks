@@ -11,13 +11,14 @@ from ismember import ismember
 import numpy as np
 import pandas as pd
 import os
+import json
 from jinja2 import Environment
 from pathlib import Path
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, update_config, set_labels, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -40,8 +41,11 @@ def set_config(config={}, **kwargs):
     config['columns'] = kwargs.get('columns', {'datetime': config['datetime']})
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # [dark_hex, light_hex] for center / top panel / side panels per theme.
+    config['color_background'] = kwargs.get('color_background', None)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     # return
     return config
 
@@ -167,8 +171,8 @@ def set_edge_properties(df, **kwargs):
 
     if node_properties is not None:
         labels = [*node_properties.keys()]
-        idx, _ = ismember(df.columns, labels)
-        if ~np.any(idx): df = df.loc[:, idx]
+        Iloc, _ = ismember(df.columns, labels)
+        if np.any(Iloc): df = df.loc[:, Iloc]
 
     if df.shape[1]==0:
         if logger is not None: logger.info('All columns are removed. Change whitelist/blacklist setting.')
@@ -221,9 +225,18 @@ def show(df, **kwargs):
     df['index'] = df['index'].dt.strftime(config['dt_format_js'])
     df.rename(columns={"index": "date"}, errors="raise", inplace=True)
 
-    # make dataset for javascript
-    vals = df.to_string(header=True, index=False, index_names=False).split('\n')
-    X = [';'.join(ele.split()) for ele in vals]
+    # Make dataset for javascript: list of "date;col1;col2;..." strings.
+    # Use explicit column join (not DataFrame.to_string) so values/names with
+    # spaces or many columns cannot be truncated or mis-split, and emit JSON
+    # so Jinja does not depend on Python list repr inside <script>.
+    cols = list(df.columns)
+    def _cell(v):
+        if v is None or (isinstance(v, float) and np.isnan(v)):
+            return 'NaN'
+        return str(v)
+    X = [';'.join(cols)]
+    for _, row in df.iterrows():
+        X.append(';'.join(_cell(row[c]) for c in cols))
 
     # Set logo
     config['logo_base64'] = set_logo(filepath=config['logo'])
@@ -255,9 +268,15 @@ def write_html(X, config, logger=None):
     # Handle figsize None -> null for JS
     width = config['figsize'][0] if config['figsize'][0] is not None else 'null'
     height = config['figsize'][1] if config['figsize'][1] is not None else 'null'
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     content = {
-        'json_data': X,
+        'json_data': json.dumps(X),
         'COLOR': config['color'],
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
         'TITLE': config['title'],
         'FONTSIZE': config['fontsize'],
         'DT_FORMAT': config['dt_format_js'],
@@ -267,8 +286,9 @@ def write_html(X, config, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
-        'showControls': 'true' if config.get('show_controls', True) else 'false',
-        'darkMode': 'true' if config.get('dark_mode', True) else 'false',
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
+        'darkMode': 'true' if dark_mode else 'false',
         'LOGO_BASE64': config['logo_base64'],
     }
 

@@ -4,14 +4,19 @@ function timeseries(data, config) {
 
     function getAvailableSize() {
         var main = document.getElementById("timeseries-main");
-        var padL = 0, padT = 80;
+        var padL = 0;
+        var availW, availH;
         if (main) {
             var cs = window.getComputedStyle(main);
             padL = parseFloat(cs.paddingLeft) || 0;
-            padT = parseFloat(cs.marginTop) || 80;
+            var rect = main.getBoundingClientRect();
+            // main is position:fixed; use its content box (exclude left padding for side panels)
+            availW = (config.WIDTH && config.WIDTH !== null) ? config.WIDTH : Math.max(100, rect.width - padL - 20);
+            availH = (config.HEIGHT && config.HEIGHT !== null) ? config.HEIGHT : Math.max(100, rect.height - 20);
+        } else {
+            availW = (config.WIDTH && config.WIDTH !== null) ? config.WIDTH : (window.innerWidth - 20);
+            availH = (config.HEIGHT && config.HEIGHT !== null) ? config.HEIGHT : (window.innerHeight - 100);
         }
-        var availW = (config.WIDTH && config.WIDTH !== null) ? config.WIDTH : (window.innerWidth - padL - 20);
-        var availH = (config.HEIGHT && config.HEIGHT !== null) ? config.HEIGHT : (window.innerHeight - padT - 40);
         return { w: Math.max(400, availW), h: Math.max(300, availH) };
     }
 
