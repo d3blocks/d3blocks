@@ -1645,7 +1645,9 @@ class D3Blocks():
                    overwrite=True,
                    notebook=False,
                    save_button: bool = True,
-                   show_controls: bool = True,
+                   show_side_panel: bool = True,
+                   show_top_panel: bool = True,
+                   color_background=None,
                    dark_mode: bool = True,
                    return_html: bool = False,
                    reset_properties=True,
@@ -1702,9 +1704,18 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
-        show_controls : bool, (default: True)
-                * True: Show the top bar and left control panels (Export/Save, Filtering, Appearance).
-                * False: Hide all GUI controls.
+        show_side_panel : bool, (default: True)
+                * True: Show the left side panels (Export / Save, Filtering, Appearance).
+                * False: Hide left side panels.
+        show_top_panel : bool, (default: True)
+                * True: Show the top bar (logo, theme).
+                * False: Hide the top bar.
+        color_background : list or str or None, (default: None)
+            Background colors for page, top panel, and side panels.
+                * None: theme defaults
+                * [dark_hex, light_hex]: per-theme backgrounds
+                * 'streamlit' / 'darkblue': named presets
+                * single hex: same color for both themes
         dark_mode : bool, (default: True)
                 * True: Start in dark theme.
                 * False: Start in light theme.
@@ -1775,7 +1786,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Timeseries', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, fontsize=fontsize, sort_on_date=sort_on_date, datetime=datetime, cmap=cmap, whitelist=whitelist, reset_properties=reset_properties, dt_format=dt_format, notebook=notebook, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, color_background=color_background, dark_mode=dark_mode, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df.columns.values, cmap=self.config['cmap'], whitelist=self.config['whitelist'], datetime=self.config['datetime'])
@@ -2460,8 +2471,10 @@ class D3Blocks():
                      label_zoom_threshold=0.4,
                      notebook=False,
                      showfig=True,
-                     show_controls: bool = True,
+                     show_side_panel: bool = True,
+                     show_top_panel: bool = True,
                      dark_mode: bool = True,
+                     color_background=None,
                      save_button: bool = True,
                      return_html: bool = False,
                      overwrite=True):
@@ -2522,16 +2535,33 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
+        show_side_panel : bool, (default: True)
+                * True: Show left side panels (Export / Save, Physics, Display).
+                * False: Hide side panels.
+        show_top_panel : bool, (default: True)
+                * True: Show top bar (logo + theme toggle).
+                * False: Hide top bar.
+        dark_mode : bool, (default: True)
+                * True: Dark theme.
+                * False: Light theme (body.light).
+        color_background : list or str, optional
+                Background for page, top panel, and side panels.
+                ``[dark_hex, light_hex]``, or a named preset (e.g. ``'streamlit'``).
+                None uses theme defaults.
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
+        return_html : bool, (default: False)
+                * True: Return the generated HTML string (useful for Streamlit, notebooks, embedding).
+                * False: Do not return HTML.
         overwrite : bool, (default: True)
                 * True: Overwrite the html in the destination directory.
                 * False: Do not overwrite destination file but show warning instead.
 
         Returns
         -------
-        None.
+        str or None
+            HTML string when ``return_html=True``, otherwise ``None``.
 
         Examples
         --------
@@ -2548,8 +2578,11 @@ class D3Blocks():
         >>> # Create force-directed-network (without cluster labels)
         >>> d3.elasticgraph(df, filepath='Elasticgraph.html')
         >>> #
+        >>> # Return HTML without opening a browser (e.g. Streamlit)
+        >>> html = d3.elasticgraph(df, showfig=False, return_html=True)
+        >>> #
         >>> # Show elasticgraph
-        >>> html = d3.Elasticgraph.show();
+        >>> html = d3.Elasticgraph.show()
         >>> #
         >>> # Node properties
         >>> d3.Elasticgraph.D3graph.node_properties
@@ -2590,13 +2623,13 @@ class D3Blocks():
         # Remvove quotes from source-target labels
         df = utils.remove_quotes(df)
         # Initialize network d3-elasticgraph-network
-        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button)
+        self.Elasticgraph = Elasticgraph(collision=collision, charge=charge, radius=size, hull_offset=hull_offset, single_click_expand=single_click_expand, sticky=sticky, label_zoom_threshold=label_zoom_threshold, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, save_button=save_button)
         # Convert vector to adjmat
         adjmat = d3network.vec2adjmat(df['source'], df['target'], weight=df['weight'])
         # Create default graph
         self.Elasticgraph.graph(adjmat, group=group, scaler=scaler)
         # Open the webbrowser
-        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite, show_controls=show_controls, dark_mode=dark_mode, save_button=save_button, logo=self.logo)
+        html = self.Elasticgraph.show(figsize=figsize, title=title, filepath=filepath, showfig=showfig, notebook=notebook, overwrite=overwrite, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, save_button=save_button, logo=self.logo)
         # Create the plot
         if return_html:
             return html

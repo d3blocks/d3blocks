@@ -56,6 +56,18 @@ class Elasticgraph:
     verbose : int, (default: 20)
         Print progress to screen.
         60: None, 40: Error, 30: Warn, 20: Info, 10: Debug
+    show_side_panel : bool, (default: True)
+        Show/hide the left side panels (Export / Save, Physics, Display).
+    show_top_panel : bool, (default: True)
+        Show/hide the top bar (logo + theme toggle).
+    dark_mode : bool, (default: True)
+        True: dark theme; False: light theme (``body.light``).
+    color_background : list or str, optional
+        Background colors for page, top panel, and side panels.
+        ``[dark_hex, light_hex]``, or a named preset (e.g. ``'streamlit'``).
+        None uses theme defaults.
+    save_button : bool, (default: True)
+        Show the Save SVG button in the Export / Save panel.
 
     Returns
     -------
@@ -67,7 +79,7 @@ class Elasticgraph:
     * Fork Ger Hobbelts (Block 3104394): https://bl.ocks.org/GerHobbelt/3104394
     """
 
-    def __init__(self, radius: int = 4, hull_offset: int = 15, collision: float = 0.8, charge: int = 1000, sticky: bool = True, label_zoom_threshold: float = 0.4, verbose: int = 20, single_click_expand: bool = True, show_controls: bool = True, dark_mode: bool = True, save_button: bool = True) -> None:
+    def __init__(self, radius: int = 4, hull_offset: int = 15, collision: float = 0.8, charge: int = 1000, sticky: bool = True, label_zoom_threshold: float = 0.4, verbose: int = 20, single_click_expand: bool = True, show_side_panel: bool = True, show_top_panel: bool = True, dark_mode: bool = True, color_background=None, save_button: bool = True) -> None:
         """Initialize elasticgraph."""
         self.D3graph = d3graph()
         # Cleaning
@@ -84,8 +96,10 @@ class Elasticgraph:
         self.D3graph.config['sticky'] = sticky
         self.D3graph.config['label_zoom_threshold'] = label_zoom_threshold
         self.D3graph.config['single_click_expand'] = single_click_expand
-        self.D3graph.config['show_controls'] = show_controls
+        self.D3graph.config['show_side_panel'] = show_side_panel
+        self.D3graph.config['show_top_panel'] = show_top_panel
         self.D3graph.config['dark_mode'] = dark_mode
+        self.D3graph.config['color_background'] = color_background
         self.D3graph.config['save_button'] = save_button
         # Set paths
         self.D3graph.config['curpath'] = os.path.dirname(os.path.abspath(__file__))
@@ -152,11 +166,13 @@ class Elasticgraph:
              showfig: bool = True,
              overwrite: bool = True,
              notebook: bool = False,
-             show_controls: bool = None,
+             show_side_panel: bool = None,
+             show_top_panel: bool = None,
              dark_mode: bool = None,
+             color_background=None,
              save_button: bool = None,
              logo: str = 'logo.txt',
-             ) -> None:
+             ):
         """Build and show the graph.
 
         Parameters
@@ -179,10 +195,21 @@ class Elasticgraph:
         notebook : bool
             True: Use IPython to show chart in notebooks.
             False: Do not use IPython.
+        show_side_panel : bool, (default: True)
+            Show/hide the left side panels (Export / Save, Physics, Display).
+        show_top_panel : bool, (default: True)
+            Show/hide the top bar (logo + theme toggle).
+        dark_mode : bool, (default: True)
+            True: dark theme; False: light theme (``body.light``).
+        color_background : list or str, optional
+            Background colors for page, top panel, and side panels.
+            ``[dark_hex, light_hex]``, or a named preset (e.g. ``'streamlit'``).
+            None uses theme defaults.
 
         Returns
         -------
-        None.
+        str
+            Generated HTML string (also written to ``filepath`` when set).
 
         """
         # Some checks
@@ -196,10 +223,14 @@ class Elasticgraph:
         self.D3graph.config['notebook'] = notebook
         self.D3graph.config['logo'] = logo
 
-        if show_controls is not None:
-            self.D3graph.config['show_controls'] = show_controls
+        if show_side_panel is not None:
+            self.D3graph.config['show_side_panel'] = show_side_panel
+        if show_top_panel is not None:
+            self.D3graph.config['show_top_panel'] = show_top_panel
         if dark_mode is not None:
             self.D3graph.config['dark_mode'] = dark_mode
+        if color_background is not None:
+            self.D3graph.config['color_background'] = color_background
         if save_button is not None:
             self.D3graph.config['save_button'] = save_button
         self.D3graph.set_path(filepath)
@@ -219,11 +250,10 @@ class Elasticgraph:
         json_data = json_create(self.D3graph.G)
         # Create html with json file embedded
         html = self.write_html(json_data, overwrite=overwrite)
-        # Display the chart
-        return self.D3graph.display(html)
-        # if self.D3graph.config['showfig']:
-        #     self.D3graph.showfig(self.D3graph.config['filepath'])
-        # return html
+        # Display the chart (opens browser / notebook when showfig is True)
+        self.D3graph.display(html)
+        # Always return HTML so callers (e.g. d3.elasticgraph(..., return_html=True)) get the string
+        return html
 
     def set_edge_properties(self,
                             edge_distance: int = None,
@@ -355,6 +385,11 @@ class Elasticgraph:
         # Set logo
         logo_base64 = utils.set_logo(filepath=cfg.get('logo', None))
 
+        show_side_panel = cfg.get('show_side_panel', True)
+        show_top_panel = cfg.get('show_top_panel', True)
+        dark_mode = cfg.get('dark_mode', True)
+        bg_dark, bg_light = utils.resolve_color_background(cfg.get('color_background', None))
+
         _charge_abs = abs(cfg['charge'])
         content = {
             'json_data': json_data,
@@ -370,8 +405,11 @@ class Elasticgraph:
             'charge_abs': _charge_abs,     # positive for the slider
             'sticky': cfg['sticky'],
             'label_zoom_threshold': cfg['label_zoom_threshold'],
-            'show_controls': cfg.get('show_controls', True),
-            'dark_mode': cfg.get('dark_mode', True),
+            'showSidePanel': 'true' if show_side_panel else 'false',
+            'showTopPanel': 'true' if show_top_panel else 'false',
+            'darkMode': 'true' if dark_mode else 'false',
+            'COLOR_BACKGROUND_DARK': bg_dark,
+            'COLOR_BACKGROUND_LIGHT': bg_light,
             'save_button': cfg.get('save_button', True),
             'LOGO_BASE64': logo_base64,
         }

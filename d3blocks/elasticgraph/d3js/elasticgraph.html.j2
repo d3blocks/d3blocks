@@ -11,9 +11,32 @@ Chart       : Elasticgraph (elastic force-directed network)
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <style>{% include "elasticgraph.css" %}</style>
+    <!-- Center + top panel + side panels: per-theme backgrounds.
+         Theme toggle (body.light) switches which color is used. -->
+    <style>
+      body {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .top-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body .stats-panel {
+        background: {{ COLOR_BACKGROUND_DARK }};
+      }
+      body.light {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .top-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+      body.light .stats-panel {
+        background: {{ COLOR_BACKGROUND_LIGHT }};
+      }
+    </style>
 </head>
-<body{% if not dark_mode %} class="light"{% endif %}>
+<body{% if darkMode != 'true' %} class="light"{% endif %}>
 
+{% if showTopPanel == 'true' %}
 <!-- ── Top bar ──────────────────────────────────────────────────── -->
 <div class="top-panel">
   <div class="top-panel-left">
@@ -25,12 +48,13 @@ Chart       : Elasticgraph (elastic force-directed network)
   <div class="top-panel-center"></div>
   <div class="top-panel-right">
     <button class="button-switch" id="themeBtn" type="button">
-      {% if not dark_mode %}☀{% else %}🌙{% endif %}
+      {% if darkMode != 'true' %}☀{% else %}🌙{% endif %}
     </button>
   </div>
 </div>
+{% endif %}
 
-{% if show_controls %}
+{% if showSidePanel == 'true' %}
 <!-- ── Panel: Export / Save ─────────────────────────────────────── -->
 <div class="stats-panel collapsed" id="exportPanel">
   <div class="stats-panel-title" draggable="true">
@@ -147,7 +171,8 @@ window.addEventListener('DOMContentLoaded', function () {
       gc.style.bottom = '0';
     }
 
-    var y = bar ? bar.getBoundingClientRect().bottom + 8 : 60;
+    // When top bar is absent, treat its height as 0 (do not early-return)
+    var y = bar ? bar.getBoundingClientRect().bottom + 8 : 8;
     PANEL_ORDER.forEach(function (id) {
       var p = document.getElementById(id);
       if (!p) return;
@@ -208,14 +233,17 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Theme toggle
-  document.getElementById('themeBtn').addEventListener('click', function () {
-    document.body.classList.toggle('light');
-    var light = document.body.classList.contains('light');
-    this.textContent = light ? '☀' : '🌙';
-    // Refresh label colours (they read --text from body style at render time)
-    if (window._applyLabelSize) window._applyLabelSize(window._labelSizeOverride || 12);
-  });
+  // Theme toggle (no-op when top panel / themeBtn is absent)
+  var themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      document.body.classList.toggle('light');
+      var light = document.body.classList.contains('light');
+      this.textContent = light ? '☀' : '🌙';
+      // Refresh label colours (they read --text from body style at render time)
+      if (window._applyLabelSize) window._applyLabelSize(window._labelSizeOverride || 12);
+    });
+  }
 })();
 
 /* ── Physics sliders ────────────────────────────────────────────── */

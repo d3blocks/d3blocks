@@ -1,3 +1,39 @@
+# Import library
+from d3blocks import D3Blocks
+
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('energy')
+
+# Create network graph
+html = d3.elasticgraph(
+          df,
+          show_side_panel=False,
+          show_top_panel=False,
+          dark_mode=True,
+          color_background='streamlit',
+          return_html=True,
+          )
+
+# %%
+# timeseries
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+df = d3.import_example('climate')
+
+html = d3.timeseries(
+          df,
+          datetime='date',
+          dt_format='%Y-%m-%d',
+          show_side_panel=True,
+          show_top_panel=True,
+          dark_mode=True,
+          # color_background='streamlit',
+          )
+
+# %%
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('surfspots')
@@ -70,7 +106,7 @@ d3.maps(df, filepath=r'c:/temp/test/', show_controls=True, dark_mode=False)
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('climate')
-html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html', show_controls=False)
+html = d3.timeseries(df, datetime='date', dt_format='%Y-%m-%d', filepath=r'c:\temp\timeseries1.html')
 
 # %%
 from d3blocks import D3Blocks
