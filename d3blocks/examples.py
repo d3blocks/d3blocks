@@ -1,3 +1,19 @@
+# Load library
+from d3blocks import D3Blocks
+# Initialize
+d3 = D3Blocks()
+
+# Import example
+df = d3.import_example('stormofswords') # 'stormofswords'
+html = d3.circlepacking(
+          df,
+          show_side_panel=True,
+          show_top_panel=True,
+          dark_mode=True,
+          # color_background='streamlit',
+          )
+
+# %%
 # Import library
 from d3blocks import D3Blocks
 

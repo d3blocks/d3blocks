@@ -3266,8 +3266,10 @@ class D3Blocks():
                       overwrite: bool = True,
                       notebook: bool = False,
                       save_button: bool = True,
-                      show_controls: bool = True,
+                      show_side_panel: bool = True,
+                      show_top_panel: bool = True,
                       dark_mode: bool = True,
+                      color_background=None,
                       return_html: bool = False,
                       reset_properties: bool = True,
                       ):
@@ -3328,12 +3330,19 @@ class D3Blocks():
         save_button : bool, (default: True)
                 * True: Save button is shown in the HTML to save the image in svg.
                 * False: No save button is shown in the HTML.
-        show_controls : bool, (default: True)
-                * True: Show top bar, export panel, and display controls.
-                * False: Chart only (no chrome).
+        show_side_panel : bool, (default: True)
+                * True: Show left side panels (Export / Save, Display).
+                * False: Hide side panels.
+        show_top_panel : bool, (default: True)
+                * True: Show top bar (logo, search, reset, theme toggle).
+                * False: Hide top bar.
         dark_mode : bool, (default: True)
                 * True: Dark theme by default.
                 * False: Light theme by default.
+        color_background : list or str, optional
+                Background for page, top panel, and side panels.
+                ``[dark_hex, light_hex]``, or a named preset (e.g. ``'streamlit'``).
+                None uses theme defaults.
         return_html : bool, (default: False)
                 * True: Return html
                 * False: Nothing is returned
@@ -3343,14 +3352,9 @@ class D3Blocks():
 
         Returns
         -------
-        d3.node_properties: DataFrame of dictionary
-             Contains properties of the unique input label/nodes/samples.
-
-        d3.edge_properties: DataFrame of dictionary
-             Contains properties of the unique input edges/links.
-
-        d3.config: dictionary
-             Contains configuration properties.
+        str or None
+            HTML string when ``return_html=True``, otherwise ``None``.
+            Also populates ``d3.node_properties``, ``d3.edge_properties``, ``d3.config``.
 
         Examples
         --------
@@ -3416,7 +3420,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Circlepacking', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, show_controls=show_controls, dark_mode=dark_mode, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, size=size, zoom=zoom, speed=speed, border=border, font=font, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, reset_properties=reset_properties, notebook=notebook, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, logger=logger)
         # Cleaning of data
         # Convert NumPy types to regular Python types for proper JSON serialization
         df = utils.pre_processing(df, labels=[str(x) for x in df.columns.values[:-1]], logger=logger)

@@ -9,9 +9,9 @@ License     : GPL3
 from jinja2 import Environment, PackageLoader
 
 try:
-    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script, set_logo
+    from .. utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script, set_logo
+    from utils import convert_dataframe_dict, set_path, pre_processing, update_config, set_labels, write_html_file, is_circular, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -34,8 +34,11 @@ def set_config(config={}, margin={}, font={}, border={}, **kwargs):
     config['border'] = {**{'color': '#FFFFFF', 'width': 1.5, 'fill': '#FFFFFF', "padding": 5}, **border}
     config['notebook'] = kwargs.get('notebook', False)
     config['save_button'] = kwargs.get('save_button', True)
-    config['show_controls'] = kwargs.get('show_controls', True)
+    # UI conventions (aligned with scatter)
+    config['show_side_panel'] = kwargs.get('show_side_panel', True)
+    config['show_top_panel'] = kwargs.get('show_top_panel', True)
     config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['color_background'] = kwargs.get('color_background', None)
     # return
     return config
 
@@ -184,9 +187,11 @@ def write_html(X, config, node_properties, logger=None):
     width = 'window.screen.width' if config['figsize'][0] is None else config['figsize'][0]
     height = 'window.screen.height' if config['figsize'][1] is None else config['figsize'][1]
 
-    # Jinja expects lowercase 'true'/'false' JSON-style strings for template conditionals
-    show_controls = 'true' if config.get('show_controls', True) else 'false'
-    dark_mode = 'true' if config.get('dark_mode', True) else 'false'
+    # UI flags as lowercase 'true'/'false' for Jinja conditionals
+    show_side_panel = config.get('show_side_panel', True)
+    show_top_panel = config.get('show_top_panel', True)
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
 
     content = {
         'json_data': X,
@@ -208,8 +213,11 @@ def write_html(X, config, node_properties, logger=None):
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],
-        'showControls': show_controls,
-        'darkMode': dark_mode,
+        'showSidePanel': 'true' if show_side_panel else 'false',
+        'showTopPanel': 'true' if show_top_panel else 'false',
+        'darkMode': 'true' if dark_mode else 'false',
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
         'LOGO_BASE64': config['logo_base64'],
     }
 

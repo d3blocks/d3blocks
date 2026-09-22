@@ -13,13 +13,35 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ TITLE }}</title>
   <style>{% include "circlepacking.css" %}</style>
+  <!-- Center + top panel + side panels: per-theme backgrounds.
+       Theme toggle (body.light) switches which color is used. -->
+  <style>
+    body {
+      background: {{ COLOR_BACKGROUND_DARK }};
+    }
+    body .top-panel {
+      background: {{ COLOR_BACKGROUND_DARK }};
+    }
+    body .stats-panel {
+      background: {{ COLOR_BACKGROUND_DARK }};
+    }
+    body.light {
+      background: {{ COLOR_BACKGROUND_LIGHT }};
+    }
+    body.light .top-panel {
+      background: {{ COLOR_BACKGROUND_LIGHT }};
+    }
+    body.light .stats-panel {
+      background: {{ COLOR_BACKGROUND_LIGHT }};
+    }
+  </style>
   <script>{% include "d3.v6.min.js" %}</script>
   <script>{% include "lodash.min.js" %}</script>
   {{ SUPPORT }}
 </head>
-<body class="{% if darkMode == 'false' %}light {% endif %}{% if showControls == 'true' %}has-controls{% endif %}">
+<body class="{% if darkMode == 'false' %}light {% endif %}{% if showTopPanel == 'true' %}has-top-panel{% endif %}">
 
-{% if showControls == 'true' %}
+{% if showTopPanel == 'true' %}
 <div class="top-panel" role="toolbar" aria-label="Top controls">
   <div class="top-panel-left">
     <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
@@ -37,9 +59,11 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
+{% endif %}
 
+{% if showSidePanel == 'true' %}
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button id="exportDataButton" class="button-switch">Export Data</button>
     {{ SAVE_BUTTON_START }}<button id="saveButton" class="button-switch">Save</button>{{ SAVE_BUTTON_STOP }}
@@ -96,7 +120,8 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
     fonttype: "{{ fonttype }}",
     fontoutlinecolor: "{{ fontoutlinecolor }}",
     darkMode: {{ darkMode }},
-    showControls: {{ showControls }}
+    showSidePanel: {{ showSidePanel }},
+    showTopPanel: {{ showTopPanel }}
   };
 </script>
 <script>
@@ -333,6 +358,7 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
   rebuildChart();
 
   // —— Reset view ————————————————————————————————————————————————
+  // No-op when top panel / resetBtn is absent
   const resetBtn = document.getElementById("resetBtn");
   if (resetBtn) {
     resetBtn.addEventListener("click", function () {
@@ -341,6 +367,7 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
   }
 
   // —— Theme toggle ——————————————————————————————————————————————
+  // No-op when top panel / themeBtn is absent
   const themeBtn = document.getElementById("themeBtn");
   if (themeBtn) {
     themeBtn.addEventListener("click", function () {
@@ -516,6 +543,7 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
   }
 
   // —— Side panel positioning & collapse / reorder ————————————————
+  // When top bar is absent, treat its height as 0 (do not early-return)
   function positionSidePanels() {
     var panels = Array.from(document.querySelectorAll(".stats-panel"));
     var topPanel = document.querySelector(".top-panel");
