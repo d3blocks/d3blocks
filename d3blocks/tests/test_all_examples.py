@@ -353,7 +353,7 @@ def test_imageslider():
         d3 = D3Blocks()
         
         # Local images
-        img_before, img_after = d3.import_example('southern_nebula')
+        img_before, img_after = d3.import_example('southern_nebula_internet')
         
         # Internet location
         img_before, img_after = d3.import_example('southern_nebula_internet')
