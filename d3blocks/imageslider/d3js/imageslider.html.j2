@@ -16,8 +16,11 @@ Forked      : JohnEdChristensen; https://github.com/JohnEdChristensen/WebbCompar
 		<style>
 		   {% include "reset.css" %}
 		   {% include "imageslider.css" %}
-
-			body { background: {{ BACKGROUND }} }
+		</style>
+		<!-- Page background: per-theme colors. Theme follows dark_mode. -->
+		<style>
+			body { background: {{ COLOR_BACKGROUND_DARK }}; }
+			body.light { background: {{ COLOR_BACKGROUND_LIGHT }}; }
 		</style>
 
         <!---		
@@ -44,7 +47,7 @@ Forked      : JohnEdChristensen; https://github.com/JohnEdChristensen/WebbCompar
 	</script>
 
     
-    <body>
+    <body{% if darkMode == 'false' %} class="light"{% endif %}>
         <div class="main" style="max-width: {{ WIDTH }}px;">
 
             <br>
@@ -79,4 +82,3 @@ Forked      : JohnEdChristensen; https://github.com/JohnEdChristensen/WebbCompar
 	</script>
     
 </html>
-

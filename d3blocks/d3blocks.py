@@ -1043,6 +1043,8 @@ class D3Blocks():
                     scale=True,
                     colorscale=-1,
                     background='#000000',
+                    color_background='black',
+                    dark_mode: bool = True,
                     title='Imageslider - D3blocks',
                     filepath='imageslider.html',
                     figsize = [None, None],
@@ -1074,8 +1076,12 @@ class D3Blocks():
                 * 2: cv2.IMREAD_ANYDEPTH
                 * 8: cv2.COLOR_GRAY2RGB
                 * -1: cv2.IMREAD_UNCHANGED
-        background : String (default: '#000000')
-            Background color.
+        color_background : list or str or None, (default: None)
+            Page background as ``[dark_hex, light_hex]``. Also accepts a single
+            hex string (same color for both themes), ``'streamlit'``, or
+            ``'darkblue'``. None uses theme defaults (``#222222`` / ``#ffffff``).
+        dark_mode : bool, (default: True)
+            True: dark theme (default body). False: light theme (``body.light``).
         title : String, (default: None)
             Title of the figure.
                 * 'Imageslider'
@@ -1142,7 +1148,8 @@ class D3Blocks():
         self.config['img_after'] = img_after
         self.config['scale'] = scale
         self.config['colorscale'] = colorscale
-        self.config['background'] = background
+        self.config['color_background'] = color_background
+        self.config['dark_mode'] = dark_mode
         self.config['filepath'] = utils.set_path(filepath, logger)
         self.config['title'] = title
         self.config['showfig'] = showfig

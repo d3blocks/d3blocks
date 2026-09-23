@@ -938,6 +938,8 @@ def resolve_color_background(color_background):
 
     if color_background is None:
         return _DEFAULT_BG_DARK, _DEFAULT_BG_LIGHT
+    if isinstance(color_background, str) and color_background == 'black':
+        return "#000000", "#FFFFFF"
     if isinstance(color_background, str) and color_background == 'streamlit':
         return "#0E1117", "#FFFFFF"
     if isinstance(color_background, str) and color_background == 'darkblue':

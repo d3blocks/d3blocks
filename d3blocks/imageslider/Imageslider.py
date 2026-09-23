@@ -14,9 +14,9 @@ import os
 import time
 import re
 try:
-    from .. utils import set_path, write_html_file, include_save_to_svg_script, set_logo
+    from .. utils import set_path, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 except:
-    from utils import set_path, write_html_file, include_save_to_svg_script, set_logo
+    from utils import set_path, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 
 # %% Set configuration properties
@@ -30,7 +30,6 @@ except:
 #     config['figsize']=[None, None]
 #     config['scale']=True
 #     config['colorscale']=-1
-#     config['background']='#000000'
 #     config['notebook'] = True
 #     return config
 
@@ -135,6 +134,8 @@ def write_html(img_before, img_after, config, logger):
     """
     # Save button
     save_script, show_save_button = include_save_to_svg_script(config['save_button'], title=config['title'])
+    dark_mode = config.get('dark_mode', True)
+    bg_dark, bg_light = resolve_color_background(config.get('color_background', None))
     content = {
         'TITLE': config['title'],
         'WIDTH': config['figsize'][0],
@@ -143,7 +144,9 @@ def write_html(img_before, img_after, config, logger):
         'IMG_AFTER': img_after,
         'ALT_BEFORE': config['alt_before'],
         'ALT_AFTER': config['alt_after'],
-        'BACKGROUND': config['background'],
+        'COLOR_BACKGROUND_DARK': bg_dark,
+        'COLOR_BACKGROUND_LIGHT': bg_light,
+        'darkMode': 'true' if dark_mode else 'false',
         'SAVE_TO_SVG_SCRIPT': save_script,
         'SAVE_BUTTON_START': show_save_button[0],
         'SAVE_BUTTON_STOP': show_save_button[1],

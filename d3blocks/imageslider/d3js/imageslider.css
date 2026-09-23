@@ -7,8 +7,12 @@
 body {
   font-size: 100%;
   font-family: "Open Sans", sans-serif;
+  color: #e5e9f0;
+  /* background set via template COLOR_BACKGROUND_DARK / LIGHT */
+}
+
+body.light {
   color: #2E3440;
-  background-color: #2E3440;
 }
 
 a {

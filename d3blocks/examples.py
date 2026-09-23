@@ -1,3 +1,14 @@
+from d3blocks import D3Blocks
+d3 = D3Blocks()
+img_before, img_after = d3.import_example('southern_nebula_internet')
+html = d3.imageslider(img_before,
+                      img_after,
+                      dark_mode=True,
+                      color_background='streamlit',
+                      )
+
+
+# %%
 # Load library
 from d3blocks import D3Blocks
 # Initialize
@@ -870,6 +881,8 @@ html = d3.maps(df, filepath='c://temp//maps.html', color=df['label'].values, cma
 
 
 # Imageslider
+from d3blocks import D3Blocks
+d3 = D3Blocks()
 img_before, img_after = d3.import_example('southern_nebula_internet')
 html = d3.imageslider(img_before, img_after, filepath=r'c:/temp/imageslider2.html')
 
