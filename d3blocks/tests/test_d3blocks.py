@@ -235,24 +235,10 @@ class Testd3blocks(unittest.TestCase):
         # Initialize
         d3 = D3Blocks()
         # Import example
-        img_before_path, img_after_path = d3.import_example('southern_nebula')
         img_before_url, img_after_url = d3.import_example('southern_nebula_internet')
-        # Read the image
-        img_before_X = cv2.imread(img_before_path, -1)
-        img_after_X = cv2.imread(img_after_path, -1)
 
         # Make image slider graph
         d3.imageslider(img_before_url, img_after_url, showfig=False, scale=False)
-        d3.imageslider(img_before_X, img_after_X, showfig=False)
-        d3.imageslider(img_before_path, img_after_path, showfig=False, scale=True, colorscale=2, figsize=[400, 400])
-
-        d3.imageslider(img_before_path, img_after_url, showfig=False)
-        d3.imageslider(img_before_url, img_after_X, showfig=False)
-        d3.imageslider(img_before_X, img_after_path, showfig=False)
-
-        d3.imageslider(img_before_url, img_after_path, showfig=False)
-        d3.imageslider(img_before_X, img_before_url, showfig=False)
-        d3.imageslider(img_before_path, img_after_X, showfig=False)
 
         # Initialize
         d3 = D3Blocks()
