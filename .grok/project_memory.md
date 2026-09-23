@@ -1,0 +1,1 @@
+- Treemap aligned to chart_ui_conventions.md: show_side_panel/show_top_panel (independent), color_background via resolve_color_background, dark_mode, Export / Save first; streamlit demo at treemap/treemap_streamlit_demo.py [2026-09-21]
