@@ -2182,7 +2182,7 @@ class D3Blocks():
                 click={'fill': None, 'stroke': 'black', 'size': 1.3, 'stroke-width': 3},
                 # GUI properties
                 background_color = '#FFFFFF',
-                show_controls: bool = True,
+                show_side_panel: bool = True,
                 dark_mode = True,
                 sticky: bool = None,
                 node_text_inside: bool = False,
@@ -2334,7 +2334,7 @@ class D3Blocks():
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
-        show_controls : bool, (default: True)
+        show_side_panel : bool, (default: True)
             Whether to render the top-panel buttons (Dark Mode, Hide Edges, Show Density,
             Save) at all. Set to False when embedding the generated HTML into an existing
             page/app that provides its own UI chrome and doesn't need d3graph's built-in
@@ -2449,7 +2449,7 @@ class D3Blocks():
                           density_blur=density_blur,
                           density_opacity=density_opacity,
                           save_button=save_button,
-                          show_controls=show_controls,
+                          show_side_panel=show_side_panel,
                           overwrite=overwrite,
                           )
         # Display the chart

@@ -441,7 +441,7 @@ df = pd.DataFrame({
 # Most important node for Degree Centrality: X
 
 d3 = D3Blocks()
-d3.d3graph(df, filepath='degree_graph.html')
+d3.d3graph(df, filepath='degree_graph.html', show_side_panel=False)
 
 # Compute stats
 adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
