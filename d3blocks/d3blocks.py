@@ -487,7 +487,7 @@ class D3Blocks():
                 tooltip=None,
                 cmap='tab20',
                 scale=False,
-                color_background=["#222222", "#FFFFFF"],
+                color_background=None,
                 dark_mode: bool = True,
                 label_radio=['(x, y)', '(x1, y1)', '(x2, y2)', '(x3, y3)'],
                 xlim=[None, None],
@@ -2181,7 +2181,8 @@ class D3Blocks():
                 show_slider=True,
                 click={'fill': None, 'stroke': 'black', 'size': 1.3, 'stroke-width': 3},
                 # GUI properties
-                background_color = '#FFFFFF',
+                color_background = None,
+                show_top_panel: bool = True,
                 show_side_panel: bool = True,
                 dark_mode = True,
                 sticky: bool = None,
@@ -2189,15 +2190,18 @@ class D3Blocks():
                 max_ticks: int = 300,
                 label_zoom_threshold: float = 0.4,
                 canvas_edge_threshold: int = 2000,
+                # Density
                 show_density: bool = False,
                 density_grid_size: int = 60,
                 density_blur: int = 15,
                 density_opacity: float = 0.8,
+                highlight_full_network: bool = True,
                 # Various
                 support='text',
                 notebook=False,
                 showfig=True,
                 overwrite=True,
+                return_html: bool = False,
                 ):
         """d3graph block.
 
@@ -2273,8 +2277,10 @@ class D3Blocks():
                 * {'fill': 'red', 'stroke': 'black', 'size': 1.3, 'stroke-width': 3}
                 * {'fill': None, 'stroke': '#FFF000', 'size': 2, 'stroke-width': 1}
                 * None : No action on click.
-        background_color : str, optional
-            The background color of the HTML page and SVG. Default is '#FFFFFF'.
+        color_background : list or str, optional
+                Background for page, top panel, and side panels.
+                ``[dark_hex, light_hex]``, or a named preset (e.g. ``'streamlit'``).
+                None uses theme defaults.
         dark_mode : bool, optional
             If True, enables dark mode for the visualization. Default is False.
         title : String, (default: None)
@@ -2310,19 +2316,9 @@ class D3Blocks():
             Above this many visible edges, edges are drawn on a <canvas> layer instead of
             as individual SVG <line> elements. SVG's per-element DOM overhead is what makes
             tens of thousands of edges freeze the page; canvas draw calls stay cheap
-            regardless of edge count. Nodes always stay SVG (drag/click/tooltips). Only
-            applies once edges exceed this count, so small/medium graphs are unaffected -
-            note that in canvas mode, the "Save as SVG" export won't include edges, since
-            they no longer live in the SVG DOM.
+            regardless of edge count.
         show_density : bool, (default: False)
-            Adds a node-clustering heatmap layer (grid-binned density of node positions),
-            drawn on its own canvas beneath the edges and nodes, with a toggle button in
-            the UI ("Show/Hide Density") to turn it on/off regardless of this default.
-            Recomputed from live node positions each frame it's visible, so it tracks the
-            force layout as nodes settle, and it responds to the weight/component sliders
-            since it's based on whichever nodes are currently on screen. Color scheme is
-            a yellow-to-red heat gradient in light mode, single-hue blue in dark mode
-            (updates live when dark mode is toggled).
+            Adds a node-clustering heatmap layer (grid-binned density of node positions).
         density_grid_size : int, (default: 40)
             Grid resolution for the density heatmap (cells along the longer axis of the
             node bounding box). Higher = finer detail on tight clusters, more cells to draw.
@@ -2331,20 +2327,24 @@ class D3Blocks():
             blocky grid.
         density_opacity : float, (default: 0.6)
             Maximum heatmap opacity, reached at the highest-density grid cell.
+        highlight_full_network : bool, (default: True)
+            Controls how much of the graph lights up when a node is clicked.
+            True: The entire connected network reachable from the clicked node is highlighted; everything outside that component is dimmed.
+            False: Only the clicked node's directly-connected neighbors/edges (one hop) are highlighted, matching the old default behavior.
         notebook : bool
                 * True: Use IPython to show chart in notebook.
                 * False: Do not use IPython.
         show_side_panel : bool, (default: True)
-            Whether to render the top-panel buttons (Dark Mode, Hide Edges, Show Density,
-            Save) at all. Set to False when embedding the generated HTML into an existing
-            page/app that provides its own UI chrome and doesn't need d3graph's built-in
-            controls - the buttons (and their JS wiring) are omitted entirely rather than
-            just hidden, so there's no extra DOM/clutter in the embed. The weight/component
-            sliders are controlled separately via show_slider; the Save button specifically
-            is also controlled via save_button, independent of this.
+            Render the side panels (Export, Network Statistic, Physics, etc.).
+            Set to False when embedding the generated HTML into an existing page/app that provides its own UI chrome (streamlit).
+        show_top_panel : bool, (default: True)
+            Render the top chrome (logo, search field, and the Dark Mode / Hide Edges / Show Density buttons).
         overwrite : bool, (default: True)
                 * True: Overwrite the html in the destination directory.
                 * False: Do not overwrite destination file but show warning instead.
+        return_html : bool, (default: False)
+                * True: Return the generated HTML string (useful for Streamlit, notebooks, embedding).
+                * False: Do not return HTML.
 
         Returns
         -------
@@ -2412,7 +2412,7 @@ class D3Blocks():
         self.config['show_slider'] = show_slider
         self.config['set_slider'] = set_slider
         self.config['click'] = click
-        self.config['background_color'] = background_color
+        self.config['color_background'] = color_background
         self.config['dark_mode'] = dark_mode
         self.config['notebook'] = notebook
 
@@ -2429,14 +2429,13 @@ class D3Blocks():
         # Set some of the edge properties
         self.D3graph.set_edge_properties(directed=directed, marker_start=marker_start, marker_end=marker_end, marker_color=marker_color)
         # Open the webbrowser
-        self.D3graph.show(figsize=figsize,
+        html = self.D3graph.show(figsize=figsize,
                           title=title,
                           filepath=filepath,
                           showfig=showfig,
-                          show_slider=show_slider,
                           set_slider=set_slider,
                           notebook=notebook,
-                          background_color=background_color,
+                          color_background=color_background,
                           dark_mode=dark_mode,
                           click=click,
                           sticky=sticky,
@@ -2449,11 +2448,16 @@ class D3Blocks():
                           density_blur=density_blur,
                           density_opacity=density_opacity,
                           save_button=save_button,
+                          show_top_panel=show_top_panel,
                           show_side_panel=show_side_panel,
+                          highlight_full_network=highlight_full_network,
+                          show_slider=show_slider,
                           overwrite=overwrite,
+                          return_html=return_html,
                           )
-        # Display the chart
-        # return self.display(html)
+
+        if return_html:
+            return html
 
     def elasticgraph(self,
                      df,

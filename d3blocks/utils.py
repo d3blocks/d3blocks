@@ -19,9 +19,7 @@ import time
 import json
 import d3graph as d3network
 from collections import defaultdict
-import shutil
 import logging
-
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 logger = logging.getLogger(__name__)
