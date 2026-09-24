@@ -536,11 +536,13 @@ class D3Blocks():
         size: list/array of with same size as (x,y).
             Size of the samples.
         color : list/array of hex colors with same size as (x,y)
+
                 * '#ffffff' : All dots are get the same hex color.
                 * None: The same color as for c is applied.
                 * ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
         stroke: list/array of hex colors with same size as (x,y)
             Edgecolor of dotsize in hex colors.
+
                 * '#000000' : All dots are get the same hex color.
                 * ['#000000', '#ffffff',...]: list/array of hex colors with same size as (x,y)
         c_gradient : String, (default: 'opaque')
@@ -2674,6 +2676,7 @@ class D3Blocks():
         ----------
         df : pd.DataFrame()
             Input data containing the following columns:
+
                 * 'source', 'target', 'weight'
         hierarchy : list
             Expand or substract the hierarchical structure. No information is lossed. The eight branches are shown by default.
@@ -3490,6 +3493,7 @@ class D3Blocks():
             Marker defaults (see previous docs). Used when building node properties.
         countries : dict or None
             Explicit country styling::
+
                 {'World': {'color': '#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
                  'Netherlands': {'color': '#000FFF', 'opacity': 0.8}}
             Ignored when ``country_names`` is provided.
