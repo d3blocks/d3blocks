@@ -92,6 +92,8 @@ Contents
   :caption: Documentation
 
   Documentation
+  UI_controls
+  Streamlit
   Coding quality
   d3blocks.d3blocks
 

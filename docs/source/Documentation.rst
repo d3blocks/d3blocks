@@ -4,6 +4,19 @@ Support
 .. include:: sponsor.rst
 
 
+UI controls and Streamlit
+#########################
+
+Charts that ship interactive browser chrome share common parameters to show or
+hide the **top bar** and **side panels**, and to set the **theme / background**.
+See:
+
+* :doc:`UI_controls` — ``show_side_panel``, ``show_top_panel``,
+  ``color_background``, ``dark_mode``.
+* :doc:`Streamlit` — embedding charts in Streamlit with ``st.iframe``, plus the
+  demo apps under ``streamlit/``.
+
+
 Medium Blogs
 #############
 
