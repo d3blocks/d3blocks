@@ -137,3 +137,6 @@ See also
 * :doc:`UI_controls` — ``show_side_panel``, ``show_top_panel``,
   ``color_background``, ``dark_mode``.
 * Per-chart pages under **Blocks** for input data shapes and API details.
+
+
+.. include:: add_bottom.add

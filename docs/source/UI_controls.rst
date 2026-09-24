@@ -84,3 +84,6 @@ See also
   mirror panel controls in the Streamlit sidebar.
 * Per-chart API pages under **Blocks** (parameters are listed on each
   ``automethod``).
+
+
+.. include:: add_bottom.add
