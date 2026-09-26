@@ -11,7 +11,7 @@
 [![Medium](https://img.shields.io/badge/Medium-Blog-black)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog)
 ![GitHub Repo stars](https://img.shields.io/github/stars/d3blocks/d3blocks)
 ![GitHub repo size](https://img.shields.io/github/repo-size/d3blocks/d3blocks)
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#colab-notebook)
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/d3blocks/d3blocks/blob/main/notebooks/d3blocks.ipynb)
 [![Donate](https://img.shields.io/badge/Support%20this%20project-grey.svg?logo=github%20sponsors)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#)
 
 ### 
