@@ -37,7 +37,7 @@ df = d3.import_example('energy')
 # Create network graph
 html = d3.elasticgraph(
           df,
-          show_side_panel=False,
+          show_side_panel=True,
           show_top_panel=False,
           dark_mode=True,
           color_background='streamlit',
@@ -126,7 +126,7 @@ d3.chord(df,
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('surfspots')
-d3.maps(df, filepath=r'c:/temp/test/', show_controls=True, dark_mode=False)
+d3.maps(df, filepath=r'c:/temp/test/', show_side_panel=True, dark_mode=False)
 
 # %%
 # timeseries
@@ -188,7 +188,7 @@ d3.violin(x=df['labx'].values,
           filepath=r'c:\temp\violine.html',
           figsize=[None, None],
           df=df,
-          show_controls=False,
+          show_side_panel=True,
           dark_mode=False
           )
 
@@ -266,8 +266,8 @@ df["weight"] = np.random.randint(1, 101, size=len(df))
 html = d3.d3graph(df,
            show_side_panel=True,
            show_top_panel=True,
-           show_slider=True,
-           show_density=True,
+           # show_slider=True,
+           # show_density=True,
            color_background='streamlit',
            return_html=True,
            showfig=True,
@@ -421,7 +421,7 @@ d3.d3graph(df,
            dark_mode=True,
            show_density=True,
            show_slider=True,
-           show_controls=True,
+           show_side_panel=True,
            )
 
 adjmat = d3.vec2adjmat(df['source'], df['target'], df['weight'])
@@ -625,7 +625,7 @@ d3.show(filepath=r'c:\temp\tree.html', margin = {"top": 20, "right": 80, "bottom
         link_length=120,
         font={'size':20},
         dark_mode=True,
-        show_controls=True,
+        show_side_panel=True,
         )
 
 
@@ -832,7 +832,7 @@ html = d3.treemap(df, filepath=r'c:\temp\treemap1.html')
 
 # Tree
 df = d3.import_example(data='energy')
-html = d3.tree(df)
+html = d3.treemap(df)
 html = d3.tree(df, save_button=False)
 html = d3.tree(df, save_button=True)
 html = d3.tree(df, return_html=True, filepath=None)
@@ -1051,7 +1051,7 @@ d3 = D3Blocks()
 df = d3.import_example('energy')
 
 html = d3.circlepacking(df, filepath='c://temp//circlepacking.html', font={'size': 16}, zoom='click', figsize=[900, 1900])
-# html = d3.treemap(df, filepath='c://temp//treemap.html', show_controls=True, dark_mode=True, value='count')
+# html = d3.treemap(df, filepath='c://temp//treemap.html', show_side_panel=True, dark_mode=True, value='count')
 # html = d3.tree(df, filepath='c://temp//tree.html')
 # html = d3.sankey(df)
 # html = d3.chord(df)
@@ -1089,7 +1089,7 @@ d3 = D3Blocks()
 df = d3.import_example(data='energy')
 
 # Create the network graph
-d3.d3graph(df, cmap='Set2', dark_mode=False, background_color='#FFF000', show_controls=True, showfig=True)
+d3.d3graph(df, cmap='Set2', dark_mode=False, background_color='#FFF000', show_side_panel=True, showfig=True)
 # Extract the node colors from the network graph.
 # node_colors = d3.D3graph.node_properties
 
