@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streamlit &mdash; d3blocks d3blocks documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6837f5c9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Coding quality" href="Coding%20quality.html" />
+    <link rel="prev" title="UI controls (panels and theme)" href="UI_controls.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+    
+              <p class="caption" role="heading"><span class="caption-text">Motivation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#why-bother-using-d3-js">Why bother using D3.js?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#d3-motivation">D3 Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#d3-charts">D3 charts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Install from Pypi (pip)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#install-from-github">Install from github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#create-environment">Create environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#uninstall">Uninstall</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Radialgraph.html">RadialGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Matrix.html">Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Scatter.html">Scatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Maps.html">Maps</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Export to HTML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#saving-charts">Saving Charts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#ui-controls-and-streamlit">UI controls and Streamlit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#medium-blogs">Medium Blogs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#gumroad-products-with-podcasts">Gumroad Products with Podcasts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UI_controls.html">UI controls (panels and theme)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Streamlit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-pattern">Recommended pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rules-of-thumb">Rules of thumb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#demo-apps">Demo apps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#available-demos">Available demos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#typical-layout-of-a-demo">Typical layout of a demo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3blocks.d3blocks.html">API References</a></li>
+</ul>
+
+    <a href= "genindex.html">Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">d3blocks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Streamlit</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Streamlit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="streamlit">
+<h1>Streamlit<a class="headerlink" href="#streamlit" title="Link to this heading"></a></h1>
+<p>D3Blocks charts are self-contained HTML + JavaScript. You can embed them in a
+<a class="reference external" href="https://streamlit.io">Streamlit</a> app by generating the HTML with
+<code class="docutils literal notranslate"><span class="pre">showfig=False</span></code> and <code class="docutils literal notranslate"><span class="pre">return_html=True</span></code>, then displaying it with
+<code class="docutils literal notranslate"><span class="pre">st.iframe</span></code>.</p>
+<section id="recommended-pattern">
+<h2>Recommended pattern<a class="headerlink" href="#recommended-pattern" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">streamlit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">st</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+
+<span class="n">st</span><span class="o">.</span><span class="n">set_page_config</span><span class="p">(</span><span class="n">page_title</span><span class="o">=</span><span class="s2">&quot;D3Blocks&quot;</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;wide&quot;</span><span class="p">)</span>
+
+<span class="c1"># Optional: put chart options in the Streamlit sidebar</span>
+<span class="n">show_side_panel</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">checkbox</span><span class="p">(</span><span class="s2">&quot;Show D3Blocks side panels&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">show_top_panel</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">checkbox</span><span class="p">(</span><span class="s2">&quot;Show D3Blocks top panel&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">height</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">slider</span><span class="p">(</span><span class="s2">&quot;Chart height&quot;</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="c1"># Build HTML without opening a browser window</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=...</span><span class="p">,</span> <span class="n">y</span><span class="o">=...</span><span class="p">,</span>
+    <span class="n">show_side_panel</span><span class="o">=</span><span class="n">show_side_panel</span><span class="p">,</span>
+    <span class="n">show_top_panel</span><span class="o">=</span><span class="n">show_top_panel</span><span class="p">,</span>
+    <span class="n">dark_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">color_background</span><span class="o">=</span><span class="s1">&#39;streamlit&#39;</span><span class="p">,</span>
+    <span class="n">showfig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_html</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">st</span><span class="o">.</span><span class="n">iframe</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;stretch&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="rules-of-thumb">
+<h2>Rules of thumb<a class="headerlink" href="#rules-of-thumb" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Prefer <strong>``st.iframe(html, height=…)``</strong>. Do <strong>not</strong> use the deprecated
+<code class="docutils literal notranslate"><span class="pre">components.html</span></code> for these charts, and avoid <code class="docutils literal notranslate"><span class="pre">st.html</span></code> for full
+interactive charts: it is not iframed, and JavaScript is off unless
+<code class="docutils literal notranslate"><span class="pre">unsafe_allow_javascript=True</span></code>. Fixed-position CSS from the chart would
+also overlay the Streamlit page.</p></li>
+<li><p>Always pass an <strong>explicit pixel height</strong> (or <code class="docutils literal notranslate"><span class="pre">height=&quot;stretch&quot;</span></code>).
+<code class="docutils literal notranslate"><span class="pre">height=&quot;content&quot;</span></code> is unreliable when the chart uses <code class="docutils literal notranslate"><span class="pre">position:</span> <span class="pre">fixed</span></code>
+and contributes almost no document-flow height.</p></li>
+<li><p>Generate with <strong>``showfig=False``</strong> and <strong>``return_html=True``</strong>.</p></li>
+<li><p>When Streamlit already owns the controls (sidebar), set
+<code class="docutils literal notranslate"><span class="pre">show_side_panel=False</span></code> (and optionally <code class="docutils literal notranslate"><span class="pre">show_top_panel=False</span></code>) so the
+chart does not duplicate UI. See <a class="reference internal" href="UI_controls.html"><span class="doc">UI controls (panels and theme)</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">color_background='streamlit'</span></code> picks backgrounds that match a typical
+Streamlit light/dark page.</p></li>
+</ul>
+</section>
+<section id="demo-apps">
+<h2>Demo apps<a class="headerlink" href="#demo-apps" title="Link to this heading"></a></h2>
+<p>Ready-to-run demos live in the repository under the <code class="docutils literal notranslate"><span class="pre">streamlit/</span></code> directory.
+Each file is a minimal Streamlit app for one chart. Run from a machine with
+<code class="docutils literal notranslate"><span class="pre">d3blocks</span></code> and <code class="docutils literal notranslate"><span class="pre">streamlit</span></code> installed:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">streamlit run streamlit/scatter_streamlit_demo.py</span>
+</pre></div>
+</div>
+<section id="available-demos">
+<h3>Available demos<a class="headerlink" href="#available-demos" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 40.0%" />
+<col style="width: 32.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Chart</p></th>
+<th class="head"><p>Demo file</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Scatter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scatter_streamlit_demo.py</span></code></p></td>
+<td><p>Point size/color/tooltip; panel toggles</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sankey</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sankey_streamlit_demo.py</span></code></p></td>
+<td><p>Link color/opacity, node layout</p></td>
+</tr>
+<tr class="row-even"><td><p>Chord</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">chord_streamlit_demo.py</span></code></p></td>
+<td><p>Energy-flow style demo</p></td>
+</tr>
+<tr class="row-odd"><td><p>Heatmap</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">heatmap_streamlit_demo.py</span></code></p></td>
+<td><p>Matrix heatmap controls</p></td>
+</tr>
+<tr class="row-even"><td><p>Violin</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">violin_streamlit_demo.py</span></code></p></td>
+<td><p>Distribution view</p></td>
+</tr>
+<tr class="row-odd"><td><p>Timeseries</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">timeseries_streamlit_demo.py</span></code></p></td>
+<td><p>Multi-series time chart</p></td>
+</tr>
+<tr class="row-even"><td><p>MovingBubbles</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">movingbubbles_streamlit_demo.py</span></code></p></td>
+<td><p>Animated state transitions</p></td>
+</tr>
+<tr class="row-odd"><td><p>Imageslider</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">imageslider_streamlit_demo.py</span></code></p></td>
+<td><p>Before/after images; dark mode &amp; background</p></td>
+</tr>
+<tr class="row-even"><td><p>Treemap</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">treemap_streamlit_demo.py</span></code></p></td>
+<td><p>Hierarchical rectangles</p></td>
+</tr>
+<tr class="row-odd"><td><p>Circlepacking</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">circlepacking_streamlit_demo.py</span></code></p></td>
+<td><p>Nested circles</p></td>
+</tr>
+<tr class="row-even"><td><p>Maps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">maps_streamlit_demo.py</span></code></p></td>
+<td><p>Lat/lon markers</p></td>
+</tr>
+<tr class="row-odd"><td><p>D3graph</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">d3graph_streamlit_demo.py</span></code></p></td>
+<td><p>Force-directed network</p></td>
+</tr>
+<tr class="row-even"><td><p>Elasticgraph</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">elasticgraph_streamlit_demo.py</span></code></p></td>
+<td><p>Elastic force network</p></td>
+</tr>
+<tr class="row-odd"><td><p>Radialgraph</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">radialgraph_streamlit_demo.py</span></code></p></td>
+<td><p>Focus-centered radial network</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="typical-layout-of-a-demo">
+<h3>Typical layout of a demo<a class="headerlink" href="#typical-layout-of-a-demo" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Load data</strong> once with <code class="docutils literal notranslate"><span class="pre">&#64;st.cache_data</span></code> (often via
+<code class="docutils literal notranslate"><span class="pre">d3.import_example(...)</span></code>).</p></li>
+<li><p><strong>Sidebar</strong> — Streamlit widgets for data encodings and for
+<code class="docutils literal notranslate"><span class="pre">show_side_panel</span></code> / <code class="docutils literal notranslate"><span class="pre">show_top_panel</span></code> / height.</p></li>
+<li><p><strong>Build HTML</strong> inside a cached function that calls the D3Blocks chart method
+with <code class="docutils literal notranslate"><span class="pre">showfig=False</span></code>, <code class="docutils literal notranslate"><span class="pre">return_html=True</span></code>.</p></li>
+<li><p><strong>Main area</strong> — <code class="docutils literal notranslate"><span class="pre">st.iframe(html,</span> <span class="pre">height=height,</span> <span class="pre">width=&quot;stretch&quot;)</span></code>.</p></li>
+</ol>
+<p>This keeps the interactive D3 chart inside a fixed-height frame while Streamlit
+owns navigation and global controls.</p>
+</section>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="UI_controls.html"><span class="doc">UI controls (panels and theme)</span></a> — <code class="docutils literal notranslate"><span class="pre">show_side_panel</span></code>, <code class="docutils literal notranslate"><span class="pre">show_top_panel</span></code>,
+<code class="docutils literal notranslate"><span class="pre">color_background</span></code>, <code class="docutils literal notranslate"><span class="pre">dark_mode</span></code>.</p></li>
+<li><p>Per-chart pages under <strong>Blocks</strong> for input data shapes and API details.</p></li>
+</ul>
+<hr>
+<center>
+        <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
+        <!-- Show an image ad -->
+        <!-- <div data-ea-publisher="erdogantgithubio" data-ea-type="image"></div> -->
+        <div data-ea-publisher="erdogantgithubio" data-ea-type="image" data-ea-style="stickybox"></div>
+</center>
+<hr></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="UI_controls.html" class="btn btn-neutral float-left" title="UI controls (panels and theme)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Coding%20quality.html" class="btn btn-neutral float-right" title="Coding quality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Erdogan Taskesen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

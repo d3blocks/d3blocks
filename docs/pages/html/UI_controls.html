@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI controls (panels and theme) &mdash; d3blocks d3blocks documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=e0179649" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6837f5c9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Streamlit" href="Streamlit.html" />
+    <link rel="prev" title="Support" href="Documentation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            d3blocks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+    
+              <p class="caption" role="heading"><span class="caption-text">Motivation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#why-bother-using-d3-js">Why bother using D3.js?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#d3-motivation">D3 Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Motivation.html#d3-charts">D3 charts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Install from Pypi (pip)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#install-from-github">Install from github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#create-environment">Create environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html#uninstall">Uninstall</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Blocks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Timeseries.html">Timeseries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Chord.html">Chord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Radialgraph.html">RadialGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Matrix.html">Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MovingBubbles.html">MovingBubbles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Imageslider.html">Imageslider</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Scatter.html">Scatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Violin.html">Violin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Particles.html">Particles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Treemap.html">Treemap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Circlepacking.html">circlepacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Maps.html">Maps</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Helper functions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html">Export to HTML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#vec2adjmat">vec2adjmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#adjmat2vec">adjmat2vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#examples">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helper_functions.html#saving-charts">Saving Charts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#ui-controls-and-streamlit">UI controls and Streamlit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#medium-blogs">Medium Blogs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#gumroad-products-with-podcasts">Gumroad Products with Podcasts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#colab-notebook">Colab Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html#github">Github</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UI controls (panels and theme)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#show-or-hide-panels">Show or hide panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theme-and-background-color">Theme and background color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#which-charts-support-these-parameters">Which charts support these parameters?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Streamlit.html">Streamlit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Coding%20quality.html">Coding quality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="d3blocks.d3blocks.html">API References</a></li>
+</ul>
+
+    <a href= "genindex.html">Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">d3blocks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">UI controls (panels and theme)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/UI_controls.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ui-controls-panels-and-theme">
+<h1>UI controls (panels and theme)<a class="headerlink" href="#ui-controls-panels-and-theme" title="Link to this heading"></a></h1>
+<p>Most D3Blocks charts share a small set of <strong>UI parameters</strong> that control the
+browser chrome (top bar, side panels) and the page theme. These parameters are
+passed on the chart method itself (for example <code class="docutils literal notranslate"><span class="pre">d3.scatter(...)</span></code>) and are
+documented on each method via the API reference.</p>
+<section id="show-or-hide-panels">
+<h2>Show or hide panels<a class="headerlink" href="#show-or-hide-panels" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">show_side_panel</span></code> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, default <code class="docutils literal notranslate"><span class="pre">True</span></code>) — show or hide the <strong>left
+side panels</strong> (Export / Save, Layout, Filtering, Physics, and chart-specific
+panels). Use this when embedding a chart in a dashboard and you already
+expose the same controls in the host UI (e.g. Streamlit sidebar).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show_top_panel</span></code> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, default <code class="docutils literal notranslate"><span class="pre">True</span></code>) — show or hide the <strong>top bar</strong>
+(search, theme toggle, and other toolbar actions).</p></li>
+</ul>
+<p>The two flags are independent: you can keep the top bar and hide the side
+panels, or the other way around. Chart interaction in the center of the page
+keeps working when panels are disabled.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+
+<span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">()</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=...</span><span class="p">,</span> <span class="n">y</span><span class="o">=...</span><span class="p">,</span>
+    <span class="n">show_side_panel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>   <span class="c1"># hide left control stack</span>
+    <span class="n">show_top_panel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>     <span class="c1"># keep top toolbar</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="theme-and-background-color">
+<h2>Theme and background color<a class="headerlink" href="#theme-and-background-color" title="Link to this heading"></a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dark_mode</span></code> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, default <code class="docutils literal notranslate"><span class="pre">True</span></code>) — initial theme.
+<code class="docutils literal notranslate"><span class="pre">True</span></code> → dark theme; <code class="docutils literal notranslate"><span class="pre">False</span></code> → light theme (<code class="docutils literal notranslate"><span class="pre">body.light</span></code>). If the chart
+exposes a theme toggle in the top bar, the user can still switch at runtime;
+the initial state follows <code class="docutils literal notranslate"><span class="pre">dark_mode</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">color_background</span></code> — page / panel background as a <strong>list of two hex
+colors</strong> <code class="docutils literal notranslate"><span class="pre">[dark_hex,</span> <span class="pre">light_hex]</span></code>. Accepts also:</p>
+<ul class="simple">
+<li><p>a single hex string (same color for both themes),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'streamlit'</span></code> — backgrounds matched to a Streamlit app,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'darkblue'</span></code> — dark navy / soft light blue-gray,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> — theme defaults (<code class="docutils literal notranslate"><span class="pre">#222222</span></code> / <code class="docutils literal notranslate"><span class="pre">#ffffff</span></code>).</p></li>
+</ul>
+<p>Custom backgrounds apply only to the page center, top bar, and side panels.
+Text, axes, and button label colors follow the theme CSS variables and are
+not overridden.</p>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d3</span><span class="o">.</span><span class="n">sankey</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">dark_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">color_background</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;#12141c&#39;</span><span class="p">,</span> <span class="s1">&#39;#e8eef5&#39;</span><span class="p">],</span>  <span class="c1"># or &#39;streamlit&#39; / &#39;darkblue&#39;</span>
+    <span class="n">show_side_panel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">show_top_panel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="which-charts-support-these-parameters">
+<h2>Which charts support these parameters?<a class="headerlink" href="#which-charts-support-these-parameters" title="Link to this heading"></a></h2>
+<p>The panel and theme parameters are available on the chart methods that ship
+with interactive browser chrome, including:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">scatter</span></code>, <code class="docutils literal notranslate"><span class="pre">violin</span></code>, <code class="docutils literal notranslate"><span class="pre">chord</span></code>, <code class="docutils literal notranslate"><span class="pre">sankey</span></code>, <code class="docutils literal notranslate"><span class="pre">heatmap</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timeseries</span></code>, <code class="docutils literal notranslate"><span class="pre">movingbubbles</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d3graph</span></code>, <code class="docutils literal notranslate"><span class="pre">elasticgraph</span></code>, <code class="docutils literal notranslate"><span class="pre">radialgraph</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tree</span></code>, <code class="docutils literal notranslate"><span class="pre">treemap</span></code>, <code class="docutils literal notranslate"><span class="pre">circlepacking</span></code>, <code class="docutils literal notranslate"><span class="pre">maps</span></code></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">imageslider</span></code> supports <code class="docutils literal notranslate"><span class="pre">dark_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">color_background</span></code> (page
+background only; it has no side/top control panels).</p>
+<p><code class="docutils literal notranslate"><span class="pre">particles</span></code> and <code class="docutils literal notranslate"><span class="pre">matrix</span></code> use a simpler HTML shell and do not expose the
+panel flags.</p>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="Streamlit.html"><span class="doc">Streamlit</span></a> — embedding charts in Streamlit apps, including how to
+mirror panel controls in the Streamlit sidebar.</p></li>
+<li><p>Per-chart API pages under <strong>Blocks</strong> (parameters are listed on each
+<code class="docutils literal notranslate"><span class="pre">automethod</span></code>).</p></li>
+</ul>
+<hr>
+<center>
+        <script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
+        <!-- Show an image ad -->
+        <!-- <div data-ea-publisher="erdogantgithubio" data-ea-type="image"></div> -->
+        <div data-ea-publisher="erdogantgithubio" data-ea-type="image" data-ea-style="stickybox"></div>
+</center>
+<hr></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Documentation.html" class="btn btn-neutral float-left" title="Support" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Streamlit.html" class="btn btn-neutral float-right" title="Streamlit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Erdogan Taskesen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
