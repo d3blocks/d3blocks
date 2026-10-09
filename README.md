@@ -117,7 +117,7 @@ When HTMLs are generated, it automatically include ethical ads as a small way to
 This entire project with maintenance is done thoughtfully and only in my free time. Ads can be disabled via an input parameter, and you can also support the project with a coffee donation instead.
 
 ### Star history
-[![Star History Chart](https://star-history.dera.page/svg?repos=d3blocks/d3blocks&type=Date)](https://star-history.dera.page/#d3blocks/d3blocks&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=d3blocks/d3blocks)](https://star-history.dera.page/d3blocks/d3blocks)
 
 ### References
 * [bl.ocks](https://bl.ocks.org/)
