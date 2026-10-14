@@ -192,3 +192,53 @@ def test_flowgraph_direction_aliases(direction, expected):
     d3, html = _render(_sample_df(), direction=direction)
     assert d3.config['direction'] == expected
     assert _options(html)['direction'] == expected
+
+
+_MARKDOWN = '''# Process
+
+Some text.
+
+```mermaid
+sequenceDiagram
+    A->>B: not a flowchart
+```
+
+```mermaid
+flowchart TD
+    a([Start]) --> b{Ok?}
+    b -->|yes| c[Done]
+```
+
+```mermaid
+graph LR
+    x --> y
+```
+'''
+
+
+def test_flowgraph_mermaid_from_markdown_text():
+    d3, html = _render(_MARKDOWN)
+    assert d3.config['direction'] == 'TB'  # first *flowchart* block, sequence diagram skipped
+    assert [n['name'] for n in _data(html)['nodes']] == ['a', 'b', 'c']
+
+
+def test_flowgraph_mermaid_from_files(tmp_path):
+    md = tmp_path / 'process.md'
+    md.write_text(_MARKDOWN, encoding='utf-8')
+    mmd = tmp_path / 'flow.mmd'
+    mmd.write_text('graph LR\n    p --> q --> r\n', encoding='utf-8')
+    for source in (md, str(md)):
+        d3, html = _render(source)
+        assert [n['name'] for n in _data(html)['nodes']] == ['a', 'b', 'c']
+    d3, html = _render(mmd)
+    assert d3.config['direction'] == 'LR'
+    assert [n['name'] for n in _data(html)['nodes']] == ['p', 'q', 'r']
+
+
+def test_flowgraph_mermaid_file_errors(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        _render(str(tmp_path / 'missing.md'))
+    md = tmp_path / 'nothing.md'
+    md.write_text('```mermaid\nsequenceDiagram\n    A->>B: hi\n```\n', encoding='utf-8')
+    with pytest.raises(ValueError):
+        _render(md)

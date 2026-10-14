@@ -73,6 +73,14 @@ nested subgraphs and colours from ``style`` / ``classDef`` are converted.
 	    ship ==> done([Delivered])
 	''')
 
+The diagram can also live in a Markdown file as a fenced ``mermaid`` block, so GitHub renders it
+too; pass the file path (``.md``, ``.markdown``, ``.mmd`` or ``.mermaid``). From Markdown, the first
+flowchart block is used.
+
+.. code:: python
+
+	d3.flowgraph('docs/order_process.md')
+
 
 Architecture diagram
 ********************

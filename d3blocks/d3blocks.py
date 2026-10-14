@@ -3122,13 +3122,17 @@ class D3Blocks():
 
         Parameters
         ----------
-        df : pd.DataFrame or str
+        df : pd.DataFrame, str or path-like
             * DataFrame with the edges. Required columns: 'source', 'target'.
               Optional columns: 'label' (edge text), 'weight' (line width),
-              'style' ('solid', 'dashed', 'dotted') and 'color'.
-            * str: a Mermaid flowchart, e.g. 'flowchart LR; A[Start] --> B{Valid?}'.
-              Node shapes, edge labels, dotted/thick links and (nested) subgraphs are
-              converted; `nodes`, `groups` and `direction` override what it defines.
+              'variant', 'style' ('solid', 'dashed', 'dotted'), 'color' and 'animation'.
+            * str: a Mermaid flowchart, e.g. 'flowchart LR; A[Start] --> B{Valid?}',
+              or Markdown text containing a ```mermaid block.
+            * Path to a Markdown file (.md, .markdown) with a ```mermaid block, so the
+              same diagram renders on GitHub, or to a .mmd / .mermaid file.
+              From Markdown, the first flowchart block is used.
+            Node shapes, edge labels, dotted/thick links and (nested) subgraphs are
+            converted; `nodes`, `groups` and `direction` override what it defines.
         nodes : pd.DataFrame or dict, (default: None)
             Per-node attributes keyed by node name (a 'name' column or the index):
                 * 'label': display text; use '\\n' for line breaks.
@@ -3231,6 +3235,9 @@ class D3Blocks():
         >>> d3.node_properties['Fix']['color'] = '#e15759'
         >>> d3.show()
         >>>
+        >>> # Mermaid diagram kept in a Markdown file (renders on GitHub too)
+        >>> d3.flowgraph('docs/process.md')
+        >>>
         >>> # Mermaid flowchart with a subgraph, laid out with ELK
         >>> d3.flowgraph('''
         ... flowchart LR
@@ -3248,8 +3255,8 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html
 
         """
-        # Mermaid input: convert to edges, nodes, groups and direction.
-        if isinstance(df, str):
+        # Mermaid input (text, Markdown or file): convert to edges, nodes, groups and direction.
+        if Flowgraph.is_mermaid_source(df):
             df, m_nodes, m_groups, m_direction = Flowgraph.from_mermaid(df, logger=logger)
             nodes = Flowgraph.merge_node_attributes(m_nodes, nodes)
             groups = {**m_groups, **(groups or {})}

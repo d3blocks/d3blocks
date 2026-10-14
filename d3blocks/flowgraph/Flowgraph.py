@@ -10,8 +10,10 @@ Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
 import json
+import os
 import re
 from html import escape as html_escape
+from pathlib import Path
 
 import colourmap
 import numpy as np
@@ -422,6 +424,66 @@ _MERMAID_LINK = re.compile(r'<?(-{2,}|={2,}|-\.+-|~{3,})(>|o(?=\s)|x(?=\s))?')
 _MERMAID_SKIP = ('classDef', 'class ', 'linkStyle', 'click', 'accTitle', 'accDescr', 'direction')
 
 
+MERMAID_FILE_SUFFIXES = ('.md', '.markdown', '.mmd', '.mermaid')
+
+
+def is_mermaid_source(obj):
+    """True for Mermaid text, Markdown text or a path to a Mermaid/Markdown file."""
+    return isinstance(obj, (str, os.PathLike))
+
+
+def read_mermaid(source, logger=None):
+    """Return Mermaid flowchart text from text, Markdown or a file path.
+
+    Parameters
+    ----------
+    source : str or path-like
+        * Mermaid flowchart text.
+        * Markdown text with ```mermaid fenced blocks.
+        * Path to a .md / .markdown file (fenced blocks) or a .mmd / .mermaid file.
+        From Markdown, the first fenced block that is a flowchart ('flowchart' or
+        'graph') is used; other diagram types are skipped.
+
+    Returns
+    -------
+    str
+        Mermaid flowchart text.
+
+    """
+    path = _as_mermaid_path(source)
+    text = path.read_text(encoding='utf-8') if path is not None else str(source)
+    blocks = re.findall(r'^[ \t]*```+[ \t]*mermaid[^\n]*\n(.*?)^[ \t]*```', text, re.S | re.M)
+    if not blocks:
+        return text
+    flowcharts = [b for b in blocks if _first_statement(b).split()[:1] in (['flowchart'], ['graph'], ['flowchart-elk'])]
+    if not flowcharts:
+        raise ValueError('No Mermaid flowchart found in the ```mermaid blocks of %s.' % (path or 'the Markdown text'))
+    if len(flowcharts) > 1 and logger is not None:
+        logger.info('Found %d Mermaid flowcharts; using the first.' % len(flowcharts))
+    return flowcharts[0]
+
+
+def _as_mermaid_path(source):
+    """Path to read, or None when `source` is diagram text."""
+    if isinstance(source, os.PathLike):
+        path = Path(source)
+    elif isinstance(source, str) and '\n' not in source and source.strip().lower().endswith(MERMAID_FILE_SUFFIXES):
+        path = Path(source.strip())
+    else:
+        return None
+    if not path.is_file():
+        raise FileNotFoundError('Mermaid/Markdown file not found: %s' % path)
+    return path
+
+
+def _first_statement(text):
+    for line in str(text).splitlines():
+        line = line.strip()
+        if line and not line.startswith('%%'):
+            return line
+    return ''
+
+
 def from_mermaid(text, logger=None):
     """Convert a Mermaid flowchart into Flowgraph inputs.
 
@@ -433,8 +495,9 @@ def from_mermaid(text, logger=None):
 
     Parameters
     ----------
-    text : str
-        Mermaid flowchart source.
+    text : str or path-like
+        Mermaid flowchart text, Markdown with a ```mermaid block, or a path to a
+        .md / .markdown / .mmd / .mermaid file (see read_mermaid).
 
     Returns
     -------
@@ -442,6 +505,7 @@ def from_mermaid(text, logger=None):
         (edges DataFrame, nodes dict, groups dict, direction or None)
 
     """
+    text = read_mermaid(text, logger=logger)
     nodes, groups, edges, classes = {}, {}, [], {}
     stack, direction = [], None
 
