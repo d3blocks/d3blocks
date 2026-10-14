@@ -954,7 +954,8 @@
   }
   function showNodeTooltip(ev, d) {
     var parts = ['<div class="fg-tt-title">' + escapeHtml(d.label.replace(/\n/g, ' ')) + '</div>'];
-    if (d.tooltip && d.tooltip !== d.label.replace(/\n/g, ' ')) parts.push('<div>' + d.tooltip + '</div>');
+    // An explicit tooltip may contain HTML (as in other d3blocks charts); the label is always escaped.
+    if (d.tooltip) parts.push('<div>' + d.tooltip + '</div>');
     var meta = [d.shape];
     if (d.group && groupById.has(d.group)) meta.push(escapeHtml(groupById.get(d.group).label));
     meta.push((inEdges.get(d.name) || []).length + ' in · ' + (outEdges.get(d.name) || []).length + ' out');
@@ -1232,6 +1233,10 @@
       state[key] = el.checked;
       if (needsLayout) relayout(); else render(false);
     });
+  }
+  // "Per edge" only makes sense when some edges carry their own animation.
+  if (!edges.some(function (e) { return e.animation; })) {
+    document.querySelectorAll('[data-animation="none"]').forEach(function (b) { b.style.display = 'none'; });
   }
   document.querySelectorAll('[data-animation]').forEach(function (btn) {
     function sync() {

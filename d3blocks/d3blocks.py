@@ -3140,7 +3140,7 @@ class D3Blocks():
                   'database', 'queue', 'document', 'external' or 'circle'.
                 * 'group': group (swimlane / boundary) the node belongs to.
                 * 'color': node colour; overrides `color`.
-                * 'tooltip': text or HTML shown on hover.
+                * 'tooltip': extra text or HTML shown on hover below the label.
         groups : dict, (default: None)
             Group settings: {group: {'label': str, 'parent': str, 'color': hex}}.
             Use 'parent' to nest groups (e.g. a subnet inside a VPC). The short form
@@ -3217,7 +3217,9 @@ class D3Blocks():
         d3.edge_properties : DataFrame
              Edge properties; edit and call d3.show() to update.
         d3.config : dictionary
-             Configuration, including the resolved groups in d3.config['groups'].
+             Configuration. d3.config['groups'] holds the group settings (merged with
+             Mermaid subgraphs); edit and call d3.show(). Labels, nesting and colours
+             are resolved from it on every draw.
 
         Examples
         --------
@@ -3259,7 +3261,7 @@ class D3Blocks():
         if Flowgraph.is_mermaid_source(df):
             df, m_nodes, m_groups, m_direction = Flowgraph.from_mermaid(df, logger=logger)
             nodes = Flowgraph.merge_node_attributes(m_nodes, nodes)
-            groups = {**m_groups, **(groups or {})}
+            groups = Flowgraph.merge_group_attributes(m_groups, groups)
             direction = direction or m_direction
         direction = direction or 'LR'
         # Cleaning
@@ -3272,7 +3274,7 @@ class D3Blocks():
             showfig=showfig, overwrite=overwrite, notebook=notebook, direction=direction,
             layout=layout, nodesep=nodesep, ranksep=ranksep, edgesep=edgesep, ranker=ranker,
             curve=curve, animate=animate, draggable=draggable,
-            show_edge_labels=show_edge_labels, show_groups=show_groups, groups=groups,
+            show_edge_labels=show_edge_labels, show_groups=show_groups, groups=groups, cmap=cmap,
             color_background=color_background, dark_mode=dark_mode, save_button=save_button,
             show_side_panel=show_side_panel, show_top_panel=show_top_panel,
             reset_properties=reset_properties, logger=logger,
@@ -3280,8 +3282,6 @@ class D3Blocks():
         # Set default node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df, nodes=nodes, shape=shape, color=color, cmap=cmap, logger=logger)
-        # Resolve groups (labels, parents, colours matching the nodes)
-        self.config['groups'] = self.chart.set_group_properties(self.node_properties, groups, cmap=cmap, logger=logger)
         # Set edge properties
         self.set_edge_properties(df, edge_color=edge_color, logger=logger)
 

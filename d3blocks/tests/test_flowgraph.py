@@ -242,3 +242,80 @@ def test_flowgraph_mermaid_file_errors(tmp_path):
     md.write_text('```mermaid\nsequenceDiagram\n    A->>B: hi\n```\n', encoding='utf-8')
     with pytest.raises(ValueError):
         _render(md)
+
+
+# --- Regression tests for the pre-PR review --------------------------------
+
+def test_flowgraph_without_edges_draws_isolated_nodes():
+    # Mermaid with node declarations only.
+    _, html = _render('flowchart LR\n    A[Start]\n    B[End]')
+    data = _data(html)
+    assert [n['name'] for n in data['nodes']] == ['A', 'B'] and data['edges'] == []
+    # Empty edge list plus nodes.
+    _, html = _render(pd.DataFrame(columns=['source', 'target']), nodes={'solo': {'label': 'Solo'}})
+    assert [n['name'] for n in _data(html)['nodes']] == ['solo']
+
+
+def test_flowgraph_group_overrides_merge_with_mermaid_subgraphs():
+    text = 'flowchart LR\n subgraph cloud [Cloud]\n  subgraph api [API]\n   a --> b\n  end\n end'
+    d3, html = _render(text, groups={'api': {'color': '#ff0000'}})
+    groups = {g['name']: g for g in _data(html)['groups']}
+    assert groups['api']['label'] == 'API' and groups['api']['parent'] == 'cloud'
+    assert groups['api']['color'] == '#ff0000'
+    # Short form {group: parent} also keeps the Mermaid label.
+    _, html = _render('flowchart LR\n subgraph api [API]\n  a --> b\n end', groups={'api': 'outer'})
+    groups = {g['name']: g for g in _data(html)['groups']}
+    assert groups['api']['label'] == 'API' and groups['api']['parent'] == 'outer'
+
+
+def test_flowgraph_mermaid_ids_starting_with_keywords():
+    df, nodes, _, _ = Flowgraph.from_mermaid(
+        'flowchart LR\n clickstream --> kafka\n directions_api --> b\n click kafka callback\n linkStyle 0 stroke:#f00')
+    assert list(zip(df['source'], df['target'])) == [('clickstream', 'kafka'), ('directions_api', 'b')]
+    assert 'click' not in nodes and 'linkStyle' not in nodes
+
+
+def test_flowgraph_mermaid_trapezoids_do_not_swallow_the_line():
+    df, nodes, _, _ = Flowgraph.from_mermaid('flowchart LR\n A[/in\\] --> B[/out/] --> C[\\alt/]')
+    assert list(zip(df['source'], df['target'])) == [('A', 'B'), ('B', 'C')]
+    assert (nodes['A']['label'], nodes['B']['label'], nodes['C']['label']) == ('in', 'out', 'alt')
+    assert {nodes[k]['shape'] for k in 'ABC'} == {'io'}
+
+
+def test_flowgraph_mermaid_semicolon_in_edge_label():
+    df, _, _, _ = Flowgraph.from_mermaid('flowchart LR\n A -->|retry; backoff| B; B --> C')
+    assert df[['source', 'target', 'label']].values.tolist() == [['A', 'B', 'retry; backoff'], ['B', 'C', '']]
+
+
+def test_flowgraph_rejects_unsupported_text_and_files(tmp_path):
+    with pytest.raises(ValueError, match='Unsupported input file'):
+        _render('edges.csv')
+    with pytest.raises(ValueError, match='Unsupported input file'):
+        _render(tmp_path / 'edges.csv')
+    with pytest.raises(ValueError, match='No Mermaid flowchart nodes'):
+        _render('hello world')
+
+
+def test_flowgraph_groups_resolved_on_every_draw():
+    nodes = {'start': {'group': 'g1'}, 'check': {'group': 'g1'}}
+    d3, html = _render(_sample_df(), nodes=nodes, cmap='tab10')
+    assert d3.config['groups'] == {}          # only user settings live in config
+    # Move a node into a new group and redraw: the group appears, coloured like its node.
+    d3.node_properties['done']['group'] = 'g2'
+    groups = {g['name']: g for g in _data(d3.show(return_html=True, showfig=False))['groups']}
+    assert set(groups) == {'g1', 'g2'}
+    assert groups['g2']['color'] == d3.node_properties['done']['color']
+    # Group settings edited in config take effect on redraw.
+    d3.config['groups']['g1'] = {'label': 'Intake', 'color': '#123456'}
+    groups = {g['name']: g for g in _data(d3.show(return_html=True, showfig=False))['groups']}
+    assert groups['g1']['label'] == 'Intake' and groups['g1']['color'] == '#123456'
+
+
+def test_flowgraph_tooltip_defaults_to_none_and_follows_label_edits():
+    d3, html = _render(_sample_df(), nodes={'start': {'label': 'x < y & z'}, 'check': {'tooltip': '<b>Gate</b>'}})
+    by_name = {n['name']: n for n in _data(html)['nodes']}
+    assert by_name['start']['tooltip'] is None
+    assert by_name['check']['tooltip'] == '<b>Gate</b>'   # explicit tooltips are kept as given
+    d3.node_properties['start']['label'] = 'Renamed'
+    by_name = {n['name']: n for n in _data(d3.show(return_html=True, showfig=False))['nodes']}
+    assert by_name['start']['label'] == 'Renamed' and by_name['start']['tooltip'] is None

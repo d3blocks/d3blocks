@@ -75,7 +75,8 @@ def set_config(config={}, font={}, **kwargs):
     config['animate'], config['animation'] = _resolve_animate(kwargs.get('animate', False), logger)
     config['show_edge_labels'] = kwargs.get('show_edge_labels', True)
     # Groups: {group: {'label': str, 'parent': str or None, 'color': hex}}
-    config['groups'] = kwargs.get('groups', {})
+    config['groups'] = kwargs.get('groups') or {}
+    config['cmap'] = kwargs.get('cmap', 'Set2')
     config['show_groups'] = kwargs.get('show_groups', True)
     # GUI
     config['color_background'] = kwargs.get('color_background', None)
@@ -139,7 +140,7 @@ def set_node_properties(df, nodes=None, shape='process', color='group', cmap='Se
             'shape': node_shape,
             'group': None if group is None else str(group),
             'color': _get(a, 'color', None),
-            'tooltip': str(_get(a, 'tooltip', label.replace('\n', ' '))),
+            'tooltip': _optional_str(_get(a, 'tooltip', None)),
         }
 
     _assign_colors(node_properties, color, cmap)
@@ -271,7 +272,7 @@ def set_edge_properties(df, edge_color='#8c8c8c', logger=None, **kwargs):
 
     # Line width follows weight when weights differ, otherwise a constant width.
     w = out['weight'].values
-    if np.ptp(w) > 0:
+    if len(w) and np.ptp(w) > 0:
         width = 1.5 + 3.5 * (w - w.min()) / np.ptp(w)
     else:
         width = np.full(len(w), 1.5)
@@ -310,10 +311,11 @@ def show(df, **kwargs):
     for name in pd.unique(df[['source', 'target']].values.ravel()):
         if name not in node_properties:
             node_properties[name] = {'name': name, 'label': name, 'shape': 'process', 'group': None,
-                                     'color': DEFAULT_NODE_COLOR, 'tooltip': name}
+                                     'color': DEFAULT_NODE_COLOR, 'tooltip': None}
 
-    # Idempotent: keeps user-set label/parent/colour, fills in anything missing.
-    groups = set_group_properties(node_properties, config.get('groups'), logger=logger)
+    # Groups are resolved here only, from the user's settings in config['groups'], so
+    # colours follow the current node colours and the chart's cmap on every redraw.
+    groups = set_group_properties(node_properties, config.get('groups'), cmap=config.get('cmap', 'Set2'), logger=logger)
 
     # Per-edge animations play even when the chart-wide animation is off.
     if 'animation' in df.columns and df['animation'].notna().any() and not config.get('animate'):
@@ -421,14 +423,14 @@ _MERMAID_ID = re.compile(r'[A-Za-z0-9_]+')
 _MERMAID_LINK_TEXT = re.compile(r'(--|==|-\.)\s+(.+?)\s+(-{2,}>|-{3,}|={2,}>|={3,}|\.-+>|\.-+)')
 # Plain link: -->, ---, -.->, ==>, ~~~, <-->, --o, --x
 _MERMAID_LINK = re.compile(r'<?(-{2,}|={2,}|-\.+-|~{3,})(>|o(?=\s)|x(?=\s))?')
-_MERMAID_SKIP = ('classDef', 'class ', 'linkStyle', 'click', 'accTitle', 'accDescr', 'direction')
+_MERMAID_SKIP = {'linkStyle', 'click', 'accTitle', 'accDescr', 'direction'}
 
 
 MERMAID_FILE_SUFFIXES = ('.md', '.markdown', '.mmd', '.mermaid')
 
 
 def is_mermaid_source(obj):
-    """True for Mermaid text, Markdown text or a path to a Mermaid/Markdown file."""
+    """True for str / path-like input, which is read as Mermaid (see read_mermaid)."""
     return isinstance(obj, (str, os.PathLike))
 
 
@@ -464,16 +466,28 @@ def read_mermaid(source, logger=None):
 
 
 def _as_mermaid_path(source):
-    """Path to read, or None when `source` is diagram text."""
+    """Path to read, or None when `source` is diagram text.
+
+    Paths with other suffixes (e.g. a CSV) raise a ValueError instead of being
+    parsed as diagram text.
+    """
     if isinstance(source, os.PathLike):
         path = Path(source)
-    elif isinstance(source, str) and '\n' not in source and source.strip().lower().endswith(MERMAID_FILE_SUFFIXES):
+    elif isinstance(source, str) and '\n' not in source and _looks_like_path(source.strip()):
         path = Path(source.strip())
     else:
         return None
+    if path.suffix.lower() not in MERMAID_FILE_SUFFIXES:
+        raise ValueError('Unsupported input file %s: use a Mermaid/Markdown file (%s), or load the data into a '
+                         'DataFrame with source/target columns.' % (path, ', '.join(MERMAID_FILE_SUFFIXES)))
     if not path.is_file():
         raise FileNotFoundError('Mermaid/Markdown file not found: %s' % path)
     return path
+
+
+def _looks_like_path(text):
+    """A single token ending in a file suffix, e.g. 'docs/flow.md' or 'edges.csv'."""
+    return bool(re.fullmatch(r'[^\s;|<>{}\[\]()"]+\.[A-Za-z0-9]{1,10}', text))
 
 
 def _first_statement(text):
@@ -556,13 +570,24 @@ def from_mermaid(text, logger=None):
                 for name in parts[1].split(','):
                     node(name)['class'] = parts[2]
             continue
-        if stmt.startswith(_MERMAID_SKIP):
+        if head.split(':')[0] in _MERMAID_SKIP:
             continue
+        # All or nothing: nodes and edges of a statement are kept only if it parses.
+        pending, chain_edges = [], []
+
+        def record(name, label=None, shape=None):
+            extra = {}
+            pending.append((name, label, shape, extra))
+            return extra
         try:
-            _mermaid_chain(stmt, node, edges)
+            _mermaid_chain(stmt, record, chain_edges)
         except ValueError as e:
             if logger is not None:
                 logger.warning('Mermaid: skipped statement %r (%s)' % (stmt, e))
+            continue
+        for name, label, shape, extra in pending:
+            node(name, label, shape).update(extra)
+        edges.extend(chain_edges)
 
     for n in nodes.values():
         cls = n.pop('class', None)
@@ -573,8 +598,25 @@ def from_mermaid(text, logger=None):
     if linked_groups and logger is not None:
         logger.warning('Mermaid: links to subgraphs are not supported; %s are drawn as plain nodes.' % linked_groups)
 
+    if not nodes:
+        raise ValueError('No Mermaid flowchart nodes found. Expected text such as '
+                         '"flowchart LR; A[Start] --> B{Valid?}", Markdown with a ```mermaid block, '
+                         'or a path to a %s file.' % '/'.join(MERMAID_FILE_SUFFIXES))
     df = pd.DataFrame(edges, columns=['source', 'target', 'label', 'style', 'weight'])
     return df, nodes, groups, direction
+
+
+def merge_group_attributes(base, override):
+    """Merge group settings per field; values in `override` win.
+
+    Both accept {group: {'label', 'parent', 'color'}} or the short form {group: parent}.
+    """
+    def norm(groups):
+        return {str(k): (dict(v) if isinstance(v, dict) else {'parent': v}) for k, v in (groups or {}).items()}
+    merged = norm(base)
+    for name, attrs in norm(override).items():
+        merged.setdefault(name, {}).update({k: v for k, v in attrs.items() if not _is_missing(v)})
+    return merged
 
 
 def merge_node_attributes(base, override):
@@ -586,18 +628,20 @@ def merge_node_attributes(base, override):
 
 
 def _mermaid_statements(text):
-    """Split on newlines and on ';' outside quotes and brackets."""
+    """Split on newlines and on ';' outside quotes, brackets and |edge labels|."""
     out = []
     for line in str(text).splitlines():
-        buf, depth, quoted = '', 0, False
+        buf, depth, quoted, piped = '', 0, False, False
         for ch in line:
-            if ch == '"':
+            if ch == '"' and not piped:
                 quoted = not quoted
-            elif not quoted and ch in '[({':
+            elif ch == '|' and not quoted and depth == 0:
+                piped = not piped
+            elif not quoted and not piped and ch in '[({':
                 depth += 1
-            elif not quoted and ch in '])}':
+            elif not quoted and not piped and ch in '])}':
                 depth = max(0, depth - 1)
-            if ch == ';' and not quoted and depth == 0:
+            if ch == ';' and not quoted and not piped and depth == 0:
                 out.append(buf)
                 buf = ''
             else:
@@ -635,21 +679,27 @@ def _mermaid_node(stmt, i, node):
         raise ValueError('expected a node id at %r' % stmt[i:i + 20])
     name, i = m.group(0), m.end()
     label = shape = None
-    for open_, close, kind in _MERMAID_SHAPES:
+    # Longest opening delimiter first. Of the closings that pair with it, the
+    # nearest one ends the label, so '[/a\] --> B[/b/]' stays two nodes.
+    for open_ in dict.fromkeys(o for o, _, _ in _MERMAID_SHAPES):
         if not stmt.startswith(open_, i):
             continue
         j = i + len(open_)
-        if stmt.startswith('"', j):
-            q = stmt.find('"', j + 1)
-            if q < 0 or not stmt.startswith(close, q + 1):
+        best = None
+        for o, close, kind in _MERMAID_SHAPES:
+            if o != open_:
                 continue
-            label, i = stmt[j:q + 1], q + 1 + len(close)
-        else:
-            end = stmt.find(close, j)
-            if end < 0:
-                continue
-            label, i = stmt[j:end], end + len(close)
-        label, shape = _mermaid_label(label), kind
+            if stmt.startswith('"', j):
+                q = stmt.find('"', j + 1)
+                end = q + 1 if q >= 0 and stmt.startswith(close, q + 1) else -1
+            else:
+                end = stmt.find(close, j)
+            if end >= 0 and (best is None or end < best[0]):
+                best = (end, close, kind)
+        if best is None:
+            continue
+        end, close, shape = best
+        label, i = _mermaid_label(stmt[j:end]), end + len(close)
         break
     node(name, label, shape)
     if stmt.startswith(':::', i):
@@ -719,6 +769,10 @@ def _warn_unknown(values, allowed, what, fallback, logger):
     bad = sorted(set(values) - set(allowed))
     if bad and logger is not None:
         logger.warning('Unknown %s(s) %s; using %s. Choose from %s.' % (what, bad, fallback, tuple(allowed)))
+
+
+def _optional_str(v):
+    return None if v is None else str(v)
 
 
 def _check_columns(df):
