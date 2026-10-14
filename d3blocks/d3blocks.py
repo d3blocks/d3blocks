@@ -30,6 +30,7 @@ try:
     import d3blocks.circlepacking.Circlepacking as Circlepacking
     import d3blocks.tree.Tree as Tree
     import d3blocks.radialgraph.Radialgraph as Radialgraph
+    import d3blocks.flowgraph.Flowgraph as Flowgraph
     import d3blocks.maps.Maps as Maps
     import d3blocks.utils as utils
 except:
@@ -49,6 +50,7 @@ except:
     import circlepacking.Circlepacking as Circlepacking
     import tree.Tree as Tree
     import radialgraph.Radialgraph as Radialgraph
+    import flowgraph.Flowgraph as Flowgraph
     import maps.Maps as Maps
     import utils
     # #####################################################
@@ -3078,6 +3080,211 @@ class D3Blocks():
         if return_html:
             return html
 
+    def flowgraph(self,
+                  df,
+                  nodes=None,
+                  groups: dict = None,
+                  direction: str = None,
+                  layout: str = 'dagre',
+                  shape: str = 'process',
+                  color: str = 'group',
+                  cmap: str = 'Set2',
+                  edge_color: str = '#8c8c8c',
+                  nodesep: int = 40,
+                  ranksep: int = 70,
+                  edgesep: int = 20,
+                  ranker: str = 'network-simplex',
+                  curve: str = 'smooth',
+                  animate: bool = False,
+                  draggable: bool = True,
+                  show_edge_labels: bool = True,
+                  show_groups: bool = True,
+                  font: dict = {'size': 13},
+                  title: str = 'Flowgraph - D3blocks',
+                  filepath: str = 'flowgraph.html',
+                  figsize=[None, None],
+                  showfig: bool = True,
+                  overwrite: bool = True,
+                  notebook: bool = False,
+                  save_button: bool = True,
+                  show_side_panel: bool = True,
+                  show_top_panel: bool = True,
+                  dark_mode: bool = True,
+                  color_background=None,
+                  return_html: bool = False,
+                  reset_properties: bool = True):
+        """Flowgraph block: process flows and architecture diagrams.
+
+        Nodes are arranged in ranks along the flow direction with a layered
+        layout, drawn as flowchart shapes and optionally nested in groups such as
+        swimlanes, services or network boundaries. The input is either an edge
+        list or a Mermaid flowchart.
+
+        Parameters
+        ----------
+        df : pd.DataFrame or str
+            * DataFrame with the edges. Required columns: 'source', 'target'.
+              Optional columns: 'label' (edge text), 'weight' (line width),
+              'style' ('solid', 'dashed', 'dotted') and 'color'.
+            * str: a Mermaid flowchart, e.g. 'flowchart LR; A[Start] --> B{Valid?}'.
+              Node shapes, edge labels, dotted/thick links and (nested) subgraphs are
+              converted; `nodes`, `groups` and `direction` override what it defines.
+        nodes : pd.DataFrame or dict, (default: None)
+            Per-node attributes keyed by node name (a 'name' column or the index):
+                * 'label': display text; use '\\n' for line breaks.
+                * 'shape': 'process', 'decision', 'terminal', 'io', 'subprocess',
+                  'database', 'queue', 'document', 'external' or 'circle'.
+                * 'group': group (swimlane / boundary) the node belongs to.
+                * 'color': node colour; overrides `color`.
+                * 'tooltip': text or HTML shown on hover.
+        groups : dict, (default: None)
+            Group settings: {group: {'label': str, 'parent': str, 'color': hex}}.
+            Use 'parent' to nest groups (e.g. a subnet inside a VPC). The short form
+            {group: parent} is also accepted.
+        direction : str, (default: None)
+            Flow direction: 'LR', 'TB', 'RL' or 'BT'. None: the direction of the
+            Mermaid header, otherwise 'LR'.
+        layout : str, (default: 'dagre')
+            * 'dagre': layered layout with smooth edges; small output (~0.5 MB).
+            * 'elk': ELK layered layout with orthogonal edge routing and native
+              nested groups; tidier for architecture diagrams, adds ~1.5 MB to the HTML.
+        shape : str, (default: 'process')
+            Default shape for nodes without one.
+        color : str, (default: 'group')
+            * 'group': colour nodes by group.
+            * 'shape': colour nodes by shape.
+            * '#RRGGBB': one colour for all nodes.
+        cmap : str, (default: 'Set2')
+            Colormap for group / shape colouring.
+        edge_color : str, (default: '#8c8c8c')
+            Default edge colour.
+        nodesep : int, (default: 40)
+            Pixels between nodes in the same rank.
+        ranksep : int, (default: 70)
+            Pixels between ranks.
+        edgesep : int, (default: 20)
+            Pixels between parallel edges.
+        ranker : str, (default: 'network-simplex')
+            dagre ranking algorithm: 'network-simplex', 'tight-tree' or 'longest-path'.
+        curve : str, (default: 'smooth')
+            Edge shape: 'smooth' (curved, or rounded corners with ELK) or 'straight'.
+        animate : bool, (default: False)
+            Animate pulses along the edges to show the direction of flow.
+        draggable : bool, (default: True)
+            Nodes can be dragged; connected edges and groups follow.
+        show_edge_labels : bool, (default: True)
+            Draw edge labels.
+        show_groups : bool, (default: True)
+            Draw groups as containers (and keep their members together).
+        font : dict, (default: {'size': 13})
+            Font properties.
+        title : str, (default: 'Flowgraph - D3blocks')
+            Title of the figure.
+        filepath : str, (default: 'flowgraph.html')
+            File path to save the output. None: return HTML only.
+        figsize : list, (default: [None, None])
+            [width, height] in pixels. None: full window.
+        showfig : bool, (default: True)
+            Open the chart in the browser.
+        overwrite : bool, (default: True)
+            Overwrite an existing file.
+        notebook : bool, (default: False)
+            Display inline in a Jupyter notebook.
+        save_button : bool, (default: True)
+            Show the SVG/PNG save buttons.
+        show_side_panel : bool, (default: True)
+            Show the left side panels (Export / Save, Layout, Groups).
+        show_top_panel : bool, (default: True)
+            Show the top bar (logo, search, fit, theme).
+        dark_mode : bool, (default: True)
+            Start in the dark theme.
+        color_background : list of str, str, or None, (default: None)
+            Backgrounds for center / top / side panels as ``[dark_hex, light_hex]``.
+            Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
+        return_html : bool, (default: False)
+            Return the HTML string.
+        reset_properties : bool, (default: True)
+            Recompute node and edge properties from the input.
+
+        Returns
+        -------
+        d3.node_properties : DataFrame of dictionary
+             Node properties; edit and call d3.show() to update.
+        d3.edge_properties : DataFrame
+             Edge properties; edit and call d3.show() to update.
+        d3.config : dictionary
+             Configuration, including the resolved groups in d3.config['groups'].
+
+        Examples
+        --------
+        >>> # Edge list with shapes and edge labels
+        >>> import pandas as pd
+        >>> from d3blocks import D3Blocks
+        >>> d3 = D3Blocks(frame=False)
+        >>> df = pd.DataFrame({'source': ['Start', 'Valid?', 'Valid?', 'Fix'],
+        ...                    'target': ['Valid?', 'Done', 'Fix', 'Valid?'],
+        ...                    'label': ['', 'yes', 'no', 'retry']})
+        >>> nodes = {'Start': {'shape': 'terminal'}, 'Valid?': {'shape': 'decision'},
+        ...          'Done': {'shape': 'terminal'}}
+        >>> d3.flowgraph(df, nodes=nodes, direction='TB')
+        >>> # Change a node and redraw
+        >>> d3.node_properties['Fix']['color'] = '#e15759'
+        >>> d3.show()
+        >>>
+        >>> # Mermaid flowchart with a subgraph, laid out with ELK
+        >>> d3.flowgraph('''
+        ... flowchart LR
+        ...   subgraph api [API]
+        ...     gw[Gateway] --> svc[Orders]
+        ...   end
+        ...   svc --> db[(Postgres)]
+        ...   svc -.->|events| q[[Worker]]
+        ... ''', layout='elk')
+
+        References
+        ----------
+        * dagre: https://github.com/dagrejs/dagre
+        * ELK: https://eclipse.dev/elk/
+        * https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html
+
+        """
+        # Mermaid input: convert to edges, nodes, groups and direction.
+        if isinstance(df, str):
+            df, m_nodes, m_groups, m_direction = Flowgraph.from_mermaid(df, logger=logger)
+            nodes = Flowgraph.merge_node_attributes(m_nodes, nodes)
+            groups = {**m_groups, **(groups or {})}
+            direction = direction or m_direction
+        direction = direction or 'LR'
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func('Flowgraph', logger)
+        # Store properties
+        self.config = self.chart.set_config(
+            config=self.config, font=font, title=title, filepath=filepath, figsize=figsize,
+            showfig=showfig, overwrite=overwrite, notebook=notebook, direction=direction,
+            layout=layout, nodesep=nodesep, ranksep=ranksep, edgesep=edgesep, ranker=ranker,
+            curve=curve, animate=animate, draggable=draggable,
+            show_edge_labels=show_edge_labels, show_groups=show_groups, groups=groups,
+            color_background=color_background, dark_mode=dark_mode, save_button=save_button,
+            show_side_panel=show_side_panel, show_top_panel=show_top_panel,
+            reset_properties=reset_properties, logger=logger,
+        )
+        # Set default node properties
+        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+            self.set_node_properties(df, nodes=nodes, shape=shape, color=color, cmap=cmap, logger=logger)
+        # Resolve groups (labels, parents, colours matching the nodes)
+        self.config['groups'] = self.chart.set_group_properties(self.node_properties, groups, cmap=cmap, logger=logger)
+        # Set edge properties
+        self.set_edge_properties(df, edge_color=edge_color, logger=logger)
+
+        # Create the plot
+        html = self.show()
+
+        # Return
+        if return_html:
+            return html
+
     def treemap(self,
                 df: pd.DataFrame,
                 margin = {"top": 40, "right": 10, "bottom": 10, "left": 10},
@@ -4203,7 +4410,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['RadialGraph', 'Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph']):
+        if np.isin(chart, ['RadialGraph', 'Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph', 'Flowgraph']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

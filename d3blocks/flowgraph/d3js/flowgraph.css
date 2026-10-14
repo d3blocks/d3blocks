@@ -1,0 +1,372 @@
+/* Shared d3blocks theme + panels (from tree.css), followed by flowgraph styles. */
+:root {
+  --bg: #222;
+  --panel-bg: rgba(34, 34, 34, 0.92);
+  --panel-border: rgba(255, 255, 255, 0.15);
+  --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --text: #eee;
+  --text-muted: rgba(238, 238, 238, 0.6);
+  --btn-bg: #333;
+  --btn-bg-active: #3d3d3d;
+  --btn-border: #555;
+  --btn-text: #eee;
+  --tooltip-bg: rgba(34, 34, 34, 0.95);
+  --tooltip-text: #fff;
+  --transition: background 0.2s, color 0.2s, border-color 0.25s;
+  --accent: #1ABC9C;
+  --topbar-bg: rgba(34, 34, 34, 0.4);
+  --search-hover: #1e4d42;
+}
+body.light {
+  --bg: #fff;
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --panel-border: rgba(0, 0, 0, 0.1);
+  --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --text: #222;
+  --text-muted: rgba(34, 34, 34, 0.55);
+  --btn-bg: #fff;
+  --btn-bg-active: #eee;
+  --btn-border: #ccc;
+  --btn-text: #222;
+  --tooltip-bg: rgba(255, 255, 255, 0.96);
+  --tooltip-text: #1a1a1a;
+  --accent: #1ABC9C;
+  --topbar-bg: rgba(255, 255, 255, 0.4);
+  --search-hover: #e8f8f5;
+}
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  font-family: "Helvetica", Arial, sans-serif;
+  overflow: hidden;
+  transition: var(--transition);
+}
+.search-wrap { position: relative; margin-bottom: 6px; }
+.search-input {
+  width: 100%; box-sizing: border-box;
+  background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+  border-radius: 6px; padding: 9px 12px; font-size: 13px;
+  font-family: "Helvetica", Arial, sans-serif;
+  outline: none; transition: var(--transition), width 0.2s;
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-input:focus { border-color: var(--accent); }
+.search-results {
+  position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px;
+  background: var(--panel-bg); border: 1px solid var(--panel-border);
+  border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 20;
+  display: none; box-shadow: var(--dropdown-shadow);
+}
+.search-results.open { display: block; }
+.search-item {
+  padding: 7px 12px; font-size: 12px; color: var(--text); cursor: pointer;
+  border-bottom: 1px solid var(--panel-border);
+}
+.search-item:last-child { border-bottom: none; }
+.search-item:hover, .search-item.active { background: var(--search-hover); }
+
+.stats-panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: var(--panel-bg);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: var(--panel-shadow);
+  font-family: "Helvetica", Arial, sans-serif;
+  font-size: 13px;
+  width: 220px;
+  min-width: 180px;
+  max-width: min(600px, calc(100vw - 40px));
+  border: 1px solid var(--panel-border);
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+  min-height: 40px;
+  max-height: calc(100vh - 40px);
+}
+.stats-panel.collapsed { resize: none; }
+.stats-panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.stats-panel .stats-panel-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stats-panel .stats-panel-title:active { cursor: grabbing; }
+.stats-panel.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+}
+.stats-panel.collapsed .stats-panel-title { margin-bottom: 0; }
+.stats-panel.collapsed .stats-panel-body { display: none; }
+.stats-panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+  color: inherit;
+  transition: transform 0.15s ease;
+}
+.stats-panel-toggle svg { width: 12px; height: 12px; display: block; }
+.stats-panel.collapsed .stats-panel-toggle { transform: rotate(-90deg); }
+.stats-panel label { display: block; margin: 4px 0; cursor: pointer; }
+.stats-panel .physics-control { margin: 10px 0; }
+.stats-panel .physics-control label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+  cursor: default;
+  font-weight: normal;
+}
+.stats-panel .physics-control input[type="range"] {
+  width: 100%;
+  box-sizing: border-box;
+  accent-color: var(--accent);
+}
+.stats-panel .button-switch {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 10px 0 0 0;
+  box-sizing: border-box;
+}
+.button-switch {
+  display: inline-block;
+  margin: 8px 4px;
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+  font-size: 1em;
+  font-family: "Helvetica", Arial, sans-serif;
+  transition: var(--transition);
+}
+.button-switch:active { background: var(--btn-bg-active); }
+.button-switch.active {
+  background: var(--btn-bg-active);
+  border-color: var(--btn-border);
+  color: var(--btn-text);
+}
+.button-switch:disabled { opacity: 0.45; cursor: default; }
+
+.top-panel {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  z-index: 1200;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--topbar-bg);
+  box-shadow: var(--panel-shadow);
+  transition: var(--transition);
+  pointer-events: none;
+}
+/* Light mode: no dark drop-shadow under the white top bar */
+body.light .top-panel {
+  box-shadow: none;
+}
+.top-panel .top-panel-left { pointer-events: none; }
+.top-panel .top-panel-left a { pointer-events: auto; }
+.top-panel .top-panel-center {
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.top-panel .top-panel-right {
+  pointer-events: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-self: end;
+}
+.top-panel .button-switch { margin: 0; }
+/* Match button-switch height/padding so Find sits on the same baseline. */
+.top-search {
+  width: 440px;
+  max-width: 60vw;
+  margin-bottom: 0; /* override .search-wrap's 6px which shifts it off-center */
+  display: flex;
+  align-items: center;
+}
+.top-search .search-input {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 1em;
+  line-height: normal;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------ flowgraph */
+#fg-main {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+#fg-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  font-family: "Helvetica", Arial, sans-serif;
+}
+#fg-svg:active { cursor: grabbing; }
+
+/* Nodes: tinted fill + coloured outline, colour comes from --c per node. */
+.fg-node { cursor: pointer; transition: opacity 0.2s; }
+.fg-node .fg-shape {
+  fill: var(--c);
+  fill-opacity: 0.18;
+  stroke: var(--c);
+  stroke-width: 1.6px;
+  stroke-linejoin: round;
+}
+body.light .fg-node .fg-shape { fill-opacity: 0.12; }
+.fg-node.shape-external .fg-shape { stroke-dasharray: 6 4; fill-opacity: 0.06; }
+.fg-node.shape-decision .fg-shape,
+.fg-node.shape-terminal .fg-shape { fill-opacity: 0.26; }
+.fg-node .fg-label {
+  fill: var(--text);
+  pointer-events: none;
+  user-select: none;
+}
+.fg-node:hover .fg-shape { stroke-width: 2.6px; }
+.fg-node.fg-focus .fg-shape { stroke-width: 3px; fill-opacity: 0.32; }
+
+/* Groups: dashed container with a header label. */
+.fg-group { cursor: pointer; transition: opacity 0.2s; }
+.fg-group-box {
+  fill: var(--c);
+  fill-opacity: 0.05;
+  stroke: var(--c);
+  stroke-opacity: 0.7;
+  stroke-width: 1.2px;
+  stroke-dasharray: 5 4;
+}
+.fg-group:hover .fg-group-box,
+.fg-group.fg-focus .fg-group-box { fill-opacity: 0.11; stroke-opacity: 1; stroke-dasharray: none; }
+.fg-group-label {
+  fill: var(--c);
+  font-weight: bold;
+  dominant-baseline: central;
+  user-select: none;
+}
+
+/* Edges. */
+.fg-edge-g { cursor: pointer; transition: opacity 0.2s; }
+.fg-edge {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fg-edge.style-dashed { stroke-dasharray: 7 5; }
+.fg-edge.style-dotted { stroke-dasharray: 1.5 4.5; }
+.fg-edge-hit { fill: none; stroke: transparent; stroke-width: 14px; }
+.fg-edge-g:hover .fg-edge { filter: brightness(1.4); }
+.fg-edge-label { pointer-events: none; transition: opacity 0.2s; }
+.fg-edge-label rect { fill: var(--bg); fill-opacity: 0.9; stroke: var(--panel-border); }
+.fg-edge-label text { fill: var(--text-muted); }
+
+/* Animations, per edge via data-anim. Overlays keep the edge's own
+   solid / dashed / dotted style visible underneath. */
+.fg-edge-flow, .fg-edge-comet {
+  fill: none;
+  stroke-linecap: round;
+  filter: brightness(1.8);
+  pointer-events: none;
+}
+.fg-edge-flow { display: none; stroke-dasharray: 3 45; }
+.fg-edge-g[data-anim="pulse"] .fg-edge-flow { display: inline; animation: fg-march 1.4s linear infinite; }
+@keyframes fg-march { to { stroke-dashoffset: -48; } }
+.fg-edge-g[data-anim="dash"] .fg-edge { stroke-dasharray: 10 8; animation: fg-dash 0.9s linear infinite; }
+@keyframes fg-dash { to { stroke-dashoffset: -18; } }
+.fg-edge-dots circle { filter: brightness(1.6); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .fg-edge-g[data-anim] .fg-edge-flow { display: none; animation: none; }
+  .fg-edge-g[data-anim="dash"] .fg-edge { animation: none; }
+}
+
+/* Trace: dim everything not yet reached. */
+.fg-tracing .fg-node:not(.fg-traced) { opacity: 0.15; }
+.fg-tracing .fg-edge-g:not(.fg-traced) { opacity: 0.06; }
+.fg-tracing .fg-edge-label:not(.fg-traced) { opacity: 0.06; }
+.fg-tracing .fg-node.fg-traced .fg-shape { stroke-width: 2.6px; fill-opacity: 0.32; }
+.fg-tracing .fg-edge-g.fg-traced .fg-edge { filter: brightness(1.35); }
+
+/* Highlighting: dim everything that is not part of the selection. */
+.fg-has-highlight .fg-node:not(.fg-hl) { opacity: 0.15; }
+.fg-has-highlight .fg-edge-g:not(.fg-hl) { opacity: 0.08; }
+.fg-has-highlight .fg-edge-label:not(.fg-hl) { opacity: 0.08; }
+.fg-has-highlight .fg-group:not(.fg-focus) { opacity: 0.55; }
+
+/* Tooltip. */
+#fg-tooltip {
+  position: fixed;
+  z-index: 1500;
+  max-width: 320px;
+  padding: 8px 11px;
+  border-radius: 6px;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  font: 12px/1.45 "Helvetica", Arial, sans-serif;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+#fg-tooltip.open { opacity: 1; }
+#fg-tooltip .fg-tt-title { font-weight: bold; margin-bottom: 2px; }
+#fg-tooltip .fg-tt-meta { color: var(--text-muted); margin-top: 4px; font-size: 11px; }
+
+/* Panel controls. */
+.fg-button-row { display: flex; gap: 6px; margin: 4px 0 8px 0; }
+.stats-panel .fg-button-row .button-switch { margin: 0; padding: 5px 0; flex: 1; font-size: 12px; }
+.button-switch.active { border-color: var(--accent); color: var(--accent); }
+.fg-section-label { font-size: 11px; color: var(--text-muted); margin: 10px 0 2px 0; text-transform: uppercase; letter-spacing: 0.04em; }
+.stats-panel label.fg-check { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.stats-panel label.fg-check input { accent-color: var(--accent); margin: 0; }
+.fg-legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; font-size: 12px; }
+.fg-legend-item:hover { color: var(--accent); }
+.fg-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; opacity: 0.85; }
+.fg-line-swatch { width: 26px; height: 10px; flex-shrink: 0; }
+.fg-legend-count { color: var(--text-muted); font-size: 11px; margin-left: auto; }
+.fg-button-row.fg-wrap { flex-wrap: wrap; }
+.stats-panel .fg-button-row.fg-wrap .button-switch { flex: 1 0 28%; }
+.fg-hint { font-size: 11px; opacity: 0.6; margin-top: 6px; }
+.fg-empty { color: var(--text-muted); font: 14px "Helvetica", Arial, sans-serif; padding: 120px 0; text-align: center; }
+
+@media (max-width: 640px) {
+  .stats-panel { width: 180px; }
+  .top-search { width: 52vw; }
+}
+
+/* Dragging. */
+.fg-node.fg-draggable { cursor: grab; }
+.fg-dragging, .fg-dragging .fg-node { cursor: grabbing; }
+.fg-dragging .fg-node, .fg-dragging .fg-edge-g, .fg-dragging .fg-group { transition: none; }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<!--
+Library     : d3blocks
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+Layout      : dagre (https://github.com/dagrejs/dagre, MIT), ELK (https://github.com/kieler/elkjs, EPL-2.0 OR GPL-3.0)
+-->
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ TITLE }}</title>
+{{ SUPPORT }}
+
+<style>{% include "flowgraph.css" %}</style>
+<style>
+  body { background: {{ COLOR_BACKGROUND_DARK }}; --bg: {{ COLOR_BACKGROUND_DARK }}; }
+  body .top-panel, body .stats-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body.light { background: {{ COLOR_BACKGROUND_LIGHT }}; --bg: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .top-panel, body.light .stats-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+</style>
+
+<script>{% include "d3.v7.min.js" %}</script>
+<script>{% include "dagre.min.js" %}</script>
+{% if layout == 'elk' %}<script>{% include "elk.bundled.js" %}</script>{% endif %}
+</head>
+<body{% if darkMode == 'false' %} class="light"{% endif %}>
+
+<div id="fg-main"><svg id="fg-svg" role="img" aria-label="{{ TITLE }}"></svg></div>
+<div id="fg-tooltip" role="tooltip"></div>
+
+{% if showTopPanel == 'true' %}
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
+      <img src="{{ LOGO_BASE64 }}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center">
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find a node…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="traceButton" type="button" title="Walk through the flow step by step (from the pinned node, or from all start nodes)">▶ Trace</button>
+    <button class="button-switch" id="fitButton" type="button" title="Fit diagram to screen">Fit</button>
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+{% endif %}
+
+{% if showSidePanel == 'true' %}
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    {{ SAVE_BUTTON_START }}<div class="fg-button-row">
+      <button class="button-switch" id="saveSvgButton" type="button" title="Download the diagram as SVG">SVG</button>
+      <button class="button-switch" id="savePngButton" type="button" title="Download the diagram as PNG (2x)">PNG</button>
+    </div>{{ SAVE_BUTTON_STOP }}
+    <div class="fg-button-row">
+      <button class="button-switch" id="exportButton" type="button" title="Download nodes, edges and computed positions as JSON">JSON</button>
+    </div>
+    <div class="fg-hint">Images are saved as currently shown, including theme and highlighting.</div>
+  </div>
+</div>
+
+<div class="stats-panel collapsed" id="layoutPanel">
+  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="fg-section-label">Direction</div>
+    <div class="fg-button-row">
+      <button class="button-switch" type="button" data-direction="LR" title="Left to right">→</button>
+      <button class="button-switch" type="button" data-direction="TB" title="Top to bottom">↓</button>
+      <button class="button-switch" type="button" data-direction="RL" title="Right to left">←</button>
+      <button class="button-switch" type="button" data-direction="BT" title="Bottom to top">↑</button>
+    </div>
+    <div class="fg-section-label">Edges</div>
+    <div class="fg-button-row">
+      <button class="button-switch" type="button" data-curve="smooth">Smooth</button>
+      <button class="button-switch" type="button" data-curve="straight">Straight</button>
+    </div>
+    <div class="physics-control">
+      <label for="nodesepSlider">Node spacing <span class="val" id="nodesepVal">{{ nodesep }}px</span></label>
+      <input type="range" id="nodesepSlider" min="10" max="150" step="5" value="{{ nodesep }}">
+    </div>
+    <div class="physics-control">
+      <label for="ranksepSlider">Rank spacing <span class="val" id="ranksepVal">{{ ranksep }}px</span></label>
+      <input type="range" id="ranksepSlider" min="20" max="250" step="5" value="{{ ranksep }}">
+    </div>
+    <div class="physics-control">
+      <label for="fontSizeSlider">Font size <span class="val" id="fontSizeVal">{{ fontsize }}px</span></label>
+      <input type="range" id="fontSizeSlider" min="8" max="24" step="1" value="{{ fontsize }}">
+    </div>
+    <div class="fg-section-label">Animation</div>
+    <div class="fg-button-row fg-wrap">
+      <button class="button-switch" type="button" data-animation="off">Off</button>
+      <button class="button-switch" type="button" data-animation="pulse" title="Bright pulses along each edge">Pulse</button>
+      <button class="button-switch" type="button" data-animation="dash" title="Marching dashes">Dash</button>
+      <button class="button-switch" type="button" data-animation="dots" title="Tokens travelling along the edges">Dots</button>
+      <button class="button-switch" type="button" data-animation="comet" title="A bright segment sweeping each edge">Comet</button>
+    </div>
+    <label class="fg-check" id="edgeLabelToggleRow"><input type="checkbox" id="edgeLabelToggle"> Edge labels</label>
+    <label class="fg-check" id="groupToggleRow"><input type="checkbox" id="groupToggle"> Groups</label>
+    <div class="fg-button-row">
+      <button class="button-switch" id="traceButton2" type="button" title="Walk through the flow step by step">▶ Trace</button>
+      <button class="button-switch" id="fitButton2" type="button">Fit</button>
+      <button class="button-switch" id="resetButton" type="button" title="Recompute the layout (undo dragging)">Reset layout</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-panel collapsed" id="legendPanel">
+  <div class="stats-panel-title">Legend<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div id="legendList"></div>
+    <div class="fg-hint">Hover to highlight a group or edge type; click to pin.</div>
+  </div>
+</div>
+{% endif %}
+
+<script type="application/json" id="fg-data">{{ json_data }}</script>
+<script type="application/json" id="fg-options">{{ options }}</script>
+<script>{% include "d3.flowgraph.js" %}</script>
+
+</body>
+</html>
