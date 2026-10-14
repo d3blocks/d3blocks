@@ -3142,8 +3142,8 @@ class D3Blocks():
             Use 'parent' to nest groups (e.g. a subnet inside a VPC). The short form
             {group: parent} is also accepted.
         direction : str, (default: None)
-            Flow direction: 'LR', 'TB', 'RL' or 'BT'. None: the direction of the
-            Mermaid header, otherwise 'LR'.
+            Flow direction: 'LR', 'TB' (or 'TD'), 'RL' or 'BT'. None: the direction
+            of the Mermaid header, otherwise 'LR'.
         layout : str, (default: 'dagre')
             * 'dagre': layered layout with smooth edges; small output (~0.5 MB).
             * 'elk': ELK layered layout with orthogonal edge routing and native

@@ -185,3 +185,10 @@ def test_flowgraph_accepts_mermaid_string():
 def test_flowgraph_registered_as_chart():
     d3 = D3Blocks(chart='flowgraph', frame=False, support=None, verbose='error')
     assert d3.chart is Flowgraph
+
+
+@pytest.mark.parametrize('direction, expected', [('LR', 'LR'), ('tb', 'TB'), ('TD', 'TB'), ('td', 'TB'), ('RL', 'RL'), ('BT', 'BT')])
+def test_flowgraph_direction_aliases(direction, expected):
+    d3, html = _render(_sample_df(), direction=direction)
+    assert d3.config['direction'] == expected
+    assert _options(html)['direction'] == expected

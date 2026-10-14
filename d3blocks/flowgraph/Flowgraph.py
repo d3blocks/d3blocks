@@ -59,7 +59,9 @@ def set_config(config={}, font={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['font'] = {**{'size': 13}, **font}
     # Layout
-    config['direction'] = _check_choice(kwargs.get('direction', 'LR'), DIRECTIONS, 'direction', 'LR', logger, upper=True)
+    # 'TD' is accepted as in Mermaid (same as 'TB').
+    direction = str(kwargs.get('direction', 'LR')).upper()
+    config['direction'] = _check_choice(_MERMAID_DIRECTIONS.get(direction, direction), DIRECTIONS, 'direction', 'LR', logger, upper=True)
     config['nodesep'] = kwargs.get('nodesep', 40)
     config['ranksep'] = kwargs.get('ranksep', 70)
     config['edgesep'] = kwargs.get('edgesep', 20)
