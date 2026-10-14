@@ -319,3 +319,13 @@ def test_flowgraph_tooltip_defaults_to_none_and_follows_label_edits():
     d3.node_properties['start']['label'] = 'Renamed'
     by_name = {n['name']: n for n in _data(d3.show(return_html=True, showfig=False))['nodes']}
     assert by_name['start']['label'] == 'Renamed' and by_name['start']['tooltip'] is None
+
+
+def test_flowgraph_notebook_mode_returns_isolated_iframe():
+    d3 = D3Blocks(frame=False, support=None, verbose='error')
+    html = d3.flowgraph(_sample_df(), notebook=True, filepath=None, return_html=True, figsize=[900, 500])
+    assert '<iframe srcdoc="' in html and 'width:900px;height:500px' in html
+    assert 'id="fg-svg"' not in html          # page markup is escaped inside srcdoc
+    import html as htmllib
+    inner = htmllib.unescape(re.search(r'srcdoc="(.*?)" title=', html, re.S).group(1))
+    assert 'id="fg-svg"' in inner and _data(inner)['nodes']

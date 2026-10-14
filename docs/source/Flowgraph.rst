@@ -112,6 +112,27 @@ edge routing; it suits nested architecture diagrams but adds about 1.5 MB to the
 	d3.flowgraph(edges, nodes=nodes, groups=groups, layout='elk', animate='dots')
 
 
+Jupyter and Streamlit
+*********************
+
+In a notebook, pass ``notebook=True``; the chart is shown inline, isolated in an iframe sized by
+``figsize`` (default: full width x 650 px). See ``notebooks/flowgraph.ipynb``.
+
+.. code:: python
+
+	d3 = D3Blocks(frame=False)
+	d3.flowgraph(edges, nodes=nodes, notebook=True, filepath=None, figsize=[None, 520])
+
+In Streamlit, generate the HTML with ``return_html=True`` and embed it with ``st.iframe``.
+``streamlit/flowgraph_streamlit_demo.py`` edits a Mermaid flowchart in the sidebar and
+re-renders it with the chosen layout, direction and animation.
+
+.. code:: python
+
+	html = D3Blocks().flowgraph(flowchart, filepath=None, showfig=False, return_html=True)
+	st.iframe(html, height=700, width="stretch")
+
+
 Interaction
 ***********
 

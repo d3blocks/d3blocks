@@ -3193,11 +3193,13 @@ class D3Blocks():
         overwrite : bool, (default: True)
             Overwrite an existing file.
         notebook : bool, (default: False)
-            Display inline in a Jupyter notebook.
+            Display inline in a Jupyter notebook, isolated in an iframe sized by
+            `figsize` (default: full width x 650 px). The returned HTML is then
+            that iframe.
         save_button : bool, (default: True)
             Show the SVG/PNG save buttons.
         show_side_panel : bool, (default: True)
-            Show the left side panels (Export / Save, Layout, Groups).
+            Show the left side panels (Export / Save, Layout, Legend).
         show_top_panel : bool, (default: True)
             Show the top bar (logo, search, fit, theme).
         dark_mode : bool, (default: True)

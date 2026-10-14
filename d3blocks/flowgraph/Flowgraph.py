@@ -276,7 +276,8 @@ def set_edge_properties(df, edge_color='#8c8c8c', logger=None, **kwargs):
         width = 1.5 + 3.5 * (w - w.min()) / np.ptp(w)
     else:
         width = np.full(len(w), 1.5)
-    out['width'] = np.round(width + out['variant'].map(lambda v: EDGE_VARIANTS[v]['width']).values, 2)
+    extra = np.array([EDGE_VARIANTS[v]['width'] for v in out['variant']], dtype=float)
+    out['width'] = np.round(width + extra, 2)
 
     selfloops = out['source'] == out['target']
     if selfloops.any() and logger is not None:
@@ -396,7 +397,26 @@ def write_html(X, config, logger=None):
 
     html = jinja_env.get_template('flowgraph.html.j2').render(content)
     write_html_file(config, html, logger)
+    if config.get('notebook'):
+        return notebook_iframe(html, config)
     return html
+
+
+def notebook_iframe(html, config):
+    """Wrap the chart in an iframe for Jupyter.
+
+    The chart page fills its window (fixed positioning, own body background) and
+    uses fixed element ids, so it is isolated in an iframe instead of being
+    injected into the notebook page. Size: figsize, else full width x 650 px.
+    """
+    width, height = (list(config.get('figsize') or [None, None]) + [None, None])[:2]
+    width = '%dpx' % width if width else '100%'
+    height = '%dpx' % height if height else '650px'
+    # Wrapped in a div: IPython warns about HTML that starts with '<iframe'.
+    return ('<div class="d3blocks-flowgraph"><iframe srcdoc="%s" title="%s" '
+            'style="width:%s;height:%s;border:0;border-radius:6px" '
+            'sandbox="allow-scripts allow-downloads allow-popups"></iframe></div>'
+            % (html_escape(html, quote=True), html_escape(str(config.get('title', 'Flowgraph'))), width, height))
 
 
 # %% Mermaid
