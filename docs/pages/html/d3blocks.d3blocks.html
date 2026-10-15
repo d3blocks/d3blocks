@@ -64,6 +64,7 @@
 <li class="toctree-l1"><a class="reference internal" href="d3graph.html">D3graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="elasticgraph.html">Elasticgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Radialgraph.html">RadialGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Flowgraph.html">Flowgraph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Sankey.html">Sankey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heatmap.html">Heatmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Matrix.html">Matrix</a></li>
@@ -1035,6 +1036,138 @@ None uses theme defaults.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">flowgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dagre'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'process'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'group'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Set2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#8c8c8c'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodesep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranksep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">70</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edgesep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'network-simplex'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'smooth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">animate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draggable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_edge_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'size':</span> <span class="pre">13}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Flowgraph</span> <span class="pre">-</span> <span class="pre">D3blocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'flowgraph.html'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_side_panel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_top_panel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_html</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Flowgraph block: process flows and architecture diagrams.</p>
+<p>Nodes are arranged in ranks along the flow direction with a layered
+layout, drawn as flowchart shapes and optionally nested in groups such as
+swimlanes, services or network boundaries. The input is either an edge
+list or a Mermaid flowchart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em><em>, </em><em>str</em><em> or </em><em>path-like</em>) – <ul>
+<li><p>DataFrame with the edges. Required columns: ‘source’, ‘target’.
+Optional columns: ‘label’ (edge text), ‘weight’ (line width),
+‘variant’, ‘style’ (‘solid’, ‘dashed’, ‘dotted’), ‘color’ and ‘animation’.</p></li>
+<li><p>str: a Mermaid flowchart, e.g. ‘flowchart LR; A[Start] –&gt; B{Valid?}’,
+or Markdown text containing a <a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>mermaid block.</p></li>
+<li><p>Path to a Markdown file (.md, .markdown) with a <a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>mermaid block, so the
+same diagram renders on GitHub, or to a .mmd / .mermaid file.
+From Markdown, the first flowchart block is used.</p></li>
+</ul>
+<p>Node shapes, edge labels, dotted/thick links and (nested) subgraphs are
+converted; <cite>nodes</cite>, <cite>groups</cite> and <cite>direction</cite> override what it defines.</p>
+</p></li>
+<li><p><strong>nodes</strong> (<em>pd.DataFrame</em><em> or </em><em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
+<dt>Per-node attributes keyed by node name (a ‘name’ column or the index):</dt><dd><ul>
+<li><p>’label’: display text; use ‘n’ for line breaks.</p></li>
+<li><p>’shape’: ‘process’, ‘decision’, ‘terminal’, ‘io’, ‘subprocess’,
+‘database’, ‘queue’, ‘document’, ‘external’ or ‘circle’.</p></li>
+<li><p>’group’: group (swimlane / boundary) the node belongs to.</p></li>
+<li><p>’color’: node colour; overrides <cite>color</cite>.</p></li>
+<li><p>’tooltip’: extra text or HTML shown on hover below the label.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>groups</strong> (<em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Group settings: {group: {‘label’: str, ‘parent’: str, ‘color’: hex}}.
+Use ‘parent’ to nest groups (e.g. a subnet inside a VPC). The short form
+{group: parent} is also accepted.</p></li>
+<li><p><strong>direction</strong> (<em>str</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Flow direction: ‘LR’, ‘TB’ (or ‘TD’), ‘RL’ or ‘BT’. None: the direction
+of the Mermaid header, otherwise ‘LR’.</p></li>
+<li><p><strong>layout</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'dagre'</em><em>)</em>) – <ul>
+<li><p>‘dagre’: layered layout with smooth edges; small output (~0.5 MB).</p></li>
+<li><p>’elk’: ELK layered layout with orthogonal edge routing and native
+nested groups; tidier for architecture diagrams, adds ~1.5 MB to the HTML.</p></li>
+</ul>
+</p></li>
+<li><p><strong>shape</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'process'</em><em>)</em>) – Default shape for nodes without one.</p></li>
+<li><p><strong>color</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'group'</em><em>)</em>) – <ul>
+<li><p>‘group’: colour nodes by group.</p></li>
+<li><p>’shape’: colour nodes by shape.</p></li>
+<li><p>’#RRGGBB’: one colour for all nodes.</p></li>
+</ul>
+</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'Set2'</em><em>)</em>) – Colormap for group / shape colouring.</p></li>
+<li><p><strong>edge_color</strong> (<em>str</em><em>, </em><em>(</em><em>default: '#8c8c8c'</em><em>)</em>) – Default edge colour.</p></li>
+<li><p><strong>nodesep</strong> (<em>int</em><em>, </em><em>(</em><em>default: 40</em><em>)</em>) – Pixels between nodes in the same rank.</p></li>
+<li><p><strong>ranksep</strong> (<em>int</em><em>, </em><em>(</em><em>default: 70</em><em>)</em>) – Pixels between ranks.</p></li>
+<li><p><strong>edgesep</strong> (<em>int</em><em>, </em><em>(</em><em>default: 20</em><em>)</em>) – Pixels between parallel edges.</p></li>
+<li><p><strong>ranker</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'network-simplex'</em><em>)</em>) – dagre ranking algorithm: ‘network-simplex’, ‘tight-tree’ or ‘longest-path’.</p></li>
+<li><p><strong>curve</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'smooth'</em><em>)</em>) – Edge shape: ‘smooth’ (curved, or rounded corners with ELK) or ‘straight’.</p></li>
+<li><p><strong>animate</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Animate pulses along the edges to show the direction of flow.</p></li>
+<li><p><strong>draggable</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Nodes can be dragged; connected edges and groups follow.</p></li>
+<li><p><strong>show_edge_labels</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Draw edge labels.</p></li>
+<li><p><strong>show_groups</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Draw groups as containers (and keep their members together).</p></li>
+<li><p><strong>font</strong> (<em>dict</em><em>, </em><em>(</em><em>default: {'size': 13}</em><em>)</em>) – Font properties.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'Flowgraph - D3blocks'</em><em>)</em>) – Title of the figure.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em>, </em><em>(</em><em>default: 'flowgraph.html'</em><em>)</em>) – File path to save the output. None: return HTML only.</p></li>
+<li><p><strong>figsize</strong> (<em>list</em><em>, </em><em>(</em><em>default:</em><em> [</em><em>None</em><em>, </em><em>None</em><em>]</em><em>)</em>) – [width, height] in pixels. None: full window.</p></li>
+<li><p><strong>showfig</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Open the chart in the browser.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Overwrite an existing file.</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Display inline in a Jupyter notebook, isolated in an iframe sized by
+<cite>figsize</cite> (default: full width x 650 px). The returned HTML is then
+that iframe.</p></li>
+<li><p><strong>save_button</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Show the SVG/PNG save buttons.</p></li>
+<li><p><strong>show_side_panel</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Show the left side panels (Export / Save, Layout, Legend).</p></li>
+<li><p><strong>show_top_panel</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Show the top bar (logo, search, fit, theme).</p></li>
+<li><p><strong>dark_mode</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Start in the dark theme.</p></li>
+<li><p><strong>color_background</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>str</em><em>, or </em><em>None</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – Backgrounds for center / top / side panels as <code class="docutils literal notranslate"><span class="pre">[dark_hex,</span> <span class="pre">light_hex]</span></code>.
+Named themes: <code class="docutils literal notranslate"><span class="pre">'streamlit'</span></code>, <code class="docutils literal notranslate"><span class="pre">'darkblue'</span></code>. None → <code class="docutils literal notranslate"><span class="pre">['#222222',</span> <span class="pre">'#ffffff']</span></code>.</p></li>
+<li><p><strong>return_html</strong> (<em>bool</em><em>, </em><em>(</em><em>default: False</em><em>)</em>) – Return the HTML string.</p></li>
+<li><p><strong>reset_properties</strong> (<em>bool</em><em>, </em><em>(</em><em>default: True</em><em>)</em>) – Recompute node and edge properties from the input.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>d3.node_properties</strong> (<em>DataFrame of dictionary</em>) – Node properties; edit and call d3.show() to update.</p></li>
+<li><p><strong>d3.edge_properties</strong> (<em>DataFrame</em>) – Edge properties; edit and call d3.show() to update.</p></li>
+<li><p><strong>d3.config</strong> (<em>dictionary</em>) – Configuration. d3.config[‘groups’] holds the group settings (merged with
+Mermaid subgraphs); edit and call d3.show(). Labels, nesting and colours
+are resolved from it on every draw.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Edge list with shapes and edge labels</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">d3blocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">D3Blocks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span> <span class="o">=</span> <span class="n">D3Blocks</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="s1">&#39;Valid?&#39;</span><span class="p">,</span> <span class="s1">&#39;Valid?&#39;</span><span class="p">,</span> <span class="s1">&#39;Fix&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                   <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Valid?&#39;</span><span class="p">,</span> <span class="s1">&#39;Done&#39;</span><span class="p">,</span> <span class="s1">&#39;Fix&#39;</span><span class="p">,</span> <span class="s1">&#39;Valid?&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                   <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="s1">&#39;retry&#39;</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Start&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;terminal&#39;</span><span class="p">},</span> <span class="s1">&#39;Valid?&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;decision&#39;</span><span class="p">},</span>
+<span class="gp">... </span>         <span class="s1">&#39;Done&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;terminal&#39;</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;TB&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change a node and redraw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">node_properties</span><span class="p">[</span><span class="s1">&#39;Fix&#39;</span><span class="p">][</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#e15759&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Mermaid diagram kept in a Markdown file (renders on GitHub too)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;docs/process.md&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Mermaid flowchart with a subgraph, laid out with ELK</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">flowchart LR</span>
+<span class="gp">... </span><span class="s1">  subgraph api [API]</span>
+<span class="gp">... </span><span class="s1">    gw[Gateway] --&gt; svc[Orders]</span>
+<span class="gp">... </span><span class="s1">  end</span>
+<span class="gp">... </span><span class="s1">  svc --&gt; db[(Postgres)]</span>
+<span class="gp">... </span><span class="s1">  svc -.-&gt;|events| q[[Worker]]</span>
+<span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;elk&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>dagre: <a class="reference external" href="https://github.com/dagrejs/dagre">https://github.com/dagrejs/dagre</a></p></li>
+<li><p>ELK: <a class="reference external" href="https://eclipse.dev/elk/">https://eclipse.dev/elk/</a></p></li>
+<li><p><a class="reference external" href="https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html">https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html</a></p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
