@@ -86,6 +86,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 |  14 | [Tree](https://d3blocks.github.io/d3blocks/pages/html/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://erdogant.medium.com) |
 |  15 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://erdogant.medium.com) |
 |  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://erdogant.medium.com) |
+|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [D3Blocks](https://erdogant.medium.com) |
 
 -------------------------------------------------------------------------
 

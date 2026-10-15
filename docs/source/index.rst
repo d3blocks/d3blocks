@@ -68,6 +68,7 @@ Contents
    d3graph
    elasticgraph
    Radialgraph
+   Flowgraph
    Sankey
    Heatmap
    Matrix
