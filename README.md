@@ -8,11 +8,11 @@
 [![Forks](https://img.shields.io/github/forks/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/network)
 [![Open Issues](https://img.shields.io/github/issues/d3blocks/d3blocks.svg)](https://github.com/d3blocks/d3blocks/issues)
 [![Project Status](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Medium](https://img.shields.io/badge/Medium-Blog-black)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blog)
+[![Medium](https://img.shields.io/badge/Medium-Blog-black)](https://d3blocks.github.io/d3blocks/Documentation.html#medium-blog)
 ![GitHub Repo stars](https://img.shields.io/github/stars/d3blocks/d3blocks)
 ![GitHub repo size](https://img.shields.io/github/repo-size/d3blocks/d3blocks)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/d3blocks/d3blocks/blob/main/notebooks/d3blocks.ipynb)
-[![Donate](https://img.shields.io/badge/Support%20this%20project-grey.svg?logo=github%20sponsors)](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#)
+[![Donate](https://img.shields.io/badge/Support%20this%20project-grey.svg?logo=github%20sponsors)](https://d3blocks.github.io/d3blocks/Documentation.html#)
 
 ### 
 
@@ -26,7 +26,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed
 ---
 
 <p align="center">
-  <a href="https://d3blocks.github.io/d3blocks/pages/html/index.html">
+  <a href="https://d3blocks.github.io/d3blocks">
   <img src="https://github.com/d3blocks/d3blocks/blob/main/docs/figs/summary.png" width="600" />
   </a>
 </p>
@@ -34,7 +34,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed
 ---
 
 ### Resources and Links
-- [**Example Notebooks**](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
+- [**Example Notebooks**](https://d3blocks.github.io/d3blocks/Documentation.html#google-colab-notebooks)
 - [**Documentation**](https://d3blocks.github.io/d3blocks)
 - [**Bug Reports and Feature Requests**](https://github.com/d3blocks/d3blocks/issues)
 
@@ -49,23 +49,23 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed
 
 |  nr |  Block                                                                             |    Function                  |    More Information                                                                 |
 |-----|------------------------------------------------------------------------------------|------------------------------|-------------------------------------------------------------------------|
-|  1  | [D3graph](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html)                | ``` d3.d3graph() ```         | [D3graph](https://medium.com/data-science-collective/how-to-turn-any-network-into-an-interactive-knowledge-graph-to-discover-hidden-insights-f49fae4757ff)                                  |
-|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://medium.com/data-science-collective/radialgraph-a-new-way-to-explore-large-networks-without-the-hairball-ea34193ddec9)                              |
-|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)                             |
-|  4  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)                                   |
-|  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)    |
-|  6  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)       |
-|  7  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)  |
-|  8  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  9  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  10 | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  11 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  12 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  13 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  14 | [Tree](https://d3blocks.github.io/d3blocks/pages/html/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  15 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [Dagre](https://github.com/dagrejs/dagre) |
+|  1  | [D3graph](https://d3blocks.github.io/d3blocks/d3graph.html)                | ``` d3.d3graph() ```         | [D3graph](https://medium.com/data-science-collective/how-to-turn-any-network-into-an-interactive-knowledge-graph-to-discover-hidden-insights-f49fae4757ff)                                  |
+|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://medium.com/data-science-collective/radialgraph-a-new-way-to-explore-large-networks-without-the-hairball-ea34193ddec9)                              |
+|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)                             |
+|  4  | [Sankey](https://d3blocks.github.io/d3blocks/Sankey.html)               | ``` d3.sankey()  ```         | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)                                   |
+|  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)    |
+|  6  | [Scatter](https://d3blocks.github.io/d3blocks/Scatter.html)             | ``` d3.scatter()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)       |
+|  7  | [Heatmap](https://d3blocks.github.io/d3blocks/Heatmap.html)             | ``` d3.heatmap()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)  |
+|  8  | [Chord diagram](https://d3blocks.github.io/d3blocks/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  9  | [Timeseries](https://d3blocks.github.io/d3blocks/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  10 | [Image slider](https://d3blocks.github.io/d3blocks/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  11 | [Violin plot](https://d3blocks.github.io/d3blocks/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  12 | [Particles](https://d3blocks.github.io/d3blocks/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  13 | [Treemap](https://d3blocks.github.io/d3blocks/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  14 | [Tree](https://d3blocks.github.io/d3blocks/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  15 | [Maps](https://d3blocks.github.io/d3blocks/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [Dagre](https://github.com/dagrejs/dagre) |
 
 -------------------------------------------------------------------------
 
