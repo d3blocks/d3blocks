@@ -3,7 +3,7 @@
 
 
 .. tip::
-	`Medium Blog: D3Blocks: The Python library to create stand-alone and interactive D3 charts. <https://medium.com/data-science-collective/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts-ef8c65286e86>`_
+	`Medium Blog: D3Blocks: The Python library to create stand-alone and interactive D3 charts. <https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510>`_
 
 
 .. raw:: html

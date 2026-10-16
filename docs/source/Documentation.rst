@@ -21,9 +21,10 @@ Medium Blogs
 #############
 
 .. note::
-	#. `Subscribe to Medium blogs <https://erdogant.medium.com/subscribe>`_
-	#. `D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts. <https://medium.com/data-science-collective/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts-ef8c65286e86>`_
-	#. `Create Beautiful Stand-Alone and Interactive D3.js Charts with Python. <https://medium.com/data-science-collective/d3graph-bbdf625ebf60>`_
+	#. `Subscribe to Medium blogs <https://erdogant.medium.com>`_
+	#. `D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts. <https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510>`_
+	#. `How to Turn Any Network Into an Interactive Knowledge Graph To Discover Hidden Insights. <https://medium.com/data-science-collective/how-to-turn-any-network-into-an-interactive-knowledge-graph-to-discover-hidden-insights-f49fae4757ff>`_
+	#. `RadialGraph: A New Way To Explore Large Networks Without the Hairball. <https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510>`_
 
 
 Gumroad Products with Podcasts
@@ -33,8 +34,8 @@ Gumroad Products with Podcasts
 	#. `Gumroad products <https://erdogant.gumroad.com>`_
 	#. `D3Blocks The Python Library to Create Interactive and Standalone D3js Charts. <https://erdogant.gumroad.com/l/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts>`_
 	#. `Create Beautiful Stand-Alone and Interactive D3.js Charts with Python. <https://erdogant.gumroad.com/l/d3graph-bbdf625ebf60>`_
-		
-	
+
+
 Colab Notebook
 ################
 
