@@ -65,7 +65,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed
 |  14 | [Tree](https://d3blocks.github.io/d3blocks/pages/html/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
 |  15 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
 |  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
-|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [Dagre](https://github.com/dagrejs/dagre) |
 
 -------------------------------------------------------------------------
 
