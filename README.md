@@ -47,7 +47,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed
 ### [Available charts](https://d3blocks.github.io/d3blocks/)
 
 
-|  nr |  Block                                                                             |    Function                  |    Blog                                                                 |
+|  nr |  Block                                                                             |    Function                  |    More Information                                                                 |
 |-----|------------------------------------------------------------------------------------|------------------------------|-------------------------------------------------------------------------|
 |  1  | [D3graph](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html)                | ``` d3.d3graph() ```         | [D3graph](https://medium.com/data-science-collective/how-to-turn-any-network-into-an-interactive-knowledge-graph-to-discover-hidden-insights-f49fae4757ff)                                  |
 |  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://medium.com/data-science-collective/radialgraph-a-new-way-to-explore-large-networks-without-the-hairball-ea34193ddec9)                              |
