@@ -45,7 +45,7 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 ### Resources and Links
 - **Example Notebooks:** [Examples](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
-- **Medium Blogs:** [Medium](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blogs)
+- **Medium Blog:** [Medium](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)
 - **Gumroad Blogs with podcast:** [GumRoad](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#gumroad-products-with-podcasts)
 - **Documentation:** [Website](https://d3blocks.github.io/d3blocks)
 - **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/d3blocks/d3blocks/issues)
@@ -58,7 +58,6 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 | Feature | Description |
 |---------|-------------|
-| [**Interactive Network Visualization**](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html) | Create interactive network graphs with D3graph and Elasticgraph for relationship analysis. |
 | [**Data Flow Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html) | Visualize data flows and relationships using Sankey diagrams and Chord diagrams. |
 | [**Temporal Data Analysis**](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html) | Analyze time-series data with interactive charts and moving bubbles for dynamic visualization. |
 | [**Statistical Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html) | Create statistical plots including scatter plots, violin plots, and heatmaps. |
@@ -70,23 +69,23 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 |  nr |  Block                                                                             |    Function                  |    Blog                                                                 |
 |-----|------------------------------------------------------------------------------------|------------------------------|-------------------------------------------------------------------------|
-|  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                  |
-|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://erdogant.medium.com)                              |
-|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                             |
-|  4  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                   |
-|  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://erdogant.medium.com)    |
-|  6  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://erdogant.medium.com)       |
-|  7  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://erdogant.medium.com)  |
-|  8  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://erdogant.medium.com) |
-|  9  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://erdogant.medium.com) |
-|  10 | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://erdogant.medium.com) |
-|  11 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://erdogant.medium.com) |
-|  12 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://erdogant.medium.com) |
-|  13 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://erdogant.medium.com) |
-|  14 | [Tree](https://d3blocks.github.io/d3blocks/pages/html/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://erdogant.medium.com) |
-|  15 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://erdogant.medium.com) |
-|  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://erdogant.medium.com) |
-|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [D3Blocks](https://erdogant.medium.com) |
+|  1  | [D3graph](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                  |
+|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://erdogant.medium.com)                              |
+|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                             |
+|  4  | [Sankey](https://d3blocks.github.io/d3blocks/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                   |
+|  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://erdogant.medium.com)    |
+|  6  | [Scatter](https://d3blocks.github.io/d3blocks/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://erdogant.medium.com)       |
+|  7  | [Heatmap](https://d3blocks.github.io/d3blocks/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://erdogant.medium.com)  |
+|  8  | [Chord diagram](https://d3blocks.github.io/d3blocks/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://erdogant.medium.com) |
+|  9  | [Timeseries](https://d3blocks.github.io/d3blocks/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://erdogant.medium.com) |
+|  10 | [Image slider](https://d3blocks.github.io/d3blocks/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://erdogant.medium.com) |
+|  11 | [Violin plot](https://d3blocks.github.io/d3blocks/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://erdogant.medium.com) |
+|  12 | [Particles](https://d3blocks.github.io/d3blocks/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://erdogant.medium.com) |
+|  13 | [Treemap](https://d3blocks.github.io/d3blocks/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://erdogant.medium.com) |
+|  14 | [Tree](https://d3blocks.github.io/d3blocks/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://erdogant.medium.com) |
+|  15 | [Maps](https://d3blocks.github.io/d3blocks/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://erdogant.medium.com) |
+|  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://erdogant.medium.com) |
+|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [D3Blocks](https://erdogant.medium.com) |
 
 -------------------------------------------------------------------------
 
