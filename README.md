@@ -20,7 +20,7 @@
 
 <a href="https://d3blocks.github.io/d3blocks/"><img src="https://github.com/d3blocks/d3blocks/blob/main/logo.png" width="275" align="left" /></a>
 ``D3Blocks`` is a Python package that builds on the graphics of d3 javascript (d3js). It allows you to create the most visually attractive and useful charts with only a few lines of Python code!
-The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detailed information about the working of the blocks with many examples. **⭐️ Star it if you like it ⭐️**
+The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed information about the working of the blocks with many examples. **⭐️ Star it if you like it ⭐️**
 </div>
 
 ---
@@ -33,60 +33,39 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 ---
 
-### D3Graph Network Example
-
-<p align="left">
-  <a href="http://erdogant.github.io/docs/d3graph/d3graph/socialmedia.html">
-     <img src="http://erdogant.github.io/docs/d3graph/d3graph/socialmedia.gif" width="1000"/>
-  </a>
-</p>
-
----
-
 ### Resources and Links
-- **Example Notebooks:** [Examples](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
-- **Medium Blogs** [Medium](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blogs)
-- **Gumroad Blogs with podcast:** [GumRoad](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#gumroad-products-with-podcasts))
-- **Documentation:** [Website](https://d3blocks.github.io/d3blocks)
-- **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/d3blocks/d3blocks/issues)
+- [**Example Notebooks**](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
+- [**Documentation**](https://d3blocks.github.io/d3blocks)
+- [**Bug Reports and Feature Requests**](https://github.com/d3blocks/d3blocks/issues)
 
-
----
-
-
-### Key Pipelines
-
-| Feature | Description |
-|---------|-------------|
-| [**Interactive Network Visualization**](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html) | Create interactive network graphs with D3graph and Elasticgraph for relationship analysis. |
-| [**Data Flow Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html) | Visualize data flows and relationships using Sankey diagrams and Chord diagrams. |
-| [**Temporal Data Analysis**](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html) | Analyze time-series data with interactive charts and moving bubbles for dynamic visualization. |
-| [**Statistical Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html) | Create statistical plots including scatter plots, violin plots, and heatmaps. |
-| [**Hierarchical Data Visualization**](https://d3blocks.github.io/d3blocks/pages/html/Tree.html) | Visualize hierarchical structures with tree diagrams, treemaps, and circle packing. |
+### Blogs
+- [**Medium Blog**](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)
+- [**Substack with podcast**](https://erdogant.substack.com/p/d3blocks-the-python-library-to-create)
+- [**Gumroad Blogs with podcast**](https://erdogant.gumroad.com/l/d3blocks-the-python-library-to-create-interactive-standalone-and-beautiful-d3-js-charts)
 
 -------------------------------------------------------------------------
-### [Supported charts](https://d3blocks.github.io/d3blocks/)
+### [Available charts](https://d3blocks.github.io/d3blocks/)
 
 
-|  nr |  Block                                                                             |    Function                  |    Blog                                                                     |
-|-----|------------------------------------------------------------------------------------|------------------------------|---------------------------------------------------------------------------|
-|  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                      |
-|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)     | ``` d3.radialgraph() ```     | [Radialgraph](https://erdogant.medium.com)                                      |
-|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                                 |
-|  4  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                       |
-|  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://erdogant.medium.com)    |
-|  6  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://erdogant.medium.com)       |
-|  7  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://erdogant.medium.com)  |
-|  8  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://erdogant.medium.com) |
-|  9  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://erdogant.medium.com) |
-|  10 | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://erdogant.medium.com) |
-|  11 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://erdogant.medium.com) |
-|  12 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://erdogant.medium.com) |
-|  13 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://erdogant.medium.com) |
-|  14 | [Tree](https://d3blocks.github.io/d3blocks/pages/html/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://erdogant.medium.com) |
-|  15 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://erdogant.medium.com) |
-|  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://erdogant.medium.com) |
-|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [D3Blocks](https://erdogant.medium.com) |
+|  nr |  Block                                                                             |    Function                  |    More Information                                                                 |
+|-----|------------------------------------------------------------------------------------|------------------------------|-------------------------------------------------------------------------|
+|  1  | [D3graph](https://d3blocks.github.io/d3blocks/pages/html/d3graph.html)                | ``` d3.d3graph() ```         | [D3graph](https://medium.com/data-science-collective/how-to-turn-any-network-into-an-interactive-knowledge-graph-to-discover-hidden-insights-f49fae4757ff)                                  |
+|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://medium.com/data-science-collective/radialgraph-a-new-way-to-explore-large-networks-without-the-hairball-ea34193ddec9)                              |
+|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)                             |
+|  4  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)                                   |
+|  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)    |
+|  6  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)       |
+|  7  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510)  |
+|  8  | [Chord diagram](https://d3blocks.github.io/d3blocks/pages/html/Chord.html)         | ``` d3.chord()  ```          | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  9  | [Timeseries](https://d3blocks.github.io/d3blocks/pages/html/Timeseries.html)       | ``` d3.timeseries()  ```     | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  10 | [Image slider](https://d3blocks.github.io/d3blocks/pages/html/Imageslider.html)    | ``` d3.imageslider()  ```    | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  11 | [Violin plot](https://d3blocks.github.io/d3blocks/pages/html/Violin.html)          | ``` d3.violin()  ```         | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  12 | [Particles](https://d3blocks.github.io/d3blocks/pages/html/Particles.html)         | ``` d3.particles()  ```      | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  13 | [Treemap](https://d3blocks.github.io/d3blocks/pages/html/Treemap.html)             | ``` d3.treemap()  ```        | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  14 | [Tree](https://d3blocks.github.io/d3blocks/pages/html/Tree.html)                   | ``` d3.tree()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  15 | [Maps](https://d3blocks.github.io/d3blocks/pages/html/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/pages/html/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
+|  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [Dagre](https://github.com/dagrejs/dagre) |
 
 -------------------------------------------------------------------------
 
@@ -111,11 +90,20 @@ d3 = D3Blocks()
 ```
 
 
-<hr>
+---
+
+### D3Blocks💙Streamlit
+Every chart from D3Block can easily be incorporated into a Streamlit Dashboard. Because every D3Blocks chart is just HTML and JavaScript, you can generate the HTML in memory and embed it 
+A few practical rules of thumb: prefer `st.iframe` over the older `components.html` for full interactive charts, always pass an explicit pixel height, and set `show_side_panel=False` when Streamlit already owns the controls so the UI doesn't duplicate. `color_background='streamlit'` picks backgrounds that match a typical Streamlit light or dark page.
+
+* [Minimal examples for each chart can be found in the Streamlit directory in the repo](https://github.com/d3blocks/d3blocks/tree/main/streamlit). 
+* [More Streamlit documentation can be found here.](https://d3blocks.github.io/d3blocks/Streamlit.html)
+
+---
 
 ### Ethical Ads
-When HTMLs are generated, it automatically include ethical ads as a small way to support development. 
-This entire project with maintenance is done thoughtfully and only in my free time. Ads can be disabled via an input parameter, and you can also support the project with a coffee donation instead.
+When HTMLs are generated, it automatically includes ethical ads as a small way to support development. 
+I maintain this entire project thoughtfully and in my free time. Ads can be disabled via an input parameter, and you can also support the project with a coffee donation instead.
 
 ### Star history
 [![Star History Chart](https://star-history.dera.page/svg?repos=d3blocks/d3blocks)](https://star-history.dera.page/d3blocks/d3blocks)
@@ -125,7 +113,6 @@ This entire project with maintenance is done thoughtfully and only in my free ti
 * [observablehq](https://observablehq.com/top)
 
 ### Contributors
-Setting up and maintaining D3blocks has been possible thanks to users and contributors. Thanks to:
 
 <p align="left">
   <a href="https://github.com/d3blocks/d3blocks/graphs/contributors">
@@ -138,4 +125,4 @@ Setting up and maintaining D3blocks has been possible thanks to users and contri
 * Contributions are welcome.
 * Yes! This library is entirely **free** but it runs on coffee! :) Feel free to support with a <a href="https://erdogant.github.io/donate/?currency=USD&amount=5">Coffee</a>.
 
-[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](/docs/donation/)
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00)](https://www.buymeacoffee.com/erdogant)
