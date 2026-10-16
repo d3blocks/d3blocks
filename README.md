@@ -90,7 +90,16 @@ d3 = D3Blocks()
 ```
 
 
-<hr>
+---
+
+### D3Blocks💙Streamlit
+Every chart from D3Block can easily be incorporated into a Streamlit Dashboard. Because every D3Blocks chart is just HTML and JavaScript, you can generate the HTML in memory and embed it 
+A few practical rules of thumb: prefer `st.iframe` over the older `components.html` for full interactive charts, always pass an explicit pixel height, and set `show_side_panel=False` when Streamlit already owns the controls so the UI doesn't duplicate. `color_background='streamlit'` picks backgrounds that match a typical Streamlit light or dark page.
+
+* [Minimal examples for each chart can be found in the Streamlit directory in the repo](https://github.com/d3blocks/d3blocks/tree/main/streamlit). 
+* [More Streamlit documentation can be found here.](https://d3blocks.github.io/d3blocks/Streamlit.html)
+
+---
 
 ### Ethical Ads
 When HTMLs are generated, it automatically includes ethical ads as a small way to support development. 
