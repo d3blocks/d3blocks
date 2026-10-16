@@ -45,8 +45,8 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 
 ### Resources and Links
 - **Example Notebooks:** [Examples](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#google-colab-notebooks)
-- **Medium Blogs** [Medium](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blogs)
-- **Gumroad Blogs with podcast:** [GumRoad](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#gumroad-products-with-podcasts))
+- **Medium Blogs:** [Medium](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#medium-blogs)
+- **Gumroad Blogs with podcast:** [GumRoad](https://d3blocks.github.io/d3blocks/pages/html/Documentation.html#gumroad-products-with-podcasts)
 - **Documentation:** [Website](https://d3blocks.github.io/d3blocks)
 - **Bug Reports and Feature Requests:** [GitHub Issues](https://github.com/d3blocks/d3blocks/issues)
 
@@ -68,12 +68,12 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contains detaile
 ### [Supported charts](https://d3blocks.github.io/d3blocks/)
 
 
-|  nr |  Block                                                                             |    Function                  |    Blog                                                                     |
-|-----|------------------------------------------------------------------------------------|------------------------------|---------------------------------------------------------------------------|
-|  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                      |
-|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)     | ``` d3.radialgraph() ```     | [Radialgraph](https://erdogant.medium.com)                                      |
-|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                                 |
-|  4  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                       |
+|  nr |  Block                                                                             |    Function                  |    Blog                                                                 |
+|-----|------------------------------------------------------------------------------------|------------------------------|-------------------------------------------------------------------------|
+|  1  | [D3graph](https://erdogant.github.io/d3graph/pages/html/index.html)                | ``` d3.d3graph() ```         | [D3graph](https://erdogant.medium.com)                                  |
+|  2  | [Radialgraph](https://d3blocks.github.io/d3blocks/pages/html/Radialgraph.html)   | ``` d3.radialgraph() ```     | [Radialgraph](https://erdogant.medium.com)                              |
+|  3  | [Elasticgraph](https://d3blocks.github.io/d3blocks/pages/html/elasticgraph.html)   | ``` d3.elasticgraph() ```    | [Elasticgraph](https://erdogant.medium.com)                             |
+|  4  | [Sankey](https://d3blocks.github.io/d3blocks/pages/html/Sankey.html)               | ``` d3.sankey()  ```         | [Sankey](https://erdogant.medium.com)                                   |
 |  5  | [Movingbubbles](https://d3blocks.github.io/d3blocks/pages/html/MovingBubbles.html) | ``` d3.movingbubbles()  ```  | [Movingbubbles](https://erdogant.medium.com)    |
 |  6  | [Scatter](https://d3blocks.github.io/d3blocks/pages/html/Scatter.html)             | ``` d3.scatter()  ```        | [Scatter](https://erdogant.medium.com)       |
 |  7  | [Heatmap](https://d3blocks.github.io/d3blocks/pages/html/Heatmap.html)             | ``` d3.heatmap()  ```        | [Heatmap](https://erdogant.medium.com)  |
@@ -138,4 +138,4 @@ Setting up and maintaining D3blocks has been possible thanks to users and contri
 * Contributions are welcome.
 * Yes! This library is entirely **free** but it runs on coffee! :) Feel free to support with a <a href="https://erdogant.github.io/donate/?currency=USD&amount=5">Coffee</a>.
 
-[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](/docs/donation/)
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=erdogant&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00)](https://www.buymeacoffee.com/erdogant)
