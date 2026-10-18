@@ -1,3 +1,40 @@
+
+# %% Flowgraph
+
+# Edge list with shapes and edge labels
+from d3blocks import D3Blocks
+import pandas as pd
+
+d3 = D3Blocks(frame=False)
+df = pd.DataFrame({'source': ['Start', 'Valid?', 'Valid?', 'Fix'],
+                   'target': ['Valid?', 'Done', 'Fix', 'Valid?'],
+                   'label': ['', 'yes', 'no', 'retry']})
+
+nodes = {'Start': {'shape': 'terminal'}, 'Valid?': {'shape': 'decision'},
+         'Done': {'shape': 'terminal'}}
+
+# Set the flowgraph
+d3.flowgraph(df, nodes=nodes, direction='TB')
+
+# Change a node and redraw
+d3.node_properties['Fix']['color'] = '#e15759'
+d3.show()
+
+# Mermaid diagram kept in a Markdown file (renders on GitHub too)
+d3.flowgraph('docs/process.md')
+
+# Mermaid flowchart with a subgraph, laid out with ELK
+d3.flowgraph('''
+flowchart LR
+  subgraph api [API]
+    gw[Gateway] --> svc[Orders]
+  end
+  svc --> db[(Postgres)]
+  svc -.->|events| q[[Worker]]
+''', layout='elk')
+
+
+# %% imageslider
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 img_before, img_after = d3.import_example('southern_nebula_internet')

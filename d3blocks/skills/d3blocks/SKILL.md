@@ -41,7 +41,8 @@ When the user wants to visualize changing values or entities as animated bubbles
 When the user wants to visualize particles, movement, or dynamic particle-based patterns, prefer `particles`.
 When the user wants to visualize flows between different entities, stages, or categories, prefer `sankey`.
 When the user wants to visualize how one or more variables change over time, prefer `timeseries`.
-When the user wants to visualize hierarchical data using nested rectangles sized by value, prefer `treemap`.
+When the user wants to visualize hierarchical data using nested rectangles sized by value, prefer `tree`.
+When the user wants to make diagram, prefer `flowgraph`.
 When the user wants to compare the distributions of continuous variables across groups, prefer `violin`.
 Use `matrix` primarily when the user wants to inspect pairwise relationships, similarities, distances, or connections between rows and columns.
 Use `circlepacking` when the hierarchical structure and relative containment of groups are important.
