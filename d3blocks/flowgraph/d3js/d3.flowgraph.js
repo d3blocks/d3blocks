@@ -92,9 +92,13 @@
   function groupHeader() { return Math.round(state.fontsize + 12); }
 
   // ---------------------------------------------------------------- shapes
+  // A circle without a label is a pseudo-state (state diagram start / end): a small solid dot.
+  function isPseudo(n) { return n.shape === 'circle' && !String(n.label).trim(); }
+
   function sizeNode(n) {
     var fs = state.fontsize, lh = lineHeight();
     n.lines = String(n.label).split('\n');
+    if (isPseudo(n)) { n.width = n.height = 22; return; }
     var tw = d3.max(n.lines, function (l) { return textWidth(l, fs); }) || 0;
     var th = n.lines.length * lh;
     var w = tw + 32, h = th + 20;
@@ -591,6 +595,14 @@
   }
 
   // ---------------------------------------------------------------- render
+  // Edges in the default grey follow the theme (--fg-edge-default); other edge
+  // colours are data and stay as given. Set as style, since var() is not valid
+  // in presentation attributes.
+  var DEFAULT_EDGE_COLOR = '#8c8c8c';
+  function paint(color) {
+    return String(color).toLowerCase() === DEFAULT_EDGE_COLOR ? 'var(--fg-edge-default)' : color;
+  }
+
   var colorIds = new Map();
   function markerFor(color) {
     if (!colorIds.has(color)) {
@@ -600,7 +612,7 @@
         .attr('id', id).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
         .attr('markerWidth', 9).attr('markerHeight', 9).attr('markerUnits', 'userSpaceOnUse')
         .attr('orient', 'auto-start-reverse')
-        .append('path').attr('d', 'M0,0L10,5L0,10Z').attr('fill', color);
+        .append('path').attr('d', 'M0,0L10,5L0,10Z').style('fill', paint(color));
     }
     return 'url(#' + colorIds.get(color) + ')';
   }
@@ -661,11 +673,11 @@
     eenter.append('path').attr('class', 'fg-edge-hit');
     eenter.append('path').attr('class', function (d) { return 'fg-edge style-' + d.style; })
       .attr('id', function (d) { return 'fg-path-' + d.idx; })
-      .attr('stroke', function (d) { return d.color; })
+      .style('stroke', function (d) { return paint(d.color); })
       .attr('stroke-width', function (d) { return d.width; })
       .attr('marker-end', function (d) { return markerFor(d.color); });
     eenter.append('path').attr('class', 'fg-edge-flow')
-      .attr('stroke', function (d) { return d.color; })
+      .style('stroke', function (d) { return paint(d.color); })
       .attr('stroke-width', function (d) { return d.width + 1.5; });
     eenter
       .on('mouseenter', function (ev, d) { highlight({ type: 'edge', id: d.idx }); showEdgeTooltip(ev, d); })
@@ -699,7 +711,7 @@
     var nsel = gNodes.selectAll('g.fg-node').data(nodes, function (d) { return d.name; });
     nsel.exit().remove();
     var nenter = nsel.enter().append('g')
-      .attr('class', function (d) { return 'fg-node shape-' + d.shape; })
+      .attr('class', function (d) { return 'fg-node shape-' + d.shape + (isPseudo(d) ? ' fg-pseudo' : ''); })
       .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
     nenter.append('path').attr('class', 'fg-shape');
     nenter.append('text').attr('class', 'fg-label').attr('text-anchor', 'middle');
@@ -757,7 +769,7 @@
         for (var i = 0; i < n; i++) {
           var c = document.createElementNS(SVG_NS, 'circle');
           c.setAttribute('r', Math.max(2.5, e.width + 1));
-          c.setAttribute('fill', e.color);
+          c.style.fill = paint(e.color);
           var m = document.createElementNS(SVG_NS, 'animateMotion');
           m.setAttribute('dur', dur.toFixed(2) + 's');
           m.setAttribute('repeatCount', 'indefinite');
@@ -775,7 +787,7 @@
         if (!comet) {
           comet = document.createElementNS(SVG_NS, 'path');
           comet.setAttribute('class', 'fg-edge-comet');
-          comet.setAttribute('stroke', e.color);
+          comet.style.stroke = paint(e.color);
           comet.setAttribute('stroke-width', e.width + 2);
           comet.setAttribute('d', path.getAttribute('d'));
           g.appendChild(comet);
@@ -828,6 +840,7 @@
   }
 
   function setTraceButtons(running) {
+    if (DATA.steps) return;  // the buttons open the captioned walkthrough instead
     ['traceButton', 'traceButton2'].forEach(function (id) {
       var b = document.getElementById(id);
       if (!b) return;
@@ -921,6 +934,9 @@
     } else if (target.type === 'edge') {
       var e = edges[target.id];
       es.add(e.idx); ns.add(e.source); ns.add(e.target);
+    } else if (target.type === 'step') {
+      target.nodes.forEach(function (n) { ns.add(n); });
+      target.edges.forEach(function (e) { es.add(e.idx); ns.add(e.source); ns.add(e.target); });
     }
     svg.classed('fg-has-highlight', true);
     gNodes.selectAll('g.fg-node')
@@ -937,7 +953,8 @@
     svg.selectAll('.fg-focus').classed('fg-focus', false);
   }
 
-  function restoreHighlight() { highlight(state.pinned); }
+  // While the walkthrough is open, its step owns the highlight.
+  function restoreHighlight() { highlight(walkTarget || state.pinned); }
 
   function samePin(a, b) { return a && b && a.type === b.type && a.id === b.id; }
   function togglePin(target) {
@@ -988,17 +1005,19 @@
     document.querySelectorAll('.stats-panel').forEach(function (p) {
       if (p.style.display !== 'none') left = Math.max(left, p.getBoundingClientRect().right + 16);
     });
-    return { top: top, left: left, right: 16, bottom: 16 };
+    return { top: top, left: left, right: 16, bottom: 16 + (walkthrough ? walkthrough.height() : 0) };
   }
 
-  function fit(animated) {
+  // Fit the whole diagram, or the box {x, y, w, h} (the walkthrough's follow camera).
+  function fit(animated, box) {
+    box = box || bounds;
     var rect = svg.node().getBoundingClientRect();
     var ins = viewportInsets();
     var availW = Math.max(50, rect.width - ins.left - ins.right);
     var availH = Math.max(50, rect.height - ins.top - ins.bottom);
-    var k = Math.min(availW / bounds.w, availH / bounds.h, 1.5);
-    var tx = ins.left + (availW - bounds.w * k) / 2 - bounds.x * k;
-    var ty = ins.top + (availH - bounds.h * k) / 2 - bounds.y * k;
+    var k = Math.min(availW / box.w, availH / box.h, 1.5);
+    var tx = ins.left + (availW - box.w * k) / 2 - box.x * k;
+    var ty = ins.top + (availH - box.h * k) / 2 - box.y * k;
     var tr = d3.zoomIdentity.translate(tx, ty).scale(k);
     (animated ? svg.transition().duration(500) : svg).call(zoom.transform, tr);
   }
@@ -1014,7 +1033,7 @@
     return computeLayout().then(function (fresh) {
       if (!fresh) return;
       render(true);
-      setTimeout(function () { fit(true); }, 60);
+      setTimeout(function () { fit(true, walkTarget ? stepBounds(walkTarget) : null); }, 60);
     });
   }
 
@@ -1253,8 +1272,60 @@
       refreshAnimations();
     });
   });
-  on('traceButton', 'click', playTrace);
-  on('traceButton2', 'click', playTrace);
+  // Captioned walkthrough (steps) replaces the uncaptioned trace on the same buttons.
+  var walkthrough = null, walkTarget = null;
+  if (DATA.steps) {
+    var edgesByPair = new Map();
+    edges.forEach(function (e) {
+      var key = e.source + '\u0000' + e.target;
+      if (!edgesByPair.has(key)) edgesByPair.set(key, []);
+      edgesByPair.get(key).push(e);
+    });
+    ['traceButton', 'traceButton2'].forEach(function (id) {
+      var b = document.getElementById(id);
+      if (!b) return;
+      if (!DATA.steps.length) { b.style.display = 'none'; return; }
+      b.textContent = '▶ Walk through';
+      b.title = 'Step through the diagram with a caption per step';
+    });
+    walkthrough = D3BlocksWalkthrough({
+      steps: DATA.steps,
+      triggers: ['traceButton', 'traceButton2'],
+      onOpen: function () { stopTrace(); hideTooltip(); },
+      onStep: function (st) {
+        var hl = st.highlight || {};
+        var stepNodes = hl.nodes || [], stepEdges = [];
+        (hl.edges || []).forEach(function (p) {
+          stepEdges = stepEdges.concat(edgesByPair.get(p[0] + '\u0000' + p[1]) || []);
+        });
+        walkTarget = (stepNodes.length || stepEdges.length) ? { type: 'step', nodes: stepNodes, edges: stepEdges } : null;
+        restoreHighlight();
+        fit(true, walkTarget ? stepBounds(walkTarget) : null);
+      },
+      onClose: function () { walkTarget = null; restoreHighlight(); fit(true); }
+    });
+  } else {
+    on('traceButton', 'click', playTrace);
+    on('traceButton2', 'click', playTrace);
+  }
+
+  // Box around a step's nodes and edges, padded so the camera keeps some context.
+  function stepBounds(target) {
+    var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    function grow(x, y) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    var names = new Set(target.nodes);
+    target.edges.forEach(function (e) {
+      names.add(e.source); names.add(e.target);
+      e.points.forEach(function (p) { grow(p.x, p.y); });
+    });
+    names.forEach(function (name) {
+      var n = nodeById.get(name);
+      if (n) { grow(n.x - n.width / 2, n.y - n.height / 2); grow(n.x + n.width / 2, n.y + n.height / 2); }
+    });
+    if (!isFinite(x0)) return null;
+    var pad = 60;
+    return { x: x0 - pad, y: y0 - pad, w: x1 - x0 + 2 * pad, h: y1 - y0 + 2 * pad };
+  }
   checkbox('edgeLabelToggle', 'showEdgeLabels', true);
   checkbox('groupToggle', 'showGroups', true);
   if (!usedGroups.length) {
@@ -1309,22 +1380,16 @@
       variants.forEach(function (v) {
         var e = edges.find(function (x) { return x.variant === v; });
         var dash = e.style === 'dashed' ? '5 3' : e.style === 'dotted' ? '1.5 3' : 'none';
-        var swatch = '<svg class="fg-line-swatch" viewBox="0 0 26 10"><line x1="1" y1="5" x2="25" y2="5" stroke="' +
-          escapeHtml(e.color) + '" stroke-width="' + Math.min(4, e.width) + '" stroke-dasharray="' + dash + '" stroke-linecap="round"/></svg>';
+        var swatch = '<svg class="fg-line-swatch" viewBox="0 0 26 10"><line x1="1" y1="5" x2="25" y2="5" style="stroke:' +
+          escapeHtml(paint(e.color)) + '" stroke-width="' + Math.min(4, e.width) + '" stroke-dasharray="' + dash + '" stroke-linecap="round"/></svg>';
         var n = edges.filter(function (x) { return x.variant === v; }).length;
         row(swatch + escapeHtml(v) + ' <span class="fg-legend-count">' + n + '</span>', { type: 'variant', id: v });
       });
     }
   })();
 
-  // Theme.
-  on('themeBtn', 'click', function () {
-    document.body.classList.toggle('light');
-    var isLight = document.body.classList.contains('light');
-    var btn = document.getElementById('themeBtn');
-    btn.textContent = isLight ? '☀' : '🌙';
-    btn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
-  });
+  // Theme (theme.js: runtime toggle, and dark_mode='auto' follows the OS until toggled).
+  D3BlocksTheme.bind('themeBtn');
 
   // Search.
   (function setupSearch() {
@@ -1403,5 +1468,5 @@
     throw err;
   });
 
-  window.__flowgraph = { state: state, nodes: nodes, edges: edges, groups: usedGroups, relayout: relayout, fit: fit, ready: ready };
+  window.__flowgraph = { state: state, nodes: nodes, edges: edges, groups: usedGroups, relayout: relayout, fit: fit, ready: ready, walkthrough: walkthrough };
 })();

@@ -66,6 +66,8 @@ The [documentation pages](https://d3blocks.github.io/d3blocks/) contain detailed
 |  15 | [Maps](https://d3blocks.github.io/d3blocks/Maps.html)                   | ``` d3.maps()  ```           | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
 |  16 | [Circlepacking](https://d3blocks.github.io/d3blocks/Circlepacking.html) | ``` d3.circlepacking()  ```  | [D3Blocks](https://medium.com/data-science-collective/d3blocks-the-sweet-spot-for-data-scientists-interactive-charts-without-deployment-friction-c7f576025510) |
 |  17 | [Flowgraph](https://d3blocks.github.io/d3blocks/Flowgraph.html)         | ``` d3.flowgraph()  ```      | [Dagre](https://github.com/dagrejs/dagre) |
+|  18 | [Sequence](https://d3blocks.github.io/d3blocks/Sequence.html)           | ``` d3.sequence()  ```       | [Mermaid sequenceDiagram](https://mermaid.js.org/syntax/sequenceDiagram.html) |
+|  19 | [ERD](https://d3blocks.github.io/d3blocks/ERD.html)                     | ``` d3.erd()  ```            | [Mermaid erDiagram](https://mermaid.js.org/syntax/entityRelationshipDiagram.html) |
 
 -------------------------------------------------------------------------
 

@@ -88,6 +88,42 @@ flowchart block is used.
 	d3.flowgraph('docs/order_process.md')
 
 
+State diagrams
+**************
+
+Mermaid ``stateDiagram`` and ``stateDiagram-v2`` are read too, so lifecycle diagrams render with
+the same layout, interaction and export as flowcharts. ``[*]`` becomes one start and one end
+pseudo-state (small circles), transition labels are kept (everything after the first ``:``), notes
+are added to the state's tooltip and ``classDef`` / ``class`` colours are applied. State diagrams are
+laid out top to bottom unless ``direction`` is passed. Composite states, ``<<choice>>``,
+``state "x" as A`` and ``direction`` raise a ``ValueError`` naming the line.
+
+.. code:: python
+
+	d3.flowgraph('''
+	stateDiagram-v2
+	    [*] --> pending : Signal created
+	    pending --> awaiting_approval : Risk checks pass
+	    pending --> cancelled : Strategy disabled
+	    awaiting_approval --> approved : Operator approves
+	    awaiting_approval --> rejected : Operator rejects
+	    approved --> executed : Order sent to broker
+	    executed --> [*]
+	    rejected --> [*]
+	    cancelled --> [*]
+
+	    note right of awaiting_approval
+	        Agent-generated signals
+	        enter here directly
+	    end note
+
+	    classDef review fill:#e0f2fe,stroke:#0284c7
+	    class awaiting_approval review
+	''')
+
+From Markdown, the first flowchart or state diagram block is used; other diagram types are skipped.
+
+
 Architecture diagram
 ********************
 
@@ -139,11 +175,44 @@ re-renders it with the chosen layout, direction and animation.
 	st.iframe(html, height=700, width="stretch")
 
 
+Walkthrough
+***********
+
+``steps`` adds a captioned walkthrough. **▶ Walk through** in the top panel opens a caption bar with
+the step title, the caption, "Step 3 of 9", a row of step stops and Prev / Play / Next. Each step
+highlights its nodes and edges, dims the rest and zooms to them. Keys: ← and → move, Space plays or
+pauses, Esc closes. Play advances every 3 seconds and stops on the last step.
+
+.. code:: python
+
+	steps = [
+	    {'title': 'Check', 'caption': 'Every order is validated first.',
+	     'highlight': {'nodes': ['check'], 'edges': [('start', 'check')]}},
+	    {'title': 'Retry', 'caption': 'Invalid input is fixed and checked again.',
+	     'highlight': {'edges': [('check', 'fix'), ('fix', 'check')]}},
+	]
+	d3.flowgraph(edges, nodes=nodes, steps=steps)
+
+Without ``steps`` the button is **▶ Trace**, the uncaptioned walk through the flow. Unknown nodes or
+edges and unsupported keys raise a ``ValueError`` with the step index. The same walkthrough is used by
+``sequence`` and ``erd``.
+
+
+Theme
+*****
+
+The theme button (last on the right of the top panel) switches between dark and light at runtime.
+``dark_mode=True`` (default) starts dark, ``False`` starts light, and ``dark_mode='auto'`` follows the
+operating system theme, also when it changes, until the theme button is used. In ``'auto'`` mode a
+``?theme=light`` or ``?theme=dark`` URL parameter picks the theme. Exports keep the theme shown.
+
+
 Interaction
 ***********
 
 * Hover a node to trace everything upstream and downstream; click to pin.
-* **▶ Trace** walks through the flow step by step (from the pinned node, or from all start nodes).
+* **▶ Trace** walks through the flow step by step (from the pinned node, or from all start nodes);
+  with ``steps`` it is **▶ Walk through**, the captioned walkthrough.
 * Drag nodes; edges and groups follow. **Reset layout** recomputes the layout.
 * The Layout panel changes direction, spacing, font size, edge curve and animation.
 * The Legend panel lists groups and the edge variants in use.

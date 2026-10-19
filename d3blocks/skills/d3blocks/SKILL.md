@@ -43,6 +43,9 @@ When the user wants to visualize flows between different entities, stages, or ca
 When the user wants to visualize how one or more variables change over time, prefer `timeseries`.
 When the user wants to visualize hierarchical data using nested rectangles sized by value, prefer `tree`.
 When the user wants to make diagram, prefer `flowgraph`.
+When the user wants a state machine or lifecycle diagram (Mermaid `stateDiagram`), prefer `flowgraph`.
+When the user wants to show request/response flows or API call order between participants (Mermaid `sequenceDiagram`), prefer `sequence`.
+When the user wants to visualize a database schema, tables and their keys, or entity relationships (Mermaid `erDiagram`), prefer `erd`.
 When the user wants to compare the distributions of continuous variables across groups, prefer `violin`.
 Use `matrix` primarily when the user wants to inspect pairwise relationships, similarities, distances, or connections between rows and columns.
 Use `circlepacking` when the hierarchical structure and relative containment of groups are important.

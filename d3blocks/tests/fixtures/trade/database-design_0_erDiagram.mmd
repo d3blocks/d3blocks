@@ -1,0 +1,66 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#ccfbf1", "tertiaryBorderColor": "#0f766e", "tertiaryTextColor": "#134e4a", "lineColor": "#7c3aed", "textColor": "#0f172a"}, "themeCSS": ".entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; } .entityLabel, .entityLabel *, .relationshipLabel, .relationshipLabel * { fill: #0f172a !important; color: #0f172a !important; } .relationshipLabelBox { fill: #fef3c7 !important; opacity: 1 !important; } .flowchart-link { stroke: #a78bfa !important; stroke-width: 2px !important; } marker path { fill: #a78bfa !important; stroke: #a78bfa !important; } .edgeLabel rect, .labelBkg { fill: #fef3c7 !important; opacity: 1 !important; } .edgeLabel, .edgeLabel p { background-color: #fef3c7 !important; color: #0f172a !important; }"}}%%
+erDiagram
+    user_guide_rag_generations ||--o{ user_guide_rag_chunks : "owns (FK)"
+    langchain_pg_collection o|--o{ langchain_pg_embedding : "contains (FK)"
+    user_guide_rag_generations o|..o| langchain_pg_collection : "collection_name = name"
+    user_guide_rag_chunks o|..o| langchain_pg_embedding : "chunk_id in metadata"
+    user_guide_rag_chats ||--o{ user_guide_rag_messages : "contains (FK)"
+    user_guide_rag_generations }o..o{ user_guide_page_help_cache : "shared guide_hash"
+
+    user_guide_rag_generations {
+        uuid id PK
+        varchar base_collection
+        varchar backend
+        varchar collection_name UK
+        varchar status
+        varchar embedding_identity
+        varchar guide_hash
+        integer chunk_count
+        bytea search_manifest_ciphertext
+    }
+    user_guide_rag_chunks {
+        uuid generation_id PK,FK
+        varchar chunk_id PK
+        varchar backend
+        integer ordinal
+        varchar route
+        varchar feature
+        varchar intent
+        tsvector plaintext_search_vector
+        bytea payload_ciphertext
+    }
+    langchain_pg_collection {
+        uuid uuid PK
+        varchar name UK
+        json cmetadata
+    }
+    langchain_pg_embedding {
+        varchar id PK
+        uuid collection_id FK
+        vector embedding
+        varchar document
+        jsonb cmetadata
+    }
+    user_guide_rag_chats {
+        uuid id PK
+        varchar summary
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    user_guide_rag_messages {
+        uuid id PK
+        uuid chat_id FK
+        varchar role
+        text content
+        jsonb message_metadata
+        timestamptz created_at
+    }
+    user_guide_page_help_cache {
+        uuid id PK
+        varchar guide_hash
+        varchar route
+        text query
+        varchar model_key
+        text answer
+        jsonb sources
+    }

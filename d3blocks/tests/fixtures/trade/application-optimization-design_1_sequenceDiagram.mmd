@@ -1,0 +1,12 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "tertiaryTextColor": "#14532d", "lineColor": "#7c3aed", "textColor": "#0f172a", "clusterBkg": "#f3e8ff", "clusterBorder": "#9333ea", "actorBkg": "#e0f2fe", "actorBorder": "#0284c7", "actorTextColor": "#0c4a6e", "actorLineColor": "#64748b", "signalColor": "#db2777", "signalTextColor": "#831843", "labelBoxBkgColor": "#ecfdf5", "labelBoxBorderColor": "#059669", "labelTextColor": "#064e3b", "noteBkgColor": "#fef9c3", "noteBorderColor": "#ca8a04", "noteTextColor": "#422006", "activationBkgColor": "#ede9fe", "activationBorderColor": "#7c3aed", "edgeLabelBackground": "#fff7ed"}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+sequenceDiagram
+    participant W as Worker
+    participant D as PostgreSQL
+    participant L as LLM adapter
+    W->>D: Lock agent/day and check total allowance
+    D-->>W: Commit reservation or deny
+    W->>L: One explicitly budgeted provider attempt
+    L-->>W: Response with usage or classified failure
+    W->>D: Lock agent/day and settle call idempotently
+    D-->>W: Commit actual usage and release held allowance
+    W->>D: Persist suggestion/signal separately

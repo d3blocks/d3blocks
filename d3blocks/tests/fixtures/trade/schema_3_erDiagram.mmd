@@ -1,0 +1,234 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "tertiaryTextColor": "#14532d", "lineColor": "#7c3aed", "textColor": "#0f172a", "clusterBkg": "#f3e8ff", "clusterBorder": "#9333ea", "actorBkg": "#e0f2fe", "actorBorder": "#0284c7", "actorTextColor": "#0c4a6e", "actorLineColor": "#64748b", "signalColor": "#db2777", "signalTextColor": "#831843", "labelBoxBkgColor": "#ecfdf5", "labelBoxBorderColor": "#059669", "labelTextColor": "#064e3b", "noteBkgColor": "#fef9c3", "noteBorderColor": "#ca8a04", "noteTextColor": "#422006", "activationBkgColor": "#ede9fe", "activationBorderColor": "#7c3aed", "edgeLabelBackground": "#fff7ed"}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+erDiagram
+    strategy_definitions {
+        uuid id PK
+        text name
+        int  version
+        text strategy_type
+        text risk_tier
+        jsonb parameters
+        bool enabled
+        bool paper_trade_only
+        text account_id
+        text schedule_cron
+        timestamptz next_run_at
+        bool auto_submit
+        numeric max_daily_loss
+        timestamptz breaker_tripped_at
+        text live_config_fingerprint
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    strategy_runs {
+        uuid id PK
+        uuid config_snapshot_id FK
+        uuid strategy_id FK
+        text triggered_by
+        text status
+        timestamptz started_at
+        timestamptz completed_at
+        text error
+        jsonb log_lines
+    }
+
+    signals {
+        uuid id PK
+        uuid config_snapshot_id FK
+        uuid strategy_id FK "nullable"
+        uuid run_id FK "nullable"
+        text symbol
+        text direction
+        numeric quantity
+        numeric target_weight
+        text order_type
+        numeric limit_price
+        text rationale
+        text risk_tier
+        text signal_kind
+        text status
+        text account_id
+        text order_id
+        text origin "strategy | manual"
+        text execution_mode "nullable; paper | live for manual"
+        bool extended_hours
+        timestamptz created_at
+    }
+
+    orders {
+        uuid id PK
+        uuid config_snapshot_id FK
+        uuid signal_id FK
+        uuid capital_allocation_id FK
+        text broker_order_id
+        text account_id
+        text symbol
+        text direction
+        numeric quantity
+        numeric estimated_notional
+        text order_type
+        bool extended_hours
+        text status
+        timestamptz submitted_at
+        timestamptz filled_at
+        numeric filled_quantity
+        numeric filled_price
+    }
+
+    order_fills {
+        uuid id PK
+        uuid order_id FK
+        text provider_fill_id
+        text symbol
+        text direction
+        numeric quantity
+        numeric price
+        timestamptz filled_at
+        numeric commission
+        numeric fees
+        numeric slippage_bps
+        text source
+        jsonb raw_payload
+        timestamptz created_at
+    }
+
+    risk_check_results {
+        uuid id PK
+        uuid signal_id FK
+        uuid order_id FK "nullable"
+        text check_name
+        text status
+        text message
+        text threshold
+        text observed_value
+        jsonb metadata
+        timestamptz created_at
+    }
+
+    audit_events {
+        uuid id PK
+        text event_type
+        text entity_type
+        uuid entity_id
+        jsonb payload
+        timestamptz created_at
+    }
+
+    oauth_tokens {
+        uuid id PK
+        text provider
+        text access_token_enc
+        text refresh_token_enc
+        timestamptz expires_at
+        text scope
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    oauth_states {
+        uuid id PK
+        text state
+        text code_verifier
+        timestamptz created_at
+    }
+
+    task_queue {
+        uuid id PK
+        text task_type
+        jsonb payload
+        text status
+        int  priority
+        timestamptz created_at
+        timestamptz started_at
+        timestamptz completed_at
+        text error
+    }
+
+    agent_suggestions {
+        uuid id PK
+        text agent_name
+        text symbol
+        text sentiment
+        numeric confidence
+        text suggestion
+        uuid signal_id FK
+        uuid order_id FK
+        int  prompt_tokens
+        int  completion_tokens
+        int  total_tokens
+        timestamptz created_at
+    }
+
+    agent_suggestion_evals {
+        uuid id PK
+        uuid suggestion_id FK
+        text judge_name
+        text evaluation_type
+        text label
+        numeric score
+        numeric confidence
+        text calibration_bucket
+        numeric realized_pnl
+        int fill_count
+        jsonb metadata
+        timestamptz evaluated_at
+    }
+
+    user_guide_rag_chats {
+        uuid id PK
+        text summary
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    user_guide_rag_messages {
+        uuid id PK
+        uuid chat_id FK
+        text role
+        text content
+        jsonb message_metadata
+        timestamptz created_at
+    }
+
+    trading_assistant_chats {
+        uuid id PK
+        text summary
+        timestamptz archived_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    trading_assistant_messages {
+        uuid id PK
+        uuid chat_id FK
+        text role
+        text content
+        jsonb message_metadata
+        timestamptz archived_at
+        timestamptz created_at
+    }
+
+    trading_assistant_steps {
+        uuid id PK
+        uuid chat_id FK
+        int ordinal
+        text title
+        text description
+        text action_type
+        jsonb action_payload
+        text status
+        jsonb result
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    strategy_definitions ||--o{ strategy_runs : "has runs"
+    strategy_definitions o|--o{ signals       : "produces"
+    strategy_runs        o|--o{ signals       : "contains"
+    signals              o|--o{ orders        : "may produce"
+    orders               ||--o{ order_fills   : "has fills"
+    signals              ||--o{ risk_check_results : "checked by"
+    orders               ||--o{ risk_check_results : "linked checks"
+    user_guide_rag_chats ||--o{ user_guide_rag_messages : "contains"
+    trading_assistant_chats ||--o{ trading_assistant_messages : "contains"
+    trading_assistant_chats ||--o{ trading_assistant_steps : "has steps"

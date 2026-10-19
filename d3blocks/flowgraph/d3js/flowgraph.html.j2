@@ -15,6 +15,7 @@ Layout      : dagre (https://github.com/dagrejs/dagre, MIT), ELK (https://github
 {{ SUPPORT }}
 
 <style>{% include "flowgraph.css" %}</style>
+<style>{% include "walkthrough.css" %}</style>
 <style>
   body { background: {{ COLOR_BACKGROUND_DARK }}; --bg: {{ COLOR_BACKGROUND_DARK }}; }
   body .top-panel, body .stats-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
@@ -26,7 +27,8 @@ Layout      : dagre (https://github.com/dagrejs/dagre, MIT), ELK (https://github
 <script>{% include "dagre.min.js" %}</script>
 {% if layout == 'elk' %}<script>{% include "elk.bundled.js" %}</script>{% endif %}
 </head>
-<body{% if darkMode == 'false' %} class="light"{% endif %}>
+<body{% if darkMode == 'false' %} class="light"{% endif %} data-dark-mode="{{ darkMode }}">
+<script>{% include "theme.js" %}</script>
 
 <div id="fg-main"><svg id="fg-svg" role="img" aria-label="{{ TITLE }}"></svg></div>
 <div id="fg-tooltip" role="tooltip"></div>
@@ -124,6 +126,7 @@ Layout      : dagre (https://github.com/dagrejs/dagre, MIT), ELK (https://github
 
 <script type="application/json" id="fg-data">{{ json_data }}</script>
 <script type="application/json" id="fg-options">{{ options }}</script>
+<script>{% include "walkthrough.js" %}</script>
 <script>{% include "d3.flowgraph.js" %}</script>
 
 </body>

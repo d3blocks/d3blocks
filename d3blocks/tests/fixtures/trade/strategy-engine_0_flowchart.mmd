@@ -1,0 +1,34 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "tertiaryTextColor": "#14532d", "lineColor": "#7c3aed", "textColor": "#0f172a", "clusterBkg": "#f3e8ff", "clusterBorder": "#9333ea", "actorBkg": "#e0f2fe", "actorBorder": "#0284c7", "actorTextColor": "#0c4a6e", "actorLineColor": "#64748b", "signalColor": "#db2777", "signalTextColor": "#831843", "labelBoxBkgColor": "#ecfdf5", "labelBoxBorderColor": "#059669", "labelTextColor": "#064e3b", "noteBkgColor": "#fef9c3", "noteBorderColor": "#ca8a04", "noteTextColor": "#422006", "activationBkgColor": "#ede9fe", "activationBorderColor": "#7c3aed", "edgeLabelBackground": "#fff7ed"}, "flowchart": {"htmlLabels": false}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+flowchart TD
+  Defined[Defined\nstored in strategy_definitions] --> Enabled[Enabled]
+  Enabled --> Triggered[Triggered\nscheduler or manual]
+  Triggered --> Evaluated[Evaluated\ndeterministic logic runs]
+  Evaluated --> Produced[Signals Produced\nwritten to signals table]
+  Produced --> RiskCheck{Risk checks pass?}
+  RiskCheck -->|yes, low tier| AutoProceed[Signal auto-proceeds\nto execution]
+  RiskCheck -->|yes, medium/high tier| AwaitApproval[awaiting_approval\nhuman reviews in UI]
+  RiskCheck -->|no| Rejected[Rejected with reason\naudit event written]
+  AwaitApproval --> Approved[Approved]
+  AwaitApproval --> RejectedManual[Rejected by user]
+  Approved --> Executed[Order placed via broker adapter\norder record created]
+
+  AgentSignal([Agent Signal\nnews_sentiment, etc.]) -.->|always enters here| AwaitApproval
+    classDef sky fill:#bae6fd,stroke:#0284c7,color:#0f172a,stroke-width:2px;
+    classDef teal fill:#99f6e4,stroke:#0f766e,color:#042f2e,stroke-width:2px;
+    classDef amber fill:#fde68a,stroke:#b45309,color:#422006,stroke-width:2px;
+    classDef pink fill:#fbcfe8,stroke:#be185d,color:#831843,stroke-width:2px;
+    classDef mint fill:#bbf7d0,stroke:#15803d,color:#14532d,stroke-width:2px;
+    classDef violet fill:#ddd6fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px;
+    class Defined sky;
+    class Enabled teal;
+    class Triggered amber;
+    class Evaluated pink;
+    class Produced mint;
+    class RiskCheck violet;
+    class AutoProceed sky;
+    class AwaitApproval teal;
+    class Rejected amber;
+    class Approved pink;
+    class RejectedManual mint;
+    class Executed violet;
+    class AgentSignal sky;

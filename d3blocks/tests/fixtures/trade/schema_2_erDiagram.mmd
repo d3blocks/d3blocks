@@ -1,0 +1,54 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#ccfbf1", "primaryBorderColor": "#0f766e", "primaryTextColor": "#0f172a", "lineColor": "#7c3aed"}}}%%
+erDiagram
+    trading_assistant_chats ||--o{ trading_assistant_messages : contains
+    trading_assistant_chats ||--o{ trading_assistant_steps : plans
+    trading_assistant_chats o|--o{ workflow_runs : guides
+    workflow_runs ||--o{ workflow_run_steps : stages
+    trading_assistant_steps o|--o| trading_coach_actions : presents
+
+    trading_assistant_chats {
+        uuid id PK
+        text summary
+        timestamptz archived_at
+    }
+    trading_assistant_messages {
+        uuid id PK
+        uuid chat_id FK
+        text role
+        text content
+        timestamptz archived_at
+    }
+    trading_assistant_steps {
+        uuid id PK
+        uuid chat_id FK
+        int ordinal
+        text action_type
+        jsonb action_payload
+        text status
+        jsonb result
+    }
+    trading_coach_actions {
+        uuid id PK
+        uuid assistant_step_id FK
+        text action_type
+        text status
+        jsonb manifest
+        text manifest_hash
+        jsonb effect_receipts
+    }
+    workflow_runs {
+        uuid id PK
+        uuid chat_id FK
+        text workflow_id
+        text status
+        text langgraph_thread_id UK
+        jsonb selected_context
+    }
+    workflow_run_steps {
+        uuid id PK
+        uuid workflow_run_id FK
+        text stage_key
+        int ordinal
+        text status
+        jsonb data
+    }

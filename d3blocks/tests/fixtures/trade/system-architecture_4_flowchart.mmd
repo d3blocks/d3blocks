@@ -1,0 +1,54 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "tertiaryTextColor": "#14532d", "lineColor": "#7c3aed", "textColor": "#0f172a", "clusterBkg": "#f3e8ff", "clusterBorder": "#9333ea", "actorBkg": "#e0f2fe", "actorBorder": "#0284c7", "actorTextColor": "#0c4a6e", "actorLineColor": "#64748b", "signalColor": "#db2777", "signalTextColor": "#831843", "labelBoxBkgColor": "#ecfdf5", "labelBoxBorderColor": "#059669", "labelTextColor": "#064e3b", "noteBkgColor": "#fef9c3", "noteBorderColor": "#ca8a04", "noteTextColor": "#422006", "activationBkgColor": "#ede9fe", "activationBorderColor": "#7c3aed", "edgeLabelBackground": "#fff7ed"}, "flowchart": {"htmlLabels": false}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+flowchart TD
+  subgraph T1 ["Tier 1 - Observe and Report (active)"]
+    T1A[Daily P/L and briefing workers]
+    T1B[Portfolio snapshot worker]
+    T1C[Signal cluster and anomaly monitors]
+  end
+
+  subgraph T2 ["Tier 2 - Signal Generation (active)"]
+    T2A[News sentiment agent\nworkers/news_sentiment.py]
+    T2B[Earnings preflight and context\nactive]
+    T2C[Rebalance advisor\nactive]
+  end
+
+  subgraph T3 ["Tier 3 - Guarded Automation (partially active)"]
+    T3A[Market regime gating\nactive]
+    T3B[Approval and deterministic risk gates\nactive]
+  end
+
+  subgraph T4 ["Tier 4 - Operational Watchdog (active)"]
+    T4A[Stale order and worker detection]
+    T4B[Fill anomaly and reconciliation alerts]
+  end
+
+  T2A --> ApprovalQueue[Signal Approval Queue\nawait_approval status]
+  T2B --> ApprovalQueue
+  T2C --> ApprovalQueue
+  ApprovalQueue --> HumanApproval[Human Review\nDashboard]
+  HumanApproval --> Execution[Execution Service]
+
+  T3A -.->|requires deterministic guardrails| Execution
+  T1A -.->|no DB writes| Logs[Logs / Notifications]
+  T4A -.->|rule-based, no LLM| Audit[Audit Events]
+    classDef sky fill:#bae6fd,stroke:#0284c7,color:#0f172a,stroke-width:2px;
+    classDef teal fill:#99f6e4,stroke:#0f766e,color:#042f2e,stroke-width:2px;
+    classDef amber fill:#fde68a,stroke:#b45309,color:#422006,stroke-width:2px;
+    classDef pink fill:#fbcfe8,stroke:#be185d,color:#831843,stroke-width:2px;
+    classDef mint fill:#bbf7d0,stroke:#15803d,color:#14532d,stroke-width:2px;
+    classDef violet fill:#ddd6fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px;
+    class T1A sky;
+    class T1B teal;
+    class T1C amber;
+    class T2A pink;
+    class T2B mint;
+    class T2C violet;
+    class T3A sky;
+    class T3B teal;
+    class T4A amber;
+    class T4B pink;
+    class ApprovalQueue mint;
+    class HumanApproval violet;
+    class Execution sky;
+    class Logs teal;
+    class Audit amber;

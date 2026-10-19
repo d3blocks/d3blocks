@@ -18,12 +18,13 @@ from pathlib import Path
 import colourmap
 import numpy as np
 import pandas as pd
-from jinja2 import Environment, FileSystemLoader, PackageLoader
 
 try:
     from ..utils import set_path, update_config, write_html_file, set_logo, resolve_color_background
+    from .._shared import template_env, check_dark_mode, dark_mode_flag, normalize_steps, ref_in, pair_in
 except ImportError:
     from utils import set_path, update_config, write_html_file, set_logo, resolve_color_background
+    from _shared import template_env, check_dark_mode, dark_mode_flag, normalize_steps, ref_in, pair_in
 
 
 SHAPES = ('process', 'decision', 'terminal', 'io', 'subprocess', 'database',
@@ -78,9 +79,11 @@ def set_config(config={}, font={}, **kwargs):
     config['groups'] = kwargs.get('groups') or {}
     config['cmap'] = kwargs.get('cmap', 'Set2')
     config['show_groups'] = kwargs.get('show_groups', True)
+    # Captioned walkthrough: None keeps the uncaptioned trace.
+    config['steps'] = kwargs.get('steps', None)
     # GUI
     config['color_background'] = kwargs.get('color_background', None)
-    config['dark_mode'] = kwargs.get('dark_mode', True)
+    config['dark_mode'] = check_dark_mode(kwargs.get('dark_mode', True))
     config['save_button'] = kwargs.get('save_button', True)
     config['show_side_panel'] = kwargs.get('show_side_panel', True)
     config['show_top_panel'] = kwargs.get('show_top_panel', True)
@@ -322,10 +325,16 @@ def show(df, **kwargs):
     if 'animation' in df.columns and df['animation'].notna().any() and not config.get('animate'):
         config['animate'], config['animation'] = True, 'none'
 
+    steps = normalize_steps(config.get('steps'), {
+        'nodes': ref_in(node_properties, 'node'),
+        'edges': pair_in(zip(df['source'], df['target']), 'edge'),
+    }, 'flowgraph')
+
     data = {
         'nodes': [_jsonable(p) for p in node_properties.values()],
         'edges': [_jsonable(r) for r in df.to_dict(orient='records')],
         'groups': [_jsonable(g) for g in groups.values()],
+        'steps': steps,
     }
     X = json.dumps(data, ensure_ascii=False).replace('</', '<\\/')
 
@@ -380,7 +389,7 @@ def write_html(X, config, logger=None):
         'nodesep': config['nodesep'],
         'ranksep': config['ranksep'],
         'layout': config.get('layout', 'dagre'),
-        'darkMode': 'true' if config.get('dark_mode', True) else 'false',
+        'darkMode': dark_mode_flag(config.get('dark_mode', True)),
         'showSidePanel': 'true' if config.get('show_side_panel', True) else 'false',
         'showTopPanel': 'true' if config.get('show_top_panel', True) else 'false',
         'SUPPORT': config.get('support') or '',
@@ -389,13 +398,7 @@ def write_html(X, config, logger=None):
         'LOGO_BASE64': config['logo_base64'],
     }
 
-    try:
-        jinja_env = Environment(loader=PackageLoader(package_name=__name__, package_path='d3js'))
-    except Exception:
-        from pathlib import Path
-        jinja_env = Environment(loader=FileSystemLoader(str(Path(__file__).resolve().parent / 'd3js')))
-
-    html = jinja_env.get_template('flowgraph.html.j2').render(content)
+    html = template_env(__name__, __file__).get_template('flowgraph.html.j2').render(content)
     write_html_file(config, html, logger)
     if config.get('notebook'):
         return notebook_iframe(html, config)
@@ -447,6 +450,10 @@ _MERMAID_SKIP = {'linkStyle', 'click', 'accTitle', 'accDescr', 'direction'}
 
 
 MERMAID_FILE_SUFFIXES = ('.md', '.markdown', '.mmd', '.mermaid')
+FLOWCHART_KINDS = ('flowchart', 'graph', 'flowchart-elk')
+STATE_KINDS = ('stateDiagram', 'stateDiagram-v2')
+# Diagram keywords the flowgraph block reads.
+MERMAID_KINDS = FLOWCHART_KINDS + STATE_KINDS
 
 
 def is_mermaid_source(obj):
@@ -454,22 +461,26 @@ def is_mermaid_source(obj):
     return isinstance(obj, (str, os.PathLike))
 
 
-def read_mermaid(source, logger=None):
-    """Return Mermaid flowchart text from text, Markdown or a file path.
+def read_mermaid(source, logger=None, kinds=MERMAID_KINDS):
+    """Return Mermaid diagram text from text, Markdown or a file path.
 
     Parameters
     ----------
     source : str or path-like
-        * Mermaid flowchart text.
+        * Mermaid diagram text.
         * Markdown text with ```mermaid fenced blocks.
         * Path to a .md / .markdown file (fenced blocks) or a .mmd / .mermaid file.
-        From Markdown, the first fenced block that is a flowchart ('flowchart' or
-        'graph') is used; other diagram types are skipped.
+        From Markdown, the first fenced block whose diagram keyword is in `kinds`
+        is used; other diagram types are skipped.
+    kinds : tuple of str, (default: MERMAID_KINDS)
+        Diagram keywords to accept, e.g. ('sequenceDiagram',). The default is what
+        flowgraph reads: flowcharts ('flowchart', 'graph', 'flowchart-elk') and
+        state diagrams ('stateDiagram', 'stateDiagram-v2').
 
     Returns
     -------
     str
-        Mermaid flowchart text.
+        Mermaid diagram text.
 
     """
     path = _as_mermaid_path(source)
@@ -477,12 +488,13 @@ def read_mermaid(source, logger=None):
     blocks = re.findall(r'^[ \t]*```+[ \t]*mermaid[^\n]*\n(.*?)^[ \t]*```', text, re.S | re.M)
     if not blocks:
         return text
-    flowcharts = [b for b in blocks if _first_statement(b).split()[:1] in (['flowchart'], ['graph'], ['flowchart-elk'])]
-    if not flowcharts:
-        raise ValueError('No Mermaid flowchart found in the ```mermaid blocks of %s.' % (path or 'the Markdown text'))
-    if len(flowcharts) > 1 and logger is not None:
-        logger.info('Found %d Mermaid flowcharts; using the first.' % len(flowcharts))
-    return flowcharts[0]
+    found = [b for b in blocks if _first_statement(b).split()[:1] in [[k] for k in kinds]]
+    if not found:
+        raise ValueError('No Mermaid diagram of kind %s found in the ```mermaid blocks of %s.'
+                         % ('/'.join(kinds), path or 'the Markdown text'))
+    if len(found) > 1 and logger is not None:
+        logger.info('Found %d Mermaid diagrams of kind %s; using the first.' % (len(found), '/'.join(kinds)))
+    return found[0]
 
 
 def _as_mermaid_path(source):
@@ -519,13 +531,15 @@ def _first_statement(text):
 
 
 def from_mermaid(text, logger=None):
-    """Convert a Mermaid flowchart into Flowgraph inputs.
+    """Convert a Mermaid flowchart or state diagram into Flowgraph inputs.
 
-    Supported: the 'flowchart'/'graph' header with direction, node shapes
+    Flowcharts: the 'flowchart'/'graph' header with direction, node shapes
     ([] () ([]) [[]] [()] (()) {} {{}} [//] [\\] >]), quoted labels and <br>,
     links (--> --- -.-> ==> ~~~ with |text| or inline text), chains (A --> B --> C),
     '&' (A & B --> C), nested subgraphs, and node colours from 'style' and
     'classDef' + 'class' / ':::'. Other statements are ignored.
+
+    State diagrams ('stateDiagram' / 'stateDiagram-v2'): see _from_mermaid_state.
 
     Parameters
     ----------
@@ -540,6 +554,8 @@ def from_mermaid(text, logger=None):
 
     """
     text = read_mermaid(text, logger=logger)
+    if _first_statement(text).split()[:1] in [[k] for k in STATE_KINDS]:
+        return _from_mermaid_state(text, logger=logger)
     nodes, groups, edges, classes = {}, {}, [], {}
     stack, direction = [], None
 
@@ -624,6 +640,101 @@ def from_mermaid(text, logger=None):
                          'or a path to a %s file.' % '/'.join(MERMAID_FILE_SUFFIXES))
     df = pd.DataFrame(edges, columns=['source', 'target', 'label', 'style', 'weight'])
     return df, nodes, groups, direction
+
+
+_STATE_REF = r'(\[\*\]|[A-Za-z0-9_]+)'
+_STATE_TRANSITION = re.compile(r'^' + _STATE_REF + r'\s*-->\s*' + _STATE_REF + r'\s*(?::(.*))?$')
+_STATE_NOTE = re.compile(r'^note\s+(?:left|right)\s+of\s+([A-Za-z0-9_]+)\s*(?::(.*))?$')
+
+
+def _from_mermaid_state(text, logger=None):
+    """Convert a Mermaid state diagram into Flowgraph inputs.
+
+    Supported: transitions 'A --> B' and 'A --> B : label' (the label is everything
+    after the first ':'), '[*]' as one start and one end pseudo-state (small circles),
+    notes ('note right of A' ... 'end note', 'note left of A : text') which are added
+    to the state's tooltip, 'classDef' + 'class' colours and '%%' comments. Other
+    statements (composite states, <<choice>>, 'state "x" as A', 'direction', ...)
+    raise a ValueError naming the line.
+
+    Returns
+    -------
+    tuple
+        (edges DataFrame, nodes dict, groups dict (empty), direction 'TB')
+
+    """
+    nodes, edges, classes = {}, [], {}
+    note_for, note_lines, note_line = None, [], 0
+
+    def state(name):
+        return nodes.setdefault(name, {})
+
+    def add_note(name, lines):
+        n = state(name)
+        # Tooltips may hold HTML, so the note text is escaped and its lines joined with <br>.
+        note = '<br>'.join(html_escape(line) for line in lines)
+        n['tooltip'] = n['tooltip'] + '<br>' + note if n.get('tooltip') else note
+
+    for lineno, raw in enumerate(str(text).splitlines(), 1):
+        stmt = raw.strip()
+        if note_for is not None:
+            if stmt == 'end note':
+                add_note(note_for, note_lines)
+                note_for = None
+            elif stmt:
+                note_lines.append(stmt)
+            continue
+        stmt = stmt.rstrip(';').rstrip()
+        if not stmt or stmt.startswith('%%'):
+            continue
+        head = stmt.split()[0]
+        if head in STATE_KINDS and len(stmt.split()) == 1:
+            continue
+        if head == 'classDef':
+            parts = stmt.split(None, 2)
+            if len(parts) > 2:
+                for name in parts[1].split(','):
+                    classes[name] = _mermaid_color(parts[2])
+            continue
+        if head == 'class':
+            parts = stmt.split()
+            if len(parts) >= 3:
+                for name in parts[1].split(','):
+                    state(name)['class'] = parts[2]
+            continue
+        m = _STATE_NOTE.match(stmt)
+        if m:
+            if m.group(2) is not None:
+                add_note(m.group(1), [m.group(2).strip()])
+            else:
+                note_for, note_lines, note_line = m.group(1), [], lineno
+            continue
+        m = _STATE_TRANSITION.match(stmt)
+        if m:
+            src = '__start__' if m.group(1) == '[*]' else m.group(1)
+            tgt = '__end__' if m.group(2) == '[*]' else m.group(2)
+            for name in (src, tgt):
+                if name in ('__start__', '__end__'):
+                    nodes.setdefault(name, {'label': '', 'shape': 'circle', 'color': DEFAULT_EDGE_COLOR,
+                                            'tooltip': name.strip('_')})
+                else:
+                    state(name)
+            edges.append((src, tgt, (m.group(3) or '').strip(), 'solid', 1))
+            continue
+        raise ValueError('Mermaid stateDiagram line %d is not supported: %r. Supported: transitions '
+                         '(A --> B : label), [*] start/end, notes, classDef/class and %%%% comments.' % (lineno, stmt))
+    if note_for is not None:
+        raise ValueError('Mermaid stateDiagram line %d: note for %r has no "end note".' % (note_line, note_for))
+
+    for n in nodes.values():
+        cls = n.pop('class', None)
+        if cls and classes.get(cls) and 'color' not in n:
+            n['color'] = classes[cls]
+    if not edges:
+        raise ValueError('No Mermaid state transitions found. Expected text such as '
+                         '"stateDiagram-v2\n  [*] --> pending\n  pending --> done : finish".')
+    df = pd.DataFrame(edges, columns=['source', 'target', 'label', 'style', 'weight'])
+    return df, nodes, {}, 'TB'
 
 
 def merge_group_attributes(base, override):

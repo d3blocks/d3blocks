@@ -1,6 +1,8 @@
 """Tests for the Flowgraph block (process flows and architecture diagrams)."""
 import json
+import logging
 import re
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -329,3 +331,179 @@ def test_flowgraph_notebook_mode_returns_isolated_iframe():
     import html as htmllib
     inner = htmllib.unescape(re.search(r'srcdoc="(.*?)" title=', html, re.S).group(1))
     assert 'id="fg-svg"' in inner and _data(inner)['nodes']
+
+
+# --- State diagrams, walkthrough steps and dark_mode='auto' (2.3.0) ----------
+
+FIXTURES = Path(__file__).parent / 'fixtures' / 'trade'
+_STATE = '''stateDiagram-v2
+    %% comment
+    [*] --> pending : created
+    pending --> done : ok: all checks
+    pending --> failed
+    done --> [*]
+    failed --> [*]
+    note right of pending
+        Waits for <b>review</b>
+        then continues
+    end note
+    note left of done : finished
+    classDef good fill:#dcfce7,stroke:#16a34a;
+    class done good;
+'''
+
+
+def test_flowgraph_state_diagram_subset():
+    df, nodes, groups, direction = Flowgraph.from_mermaid(_STATE)
+    assert direction == 'TB' and groups == {}
+    assert list(zip(df['source'], df['target'], df['label'])) == [
+        ('__start__', 'pending', 'created'), ('pending', 'done', 'ok: all checks'), ('pending', 'failed', ''),
+        ('done', '__end__', ''), ('failed', '__end__', '')]
+    assert nodes['__start__'] == {'label': '', 'shape': 'circle', 'color': '#8c8c8c', 'tooltip': 'start'}
+    assert nodes['__end__']['tooltip'] == 'end'
+    # Notes go to the tooltip, escaped (tooltips may hold HTML), with their newlines kept.
+    assert nodes['pending']['tooltip'] == 'Waits for &lt;b&gt;review&lt;/b&gt;<br>then continues'
+    assert nodes['done']['tooltip'] == 'finished'
+    assert nodes['done']['color'] == '#dcfce7'
+
+
+def test_flowgraph_state_referenced_before_declared_and_v1_header():
+    df, nodes, _, _ = Flowgraph.from_mermaid('stateDiagram\n class idle quiet\n classDef quiet fill:#eee\n idle --> busy')
+    assert list(nodes)[:2] == ['idle', 'busy'] and nodes['idle']['color'] == '#eee'
+    assert len(df) == 1
+
+
+@pytest.mark.parametrize('line', ['state A {', 'state c <<choice>>', 'state "Long name" as A', 'direction LR',
+                                  'A : description', '}'])
+def test_flowgraph_state_unsupported_syntax_names_the_line(line):
+    with pytest.raises(ValueError, match='line 3 is not supported') as err:
+        Flowgraph.from_mermaid('stateDiagram-v2\n  [*] --> A\n  %s\n' % line)
+    assert repr(line) in str(err.value)
+
+
+def test_flowgraph_state_unterminated_note():
+    with pytest.raises(ValueError, match='end note'):
+        Flowgraph.from_mermaid('stateDiagram-v2\n  A --> B\n  note right of A\n  text\n')
+
+
+def test_flowgraph_renders_state_diagram():
+    d3, html = _render(_STATE)
+    assert d3.config['direction'] == 'TB'
+    names = [n['name'] for n in _data(html)['nodes']]
+    assert names[:2] == ['__start__', 'pending'] and '__end__' in names
+
+
+_MIXED_MARKDOWN = '''# Several diagrams
+
+```mermaid
+sequenceDiagram
+    A->>B: hi
+```
+
+```mermaid
+erDiagram
+    A ||--o{ B : has
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> s1
+```
+
+```mermaid
+flowchart LR
+    f1 --> f2
+```
+'''
+
+
+def test_read_mermaid_kinds_picks_first_matching_block():
+    assert Flowgraph.read_mermaid(_MIXED_MARKDOWN).startswith('stateDiagram-v2')
+    assert Flowgraph.read_mermaid(_MIXED_MARKDOWN, kinds=Flowgraph.FLOWCHART_KINDS).startswith('flowchart')
+    assert Flowgraph.read_mermaid(_MIXED_MARKDOWN, kinds=('sequenceDiagram',)).startswith('sequenceDiagram')
+    assert Flowgraph.read_mermaid(_MIXED_MARKDOWN, kinds=('erDiagram',)).startswith('erDiagram')
+    with pytest.raises(ValueError, match='journey'):
+        Flowgraph.read_mermaid(_MIXED_MARKDOWN, kinds=('journey',))
+
+
+@pytest.mark.parametrize('path', sorted(FIXTURES.glob('*stateDiagram*.mmd')) + sorted(FIXTURES.glob('*flowchart*.mmd')),
+                         ids=lambda p: p.stem)
+def test_flowgraph_trade_fixtures(path, caplog):
+    log = logging.getLogger('test_flowgraph_fixtures')
+    with caplog.at_level(logging.WARNING, logger=log.name):
+        df, nodes, groups, _ = Flowgraph.from_mermaid(path, logger=log)
+    assert not caplog.records, [r.getMessage() for r in caplog.records]
+    _, html = _render(path)
+    names = {n['name'] for n in _data(html)['nodes']}
+    assert set(nodes) <= names
+    # Every state / node id written in the source appears in the payload.
+    text = path.read_text(encoding='utf-8')
+    if 'stateDiagram' in text:
+        ids = set(re.findall(r'^\s*(\w+|\[\*\])\s*-->\s*(\w+|\[\*\])', text, re.M))
+        for a, b in ids:
+            for ref in (a, b):
+                assert (ref in names) or ref == '[*]'
+        assert len(_data(html)['edges']) == len(re.findall(r'-->', text))
+
+
+def _steps():
+    return [
+        {'title': 'Check', 'caption': 'Validate the input.', 'highlight': {'nodes': ['check'], 'edges': [('start', 'check')]}},
+        {'title': 'Retry', 'highlight': {'edges': [['fix', 'check']]}},
+        {'caption': 'No highlight: everything stays visible.'},
+    ]
+
+
+def test_flowgraph_steps_in_payload():
+    _, html = _render(_sample_df(), steps=_steps())
+    steps = _data(html)['steps']
+    assert steps[0] == {'title': 'Check', 'caption': 'Validate the input.',
+                        'highlight': {'nodes': ['check'], 'edges': [['start', 'check']]}}
+    assert steps[1]['caption'] == '' and steps[2]['title'] == 'Step 3' and steps[2]['highlight'] == {}
+    assert 'D3BlocksWalkthrough' in html and 'd3b-walk' in html
+
+
+def test_flowgraph_without_steps_keeps_trace():
+    _, html = _render(_sample_df())
+    assert _data(html)['steps'] is None
+    assert 'id="traceButton"' in html
+
+
+@pytest.mark.parametrize('steps, match', [
+    ([{'highlight': {'nodes': ['nope']}}], r"steps\[0\]: unknown node 'nope'"),
+    ([{}, {'highlight': {'edges': [('done', 'start')]}}], r"steps\[1\]: unknown edge \('done', 'start'\)"),
+    ([{'highlight': {'edges': ['start']}}], r'steps\[0\]: edge must be \(source, target\) pairs'),
+    ([{'highlight': {'messages': [0]}}], r"steps\[0\]: highlight key\(s\) \['messages'\] are not supported by flowgraph"),
+    ([{'note': 'x'}], r"steps\[0\]: unknown key\(s\) \['note'\]"),
+    (['title'], r'steps\[0\]: expected a dict'),
+    ({'title': 'x'}, 'steps must be a list'),
+])
+def test_flowgraph_steps_validation(steps, match):
+    with pytest.raises(ValueError, match=match):
+        _render(_sample_df(), steps=steps)
+
+
+def test_flowgraph_steps_escaped_in_json():
+    _, html = _render(_sample_df(), steps=[{'title': '</script><script>alert(1)</script>', 'caption': '<b>x</b>'}])
+    assert '</script><script>alert(1)' not in html
+    assert _data(html)['steps'][0]['title'] == '</script><script>alert(1)</script>'
+
+
+@pytest.mark.parametrize('dark_mode, flag', [(True, 'true'), (False, 'false'), ('auto', 'auto'), ('AUTO', 'auto')])
+def test_flowgraph_dark_mode_flag(dark_mode, flag):
+    _, html = _render(_sample_df(), dark_mode=dark_mode)
+    assert 'data-dark-mode="%s"' % flag in html
+    assert ('<body class="light"' in html) == (flag == 'false')
+    assert 'id="themeBtn"' in html and 'D3BlocksTheme' in html
+
+
+@pytest.mark.parametrize('dark_mode', ['light', 1, None, 'yes'])
+def test_flowgraph_dark_mode_rejects_other_values(dark_mode):
+    with pytest.raises(ValueError, match='dark_mode'):
+        _render(_sample_df(), dark_mode=dark_mode)
+
+
+def test_flowgraph_output_stays_self_contained():
+    _, html = _render(_sample_df(), steps=_steps(), dark_mode='auto')
+    assert not re.search(r'<script[^>]+src=["\']https?:', html)
+    assert not re.search(r'<link[^>]+href=["\']https?:', html)
