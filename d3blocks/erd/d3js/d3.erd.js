@@ -359,8 +359,8 @@
   }
   function showRelTooltip(ev, r) {
     var s = entById.get(r.source), t = entById.get(r.target);
-    var body = (r.source_card ? CARD_TEXT[r.source_card] + ' ' : '') + s.label + ' — ' +
-               (r.target_card ? CARD_TEXT[r.target_card] + ' ' : '') + t.label;
+    function end(e, card) { return e.label + (card ? ' (' + CARD_TEXT[card] + ')' : ''); }
+    var body = end(s, r.source_card) + ' — ' + end(t, r.target_card);
     tooltipContent(r.label || (s.label + ' — ' + t.label), body, r.identifying ? 'identifying' : 'non-identifying');
     moveTooltip(ev);
   }
