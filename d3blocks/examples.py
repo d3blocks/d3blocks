@@ -1,4 +1,3 @@
-
 # %% Flowgraph
 
 # Edge list with shapes and edge labels
@@ -14,11 +13,14 @@ nodes = {'Start': {'shape': 'terminal'}, 'Valid?': {'shape': 'decision'},
          'Done': {'shape': 'terminal'}}
 
 # Set the flowgraph
-d3.flowgraph(df, nodes=nodes, direction='TB')
+d3.flowgraph(df, nodes=nodes, direction='TB', showfig=True)
 
 # Change a node and redraw
 d3.node_properties['Fix']['color'] = '#e15759'
-d3.show()
+d3.show(showfig=True)
+
+# %%
+
 
 # Mermaid diagram kept in a Markdown file (renders on GitHub too)
 d3.flowgraph('docs/process.md')
@@ -117,13 +119,13 @@ from d3blocks import D3Blocks
 # Initialize
 d3 = D3Blocks()
 
-df = d3.import_example('energy')
-
+df = d3.import_example('socialmedia')
+df = df[0:200]
 # Create the chart
 d3.heatmap(
           df=df,
-          show_side_panel=False,
-          show_top_panel=False,
+          show_side_panel=True,
+          show_top_panel=True,
           dark_mode=True,
           # color_background='streamlit',
           )

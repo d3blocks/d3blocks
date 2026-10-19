@@ -33,7 +33,7 @@ def set_config(config={}, **kwargs):
     config['stroke'] = kwargs.get('stroke', 'red')
     config['notebook'] = kwargs.get('notebook', False)
     config['reset_properties'] = kwargs.get('reset_properties', True)
-    config['cmap'] = kwargs.get('cmap', 'Set1')
+    config['cmap'] = kwargs.get('cmap', 'tableau')
     config['cluster_params'] = kwargs.get('cluster_params', {})
     config['scale'] = kwargs.get('scale', False)
     config['fontsize'] = kwargs.get('fontsize', 10)
@@ -149,6 +149,59 @@ def set_node_properties(df, **kwargs):
     return dict_labels
 
 
+_NOISE_COLOR = '#8a8f9c'
+_TABLEAU10 = ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f',
+              '#edc948', '#b07aa1', '#ff9da7', '#9c755f', '#bab0ac']
+_OLD_QUALITATIVE_DEFAULTS = (None, 'tableau', 'Set1', 'Set2')
+
+
+def _cluster_palette(n, cmap=None):
+    """Return n visually distinct hex colors (one per cluster).
+
+    The old approach sampled 8-9 color qualitative colormaps through a 0..1
+    normalisation, which produced duplicate colors for >8 clusters and always
+    ended on gray. Here every cluster gets its own entry.
+    """
+    import colorsys
+    if cmap in _OLD_QUALITATIVE_DEFAULTS:
+        if n <= len(_TABLEAU10):
+            return _TABLEAU10[:n]
+        # More clusters than the base palette: spread hues, alternate lightness
+        cols = list(_TABLEAU10)
+        extra = n - len(cols)
+        for i in range(extra):
+            h = (i * 0.618033988749895) % 1.0  # golden-angle hue spacing
+            l = 0.55 if i % 2 == 0 else 0.42
+            r, g, b = colorsys.hls_to_rgb(h, l, 0.65)
+            cols.append('#%02x%02x%02x' % (int(r * 255), int(g * 255), int(b * 255)))
+        return cols
+    # User supplied a matplotlib colormap: use its discrete colors if it has enough, else sample evenly
+    import matplotlib
+    from matplotlib.colors import ListedColormap, to_hex
+    cm = matplotlib.colormaps[cmap]
+    if isinstance(cm, ListedColormap) and cm.N >= n and cm.N <= 20:
+        return [to_hex(cm.colors[i]) for i in range(n)]
+    return [to_hex(cm(v)) for v in np.linspace(0, 1, max(n, 2))[:n]]
+
+
+def _color_from_labels(labels, cmap):
+    """Map arbitrary cluster labels to (consecutive int labels, hex colors). Label -1 (noise) is gray."""
+    labels = np.asarray(labels)
+    uni = [u for u in np.unique(labels) if u != -1]
+    palette = _cluster_palette(len(uni), cmap)
+    lut = {int(u): palette[i] for i, u in enumerate(uni)}
+    lut[-1] = _NOISE_COLOR
+    colors = [lut[int(x)] for x in labels]
+    return [int(x) for x in labels], colors
+
+
+def _log(logger, level, msg):
+    if logger is not None:
+        getattr(logger, level)(msg)
+    else:
+        print('[%s] %s' % (level, msg))
+
+
 def set_colors(df, **kwargs):
     """Color in clusterlabel.
 
@@ -162,60 +215,56 @@ def set_colors(df, **kwargs):
     config = kwargs.get('config')
     node_properties = kwargs.get('node_properties')
 
-    # d3network.vec2adjmat(source, target, weight=weight, symmetric=symmetric, aggfunc=aggfunc)
-    if df.get('weight', None) is not None:
-        df = df.copy()
-        df['weight'] = normalize(df['weight'].values, scaler=config['scaler'])
-    adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=df.get('weight', None).values, symmetric=True)
-
     # Default is all cluster labels are the same
-    # Convert NumPy integers to regular Python integers for proper JSON serialization
     node_properties['classlabel'] = [0] * node_properties.shape[0]
     node_properties['color'] = '#000000'
 
-    if isinstance(config.get('color'), str) and config.get('color')=='cluster':
-        # Cluster the nodes
+    if isinstance(config.get('color'), str) and config.get('color') == 'cluster':
         try:
             from clusteval import clusteval
         except Exception:
-            if logger is not None:
-                logger.warning('clusteval is not installed; skipping clustering and using default colors. Tip: pip install clusteval')
-            else:
-                print('Warning: clusteval is not installed; skipping clustering and using default colors. Tip: pip install clusteval')
+            _log(logger, 'warning', 'clusteval is not installed; skipping clustering and using default colors. Tip: pip install clusteval')
             return node_properties
-        # Initialize
-        plot_param = config['cluster_params'].pop('plot', False)
-        ce = clusteval(**config['cluster_params'])
+
+        # Cluster on the RAW weights. Z-scoring first turned "no link" (0) into an
+        # "average link" and distorted the row profiles that are being clustered.
+        weight = df['weight'].values if df.get('weight', None) is not None else np.ones(df.shape[0])
+        adjmat = vec2adjmat(source=df['source'], target=df['target'], weight=weight, symmetric=True)
+        adjmat = adjmat.fillna(0)
+
+        # Do not mutate the (possibly shared/default) cluster_params dict
+        cluster_params = dict(config.get('cluster_params') or {})
+        plot_param = cluster_params.pop('plot', False)
+        ce = clusteval(**cluster_params)
         results = ce.fit(adjmat.values)
         if plot_param: ce.plot()
-        logger.info('[%d] clusters detected' %(len(np.unique(results['labx']))))
+        labx = np.asarray(results['labx'])
+        _log(logger, 'info', '[%d] clusters detected' % (len(np.unique(labx[labx != -1]))))
 
-        # uilabx = np.unique(results['labx'])
+        # Align cluster labels with node_properties order (adjmat order can differ!)
         Iloc, idx = ismember(node_properties['label'].values, adjmat.index.values)
         if np.any(~Iloc):
-            logger.error('Feature name(s): %s can not be used. Hint: Remove special characters. <return>' %(df.index.values[~np.isin(np.arange(0, df.shape[0]), idx)]))
+            missing = node_properties['label'].values[~np.asarray(Iloc)]
+            _log(logger, 'error', 'Feature name(s): %s can not be used. Hint: Remove special characters.' % (missing,))
             return None
-        logger.info('Colors are based on clustering.')
-        # Convert NumPy integers to regular Python integers for proper JSON serialization
-        node_properties['classlabel'] = [int(x) for x in results['labx']]
-        # # Create node colors
-        colors = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
-        # Convert NumPy strings to regular Python strings
-        node_properties['color'] = [str(c) for c in colors]
+        labx_nodes = labx[np.asarray(idx)]
+        _log(logger, 'info', 'Colors are based on clustering.')
+        classlabel, colors = _color_from_labels(labx_nodes, config.get('cmap'))
+        node_properties['classlabel'] = classlabel
+        node_properties['color'] = colors
+
     elif isinstance(config['color'], (list, np.ndarray)):
         if np.all(list(map(colourmap.is_hex_color, config['color']))):
-            logger.info('Colors are based on the input hex colors.')
-            # Convert NumPy strings to regular Python strings
+            _log(logger, 'info', 'Colors are based on the input hex colors.')
             node_properties['color'] = [str(c) for c in config['color']]
             class_labels = ismember(config['color'], np.unique(config['color']))[1]
             node_properties['classlabel'] = [int(x) for x in class_labels]
         else:
-            logger.info('Colors are based on the labels.')
+            _log(logger, 'info', 'Colors are based on the labels.')
             class_labels = ismember(config['color'], np.unique(config['color']))[1]
-            node_properties['classlabel'] = [int(x) for x in class_labels]
-            colors = colourmap.fromlist(node_properties['classlabel'], cmap=config['cmap'], scheme='hex', verbose=0)[0]
-            # Convert NumPy strings to regular Python strings
-            node_properties['color'] = [str(c) for c in colors]
+            classlabel, colors = _color_from_labels(class_labels, config.get('cmap'))
+            node_properties['classlabel'] = classlabel
+            node_properties['color'] = colors
 
     return node_properties
 
