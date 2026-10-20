@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<!--
+Library     : d3blocks
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+-->
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ TITLE }}</title>
+{{ SUPPORT }}
+
+<style>{% include "__NAME__.css" %}</style>
+<style>
+  body { background: {{ COLOR_BACKGROUND_DARK }}; --bg: {{ COLOR_BACKGROUND_DARK }}; }
+  body .top-panel, body .stats-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body.light { background: {{ COLOR_BACKGROUND_LIGHT }}; --bg: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .top-panel, body.light .stats-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+</style>
+
+<script>{% include "d3.v7.min.js" %}</script>
+</head>
+<body{% if darkMode == 'false' %} class="light"{% endif %} data-dark-mode="{{ darkMode }}">
+<script>{% include "theme.js" %}</script>
+
+<div id="__PREFIX__-main"><svg id="__PREFIX__-svg" role="img" aria-label="{{ TITLE }}"></svg></div>
+<div id="__PREFIX__-tooltip" role="tooltip"></div>
+
+{% if showTopPanel == 'true' %}
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
+      <img src="{{ LOGO_BASE64 }}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center">
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <div class="top-panel-right">
+    <!-- Chart-specific top-bar controls here (Select, Density, ...). The theme button stays LAST. -->
+    <button class="button-switch" id="fitButton" type="button" title="Fit to screen">Fit</button>
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+{% endif %}
+
+{% if showSidePanel == 'true' %}
+<!-- Export / Save is always the first (top) side panel. -->
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    {{ SAVE_BUTTON_START }}<div class="__PREFIX__-button-row">
+      <button class="button-switch" id="saveSvgButton" type="button" title="Download the chart as SVG">SVG</button>
+      <button class="button-switch" id="savePngButton" type="button" title="Download the chart as PNG (2x)">PNG</button>
+    </div>{{ SAVE_BUTTON_STOP }}
+    <div class="__PREFIX__-button-row">
+      <button class="button-switch" id="exportButton" type="button" title="Download the data as JSON">JSON</button>
+    </div>
+    <div class="__PREFIX__-hint">Images are saved as currently shown, including theme.</div>
+  </div>
+</div>
+
+<!-- TODO: chart-specific side panels (Layout, Physics, Legend, ...), same markup as above, each class="stats-panel collapsed". -->
+{% endif %}
+
+<script type="application/json" id="__PREFIX__-data">{{ json_data }}</script>
+<script type="application/json" id="__PREFIX__-options">{{ options }}</script>
+<script>{% include "d3.__NAME__.js" %}</script>
+
+</body>
+</html>
