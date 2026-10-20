@@ -19,8 +19,8 @@ from pathlib import Path
 import numpy as np
 from jinja2 import ChoiceLoader, Environment, FileSystemLoader, PackageLoader
 
-DARK_MODES = (True, False, 'auto')
-STEP_KEYS = ('title', 'caption', 'highlight')
+DARK_MODES = (True, False, "auto")
+STEP_KEYS = ("title", "caption", "highlight")
 
 
 def template_env(package_name, block_file):
@@ -36,11 +36,15 @@ def template_env(package_name, block_file):
 
     def loader(package, folder):
         try:
-            return PackageLoader(package_name=package, package_path='d3js')
+            return PackageLoader(package_name=package, package_path="d3js")
         except Exception:
-            return FileSystemLoader(str(Path(folder).resolve().parent / 'd3js'))
+            return FileSystemLoader(str(Path(folder).resolve().parent / "d3js"))
 
-    return Environment(loader=ChoiceLoader([loader(package_name, block_file), loader(__name__, __file__)]))
+    return Environment(
+        loader=ChoiceLoader(
+            [loader(package_name, block_file), loader(__name__, __file__)]
+        )
+    )
 
 
 def notebook_iframe(html, config, block):
@@ -50,15 +54,21 @@ def notebook_iframe(html, config, block):
     fixed element ids, so it is isolated in an iframe instead of being injected
     into the notebook page. Size: figsize, else full width x 650 px.
     """
-    width, height = (list(config.get('figsize') or [None, None]) + [None, None])[:2]
-    width = '%dpx' % width if width else '100%'
-    height = '%dpx' % height if height else '650px'
+    width, height = (list(config.get("figsize") or [None, None]) + [None, None])[:2]
+    width = "%dpx" % width if width else "100%"
+    height = "%dpx" % height if height else "650px"
     # Wrapped in a div: IPython warns about HTML that starts with '<iframe'.
     return (
         '<div class="d3blocks-%s"><iframe srcdoc="%s" title="%s" '
         'style="width:%s;height:%s;border:0;border-radius:6px" '
         'sandbox="allow-scripts allow-downloads allow-popups"></iframe></div>'
-        % (block, html_escape(html, quote=True), html_escape(str(config.get('title', block))), width, height)
+        % (
+            block,
+            html_escape(html, quote=True),
+            html_escape(str(config.get("title", block))),
+            width,
+            height,
+        )
     )
 
 
@@ -70,16 +80,16 @@ def dark_mode_flag(dark_mode):
     * 'auto': follow the operating system theme until the viewer uses the theme toggle.
     """
     if isinstance(dark_mode, (bool, np.bool_)):
-        return 'true' if dark_mode else 'false'
-    if isinstance(dark_mode, str) and dark_mode.lower() == 'auto':
-        return 'auto'
+        return "true" if dark_mode else "false"
+    if isinstance(dark_mode, str) and dark_mode.lower() == "auto":
+        return "auto"
     raise ValueError("dark_mode must be True, False or 'auto'; got %r." % (dark_mode,))
 
 
 def check_dark_mode(dark_mode):
     """dark_mode as True, False or 'auto'; raises ValueError for anything else."""
     flag = dark_mode_flag(dark_mode)
-    return 'auto' if flag == 'auto' else flag == 'true'
+    return "auto" if flag == "auto" else flag == "true"
 
 
 def normalize_steps(steps, refs, block):
@@ -103,22 +113,33 @@ def normalize_steps(steps, refs, block):
     """
     if steps is None:
         return None
-    if isinstance(steps, (str, dict)) or not hasattr(steps, '__iter__'):
-        raise ValueError('steps must be a list of dicts or None; got %s.' % type(steps).__name__)
+    if isinstance(steps, (str, dict)) or not hasattr(steps, "__iter__"):
+        raise ValueError(
+            "steps must be a list of dicts or None; got %s." % type(steps).__name__
+        )
     out = []
     for i, step in enumerate(steps):
         if not isinstance(step, dict):
-            raise ValueError('steps[%d]: expected a dict with %s; got %s.' % (i, STEP_KEYS, type(step).__name__))
+            raise ValueError(
+                "steps[%d]: expected a dict with %s; got %s."
+                % (i, STEP_KEYS, type(step).__name__)
+            )
         unknown = sorted(set(step) - set(STEP_KEYS))
         if unknown:
-            raise ValueError('steps[%d]: unknown key(s) %s; use %s.' % (i, unknown, STEP_KEYS))
-        highlight = step.get('highlight') or {}
+            raise ValueError(
+                "steps[%d]: unknown key(s) %s; use %s." % (i, unknown, STEP_KEYS)
+            )
+        highlight = step.get("highlight") or {}
         if not isinstance(highlight, dict):
-            raise ValueError("steps[%d]: 'highlight' must be a dict; got %s." % (i, type(highlight).__name__))
+            raise ValueError(
+                "steps[%d]: 'highlight' must be a dict; got %s."
+                % (i, type(highlight).__name__)
+            )
         unsupported = sorted(set(highlight) - set(refs))
         if unsupported:
             raise ValueError(
-                'steps[%d]: highlight key(s) %s are not supported by %s; use %s.' % (i, unsupported, block, tuple(refs))
+                "steps[%d]: highlight key(s) %s are not supported by %s; use %s."
+                % (i, unsupported, block, tuple(refs))
             )
         resolved = {}
         for key, values in highlight.items():
@@ -129,9 +150,9 @@ def normalize_steps(steps, refs, block):
             resolved[key] = [refs[key](v, i) for v in values]
         out.append(
             {
-                'title': str(step.get('title') or 'Step %d' % (i + 1)),
-                'caption': str(step.get('caption') or ''),
-                'highlight': resolved,
+                "title": str(step.get("title") or "Step %d" % (i + 1)),
+                "caption": str(step.get("caption") or ""),
+                "highlight": resolved,
             }
         )
     return out
@@ -144,7 +165,7 @@ def ref_in(names, what):
     def check(ref, i):
         key = str(ref)
         if key not in names:
-            raise ValueError('steps[%d]: unknown %s %r.' % (i, what, ref))
+            raise ValueError("steps[%d]: unknown %s %r." % (i, what, ref))
         return key
 
     return check
@@ -155,14 +176,16 @@ def pair_in(pairs, what, undirected=False):
     pairs = {(str(s), str(t)) for s, t in pairs}
 
     def check(ref, i):
-        if isinstance(ref, str) or not hasattr(ref, '__len__') or len(ref) != 2:
-            raise ValueError('steps[%d]: %s must be (source, target) pairs; got %r.' % (i, what, ref))
+        if isinstance(ref, str) or not hasattr(ref, "__len__") or len(ref) != 2:
+            raise ValueError(
+                "steps[%d]: %s must be (source, target) pairs; got %r." % (i, what, ref)
+            )
         s, t = str(ref[0]), str(ref[1])
         if (s, t) in pairs:
             return [s, t]
         if undirected and (t, s) in pairs:
             return [t, s]
-        raise ValueError('steps[%d]: unknown %s %r.' % (i, what, tuple(ref)))
+        raise ValueError("steps[%d]: unknown %s %r." % (i, what, tuple(ref)))
 
     return check
 
@@ -171,8 +194,15 @@ def index_in(count, what):
     """Check for an integer index in range(count)."""
 
     def check(ref, i):
-        if isinstance(ref, (bool, np.bool_)) or not isinstance(ref, (int, np.integer)) or not 0 <= ref < count:
-            raise ValueError('steps[%d]: unknown %s %r; use an index from 0 to %d.' % (i, what, ref, count - 1))
+        if (
+            isinstance(ref, (bool, np.bool_))
+            or not isinstance(ref, (int, np.integer))
+            or not 0 <= ref < count
+        ):
+            raise ValueError(
+                "steps[%d]: unknown %s %r; use an index from 0 to %d."
+                % (i, what, ref, count - 1)
+            )
         return int(ref)
 
     return check

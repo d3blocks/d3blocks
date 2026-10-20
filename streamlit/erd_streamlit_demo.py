@@ -65,7 +65,9 @@ nodesep = st.sidebar.slider("Node spacing", 10, 200, 50, 5)
 ranksep = st.sidebar.slider("Rank spacing", 20, 300, 90, 5)
 
 st.sidebar.subheader("Appearance")
-dark_mode = st.sidebar.selectbox("Theme", ["light", "dark", "auto (follow OS)"], index=0)
+dark_mode = st.sidebar.selectbox(
+    "Theme", ["light", "dark", "auto (follow OS)"], index=0
+)
 
 # D3Blocks UI
 st.sidebar.subheader("D3Blocks UI")
@@ -74,7 +76,9 @@ show_top_panel = st.sidebar.checkbox("Show D3Blocks top panel", value=True)
 
 # Streamlit iframe
 st.sidebar.subheader("Display")
-height = st.sidebar.slider("Chart height", min_value=400, max_value=1200, value=700, step=50)
+height = st.sidebar.slider(
+    "Chart height", min_value=400, max_value=1200, value=700, step=50
+)
 
 
 # =============================================================================
@@ -82,7 +86,15 @@ height = st.sidebar.slider("Chart height", min_value=400, max_value=1200, value=
 # =============================================================================
 @st.cache_data(show_spinner="Building ERD...")
 def build_erd_html(
-    mermaid, direction, show_columns, show_types, nodesep, ranksep, dark_mode, show_side_panel, show_top_panel
+    mermaid,
+    direction,
+    show_columns,
+    show_types,
+    nodesep,
+    ranksep,
+    dark_mode,
+    show_side_panel,
+    show_top_panel,
 ):
     d3 = D3Blocks()
     html = d3.erd(
@@ -92,7 +104,7 @@ def build_erd_html(
         show_types=show_types,
         nodesep=nodesep,
         ranksep=ranksep,
-        dark_mode={'light': False, 'dark': True}.get(dark_mode, 'auto'),
+        dark_mode={"light": False, "dark": True}.get(dark_mode, "auto"),
         show_side_panel=show_side_panel,
         show_top_panel=show_top_panel,
         color_background="streamlit",
@@ -108,16 +120,28 @@ def build_erd_html(
 # =============================================================================
 try:
     html = build_erd_html(
-        mermaid, direction, show_columns, show_types, nodesep, ranksep, dark_mode, show_side_panel, show_top_panel
+        mermaid,
+        direction,
+        show_columns,
+        show_types,
+        nodesep,
+        ranksep,
+        dark_mode,
+        show_side_panel,
+        show_top_panel,
     )
 except ValueError as e:
     st.error(str(e))
     st.stop()
-st.caption("Interactive entity-relationship diagram powered by D3Blocks and controlled by Streamlit.")
+st.caption(
+    "Interactive entity-relationship diagram powered by D3Blocks and controlled by Streamlit."
+)
 if hasattr(st, "iframe"):
     st.iframe(html, height=height, width="stretch")
 else:
     import streamlit.components.v1 as components
 
-    st.warning("st.iframe is missing (Streamlit < 1.56). Falling back to deprecated components.html.")
+    st.warning(
+        "st.iframe is missing (Streamlit < 1.56). Falling back to deprecated components.html."
+    )
     components.html(html, height=height, scrolling=False)

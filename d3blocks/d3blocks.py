@@ -3321,10 +3321,10 @@ class D3Blocks():
         steps: list = None,
         message_spacing: int = 44,
         wrap: int = 28,
-        cmap: str = 'Set2',
-        font: dict = {'size': 13},
-        title: str = 'Sequence - D3blocks',
-        filepath: str = 'sequence.html',
+        cmap: str = "Set2",
+        font: dict = {"size": 13},
+        title: str = "Sequence - D3blocks",
+        filepath: str = "sequence.html",
         figsize=[None, None],
         showfig: bool = True,
         overwrite: bool = True,
@@ -3461,7 +3461,7 @@ class D3Blocks():
         # Cleaning
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
-        self.chart = set_chart_func('Sequence', logger)
+        self.chart = set_chart_func("Sequence", logger)
         # Store properties
         self.config = self.chart.set_config(
             config=self.config,
@@ -3486,8 +3486,10 @@ class D3Blocks():
             logger=logger,
         )
         # Set default participant properties
-        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, participants=participants, cmap=cmap, logger=logger)
+        if self.config["reset_properties"] or (not hasattr(self, "node_properties")):
+            self.set_node_properties(
+                df, participants=participants, cmap=cmap, logger=logger
+            )
         # Set message properties
         self.set_edge_properties(df, logger=logger)
 
@@ -3504,13 +3506,13 @@ class D3Blocks():
         entities=None,
         steps: list = None,
         direction: str = None,
-        show_columns: str = 'all',
+        show_columns: str = "all",
         show_types: bool = True,
         nodesep: int = 50,
         ranksep: int = 90,
-        font: dict = {'size': 12},
-        title: str = 'ERD - D3blocks',
-        filepath: str = 'erd.html',
+        font: dict = {"size": 12},
+        title: str = "ERD - D3blocks",
+        filepath: str = "erd.html",
         figsize=[None, None],
         showfig: bool = True,
         overwrite: bool = True,
@@ -3646,11 +3648,11 @@ class D3Blocks():
             df, m_entities, m_direction = Erd.from_mermaid(df, logger=logger)
             entities = Erd.merge_node_attributes(m_entities, entities)
             direction = direction or m_direction
-        direction = direction or 'LR'
+        direction = direction or "LR"
         # Cleaning
         self._clean(clean_config=reset_properties, logger=logger)
         # Store chart
-        self.chart = set_chart_func('Erd', logger)
+        self.chart = set_chart_func("Erd", logger)
         # Store properties
         self.config = self.chart.set_config(
             config=self.config,
@@ -3676,7 +3678,7 @@ class D3Blocks():
             logger=logger,
         )
         # Set default entity properties
-        if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
+        if self.config["reset_properties"] or (not hasattr(self, "node_properties")):
             self.set_node_properties(df, entities=entities, logger=logger)
         # Set relationship properties
         self.set_edge_properties(df, logger=logger)

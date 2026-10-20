@@ -56,7 +56,9 @@ wrap = st.sidebar.slider("Wrap labels at (characters)", 10, 80, 28, 1)
 font_size = st.sidebar.slider("Font size", 8, 24, 13, 1)
 
 st.sidebar.subheader("Appearance")
-dark_mode = st.sidebar.selectbox("Theme", ["light", "dark", "auto (follow OS)"], index=0)
+dark_mode = st.sidebar.selectbox(
+    "Theme", ["light", "dark", "auto (follow OS)"], index=0
+)
 
 # D3Blocks UI
 st.sidebar.subheader("D3Blocks UI")
@@ -65,21 +67,31 @@ show_top_panel = st.sidebar.checkbox("Show D3Blocks top panel", value=True)
 
 # Streamlit iframe
 st.sidebar.subheader("Display")
-height = st.sidebar.slider("Chart height", min_value=400, max_value=1200, value=700, step=50)
+height = st.sidebar.slider(
+    "Chart height", min_value=400, max_value=1200, value=700, step=50
+)
 
 
 # =============================================================================
 # Build D3Blocks sequence diagram
 # =============================================================================
 @st.cache_data(show_spinner="Building sequence diagram...")
-def build_sequence_html(mermaid, message_spacing, wrap, font_size, dark_mode, show_side_panel, show_top_panel):
+def build_sequence_html(
+    mermaid,
+    message_spacing,
+    wrap,
+    font_size,
+    dark_mode,
+    show_side_panel,
+    show_top_panel,
+):
     d3 = D3Blocks()
     html = d3.sequence(
         mermaid,
         message_spacing=message_spacing,
         wrap=wrap,
-        font={'size': font_size},
-        dark_mode={'light': False, 'dark': True}.get(dark_mode, 'auto'),
+        font={"size": font_size},
+        dark_mode={"light": False, "dark": True}.get(dark_mode, "auto"),
         show_side_panel=show_side_panel,
         show_top_panel=show_top_panel,
         color_background="streamlit",
@@ -94,7 +106,15 @@ def build_sequence_html(mermaid, message_spacing, wrap, font_size, dark_mode, sh
 # Main page
 # =============================================================================
 try:
-    html = build_sequence_html(mermaid, message_spacing, wrap, font_size, dark_mode, show_side_panel, show_top_panel)
+    html = build_sequence_html(
+        mermaid,
+        message_spacing,
+        wrap,
+        font_size,
+        dark_mode,
+        show_side_panel,
+        show_top_panel,
+    )
 except ValueError as e:
     st.error(str(e))
     st.stop()
@@ -107,5 +127,7 @@ if hasattr(st, "iframe"):
 else:
     import streamlit.components.v1 as components
 
-    st.warning("st.iframe is missing (Streamlit < 1.56). Falling back to deprecated components.html.")
+    st.warning(
+        "st.iframe is missing (Streamlit < 1.56). Falling back to deprecated components.html."
+    )
     components.html(html, height=height, scrolling=False)

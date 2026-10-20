@@ -7,7 +7,7 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(frame=False)
 d3.sequence(
-    '''
+    """
 sequenceDiagram
     actor User
     participant Web as Web App
@@ -21,30 +21,38 @@ sequenceDiagram
     DB-->>API: rows
     API-->>Web: 200 JSON
     Web-->>User: render
-''',
+""",
     showfig=True,
 )
 
 # DataFrame input with regions and a captioned walkthrough
 df = pd.DataFrame(
     {
-        'source': ['app', 'auth', 'app', 'api'],
-        'target': ['auth', 'app', 'api', 'app'],
-        'label': ['login', 'token', 'GET /orders with token', '200 JSON'],
-        'style': ['sync', 'reply', 'sync', 'reply'],
-        'variant': ['security', 'default', 'emphasis', 'default'],
+        "source": ["app", "auth", "app", "api"],
+        "target": ["auth", "app", "api", "app"],
+        "label": ["login", "token", "GET /orders with token", "200 JSON"],
+        "style": ["sync", "reply", "sync", "reply"],
+        "variant": ["security", "default", "emphasis", "default"],
     }
 )
 steps = [
-    {'title': 'Sign in', 'caption': 'The app exchanges credentials for a token.', 'highlight': {'messages': [0, 1]}},
-    {'title': 'Call the API', 'caption': 'The token authorizes the request.', 'highlight': {'messages': [2, 3]}},
+    {
+        "title": "Sign in",
+        "caption": "The app exchanges credentials for a token.",
+        "highlight": {"messages": [0, 1]},
+    },
+    {
+        "title": "Call the API",
+        "caption": "The token authorizes the request.",
+        "highlight": {"messages": [2, 3]},
+    },
 ]
 d3.sequence(
     df,
-    participants={'app': {'label': 'Mobile app', 'kind': 'actor'}},
-    groups=[{'label': 'Sign in', 'from': 0, 'to': 1}],
+    participants={"app": {"label": "Mobile app", "kind": "actor"}},
+    groups=[{"label": "Sign in", "from": 0, "to": 1}],
     steps=steps,
-    dark_mode='auto',
+    dark_mode="auto",
     showfig=True,
 )
 
@@ -55,7 +63,7 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(frame=False)
 d3.erd(
-    '''
+    """
 erDiagram
     customers ||--o{ orders : places
     orders ||--|{ order_lines : contains
@@ -74,13 +82,13 @@ erDiagram
         uuid product_id PK,FK
         int quantity
     }
-''',
-    show_columns='all',
+""",
+    show_columns="all",
     showfig=True,
 )
 
 # Change an entity and redraw
-d3.node_properties['orders']['color'] = '#f28e2b'
+d3.node_properties["orders"]["color"] = "#f28e2b"
 d3.show(showfig=True)
 
 # %% Flowgraph state diagram
@@ -90,7 +98,7 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks(frame=False)
 d3.flowgraph(
-    '''
+    """
 stateDiagram-v2
     [*] --> pending : created
     pending --> running : worker picks up task
@@ -103,13 +111,17 @@ stateDiagram-v2
     end note
     classDef bad fill:#e15759
     class failed bad
-''',
+""",
     steps=[
-        {'title': 'Queued', 'caption': 'A task waits for a worker.', 'highlight': {'nodes': ['pending']}},
         {
-            'title': 'Outcome',
-            'caption': 'A run ends completed or failed.',
-            'highlight': {'edges': [('running', 'completed'), ('running', 'failed')]},
+            "title": "Queued",
+            "caption": "A task waits for a worker.",
+            "highlight": {"nodes": ["pending"]},
+        },
+        {
+            "title": "Outcome",
+            "caption": "A run ends completed or failed.",
+            "highlight": {"edges": [("running", "completed"), ("running", "failed")]},
         },
     ],
     showfig=True,

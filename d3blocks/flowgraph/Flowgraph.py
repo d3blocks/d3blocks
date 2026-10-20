@@ -20,11 +20,37 @@ import numpy as np
 import pandas as pd
 
 try:
-    from .._shared import check_dark_mode, dark_mode_flag, normalize_steps, pair_in, ref_in, template_env
-    from ..utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
+    from .._shared import (
+        check_dark_mode,
+        dark_mode_flag,
+        normalize_steps,
+        pair_in,
+        ref_in,
+        template_env,
+    )
+    from ..utils import (
+        resolve_color_background,
+        set_logo,
+        set_path,
+        update_config,
+        write_html_file,
+    )
 except ImportError:
-    from _shared import check_dark_mode, dark_mode_flag, normalize_steps, pair_in, ref_in, template_env
-    from utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
+    from _shared import (
+        check_dark_mode,
+        dark_mode_flag,
+        normalize_steps,
+        pair_in,
+        ref_in,
+        template_env,
+    )
+    from utils import (
+        resolve_color_background,
+        set_logo,
+        set_path,
+        update_config,
+        write_html_file,
+    )
 
 
 SHAPES = ('process', 'decision', 'terminal', 'io', 'subprocess', 'database',
@@ -326,12 +352,12 @@ def show(df, **kwargs):
         config['animate'], config['animation'] = True, 'none'
 
     steps = normalize_steps(
-        config.get('steps'),
+        config.get("steps"),
         {
-            'nodes': ref_in(node_properties, 'node'),
-            'edges': pair_in(zip(df['source'], df['target']), 'edge'),
+            "nodes": ref_in(node_properties, "node"),
+            "edges": pair_in(zip(df["source"], df["target"]), "edge"),
         },
-        'flowgraph',
+        "flowgraph",
     )
 
     data = {
@@ -453,8 +479,8 @@ _MERMAID_LINK = re.compile(r'<?(-{2,}|={2,}|-\.+-|~{3,})(>|o(?=\s)|x(?=\s))?')
 
 
 MERMAID_FILE_SUFFIXES = ('.md', '.markdown', '.mmd', '.mermaid')
-FLOWCHART_KINDS = ('flowchart', 'graph', 'flowchart-elk')
-STATE_KINDS = ('stateDiagram', 'stateDiagram-v2')
+FLOWCHART_KINDS = ("flowchart", "graph", "flowchart-elk")
+STATE_KINDS = ("stateDiagram", "stateDiagram-v2")
 # Diagram keywords the flowgraph block reads.
 MERMAID_KINDS = FLOWCHART_KINDS + STATE_KINDS
 
@@ -491,14 +517,19 @@ def read_mermaid(source, logger=None, kinds=MERMAID_KINDS):
     blocks = re.findall(r'^[ \t]*```+[ \t]*mermaid[^\n]*\n(.*?)^[ \t]*```', text, re.S | re.M)
     if not blocks:
         return text
-    found = [b for b in blocks if _first_statement(b).split()[:1] in [[k] for k in kinds]]
+    found = [
+        b for b in blocks if _first_statement(b).split()[:1] in [[k] for k in kinds]
+    ]
     if not found:
         raise ValueError(
-            'No Mermaid diagram of kind %s found in the ```mermaid blocks of %s.'
-            % ('/'.join(kinds), path or 'the Markdown text')
+            "No Mermaid diagram of kind %s found in the ```mermaid blocks of %s."
+            % ("/".join(kinds), path or "the Markdown text")
         )
     if len(found) > 1 and logger is not None:
-        logger.info('Found %d Mermaid diagrams of kind %s; using the first.' % (len(found), '/'.join(kinds)))
+        logger.info(
+            "Found %d Mermaid diagrams of kind %s; using the first."
+            % (len(found), "/".join(kinds))
+        )
     return found[0]
 
 
@@ -539,8 +570,8 @@ def _first_statement(text):
 # follows one rule: a statement is understood, explicitly ignored, or a ValueError naming
 # its line. Ignored everywhere: blank lines, %% comments, %%{init}%% directives and the
 # accessibility metadata accTitle / accDescr, none of which change the diagram.
-_ACC_LINE = re.compile(r'^acc(Title|Descr)\s*:')
-_ACC_BLOCK = re.compile(r'^accDescr\s*\{')
+_ACC_LINE = re.compile(r"^acc(Title|Descr)\s*:")
+_ACC_BLOCK = re.compile(r"^accDescr\s*\{")
 
 
 def _mermaid_lines(text):
@@ -553,19 +584,22 @@ def _mermaid_lines(text):
     for lineno, raw in enumerate(str(text).splitlines(), 1):
         stmt = raw.strip()
         if in_acc:
-            in_acc = '}' not in stmt
+            in_acc = "}" not in stmt
             continue
-        if not stmt or stmt.startswith('%%') or _ACC_LINE.match(stmt):
+        if not stmt or stmt.startswith("%%") or _ACC_LINE.match(stmt):
             continue
         if _ACC_BLOCK.match(stmt):
-            in_acc = '}' not in stmt
+            in_acc = "}" not in stmt
             continue
         yield lineno, stmt
 
 
 def _mermaid_error(kind, lineno, stmt, supported):
     """The ValueError for a statement a Mermaid parser does not support."""
-    return ValueError('Mermaid %s line %d is not supported: %r. Supported: %s.' % (kind, lineno, stmt, supported))
+    return ValueError(
+        "Mermaid %s line %d is not supported: %r. Supported: %s."
+        % (kind, lineno, stmt, supported)
+    )
 
 
 def from_mermaid(text, logger=None):
@@ -600,8 +634,8 @@ def from_mermaid(text, logger=None):
         return _from_mermaid_state(text, logger=logger)
     if kind not in [[k] for k in FLOWCHART_KINDS]:
         raise ValueError(
-            'Expected a Mermaid flowchart (%s) or state diagram (%s); the first statement is %r.'
-            % ('/'.join(FLOWCHART_KINDS), '/'.join(STATE_KINDS), _first_statement(text))
+            "Expected a Mermaid flowchart (%s) or state diagram (%s); the first statement is %r."
+            % ("/".join(FLOWCHART_KINDS), "/".join(STATE_KINDS), _first_statement(text))
         )
     nodes, groups, edges, classes = {}, {}, [], {}
     stack, direction, link_styles, group_line = [], None, [], {}
@@ -617,7 +651,7 @@ def from_mermaid(text, logger=None):
         return n
 
     def unsupported(lineno, stmt):
-        return _mermaid_error('flowchart', lineno, stmt, _FLOWCHART_SUPPORTED)
+        return _mermaid_error("flowchart", lineno, stmt, _FLOWCHART_SUPPORTED)
 
     for lineno, line in _mermaid_lines(text):
         for stmt in _mermaid_split(line):
@@ -627,48 +661,50 @@ def from_mermaid(text, logger=None):
             head = stmt.split()[0]
             if head in FLOWCHART_KINDS:
                 parts = stmt.split()
-                if len(parts) > 2 or (len(parts) == 2 and parts[1].upper() not in _MERMAID_DIRECTIONS):
+                if len(parts) > 2 or (
+                    len(parts) == 2 and parts[1].upper() not in _MERMAID_DIRECTIONS
+                ):
                     raise unsupported(lineno, stmt)
                 if len(parts) == 2:
                     direction = _MERMAID_DIRECTIONS[parts[1].upper()]
                 continue
-            if head == 'subgraph':
-                gid, label = _mermaid_subgraph(stmt[len('subgraph') :].strip())
-                groups[gid] = {'label': label, 'parent': stack[-1] if stack else None}
+            if head == "subgraph":
+                gid, label = _mermaid_subgraph(stmt[len("subgraph") :].strip())
+                groups[gid] = {"label": label, "parent": stack[-1] if stack else None}
                 group_line[gid] = lineno
                 stack.append(gid)
                 continue
-            if stmt == 'end':
+            if stmt == "end":
                 if not stack:
                     raise ValueError('Mermaid flowchart line %d: "end" without an open "subgraph".' % lineno)
                 stack.pop()
                 continue
-            if head == 'style':
+            if head == "style":
                 parts = stmt.split(None, 2)
                 if len(parts) < 3:
                     raise unsupported(lineno, stmt)
                 color = _mermaid_color(parts[2])
                 if color:
-                    node(parts[1])['color'] = color
+                    node(parts[1])["color"] = color
                 continue
-            if head == 'classDef':
+            if head == "classDef":
                 parts = stmt.split(None, 2)
                 if len(parts) < 3:
                     raise unsupported(lineno, stmt)
                 for name in parts[1].split(','):
                     classes[name] = _mermaid_color(parts[2])
                 continue
-            if head == 'class':
+            if head == "class":
                 parts = stmt.split()
                 if len(parts) != 3:
                     raise unsupported(lineno, stmt)
                 for name in parts[1].split(','):
                     node(name)['class'] = parts[2]
                 continue
-            if head == 'linkStyle':
+            if head == "linkStyle":
                 link_styles.append((lineno, stmt))
                 continue
-            if head == 'click' or (head == 'direction' and len(stmt.split()) == 2):
+            if head == "click" or (head == "direction" and len(stmt.split()) == 2):
                 # Click handlers and per-subgraph directions have no equivalent here.
                 raise unsupported(lineno, stmt)
             # All or nothing: nodes and edges of a statement are kept only if it parses.
@@ -683,7 +719,7 @@ def from_mermaid(text, logger=None):
                 _mermaid_chain(stmt, record, chain_edges)
             except ValueError as e:
                 raise ValueError(
-                    'Mermaid flowchart line %d could not be parsed: %r (%s). Supported: %s.'
+                    "Mermaid flowchart line %d could not be parsed: %r (%s). Supported: %s."
                     % (lineno, stmt, e, _FLOWCHART_SUPPORTED)
                 ) from None
             for name, label, shape, extra in pending:
@@ -701,8 +737,8 @@ def from_mermaid(text, logger=None):
         for end in e[:2]:
             if end in groups:
                 raise ValueError(
-                    'Mermaid flowchart line %d: links to subgraphs are not supported (%r is a subgraph); '
-                    'link to a node inside it instead.' % (e[-1], end)
+                    "Mermaid flowchart line %d: links to subgraphs are not supported (%r is a subgraph); "
+                    "link to a node inside it instead." % (e[-1], end)
                 )
 
     _apply_link_styles(edges, link_styles)
@@ -711,16 +747,18 @@ def from_mermaid(text, logger=None):
                          '"flowchart LR; A[Start] --> B{Valid?}", Markdown with a ```mermaid block, '
                          'or a path to a %s file.' % '/'.join(MERMAID_FILE_SUFFIXES))
     # Invisible links (~~~) only count for linkStyle numbering.
-    rows = [e[:6] for e in edges if e[3] != 'invisible']
-    df = pd.DataFrame(rows, columns=['source', 'target', 'label', 'style', 'weight', 'color'])
-    if df['color'].isna().all():
+    rows = [e[:6] for e in edges if e[3] != "invisible"]
+    df = pd.DataFrame(
+        rows, columns=["source", "target", "label", "style", "weight", "color"]
+    )
+    if df["color"].isna().all():
         df = df.drop(columns='color')
     return df, nodes, groups, direction
 
 
 _FLOWCHART_SUPPORTED = (
-    'nodes and links (A[text] --> B, A -->|text| B, A & B --> C, chains), subgraph ... end, '
-    'style, classDef, class, :::, linkStyle and %% comments'
+    "nodes and links (A[text] --> B, A -->|text| B, A & B --> C, chains), subgraph ... end, "
+    "style, classDef, class, :::, linkStyle and %% comments"
 )
 
 
@@ -731,34 +769,40 @@ def _apply_link_styles(edges, link_styles):
     ~~~ links included). Sets the edge colour (stroke) and a dashed style
     (stroke-dasharray); 'default' applies first, numbered links override it.
     """
-    for lineno, stmt in sorted(link_styles, key=lambda x: x[1].split()[1:2] != ['default']):
+    for lineno, stmt in sorted(
+        link_styles, key=lambda x: x[1].split()[1:2] != ["default"]
+    ):
         parts = stmt.split(None, 2)
         if len(parts) < 3:
-            raise _mermaid_error('flowchart', lineno, stmt, _FLOWCHART_SUPPORTED)
-        if parts[1] == 'default':
+            raise _mermaid_error("flowchart", lineno, stmt, _FLOWCHART_SUPPORTED)
+        if parts[1] == "default":
             idx = range(len(edges))
         else:
             try:
-                idx = [int(i) for i in parts[1].split(',')]
+                idx = [int(i) for i in parts[1].split(",")]
             except ValueError:
-                raise _mermaid_error('flowchart', lineno, stmt, _FLOWCHART_SUPPORTED) from None
+                raise _mermaid_error(
+                    "flowchart", lineno, stmt, _FLOWCHART_SUPPORTED
+                ) from None
             bad = [i for i in idx if not 0 <= i < len(edges)]
             if bad:
                 raise ValueError(
-                    'Mermaid flowchart line %d: linkStyle refers to link %d, but the diagram has %d '
-                    'links (numbered from 0).' % (lineno, bad[0], len(edges))
+                    "Mermaid flowchart line %d: linkStyle refers to link %d, but the diagram has %d "
+                    "links (numbered from 0)." % (lineno, bad[0], len(edges))
                 )
         props = _mermaid_props(parts[2])
         for i in idx:
-            if props.get('stroke'):
-                edges[i][5] = props['stroke']
-            if props.get('stroke-dasharray'):
-                edges[i][3] = 'dashed'
+            if props.get("stroke"):
+                edges[i][5] = props["stroke"]
+            if props.get("stroke-dasharray"):
+                edges[i][3] = "dashed"
 
 
-_STATE_REF = r'(\[\*\]|[A-Za-z0-9_]+)'
-_STATE_TRANSITION = re.compile(r'^' + _STATE_REF + r'\s*-->\s*' + _STATE_REF + r'\s*(?::(.*))?$')
-_STATE_NOTE = re.compile(r'^note\s+(?:left|right)\s+of\s+([A-Za-z0-9_]+)\s*(?::(.*))?$')
+_STATE_REF = r"(\[\*\]|[A-Za-z0-9_]+)"
+_STATE_TRANSITION = re.compile(
+    r"^" + _STATE_REF + r"\s*-->\s*" + _STATE_REF + r"\s*(?::(.*))?$"
+)
+_STATE_NOTE = re.compile(r"^note\s+(?:left|right)\s+of\s+([A-Za-z0-9_]+)\s*(?::(.*))?$")
 
 
 def _from_mermaid_state(text, logger=None):
@@ -783,10 +827,10 @@ def _from_mermaid_state(text, logger=None):
 
     def unsupported(lineno, stmt):
         return _mermaid_error(
-            'stateDiagram',
+            "stateDiagram",
             lineno,
             stmt,
-            'transitions (A --> B : label), [*] start/end, notes, direction, classDef/class and %% comments',
+            "transitions (A --> B : label), [*] start/end, notes, direction, classDef/class and %% comments",
         )
 
     def state(name):
@@ -795,39 +839,39 @@ def _from_mermaid_state(text, logger=None):
     def add_note(name, lines):
         n = state(name)
         # Tooltips may hold HTML, so the note text is escaped and its lines joined with <br>.
-        note = '<br>'.join(html_escape(line) for line in lines)
-        n['tooltip'] = n['tooltip'] + '<br>' + note if n.get('tooltip') else note
+        note = "<br>".join(html_escape(line) for line in lines)
+        n["tooltip"] = n["tooltip"] + "<br>" + note if n.get("tooltip") else note
 
     for lineno, stmt in _mermaid_lines(text):
         if note_for is not None:
-            if stmt == 'end note':
+            if stmt == "end note":
                 add_note(note_for, note_lines)
                 note_for = None
             else:
                 note_lines.append(stmt)
             continue
-        stmt = stmt.rstrip(';').rstrip()
+        stmt = stmt.rstrip(";").rstrip()
         parts = stmt.split()
         head = parts[0]
         if head in STATE_KINDS and len(parts) == 1:
             continue
-        if head == 'direction' and len(parts) == 2:
+        if head == "direction" and len(parts) == 2:
             if parts[1].upper() not in _MERMAID_DIRECTIONS:
                 raise unsupported(lineno, stmt)
             direction = _MERMAID_DIRECTIONS[parts[1].upper()]
             continue
-        if head == 'classDef':
+        if head == "classDef":
             parts = stmt.split(None, 2)
             if len(parts) < 3:
                 raise unsupported(lineno, stmt)
-            for name in parts[1].split(','):
+            for name in parts[1].split(","):
                 classes[name] = _mermaid_color(parts[2])
             continue
-        if head == 'class':
+        if head == "class":
             if len(parts) != 3:
                 raise unsupported(lineno, stmt)
-            for name in parts[1].split(','):
-                state(name)['class'] = parts[2]
+            for name in parts[1].split(","):
+                state(name)["class"] = parts[2]
             continue
         m = _STATE_NOTE.match(stmt)
         if m:
@@ -838,32 +882,41 @@ def _from_mermaid_state(text, logger=None):
             continue
         m = _STATE_TRANSITION.match(stmt)
         if m:
-            src = '__start__' if m.group(1) == '[*]' else m.group(1)
-            tgt = '__end__' if m.group(2) == '[*]' else m.group(2)
+            src = "__start__" if m.group(1) == "[*]" else m.group(1)
+            tgt = "__end__" if m.group(2) == "[*]" else m.group(2)
             for name in (src, tgt):
-                if name in ('__start__', '__end__'):
+                if name in ("__start__", "__end__"):
                     nodes.setdefault(
-                        name, {'label': '', 'shape': 'circle', 'color': DEFAULT_EDGE_COLOR, 'tooltip': name.strip('_')}
+                        name,
+                        {
+                            "label": "",
+                            "shape": "circle",
+                            "color": DEFAULT_EDGE_COLOR,
+                            "tooltip": name.strip("_"),
+                        },
                     )
                 else:
                     state(name)
-            edges.append((src, tgt, (m.group(3) or '').strip(), 'solid', 1))
+            edges.append((src, tgt, (m.group(3) or "").strip(), "solid", 1))
             continue
         raise unsupported(lineno, stmt)
     if note_for is not None:
-        raise ValueError('Mermaid stateDiagram line %d: note for %r has no "end note".' % (note_line, note_for))
+        raise ValueError(
+            'Mermaid stateDiagram line %d: note for %r has no "end note".'
+            % (note_line, note_for)
+        )
 
     for n in nodes.values():
-        cls = n.pop('class', None)
-        if cls and classes.get(cls) and 'color' not in n:
-            n['color'] = classes[cls]
+        cls = n.pop("class", None)
+        if cls and classes.get(cls) and "color" not in n:
+            n["color"] = classes[cls]
     if not edges:
         raise ValueError(
-            'No Mermaid state transitions found. Expected text such as '
+            "No Mermaid state transitions found. Expected text such as "
             '"stateDiagram-v2\n  [*] --> pending\n  pending --> done : finish".'
         )
-    df = pd.DataFrame(edges, columns=['source', 'target', 'label', 'style', 'weight'])
-    return df, nodes, {}, direction or 'TB'
+    df = pd.DataFrame(edges, columns=["source", "target", "label", "style", "weight"])
+    return df, nodes, {}, direction or "TB"
 
 
 def merge_group_attributes(base, override):
@@ -889,19 +942,19 @@ def merge_node_attributes(base, override):
 
 def _mermaid_split(line):
     """Split one line on ';' outside quotes, brackets and |edge labels|."""
-    out, buf, depth, quoted, piped = [], '', 0, False, False
+    out, buf, depth, quoted, piped = [], "", 0, False, False
     for ch in line:
         if ch == '"' and not piped:
             quoted = not quoted
-        elif ch == '|' and not quoted and depth == 0:
+        elif ch == "|" and not quoted and depth == 0:
             piped = not piped
-        elif not quoted and not piped and ch in '[({':
+        elif not quoted and not piped and ch in "[({":
             depth += 1
-        elif not quoted and not piped and ch in '])}':
+        elif not quoted and not piped and ch in "])}":
             depth = max(0, depth - 1)
-        if ch == ';' and not quoted and not piped and depth == 0:
+        if ch == ";" and not quoted and not piped and depth == 0:
             out.append(buf)
-            buf = ''
+            buf = ""
         else:
             buf += ch
     out.append(buf)
@@ -1010,8 +1063,8 @@ def _mermaid_chain(stmt, node, edges):
             if p:
                 label, i = p.group(1), p.end()
         right, i = _mermaid_group(stmt, i, node)
-        style = 'invisible' if '~' in arrow else 'dotted' if '.' in arrow else 'solid'
-        weight = 3 if '=' in arrow else 1
+        style = "invisible" if "~" in arrow else "dotted" if "." in arrow else "solid"
+        weight = 3 if "=" in arrow else 1
         for s in left:
             for t in right:
                 edges.append((s, t, _mermaid_label(label), style, weight))
