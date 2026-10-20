@@ -108,6 +108,10 @@ messages (by index) and participants, dims the rest and scrolls them into view.
 Keys: ← and → move, Space plays or pauses, Esc closes. ``steps=[]`` removes the walkthrough.
 
 
+.. raw:: html
+
+    <iframe src="https://raw.githack.com/d3blocks/d3blocks/main/docs/figs/sequence/sequence.html" height="600px" width="700px", frameBorder="0"></iframe>
+
 Theme
 *****
 

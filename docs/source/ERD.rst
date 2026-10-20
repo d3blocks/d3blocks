@@ -86,7 +86,7 @@ DataFrame input
 
 .. raw:: html
 
-    <iframe src="https://erdogant.github.io\docs\d3blocks\flowgraph.html" height="600px" width="700px", frameBorder="0"></iframe>
+    <iframe src="https://raw.githack.com/d3blocks/d3blocks/main/docs/figs/erd/erd.html" height="600px" width="700px", frameBorder="0"></iframe>
 
 
 
