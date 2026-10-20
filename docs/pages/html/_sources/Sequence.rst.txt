@@ -34,7 +34,8 @@ Mermaid input
 Supported: ``participant A``, ``participant A as Label``, ``actor A``, ``A->>B: text`` (call),
 ``A-->>B: text`` (reply), ``rect rgb(...)`` / ``rect rgba(...)`` ... ``end`` (a region) and ``%%``
 comments. Other statements (activations, notes, ``alt``/``loop``, ``autonumber``, self-messages, ...)
-raise a ``ValueError`` naming the line, so nothing is dropped silently.
+raise a ``ValueError`` naming the line, so nothing is dropped silently (see *Mermaid errors* on the
+Flowgraph page).
 
 .. code:: python
 

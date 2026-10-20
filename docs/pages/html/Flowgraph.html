@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#process-flow">Process flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mermaid-input">Mermaid input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mermaid-errors">Mermaid errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#state-diagrams">State diagrams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#architecture-diagram">Architecture diagram</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jupyter-and-streamlit">Jupyter and Streamlit</a></li>
@@ -165,10 +166,13 @@ containing a <a href="#id1"><span class="problematic" id="id2">``</span></a><a h
 same diagram renders on GitHub, or to a .mmd / .mermaid file.
 From Markdown, the first flowchart or state diagram block is used.</p></li>
 </ul>
-<p>Node shapes, edge labels, dotted/thick links and (nested) subgraphs are
-converted; <cite>nodes</cite>, <cite>groups</cite> and <cite>direction</cite> override what it defines.
-State diagrams: transitions with labels, ‘[*]’ start/end (small circles),
-notes (shown in the state’s tooltip) and classDef colours; laid out ‘TB’.</p>
+<p>Node shapes, edge labels, dotted/thick links, (nested) subgraphs and
+linkStyle colours are converted; <cite>nodes</cite>, <cite>groups</cite> and <cite>direction</cite> override
+what it defines. State diagrams: transitions with labels, ‘[*]’ start/end
+(small circles), notes (shown in the state’s tooltip), direction and
+classDef colours; laid out ‘TB’ by default. Statements that do not parse or
+have no equivalent (click, links to subgraphs, …) raise a ValueError naming
+the line.</p>
 </p></li>
 <li><p><strong>nodes</strong> (<em>pd.DataFrame</em><em> or </em><em>dict</em><em>, </em><em>(</em><em>default: None</em><em>)</em>) – <dl class="simple">
 <dt>Per-node attributes keyed by node name (a ‘name’ column or the index):</dt><dd><ul>
@@ -338,7 +342,27 @@ and group settings (<code class="docutils literal notranslate"><span class="pre"
 <section id="mermaid-input">
 <h2>Mermaid input<a class="headerlink" href="#mermaid-input" title="Link to this heading"></a></h2>
 <p>Node shapes, edge labels, dotted (<code class="docutils literal notranslate"><span class="pre">-.-&gt;</span></code>) and thick (<code class="docutils literal notranslate"><span class="pre">==&gt;</span></code>) links, <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>, chains,
-nested subgraphs and colours from <code class="docutils literal notranslate"><span class="pre">style</span></code> / <code class="docutils literal notranslate"><span class="pre">classDef</span></code> are converted.</p>
+nested subgraphs, node colours from <code class="docutils literal notranslate"><span class="pre">style</span></code> / <code class="docutils literal notranslate"><span class="pre">classDef</span></code> and edge colours and dashes from
+<code class="docutils literal notranslate"><span class="pre">linkStyle</span></code> are converted.</p>
+</section>
+<section id="mermaid-errors">
+<h2>Mermaid errors<a class="headerlink" href="#mermaid-errors" title="Link to this heading"></a></h2>
+<p>All d3blocks Mermaid readers (flowcharts, state diagrams, <code class="docutils literal notranslate"><span class="pre">sequence</span></code> and <code class="docutils literal notranslate"><span class="pre">erd</span></code>) follow one
+rule: every statement is understood, explicitly ignored, or raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> that names the
+line, before any HTML is written. Nothing is dropped silently.</p>
+<ul class="simple">
+<li><p>Ignored: blank lines, <code class="docutils literal notranslate"><span class="pre">%%</span></code> comments, <code class="docutils literal notranslate"><span class="pre">%%{init}%%</span></code> directives and the accessibility metadata
+<code class="docutils literal notranslate"><span class="pre">accTitle</span></code> / <code class="docutils literal notranslate"><span class="pre">accDescr</span></code>.</p></li>
+<li><p>Errors: statements that do not parse (for example <code class="docutils literal notranslate"><span class="pre">A[Start]</span> <span class="pre">--&gt;</span> <span class="pre">B{ok?</span></code>), a wrong first statement,
+an <code class="docutils literal notranslate"><span class="pre">end</span></code> without <code class="docutils literal notranslate"><span class="pre">subgraph</span></code> (or a <code class="docutils literal notranslate"><span class="pre">subgraph</span></code> without <code class="docutils literal notranslate"><span class="pre">end</span></code>), and Mermaid features without an
+equivalent here, such as <code class="docutils literal notranslate"><span class="pre">click</span></code>, a <code class="docutils literal notranslate"><span class="pre">direction</span></code> inside a subgraph and links to subgraphs (link to
+a node inside the subgraph instead).</p></li>
+</ul>
+<p>Line numbers count from the first line of the diagram (in Markdown: of the fenced block).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;flowchart LR</span><span class="se">\n</span><span class="s1">  A[Start] --&gt; B{ok?&#39;</span><span class="p">)</span>
+<span class="c1"># ValueError: Mermaid flowchart line 2 could not be parsed: &#39;A[Start] --&gt; B{ok?&#39; (...)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">flowchart LR</span>
 <span class="s1">    start([Order received]) --&gt; check{In stock?}</span>
@@ -364,8 +388,9 @@ flowchart block is used.</p>
 the same layout, interaction and export as flowcharts. <code class="docutils literal notranslate"><span class="pre">[*]</span></code> becomes one start and one end
 pseudo-state (small circles), transition labels are kept (everything after the first <code class="docutils literal notranslate"><span class="pre">:</span></code>), notes
 are added to the state’s tooltip and <code class="docutils literal notranslate"><span class="pre">classDef</span></code> / <code class="docutils literal notranslate"><span class="pre">class</span></code> colours are applied. State diagrams are
-laid out top to bottom unless <code class="docutils literal notranslate"><span class="pre">direction</span></code> is passed. Composite states, <code class="docutils literal notranslate"><span class="pre">&lt;&lt;choice&gt;&gt;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">state</span> <span class="pre">&quot;x&quot;</span> <span class="pre">as</span> <span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">direction</span></code> raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> naming the line.</p>
+laid out top to bottom unless the diagram has a <code class="docutils literal notranslate"><span class="pre">direction</span></code> statement or <code class="docutils literal notranslate"><span class="pre">direction</span></code> is
+passed. Composite states, <code class="docutils literal notranslate"><span class="pre">&lt;&lt;choice&gt;&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">state</span> <span class="pre">&quot;x&quot;</span> <span class="pre">as</span> <span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">:</span> <span class="pre">description</span></code> raise a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> naming the line.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">stateDiagram-v2</span>
 <span class="s1">    [*] --&gt; pending : Signal created</span>

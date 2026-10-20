@@ -31,7 +31,8 @@ Mermaid input
 Supported: relationships with all four markers per end (``||``, ``|o``/``o|``, ``}|``/``|{``,
 ``}o``/``o{``), ``--`` (identifying) and ``..`` (non-identifying) lines, entity blocks with
 ``type name PK "comment"`` rows, keys ``PK``, ``FK``, ``UK`` and comma lists, entities that are only
-used in relationships, and ``%%`` comments. Other statements raise a ``ValueError`` naming the line.
+used in relationships, a top-level ``direction`` (``direction=`` wins over it) and ``%%`` comments.
+Other statements raise a ``ValueError`` naming the line (see *Mermaid errors* on the Flowgraph page).
 
 .. code:: python
 
