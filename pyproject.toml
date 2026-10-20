@@ -67,3 +67,14 @@ include = ["d3blocks*"]
 
 [tool.setuptools.dynamic]
 version = { attr = "d3blocks.__version__" }
+
+[tool.ruff.lint]
+# Formatting is ruff format with its Black-compatible defaults (88 columns, double quotes).
+# Lint: pycodestyle errors (E), pyflakes (F) and import sorting (I). Line length is left
+# to the formatter, which does not split long strings.
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# A scratch file of `# %%` cells, each importing what it needs.
+"d3blocks/examples.py" = ["E402"]

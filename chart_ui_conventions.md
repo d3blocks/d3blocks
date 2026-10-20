@@ -28,6 +28,7 @@ Use this document as an input prompt to align other d3blocks charts with the sca
 - `dark_mode=True` → dark theme (default body, no `light` class).
 - `dark_mode=False` → light theme (`<body class="light">`).
 - Theme toggle (if present) still switches at runtime; initial state follows `dark_mode`.
+- `dark_mode='auto'` (flowgraph, sequence, erd): the initial theme follows the OS (`prefers-color-scheme`) and keeps following it until the theme toggle is used; template flag `darkMode='auto'`, applied by `_shared/d3js/theme.js` before the first paint.
 - Text, axis, buttons, and chrome follow the theme CSS variables (`--text`, `--btn-*`, etc.).
 
 ### 4. Backgrounds: `color_background` as `[dark, light]`

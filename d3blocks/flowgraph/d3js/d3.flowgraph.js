@@ -52,12 +52,49 @@
     return groups.filter(function (g) { return used.has(g.name); });
   })();
 
+  // An edge end may name a group instead of a node (Python never makes such a
+  // name a node). The edge is drawn to the group box, as Mermaid draws links to
+  // subgraphs.
+  function isGroupEnd(name) { return !nodeById.has(name) && groupById.has(name); }
+
   var outEdges = new Map(), inEdges = new Map();
   nodes.forEach(function (n) { outEdges.set(n.name, []); inEdges.set(n.name, []); });
   edges.forEach(function (e) {
-    if (outEdges.has(e.source)) outEdges.get(e.source).push(e);
-    if (inEdges.has(e.target)) inEdges.get(e.target).push(e);
+    [e.source, e.target].forEach(function (name) {
+      if (!outEdges.has(name)) { outEdges.set(name, []); inEdges.set(name, []); }
+    });
+    outEdges.get(e.source).push(e);
+    inEdges.get(e.target).push(e);
   });
+
+  // Group ends in layout: dagre cannot route edges to compound nodes, so a group
+  // end is laid out at its representative, the first node (in node order) inside
+  // the group at any depth (Mermaid's approach). Hidden groups use it too.
+  var representatives = new Map();
+  function layoutEnd(name) {
+    if (!isGroupEnd(name)) return nodeById.get(name);
+    if (!representatives.has(name)) {
+      var members = groupMembers(name);
+      representatives.set(name, nodes.find(function (n) { return members.has(n.name); }));
+    }
+    return representatives.get(name);
+  }
+
+  function groupsDrawn() { return state.showGroups && usedGroups.length > 0; }
+
+  // Geometry of an edge end after layout: the node, or a rectangle built from the
+  // group box (the representative while groups are hidden).
+  function endpointOf(name) {
+    if (!isGroupEnd(name)) return nodeById.get(name);
+    var gr = groupById.get(name), b = gr.box;
+    if (!groupsDrawn() || !b) return layoutEnd(name);
+    return { name: name, x: b.x + b.w / 2, y: b.y + b.h / 2, width: b.w, height: b.h,
+             shape: 'process', label: gr.label, isGroup: true };
+  }
+
+  function endLabel(name) {
+    return isGroupEnd(name) ? groupById.get(name).label + ' (group)' : nodeById.get(name).label;
+  }
 
   // ---------------------------------------------------------------- svg
   var main = document.getElementById('fg-main');
@@ -92,9 +129,13 @@
   function groupHeader() { return Math.round(state.fontsize + 12); }
 
   // ---------------------------------------------------------------- shapes
+  // A circle without a label is a pseudo-state (state diagram start / end): a small solid dot.
+  function isPseudo(n) { return n.shape === 'circle' && !String(n.label).trim(); }
+
   function sizeNode(n) {
     var fs = state.fontsize, lh = lineHeight();
     n.lines = String(n.label).split('\n');
+    if (isPseudo(n)) { n.width = n.height = 22; return; }
     var tw = d3.max(n.lines, function (l) { return textWidth(l, fs); }) || 0;
     var th = n.lines.length * lh;
     var w = tw + 32, h = th + 20;
@@ -248,16 +289,17 @@
 
     edges.forEach(function (e) {
       var size = edgeLabelSize(e);
-      g.setEdge(e.source, e.target, size ? { width: size.width, height: size.height, labelpos: 'c' } : {}, e.id);
+      g.setEdge(layoutEnd(e.source).name, layoutEnd(e.target).name,
+        size ? { width: size.width, height: size.height, labelpos: 'c' } : {}, e.id);
     });
 
     dagre.layout(g);
 
     nodes.forEach(function (n) { var p = g.node(n.name); n.x = p.x; n.y = p.y; });
     edges.forEach(function (e) {
-      var de = g.edge({ v: e.source, w: e.target, name: e.id });
+      var s = layoutEnd(e.source), t = layoutEnd(e.target);
+      var de = g.edge({ v: s.name, w: t.name, name: e.id });
       var pts = de.points.map(function (p) { return { x: p.x, y: p.y }; });
-      var s = nodeById.get(e.source), t = nodeById.get(e.target);
       if (s !== t && pts.length >= 2) {
         pts[0] = intersect(s, pts.length > 2 ? pts[1] : t);
         pts[pts.length - 1] = intersect(t, pts.length > 2 ? pts[pts.length - 2] : s);
@@ -272,6 +314,49 @@
     compressRanks(useGroups);
     expandCrossAxis(useGroups);
     groupBoxes(usedGroups);
+    if (useGroups) edges.forEach(cutAtGroupEnds);
+  }
+
+  // A group end's path starts at the representative inside the box; cut it where
+  // it leaves the box, so it starts (or, with its arrowhead, ends) on the border.
+  function cutAtGroupEnds(e) {
+    if (isGroupEnd(e.source)) e.points = cutFromStart(e.points, groupById.get(e.source).box);
+    if (isGroupEnd(e.target)) e.points = cutFromStart(e.points.slice().reverse(), groupById.get(e.target).box).reverse();
+    var boxes = [e.source, e.target].filter(isGroupEnd).map(function (name) { return groupById.get(name).box; });
+    if (boxes.some(function (b) { return inBox({ x: e.lx, y: e.ly }, b); })) {
+      var mid = pathMidpoint(e.points);
+      e.lx = mid.x; e.ly = mid.y;
+    }
+  }
+
+  function inBox(p, b) { return p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h; }
+
+  // Drop every point up to the last one inside the box and start at the crossing.
+  function cutFromStart(pts, b) {
+    var last = -1;
+    pts.forEach(function (p, i) { if (inBox(p, b)) last = i; });
+    if (last < 0 || last === pts.length - 1) return pts;
+    var a = pts[last], c = pts[last + 1], t = 1;
+    var dx = c.x - a.x, dy = c.y - a.y;
+    if (dx > 0) t = Math.min(t, (b.x + b.w - a.x) / dx); else if (dx < 0) t = Math.min(t, (b.x - a.x) / dx);
+    if (dy > 0) t = Math.min(t, (b.y + b.h - a.y) / dy); else if (dy < 0) t = Math.min(t, (b.y - a.y) / dy);
+    t = Math.max(0, t);
+    return [{ x: a.x + dx * t, y: a.y + dy * t }].concat(pts.slice(last + 1));
+  }
+
+  // Point halfway along a polyline.
+  function pathMidpoint(pts) {
+    var lens = [], total = 0;
+    for (var i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); lens.push(l); total += l; }
+    var half = total / 2;
+    for (var j = 0; j < lens.length; j++) {
+      if (half <= lens[j] && lens[j] > 0) {
+        var f = half / lens[j];
+        return { x: pts[j].x + (pts[j + 1].x - pts[j].x) * f, y: pts[j].y + (pts[j + 1].y - pts[j].y) * f };
+      }
+      half -= lens[j];
+    }
+    return pts[pts.length - 1];
   }
 
   // ELK: native compound layout, orthogonal edges, padding reserved for headers.
@@ -320,9 +405,12 @@
       var key = (useGroups && n.group && containers.has(GROUP_PREFIX + n.group)) ? GROUP_PREFIX + n.group : '__root__';
       containers.get(key).children.push({ id: n.name, width: n.width, height: n.height });
     });
+    // ELK supports edges to hierarchical nodes (INCLUDE_CHILDREN) and ends them on
+    // the group box; without drawn groups there is no container, so use the representative.
+    function elkEnd(name) { return (useGroups && isGroupEnd(name)) ? GROUP_PREFIX + name : layoutEnd(name).name; }
     edges.forEach(function (e) {
       var size = edgeLabelSize(e);
-      root.edges.push({ id: e.id, sources: [e.source], targets: [e.target],
+      root.edges.push({ id: e.id, sources: [elkEnd(e.source)], targets: [elkEnd(e.target)],
         labels: size ? [{ text: e.label, width: size.width, height: size.height }] : [] });
     });
 
@@ -348,7 +436,8 @@
       edges.forEach(function (e) {
         var re = byId.get(e.id), off = abs.get((re && re.container) || '__root__') || { x: 0, y: 0 };
         var sec = re && re.sections && re.sections[0];
-        var s = nodeById.get(e.source), t = nodeById.get(e.target);
+        // Group ends are rectangles (clipAlong leaves them as ELK placed them).
+        var s = endpointOf(e.source), t = endpointOf(e.target);
         if (!sec) {
           e.points = [intersect(s, t), intersect(t, s)];
         } else {
@@ -540,7 +629,7 @@
 
     nodes.forEach(function (n) { n[A] = map(n[A]); });
     edges.forEach(function (e) {
-      var s = nodeById.get(e.source), t = nodeById.get(e.target);
+      var s = layoutEnd(e.source), t = layoutEnd(e.target);
       e.points = (s === t) ? e.points.map(function (p) { var q = Object.assign({}, p); q[A] = map(q[A]); return q; })
                            : reroute(e.points);
       if (horizontal) e.lx = map(e.lx); else e.ly = map(e.ly);
@@ -582,8 +671,8 @@
       var last = e.points.length - 1;
       e.points.forEach(function (p, i) {
         // Endpoints stay attached to their nodes.
-        if (i === 0) p[B] += moved.get(e.source);
-        else if (i === last) p[B] += moved.get(e.target);
+        if (i === 0) p[B] += moved.get(layoutEnd(e.source).name);
+        else if (i === last) p[B] += moved.get(layoutEnd(e.target).name);
         else p[B] += shift(p[B], margin);
       });
       if (horizontal) e.ly += shift(e.ly, margin); else e.lx += shift(e.lx, margin);
@@ -591,6 +680,14 @@
   }
 
   // ---------------------------------------------------------------- render
+  // Edges in the default grey follow the theme (--fg-edge-default); other edge
+  // colours are data and stay as given. Set as style, since var() is not valid
+  // in presentation attributes.
+  var DEFAULT_EDGE_COLOR = '#8c8c8c';
+  function paint(color) {
+    return String(color).toLowerCase() === DEFAULT_EDGE_COLOR ? 'var(--fg-edge-default)' : color;
+  }
+
   var colorIds = new Map();
   function markerFor(color) {
     if (!colorIds.has(color)) {
@@ -600,7 +697,7 @@
         .attr('id', id).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
         .attr('markerWidth', 9).attr('markerHeight', 9).attr('markerUnits', 'userSpaceOnUse')
         .attr('orient', 'auto-start-reverse')
-        .append('path').attr('d', 'M0,0L10,5L0,10Z').attr('fill', color);
+        .append('path').attr('d', 'M0,0L10,5L0,10Z').style('fill', paint(color));
     }
     return 'url(#' + colorIds.get(color) + ')';
   }
@@ -642,7 +739,10 @@
     var genter = gsel.enter().append('g').attr('class', 'fg-group');
     genter.append('rect').attr('class', 'fg-group-box').attr('rx', 10);
     genter.append('text').attr('class', 'fg-group-label');
-    genter.on('click', function (ev, d) { ev.stopPropagation(); togglePin({ type: 'group', id: d.name }); });
+    genter
+      .on('mouseenter', function (ev, d) { highlight({ type: 'group', id: d.name }); })
+      .on('mouseleave', function () { restoreHighlight(); })
+      .on('click', function (ev, d) { ev.stopPropagation(); togglePin({ type: 'group', id: d.name }); });
     var gall = genter.merge(gsel).style('--c', function (d) { return d.color; });
     gall.order();
     maybe(gall.select('rect'), t)
@@ -661,11 +761,11 @@
     eenter.append('path').attr('class', 'fg-edge-hit');
     eenter.append('path').attr('class', function (d) { return 'fg-edge style-' + d.style; })
       .attr('id', function (d) { return 'fg-path-' + d.idx; })
-      .attr('stroke', function (d) { return d.color; })
+      .style('stroke', function (d) { return paint(d.color); })
       .attr('stroke-width', function (d) { return d.width; })
       .attr('marker-end', function (d) { return markerFor(d.color); });
     eenter.append('path').attr('class', 'fg-edge-flow')
-      .attr('stroke', function (d) { return d.color; })
+      .style('stroke', function (d) { return paint(d.color); })
       .attr('stroke-width', function (d) { return d.width + 1.5; });
     eenter
       .on('mouseenter', function (ev, d) { highlight({ type: 'edge', id: d.idx }); showEdgeTooltip(ev, d); })
@@ -699,7 +799,7 @@
     var nsel = gNodes.selectAll('g.fg-node').data(nodes, function (d) { return d.name; });
     nsel.exit().remove();
     var nenter = nsel.enter().append('g')
-      .attr('class', function (d) { return 'fg-node shape-' + d.shape; })
+      .attr('class', function (d) { return 'fg-node shape-' + d.shape + (isPseudo(d) ? ' fg-pseudo' : ''); })
       .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
     nenter.append('path').attr('class', 'fg-shape');
     nenter.append('text').attr('class', 'fg-label').attr('text-anchor', 'middle');
@@ -757,7 +857,7 @@
         for (var i = 0; i < n; i++) {
           var c = document.createElementNS(SVG_NS, 'circle');
           c.setAttribute('r', Math.max(2.5, e.width + 1));
-          c.setAttribute('fill', e.color);
+          c.style.fill = paint(e.color);
           var m = document.createElementNS(SVG_NS, 'animateMotion');
           m.setAttribute('dur', dur.toFixed(2) + 's');
           m.setAttribute('repeatCount', 'indefinite');
@@ -775,7 +875,7 @@
         if (!comet) {
           comet = document.createElementNS(SVG_NS, 'path');
           comet.setAttribute('class', 'fg-edge-comet');
-          comet.setAttribute('stroke', e.color);
+          comet.style.stroke = paint(e.color);
           comet.setAttribute('stroke-width', e.width + 2);
           comet.setAttribute('d', path.getAttribute('d'));
           g.appendChild(comet);
@@ -805,9 +905,10 @@
     var starts;
     if (state.pinned && state.pinned.type === 'node') starts = [state.pinned.id];
     else {
-      starts = nodes.filter(function (n) {
-        return !(inEdges.get(n.name) || []).some(function (e) { return e.source !== e.target; });
-      }).map(function (n) { return n.name; });
+      // Nodes and group ends without incoming edges.
+      starts = Array.from(outEdges.keys()).filter(function (name) {
+        return !(inEdges.get(name) || []).some(function (e) { return e.source !== e.target; });
+      });
       if (!starts.length) starts = [nodes[0].name];
     }
     var steps = [{ nodes: starts.slice(), edges: [] }], seen = new Set(starts), used = new Set(), frontier = starts;
@@ -828,6 +929,7 @@
   }
 
   function setTraceButtons(running) {
+    if (DATA.steps) return;  // the buttons open the captioned walkthrough instead
     ['traceButton', 'traceButton2'].forEach(function (id) {
       var b = document.getElementById(id);
       if (!b) return;
@@ -886,7 +988,8 @@
     }
   }
 
-  function groupMembers(name) {
+  // The group plus every group nested in it, at any depth.
+  function groupsInside(name) {
     var inside = new Set([name]);
     var changed = true;
     while (changed) {
@@ -895,6 +998,11 @@
         if (g.parent && inside.has(g.parent) && !inside.has(g.name)) { inside.add(g.name); changed = true; }
       });
     }
+    return inside;
+  }
+
+  function groupMembers(name) {
+    var inside = groupsInside(name);
     return new Set(nodes.filter(function (n) { return n.group && inside.has(n.group); }).map(function (n) { return n.name; }));
   }
 
@@ -909,10 +1017,12 @@
     } else if (target.type === 'group') {
       // Group members plus their direct connections.
       focusGroup = target.id;
-      var members = groupMembers(target.id);
+      var members = groupMembers(target.id), inside = groupsInside(target.id);
       members.forEach(function (m) { ns.add(m); });
       edges.forEach(function (e) {
-        if (members.has(e.source) || members.has(e.target)) { es.add(e.idx); ns.add(e.source); ns.add(e.target); }
+        if (members.has(e.source) || members.has(e.target) || inside.has(e.source) || inside.has(e.target)) {
+          es.add(e.idx); ns.add(e.source); ns.add(e.target);
+        }
       });
     } else if (target.type === 'variant') {
       edges.forEach(function (e) {
@@ -921,6 +1031,9 @@
     } else if (target.type === 'edge') {
       var e = edges[target.id];
       es.add(e.idx); ns.add(e.source); ns.add(e.target);
+    } else if (target.type === 'step') {
+      target.nodes.forEach(function (n) { ns.add(n); });
+      target.edges.forEach(function (e) { es.add(e.idx); ns.add(e.source); ns.add(e.target); });
     }
     svg.classed('fg-has-highlight', true);
     gNodes.selectAll('g.fg-node')
@@ -928,7 +1041,9 @@
       .classed('fg-focus', function (d) { return d.name === focusNode; });
     gEdges.selectAll('g.fg-edge-g').classed('fg-hl', function (d) { return es.has(d.idx); });
     gLabels.selectAll('g.fg-edge-label').classed('fg-hl', function (d) { return es.has(d.idx); });
-    gGroups.selectAll('g.fg-group').classed('fg-focus', function (d) { return d.name === focusGroup; });
+    gGroups.selectAll('g.fg-group')
+      .classed('fg-hl', function (d) { return ns.has(d.name); })
+      .classed('fg-focus', function (d) { return d.name === focusGroup; });
   }
 
   function clearHighlight() {
@@ -937,7 +1052,8 @@
     svg.selectAll('.fg-focus').classed('fg-focus', false);
   }
 
-  function restoreHighlight() { highlight(state.pinned); }
+  // While the walkthrough is open, its step owns the highlight.
+  function restoreHighlight() { highlight(walkTarget || state.pinned); }
 
   function samePin(a, b) { return a && b && a.type === b.type && a.id === b.id; }
   function togglePin(target) {
@@ -964,8 +1080,8 @@
     moveTooltip(ev);
   }
   function showEdgeTooltip(ev, d) {
-    var s = nodeById.get(d.source), t = nodeById.get(d.target);
-    var html = '<div class="fg-tt-title">' + escapeHtml(s.label.replace(/\n/g, ' ')) + ' → ' + escapeHtml(t.label.replace(/\n/g, ' ')) + '</div>';
+    var html = '<div class="fg-tt-title">' + escapeHtml(endLabel(d.source).replace(/\n/g, ' ')) + ' → ' +
+      escapeHtml(endLabel(d.target).replace(/\n/g, ' ')) + '</div>';
     if (d.label) html += '<div>' + escapeHtml(d.label) + '</div>';
     tooltip.html(html).classed('open', true);
     moveTooltip(ev);
@@ -988,17 +1104,19 @@
     document.querySelectorAll('.stats-panel').forEach(function (p) {
       if (p.style.display !== 'none') left = Math.max(left, p.getBoundingClientRect().right + 16);
     });
-    return { top: top, left: left, right: 16, bottom: 16 };
+    return { top: top, left: left, right: 16, bottom: 16 + (walkthrough ? walkthrough.height() : 0) };
   }
 
-  function fit(animated) {
+  // Fit the whole diagram, or the box {x, y, w, h} (the walkthrough's follow camera).
+  function fit(animated, box) {
+    box = box || bounds;
     var rect = svg.node().getBoundingClientRect();
     var ins = viewportInsets();
     var availW = Math.max(50, rect.width - ins.left - ins.right);
     var availH = Math.max(50, rect.height - ins.top - ins.bottom);
-    var k = Math.min(availW / bounds.w, availH / bounds.h, 1.5);
-    var tx = ins.left + (availW - bounds.w * k) / 2 - bounds.x * k;
-    var ty = ins.top + (availH - bounds.h * k) / 2 - bounds.y * k;
+    var k = Math.min(availW / box.w, availH / box.h, 1.5);
+    var tx = ins.left + (availW - box.w * k) / 2 - box.x * k;
+    var ty = ins.top + (availH - box.h * k) / 2 - box.y * k;
     var tr = d3.zoomIdentity.translate(tx, ty).scale(k);
     (animated ? svg.transition().duration(500) : svg).call(zoom.transform, tr);
   }
@@ -1014,7 +1132,7 @@
     return computeLayout().then(function (fresh) {
       if (!fresh) return;
       render(true);
-      setTimeout(function () { fit(true); }, 60);
+      setTimeout(function () { fit(true, walkTarget ? stepBounds(walkTarget) : null); }, 60);
     });
   }
 
@@ -1039,10 +1157,12 @@
     return [p0, { x: p0.x, y: mid }, { x: p1.x, y: mid }, p1];
   }
 
+  // Re-route the edges whose drawn ends include `n` (a node, or the group box /
+  // representative that endpointOf() resolves a group end to).
   function rerouteAround(n) {
     edges.forEach(function (e) {
-      if (e.source !== n.name && e.target !== n.name) return;
-      var s = nodeById.get(e.source), t = nodeById.get(e.target);
+      var s = endpointOf(e.source), t = endpointOf(e.target);
+      if (s !== n && t !== n && e.source !== n.name && e.target !== n.name) return;
       if (s === t) {
         var dx = n.x - e._anchor.x, dy = n.y - e._anchor.y;
         e.points = e._loop.map(function (p) { return { x: p.x + dx, y: p.y + dy }; });
@@ -1088,6 +1208,16 @@
           gr.box = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
         }
       });
+      // Edges at those groups follow the grown boxes.
+      var grown = new Set(ancestorsOf(d).map(function (gr) { return gr.name; }));
+      if (groupsDrawn()) {
+        edges.forEach(function (e) {
+          if (!(isGroupEnd(e.source) && grown.has(e.source)) && !(isGroupEnd(e.target) && grown.has(e.target))) return;
+          e.points = routeBetween(endpointOf(e.source), endpointOf(e.target));
+          var a = e.points[1], b = e.points[e.points.length - 2];
+          e.lx = (a.x + b.x) / 2; e.ly = (a.y + b.y) / 2;
+        });
+      }
       if (!dragFrame) dragFrame = requestAnimationFrame(function () { dragFrame = null; render(false); });
     })
     .on('end', function () {
@@ -1253,8 +1383,60 @@
       refreshAnimations();
     });
   });
-  on('traceButton', 'click', playTrace);
-  on('traceButton2', 'click', playTrace);
+  // Captioned walkthrough (steps) replaces the uncaptioned trace on the same buttons.
+  var walkthrough = null, walkTarget = null;
+  if (DATA.steps) {
+    var edgesByPair = new Map();
+    edges.forEach(function (e) {
+      var key = e.source + '\u0000' + e.target;
+      if (!edgesByPair.has(key)) edgesByPair.set(key, []);
+      edgesByPair.get(key).push(e);
+    });
+    ['traceButton', 'traceButton2'].forEach(function (id) {
+      var b = document.getElementById(id);
+      if (!b) return;
+      if (!DATA.steps.length) { b.style.display = 'none'; return; }
+      b.textContent = '▶ Walk through';
+      b.title = 'Step through the diagram with a caption per step';
+    });
+    walkthrough = D3BlocksWalkthrough({
+      steps: DATA.steps,
+      triggers: ['traceButton', 'traceButton2'],
+      onOpen: function () { stopTrace(); hideTooltip(); },
+      onStep: function (st) {
+        var hl = st.highlight || {};
+        var stepNodes = hl.nodes || [], stepEdges = [];
+        (hl.edges || []).forEach(function (p) {
+          stepEdges = stepEdges.concat(edgesByPair.get(p[0] + '\u0000' + p[1]) || []);
+        });
+        walkTarget = (stepNodes.length || stepEdges.length) ? { type: 'step', nodes: stepNodes, edges: stepEdges } : null;
+        restoreHighlight();
+        fit(true, walkTarget ? stepBounds(walkTarget) : null);
+      },
+      onClose: function () { walkTarget = null; restoreHighlight(); fit(true); }
+    });
+  } else {
+    on('traceButton', 'click', playTrace);
+    on('traceButton2', 'click', playTrace);
+  }
+
+  // Box around a step's nodes and edges, padded so the camera keeps some context.
+  function stepBounds(target) {
+    var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    function grow(x, y) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    var names = new Set(target.nodes);
+    target.edges.forEach(function (e) {
+      names.add(e.source); names.add(e.target);
+      e.points.forEach(function (p) { grow(p.x, p.y); });
+    });
+    names.forEach(function (name) {
+      var n = nodeById.get(name);
+      if (n) { grow(n.x - n.width / 2, n.y - n.height / 2); grow(n.x + n.width / 2, n.y + n.height / 2); }
+    });
+    if (!isFinite(x0)) return null;
+    var pad = 60;
+    return { x: x0 - pad, y: y0 - pad, w: x1 - x0 + 2 * pad, h: y1 - y0 + 2 * pad };
+  }
   checkbox('edgeLabelToggle', 'showEdgeLabels', true);
   checkbox('groupToggle', 'showGroups', true);
   if (!usedGroups.length) {
@@ -1309,22 +1491,16 @@
       variants.forEach(function (v) {
         var e = edges.find(function (x) { return x.variant === v; });
         var dash = e.style === 'dashed' ? '5 3' : e.style === 'dotted' ? '1.5 3' : 'none';
-        var swatch = '<svg class="fg-line-swatch" viewBox="0 0 26 10"><line x1="1" y1="5" x2="25" y2="5" stroke="' +
-          escapeHtml(e.color) + '" stroke-width="' + Math.min(4, e.width) + '" stroke-dasharray="' + dash + '" stroke-linecap="round"/></svg>';
+        var swatch = '<svg class="fg-line-swatch" viewBox="0 0 26 10"><line x1="1" y1="5" x2="25" y2="5" style="stroke:' +
+          escapeHtml(paint(e.color)) + '" stroke-width="' + Math.min(4, e.width) + '" stroke-dasharray="' + dash + '" stroke-linecap="round"/></svg>';
         var n = edges.filter(function (x) { return x.variant === v; }).length;
         row(swatch + escapeHtml(v) + ' <span class="fg-legend-count">' + n + '</span>', { type: 'variant', id: v });
       });
     }
   })();
 
-  // Theme.
-  on('themeBtn', 'click', function () {
-    document.body.classList.toggle('light');
-    var isLight = document.body.classList.contains('light');
-    var btn = document.getElementById('themeBtn');
-    btn.textContent = isLight ? '☀' : '🌙';
-    btn.title = isLight ? 'Theme: Light' : 'Theme: Dark';
-  });
+  // Theme (theme.js: runtime toggle, and dark_mode='auto' follows the OS until toggled).
+  D3BlocksTheme.bind('themeBtn');
 
   // Search.
   (function setupSearch() {
@@ -1403,5 +1579,5 @@
     throw err;
   });
 
-  window.__flowgraph = { state: state, nodes: nodes, edges: edges, groups: usedGroups, relayout: relayout, fit: fit, ready: ready };
+  window.__flowgraph = { state: state, nodes: nodes, edges: edges, groups: usedGroups, relayout: relayout, fit: fit, ready: ready, walkthrough: walkthrough };
 })();

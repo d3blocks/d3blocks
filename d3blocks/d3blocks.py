@@ -31,6 +31,8 @@ try:
     import d3blocks.tree.Tree as Tree
     import d3blocks.radialgraph.Radialgraph as Radialgraph
     import d3blocks.flowgraph.Flowgraph as Flowgraph
+    import d3blocks.sequence.Sequence as Sequence
+    import d3blocks.erd.Erd as Erd
     import d3blocks.maps.Maps as Maps
     import d3blocks.utils as utils
 except:
@@ -51,6 +53,8 @@ except:
     import tree.Tree as Tree
     import radialgraph.Radialgraph as Radialgraph
     import flowgraph.Flowgraph as Flowgraph
+    import sequence.Sequence as Sequence
+    import erd.Erd as Erd
     import maps.Maps as Maps
     import utils
     # #####################################################
@@ -3099,6 +3103,7 @@ class D3Blocks():
                   draggable: bool = True,
                   show_edge_labels: bool = True,
                   show_groups: bool = True,
+                  steps: list = None,
                   font: dict = {'size': 13},
                   title: str = 'Flowgraph - D3blocks',
                   filepath: str = 'flowgraph.html',
@@ -3109,7 +3114,7 @@ class D3Blocks():
                   save_button: bool = True,
                   show_side_panel: bool = True,
                   show_top_panel: bool = True,
-                  dark_mode: bool = True,
+                  dark_mode=True,
                   color_background=None,
                   return_html: bool = False,
                   reset_properties: bool = True):
@@ -3118,7 +3123,7 @@ class D3Blocks():
         Nodes are arranged in ranks along the flow direction with a layered
         layout, drawn as flowchart shapes and optionally nested in groups such as
         swimlanes, services or network boundaries. The input is either an edge
-        list or a Mermaid flowchart.
+        list, a Mermaid flowchart or a Mermaid state diagram.
 
         Parameters
         ----------
@@ -3126,13 +3131,21 @@ class D3Blocks():
             * DataFrame with the edges. Required columns: 'source', 'target'.
               Optional columns: 'label' (edge text), 'weight' (line width),
               'variant', 'style' ('solid', 'dashed', 'dotted'), 'color' and 'animation'.
+              A 'source' or 'target' may name a group in `groups` (one with member
+              nodes and no entry in `nodes`); the edge is then drawn to the group box.
             * str: a Mermaid flowchart, e.g. 'flowchart LR; A[Start] --> B{Valid?}',
-              or Markdown text containing a ```mermaid block.
+              a Mermaid state diagram ('stateDiagram-v2'), or Markdown text
+              containing a ```mermaid block.
             * Path to a Markdown file (.md, .markdown) with a ```mermaid block, so the
               same diagram renders on GitHub, or to a .mmd / .mermaid file.
-              From Markdown, the first flowchart block is used.
-            Node shapes, edge labels, dotted/thick links and (nested) subgraphs are
-            converted; `nodes`, `groups` and `direction` override what it defines.
+              From Markdown, the first flowchart or state diagram block is used.
+            Node shapes, edge labels, dotted/thick links, (nested) subgraphs and
+            linkStyle colours are converted; `nodes`, `groups` and `direction` override
+            what it defines. State diagrams: transitions with labels, '[*]' start/end
+            (small circles), notes (shown in the state's tooltip), direction and
+            classDef colours; laid out 'TB' by default. Statements that do not parse or
+            have no equivalent (click, links to subgraphs, ...) raise a ValueError naming
+            the line.
         nodes : pd.DataFrame or dict, (default: None)
             Per-node attributes keyed by node name (a 'name' column or the index):
                 * 'label': display text; use '\\n' for line breaks.
@@ -3180,6 +3193,11 @@ class D3Blocks():
             Draw edge labels.
         show_groups : bool, (default: True)
             Draw groups as containers (and keep their members together).
+        steps : list of dict, (default: None)
+            Captioned walkthrough; "Walk through" in the top panel steps through it:
+            [{'title': str, 'caption': str, 'highlight': {'nodes': [...], 'edges': [(source, target), ...]}}].
+            Each step highlights its nodes and edges, dims the rest and zooms to them.
+            None: the "Trace" button walks the flow uncaptioned.
         font : dict, (default: {'size': 13})
             Font properties.
         title : str, (default: 'Flowgraph - D3blocks')
@@ -3202,8 +3220,11 @@ class D3Blocks():
             Show the left side panels (Export / Save, Layout, Legend).
         show_top_panel : bool, (default: True)
             Show the top bar (logo, search, fit, theme).
-        dark_mode : bool, (default: True)
-            Start in the dark theme.
+        dark_mode : bool or 'auto', (default: True)
+            Initial theme; the theme button switches at runtime in every mode.
+                * True: start in the dark theme.
+                * False: start in the light theme.
+                * 'auto': follow the operating system theme until the theme button is used.
         color_background : list of str, str, or None, (default: None)
             Backgrounds for center / top / side panels as ``[dark_hex, light_hex]``.
             Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
@@ -3276,16 +3297,393 @@ class D3Blocks():
             showfig=showfig, overwrite=overwrite, notebook=notebook, direction=direction,
             layout=layout, nodesep=nodesep, ranksep=ranksep, edgesep=edgesep, ranker=ranker,
             curve=curve, animate=animate, draggable=draggable,
-            show_edge_labels=show_edge_labels, show_groups=show_groups, groups=groups, cmap=cmap,
+            show_edge_labels=show_edge_labels, show_groups=show_groups, groups=groups, cmap=cmap, steps=steps,
             color_background=color_background, dark_mode=dark_mode, save_button=save_button,
             show_side_panel=show_side_panel, show_top_panel=show_top_panel,
             reset_properties=reset_properties, logger=logger,
         )
         # Set default node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, nodes=nodes, shape=shape, color=color, cmap=cmap, logger=logger)
+            self.set_node_properties(df, nodes=nodes, shape=shape, color=color, cmap=cmap, groups=groups, logger=logger)
         # Set edge properties
         self.set_edge_properties(df, edge_color=edge_color, logger=logger)
+
+        # Create the plot
+        html = self.show()
+
+        # Return
+        if return_html:
+            return html
+
+    def sequence(
+        self,
+        df,
+        participants=None,
+        groups: list = None,
+        steps: list = None,
+        message_spacing: int = 44,
+        wrap: int = 28,
+        cmap: str = "Set2",
+        font: dict = {"size": 13},
+        title: str = "Sequence - D3blocks",
+        filepath: str = "sequence.html",
+        figsize=[None, None],
+        showfig: bool = True,
+        overwrite: bool = True,
+        notebook: bool = False,
+        save_button: bool = True,
+        show_side_panel: bool = True,
+        show_top_panel: bool = True,
+        dark_mode=True,
+        color_background=None,
+        return_html: bool = False,
+        reset_properties: bool = True,
+    ):
+        """Sequence block: request/response flows between participants.
+
+        Participants are columns with lifelines and messages are rows in time order:
+        calls are solid with a filled arrowhead, replies dashed with an open arrowhead.
+        Regions highlight a run of messages. The input is a Mermaid sequenceDiagram or
+        a DataFrame of messages.
+
+        Parameters
+        ----------
+        df : pd.DataFrame, str or path-like
+            * DataFrame with one row per message, in time order. Required columns:
+              'source', 'target'. Optional columns: 'label', 'style' ('sync' or
+              'reply') and 'variant' ('default', 'emphasis', 'security', 'async',
+              'error'; sets the colour and width as in flowgraph).
+            * str: a Mermaid sequenceDiagram, or Markdown text with a fenced mermaid block.
+            * Path to a Markdown file (.md, .markdown) or a .mmd / .mermaid file. From
+              Markdown, the first sequenceDiagram block is used.
+
+            Supported Mermaid: 'participant A', 'participant A as Label', 'actor A',
+            'A->>B: text' (call), 'A-->>B: text' (reply), 'rect rgb(...)' ... 'end'
+            (a region) and '%%' comments. Other statements raise a ValueError naming the line.
+        participants : pd.DataFrame or dict, (default: None)
+            Per-participant attributes keyed by participant id (a 'name' column or the index):
+                * 'label': display text; use '\\n' for line breaks.
+                * 'kind': 'participant' or 'actor' (drawn with a stick figure).
+                * 'color': participant colour; overrides `cmap`.
+                * 'tooltip': text shown on hover.
+
+            Participants that are not listed are created in order of first appearance.
+        groups : list of dict, (default: None)
+            Highlighted regions: [{'label': str, 'from': i, 'to': j, 'color': hex}],
+            where i and j are message indexes (0-based, inclusive). Mermaid 'rect' blocks
+            fill this list; a list passed here replaces them.
+        steps : list of dict, (default: None)
+            Captioned walkthrough; "Walk through" in the top panel steps through it:
+            [{'title': str, 'caption': str, 'highlight': {'messages': [i, ...], 'participants': [...]}}].
+            None: one step per message, captioned with the message label. []: no walkthrough.
+        message_spacing : int, (default: 44)
+            Minimum pixels per message row; long labels make a row taller.
+        wrap : int, (default: 28)
+            Wrap message labels at this many characters.
+        cmap : str, (default: 'Set2')
+            Colormap for participant colours.
+        font : dict, (default: {'size': 13})
+            Font properties.
+        title : str, (default: 'Sequence - D3blocks')
+            Title of the figure.
+        filepath : str, (default: 'sequence.html')
+            File path to save the output. None: return HTML only.
+        figsize : list, (default: [None, None])
+            [width, height] in pixels. None: full window.
+        showfig : bool, (default: True)
+            Open the chart in the browser.
+        overwrite : bool, (default: True)
+            Overwrite an existing file.
+        notebook : bool, (default: False)
+            Display inline in a Jupyter notebook, isolated in an iframe sized by
+            `figsize` (default: full width x 650 px).
+        save_button : bool, (default: True)
+            Show the SVG/PNG save buttons.
+        show_side_panel : bool, (default: True)
+            Show the left side panels (Export / Save, Layout, Legend).
+        show_top_panel : bool, (default: True)
+            Show the top bar (logo, search, walk through, fit, theme).
+        dark_mode : bool or 'auto', (default: True)
+            Initial theme; the theme button switches at runtime in every mode.
+                * True: start in the dark theme.
+                * False: start in the light theme.
+                * 'auto': follow the operating system theme until the theme button is used.
+        color_background : list of str, str, or None, (default: None)
+            Backgrounds for center / top / side panels as ``[dark_hex, light_hex]``.
+            Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
+        return_html : bool, (default: False)
+            Return the HTML string.
+        reset_properties : bool, (default: True)
+            Recompute participant and message properties from the input.
+
+        Returns
+        -------
+        d3.node_properties : DataFrame of dictionary
+             Participant properties; edit and call d3.show() to update.
+        d3.edge_properties : DataFrame
+             Message properties; edit and call d3.show() to update.
+        d3.config : dictionary
+             Configuration, including 'groups' and 'steps'.
+
+        Examples
+        --------
+        >>> from d3blocks import D3Blocks
+        >>> d3 = D3Blocks(frame=False)
+        >>> d3.sequence('''
+        ... sequenceDiagram
+        ...     actor User
+        ...     participant API
+        ...     participant DB as Database
+        ...     rect rgb(220, 252, 231)
+        ...         User->>API: GET /orders
+        ...         API->>DB: SELECT orders
+        ...         DB-->>API: rows
+        ...     end
+        ...     API-->>User: 200 JSON
+        ... ''')
+        >>>
+        >>> # DataFrame input with a captioned walkthrough
+        >>> import pandas as pd
+        >>> df = pd.DataFrame({'source': ['app', 'auth', 'app'], 'target': ['auth', 'app', 'api'],
+        ...                    'label': ['login', 'token', 'call with token'], 'style': ['sync', 'reply', 'sync']})
+        >>> steps = [{'title': 'Sign in', 'caption': 'The app gets a token.', 'highlight': {'messages': [0, 1]}},
+        ...          {'title': 'Call', 'caption': 'The token authorizes the call.', 'highlight': {'messages': [2]}}]
+        >>> d3.sequence(df, steps=steps)
+
+        References
+        ----------
+        * https://d3blocks.github.io/d3blocks/pages/html/Sequence.html
+
+        """
+        # Mermaid input (text, Markdown or file): convert to messages, participants and regions.
+        if Sequence.is_mermaid_source(df):
+            df, m_participants, m_groups = Sequence.from_mermaid(df, logger=logger)
+            participants = Sequence.merge_node_attributes(m_participants, participants)
+            groups = m_groups if groups is None else groups
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func("Sequence", logger)
+        # Store properties
+        self.config = self.chart.set_config(
+            config=self.config,
+            font=font,
+            title=title,
+            filepath=filepath,
+            figsize=figsize,
+            showfig=showfig,
+            overwrite=overwrite,
+            notebook=notebook,
+            message_spacing=message_spacing,
+            wrap=wrap,
+            cmap=cmap,
+            groups=groups,
+            steps=steps,
+            color_background=color_background,
+            dark_mode=dark_mode,
+            save_button=save_button,
+            show_side_panel=show_side_panel,
+            show_top_panel=show_top_panel,
+            reset_properties=reset_properties,
+            logger=logger,
+        )
+        # Set default participant properties
+        if self.config["reset_properties"] or (not hasattr(self, "node_properties")):
+            self.set_node_properties(
+                df, participants=participants, cmap=cmap, logger=logger
+            )
+        # Set message properties
+        self.set_edge_properties(df, logger=logger)
+
+        # Create the plot
+        html = self.show()
+
+        # Return
+        if return_html:
+            return html
+
+    def erd(
+        self,
+        df,
+        entities=None,
+        steps: list = None,
+        direction: str = None,
+        show_columns: str = "all",
+        show_types: bool = True,
+        nodesep: int = 50,
+        ranksep: int = 90,
+        font: dict = {"size": 12},
+        title: str = "ERD - D3blocks",
+        filepath: str = "erd.html",
+        figsize=[None, None],
+        showfig: bool = True,
+        overwrite: bool = True,
+        notebook: bool = False,
+        save_button: bool = True,
+        show_side_panel: bool = True,
+        show_top_panel: bool = True,
+        dark_mode=True,
+        color_background=None,
+        return_html: bool = False,
+        reset_properties: bool = True,
+    ):
+        """ERD block: entity-relationship diagrams of database schemas.
+
+        Entities are table boxes with one row per column (name, type and PK/FK/UK
+        badges); relationships carry crow's-foot cardinality markers and are dashed
+        when non-identifying. Laid out with dagre. The input is a Mermaid erDiagram or
+        a DataFrame of relationships.
+
+        Parameters
+        ----------
+        df : pd.DataFrame, str or path-like
+            * DataFrame with the relationships. Required columns: 'source', 'target'.
+              Optional columns: 'source_card' and 'target_card' ('one', 'zero_or_one',
+              'one_or_more' or 'zero_or_more'; missing: no marker), 'label' and
+              'identifying' (bool; default True).
+            * str: a Mermaid erDiagram, or Markdown text with a fenced mermaid block.
+            * Path to a Markdown file (.md, .markdown) or a .mmd / .mermaid file. From
+              Markdown, the first erDiagram block is used.
+
+            Supported Mermaid: relationships 'A ||--o{ B : label' with all four markers
+            per end, '--' (identifying) and '..' (non-identifying), entity blocks
+            'A { type name PK "comment" }' with PK/FK/UK and comma lists, a top-level
+            'direction' and '%%' comments. Other statements raise a ValueError naming
+            the line.
+        entities : pd.DataFrame or dict, (default: None)
+            Per-entity attributes keyed by entity name (a 'name' column or the index):
+                * 'label': display text.
+                * 'color': header and border colour.
+                * 'tooltip': text shown on hover.
+                * 'columns': [{'name', 'type', 'key', 'comment'}], where 'key' is '',
+                  'PK', 'FK', 'UK' or a comma list such as 'PK,FK'.
+
+            Entities that only occur in `df` are drawn without columns.
+        steps : list of dict, (default: None)
+            Captioned walkthrough; "Walk through" in the top panel steps through it:
+            [{'title': str, 'caption': str, 'highlight': {'nodes': [...], 'edges': [(a, b), ...]}}].
+            'nodes' are entities, 'edges' are relationships (in either order). Each step
+            highlights them, dims the rest and zooms to them. None: no walkthrough.
+        direction : str, (default: None)
+            Layout direction: 'LR', 'TB' (or 'TD'), 'RL' or 'BT'. None: the Mermaid
+            'direction' statement if there is one, otherwise 'LR'.
+        show_columns : str, (default: 'all')
+            Columns shown in the table boxes; the top panel switches this at runtime.
+                * 'all': every column.
+                * 'keys': PK/FK/UK columns only.
+                * 'none': table names only.
+        show_types : bool, (default: True)
+            Show the column types.
+        nodesep : int, (default: 50)
+            Pixels between entities in the same rank.
+        ranksep : int, (default: 90)
+            Pixels between ranks.
+        font : dict, (default: {'size': 12})
+            Font properties.
+        title : str, (default: 'ERD - D3blocks')
+            Title of the figure.
+        filepath : str, (default: 'erd.html')
+            File path to save the output. None: return HTML only.
+        figsize : list, (default: [None, None])
+            [width, height] in pixels. None: full window.
+        showfig : bool, (default: True)
+            Open the chart in the browser.
+        overwrite : bool, (default: True)
+            Overwrite an existing file.
+        notebook : bool, (default: False)
+            Display inline in a Jupyter notebook, isolated in an iframe sized by
+            `figsize` (default: full width x 650 px).
+        save_button : bool, (default: True)
+            Show the SVG/PNG save buttons.
+        show_side_panel : bool, (default: True)
+            Show the left side panels (Export / Save, Layout, Legend).
+        show_top_panel : bool, (default: True)
+            Show the top bar (logo, search, columns, walk through, fit, theme).
+        dark_mode : bool or 'auto', (default: True)
+            Initial theme; the theme button switches at runtime in every mode.
+                * True: start in the dark theme.
+                * False: start in the light theme.
+                * 'auto': follow the operating system theme until the theme button is used.
+        color_background : list of str, str, or None, (default: None)
+            Backgrounds for center / top / side panels as ``[dark_hex, light_hex]``.
+            Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
+        return_html : bool, (default: False)
+            Return the HTML string.
+        reset_properties : bool, (default: True)
+            Recompute entity and relationship properties from the input.
+
+        Returns
+        -------
+        d3.node_properties : DataFrame of dictionary
+             Entity properties; edit and call d3.show() to update.
+        d3.edge_properties : DataFrame
+             Relationship properties; edit and call d3.show() to update.
+        d3.config : dictionary
+             Configuration, including 'steps' and 'show_columns'.
+
+        Examples
+        --------
+        >>> from d3blocks import D3Blocks
+        >>> d3 = D3Blocks(frame=False)
+        >>> d3.erd('''
+        ... erDiagram
+        ...     customers ||--o{ orders : places
+        ...     orders ||--|{ order_lines : contains
+        ...     customers {
+        ...         uuid id PK
+        ...         text email UK
+        ...     }
+        ...     orders {
+        ...         uuid id PK
+        ...         uuid customer_id FK "who ordered"
+        ...     }
+        ... ''', show_columns='keys')
+
+        References
+        ----------
+        * dagre: https://github.com/dagrejs/dagre
+        * https://d3blocks.github.io/d3blocks/pages/html/ERD.html
+
+        """
+        # Mermaid input (text, Markdown or file): convert to relationships and entities.
+        if Erd.is_mermaid_source(df):
+            df, m_entities, m_direction = Erd.from_mermaid(df, logger=logger)
+            entities = Erd.merge_node_attributes(m_entities, entities)
+            direction = direction or m_direction
+        direction = direction or "LR"
+        # Cleaning
+        self._clean(clean_config=reset_properties, logger=logger)
+        # Store chart
+        self.chart = set_chart_func("Erd", logger)
+        # Store properties
+        self.config = self.chart.set_config(
+            config=self.config,
+            font=font,
+            title=title,
+            filepath=filepath,
+            figsize=figsize,
+            showfig=showfig,
+            overwrite=overwrite,
+            notebook=notebook,
+            direction=direction,
+            show_columns=show_columns,
+            show_types=show_types,
+            nodesep=nodesep,
+            ranksep=ranksep,
+            steps=steps,
+            color_background=color_background,
+            dark_mode=dark_mode,
+            save_button=save_button,
+            show_side_panel=show_side_panel,
+            show_top_panel=show_top_panel,
+            reset_properties=reset_properties,
+            logger=logger,
+        )
+        # Set default entity properties
+        if self.config["reset_properties"] or (not hasattr(self, "node_properties")):
+            self.set_node_properties(df, entities=entities, logger=logger)
+        # Set relationship properties
+        self.set_edge_properties(df, logger=logger)
 
         # Create the plot
         html = self.show()
@@ -4419,7 +4817,7 @@ def set_chart_func(chart=None, logger=None):
     if chart is not None:
         if logger is not None: logger.info('Initializing [%s]' %(chart))
         chart = str.capitalize(chart)
-        if np.isin(chart, ['RadialGraph', 'Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph', 'Flowgraph']):
+        if np.isin(chart, ['RadialGraph', 'Maps', 'Chord', 'Sankey', 'Timeseries', 'Violin', 'Movingbubbles', 'Scatter', 'Heatmap', 'Matrix', 'Treemap', 'Tree', 'Circlepacking', 'Radialgraph', 'Flowgraph', 'Sequence', 'Erd']):
             chart=eval(chart)
         else:
             if logger is not None: logger.info('%s is not yet implemented in such manner.' %(chart))

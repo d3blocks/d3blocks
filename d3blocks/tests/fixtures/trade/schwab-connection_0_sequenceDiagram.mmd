@@ -1,0 +1,28 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#ecfeff", "primaryBorderColor": "#0891b2", "primaryTextColor": "#0f172a", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#f59e0b", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "lineColor": "#f97316", "noteBkgColor": "#fef9c3", "noteTextColor": "#422006", "activationBkgColor": "#e0f2fe", "activationBorderColor": "#0284c7"}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+sequenceDiagram
+    actor Operator
+    participant UI as Trade App (UI)
+    participant API as Trade API
+    participant DB as Database
+    participant Schwab as Schwab OAuth
+
+    rect rgb(236, 254, 255)
+        Operator->>UI: Click "Connect Schwab"
+        UI->>API: GET /api/v1/brokers/schwab/authorize
+        API->>DB: Store state nonce + PKCE verifier
+        API-->>UI: Redirect to Schwab authorization URL
+    end
+    rect rgb(254, 243, 199)
+        UI->>Schwab: Redirect browser to authorization URL
+        Schwab-->>Operator: Login & consent page
+        Operator->>Schwab: Approve connection
+        Schwab->>API: GET /api/v1/brokers/schwab/callback?code=…&state=…
+    end
+    rect rgb(220, 252, 231)
+        API->>DB: Validate state nonce
+        API->>Schwab: POST token exchange (code + PKCE verifier)
+        Schwab-->>API: access_token + refresh_token
+        API->>DB: Store encrypted tokens
+        API-->>UI: Redirect to Settings -> Broker Connection
+        UI-->>Operator: Settings page shows "Connected"
+    end

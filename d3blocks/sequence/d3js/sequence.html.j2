@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<!--
+Library     : d3blocks
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+-->
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ TITLE }}</title>
+{{ SUPPORT }}
+
+<style>{% include "sequence.css" %}</style>
+<style>{% include "walkthrough.css" %}</style>
+<style>
+  body { background: {{ COLOR_BACKGROUND_DARK }}; --bg: {{ COLOR_BACKGROUND_DARK }}; }
+  body .top-panel, body .stats-panel { background: {{ COLOR_BACKGROUND_DARK }}; }
+  body.light { background: {{ COLOR_BACKGROUND_LIGHT }}; --bg: {{ COLOR_BACKGROUND_LIGHT }}; }
+  body.light .top-panel, body.light .stats-panel { background: {{ COLOR_BACKGROUND_LIGHT }}; }
+</style>
+
+<script>{% include "d3.v7.min.js" %}</script>
+</head>
+<body{% if darkMode == 'false' %} class="light"{% endif %} data-dark-mode="{{ darkMode }}">
+<script>{% include "theme.js" %}</script>
+
+<div id="sq-main"><svg id="sq-svg" role="img" aria-label="{{ TITLE }}"></svg></div>
+<div id="sq-tooltip" role="tooltip"></div>
+
+{% if showTopPanel == 'true' %}
+<div class="top-panel" role="toolbar" aria-label="Top controls">
+  <div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
+      <img src="{{ LOGO_BASE64 }}" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+  </div>
+  <div class="top-panel-center">
+    <div class="search-wrap top-search">
+      <input class="search-input" id="searchInput" type="search" placeholder="Find a participant or message…" autocomplete="off" spellcheck="false" />
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <div class="top-panel-right">
+    <button class="button-switch" id="walkButton" type="button" title="Step through the messages with a caption per step">▶ Walk through</button>
+    <button class="button-switch" id="fitButton" type="button" title="Fit diagram to the window width">Fit</button>
+    <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
+  </div>
+</div>
+{% endif %}
+
+{% if showSidePanel == 'true' %}
+<div class="stats-panel collapsed" id="exportPanel">
+  <div class="stats-panel-title">Export / Save<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    {{ SAVE_BUTTON_START }}<div class="sq-button-row">
+      <button class="button-switch" id="saveSvgButton" type="button" title="Download the diagram as SVG">SVG</button>
+      <button class="button-switch" id="savePngButton" type="button" title="Download the diagram as PNG (2x)">PNG</button>
+    </div>{{ SAVE_BUTTON_STOP }}
+    <div class="sq-button-row">
+      <button class="button-switch" id="exportButton" type="button" title="Download participants, messages and computed positions as JSON">JSON</button>
+    </div>
+    <div class="sq-hint">Images are saved as currently shown, including theme and highlighting.</div>
+  </div>
+</div>
+
+<div class="stats-panel collapsed" id="layoutPanel">
+  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="spacingSlider">Message spacing <span class="val" id="spacingVal">{{ messageSpacing }}px</span></label>
+      <input type="range" id="spacingSlider" min="24" max="120" step="2" value="{{ messageSpacing }}">
+    </div>
+    <div class="physics-control">
+      <label for="wrapSlider">Wrap labels at <span class="val" id="wrapVal">{{ wrap }}</span></label>
+      <input type="range" id="wrapSlider" min="10" max="80" step="1" value="{{ wrap }}">
+    </div>
+    <div class="physics-control">
+      <label for="fontSizeSlider">Font size <span class="val" id="fontSizeVal">{{ fontsize }}px</span></label>
+      <input type="range" id="fontSizeSlider" min="8" max="24" step="1" value="{{ fontsize }}">
+    </div>
+    <div class="sq-button-row">
+      <button class="button-switch" id="walkButton2" type="button" title="Step through the messages">▶ Walk through</button>
+      <button class="button-switch" id="fitButton2" type="button">Fit</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-panel collapsed" id="legendPanel">
+  <div class="stats-panel-title">Legend<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-body">
+    <div id="legendList"></div>
+    <div class="sq-hint">Hover to highlight; click to pin.</div>
+  </div>
+</div>
+{% endif %}
+
+<script type="application/json" id="sq-data">{{ json_data }}</script>
+<script type="application/json" id="sq-options">{{ options }}</script>
+<script>{% include "walkthrough.js" %}</script>
+<script>{% include "d3.sequence.js" %}</script>
+
+</body>
+</html>

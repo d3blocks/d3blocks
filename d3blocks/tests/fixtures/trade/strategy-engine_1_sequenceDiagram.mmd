@@ -1,0 +1,34 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "tertiaryTextColor": "#14532d", "lineColor": "#7c3aed", "textColor": "#0f172a", "clusterBkg": "#f3e8ff", "clusterBorder": "#9333ea", "actorBkg": "#e0f2fe", "actorBorder": "#0284c7", "actorTextColor": "#0c4a6e", "actorLineColor": "#64748b", "signalColor": "#db2777", "signalTextColor": "#831843", "labelBoxBkgColor": "#ecfdf5", "labelBoxBorderColor": "#059669", "labelTextColor": "#064e3b", "noteBkgColor": "#fef9c3", "noteBorderColor": "#ca8a04", "noteTextColor": "#422006", "activationBkgColor": "#ede9fe", "activationBorderColor": "#7c3aed", "edgeLabelBackground": "#fff7ed"}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+sequenceDiagram
+  participant Scheduler as strategy_scheduler
+  participant Orch as strategy_orchestrator
+  participant Narrator as position_risk_narrator
+  participant Cluster as signal_cluster_detector
+  participant Earnings as earnings_preflight
+  participant Anomaly as anomaly_detector
+  participant Param as parameter_tuning_advisor
+  participant News as news_sentiment
+  participant Rebalance as rebalance_advisor
+  participant OpsBrief as operations_briefing
+  participant OpsInvest as operations_investigator
+  participant DB as PostgreSQL
+
+  Scheduler->>Orch: _run_agent_workers()
+  Orch->>Narrator: run(context)
+  Narrator->>DB: write agent_suggestions row
+  Orch->>Cluster: run(signals)
+  Cluster->>DB: write alert signal (no strategy/run FK)
+  Orch->>Earnings: run(positions)
+  Earnings->>DB: write alert signal
+  Orch->>Anomaly: run(orders)
+  Anomaly->>DB: write alert signal
+  Orch->>Param: run(backtests)
+  Param->>DB: write agent_suggestions row
+  Orch->>News: run(watchlist)
+  News->>DB: write signals (awaiting_approval)
+  Orch->>Rebalance: run(portfolio)
+  Rebalance->>DB: write agent_suggestions row
+  Scheduler->>OpsBrief: run(operations overview)
+  OpsBrief->>DB: write agent_suggestions row
+  Scheduler->>OpsInvest: run(read-only operations context)
+  OpsInvest->>DB: write agent_suggestions row

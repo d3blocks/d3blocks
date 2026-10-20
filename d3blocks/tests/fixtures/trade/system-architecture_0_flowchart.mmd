@@ -1,0 +1,110 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#dbeafe", "primaryBorderColor": "#2563eb", "primaryTextColor": "#172554", "secondaryColor": "#fef3c7", "secondaryBorderColor": "#d97706", "secondaryTextColor": "#422006", "tertiaryColor": "#dcfce7", "tertiaryBorderColor": "#16a34a", "tertiaryTextColor": "#14532d", "lineColor": "#7c3aed", "textColor": "#0f172a", "clusterBkg": "#f3e8ff", "clusterBorder": "#9333ea", "actorBkg": "#e0f2fe", "actorBorder": "#0284c7", "actorTextColor": "#0c4a6e", "actorLineColor": "#64748b", "signalColor": "#db2777", "signalTextColor": "#831843", "labelBoxBkgColor": "#ecfdf5", "labelBoxBorderColor": "#059669", "labelTextColor": "#064e3b", "noteBkgColor": "#fef9c3", "noteBorderColor": "#ca8a04", "noteTextColor": "#422006", "activationBkgColor": "#ede9fe", "activationBorderColor": "#7c3aed", "edgeLabelBackground": "#fff7ed"}, "flowchart": {"htmlLabels": false}, "themeCSS": ".nodeLabel, .nodeLabel *, .label, .label *, .actor text, .entityLabel, .state-title, .stateLabel { fill: #0f172a !important; color: #0f172a !important; } .actor, .actor-man, .actor-woman { fill: #bae6fd !important; stroke: #0284c7 !important; } .entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; }"}}%%
+flowchart LR
+  subgraph Browser
+    UI[Next.js App Router]
+  end
+
+  subgraph API ["FastAPI - services/api"]
+    Routers[Versioned Routers v1]
+    Risk[Risk Controls]
+    Audit[Audit Writer]
+    DI[Broker DI Factory]
+    NewsDI[News DI Factory]
+    LLMFactory[LLM Factory]
+  end
+
+  subgraph Workers ["Background Workers - workers/"]
+    Scheduler[strategy_scheduler.py]
+    Poller[order_status_poller.py]
+    PortfolioSync[portfolio_sync.py]
+    BacktestWorker[backtest.py]
+    subgraph AgentWorkers ["AI Agent Workers (--enable-agents)"]
+      Orchestrator[strategy_orchestrator.py]
+      Narrator[position_risk_narrator.py]
+      Cluster[signal_cluster_detector.py]
+      BacktestInterp[backtest_interpreter.py]
+      ParamAdvisor[parameter_tuning_advisor.py]
+      AnomalyDet[anomaly_detector.py]
+      Earnings[earnings_preflight.py]
+      NewsSent[news_sentiment.py]
+      Rebalance[rebalance_advisor.py]
+      PnLReport[pnl_report.py]
+      SigRationale[signal_rationale.py]
+      TradeReflect[trade_reflection.py]
+      MktBriefing[market_briefing.py]
+      OpsBriefing[operations_briefing.py]
+      OpsInvestigator[operations_investigator.py]
+      WLScreener[watchlist_screener.py]
+    end
+  end
+
+  subgraph Adapters ["Provider Adapters"]
+    SchwabAdapter[Schwab Adapter]
+    FinnhubAdapter[Finnhub Adapter]
+  end
+
+  subgraph External ["External Services"]
+    SchwabAPI[Schwab API]
+    FinnhubAPI[Finnhub REST API]
+    OpenAI[OpenAI API]
+    Anthropic[Anthropic API]
+  end
+
+  PG[(PostgreSQL)]
+
+  UI -->|HTTP + cookie auth| Routers
+  Routers --> Risk
+  Routers --> Audit
+  Routers --> DI
+  Routers --> NewsDI
+  DI --> SchwabAdapter
+  NewsDI --> FinnhubAdapter
+  SchwabAdapter --> SchwabAPI
+  FinnhubAdapter --> FinnhubAPI
+  Routers --> PG
+  Workers --> PG
+  Workers --> SchwabAdapter
+  AgentWorkers --> FinnhubAdapter
+  AgentWorkers --> LLMFactory
+  LLMFactory -->|config.yaml provider=openai| OpenAI
+  LLMFactory -->|config.yaml provider=anthropic| Anthropic
+    classDef sky fill:#bae6fd,stroke:#0284c7,color:#0f172a,stroke-width:2px;
+    classDef teal fill:#99f6e4,stroke:#0f766e,color:#042f2e,stroke-width:2px;
+    classDef amber fill:#fde68a,stroke:#b45309,color:#422006,stroke-width:2px;
+    classDef pink fill:#fbcfe8,stroke:#be185d,color:#831843,stroke-width:2px;
+    classDef mint fill:#bbf7d0,stroke:#15803d,color:#14532d,stroke-width:2px;
+    classDef violet fill:#ddd6fe,stroke:#6d28d9,color:#2e1065,stroke-width:2px;
+    class UI sky;
+    class Routers teal;
+    class Risk amber;
+    class Audit pink;
+    class DI mint;
+    class NewsDI violet;
+    class LLMFactory sky;
+    class Scheduler teal;
+    class Poller amber;
+    class PortfolioSync pink;
+    class BacktestWorker mint;
+    class Orchestrator violet;
+    class Narrator sky;
+    class Cluster teal;
+    class BacktestInterp amber;
+    class ParamAdvisor pink;
+    class AnomalyDet mint;
+    class Earnings violet;
+    class NewsSent sky;
+    class Rebalance teal;
+    class PnLReport amber;
+    class SigRationale pink;
+    class TradeReflect mint;
+    class MktBriefing violet;
+    class OpsBriefing sky;
+    class OpsInvestigator teal;
+    class WLScreener amber;
+    class SchwabAdapter pink;
+    class FinnhubAdapter mint;
+    class SchwabAPI violet;
+    class FinnhubAPI sky;
+    class OpenAI teal;
+    class Anthropic amber;
+    class PG pink;

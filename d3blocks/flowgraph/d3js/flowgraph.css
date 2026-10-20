@@ -17,6 +17,7 @@
   --accent: #1ABC9C;
   --topbar-bg: rgba(34, 34, 34, 0.4);
   --search-hover: #1e4d42;
+  --fg-edge-default: #8c8c8c;
 }
 body.light {
   --bg: #fff;
@@ -35,6 +36,7 @@ body.light {
   --accent: #1ABC9C;
   --topbar-bg: rgba(255, 255, 255, 0.4);
   --search-hover: #e8f8f5;
+  --fg-edge-default: #757575;
 }
 html, body {
   margin: 0;
@@ -248,6 +250,7 @@ body.light .top-panel {
 }
 body.light .fg-node .fg-shape { fill-opacity: 0.12; }
 .fg-node.shape-external .fg-shape { stroke-dasharray: 6 4; fill-opacity: 0.06; }
+.fg-node.fg-pseudo .fg-shape, body.light .fg-node.fg-pseudo .fg-shape { fill-opacity: 0.9; }
 .fg-node.shape-decision .fg-shape,
 .fg-node.shape-terminal .fg-shape { fill-opacity: 0.26; }
 .fg-node .fg-label {
@@ -323,6 +326,7 @@ body.light .fg-node .fg-shape { fill-opacity: 0.12; }
 .fg-has-highlight .fg-edge-g:not(.fg-hl) { opacity: 0.08; }
 .fg-has-highlight .fg-edge-label:not(.fg-hl) { opacity: 0.08; }
 .fg-has-highlight .fg-group:not(.fg-focus) { opacity: 0.55; }
+.fg-has-highlight .fg-group.fg-hl { opacity: 1; }
 
 /* Tooltip. */
 #fg-tooltip {

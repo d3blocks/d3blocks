@@ -69,6 +69,8 @@ Contents
    elasticgraph
    Radialgraph
    Flowgraph
+   Sequence
+   ERD
    Sankey
    Heatmap
    Matrix

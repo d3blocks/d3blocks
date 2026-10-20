@@ -1,0 +1,37 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#ccfbf1", "primaryTextColor": "#0f172a", "primaryBorderColor": "#0f766e", "lineColor": "#7c3aed", "textColor": "#0f172a"}, "themeCSS": ".entityBox { fill: #ccfbf1 !important; stroke: #0f766e !important; } .entityLabel, .entityLabel *, .relationshipLabel, .relationshipLabel *, .attributeBoxOdd text, .attributeBoxEven text { fill: #0f172a !important; color: #0f172a !important; } .attributeBoxOdd { fill: #fef3c7 !important; } .attributeBoxEven { fill: #dbeafe !important; } .relationshipLabelBox { fill: #fef3c7 !important; opacity: 1 !important; } .flowchart-link { stroke: #a78bfa !important; stroke-width: 2px !important; } marker path { fill: #a78bfa !important; stroke: #a78bfa !important; } .edgeLabel rect, .labelBkg { fill: #fef3c7 !important; opacity: 1 !important; } .edgeLabel, .edgeLabel p { background-color: #fef3c7 !important; color: #0f172a !important; }"}}%%
+erDiagram
+    rag_generations ||--o{ rag_documents : "generation FK"
+    rag_documents ||--o{ rag_chunks : "generation and document FK"
+    rag_generations {
+        uuid id PK
+        text corpus
+        text status
+        text build_identity
+        text embedding_identity
+        integer embedding_dimensions
+        text distance_metric
+        text text_search_config
+        integer payload_format_version
+        integer chunk_count
+        bigint content_revision
+        text source_checkpoint
+    }
+    rag_documents {
+        uuid generation_id PK,FK
+        text document_id PK
+        bigint source_revision
+        text input_hash
+        boolean is_deleted
+    }
+    rag_chunks {
+        uuid generation_id PK,FK
+        text chunk_id PK
+        text document_id FK
+        integer ordinal
+        text state
+        text product
+        text channel
+        tsvector search_vector
+        vector embedding
+        bytea payload_ciphertext
+    }

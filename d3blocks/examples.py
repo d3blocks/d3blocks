@@ -1,3 +1,132 @@
+# %% Sequence
+
+# Mermaid sequence diagram: actors, calls (->>), replies (-->>) and rect regions
+import pandas as pd
+
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(frame=False)
+d3.sequence(
+    """
+sequenceDiagram
+    actor User
+    participant Web as Web App
+    participant API
+    participant DB as Postgres
+    rect rgb(224, 242, 254)
+        User->>Web: open dashboard
+        Web->>API: GET /dashboard
+    end
+    API->>DB: query profile
+    DB-->>API: rows
+    API-->>Web: 200 JSON
+    Web-->>User: render
+""",
+    showfig=True,
+)
+
+# DataFrame input with regions and a captioned walkthrough
+df = pd.DataFrame(
+    {
+        "source": ["app", "auth", "app", "api"],
+        "target": ["auth", "app", "api", "app"],
+        "label": ["login", "token", "GET /orders with token", "200 JSON"],
+        "style": ["sync", "reply", "sync", "reply"],
+        "variant": ["security", "default", "emphasis", "default"],
+    }
+)
+steps = [
+    {
+        "title": "Sign in",
+        "caption": "The app exchanges credentials for a token.",
+        "highlight": {"messages": [0, 1]},
+    },
+    {
+        "title": "Call the API",
+        "caption": "The token authorizes the request.",
+        "highlight": {"messages": [2, 3]},
+    },
+]
+d3.sequence(
+    df,
+    participants={"app": {"label": "Mobile app", "kind": "actor"}},
+    groups=[{"label": "Sign in", "from": 0, "to": 1}],
+    steps=steps,
+    dark_mode="auto",
+    showfig=True,
+)
+
+# %% ERD
+
+# Mermaid ER diagram: crow's-foot cardinality, PK/FK/UK columns, keys-only view
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(frame=False)
+d3.erd(
+    """
+erDiagram
+    customers ||--o{ orders : places
+    orders ||--|{ order_lines : contains
+    products ||--o{ order_lines : "ordered as"
+    orders |o..o| invoices : "billed by"
+    customers {
+        uuid id PK
+        text email UK
+    }
+    orders {
+        uuid id PK
+        uuid customer_id FK "who ordered"
+    }
+    order_lines {
+        uuid order_id PK,FK
+        uuid product_id PK,FK
+        int quantity
+    }
+""",
+    show_columns="all",
+    showfig=True,
+)
+
+# Change an entity and redraw
+d3.node_properties["orders"]["color"] = "#f28e2b"
+d3.show(showfig=True)
+
+# %% Flowgraph state diagram
+
+# Mermaid stateDiagram-v2 with notes, classDef colours and a captioned walkthrough
+from d3blocks import D3Blocks
+
+d3 = D3Blocks(frame=False)
+d3.flowgraph(
+    """
+stateDiagram-v2
+    [*] --> pending : created
+    pending --> running : worker picks up task
+    running --> completed : success
+    running --> failed : error
+    completed --> [*]
+    failed --> [*]
+    note right of running
+        retried up to 3 times
+    end note
+    classDef bad fill:#e15759
+    class failed bad
+""",
+    steps=[
+        {
+            "title": "Queued",
+            "caption": "A task waits for a worker.",
+            "highlight": {"nodes": ["pending"]},
+        },
+        {
+            "title": "Outcome",
+            "caption": "A run ends completed or failed.",
+            "highlight": {"edges": [("running", "completed"), ("running", "failed")]},
+        },
+    ],
+    showfig=True,
+)
+
 # %% Flowgraph
 
 # Edge list with shapes and edge labels
