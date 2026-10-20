@@ -1170,7 +1170,9 @@ list, a Mermaid flowchart or a Mermaid state diagram.</p>
 <li><p><strong>df</strong> (<em>pd.DataFrame</em><em>, </em><em>str</em><em> or </em><em>path-like</em>) – <ul>
 <li><p>DataFrame with the edges. Required columns: ‘source’, ‘target’.
 Optional columns: ‘label’ (edge text), ‘weight’ (line width),
-‘variant’, ‘style’ (‘solid’, ‘dashed’, ‘dotted’), ‘color’ and ‘animation’.</p></li>
+‘variant’, ‘style’ (‘solid’, ‘dashed’, ‘dotted’), ‘color’ and ‘animation’.
+A ‘source’ or ‘target’ may name a group in <cite>groups</cite> (one with member
+nodes and no entry in <cite>nodes</cite>); the edge is then drawn to the group box.</p></li>
 <li><p>str: a Mermaid flowchart, e.g. ‘flowchart LR; A[Start] –&gt; B{Valid?}’,
 a Mermaid state diagram (‘stateDiagram-v2’), or Markdown text
 containing a <a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>mermaid block.</p></li>

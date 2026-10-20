@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#process-flow">Process flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mermaid-input">Mermaid input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#links-to-subgraphs">Links to subgraphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mermaid-errors">Mermaid errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#state-diagrams">State diagrams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#architecture-diagram">Architecture diagram</a></li>
@@ -158,7 +159,9 @@ list, a Mermaid flowchart or a Mermaid state diagram.</p>
 <li><p><strong>df</strong> (<em>pd.DataFrame</em><em>, </em><em>str</em><em> or </em><em>path-like</em>) – <ul>
 <li><p>DataFrame with the edges. Required columns: ‘source’, ‘target’.
 Optional columns: ‘label’ (edge text), ‘weight’ (line width),
-‘variant’, ‘style’ (‘solid’, ‘dashed’, ‘dotted’), ‘color’ and ‘animation’.</p></li>
+‘variant’, ‘style’ (‘solid’, ‘dashed’, ‘dotted’), ‘color’ and ‘animation’.
+A ‘source’ or ‘target’ may name a group in <cite>groups</cite> (one with member
+nodes and no entry in <cite>nodes</cite>); the edge is then drawn to the group box.</p></li>
 <li><p>str: a Mermaid flowchart, e.g. ‘flowchart LR; A[Start] –&gt; B{Valid?}’,
 a Mermaid state diagram (‘stateDiagram-v2’), or Markdown text
 containing a <a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>mermaid block.</p></li>
@@ -342,8 +345,33 @@ and group settings (<code class="docutils literal notranslate"><span class="pre"
 <section id="mermaid-input">
 <h2>Mermaid input<a class="headerlink" href="#mermaid-input" title="Link to this heading"></a></h2>
 <p>Node shapes, edge labels, dotted (<code class="docutils literal notranslate"><span class="pre">-.-&gt;</span></code>) and thick (<code class="docutils literal notranslate"><span class="pre">==&gt;</span></code>) links, <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>, chains,
-nested subgraphs, node colours from <code class="docutils literal notranslate"><span class="pre">style</span></code> / <code class="docutils literal notranslate"><span class="pre">classDef</span></code> and edge colours and dashes from
-<code class="docutils literal notranslate"><span class="pre">linkStyle</span></code> are converted.</p>
+nested subgraphs, links to and from subgraphs, node colours from <code class="docutils literal notranslate"><span class="pre">style</span></code> / <code class="docutils literal notranslate"><span class="pre">classDef</span></code> and edge
+colours and dashes from <code class="docutils literal notranslate"><span class="pre">linkStyle</span></code> are converted.</p>
+</section>
+<section id="links-to-subgraphs">
+<h2>Links to subgraphs<a class="headerlink" href="#links-to-subgraphs" title="Link to this heading"></a></h2>
+<p>A link may name a whole subgraph, at either end and also between two subgraphs. It is drawn to the
+subgraph’s box border, as Mermaid draws it, with dagre and with ELK. Hovering the group lights the
+links of the group and of the groups nested in it; the trace walks through it like a node.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">flowchart LR</span>
+<span class="s1">    subgraph Workers [&quot;Background workers&quot;]</span>
+<span class="s1">        W1[scheduler]</span>
+<span class="s1">        W2[sync]</span>
+<span class="s1">    end</span>
+<span class="s1">    Workers --&gt; PG[(PostgreSQL)]</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With a DataFrame, a <code class="docutils literal notranslate"><span class="pre">source</span></code> or <code class="docutils literal notranslate"><span class="pre">target</span></code> that names a group in <code class="docutils literal notranslate"><span class="pre">groups=</span></code> (one with member nodes
+and no entry in <code class="docutils literal notranslate"><span class="pre">nodes=</span></code>) works the same way:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">edges</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Workers&#39;</span><span class="p">],</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PG&#39;</span><span class="p">]})</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;W1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;group&#39;</span><span class="p">:</span> <span class="s1">&#39;Workers&#39;</span><span class="p">},</span> <span class="s1">&#39;W2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;group&#39;</span><span class="p">:</span> <span class="s1">&#39;Workers&#39;</span><span class="p">},</span> <span class="s1">&#39;PG&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;database&#39;</span><span class="p">}}</span>
+<span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Workers&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;Background workers&#39;</span><span class="p">}})</span>
+</pre></div>
+</div>
+<p>A link to an empty subgraph draws a node with the subgraph’s title. A link between a subgraph and
+itself or its own content raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, as there is no box border to draw it to.</p>
 </section>
 <section id="mermaid-errors">
 <h2>Mermaid errors<a class="headerlink" href="#mermaid-errors" title="Link to this heading"></a></h2>
@@ -354,9 +382,9 @@ line, before any HTML is written. Nothing is dropped silently.</p>
 <li><p>Ignored: blank lines, <code class="docutils literal notranslate"><span class="pre">%%</span></code> comments, <code class="docutils literal notranslate"><span class="pre">%%{init}%%</span></code> directives and the accessibility metadata
 <code class="docutils literal notranslate"><span class="pre">accTitle</span></code> / <code class="docutils literal notranslate"><span class="pre">accDescr</span></code>.</p></li>
 <li><p>Errors: statements that do not parse (for example <code class="docutils literal notranslate"><span class="pre">A[Start]</span> <span class="pre">--&gt;</span> <span class="pre">B{ok?</span></code>), a wrong first statement,
-an <code class="docutils literal notranslate"><span class="pre">end</span></code> without <code class="docutils literal notranslate"><span class="pre">subgraph</span></code> (or a <code class="docutils literal notranslate"><span class="pre">subgraph</span></code> without <code class="docutils literal notranslate"><span class="pre">end</span></code>), and Mermaid features without an
-equivalent here, such as <code class="docutils literal notranslate"><span class="pre">click</span></code>, a <code class="docutils literal notranslate"><span class="pre">direction</span></code> inside a subgraph and links to subgraphs (link to
-a node inside the subgraph instead).</p></li>
+an <code class="docutils literal notranslate"><span class="pre">end</span></code> without <code class="docutils literal notranslate"><span class="pre">subgraph</span></code> (or a <code class="docutils literal notranslate"><span class="pre">subgraph</span></code> without <code class="docutils literal notranslate"><span class="pre">end</span></code>), a link between a subgraph and
+its own content, a linked subgraph id that is also given a label, shape, <code class="docutils literal notranslate"><span class="pre">style</span></code> or <code class="docutils literal notranslate"><span class="pre">class</span></code>, and
+Mermaid features without an equivalent here, such as <code class="docutils literal notranslate"><span class="pre">click</span></code> and a <code class="docutils literal notranslate"><span class="pre">direction</span></code> inside a subgraph.</p></li>
 </ul>
 <p>Line numbers count from the first line of the diagram (in Markdown: of the fenced block).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d3</span><span class="o">.</span><span class="n">flowgraph</span><span class="p">(</span><span class="s1">&#39;flowchart LR</span><span class="se">\n</span><span class="s1">  A[Start] --&gt; B{ok?&#39;</span><span class="p">)</span>

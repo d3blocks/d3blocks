@@ -64,8 +64,38 @@ Mermaid input
 *************
 
 Node shapes, edge labels, dotted (``-.->``) and thick (``==>``) links, ``&``, chains,
-nested subgraphs, node colours from ``style`` / ``classDef`` and edge colours and dashes from
-``linkStyle`` are converted.
+nested subgraphs, links to and from subgraphs, node colours from ``style`` / ``classDef`` and edge
+colours and dashes from ``linkStyle`` are converted.
+
+Links to subgraphs
+******************
+
+A link may name a whole subgraph, at either end and also between two subgraphs. It is drawn to the
+subgraph's box border, as Mermaid draws it, with dagre and with ELK. Hovering the group lights the
+links of the group and of the groups nested in it; the trace walks through it like a node.
+
+.. code:: python
+
+	d3.flowgraph('''
+	flowchart LR
+	    subgraph Workers ["Background workers"]
+	        W1[scheduler]
+	        W2[sync]
+	    end
+	    Workers --> PG[(PostgreSQL)]
+	''')
+
+With a DataFrame, a ``source`` or ``target`` that names a group in ``groups=`` (one with member nodes
+and no entry in ``nodes=``) works the same way:
+
+.. code:: python
+
+	edges = pd.DataFrame({'source': ['Workers'], 'target': ['PG']})
+	nodes = {'W1': {'group': 'Workers'}, 'W2': {'group': 'Workers'}, 'PG': {'shape': 'database'}}
+	d3.flowgraph(edges, nodes=nodes, groups={'Workers': {'label': 'Background workers'}})
+
+A link to an empty subgraph draws a node with the subgraph's title. A link between a subgraph and
+itself or its own content raises a ``ValueError``, as there is no box border to draw it to.
 
 Mermaid errors
 **************
@@ -77,9 +107,9 @@ line, before any HTML is written. Nothing is dropped silently.
 * Ignored: blank lines, ``%%`` comments, ``%%{init}%%`` directives and the accessibility metadata
   ``accTitle`` / ``accDescr``.
 * Errors: statements that do not parse (for example ``A[Start] --> B{ok?``), a wrong first statement,
-  an ``end`` without ``subgraph`` (or a ``subgraph`` without ``end``), and Mermaid features without an
-  equivalent here, such as ``click``, a ``direction`` inside a subgraph and links to subgraphs (link to
-  a node inside the subgraph instead).
+  an ``end`` without ``subgraph`` (or a ``subgraph`` without ``end``), a link between a subgraph and
+  its own content, a linked subgraph id that is also given a label, shape, ``style`` or ``class``, and
+  Mermaid features without an equivalent here, such as ``click`` and a ``direction`` inside a subgraph.
 
 Line numbers count from the first line of the diagram (in Markdown: of the fenced block).
 
