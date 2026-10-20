@@ -3452,7 +3452,7 @@ class D3Blocks():
 
         References
         ----------
-        * https://d3blocks.github.io/d3blocks/pages/html/Sequence.html
+        * https://raw.githack.com/d3blocks/d3blocks/main/docs/figs/sequence/sequence.html
 
         """
         # Mermaid input (text, Markdown or file): convert to messages, participants and regions.
@@ -3642,7 +3642,7 @@ class D3Blocks():
         References
         ----------
         * dagre: https://github.com/dagrejs/dagre
-        * https://d3blocks.github.io/d3blocks/pages/html/ERD.html
+        * https://raw.githack.com/d3blocks/d3blocks/main/docs/figs/erd/erd.html
 
         """
         # Mermaid input (text, Markdown or file): convert to relationships and entities.
