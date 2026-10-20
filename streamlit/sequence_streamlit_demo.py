@@ -67,6 +67,7 @@ show_top_panel = st.sidebar.checkbox("Show D3Blocks top panel", value=True)
 st.sidebar.subheader("Display")
 height = st.sidebar.slider("Chart height", min_value=400, max_value=1200, value=700, step=50)
 
+
 # =============================================================================
 # Build D3Blocks sequence diagram
 # =============================================================================
@@ -88,6 +89,7 @@ def build_sequence_html(mermaid, message_spacing, wrap, font_size, dark_mode, sh
     )
     return html
 
+
 # =============================================================================
 # Main page
 # =============================================================================
@@ -96,8 +98,10 @@ try:
 except ValueError as e:
     st.error(str(e))
     st.stop()
-st.caption("Interactive sequence diagram powered by D3Blocks and controlled by Streamlit. "
-           "Use ▶ Walk through to step through the messages.")
+st.caption(
+    "Interactive sequence diagram powered by D3Blocks and controlled by Streamlit. "
+    "Use ▶ Walk through to step through the messages."
+)
 if hasattr(st, "iframe"):
     st.iframe(html, height=height, width="stretch")
 else:

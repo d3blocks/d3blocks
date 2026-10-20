@@ -76,12 +76,14 @@ show_top_panel = st.sidebar.checkbox("Show D3Blocks top panel", value=True)
 st.sidebar.subheader("Display")
 height = st.sidebar.slider("Chart height", min_value=400, max_value=1200, value=700, step=50)
 
+
 # =============================================================================
 # Build D3Blocks ERD
 # =============================================================================
 @st.cache_data(show_spinner="Building ERD...")
-def build_erd_html(mermaid, direction, show_columns, show_types, nodesep, ranksep, dark_mode,
-                   show_side_panel, show_top_panel):
+def build_erd_html(
+    mermaid, direction, show_columns, show_types, nodesep, ranksep, dark_mode, show_side_panel, show_top_panel
+):
     d3 = D3Blocks()
     html = d3.erd(
         mermaid,
@@ -100,12 +102,14 @@ def build_erd_html(mermaid, direction, show_columns, show_types, nodesep, rankse
     )
     return html
 
+
 # =============================================================================
 # Main page
 # =============================================================================
 try:
-    html = build_erd_html(mermaid, direction, show_columns, show_types, nodesep, ranksep, dark_mode,
-                          show_side_panel, show_top_panel)
+    html = build_erd_html(
+        mermaid, direction, show_columns, show_types, nodesep, ranksep, dark_mode, show_side_panel, show_top_panel
+    )
 except ValueError as e:
     st.error(str(e))
     st.stop()

@@ -1,4 +1,5 @@
 """Sequence chart for d3blocks."""
+
 from .Sequence import (
     from_mermaid,
     set_config,

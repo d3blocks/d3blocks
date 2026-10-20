@@ -1,4 +1,5 @@
 """Tests for the ERD block (entity-relationship diagrams)."""
+
 import json
 import logging
 import re
@@ -46,14 +47,26 @@ def _render(df, **kwargs):
 
 
 def _df():
-    return pd.DataFrame({'source': ['customers', 'orders'], 'target': ['orders', 'lines'],
-                         'source_card': ['one', 'one'], 'target_card': ['zero_or_more', 'one_or_more'],
-                         'label': ['places', 'contains'], 'identifying': [True, False]})
+    return pd.DataFrame(
+        {
+            'source': ['customers', 'orders'],
+            'target': ['orders', 'lines'],
+            'source_card': ['one', 'one'],
+            'target_card': ['zero_or_more', 'one_or_more'],
+            'label': ['places', 'contains'],
+            'identifying': [True, False],
+        }
+    )
 
 
 def test_erd_mermaid_subset():
-    df, entities = Erd.from_mermaid(_MERMAID)
-    assert list(df[['source', 'target', 'source_card', 'target_card', 'label', 'identifying']].itertuples(index=False, name=None)) == [
+    df, entities, direction = Erd.from_mermaid(_MERMAID)
+    assert direction is None
+    assert list(
+        df[['source', 'target', 'source_card', 'target_card', 'label', 'identifying']].itertuples(
+            index=False, name=None
+        )
+    ) == [
         ('customers', 'orders', 'one', 'zero_or_more', 'places', True),
         ('orders', 'products', 'one_or_more', 'one_or_more', 'lists (M:N)', False),
         ('customers', 'loyalty', 'zero_or_one', 'zero_or_one', 'has', True),
@@ -61,7 +74,8 @@ def test_erd_mermaid_subset():
     ]
     assert entities['customers']['columns'] == [
         {'name': 'id', 'type': 'uuid', 'key': 'PK', 'comment': ''},
-        {'name': 'email', 'type': 'text', 'key': 'UK', 'comment': 'login, unique'}]
+        {'name': 'email', 'type': 'text', 'key': 'UK', 'comment': 'login, unique'},
+    ]
     assert entities['orders']['columns'][2] == {'name': 'order_id', 'type': 'uuid', 'key': 'PK,FK', 'comment': ''}
     assert entities['orders']['columns'][3]['key'] == ''
     assert entities['products'] == {}  # used only in relationships: no columns
@@ -78,8 +92,16 @@ def test_erd_renders_mermaid():
     assert 'dagre' in html and 'd3js.org' in html
 
 
-@pytest.mark.parametrize('line', ['direction LR', 'customers ||--o< orders : x', 'customers }}--o{ orders : x',
-                                  'p["Person"]', 'customers ||-o{ orders : x'])
+@pytest.mark.parametrize(
+    'line',
+    [
+        'direction XY',
+        'customers ||--o< orders : x',
+        'customers }}--o{ orders : x',
+        'p["Person"]',
+        'customers ||-o{ orders : x',
+    ],
+)
 def test_erd_unsupported_statements_name_the_line(line):
     with pytest.raises(ValueError, match='line 3') as err:
         Erd.from_mermaid('erDiagram\n  a ||--o{ b : x\n  %s\n' % line)
@@ -89,20 +111,28 @@ def test_erd_unsupported_statements_name_the_line(line):
 def test_erd_bad_column_and_unclosed_entity():
     with pytest.raises(ValueError, match='line 3: unsupported column'):
         Erd.from_mermaid('erDiagram\n a {\n just_one_token\n }\n')
-    with pytest.raises(ValueError, match='no closing'):
+    with pytest.raises(ValueError, match="line 2: entity 'a' has no closing"):
         Erd.from_mermaid('erDiagram\n a {\n uuid id PK\n')
 
 
 def test_erd_dataframe_input_and_entities():
-    entities = {'customers': {'label': 'Customers', 'color': '#ff0000', 'tooltip': 'People',
-                              'columns': [{'name': 'id', 'type': 'uuid', 'key': 'pk'}, 'email']},
-                'audit': {'columns': [{'name': 'id', 'key': 'PK, FK'}]}}
+    entities = {
+        'customers': {
+            'label': 'Customers',
+            'color': '#ff0000',
+            'tooltip': 'People',
+            'columns': [{'name': 'id', 'type': 'uuid', 'key': 'pk'}, 'email'],
+        },
+        'audit': {'columns': [{'name': 'id', 'key': 'PK, FK'}]},
+    }
     _, html = _render(_df(), entities=entities)
     data = _data(html)
     by_name = {e['name']: e for e in data['entities']}
     assert [e['name'] for e in data['entities']] == ['customers', 'audit', 'orders', 'lines']
-    assert by_name['customers']['columns'] == [{'name': 'id', 'type': 'uuid', 'key': 'PK', 'comment': ''},
-                                               {'name': 'email', 'type': '', 'key': '', 'comment': ''}]
+    assert by_name['customers']['columns'] == [
+        {'name': 'id', 'type': 'uuid', 'key': 'PK', 'comment': ''},
+        {'name': 'email', 'type': '', 'key': '', 'comment': ''},
+    ]
     assert by_name['audit']['columns'][0]['key'] == 'PK,FK'  # isolated entity, comma list normalized
     assert data['relationships'][1]['identifying'] is False
 
@@ -133,14 +163,25 @@ def test_erd_escapes_html():
 def test_erd_options():
     _, html = _render(_df(), direction='td', show_columns='keys', show_types=False, nodesep=10, ranksep=20)
     opts = _options(html)
-    assert (opts['direction'], opts['showColumns'], opts['showTypes'], opts['nodesep'], opts['ranksep']) == ('TB', 'keys', False, 10, 20)
+    assert (opts['direction'], opts['showColumns'], opts['showTypes'], opts['nodesep'], opts['ranksep']) == (
+        'TB',
+        'keys',
+        False,
+        10,
+        20,
+    )
     _, html = _render(_df(), show_columns='bogus')
     assert _options(html)['showColumns'] == 'all'
 
 
 def test_erd_steps():
-    steps = [{'title': 'Orders', 'caption': 'A customer places orders.',
-              'highlight': {'nodes': ['customers'], 'edges': [('orders', 'customers')]}}]
+    steps = [
+        {
+            'title': 'Orders',
+            'caption': 'A customer places orders.',
+            'highlight': {'nodes': ['customers'], 'edges': [('orders', 'customers')]},
+        }
+    ]
     _, html = _render(_df(), steps=steps)
     # Relationship references work in either order and are stored as written in the data.
     assert _data(html)['steps'][0]['highlight'] == {'nodes': ['customers'], 'edges': [['customers', 'orders']]}
@@ -193,7 +234,9 @@ def test_erd_frame_mode_and_editing():
 
 def test_erd_finds_its_block_in_mixed_markdown(tmp_path):
     md = tmp_path / 'doc.md'
-    md.write_text('```mermaid\nsequenceDiagram\n A->>B: x\n```\n```mermaid\nerDiagram\n a ||--o{ b : has\n```\n', encoding='utf-8')
+    md.write_text(
+        '```mermaid\nsequenceDiagram\n A->>B: x\n```\n```mermaid\nerDiagram\n a ||--o{ b : has\n```\n', encoding='utf-8'
+    )
     _, html = _render(md)
     assert [e['name'] for e in _data(html)['entities']] == ['a', 'b']
 
@@ -202,7 +245,7 @@ def test_erd_finds_its_block_in_mixed_markdown(tmp_path):
 def test_erd_trade_fixtures(path, caplog):
     log = logging.getLogger('test_erd_fixtures')
     with caplog.at_level(logging.WARNING, logger=log.name):
-        df, entities = Erd.from_mermaid(path, logger=log)
+        df, entities, _ = Erd.from_mermaid(path, logger=log)
     assert not caplog.records
     _, html = _render(path)
     data = _data(html)
@@ -219,9 +262,40 @@ def test_erd_trade_fixtures(path, caplog):
     assert n_columns == sum(len(v.get('columns', [])) for v in entities.values())
 
 
-@pytest.mark.parametrize('value, expected', [('false', False), ('No', False), ('0', False), (0, False), (False, False),
-                                             ('true', True), ('yes', True), (1, True), (None, True), (float('nan'), True)])
+@pytest.mark.parametrize(
+    'value, expected',
+    [
+        ('false', False),
+        ('No', False),
+        ('0', False),
+        (0, False),
+        (False, False),
+        ('true', True),
+        ('yes', True),
+        (1, True),
+        (None, True),
+        (float('nan'), True),
+    ],
+)
 def test_erd_identifying_from_text_and_numbers(value, expected):
     df = pd.DataFrame({'source': ['a'], 'target': ['b'], 'identifying': pd.Series([value], dtype=object)})
     _, html = _render(df)
     assert _data(html)['relationships'][0]['identifying'] is expected
+
+
+def test_erd_direction_from_mermaid_and_argument():
+    d3, html = _render('erDiagram\n  direction TB\n  a ||--o{ b : has')
+    assert _options(html)['direction'] == 'TB'
+    _, html = _render('erDiagram\n  direction TB\n  a ||--o{ b : has', direction='RL')  # the argument wins
+    assert _options(html)['direction'] == 'RL'
+    _, html = _render('erDiagram\n  a ||--o{ b : has')
+    assert _options(html)['direction'] == 'LR'
+    _, entities, _ = Erd.from_mermaid('erDiagram\n  direction ||--o{ b : has')  # an entity called direction
+    assert set(entities) == {'direction', 'b'}
+
+
+def test_erd_ignores_accessibility_metadata():
+    df, entities, _ = Erd.from_mermaid(
+        'erDiagram\n  accTitle: Shop\n  accDescr {\n    two\n    lines\n  }\n  a ||--o{ b : has\n'
+    )
+    assert set(entities) == {'a', 'b'} and len(df) == 1

@@ -1,4 +1,5 @@
 """ERD chart for d3blocks."""
+
 from .Erd import (
     from_mermaid,
     set_config,

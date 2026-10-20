@@ -64,7 +64,29 @@ Mermaid input
 *************
 
 Node shapes, edge labels, dotted (``-.->``) and thick (``==>``) links, ``&``, chains,
-nested subgraphs and colours from ``style`` / ``classDef`` are converted.
+nested subgraphs, node colours from ``style`` / ``classDef`` and edge colours and dashes from
+``linkStyle`` are converted.
+
+Mermaid errors
+**************
+
+All d3blocks Mermaid readers (flowcharts, state diagrams, ``sequence`` and ``erd``) follow one
+rule: every statement is understood, explicitly ignored, or raises a ``ValueError`` that names the
+line, before any HTML is written. Nothing is dropped silently.
+
+* Ignored: blank lines, ``%%`` comments, ``%%{init}%%`` directives and the accessibility metadata
+  ``accTitle`` / ``accDescr``.
+* Errors: statements that do not parse (for example ``A[Start] --> B{ok?``), a wrong first statement,
+  an ``end`` without ``subgraph`` (or a ``subgraph`` without ``end``), and Mermaid features without an
+  equivalent here, such as ``click``, a ``direction`` inside a subgraph and links to subgraphs (link to
+  a node inside the subgraph instead).
+
+Line numbers count from the first line of the diagram (in Markdown: of the fenced block).
+
+.. code:: python
+
+	d3.flowgraph('flowchart LR\n  A[Start] --> B{ok?')
+	# ValueError: Mermaid flowchart line 2 could not be parsed: 'A[Start] --> B{ok?' (...)
 
 .. code:: python
 
@@ -95,8 +117,9 @@ Mermaid ``stateDiagram`` and ``stateDiagram-v2`` are read too, so lifecycle diag
 the same layout, interaction and export as flowcharts. ``[*]`` becomes one start and one end
 pseudo-state (small circles), transition labels are kept (everything after the first ``:``), notes
 are added to the state's tooltip and ``classDef`` / ``class`` colours are applied. State diagrams are
-laid out top to bottom unless ``direction`` is passed. Composite states, ``<<choice>>``,
-``state "x" as A`` and ``direction`` raise a ``ValueError`` naming the line.
+laid out top to bottom unless the diagram has a ``direction`` statement or ``direction`` is
+passed. Composite states, ``<<choice>>``, ``state "x" as A`` and ``A : description`` raise a
+``ValueError`` naming the line.
 
 .. code:: python
 

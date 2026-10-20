@@ -1,4 +1,5 @@
 """Tests for the Sequence block (sequence diagrams)."""
+
 import json
 import logging
 import re
@@ -44,8 +45,14 @@ def _render(df, **kwargs):
 
 
 def _df():
-    return pd.DataFrame({'source': ['app', 'auth', 'app'], 'target': ['auth', 'app', 'api'],
-                         'label': ['login', 'token', 'call'], 'style': ['sync', 'reply', 'sync']})
+    return pd.DataFrame(
+        {
+            'source': ['app', 'auth', 'app'],
+            'target': ['auth', 'app', 'api'],
+            'label': ['login', 'token', 'call'],
+            'style': ['sync', 'reply', 'sync'],
+        }
+    )
 
 
 def test_sequence_mermaid_subset():
@@ -56,8 +63,10 @@ def test_sequence_mermaid_subset():
     assert participants['API'] == {'kind': 'participant'} and participants['DB'] == {}
     assert list(df['style']) == ['sync', 'sync', 'reply', 'sync']
     assert list(df['label']) == ['Click "Connect"', 'GET /authorize', 'Redirect\nto consent', 'store: state']
-    assert groups == [{'label': '', 'from': 0, 'to': 1, 'color': 'rgb(236,254,255)'},
-                      {'label': '', 'from': 2, 'to': 2, 'color': 'rgba(254,243,199,0.5)'}]
+    assert groups == [
+        {'label': '', 'from': 0, 'to': 1, 'color': 'rgb(236,254,255)'},
+        {'label': '', 'from': 2, 'to': 2, 'color': 'rgba(254,243,199,0.5)'},
+    ]
 
 
 def test_sequence_renders_mermaid():
@@ -71,8 +80,19 @@ def test_sequence_renders_mermaid():
     assert 'id="sq-svg"' in html and 'd3js.org' in html
 
 
-@pytest.mark.parametrize('line', ['autonumber', 'A->>+B: activate', 'A-)B: async', 'A->B: open', 'note over A: x',
-                                  'loop every minute', 'alt ok', 'A->>A: self'])
+@pytest.mark.parametrize(
+    'line',
+    [
+        'autonumber',
+        'A->>+B: activate',
+        'A-)B: async',
+        'A->B: open',
+        'note over A: x',
+        'loop every minute',
+        'alt ok',
+        'A->>A: self',
+    ],
+)
 def test_sequence_unsupported_statements_name_the_line(line):
     with pytest.raises(ValueError, match='line 3') as err:
         Sequence.from_mermaid('sequenceDiagram\n  A->>B: hi\n  %s\n' % line)
@@ -80,19 +100,29 @@ def test_sequence_unsupported_statements_name_the_line(line):
 
 
 def test_sequence_unbalanced_rect():
-    with pytest.raises(ValueError, match='without "end"'):
+    with pytest.raises(ValueError, match='line 2: "rect" has no "end"'):
         Sequence.from_mermaid('sequenceDiagram\n rect rgb(1,2,3)\n A->>B: x\n')
+    with pytest.raises(ValueError, match='line 3: "rect" contains no messages'):
+        Sequence.from_mermaid('sequenceDiagram\n A->>B: x\n rect rgb(1,2,3)\n end\n')
     with pytest.raises(ValueError, match='without an open "rect"'):
         Sequence.from_mermaid('sequenceDiagram\n A->>B: x\n end\n')
 
 
 def test_sequence_dataframe_input_and_participants():
-    participants = {'app': {'label': 'Mobile app', 'kind': 'actor', 'color': '#ff0000', 'tooltip': 'iOS'},
-                    'api': {'label': 'API'}}
+    participants = {
+        'app': {'label': 'Mobile app', 'kind': 'actor', 'color': '#ff0000', 'tooltip': 'iOS'},
+        'api': {'label': 'API'},
+    }
     d3, html = _render(_df(), participants=participants)
     data = _data(html)
     assert [p['name'] for p in data['participants']] == ['app', 'api', 'auth']
-    assert data['participants'][0] == {'name': 'app', 'label': 'Mobile app', 'kind': 'actor', 'color': '#ff0000', 'tooltip': 'iOS'}
+    assert data['participants'][0] == {
+        'name': 'app',
+        'label': 'Mobile app',
+        'kind': 'actor',
+        'color': '#ff0000',
+        'tooltip': 'iOS',
+    }
     assert [m['style'] for m in data['messages']] == ['sync', 'reply', 'sync']
     assert data['messages'][0]['color'] is None  # default messages use the theme colour
 
@@ -128,10 +158,13 @@ def test_sequence_default_steps_one_per_message():
 
 
 def test_sequence_custom_steps_and_validation():
-    steps = [{'title': 'Sign in', 'caption': 'Get a token', 'highlight': {'messages': [0, 1], 'participants': ['auth']}}]
+    steps = [
+        {'title': 'Sign in', 'caption': 'Get a token', 'highlight': {'messages': [0, 1], 'participants': ['auth']}}
+    ]
     _, html = _render(_df(), steps=steps)
-    assert _data(html)['steps'] == [{'title': 'Sign in', 'caption': 'Get a token',
-                                     'highlight': {'messages': [0, 1], 'participants': ['auth']}}]
+    assert _data(html)['steps'] == [
+        {'title': 'Sign in', 'caption': 'Get a token', 'highlight': {'messages': [0, 1], 'participants': ['auth']}}
+    ]
     _, html = _render(_df(), steps=[])
     assert _data(html)['steps'] == []
     with pytest.raises(ValueError, match=r'steps\[0\]: unknown message 3'):
@@ -196,7 +229,9 @@ def test_sequence_frame_mode():
 
 def test_sequence_finds_its_block_in_mixed_markdown(tmp_path):
     md = tmp_path / 'doc.md'
-    md.write_text('```mermaid\nflowchart LR\n a --> b\n```\n\n```mermaid\nsequenceDiagram\n X->>Y: hi\n```\n', encoding='utf-8')
+    md.write_text(
+        '```mermaid\nflowchart LR\n a --> b\n```\n\n```mermaid\nsequenceDiagram\n X->>Y: hi\n```\n', encoding='utf-8'
+    )
     _, html = _render(md)
     assert [p['name'] for p in _data(html)['participants']] == ['X', 'Y']
 
@@ -213,7 +248,7 @@ def test_sequence_trade_fixtures(path, caplog):
     # Every participant and message in the source appears in the payload.
     declared = re.findall(r'^\s*(?:participant|actor)\s+(\S+)', text, re.M)
     names = [p['name'] for p in data['participants']]
-    assert names[:len(declared)] == declared
+    assert names[: len(declared)] == declared
     assert len(data['messages']) == len(re.findall(r'-?->>', text))
     assert len(data['groups']) == len(re.findall(r'^\s*rect\b', text, re.M))
     assert len(data['steps']) == len(data['messages'])
@@ -221,8 +256,24 @@ def test_sequence_trade_fixtures(path, caplog):
 
 def test_sequence_hyphenated_ids_and_quoted_aliases():
     df, participants, _ = Sequence.from_mermaid(
-        'sequenceDiagram\n participant auth-svc as "Auth service"\n api-gw->>auth-svc: login\n auth-svc-->>api-gw: "token"\n')
+        'sequenceDiagram\n participant auth-svc as "Auth service"\n api-gw->>auth-svc: login\n auth-svc-->>api-gw: "token"\n'
+    )
     assert list(participants) == ['auth-svc', 'api-gw']
     assert participants['auth-svc']['label'] == 'Auth service'
-    assert list(zip(df['source'], df['target'], df['style'])) == [('api-gw', 'auth-svc', 'sync'), ('auth-svc', 'api-gw', 'reply')]
+    assert list(zip(df['source'], df['target'], df['style'])) == [
+        ('api-gw', 'auth-svc', 'sync'),
+        ('auth-svc', 'api-gw', 'reply'),
+    ]
     assert df['label'][1] == 'token'
+
+
+def test_sequence_ignores_accessibility_metadata_and_init():
+    df, participants, _ = Sequence.from_mermaid(
+        '%%{init: {"theme": "base"}}%%\nsequenceDiagram\n  accTitle: Login\n  accDescr: The login flow\n  A->>B: hi\n'
+    )
+    assert list(participants) == ['A', 'B'] and len(df) == 1
+
+
+def test_sequence_header_typo():
+    with pytest.raises(ValueError, match="first statement is 'sequenceDiagra'"):
+        Sequence.from_mermaid('sequenceDiagra\n  A->>B: hi')

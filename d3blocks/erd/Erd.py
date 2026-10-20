@@ -9,6 +9,7 @@ Library     : d3blocks
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
+
 import json
 import re
 from html import escape as html_escape
@@ -17,13 +18,21 @@ import numpy as np
 import pandas as pd
 
 try:
-    from ..utils import set_path, update_config, write_html_file, set_logo, resolve_color_background
-    from .._shared import template_env, notebook_iframe, check_dark_mode, dark_mode_flag, normalize_steps, ref_in, pair_in
+    from .._shared import (
+        check_dark_mode,
+        dark_mode_flag,
+        normalize_steps,
+        notebook_iframe,
+        pair_in,
+        ref_in,
+        template_env,
+    )
     from ..flowgraph import Flowgraph as fg
+    from ..utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
 except ImportError:
-    from utils import set_path, update_config, write_html_file, set_logo, resolve_color_background
-    from _shared import template_env, notebook_iframe, check_dark_mode, dark_mode_flag, normalize_steps, ref_in, pair_in
     import flowgraph.Flowgraph as fg
+    from _shared import check_dark_mode, dark_mode_flag, normalize_steps, notebook_iframe, pair_in, ref_in, template_env
+    from utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
 
 CARDINALITIES = ('one', 'zero_or_one', 'one_or_more', 'zero_or_more')
 KEYS = ('PK', 'FK', 'UK')
@@ -49,8 +58,12 @@ def set_config(config={}, font={}, **kwargs):
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['font'] = {**{'size': 12}, **font}
     direction = str(kwargs.get('direction', 'LR')).upper()
-    config['direction'] = fg._check_choice('TB' if direction == 'TD' else direction, DIRECTIONS, 'direction', 'LR', logger, upper=True)
-    config['show_columns'] = fg._check_choice(kwargs.get('show_columns', 'all'), SHOW_COLUMNS, 'show_columns', 'all', logger)
+    config['direction'] = fg._check_choice(
+        'TB' if direction == 'TD' else direction, DIRECTIONS, 'direction', 'LR', logger, upper=True
+    )
+    config['show_columns'] = fg._check_choice(
+        kwargs.get('show_columns', 'all'), SHOW_COLUMNS, 'show_columns', 'all', logger
+    )
     config['show_types'] = kwargs.get('show_types', True)
     config['nodesep'] = kwargs.get('nodesep', 50)
     config['ranksep'] = kwargs.get('ranksep', 90)
@@ -112,13 +125,21 @@ def _columns(entity, columns):
         if isinstance(c, str):
             c = {'name': c}
         if not isinstance(c, dict) or not c.get('name'):
-            raise ValueError("Entity %r column %d: expected {'name', 'type', 'key', 'comment'}; got %r." % (entity, i, c))
+            raise ValueError(
+                "Entity %r column %d: expected {'name', 'type', 'key', 'comment'}; got %r." % (entity, i, c)
+            )
         keys = [k.strip().upper() for k in str(c.get('key') or '').split(',') if k.strip()]
         bad = [k for k in keys if k not in KEYS]
         if bad:
             raise ValueError('Entity %r column %r: unknown key(s) %s; use %s.' % (entity, c['name'], bad, KEYS))
-        out.append({'name': str(c['name']), 'type': str(c.get('type') or ''), 'key': ','.join(keys),
-                    'comment': str(c.get('comment') or '')})
+        out.append(
+            {
+                'name': str(c['name']),
+                'type': str(c.get('type') or ''),
+                'key': ','.join(keys),
+                'comment': str(c.get('comment') or ''),
+            }
+        )
     return out
 
 
@@ -144,10 +165,12 @@ def set_edge_properties(df, logger=None, **kwargs):
 
     """
     fg._check_columns(df)
-    out = pd.DataFrame({
-        'source': df['source'].astype(str).values,
-        'target': df['target'].astype(str).values,
-    })
+    out = pd.DataFrame(
+        {
+            'source': df['source'].astype(str).values,
+            'target': df['target'].astype(str).values,
+        }
+    )
     for col in ('source_card', 'target_card'):
         cards = fg._column(df, col, None).astype(object)
         cards = cards.where(cards.notna(), None).map(lambda v: None if v is None else str(v).lower())
@@ -193,14 +216,24 @@ def show(df, **kwargs):
     # Relationships may reference entities that were added after set_node_properties().
     for name in pd.unique(df[['source', 'target']].values.ravel()):
         if name not in entities:
-            entities[name] = {'name': name, 'label': name, 'color': DEFAULT_ENTITY_COLOR, 'tooltip': None, 'columns': []}
+            entities[name] = {
+                'name': name,
+                'label': name,
+                'color': DEFAULT_ENTITY_COLOR,
+                'tooltip': None,
+                'columns': [],
+            }
     for e in entities.values():
         e['columns'] = _columns(e['name'], e.get('columns'))
 
-    steps = normalize_steps(config.get('steps'), {
-        'nodes': ref_in(entities, 'entity'),
-        'edges': pair_in(zip(df['source'], df['target']), 'relationship', undirected=True),
-    }, 'erd')
+    steps = normalize_steps(
+        config.get('steps'),
+        {
+            'nodes': ref_in(entities, 'entity'),
+            'edges': pair_in(zip(df['source'], df['target']), 'relationship', undirected=True),
+        },
+        'erd',
+    )
 
     data = {
         'entities': [fg._jsonable(e) for e in entities.values()],
@@ -281,8 +314,9 @@ def from_mermaid(text, logger=None):
     Supported: relationships 'A ||--o{ B : label' with all four markers per end
     (|| |o/o| }|/|{ }o/o{), '--' (identifying, solid) and '..' (non-identifying,
     dashed); entity blocks 'A { type name PK "comment" }' with keys PK, FK, UK and
-    comma lists ('PK,FK'); entities that only occur in relationships; '%%' comments.
-    Other statements raise a ValueError naming the line.
+    comma lists ('PK,FK'); entities that only occur in relationships; a top-level
+    'direction LR|TB|...'; '%%' comments (accTitle / accDescr are ignored too). Other
+    statements raise a ValueError naming the line.
 
     Parameters
     ----------
@@ -293,42 +327,53 @@ def from_mermaid(text, logger=None):
     Returns
     -------
     tuple
-        (relationships DataFrame, entities dict)
+        (relationships DataFrame, entities dict, direction or None)
 
     """
     text = fg.read_mermaid(text, logger=logger, kinds=('erDiagram',))
     if fg._first_statement(text).split()[:1] != ['erDiagram']:
         raise ValueError('Expected a Mermaid erDiagram; the first statement is %r.' % fg._first_statement(text))
-    entities, rels, current = {}, [], None
+    entities, rels, current, current_line, direction = {}, [], None, 0, None
+    supported = (
+        'relationships (A ||--o{ B : label), entity blocks (A { type name PK "comment" }), direction and %% comments'
+    )
 
-    for lineno, raw in enumerate(str(text).splitlines(), 1):
-        stmt = raw.strip()
-        if not stmt or stmt.startswith('%%'):
-            continue
+    for lineno, stmt in fg._mermaid_lines(text):
         if current is not None:
             if stmt == '}':
                 current = None
                 continue
             m = _COLUMN.match(stmt)
             if not m:
-                raise ValueError('Mermaid erDiagram line %d: unsupported column %r in entity %r. Expected '
-                                 '\'type name [PK|FK|UK] ["comment"]\'.' % (lineno, stmt, current))
+                raise ValueError(
+                    'Mermaid erDiagram line %d: unsupported column %r in entity %r. Expected '
+                    '\'type name [PK|FK|UK] ["comment"]\'.' % (lineno, stmt, current)
+                )
             keys = ','.join(k.strip() for k in m.group(3).split(',') if k.strip())
-            entities[current]['columns'].append({'name': m.group(2), 'type': m.group(1), 'key': keys,
-                                                 'comment': m.group(4) or ''})
+            entities[current]['columns'].append(
+                {'name': m.group(2), 'type': m.group(1), 'key': keys, 'comment': m.group(4) or ''}
+            )
             continue
         if stmt == 'erDiagram':
             continue
+        parts = stmt.split()
+        if parts[0] == 'direction' and len(parts) == 2:
+            if parts[1].upper() not in fg._MERMAID_DIRECTIONS:
+                raise fg._mermaid_error('erDiagram', lineno, stmt, supported)
+            direction = fg._MERMAID_DIRECTIONS[parts[1].upper()]
+            continue
         m = _ENTITY_OPEN.match(stmt)
         if m:
-            current = m.group(1)
+            current, current_line = m.group(1), lineno
             entities.setdefault(current, {}).setdefault('columns', [])
             continue
         m = _RELATIONSHIP.match(stmt)
         if m:
             left, line, right = m.group(2), m.group(3), m.group(4)
             if left not in _LEFT_CARDS or right not in _RIGHT_CARDS:
-                raise ValueError('Mermaid erDiagram line %d: unknown cardinality %r in %r.' % (lineno, left + line + right, stmt))
+                raise ValueError(
+                    'Mermaid erDiagram line %d: unknown cardinality %r in %r.' % (lineno, left + line + right, stmt)
+                )
             source, target = m.group(1), m.group(5)
             entities.setdefault(source, {})
             entities.setdefault(target, {})
@@ -337,13 +382,12 @@ def from_mermaid(text, logger=None):
                 label = label[1:-1]
             rels.append((source, target, _LEFT_CARDS[left], _RIGHT_CARDS[right], label, line == '--'))
             continue
-        raise ValueError('Mermaid erDiagram line %d is not supported: %r. Supported: relationships '
-                         '(A ||--o{ B : label), entity blocks (A { type name PK "comment" }) and %%%% comments.'
-                         % (lineno, stmt))
+        raise fg._mermaid_error('erDiagram', lineno, stmt, supported)
     if current is not None:
-        raise ValueError('Mermaid erDiagram: entity %r has no closing "}".' % current)
+        raise ValueError('Mermaid erDiagram line %d: entity %r has no closing "}".' % (current_line, current))
     if not entities:
-        raise ValueError('No Mermaid erDiagram entities found. Expected text such as '
-                         '"erDiagram\\n  CUSTOMER ||--o{ ORDER : places".')
+        raise ValueError(
+            'No Mermaid erDiagram entities found. Expected text such as "erDiagram\\n  CUSTOMER ||--o{ ORDER : places".'
+        )
     df = pd.DataFrame(rels, columns=['source', 'target', 'source_card', 'target_card', 'label', 'identifying'])
-    return df, entities
+    return df, entities, direction

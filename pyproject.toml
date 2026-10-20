@@ -67,3 +67,10 @@ include = ["d3blocks*"]
 
 [tool.setuptools.dynamic]
 version = { attr = "d3blocks.__version__" }
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+# The code base uses single quotes; keep them.
+quote-style = "preserve"

@@ -12,6 +12,7 @@ Library     : d3blocks
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
+
 from html import escape as html_escape
 from pathlib import Path
 
@@ -32,11 +33,13 @@ def template_env(package_name, block_file):
     block_file : str
         __file__ of the block module (used when the package loader is unavailable).
     """
+
     def loader(package, folder):
         try:
             return PackageLoader(package_name=package, package_path='d3js')
         except Exception:
             return FileSystemLoader(str(Path(folder).resolve().parent / 'd3js'))
+
     return Environment(loader=ChoiceLoader([loader(package_name, block_file), loader(__name__, __file__)]))
 
 
@@ -51,10 +54,12 @@ def notebook_iframe(html, config, block):
     width = '%dpx' % width if width else '100%'
     height = '%dpx' % height if height else '650px'
     # Wrapped in a div: IPython warns about HTML that starts with '<iframe'.
-    return ('<div class="d3blocks-%s"><iframe srcdoc="%s" title="%s" '
-            'style="width:%s;height:%s;border:0;border-radius:6px" '
-            'sandbox="allow-scripts allow-downloads allow-popups"></iframe></div>'
-            % (block, html_escape(html, quote=True), html_escape(str(config.get('title', block))), width, height))
+    return (
+        '<div class="d3blocks-%s"><iframe srcdoc="%s" title="%s" '
+        'style="width:%s;height:%s;border:0;border-radius:6px" '
+        'sandbox="allow-scripts allow-downloads allow-popups"></iframe></div>'
+        % (block, html_escape(html, quote=True), html_escape(str(config.get('title', block))), width, height)
+    )
 
 
 def dark_mode_flag(dark_mode):
@@ -112,8 +117,9 @@ def normalize_steps(steps, refs, block):
             raise ValueError("steps[%d]: 'highlight' must be a dict; got %s." % (i, type(highlight).__name__))
         unsupported = sorted(set(highlight) - set(refs))
         if unsupported:
-            raise ValueError('steps[%d]: highlight key(s) %s are not supported by %s; use %s.'
-                             % (i, unsupported, block, tuple(refs)))
+            raise ValueError(
+                'steps[%d]: highlight key(s) %s are not supported by %s; use %s.' % (i, unsupported, block, tuple(refs))
+            )
         resolved = {}
         for key, values in highlight.items():
             if values is None:
@@ -121,11 +127,13 @@ def normalize_steps(steps, refs, block):
             if isinstance(values, (str, int, np.integer)):
                 values = [values]
             resolved[key] = [refs[key](v, i) for v in values]
-        out.append({
-            'title': str(step.get('title') or 'Step %d' % (i + 1)),
-            'caption': str(step.get('caption') or ''),
-            'highlight': resolved,
-        })
+        out.append(
+            {
+                'title': str(step.get('title') or 'Step %d' % (i + 1)),
+                'caption': str(step.get('caption') or ''),
+                'highlight': resolved,
+            }
+        )
     return out
 
 
@@ -138,6 +146,7 @@ def ref_in(names, what):
         if key not in names:
             raise ValueError('steps[%d]: unknown %s %r.' % (i, what, ref))
         return key
+
     return check
 
 
@@ -154,13 +163,16 @@ def pair_in(pairs, what, undirected=False):
         if undirected and (t, s) in pairs:
             return [t, s]
         raise ValueError('steps[%d]: unknown %s %r.' % (i, what, tuple(ref)))
+
     return check
 
 
 def index_in(count, what):
     """Check for an integer index in range(count)."""
+
     def check(ref, i):
         if isinstance(ref, (bool, np.bool_)) or not isinstance(ref, (int, np.integer)) or not 0 <= ref < count:
             raise ValueError('steps[%d]: unknown %s %r; use an index from 0 to %d.' % (i, what, ref, count - 1))
         return int(ref)
+
     return check

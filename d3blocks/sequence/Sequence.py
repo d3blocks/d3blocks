@@ -8,6 +8,7 @@ Library     : d3blocks
 Github      : https://github.com/d3blocks/d3blocks
 License     : GPL3
 """
+
 import json
 import re
 from html import escape as html_escape
@@ -15,13 +16,29 @@ from html import escape as html_escape
 import pandas as pd
 
 try:
-    from ..utils import set_path, update_config, write_html_file, set_logo, resolve_color_background
-    from .._shared import template_env, notebook_iframe, check_dark_mode, dark_mode_flag, normalize_steps, ref_in, index_in
+    from .._shared import (
+        check_dark_mode,
+        dark_mode_flag,
+        index_in,
+        normalize_steps,
+        notebook_iframe,
+        ref_in,
+        template_env,
+    )
     from ..flowgraph import Flowgraph as fg
+    from ..utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
 except ImportError:
-    from utils import set_path, update_config, write_html_file, set_logo, resolve_color_background
-    from _shared import template_env, notebook_iframe, check_dark_mode, dark_mode_flag, normalize_steps, ref_in, index_in
     import flowgraph.Flowgraph as fg
+    from _shared import (
+        check_dark_mode,
+        dark_mode_flag,
+        index_in,
+        normalize_steps,
+        notebook_iframe,
+        ref_in,
+        template_env,
+    )
+    from utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
 
 KINDS = ('participant', 'actor')
 STYLES = ('sync', 'reply')
@@ -97,7 +114,9 @@ def set_node_properties(df, participants=None, cmap='Set2', logger=None, **kwarg
         props[name] = {
             'name': name,
             'label': str(fg._get(a, 'label', name)),
-            'kind': fg._check_choice(fg._get(a, 'kind', 'participant'), KINDS, f"kind of '{name}'", 'participant', logger),
+            'kind': fg._check_choice(
+                fg._get(a, 'kind', 'participant'), KINDS, f"kind of '{name}'", 'participant', logger
+            ),
             'color': fg._get(a, 'color', None) or palette[name],
             'tooltip': fg._optional_str(fg._get(a, 'tooltip', None)),
         }
@@ -127,14 +146,18 @@ def set_edge_properties(df, logger=None, **kwargs):
 
     """
     fg._check_columns(df)
-    out = pd.DataFrame({
-        'source': df['source'].astype(str).values,
-        'target': df['target'].astype(str).values,
-    })
+    out = pd.DataFrame(
+        {
+            'source': df['source'].astype(str).values,
+            'target': df['target'].astype(str).values,
+        }
+    )
     selfloops = [i for i, (s, t) in enumerate(zip(out['source'], out['target'])) if s == t]
     if selfloops:
-        raise ValueError('Self-messages are not supported (message %d: %s -> %s).'
-                         % (selfloops[0], out['source'][selfloops[0]], out['target'][selfloops[0]]))
+        raise ValueError(
+            'Self-messages are not supported (message %d: %s -> %s).'
+            % (selfloops[0], out['source'][selfloops[0]], out['target'][selfloops[0]])
+        )
     out['label'] = fg._column(df, 'label', '').fillna('').astype(str).values
 
     styles = fg._column(df, 'style', 'sync').fillna('sync').astype(str).str.lower()
@@ -158,17 +181,30 @@ def set_group_properties(groups, n_messages, logger=None):
             raise ValueError("groups[%d]: expected {'label': str, 'from': i, 'to': j, 'color': hex}; got %r." % (i, g))
         lo, hi = int(g['from']), int(g['to'])
         if not 0 <= lo <= hi < n_messages:
-            raise ValueError('groups[%d]: messages %d..%d are out of range; there are %d messages.' % (i, lo, hi, n_messages))
-        out.append({'label': str(g.get('label') or ''), 'from': lo, 'to': hi, 'color': str(g.get('color') or DEFAULT_REGION_COLOR)})
+            raise ValueError(
+                'groups[%d]: messages %d..%d are out of range; there are %d messages.' % (i, lo, hi, n_messages)
+            )
+        out.append(
+            {
+                'label': str(g.get('label') or ''),
+                'from': lo,
+                'to': hi,
+                'color': str(g.get('color') or DEFAULT_REGION_COLOR),
+            }
+        )
     return out
 
 
 def default_steps(df, participants):
     """One step per message, captioned with the message label."""
+
     def name(p):
         return participants.get(p, {}).get('label', p).replace('\n', ' ')
-    return [{'title': '%d. %s → %s' % (i + 1, name(s), name(t)), 'caption': label, 'highlight': {'messages': [i]}}
-            for i, (s, t, label) in enumerate(zip(df['source'], df['target'], df['label']))]
+
+    return [
+        {'title': '%d. %s → %s' % (i + 1, name(s), name(t)), 'caption': label, 'highlight': {'messages': [i]}}
+        for i, (s, t, label) in enumerate(zip(df['source'], df['target'], df['label']))
+    ]
 
 
 # %% Show
@@ -198,14 +234,24 @@ def show(df, **kwargs):
     missing = [n for n in pd.unique(df[['source', 'target']].values.ravel()) if n not in participants]
     palette = fg._colors_for(missing, config.get('cmap', 'Set2'))
     for name in missing:
-        participants[name] = {'name': name, 'label': name, 'kind': 'participant', 'color': palette[name], 'tooltip': None}
+        participants[name] = {
+            'name': name,
+            'label': name,
+            'kind': 'participant',
+            'color': palette[name],
+            'tooltip': None,
+        }
 
     groups = set_group_properties(config.get('groups'), len(df), logger=logger)
     steps = config.get('steps')
-    steps = normalize_steps(default_steps(df, participants) if steps is None else steps, {
-        'messages': index_in(len(df), 'message'),
-        'participants': ref_in(participants, 'participant'),
-    }, 'sequence')
+    steps = normalize_steps(
+        default_steps(df, participants) if steps is None else steps,
+        {
+            'messages': index_in(len(df), 'message'),
+            'participants': ref_in(participants, 'participant'),
+        },
+        'sequence',
+    )
 
     data = {
         'participants': [fg._jsonable(p) for p in participants.values()],
@@ -281,8 +327,8 @@ def from_mermaid(text, logger=None):
 
     Supported: 'participant A', 'participant A as Label', 'actor A', messages
     'A->>B: text' (call) and 'A-->>B: text' (reply), 'rect rgb(...)' / 'rect rgba(...)'
-    ... 'end' regions and '%%' comments. Other statements raise a ValueError naming
-    the line.
+    ... 'end' regions and '%%' comments (accTitle / accDescr are ignored too). Other
+    statements raise a ValueError naming the line.
 
     Parameters
     ----------
@@ -300,11 +346,13 @@ def from_mermaid(text, logger=None):
     if fg._first_statement(text).split()[:1] != ['sequenceDiagram']:
         raise ValueError('Expected a Mermaid sequenceDiagram; the first statement is %r.' % fg._first_statement(text))
     participants, messages, groups, stack = {}, [], [], []
+    header = True
 
-    for lineno, raw in enumerate(str(text).splitlines(), 1):
-        stmt = raw.strip()
-        if not stmt or stmt.startswith('%%') or stmt == 'sequenceDiagram':
-            continue
+    for lineno, stmt in fg._mermaid_lines(text):
+        if header:
+            header = False
+            if stmt == 'sequenceDiagram':
+                continue
         m = _PARTICIPANT.match(stmt)
         if m:
             p = participants.setdefault(m.group(2), {})
@@ -316,28 +364,37 @@ def from_mermaid(text, logger=None):
         if m:
             source, arrow, target = m.group(1), m.group(2), m.group(3)
             if source == target:
-                raise ValueError('Mermaid sequenceDiagram line %d: self-messages are not supported: %r.' % (lineno, stmt))
+                raise ValueError(
+                    'Mermaid sequenceDiagram line %d: self-messages are not supported: %r.' % (lineno, stmt)
+                )
             participants.setdefault(source, {})
             participants.setdefault(target, {})
             messages.append((source, target, fg._mermaid_label(m.group(4)), 'reply' if arrow == '-->>' else 'sync'))
             continue
         m = _RECT.match(stmt)
         if m:
-            stack.append({'label': '', 'from': len(messages), 'color': m.group(1).replace(' ', '')})
+            stack.append({'label': '', 'from': len(messages), 'color': m.group(1).replace(' ', ''), 'line': lineno})
             continue
         if stmt == 'end':
             if not stack:
                 raise ValueError('Mermaid sequenceDiagram line %d: "end" without an open "rect".' % lineno)
             g = stack.pop()
-            if len(messages) > g['from']:
-                groups.append({'label': g['label'], 'from': g['from'], 'to': len(messages) - 1, 'color': g['color']})
+            if len(messages) == g['from']:
+                raise ValueError('Mermaid sequenceDiagram line %d: "rect" contains no messages.' % g['line'])
+            groups.append({'label': g['label'], 'from': g['from'], 'to': len(messages) - 1, 'color': g['color']})
             continue
-        raise ValueError('Mermaid sequenceDiagram line %d is not supported: %r. Supported: participant/actor '
-                         '(with "as"), A->>B: text, A-->>B: text, rect rgb(...) ... end and %%%% comments.' % (lineno, stmt))
+        raise fg._mermaid_error(
+            'sequenceDiagram',
+            lineno,
+            stmt,
+            'participant/actor (with "as"), A->>B: text, A-->>B: text, rect rgb(...) ... end and %% comments',
+        )
     if stack:
-        raise ValueError('Mermaid sequenceDiagram: %d "rect" block(s) without "end".' % len(stack))
+        raise ValueError('Mermaid sequenceDiagram line %d: "rect" has no "end".' % stack[-1]['line'])
     if not messages:
-        raise ValueError('No Mermaid sequence messages found. Expected text such as '
-                         '"sequenceDiagram\\n  A->>B: request\\n  B-->>A: response".')
+        raise ValueError(
+            'No Mermaid sequence messages found. Expected text such as '
+            '"sequenceDiagram\\n  A->>B: request\\n  B-->>A: response".'
+        )
     df = pd.DataFrame(messages, columns=['source', 'target', 'label', 'style'])
     return df, participants, groups
