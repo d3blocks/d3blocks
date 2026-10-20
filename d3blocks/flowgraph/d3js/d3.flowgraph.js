@@ -52,12 +52,49 @@
     return groups.filter(function (g) { return used.has(g.name); });
   })();
 
+  // An edge end may name a group instead of a node (Python never makes such a
+  // name a node). The edge is drawn to the group box, as Mermaid draws links to
+  // subgraphs.
+  function isGroupEnd(name) { return !nodeById.has(name) && groupById.has(name); }
+
   var outEdges = new Map(), inEdges = new Map();
   nodes.forEach(function (n) { outEdges.set(n.name, []); inEdges.set(n.name, []); });
   edges.forEach(function (e) {
-    if (outEdges.has(e.source)) outEdges.get(e.source).push(e);
-    if (inEdges.has(e.target)) inEdges.get(e.target).push(e);
+    [e.source, e.target].forEach(function (name) {
+      if (!outEdges.has(name)) { outEdges.set(name, []); inEdges.set(name, []); }
+    });
+    outEdges.get(e.source).push(e);
+    inEdges.get(e.target).push(e);
   });
+
+  // Group ends in layout: dagre cannot route edges to compound nodes, so a group
+  // end is laid out at its representative, the first node (in node order) inside
+  // the group at any depth (Mermaid's approach). Hidden groups use it too.
+  var representatives = new Map();
+  function layoutEnd(name) {
+    if (!isGroupEnd(name)) return nodeById.get(name);
+    if (!representatives.has(name)) {
+      var members = groupMembers(name);
+      representatives.set(name, nodes.find(function (n) { return members.has(n.name); }));
+    }
+    return representatives.get(name);
+  }
+
+  function groupsDrawn() { return state.showGroups && usedGroups.length > 0; }
+
+  // Geometry of an edge end after layout: the node, or a rectangle built from the
+  // group box (the representative while groups are hidden).
+  function endpointOf(name) {
+    if (!isGroupEnd(name)) return nodeById.get(name);
+    var gr = groupById.get(name), b = gr.box;
+    if (!groupsDrawn() || !b) return layoutEnd(name);
+    return { name: name, x: b.x + b.w / 2, y: b.y + b.h / 2, width: b.w, height: b.h,
+             shape: 'process', label: gr.label, isGroup: true };
+  }
+
+  function endLabel(name) {
+    return isGroupEnd(name) ? groupById.get(name).label + ' (group)' : nodeById.get(name).label;
+  }
 
   // ---------------------------------------------------------------- svg
   var main = document.getElementById('fg-main');
@@ -252,16 +289,17 @@
 
     edges.forEach(function (e) {
       var size = edgeLabelSize(e);
-      g.setEdge(e.source, e.target, size ? { width: size.width, height: size.height, labelpos: 'c' } : {}, e.id);
+      g.setEdge(layoutEnd(e.source).name, layoutEnd(e.target).name,
+        size ? { width: size.width, height: size.height, labelpos: 'c' } : {}, e.id);
     });
 
     dagre.layout(g);
 
     nodes.forEach(function (n) { var p = g.node(n.name); n.x = p.x; n.y = p.y; });
     edges.forEach(function (e) {
-      var de = g.edge({ v: e.source, w: e.target, name: e.id });
+      var s = layoutEnd(e.source), t = layoutEnd(e.target);
+      var de = g.edge({ v: s.name, w: t.name, name: e.id });
       var pts = de.points.map(function (p) { return { x: p.x, y: p.y }; });
-      var s = nodeById.get(e.source), t = nodeById.get(e.target);
       if (s !== t && pts.length >= 2) {
         pts[0] = intersect(s, pts.length > 2 ? pts[1] : t);
         pts[pts.length - 1] = intersect(t, pts.length > 2 ? pts[pts.length - 2] : s);
@@ -276,6 +314,49 @@
     compressRanks(useGroups);
     expandCrossAxis(useGroups);
     groupBoxes(usedGroups);
+    if (useGroups) edges.forEach(cutAtGroupEnds);
+  }
+
+  // A group end's path starts at the representative inside the box; cut it where
+  // it leaves the box, so it starts (or, with its arrowhead, ends) on the border.
+  function cutAtGroupEnds(e) {
+    if (isGroupEnd(e.source)) e.points = cutFromStart(e.points, groupById.get(e.source).box);
+    if (isGroupEnd(e.target)) e.points = cutFromStart(e.points.slice().reverse(), groupById.get(e.target).box).reverse();
+    var boxes = [e.source, e.target].filter(isGroupEnd).map(function (name) { return groupById.get(name).box; });
+    if (boxes.some(function (b) { return inBox({ x: e.lx, y: e.ly }, b); })) {
+      var mid = pathMidpoint(e.points);
+      e.lx = mid.x; e.ly = mid.y;
+    }
+  }
+
+  function inBox(p, b) { return p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h; }
+
+  // Drop every point up to the last one inside the box and start at the crossing.
+  function cutFromStart(pts, b) {
+    var last = -1;
+    pts.forEach(function (p, i) { if (inBox(p, b)) last = i; });
+    if (last < 0 || last === pts.length - 1) return pts;
+    var a = pts[last], c = pts[last + 1], t = 1;
+    var dx = c.x - a.x, dy = c.y - a.y;
+    if (dx > 0) t = Math.min(t, (b.x + b.w - a.x) / dx); else if (dx < 0) t = Math.min(t, (b.x - a.x) / dx);
+    if (dy > 0) t = Math.min(t, (b.y + b.h - a.y) / dy); else if (dy < 0) t = Math.min(t, (b.y - a.y) / dy);
+    t = Math.max(0, t);
+    return [{ x: a.x + dx * t, y: a.y + dy * t }].concat(pts.slice(last + 1));
+  }
+
+  // Point halfway along a polyline.
+  function pathMidpoint(pts) {
+    var lens = [], total = 0;
+    for (var i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); lens.push(l); total += l; }
+    var half = total / 2;
+    for (var j = 0; j < lens.length; j++) {
+      if (half <= lens[j] && lens[j] > 0) {
+        var f = half / lens[j];
+        return { x: pts[j].x + (pts[j + 1].x - pts[j].x) * f, y: pts[j].y + (pts[j + 1].y - pts[j].y) * f };
+      }
+      half -= lens[j];
+    }
+    return pts[pts.length - 1];
   }
 
   // ELK: native compound layout, orthogonal edges, padding reserved for headers.
@@ -324,9 +405,12 @@
       var key = (useGroups && n.group && containers.has(GROUP_PREFIX + n.group)) ? GROUP_PREFIX + n.group : '__root__';
       containers.get(key).children.push({ id: n.name, width: n.width, height: n.height });
     });
+    // ELK supports edges to hierarchical nodes (INCLUDE_CHILDREN) and ends them on
+    // the group box; without drawn groups there is no container, so use the representative.
+    function elkEnd(name) { return (useGroups && isGroupEnd(name)) ? GROUP_PREFIX + name : layoutEnd(name).name; }
     edges.forEach(function (e) {
       var size = edgeLabelSize(e);
-      root.edges.push({ id: e.id, sources: [e.source], targets: [e.target],
+      root.edges.push({ id: e.id, sources: [elkEnd(e.source)], targets: [elkEnd(e.target)],
         labels: size ? [{ text: e.label, width: size.width, height: size.height }] : [] });
     });
 
@@ -352,7 +436,8 @@
       edges.forEach(function (e) {
         var re = byId.get(e.id), off = abs.get((re && re.container) || '__root__') || { x: 0, y: 0 };
         var sec = re && re.sections && re.sections[0];
-        var s = nodeById.get(e.source), t = nodeById.get(e.target);
+        // Group ends are rectangles (clipAlong leaves them as ELK placed them).
+        var s = endpointOf(e.source), t = endpointOf(e.target);
         if (!sec) {
           e.points = [intersect(s, t), intersect(t, s)];
         } else {
@@ -544,7 +629,7 @@
 
     nodes.forEach(function (n) { n[A] = map(n[A]); });
     edges.forEach(function (e) {
-      var s = nodeById.get(e.source), t = nodeById.get(e.target);
+      var s = layoutEnd(e.source), t = layoutEnd(e.target);
       e.points = (s === t) ? e.points.map(function (p) { var q = Object.assign({}, p); q[A] = map(q[A]); return q; })
                            : reroute(e.points);
       if (horizontal) e.lx = map(e.lx); else e.ly = map(e.ly);
@@ -586,8 +671,8 @@
       var last = e.points.length - 1;
       e.points.forEach(function (p, i) {
         // Endpoints stay attached to their nodes.
-        if (i === 0) p[B] += moved.get(e.source);
-        else if (i === last) p[B] += moved.get(e.target);
+        if (i === 0) p[B] += moved.get(layoutEnd(e.source).name);
+        else if (i === last) p[B] += moved.get(layoutEnd(e.target).name);
         else p[B] += shift(p[B], margin);
       });
       if (horizontal) e.ly += shift(e.ly, margin); else e.lx += shift(e.lx, margin);
@@ -654,7 +739,10 @@
     var genter = gsel.enter().append('g').attr('class', 'fg-group');
     genter.append('rect').attr('class', 'fg-group-box').attr('rx', 10);
     genter.append('text').attr('class', 'fg-group-label');
-    genter.on('click', function (ev, d) { ev.stopPropagation(); togglePin({ type: 'group', id: d.name }); });
+    genter
+      .on('mouseenter', function (ev, d) { highlight({ type: 'group', id: d.name }); })
+      .on('mouseleave', function () { restoreHighlight(); })
+      .on('click', function (ev, d) { ev.stopPropagation(); togglePin({ type: 'group', id: d.name }); });
     var gall = genter.merge(gsel).style('--c', function (d) { return d.color; });
     gall.order();
     maybe(gall.select('rect'), t)
@@ -817,9 +905,10 @@
     var starts;
     if (state.pinned && state.pinned.type === 'node') starts = [state.pinned.id];
     else {
-      starts = nodes.filter(function (n) {
-        return !(inEdges.get(n.name) || []).some(function (e) { return e.source !== e.target; });
-      }).map(function (n) { return n.name; });
+      // Nodes and group ends without incoming edges.
+      starts = Array.from(outEdges.keys()).filter(function (name) {
+        return !(inEdges.get(name) || []).some(function (e) { return e.source !== e.target; });
+      });
       if (!starts.length) starts = [nodes[0].name];
     }
     var steps = [{ nodes: starts.slice(), edges: [] }], seen = new Set(starts), used = new Set(), frontier = starts;
@@ -899,7 +988,8 @@
     }
   }
 
-  function groupMembers(name) {
+  // The group plus every group nested in it, at any depth.
+  function groupsInside(name) {
     var inside = new Set([name]);
     var changed = true;
     while (changed) {
@@ -908,6 +998,11 @@
         if (g.parent && inside.has(g.parent) && !inside.has(g.name)) { inside.add(g.name); changed = true; }
       });
     }
+    return inside;
+  }
+
+  function groupMembers(name) {
+    var inside = groupsInside(name);
     return new Set(nodes.filter(function (n) { return n.group && inside.has(n.group); }).map(function (n) { return n.name; }));
   }
 
@@ -922,10 +1017,12 @@
     } else if (target.type === 'group') {
       // Group members plus their direct connections.
       focusGroup = target.id;
-      var members = groupMembers(target.id);
+      var members = groupMembers(target.id), inside = groupsInside(target.id);
       members.forEach(function (m) { ns.add(m); });
       edges.forEach(function (e) {
-        if (members.has(e.source) || members.has(e.target)) { es.add(e.idx); ns.add(e.source); ns.add(e.target); }
+        if (members.has(e.source) || members.has(e.target) || inside.has(e.source) || inside.has(e.target)) {
+          es.add(e.idx); ns.add(e.source); ns.add(e.target);
+        }
       });
     } else if (target.type === 'variant') {
       edges.forEach(function (e) {
@@ -944,7 +1041,9 @@
       .classed('fg-focus', function (d) { return d.name === focusNode; });
     gEdges.selectAll('g.fg-edge-g').classed('fg-hl', function (d) { return es.has(d.idx); });
     gLabels.selectAll('g.fg-edge-label').classed('fg-hl', function (d) { return es.has(d.idx); });
-    gGroups.selectAll('g.fg-group').classed('fg-focus', function (d) { return d.name === focusGroup; });
+    gGroups.selectAll('g.fg-group')
+      .classed('fg-hl', function (d) { return ns.has(d.name); })
+      .classed('fg-focus', function (d) { return d.name === focusGroup; });
   }
 
   function clearHighlight() {
@@ -981,8 +1080,8 @@
     moveTooltip(ev);
   }
   function showEdgeTooltip(ev, d) {
-    var s = nodeById.get(d.source), t = nodeById.get(d.target);
-    var html = '<div class="fg-tt-title">' + escapeHtml(s.label.replace(/\n/g, ' ')) + ' → ' + escapeHtml(t.label.replace(/\n/g, ' ')) + '</div>';
+    var html = '<div class="fg-tt-title">' + escapeHtml(endLabel(d.source).replace(/\n/g, ' ')) + ' → ' +
+      escapeHtml(endLabel(d.target).replace(/\n/g, ' ')) + '</div>';
     if (d.label) html += '<div>' + escapeHtml(d.label) + '</div>';
     tooltip.html(html).classed('open', true);
     moveTooltip(ev);
@@ -1058,10 +1157,12 @@
     return [p0, { x: p0.x, y: mid }, { x: p1.x, y: mid }, p1];
   }
 
+  // Re-route the edges whose drawn ends include `n` (a node, or the group box /
+  // representative that endpointOf() resolves a group end to).
   function rerouteAround(n) {
     edges.forEach(function (e) {
-      if (e.source !== n.name && e.target !== n.name) return;
-      var s = nodeById.get(e.source), t = nodeById.get(e.target);
+      var s = endpointOf(e.source), t = endpointOf(e.target);
+      if (s !== n && t !== n && e.source !== n.name && e.target !== n.name) return;
       if (s === t) {
         var dx = n.x - e._anchor.x, dy = n.y - e._anchor.y;
         e.points = e._loop.map(function (p) { return { x: p.x + dx, y: p.y + dy }; });
@@ -1107,6 +1208,16 @@
           gr.box = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
         }
       });
+      // Edges at those groups follow the grown boxes.
+      var grown = new Set(ancestorsOf(d).map(function (gr) { return gr.name; }));
+      if (groupsDrawn()) {
+        edges.forEach(function (e) {
+          if (!(isGroupEnd(e.source) && grown.has(e.source)) && !(isGroupEnd(e.target) && grown.has(e.target))) return;
+          e.points = routeBetween(endpointOf(e.source), endpointOf(e.target));
+          var a = e.points[1], b = e.points[e.points.length - 2];
+          e.lx = (a.x + b.x) / 2; e.ly = (a.y + b.y) / 2;
+        });
+      }
       if (!dragFrame) dragFrame = requestAnimationFrame(function () { dragFrame = null; render(false); });
     })
     .on('end', function () {

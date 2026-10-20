@@ -117,7 +117,7 @@ def set_config(config={}, font={}, **kwargs):
 
 
 # %% Node properties
-def set_node_properties(df, nodes=None, shape='process', color='group', cmap='Set2', logger=None, **kwargs):
+def set_node_properties(df, nodes=None, shape='process', color='group', cmap='Set2', logger=None, groups=None, **kwargs):
     """Set the node properties.
 
     Parameters
@@ -138,6 +138,10 @@ def set_node_properties(df, nodes=None, shape='process', color='group', cmap='Se
         A per-node 'color' in `nodes` always wins.
     cmap : str, (default: 'Set2')
         Matplotlib colormap used for 'group' / 'shape' colouring.
+    groups : dict, (default: None)
+        Group settings, as for set_group_properties(). An edge end that names one of
+        these groups, has member nodes and is not in `nodes` is a group end: the edge
+        is drawn to the group box, and no node is made for it.
 
     Returns
     -------
@@ -149,8 +153,9 @@ def set_node_properties(df, nodes=None, shape='process', color='group', cmap='Se
     shape = _check_choice(shape, SHAPES, 'shape', 'process', logger)
     attrs = _nodes_to_dict(nodes)
 
-    # Node order: first appearance in the edge list, then isolated nodes.
-    order = list(pd.unique(df[['source', 'target']].astype(str).values.ravel()))
+    # Node order: first appearance in the edge list, then isolated nodes. Group ends are not nodes.
+    group_ends = _group_endpoints(df, attrs, groups)
+    order = [n for n in pd.unique(df[['source', 'target']].astype(str).values.ravel()) if n not in group_ends]
     order += [n for n in attrs if n not in order]
 
     unknown = [n for n in attrs if n not in set(df['source'].astype(str)) | set(df['target'].astype(str))]
@@ -337,15 +342,17 @@ def show(df, **kwargs):
     node_properties = _node_properties_to_dict(kwargs.get('node_properties'))
     config = update_config(kwargs, logger).copy()
 
-    # Edges may reference nodes that were added after set_node_properties().
+    # Edges may reference nodes that were added after set_node_properties(); group ends stay groups.
+    group_ends = _group_endpoints(df, node_properties, config.get('groups'))
     for name in pd.unique(df[['source', 'target']].values.ravel()):
-        if name not in node_properties:
+        if name not in node_properties and name not in group_ends:
             node_properties[name] = {'name': name, 'label': name, 'shape': 'process', 'group': None,
                                      'color': DEFAULT_NODE_COLOR, 'tooltip': None}
 
     # Groups are resolved here only, from the user's settings in config['groups'], so
     # colours follow the current node colours and the chart's cmap on every redraw.
     groups = set_group_properties(node_properties, config.get('groups'), cmap=config.get('cmap', 'Set2'), logger=logger)
+    _check_group_links(df, node_properties, config.get('groups'))
 
     # Per-edge animations play even when the chart-wide animation is off.
     if 'animation' in df.columns and df['animation'].notna().any() and not config.get('animate'):
@@ -608,11 +615,13 @@ def from_mermaid(text, logger=None):
     Flowcharts: the 'flowchart'/'graph' header with direction, node shapes
     ([] () ([]) [[]] [()] (()) {} {{}} [//] [\\] >]), quoted labels and <br>,
     links (--> --- -.-> ==> ~~~ with |text| or inline text), chains (A --> B --> C),
-    '&' (A & B --> C), nested subgraphs, node colours from 'style' and
-    'classDef' + 'class' / ':::', and edge colours / dashes from 'linkStyle'.
-    Comments, init directives and accTitle / accDescr are ignored. Anything else
-    (click, per-subgraph direction, links to subgraphs, unparseable statements)
-    raises a ValueError naming the line, as in every d3blocks Mermaid parser.
+    '&' (A & B --> C), nested subgraphs, links to and from subgraphs (drawn to the
+    group box), node colours from 'style' and 'classDef' + 'class' / ':::', and
+    edge colours / dashes from 'linkStyle'. Comments, init directives and
+    accTitle / accDescr are ignored. Anything else (click, per-subgraph direction,
+    a link between a subgraph and its own content, a linked subgraph id that is
+    also styled or labelled as a node, unparseable statements) raises a ValueError
+    naming the line, as in every d3blocks Mermaid parser.
 
     State diagrams ('stateDiagram' / 'stateDiagram-v2'): see _from_mermaid_state.
 
@@ -639,6 +648,10 @@ def from_mermaid(text, logger=None):
         )
     nodes, groups, edges, classes = {}, {}, [], {}
     stack, direction, link_styles, group_line = [], None, [], {}
+    defined_at = {}  # name -> first line that gives it a label, shape, style or class
+
+    def define(name, lineno):
+        defined_at.setdefault(name, lineno)
 
     def node(name, label=None, shape=None):
         n = nodes.setdefault(name, {})
@@ -684,6 +697,7 @@ def from_mermaid(text, logger=None):
                 if len(parts) < 3:
                     raise unsupported(lineno, stmt)
                 color = _mermaid_color(parts[2])
+                define(parts[1], lineno)
                 if color:
                     node(parts[1])["color"] = color
                 continue
@@ -700,6 +714,7 @@ def from_mermaid(text, logger=None):
                     raise unsupported(lineno, stmt)
                 for name in parts[1].split(','):
                     node(name)['class'] = parts[2]
+                    define(name, lineno)
                 continue
             if head == "linkStyle":
                 link_styles.append((lineno, stmt))
@@ -724,22 +739,43 @@ def from_mermaid(text, logger=None):
                 ) from None
             for name, label, shape, extra in pending:
                 node(name, label, shape).update(extra)
+                if label is not None or shape is not None or "class" in extra:
+                    define(name, lineno)
             edges.extend([list(e) + [None, lineno] for e in chain_edges])
     if stack:
-        raise ValueError('Mermaid flowchart line %d: subgraph %r has no "end".' % (group_line[stack[-1]], stack[-1]))
+        raise ValueError(
+            'Mermaid flowchart line %d: subgraph %r has no "end".'
+            % (group_line[stack[-1]], stack[-1])
+        )
+
+    # Links to subgraphs. A linked subgraph with member nodes (at any depth) is a
+    # group end: its node entry, created by the link, is dropped. One without
+    # members stays a node with the subgraph's title, as Mermaid draws it.
+    linked = {end for e in edges for end in e[:2] if end in groups}
+    members = _group_members(
+        {k: v for k, v in nodes.items() if k not in linked}, groups
+    )
+    for name in sorted(linked):
+        if members.get(name):
+            if name in defined_at:
+                raise ValueError(
+                    "Mermaid flowchart line %d: %r is a subgraph and also a node (a label, shape, "
+                    "style or class); give the node another id."
+                    % (defined_at[name], name)
+                )
+            del nodes[name]
+        else:
+            nodes[name].setdefault("label", groups[name]["label"])
+    ends = {name for name in linked if name not in nodes}
+    for e in edges:
+        problem = _group_link_problem(e[0], e[1], ends, members, groups)
+        if problem:
+            raise ValueError("Mermaid flowchart line %d: %s." % (e[-1], problem))
 
     for n in nodes.values():
         cls = n.pop('class', None)
         if cls and classes.get(cls) and 'color' not in n:
             n['color'] = classes[cls]
-
-    for e in edges:
-        for end in e[:2]:
-            if end in groups:
-                raise ValueError(
-                    "Mermaid flowchart line %d: links to subgraphs are not supported (%r is a subgraph); "
-                    "link to a node inside it instead." % (e[-1], end)
-                )
 
     _apply_link_styles(edges, link_styles)
     if not nodes:
@@ -757,9 +793,84 @@ def from_mermaid(text, logger=None):
 
 
 _FLOWCHART_SUPPORTED = (
-    "nodes and links (A[text] --> B, A -->|text| B, A & B --> C, chains), subgraph ... end, "
-    "style, classDef, class, :::, linkStyle and %% comments"
+    "nodes and links (A[text] --> B, A -->|text| B, A & B --> C, chains), subgraph ... end "
+    "(links may name a subgraph), style, classDef, class, :::, linkStyle and %% comments"
 )
+
+
+def _parents(groups):
+    """{group: parent or None} from {group: {'parent': ...}} or the short form {group: parent}."""
+    out = {}
+    for g, cfg in (groups or {}).items():
+        parent = cfg.get("parent") if isinstance(cfg, dict) else cfg
+        out[str(g)] = None if _is_missing(parent) else str(parent)
+    return out
+
+
+def _group_descendants(groups):
+    """{group: the group itself plus every group nested in it, at any depth}."""
+    parents = _parents(groups)
+    out = {g: {g} for g in parents}
+    for g in parents:
+        p, seen = parents[g], {g}
+        while p is not None and p not in seen:
+            out.setdefault(p, {p}).add(g)
+            seen.add(p)
+            p = parents.get(p)
+    return out
+
+
+def _group_members(nodes, groups):
+    """{group: names of the nodes inside it, at any depth}. `nodes` maps name -> attrs."""
+    inside = _group_descendants(groups)
+    members = {g: set() for g in inside}
+    for name, attrs in nodes.items():
+        g = attrs.get("group") if isinstance(attrs, dict) else None
+        if _is_missing(g):
+            continue
+        for top, nested in inside.items():
+            if str(g) in nested:
+                members[top].add(name)
+    return members
+
+
+def _group_endpoints(df, nodes, groups):
+    """Edge ends that name a group: a key of `groups` that is not a node and has member
+    nodes at any depth. Every other end is a node."""
+    keys = set(_parents(groups))
+    members = _group_members(nodes, groups)
+    ends = set(df["source"].astype(str)) | set(df["target"].astype(str))
+    return {e for e in ends if e in keys and e not in nodes and members.get(e)}
+
+
+def _group_link_problem(source, target, ends, members, groups):
+    """Why a link between a group end and itself / its own content has no drawing, or None."""
+    inside = _group_descendants(groups)
+    for g, other in ((source, target), (target, source)):
+        if g not in ends:
+            continue
+        if other == g:
+            return "the link from group %r to itself has no drawing" % g
+        if other in members.get(g, ()) or (
+            other in ends and other in inside.get(g, ())
+        ):
+            return (
+                "%r is inside group %r, so the link would not leave the group box"
+                % (other, g)
+            )
+    return None
+
+
+def _check_group_links(df, node_properties, groups):
+    """Raise for links between a group end and itself or its own content (any depth)."""
+    ends = _group_endpoints(df, node_properties, groups)
+    if not ends:
+        return
+    members = _group_members(node_properties, groups)
+    for s, t in zip(df["source"].astype(str), df["target"].astype(str)):
+        problem = _group_link_problem(s, t, ends, members, groups)
+        if problem:
+            raise ValueError("Edge (%r, %r): %s." % (s, t, problem))
 
 
 def _apply_link_styles(edges, link_styles):

@@ -3131,6 +3131,8 @@ class D3Blocks():
             * DataFrame with the edges. Required columns: 'source', 'target'.
               Optional columns: 'label' (edge text), 'weight' (line width),
               'variant', 'style' ('solid', 'dashed', 'dotted'), 'color' and 'animation'.
+              A 'source' or 'target' may name a group in `groups` (one with member
+              nodes and no entry in `nodes`); the edge is then drawn to the group box.
             * str: a Mermaid flowchart, e.g. 'flowchart LR; A[Start] --> B{Valid?}',
               a Mermaid state diagram ('stateDiagram-v2'), or Markdown text
               containing a ```mermaid block.
@@ -3302,7 +3304,7 @@ class D3Blocks():
         )
         # Set default node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
-            self.set_node_properties(df, nodes=nodes, shape=shape, color=color, cmap=cmap, logger=logger)
+            self.set_node_properties(df, nodes=nodes, shape=shape, color=color, cmap=cmap, groups=groups, logger=logger)
         # Set edge properties
         self.set_edge_properties(df, edge_color=edge_color, logger=logger)
 

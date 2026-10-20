@@ -590,8 +590,8 @@ def test_flowgraph_output_stays_self_contained():
         ("A --> B\n  end", r'line 3: "end" without an open "subgraph"'),
         ("subgraph g [Group]\n  A --> B", r"line 2: subgraph 'g' has no \"end\""),
         (
-            "subgraph g\n  A --> B\n  end\n  g --> C",
-            r"line 5: links to subgraphs are not supported \('g' is a subgraph\)",
+            "subgraph g\n  A --> B\n  end\n  g --> A",
+            r"line 5: 'A' is inside group 'g'",
         ),
         ("A --> B\n  class A", r"line 3 is not supported: 'class A'"),
         (
@@ -664,4 +664,157 @@ def test_flowgraph_ignores_accessibility_metadata_and_comments():
     df, nodes, _, _ = Flowgraph.from_mermaid(
         "stateDiagram-v2\n" + _ACC + "  [*] --> a\n"
     )
-    assert 'a' in nodes and len(df) == 1
+    assert "a" in nodes and len(df) == 1
+
+
+# --- Links to and from subgraphs / groups ----------------------------------------
+
+_WORKERS = """flowchart LR
+  subgraph Workers ["Background Workers"]
+    W1[scheduler]
+    W2[sync]
+    subgraph AgentWorkers ["AI agents"]
+      A1[narrator]
+    end
+  end
+  subgraph Adapters
+    S[Schwab]
+  end
+  Workers --> PG[(PostgreSQL)]
+  AgentWorkers --> LLM[LLM factory]
+  Workers --> Adapters
+"""
+
+
+def test_flowgraph_mermaid_links_to_subgraphs():
+    df, nodes, groups, _ = Flowgraph.from_mermaid(_WORKERS)
+    assert list(zip(df["source"], df["target"])) == [
+        ("Workers", "PG"),
+        ("AgentWorkers", "LLM"),
+        ("Workers", "Adapters"),
+    ]
+    # Linked subgraphs are groups, not nodes.
+    assert not {"Workers", "AgentWorkers", "Adapters"} & set(nodes)
+    assert groups["AgentWorkers"]["parent"] == "Workers"
+    _, html = _render(_WORKERS)
+    data = _data(html)
+    names = {n["name"] for n in data["nodes"]}
+    assert names == {"W1", "W2", "A1", "S", "PG", "LLM"}
+    assert {g["name"] for g in data["groups"]} >= {
+        "Workers",
+        "AgentWorkers",
+        "Adapters",
+    }
+    assert ("Workers", "PG") in {(e["source"], e["target"]) for e in data["edges"]}
+
+
+def test_flowgraph_link_before_its_subgraph():
+    df, nodes, groups, _ = Flowgraph.from_mermaid(
+        "flowchart LR\n  G --> B\n  subgraph G\n    A\n  end\n"
+    )
+    assert "G" not in nodes and "G" in groups
+    assert list(zip(df["source"], df["target"])) == [("G", "B")]
+
+
+def test_flowgraph_group_with_only_a_nested_group_is_a_link_end():
+    text = "flowchart LR\n  subgraph Outer\n    subgraph Inner\n      A\n    end\n  end\n  Outer --> B\n"
+    _, nodes, groups, _ = Flowgraph.from_mermaid(text)
+    assert "Outer" not in nodes
+    _, html = _render(text)
+    assert "Outer" not in {n["name"] for n in _data(html)["nodes"]}
+
+
+def test_flowgraph_link_to_empty_subgraph_is_a_node_with_its_title():
+    _, nodes, _, _ = Flowgraph.from_mermaid(
+        'flowchart LR\n  subgraph E ["Empty box"]\n  end\n  A --> E\n'
+    )
+    assert nodes["E"]["label"] == "Empty box"
+
+
+def test_flowgraph_style_on_unlinked_subgraph_unchanged():
+    # As before: a style on a subgraph that no link names gives it a stray node entry.
+    _, nodes, groups, _ = Flowgraph.from_mermaid(
+        "flowchart LR\n  subgraph G\n    A --> B\n  end\n  style G fill:#f00\n"
+    )
+    assert nodes["G"]["color"] == "#f00" and "G" in groups
+
+
+@pytest.mark.parametrize(
+    "text, match",
+    [
+        ("subgraph G\n    A\n  end\n  G --> G", r"line 5: .*'G'.* itself"),
+        ("subgraph G\n    A\n  end\n  G --> A", r"line 5: .*'A' is inside group 'G'"),
+        (
+            "subgraph G\n    subgraph H\n      A\n    end\n  end\n  H --> G",
+            r"line 7: .*'H' is inside group 'G'",
+        ),
+        (
+            "subgraph G\n    A\n  end\n  G[Label] --> B",
+            r"line 5: .*'G' is a subgraph and also a node",
+        ),
+        (
+            "subgraph G\n    A\n  end\n  G --> B\n  style G fill:#f00",
+            r"line 6: .*'G' is a subgraph and also a node",
+        ),
+        (
+            "subgraph G\n    A\n  end\n  G --> B\n  class G warm",
+            r"line 6: .*'G' is a subgraph and also a node",
+        ),
+    ],
+)
+def test_flowgraph_subgraph_link_errors(text, match):
+    with pytest.raises(ValueError, match=match):
+        Flowgraph.from_mermaid("flowchart LR\n  %s\n" % text)
+
+
+def test_flowgraph_dataframe_group_endpoints():
+    edges = pd.DataFrame({"source": ["G", "a"], "target": ["b", "c"]})
+    nodes = {"a": {"group": "G"}}
+    d3, html = _render(edges, nodes=nodes, groups={"G": {"label": "Group G"}})
+    data = _data(html)
+    assert "G" not in {n["name"] for n in data["nodes"]}
+    assert "G" in {g["name"] for g in data["groups"]}
+    assert "G" not in d3.node_properties
+
+
+def test_flowgraph_dataframe_backward_compatible_names_stay_nodes():
+    edges = pd.DataFrame({"source": ["G", "H"], "target": ["b", "c"]})
+    # G is only implied by a node's group attribute; H is in groups= but has no members.
+    d3, html = _render(edges, nodes={"a": {"group": "G"}}, groups={"H": {}})
+    names = {n["name"] for n in _data(html)["nodes"]}
+    assert {"G", "H"} <= names
+
+
+def test_flowgraph_dataframe_group_link_errors():
+    edges = pd.DataFrame({"source": ["G"], "target": ["a"]})
+    with pytest.raises(
+        ValueError, match=r"Edge \('G', 'a'\): .*'a' is inside group 'G'"
+    ):
+        _render(edges, nodes={"a": {"group": "G"}}, groups={"G": {}})
+
+
+def test_flowgraph_steps_name_group_edges():
+    _, html = _render(
+        _WORKERS,
+        steps=[{"title": "Writes", "highlight": {"edges": [("Workers", "PG")]}}],
+    )
+    assert _data(html)["steps"][0]["highlight"]["edges"] == [["Workers", "PG"]]
+
+
+def test_flowgraph_trade_system_overview_group_links():
+    path = FIXTURES / "system-architecture_0_flowchart.mmd"
+    _, html = _render(path)
+    data = _data(html)
+    pairs = {(e["source"], e["target"]) for e in data["edges"]}
+    names = {n["name"] for n in data["nodes"]}
+    groups = {g["name"] for g in data["groups"]}
+    text = path.read_text(encoding="utf-8")
+    for a, b in [
+        ("Workers", "PG"),
+        ("Workers", "SchwabAdapter"),
+        ("AgentWorkers", "FinnhubAdapter"),
+        ("AgentWorkers", "LLMFactory"),
+    ]:
+        assert (a, b) in pairs and a in groups and a not in names
+    # Every link written in the source is in the payload.
+    assert len(data["edges"]) == len(re.findall(r"-->|-\.->|==>", text))

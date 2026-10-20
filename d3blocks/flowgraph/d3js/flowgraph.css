@@ -326,6 +326,7 @@ body.light .fg-node .fg-shape { fill-opacity: 0.12; }
 .fg-has-highlight .fg-edge-g:not(.fg-hl) { opacity: 0.08; }
 .fg-has-highlight .fg-edge-label:not(.fg-hl) { opacity: 0.08; }
 .fg-has-highlight .fg-group:not(.fg-focus) { opacity: 0.55; }
+.fg-has-highlight .fg-group.fg-hl { opacity: 1; }
 
 /* Tooltip. */
 #fg-tooltip {
