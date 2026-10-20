@@ -1,6 +1,6 @@
 ---
 name: d3blocks-scatter
-description: Use this skill when users want to Create an interactive D3Blocks scatter plot from a pandas DataFrame. This scatterplot also allows the user to explore, perform statistical associations and multiple-testing correction. The output is a stand-alone HTML itself.
+description: Use this skill when users want to Create an interactive scatter plot from a pandas DataFrame. This scatterplot also allows the user to explore, perform statistical associations and multiple-testing correction. The output is a stand-alone HTML itself.
 ---
 
 # IMPORTANT
