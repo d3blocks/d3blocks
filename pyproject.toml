@@ -50,7 +50,8 @@ dependencies = [
 ]
 
 [project.scripts]
-d3blocks = "d3blocks.skills:main"
+d3blocks = "d3blocks.skills_install:main"
+
 
 [project.urls]
 Homepage = "https://erdogant.github.io/d3blocks"

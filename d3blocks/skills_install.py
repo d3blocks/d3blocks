@@ -25,8 +25,13 @@ KNOWN_HARNESSES = {
 # ---------------------------------------------------------------------------
 
 def skill_path():
-    """Return the path to the bundled d3blocks Agent Skill."""
-    return Path(__file__).resolve().parent / "skills" / "d3blocks"
+    """Return the path to the bundled d3blocks Agent Skill directory.
+
+    The original implementation returned only the ``d3blocks`` subdirectory.
+    To copy all content of the ``skills`` folder, we return the parent
+    ``skills`` directory instead.
+    """
+    return Path(__file__).resolve().parent / "skills"
 
 
 def _global_root() -> Path:
@@ -45,7 +50,7 @@ def _detect_installed_harnesses(root: Path) -> list[str]:
 
     Only the harnesses listed in ``KNOWN_HARNESSES`` are considered.  A
     harness is "installed" when its top-level dot-directory exists (e.g.
-    ``~/.claude``); the ``skills/`` sub-directory need not be present yet.
+    ``~/.agents``); the ``skills/`` sub-directory need not be present yet.
     """
     found = []
     for name, dotdir in KNOWN_HARNESSES.items():
@@ -58,12 +63,12 @@ def _detect_installed_harnesses(root: Path) -> list[str]:
 # Core install logic
 # ---------------------------------------------------------------------------
 
-def install_skill(harness: str = "claude", *, global_install: bool = False) -> Path:
+def install_skill(harness: str = "agents", *, global_install: bool = False) -> Path:
     """Install the d3blocks Agent Skill.
 
     Parameters
     ----------
-    harness : str, default='claude'
+    harness : str, default='agents'
         Name of the AI coding harness.  The skill is installed to::
 
             [root]/.<harness>/skills/d3blocks/
@@ -89,7 +94,7 @@ def install_skill(harness: str = "claude", *, global_install: bool = False) -> P
     harness = harness.lstrip(".")
 
     root = _global_root() if global_install else Path.cwd()
-    destination = root / f".{harness}" / "skills" / "d3blocks"
+    destination = root / f".{harness}" / "skills"
 
     if harness not in KNOWN_HARNESSES:
         print(
@@ -197,7 +202,7 @@ def main():
         action="store_true",
         default=False,
         help=(
-            "Install into the user home directory (~/.claude/skills/d3blocks/) "
+            "Install into the user home directory (~/.agents/skills/d3blocks/) "
             "instead of the current project directory. "
             f"Detected home: {_global_root()}"
         ),
@@ -243,7 +248,7 @@ def main():
             if args.auto:
                 install_skill_auto(global_install=args.global_install)
             else:
-                harness = args.harness or "claude"
+                harness = args.harness or "agents"
                 install_skill(harness, global_install=args.global_install)
         else:
             install_parser.print_help()
