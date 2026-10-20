@@ -83,6 +83,13 @@ DataFrame input
 	d3.erd(df, entities=entities, direction='TB')
 
 
+
+.. raw:: html
+
+    <iframe src="https://erdogant.github.io\docs\d3blocks\flowgraph.html" height="600px" width="700px", frameBorder="0"></iframe>
+
+
+
 Large schemas
 *************
 
