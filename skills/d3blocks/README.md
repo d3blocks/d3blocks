@@ -8,7 +8,7 @@ chart, writing runnable code, and embedding it in Streamlit. Everything the agen
 
 ```bash
 npx skills add erdogant/d3blocks --skill d3blocks
-pip install d3blocks
+pip install git+https://github.com/d3blocks/d3blocks  # d3blocks 2.3.0 or later; until it is on PyPI
 ```
 
 ## Maintain

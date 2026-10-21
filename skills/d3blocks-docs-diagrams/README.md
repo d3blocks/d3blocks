@@ -9,7 +9,7 @@ Everything the agent reads is in [`SKILL.md`](SKILL.md); the work is done by
 
 ```bash
 npx skills add erdogant/d3blocks --skill d3blocks-docs-diagrams
-pip install d3blocks
+pip install git+https://github.com/d3blocks/d3blocks  # d3blocks 2.3.0 or later; until it is on PyPI
 ```
 
 ## Maintain
