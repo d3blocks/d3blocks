@@ -10,6 +10,8 @@ metadata:
 
 Turn a user-supplied `.js` chart into a block that behaves exactly like the existing ones (flowgraph is the reference implementation; scatter is the reference for panel conventions). "Integrated" means all six deliverables below exist and pass their checks. A chart that renders but is missing the `d3blocks.py` method, the theme plumbing, tests, demo or docs is not done.
 
+> Work inside a d3blocks checkout and import `d3blocks` from it directly. Do not run `pip install` first; only if the import fails (or loads another copy of d3blocks): install the checkout in editable mode, `pip install -e .`.
+
 ## Ground rules
 
 - **Read before writing.** The repo is the source of truth; this skill describes patterns, but file contents drift. Before generating anything, open the real files named in each step (flowgraph's `.html.j2`, `_shared/`, `utils.py`, the docs page, the existing demo). Never invent a helper's signature.
@@ -173,3 +175,7 @@ Run `python scripts/scaffold_chart.py --check --name blockname --prefix xx --pkg
 - [ ] Streamlit demo runs and uses `st.iframe`
 - [ ] Docs page exists, is linked from the index, examples run
 - [ ] Packaging includes `d3js/*`; line endings match the repo
+
+## Dependencies
+
+The d3blocks checkout (editable install, `pip install -e .`; brings pandas, numpy and jinja2. Install only if the import fails) · `pytest` (pip, for the block's tests) · Node.js with `jsdom` (npm, only for `scripts/smoke_jsdom.js`; `npm i jsdom` in a scratch folder)

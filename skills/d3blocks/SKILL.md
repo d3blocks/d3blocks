@@ -11,6 +11,8 @@ metadata:
 
 D3Blocks is a Python library for interactive D3.js charts from Python. Output is self-contained HTML.
 
+> `d3blocks` 2.3.0 or later is needed. Do not run `pip install` first; write the code and import it directly. Only if the import fails, or `d3blocks.__version__` is older than 2.3.0: install it (until 2.3.0 is on PyPI: `pip install git+https://github.com/d3blocks/d3blocks`).
+
 ## When to use
 
 - Interactive visualization from Python data
@@ -85,12 +87,6 @@ To convert *all* the Mermaid diagrams in a repository's docs at once, use the
 
 Repo demos (optional): `streamlit/scatter_streamlit_demo.py`, `streamlit/chord_streamlit_demo.py`.
 
-## Installation
+## Dependencies
 
-Requires d3blocks 2.3.0 or later (`sequence`, `erd` and `dark_mode='auto'` are new in 2.3.0).
-
-```bash
-pip install -U d3blocks
-# optional
-pip install streamlit
-```
+`d3blocks` 2.3.0 or later (pip; brings pandas, numpy and jinja2. Install only if the import fails or the version is older; until 2.3.0 is on PyPI, install from `git+https://github.com/d3blocks/d3blocks`) · `streamlit` (pip, only for the `examples/streamlit_*.py` apps; install only if the import fails)

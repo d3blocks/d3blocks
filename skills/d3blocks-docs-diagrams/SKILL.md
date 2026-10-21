@@ -12,7 +12,7 @@ Turns every Mermaid diagram in a set of docs into one self-contained, interactiv
 (pan and zoom, search, hover highlighting, dark/light theme, SVG/PNG export), with a manifest
 that lists what was converted, skipped or failed.
 
-Requires d3blocks 2.3.0 or later: `pip install -U d3blocks`.
+> `d3blocks` 2.3.0 or later is needed. Do not run `pip install` first; run the script directly. Only if the import fails, or `d3blocks.__version__` is older than 2.3.0: install it (until 2.3.0 is on PyPI: `pip install git+https://github.com/d3blocks/d3blocks`).
 
 ## Steps
 
@@ -94,3 +94,7 @@ D3Blocks().flowgraph(
 `highlight` takes `nodes` and `edges` for flowgraph (flowcharts and state diagrams) and erd,
 and `messages` (indexes) and `participants` for sequence. For any block's parameters, run
 `python -m pydoc d3blocks.D3Blocks.<block>`.
+
+## Dependencies
+
+`d3blocks` 2.3.0 or later (pip; brings pandas, numpy and jinja2. Install only if the import fails or the version is older; until 2.3.0 is on PyPI, install from `git+https://github.com/d3blocks/d3blocks`)
