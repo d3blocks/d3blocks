@@ -13,8 +13,9 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/d3blocks/d3blocks)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/d3blocks/d3blocks/blob/main/notebooks/d3blocks.ipynb)
 [![Donate](https://img.shields.io/badge/Support%20this%20project-grey.svg?logo=github%20sponsors)](https://d3blocks.github.io/d3blocks/Documentation.html#)
+[![skills.sh](https://skills.sh/b/d3blocks/d3blocks)](https://skills.sh/d3blocks/d3blocks)
 
-### 
+###
 
 <div>
 
@@ -77,12 +78,21 @@ pip install d3blocks     # Normal installation
 pip install -U d3blocks  # Force update
 ```
 
-#### Installation (clone)
+#### Installation (from GitHub source)
 ```bash
-git clone https://github.com/d3blocks/d3blocks.git
-cd d3blocks
-pip install -U .
-```  
+pip install git+https://github.com/d3blocks/d3blocks.git
+```
+
+##### Install skill for visualizations:
+```bash
+npx skills add erdogant/d3blocks --skill d3blocks
+```
+
+##### Install skill for chart builder:
+```bash
+npx skills add erdogant/d3blocks --skill d3blocks-chart-builder
+```
+
 
 #### Import d3blocks package
 ```python
@@ -95,16 +105,16 @@ d3 = D3Blocks()
 ---
 
 ### D3Blocks💙Streamlit
-Every chart from D3Block can easily be incorporated into a Streamlit Dashboard. Because every D3Blocks chart is just HTML and JavaScript, you can generate the HTML in memory and embed it 
+Every chart from D3Block can easily be incorporated into a Streamlit Dashboard. Because every D3Blocks chart is just HTML and JavaScript, you can generate the HTML in memory and embed it
 A few practical rules of thumb: prefer `st.iframe` over the older `components.html` for full interactive charts, always pass an explicit pixel height, and set `show_side_panel=False` when Streamlit already owns the controls so the UI doesn't duplicate. `color_background='streamlit'` picks backgrounds that match a typical Streamlit light or dark page.
 
-* [Minimal examples for each chart can be found in the Streamlit directory in the repo](https://github.com/d3blocks/d3blocks/tree/main/streamlit). 
+* [Minimal examples for each chart can be found in the Streamlit directory in the repo](https://github.com/d3blocks/d3blocks/tree/main/streamlit).
 * [More Streamlit documentation can be found here.](https://d3blocks.github.io/d3blocks/Streamlit.html)
 
 ---
 
 ### Ethical Ads
-When HTMLs are generated, it automatically includes ethical ads as a small way to support development. 
+When HTMLs are generated, it automatically includes ethical ads as a small way to support development.
 I maintain this entire project thoughtfully and in my free time. Ads can be disabled via an input parameter, and you can also support the project with a coffee donation instead.
 
 ### Star history
