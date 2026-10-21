@@ -12,7 +12,9 @@ from pathlib import Path
 import pytest
 
 EXAMPLES = Path(__file__).resolve().parent / "examples"
-STANDALONE = sorted(p for p in EXAMPLES.glob("*.py") if not p.name.startswith("streamlit_"))
+STANDALONE = sorted(
+    p for p in EXAMPLES.glob("*.py") if not p.name.startswith("streamlit_")
+)
 
 
 @pytest.mark.parametrize("path", STANDALONE, ids=lambda p: p.name)
