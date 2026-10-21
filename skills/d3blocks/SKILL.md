@@ -84,8 +84,10 @@ Repo demos (optional): `streamlit/scatter_streamlit_demo.py`, `streamlit/chord_s
 
 ## Installation
 
+Requires d3blocks 2.3.0 or later (`sequence`, `erd` and `dark_mode='auto'` are new in 2.3.0).
+
 ```bash
-pip install d3blocks
+pip install -U d3blocks
 # optional
 pip install streamlit
 ```
