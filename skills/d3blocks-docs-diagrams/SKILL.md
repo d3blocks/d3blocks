@@ -76,10 +76,19 @@ from d3blocks import D3Blocks
 
 line, text = find_blocks(Path("docs/guide.md").read_text())[0]  # diagram 1 of the file
 steps = [
-    {"title": "Validate", "caption": "Every order is checked first.",
-     "highlight": {"nodes": ["check"], "edges": [("start", "check")]}},
+    {
+        "title": "Validate",
+        "caption": "Every order is checked first.",
+        "highlight": {"nodes": ["check"], "edges": [("start", "check")]},
+    },
 ]
-D3Blocks().flowgraph(text, steps=steps, dark_mode="auto", filepath="diagrams/docs/guide/1_flowchart.html", showfig=False)
+D3Blocks().flowgraph(
+    text,
+    steps=steps,
+    dark_mode="auto",
+    filepath="diagrams/docs/guide/1_flowchart.html",
+    showfig=False,
+)
 ```
 
 `highlight` takes `nodes` and `edges` for flowgraph (flowcharts and state diagrams) and erd,

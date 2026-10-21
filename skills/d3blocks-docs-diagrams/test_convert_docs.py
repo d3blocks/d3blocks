@@ -58,7 +58,9 @@ def _tree(tmp_path, broken=True):
     (docs / "sub" / "flow.mmd").write_text("graph TD\n  X --> Y\n", encoding="utf-8")
     skipped = docs / "node_modules"
     skipped.mkdir()
-    (skipped / "vendor.md").write_text("```mermaid\ngraph LR\n  P --> Q\n```\n", encoding="utf-8")
+    (skipped / "vendor.md").write_text(
+        "```mermaid\ngraph LR\n  P --> Q\n```\n", encoding="utf-8"
+    )
     return docs
 
 
@@ -75,7 +77,10 @@ def test_converts_every_supported_block(tmp_path):
     done, out, manifest = _run(tmp_path, docs)
     rows = {(r["source"], r["block"]): r for r in manifest}
 
-    assert {r["source"] for r in manifest} == {"docs/guide.md", "docs/sub/flow.mmd"}  # node_modules skipped
+    assert {r["source"] for r in manifest} == {
+        "docs/guide.md",
+        "docs/sub/flow.mmd",
+    }  # node_modules skipped
     expected = {
         1: ("flowchart", "flowgraph", "ok"),
         2: ("stateDiagram-v2", "flowgraph", "ok"),
@@ -86,7 +91,11 @@ def test_converts_every_supported_block(tmp_path):
     }
     for block, (kind, block_type, status) in expected.items():
         row = rows[("docs/guide.md", block)]
-        assert (row["kind"], row["block_type"], row["status"]) == (kind, block_type, status), row
+        assert (row["kind"], row["block_type"], row["status"]) == (
+            kind,
+            block_type,
+            status,
+        ), row
     assert rows[("docs/sub/flow.mmd", 1)]["status"] == "ok"
 
     # Start lines are lines in the Markdown file (the first line inside the fence).
@@ -103,7 +112,11 @@ def test_converts_every_supported_block(tmp_path):
         html = page.read_text(encoding="utf-8")
         assert not re.search(r"<(script|link)[^>]+(src|href)=[\"']https?:", html)
     assert rows[("docs/guide.md", 1)]["output"] == "docs/guide/1_flowchart.html"
-    assert rows[("docs/guide.md", 3)]["counts"] == {"participants": 2, "messages": 2, "regions": 0}
+    assert rows[("docs/guide.md", 3)]["counts"] == {
+        "participants": 2,
+        "messages": 2,
+        "regions": 0,
+    }
     assert rows[("docs/guide.md", 4)]["counts"]["entities"] == 2
 
 
@@ -142,7 +155,10 @@ def test_first_supported_block_matches_read_mermaid(tmp_path):
 def test_rejects_missing_paths_and_other_files(tmp_path):
     other = tmp_path / "notes.txt"
     other.write_text("graph LR\n  A --> B\n", encoding="utf-8")
-    for path, message in ((tmp_path / "nope", "does not exist"), (other, "not a Markdown")):
+    for path, message in (
+        (tmp_path / "nope", "does not exist"),
+        (other, "not a Markdown"),
+    ):
         cmd = [sys.executable, str(SCRIPT), str(path), "--out", str(tmp_path / "out")]
         done = subprocess.run(cmd, capture_output=True, text=True)
         assert done.returncode == 2 and message in done.stderr, done.stderr
