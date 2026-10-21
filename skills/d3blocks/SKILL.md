@@ -46,7 +46,7 @@ D3Blocks is a Python library for interactive D3.js charts from Python. Output is
 
 1. Understand the data (columns, types, what each means).
 2. Pick a chart from the table above.
-3. Open `references/<chart>.md` for parameters; open `examples/` for full runnable code.
+3. For a chart's parameters run `python -m pydoc d3blocks.D3Blocks.<chart>` (e.g. `d3blocks.D3Blocks.scatter`); it prints the signature and docstring of the installed version. Open `references/<chart>.md` for input shape and gotchas, and `examples/` for full runnable code.
 4. Give a **runnable** sample with the correct call signature (do not invent APIs).
 5. For Streamlit, use `examples/streamlit_*.py` and `references/streamlit.md` — do not invent a different embed pattern.
 
@@ -76,7 +76,8 @@ D3Blocks is a Python library for interactive D3.js charts from Python. Output is
 | Streamlit + scatter | `examples/streamlit_scatter.py` |
 | Streamlit + chord | `examples/streamlit_chord.py` |
 | Streamlit + flowgraph | `examples/streamlit_flowgraph.py` |
-| Parameter tables | `references/scatter.md`, `chord.md`, `flowgraph.md` |
+| Parameters (any chart) | `python -m pydoc d3blocks.D3Blocks.<chart>` |
+| Input shape and gotchas | `references/scatter.md`, `chord.md`, `flowgraph.md` |
 | Streamlit rules | `references/streamlit.md` |
 
 Repo demos (optional): `streamlit/scatter_streamlit_demo.py`, `streamlit/chord_streamlit_demo.py`.

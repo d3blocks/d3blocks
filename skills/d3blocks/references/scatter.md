@@ -14,32 +14,6 @@ Built-in sample: `d3.import_example('cancer')` (columns include `tsneX`, `tsneY`
 
 Do **not** call `d3.scatter(df)`. Always pass `x=` and `y=`.
 
-## Main parameters
-
-| Parameter | Default | Notes |
-|-----------|---------|--------|
-| `x`, `y` | required | Primary coordinates |
-| `x1`…`y3` | `None` | Extra coordinate systems |
-| `size` | `3` | Scalar or array |
-| `color` | `'#002147'` | Hex, array of hex, or categorical labels (with `cmap`) |
-| `stroke` | `'#000000'` | Point edge colour |
-| `opacity` | `0.6` | Scalar or array in [0, 1] |
-| `tooltip` | `None` | List of strings (HTML allowed) |
-| `c_gradient` | `'opaque'` | Density gradient; `None` to disable |
-| `cmap` | `'tab20'` | For categorical colour |
-| `scale` | `False` | Scale points |
-| `jitter` | `None` | Small random jitter |
-| `label_radio` | `['(x, y)', …]` | Labels for coord-system radio buttons |
-| `xlim` / `ylim` | auto | Axis limits |
-| `df` | `None` | Row-aligned properties |
-| `show_side_panel` / `show_top_panel` | `True` | UI chrome |
-| `dark_mode` | `True` | |
-| `color_background` | `None` | e.g. `'streamlit'` |
-| `return_html` | `False` | |
-| `filepath` | `'scatter.html'` | |
-
-Common flags: `title`, `figsize`, `showfig`, `overwrite`, `notebook`, `save_button`, `reset_properties`.
-
 ## Examples
 
 ### Sample data
