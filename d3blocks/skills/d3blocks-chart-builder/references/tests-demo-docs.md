@@ -63,6 +63,28 @@ The scaffolded markers are `id="exportPanel"` (only exists inside `{% if showSid
 
 Parametrised tests that call into the renderer should use `pytest.mark.parametrize` with readable ids. Run `pytest test_<blockname>.py -q`, then the whole suite to confirm nothing else broke (the `set_chart_func` allow-list and import edits touch shared code).
 
+### Browser-free smoke test (run after the pytest file passes)
+
+pytest checks the HTML text; this runs the page's JavaScript. Generate the eight pages, then run `scripts/smoke_jsdom.js`:
+
+```python
+import itertools, os
+from d3blocks import D3Blocks
+os.makedirs('smoke', exist_ok=True)
+for side, top, dm in itertools.product([True, False], [True, False], [False, 'auto']):
+    d3 = D3Blocks(frame=False, support=None, verbose='error')
+    html = d3.<blockname>(df, show_side_panel=side, show_top_panel=top, dark_mode=dm,
+                          filepath=None, showfig=False, return_html=True)
+    open('smoke/%s_%s_%s.html' % ('side' if side else 'noside', 'top' if top else 'notop', dm), 'w').write(html)
+```
+
+```bash
+mkdir -p /tmp/jsdom && (cd /tmp/jsdom && npm i jsdom --silent)
+NODE_PATH=/tmp/jsdom/node_modules node <skill>/scripts/smoke_jsdom.js smoke --prefix <xx>
+```
+
+Per page it fails on any uncaught script error, a missing `theme.js`, a chart script that did not finish, an empty chart svg, a theme button that does not flip the theme, or a panel title that does not toggle. Controls whose panel is not rendered are reported `n/a`, never as failures. The typical failure it catches is a control bound with `getElementById(id).addEventListener(...)` when `show_side_panel=False` removed the element. jsdom stubs (matchMedia, ResizeObserver, SVG `width.baseVal`) are in the script; the chart itself must not need them in a real browser. jsdom has no layout, so also open at least one page in a browser and look at it, or state that you could not.
+
 ---
 
 ## 2. Streamlit demo
@@ -101,4 +123,4 @@ Then wire it up:
 - Confirm the docs reference the correct public URL pattern: `https://d3blocks.github.io/d3blocks/pages/html/Blockname.html`.
 - If a docs build is possible (`sphinx-build` / `make html`), run it and fix warnings for the new page; if not, say so in the final summary.
 
-Write examples so they are copy-paste runnable, use `D3Blocks(...)` import as in the flowgraph page, and keep the data small.
+The docs page, like every other file of the new block, must not mention flowgraph or another existing chart (no "similar to flowgraph" sentences, no copied example names). Write examples so they are copy-paste runnable, import `D3Blocks` as the other chart pages do, and keep the data small.

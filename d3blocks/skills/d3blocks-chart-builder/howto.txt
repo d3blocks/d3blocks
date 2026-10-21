@@ -1,8 +1,0 @@
-In Codex, open your d3blocks project and ask:
-=============================================
-Use the d3blocks-chart-builder skill to integrate this
-JavaScript chart into d3blocks.
-
-Follow the existing Flowgraph and Scatter implementations.
-Include the Python block, JavaScript assets, public API,
-tests, Streamlit demo, and Sphinx documentation.

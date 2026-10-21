@@ -1,6 +1,6 @@
 /*
  * d3.__NAME__.js - __NAME__ renderer for d3blocks.
- * Rendering and interaction: d3 v7. Shell (panels, theme, export) follows d3.flowgraph.js.
+ * Rendering and interaction: d3 v7. Shell: panels, theme, search and export, shared by d3blocks charts.
  */
 (function () {
   'use strict';
@@ -147,8 +147,11 @@
   on('fitButton', 'click', function () { fit(true); });
   // TODO: chart-specific controls (sliders, toggles, data-* buttons) bound the same way.
 
-  // Theme (theme.js: runtime toggle; dark_mode='auto' follows the OS until toggled).
+  // Theme (theme.js: runtime toggle; dark_mode='auto' follows the OS until toggled). bind() ignores a missing button.
   D3BlocksTheme.bind('themeBtn');
+  // theme.js emits no event. Shapes styled through CSS variables recolour themselves. If render() reads colours in JS
+  // (canvas, .attr('fill', computedColor)), redraw when the theme class flips:
+  // new MutationObserver(function () { render(); }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
   // Search.
   (function setupSearch() {

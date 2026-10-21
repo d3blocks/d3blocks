@@ -1,4 +1,4 @@
-/* Shared d3blocks theme + panels (same block in tree.css / flowgraph.css), followed by __NAME__ styles. */
+/* Shared d3blocks theme + panels (identical across d3blocks charts), followed by __NAME__ styles. */
 :root {
   --bg: #222;
   --panel-bg: rgba(34, 34, 34, 0.92);

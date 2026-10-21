@@ -13,7 +13,8 @@ Turn a user-supplied `.js` chart into a block that behaves exactly like the exis
 - **Copy flowgraph's structure, not scatter's, where they differ.** Flowgraph is the newer pattern: `template_env(__name__, __file__)` instead of `Environment(PackageLoader(...))`, `check_dark_mode` / `dark_mode_flag` (supports `'auto'`) instead of a bare bool, the shared `theme.js` instead of a theme toggle written inline in the template, data via `<script type="application/json">` tags instead of `var jsonData = {{ json_data }}`, and the chart JS in its own included file. `references/template-css-js.md` has the full comparison.
 - **Surgical changes.** `d3blocks.py` is ~4800 lines. Add to it; do not reformat or reorder it.
 - **Preserve line endings.** The existing `.py` / `.md` files use CRLF. Match the file you edit, and check with `file <path>` before and after.
-- **Name once, derive the rest.** Pick `blockname` (lowercase, single word, e.g. `flowgraph`). Everything derives from it - see "Naming".
+- **Flowgraph and scatter are references, not names.** The deliverable is a new folder `d3blocks/<name>/` inside the package (next to `flowgraph/`, `scatter/`, ...). Study the existing charts, but nothing you create or edit for the new block may mention flowgraph or another existing chart, or reuse its identifiers (`fg-*` ids/classes, `Flowgraph`, `d3.flowgraph.js`, "like flowgraph" comments, test or docs text). Rename anything you carry over. `scripts/scaffold_chart.py --check` finds leaks; run it in Phase 9.
+- **Name once, derive the rest.** Pick `blockname` (lowercase, single word, not an existing chart's name; the examples below use the made-up name `heatflow`). Everything derives from it - see "Naming".
 
 ## Naming (get this right first; it is the most common source of breakage)
 
@@ -71,7 +72,7 @@ d3blocks/blockname/
     └── d3.blockname.js      # from assets/: data/options, null-safe controls, panels, theme, search, export; render() is the TODO
 ```
 
-The scaffold writes all three `d3js/` files from `assets/` (tokens `__NAME__` / `__PREFIX__` replaced). They already implement the shell that the conventions require, so phase 3 is about the chart itself. Template includes of shared files (`theme.js`, `d3.v7.min.js`, ...) rely on `template_env` finding `_shared/d3js`; check `_shared/__init__.py` once.
+The scaffold writes all three `d3js/` files from `assets/` (tokens `__NAME__` / `__PREFIX__` replaced). They already implement the shell that the conventions require, so phase 3 is about the chart itself. The template includes `theme.js` and `d3.v7.min.js` from `_shared/d3js/` by bare name: `template_env` searches the chart's own `d3js/` first, then `_shared/d3js/` (see `references/python-contract.md` section 4). Import `notebook_iframe` from `_shared`; do not write a local copy. The scaffold refuses names and prefixes that belong to existing charts and refuses to overwrite an existing chart folder.
 
 Read `references/python-contract.md` for the module contract (what `d3blocks.py` calls, config keys, template keys). Implement the data layer: validate input (raise `ValueError` with a message naming the bad column/value), build the JSON payload, `json.dumps(...).replace('</', '<\\/')` it, `html_escape` the title.
 
@@ -90,7 +91,7 @@ Read `references/template-css-js.md` first (what each file contains and why). Im
 - Reuse `theme.js` for dark/light/auto. Do not write a second theme implementation (scatter has one inline; do not copy it).
 - Keep the shared block at the top of the CSS untouched; add chart rules below it with the chart's prefix.
 
-Gate: render with defaults and open the HTML in a browser - chart draws, no console errors, no external requests. If you cannot open a browser, say so in the final summary; do not claim the chart renders.
+Gate: render with defaults - no external requests - then run the browser-free smoke test (`scripts/smoke_jsdom.js`, described in `references/tests-demo-docs.md`) over the eight pages from `show_side_panel` x `show_top_panel` x `dark_mode` in `{False, 'auto'}`: no script errors, the chart script finishes, theme toggle / Fit / panel collapse / search work where their panel exists. jsdom has no layout, so it proves wiring, not looks: if you cannot open a real browser, say so in the final summary and do not claim the chart looks right.
 
 ### Phase 4 - Apply the UI conventions (deliverable 3)
 
@@ -103,14 +104,14 @@ Read `references/conventions.md` in full and apply every numbered section to the
 5. Light mode: `body.light .top-panel { box-shadow: none; }`.
 6. Top-bar controls share one vertical alignment (search wrap margin-bottom 0, inputs match `.button-switch` padding/font-size); dropdowns look the same as the Layout dropdowns.
 
-Gate: the walkthrough in `references/conventions.md` section 10 passes for every flag combination.
+Gate: the smoke test passes for every flag combination (section 10 of the conventions: top-bar controls work with the side panel hidden; the centre chart works with the bottom panel hidden), and `references/conventions.md` is satisfied point by point.
 
 ### Phase 5 - Register in d3blocks.py (deliverable 2)
 
 Read the registration section of `references/python-contract.md`. Four edits, all required:
 
 1. Add the import to **both** import blocks at the top (the `d3blocks.<name>.<Name>` one and the "DEBUG ONLY" fallback).
-2. Add `def blockname(self, ...)` next to the other chart methods. Mirror `flowgraph()`: `self._clean(...)` -> `self.chart = set_chart_func('Blockname', logger)` -> `self.config = self.chart.set_config(...)` -> `self.set_node_properties(...)` -> `self.set_edge_properties(...)` -> `html = self.show()` -> `if return_html: return html`. Signature must include `title`, `filepath`, `figsize`, `showfig`, `overwrite`, `notebook`, `save_button`, `show_side_panel`, `show_top_panel`, `dark_mode`, `color_background`, `return_html`, `reset_properties` with the documented defaults.
+2. Add `def blockname(self, ...)` next to the other chart methods. Mirror an existing chart method (flowgraph's is the reference): `self._clean(...)` -> `self.chart = set_chart_func('Blockname', logger)` -> `self.config = self.chart.set_config(...)` -> `self.set_node_properties(...)` -> `self.set_edge_properties(...)` -> `html = self.show()` -> `if return_html: return html`. Signature must include `title`, `filepath`, `figsize`, `showfig`, `overwrite`, `notebook`, `save_button`, `show_side_panel`, `show_top_panel`, `dark_mode`, `color_background`, `return_html`, `reset_properties` with the documented defaults.
 3. Add `'Blockname'` to the allow-list inside `set_chart_func`.
 4. If the chart has no node concept, add it to the `['Violin', 'Scatter']` special case in `set_edge_properties` (otherwise "Set the node_properties first" is raised).
 
@@ -132,11 +133,12 @@ Read `references/tests-demo-docs.md` (docs section). Open `Flowgraph.rst` (and `
 
 ### Phase 9 - Final verification
 
-Run the checklist at the bottom of this file, then summarise for the user: files created, files edited (with the exact functions touched in `d3blocks.py`), test result, and anything you could not verify (for example, a docs build you could not run).
+Run `python scripts/scaffold_chart.py --check --name blockname --prefix xx --pkg-dir ... --tests-dir ... --demo-dir ...`, then the checklist at the bottom of this file, then summarise for the user: files created, files edited (with the exact functions touched in `d3blocks.py`), test result, and anything you could not verify (for example, a docs build you could not run).
 
 ## Bundled files
 
-- `scripts/scaffold_chart.py` - writes the Python module, `__init__.py`, the three `d3js/` files (from `assets/`), the test skeleton and the Streamlit demo skeleton; prints the `d3blocks.py` edits.
+- `scripts/scaffold_chart.py` - writes the Python module, `__init__.py`, the three `d3js/` files (from `assets/`), the test skeleton and the Streamlit demo skeleton; prints the `d3blocks.py` edits. `--check` scans the finished block for leaked reference names and prefixes.
+- `scripts/smoke_jsdom.js` - browser-free smoke test of rendered pages (needs `npm i jsdom`).
 - `assets/blockname.html.j2`, `assets/blockname.css`, `assets/d3.blockname.js` - the template, shared CSS block and JS shell, derived from flowgraph's.
 - `references/python-contract.md` - module API, config/template keys, `d3blocks.py` registration.
 - `references/template-css-js.md` - anatomy of the template, CSS and JS, flowgraph vs scatter, panel-independence rules.
@@ -158,6 +160,9 @@ Run the checklist at the bottom of this file, then summarise for the user: files
 - [ ] `set_config` exposes `show_side_panel`, `show_top_panel`, `dark_mode`, `color_background`, `save_button`, `notebook`, `figsize`, `title`, `filepath`, `showfig`, `overwrite`, `reset_properties`
 - [ ] Template receives `COLOR_BACKGROUND_DARK/LIGHT`, `darkMode`, `showSidePanel`, `showTopPanel` as strings
 - [ ] No `show_controls` / `showControls` / `show_stats_panel` / `show_node_panel` left anywhere
+- [ ] `python scripts/scaffold_chart.py --check ...` reports 0 leaks (no mention of flowgraph or another existing chart, no `fg-` ids/classes) and the new block lives in `d3blocks/<name>/`
+- [ ] `scripts/smoke_jsdom.js` passes for all eight flag/theme combinations
+- [ ] `notebook_iframe` is imported from `_shared`, not copied
 - [ ] Output has no external `http(s)` script/link references
 - [ ] Title and data payload are escaped (`</script>` test passes)
 - [ ] Side/top/bottom panel flags are independent (all combinations tried)

@@ -7,14 +7,19 @@ Creates (never overwrites):
   <pkg-dir>/<name>/d3js/<name>.html.j2  template (from assets/, derived from flowgraph_html.j2)
   <pkg-dir>/<name>/d3js/<name>.css      shared theme/panel CSS block + prefixed chart section
   <pkg-dir>/<name>/d3js/d3.<name>.js    JS shell: data/options, panels, theme, search, export
-  <tests-dir>/test_<name>.py            pytest skeleton modelled on test_flowgraph.py
+  <tests-dir>/test_<name>.py            pytest skeleton modelled on the existing chart tests
   <demo-dir>/<name>_streamlit_demo.py   Streamlit demo skeleton
 
 Then prints the d3blocks.py edits to make by hand (imports, method, allow-list).
 
+The new chart is a folder inside the d3blocks package: <pkg-dir>/<name>/ (default pkg-dir: d3blocks).
+Existing charts such as flowgraph are only references: the new block must not reuse their name, prefix or
+wording. `--check` scans the finished block for leaked reference names.
+
 Usage:
   python scaffold_chart.py --name heatflow --prefix hf \
       --pkg-dir d3blocks --tests-dir d3blocks/tests --demo-dir streamlit
+  python scaffold_chart.py --check --name heatflow --prefix hf --pkg-dir d3blocks --tests-dir ... --demo-dir ...
 """
 import argparse
 import re
@@ -35,7 +40,7 @@ from html import escape as html_escape
 import pandas as pd
 
 try:
-    from .._shared import check_dark_mode, dark_mode_flag, template_env
+    from .._shared import check_dark_mode, dark_mode_flag, notebook_iframe, template_env
     from ..utils import (
         resolve_color_background,
         set_logo,
@@ -44,7 +49,7 @@ try:
         write_html_file,
     )
 except ImportError:
-    from _shared import check_dark_mode, dark_mode_flag, template_env
+    from _shared import check_dark_mode, dark_mode_flag, notebook_iframe, template_env
     from utils import (
         resolve_color_background,
         set_logo,
@@ -186,20 +191,8 @@ def write_html(X, config, logger=None):
     html = template_env(__name__, __file__).get_template('{name}.html.j2').render(content)
     write_html_file(config, html, logger)
     if config.get('notebook'):
-        return notebook_iframe(html, config)
+        return notebook_iframe(html, config, '{name}')
     return html
-
-
-def notebook_iframe(html, config):
-    """Wrap the chart in an iframe for Jupyter (page uses fixed positioning and fixed element ids)."""
-    width, height = (list(config.get('figsize') or [None, None]) + [None, None])[:2]
-    width = '%dpx' % width if width else '100%'
-    height = '%dpx' % height if height else '650px'
-    # Wrapped in a div: IPython warns about HTML that starts with '<iframe'.
-    return ('<div class="d3blocks-{name}"><iframe srcdoc="%s" title="%s" '
-            'style="width:%s;height:%s;border:0;border-radius:6px" '
-            'sandbox="allow-scripts allow-downloads allow-popups"></iframe></div>'
-            % (html_escape(html, quote=True), html_escape(str(config.get('title', '{Name}'))), width, height))
 
 
 # %% Helpers
@@ -422,11 +415,11 @@ INIT = '"""{Name} block."""\n'
 
 METHOD_HINT = """
 ================  Edit d3blocks.py by hand (4 places)  ================
-1) Top of file - add to BOTH import blocks (try: and the 'DEBUG ONLY' except:), next to Flowgraph:
+1) Top of file - add to BOTH import blocks (try: and the 'DEBUG ONLY' except:), next to the other charts:
        import d3blocks.{name}.{Name} as {Name}
        import {name}.{Name} as {Name}
 2) Add `def {name}(self, df, ..., show_side_panel=True, show_top_panel=True, dark_mode=True,
-   color_background=None, return_html=False, reset_properties=True)` next to flowgraph().
+   color_background=None, return_html=False, reset_properties=True)` next to the other chart methods.
    Follow references/python-contract.md section 6.
 3) set_chart_func(): add '{Name}' to the np.isin(chart, [...]) allow-list.
 4) Only if the chart has no nodes: add it to ['Violin', 'Scatter'] in set_edge_properties().
@@ -435,6 +428,45 @@ Also: d3js/ now holds {name}.html.j2, {name}.css, d3.{name}.js (from assets/). T
 shared files (theme.js, d3.v7.min.js): confirm template_env finds them (see _shared/__init__.py).
 Check package_data/MANIFEST so d3js/* ships; keep CRLF line endings consistent with the repo.
 """
+
+
+# Names/prefixes of existing charts. A new block must not reuse them, in identifiers or in comments.
+RESERVED_NAMES = {"flowgraph", "scatter", "sequence", "erd", "tree"}
+RESERVED_PREFIXES = {"fg", "sc", "sq", "er", "tr"}
+TEXT_SUFFIXES = {".py", ".js", ".css", ".j2", ".md", ".rst", ".txt"}
+
+
+def sibling_charts(pkg_dir: Path, own: str) -> set:
+    """Names of the other chart folders in the package (folders with python files, not _private)."""
+    if not pkg_dir.is_dir():
+        return set()
+    return {d.name for d in pkg_dir.iterdir()
+            if d.is_dir() and not d.name.startswith(("_", ".")) and d.name != own and any(d.glob("*.py"))}
+
+
+def prefix_in_use(pkg_dir: Path, own: str, prefix: str):
+    """Return a sibling chart that already uses `prefix` for ids/classes, else None."""
+    pat = re.compile(r'(?<![\w-])(?:#|\.|id="|class="|\')' + re.escape(prefix) + r"-")
+    for d in sorted(sibling_charts(pkg_dir, own)):
+        for f in (pkg_dir / d / "d3js").glob("*"):
+            if f.suffix in {".css", ".js", ".j2"} and ".min." not in f.name and f.stat().st_size < 400_000:
+                if pat.search(f.read_text(encoding="utf-8", errors="ignore")):
+                    return d
+    return None
+
+
+def check_leaks(files, forbidden, prefix_forbidden):
+    """List (file, line, text) where another chart's name or a reserved prefix appears."""
+    word = re.compile(r"\b(" + "|".join(sorted(map(re.escape, forbidden))) + r")\b", re.I) if forbidden else None
+    pre = re.compile(r"(?<![\w-])(?:#|\.|id=\"|class=\")(" + "|".join(sorted(prefix_forbidden)) + r")-") if prefix_forbidden else None
+    hits = []
+    for f in files:
+        if f.suffix not in TEXT_SUFFIXES or ".min." in f.name or f.stat().st_size > 400_000:
+            continue
+        for n, line in enumerate(f.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            if (word and word.search(line)) or (pre and pre.search(line)):
+                hits.append((f, n, line.strip()[:110]))
+    return hits
 
 
 def write(path: Path, text: str, force: bool) -> None:
@@ -454,6 +486,7 @@ def main() -> int:
     ap.add_argument("--tests-dir", default="d3blocks/tests", help="folder that contains test_flowgraph.py")
     ap.add_argument("--demo-dir", default="streamlit", help="folder that contains scatter_streamlit_demo.py")
     ap.add_argument("--force", action="store_true", help="overwrite existing files")
+    ap.add_argument("--check", action="store_true", help="do not generate; scan the finished block for leaked reference names")
     args = ap.parse_args()
 
     name = args.name.strip().lower()
@@ -463,8 +496,34 @@ def main() -> int:
     Name = name.capitalize()  # d3blocks.py resolves charts with str.capitalize(); the import alias must match
     prefix = (args.prefix or name[:2]).lower()
     fmt = dict(name=name, Name=Name, prefix=prefix)
+    pkg_dir = Path(args.pkg_dir)
+    pkg = pkg_dir / name
 
-    pkg = Path(args.pkg_dir) / name
+    siblings = sibling_charts(pkg_dir, name)
+    if args.check:
+        forbidden = (RESERVED_NAMES | siblings) - {name}
+        files = [f for f in pkg.rglob("*") if f.is_file()]
+        files += [Path(args.tests_dir) / f"test_{name}.py", Path(args.demo_dir) / f"{name}_streamlit_demo.py"]
+        files = [f for f in files if f.exists()]
+        hits = check_leaks(files, forbidden, RESERVED_PREFIXES - {prefix})
+        for f, n, text in hits:
+            print(f"LEAK {f}:{n}: {text}")
+        print(f"checked {len(files)} files; {len(hits)} leak(s)")
+        return 1 if hits else 0
+
+    if name in RESERVED_NAMES or name in siblings:
+        print(f"'{name}' is an existing chart. Pick a new name; existing charts are only references.", file=sys.stderr)
+        return 2
+    if prefix in RESERVED_PREFIXES:
+        print(f"prefix '{prefix}' belongs to an existing chart; choose another with --prefix.", file=sys.stderr)
+        return 2
+    clash = prefix_in_use(pkg_dir, name, prefix)
+    if clash:
+        print(f"prefix '{prefix}' is already used by the '{clash}' chart; choose another with --prefix.", file=sys.stderr)
+        return 2
+    if (pkg / f"{Name}.py").exists() and not args.force:
+        print(f"{pkg / (Name + '.py')} exists; refusing to touch an existing chart (use --force only for your own block).", file=sys.stderr)
+        return 2
     write(pkg / "__init__.py", INIT.format(**fmt), args.force)
     write(pkg / f"{Name}.py", MODULE.format(**fmt), args.force)
     assets = Path(__file__).resolve().parent.parent / "assets"
@@ -477,6 +536,7 @@ def main() -> int:
     write(Path(args.tests_dir) / f"test_{name}.py", TEST.format(**fmt), args.force)
     write(Path(args.demo_dir) / f"{name}_streamlit_demo.py", DEMO.format(**fmt), args.force)
 
+    print(f"\nNew chart folder: {pkg}/  (inside the d3blocks package)")
     print(METHOD_HINT.format(**fmt))
     return 0
 

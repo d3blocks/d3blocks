@@ -1,6 +1,6 @@
 # Template, CSS and JS anatomy
 
-Derived from `flowgraph.html.j2`, `flowgraph.css`, `d3.flowgraph.js`, `scatter.html.j2` and `scatter.css`. The scaffold copies `assets/blockname.html.j2`, `assets/blockname.css` and `assets/d3.blockname.js`, which implement everything below. When the repo's current flowgraph files differ from the assets, the repo wins; update the new chart to match.
+Derived from the existing flowgraph and scatter files (`*.html.j2`, `*.css`, `d3.*.js`) and `_shared/`. They are references only: the new block uses its own name and prefix everywhere (`scaffold_chart.py --check` flags leaks such as `flowgraph` or `#fg-`). The scaffold copies `assets/blockname.html.j2`, `assets/blockname.css` and `assets/d3.blockname.js`, which implement everything below. When the repo's current flowgraph files differ from the assets, the repo wins; update the new chart to match.
 
 ## Contents
 1. File naming
@@ -17,7 +17,8 @@ Derived from `flowgraph.html.j2`, `flowgraph.css`, `d3.flowgraph.js`, `scatter.h
 | Template | `<name>.html.j2` | Loaded by `template_env(__name__, __file__).get_template('<name>.html.j2')` |
 | Stylesheet | `<name>.css` | `{% include "<name>.css" %}` |
 | Chart JS | `d3.<name>.js` | `{% include "d3.<name>.js" %}` (the `d3.` prefix is the convention; an upload may show `d3_<name>.js` because dots get sanitised) |
-| Shared, not copied | `theme.js`, `d3.v7.min.js`, `dagre.min.js`, `elk.bundled.js`, `walkthrough.js/.css` | Included by bare filename, so the Jinja loader must search both the chart's `d3js/` and the shared `d3js/`. Open `_shared/__init__.py` (`template_env`) and check where each lives before assuming. |
+| Shared, not copied | `theme.js`, `walkthrough.js`, `walkthrough.css`, `d3.v7.min.js` (all in `_shared/d3js/`) | Included by bare filename. `template_env` searches the chart's own `d3js/` first, then `_shared/d3js/`, so a same-named file in the chart folder overrides the shared one. |
+| Chart's own libraries | anything else the chart needs (layout engines, another d3 version under a different filename) | Ship it in the chart's `d3js/` and include it by name |
 
 Library files are inlined (`<script>{% include "d3.v7.min.js" %}</script>`), which is why output is self-contained. Optional heavy libraries are included conditionally: `{% if layout == 'elk' %}<script>{% include "elk.bundled.js" %}</script>{% endif %}`.
 
@@ -62,13 +63,32 @@ Rules for chart CSS: colours of text/chrome come only from the variables (`--tex
 | `on(id, ev, fn)` null-safe binder, plus `querySelectorAll('[data-...]')` for button groups | Controls live in panels that may not exist; `getElementById(...).addEventListener` would throw and kill the chart |
 | `viewportInsets()` with `bar ? bar.getBoundingClientRect().bottom + 12 : 16` and `max` over visible `.stats-panel` rects | Fit/zoom must work with any panel combination; absent top bar = height 0, never an early `return` |
 | `setupPanels()` stacks `.stats-panel` under the top bar (`y = (bar ? bottom : 0) + 8`), toggles `collapsed` on title click, `ResizeObserver` + `resize` repositions | Works with zero panels (empty NodeList) |
-| `D3BlocksTheme.bind('themeBtn')` | Runtime toggle; `bind` must tolerate a missing button (top bar off) - confirm in `theme.js` |
+| `D3BlocksTheme.bind('themeBtn')` | Runtime toggle. `bind` returns quietly when the button does not exist (top bar off), so it is always safe to call. `theme.js` also honours `?theme=light` / `?theme=dark` for `dark_mode='auto'`. **It emits no event**: CSS-variable styling recolours itself, but colours computed in JS (canvas, `.attr('fill', computed)`) need a redraw via `new MutationObserver(render).observe(document.body, {attributes: true, attributeFilter: ['class']})` |
 | `setupSearch()` starts with `if (!input \|\| !results) return;` | Same reason |
 | Export: `serializeSvg` (inline computed styles, background rect from `body` colour), `download`, `saveSvg`, `savePng` (2x canvas), `exportJson` | Copy; adapt the viewport class and the JSON payload |
 | Empty state: `.XX-empty` message and `return` | `D3Blocks` with no data must not render a blank page |
 | `window.__<name>` debug handle (`state`, `fit`, ...) | Handy for manual checks |
 
-Flowgraph-specific code you do not copy: layout (dagre/ELK), shapes, trace/walkthrough, edge animation, highlight/pinning. Reuse the **walkthrough** (`walkthrough.js/.css`, `steps=` parameter, `normalize_steps`) only if the chart genuinely has a step-through story.
+Code specific to the reference chart (its layout engines, shapes, trace, edge animation, highlight/pinning) is not copied. The shared **walkthrough** (below) is the one reusable feature, and only if the chart genuinely has a step-through story.
+
+### Optional: walkthrough in the JS
+
+`walkthrough.js` defines `window.D3BlocksWalkthrough(opts)`, which builds a caption bar (title, caption, "Step i of n", step rail, Prev / Play / Next / close; keyboard: arrows, Space, Esc). It uses the theme variables and `.button-switch`, so it follows dark/light automatically.
+
+```js
+var walkthrough = null;
+if (DATA.steps && DATA.steps.length) {
+  walkthrough = D3BlocksWalkthrough({
+    steps: DATA.steps,                    // [{title, caption, highlight: {key: [...]}}], validated by normalize_steps
+    triggers: ['walkButton'],             // ids of buttons that open/close it (missing ids are ignored)
+    onOpen:  function () { /* e.g. dim the chart */ },
+    onStep:  function (step, i) { /* apply step.highlight[key] to the drawn elements */ },
+    onClose: function () { /* restore */ }
+  });
+}
+```
+
+Returned API: `open(i)`, `close()`, `go(i)`, `isOpen()`, `index()`, `height()`. Two integration points: add a trigger button to the top bar only when steps exist, and make `viewportInsets().bottom` add `walkthrough ? walkthrough.height() : 0` so Fit does not hide content behind the bar. While open, `<body>` has class `d3b-walking`. Playback is reader-started and stops on the last step.
 
 `legendPanel` shows the pattern for a panel the JS may *hide itself*: `if (!panel || !list) return;` and `panel.style.display = 'none'` when empty - `setupPanels` already skips `display: none` panels.
 

@@ -1,6 +1,8 @@
 # Python contract for a block
 
-Derived from `flowgraph/Flowgraph.py`, `scatter/Scatter.py` and `d3blocks.py`. Re-open those files if anything here seems out of date.
+Derived from `flowgraph/Flowgraph.py`, `scatter/Scatter.py`, `_shared/__init__.py` and `d3blocks.py`. Re-open those files if anything here seems out of date.
+
+**Flowgraph and scatter are references, not names.** The new block is a folder `d3blocks/<name>/` with its own name, ids, classes and wording. Nothing in it (code, comments, docstrings, tests, demo, docs) may mention flowgraph or reuse its identifiers (`fg-*`, `Flowgraph`). `scripts/scaffold_chart.py --check` scans for leaks.
 
 ## Contents
 1. What `d3blocks.py` calls on your module
@@ -81,30 +83,60 @@ content = {
 html = template_env(__name__, __file__).get_template('blockname.html.j2').render(content)
 write_html_file(config, html, logger)
 if config.get('notebook'):
-    return notebook_iframe(html, config)
+    return notebook_iframe(html, config, 'blockname')
 return html
 ```
 
 `show()` sets `config['logo_base64'] = set_logo(filepath=config.get('logo'))` before calling `write_html`.
 
-`notebook_iframe(html, config)` wraps the page in `<div class="d3blocks-<name>"><iframe srcdoc="..." sandbox="allow-scripts allow-downloads allow-popups">`, sized by `figsize` or `100% x 650px`. Copy flowgraph's version and change only the class/title.
+`notebook_iframe(html, config, block)` comes from `_shared`: it wraps the page in `<div class="d3blocks-<block>"><iframe srcdoc="..." sandbox="allow-scripts allow-downloads allow-popups">`, sized by `figsize` or `100% x 650px`. Import it and pass the block name; do not write a local copy (the older `Flowgraph.py` still carries one, a duplicate to leave alone).
 
 Scatter's older `write_html` also passes `SAVE_TO_SVG_SCRIPT` via `include_save_to_svg_script`; check whether the shared template you copy still needs it.
 
-## 4. Imports and fallbacks
+## 4. Imports, `_shared` and fallbacks
 
-Flowgraph uses a package import with a flat fallback so the module also works when run from inside the source tree:
+Charts use a package import with a flat fallback so the module also works when run from inside the source tree:
 
 ```python
 try:
-    from .._shared import check_dark_mode, dark_mode_flag, template_env
+    from .._shared import check_dark_mode, dark_mode_flag, notebook_iframe, template_env
     from ..utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
 except ImportError:
-    from _shared import check_dark_mode, dark_mode_flag, template_env
+    from _shared import check_dark_mode, dark_mode_flag, notebook_iframe, template_env
     from utils import resolve_color_background, set_logo, set_path, update_config, write_html_file
 ```
 
-Open `_shared/__init__.py` to see the other helpers (`normalize_steps`, `pair_in`, `ref_in`) before reinventing something.
+What `d3blocks/_shared/` provides (code shared by the diagram blocks):
+
+| Item | Behaviour |
+|---|---|
+| `template_env(package_name, block_file)` | Jinja `Environment` with a `ChoiceLoader`: the block's own `d3js/` first, then `_shared/d3js/`. A template can `{% include %}` files from both, and a block can **override** a shared file by shipping one with the same name. Falls back to a `FileSystemLoader` on `<block_file's folder>/d3js` when the package loader is unavailable. Call it as `template_env(__name__, __file__)`. |
+| `_shared/d3js/` | `theme.js`, `walkthrough.js`, `walkthrough.css`, `d3.v7.min.js`. A chart on d3 v7 includes `d3.v7.min.js` without shipping its own copy; a chart needing another d3 version ships its own file under a different name (for example `d3.v4.min.js`). Chart-specific libraries (layout engines, etc.) belong in the chart's own `d3js/`. |
+| `check_dark_mode(v)` / `dark_mode_flag(v)` | `True`, `False`, `'auto'` (case-insensitive) accepted; anything else (`'light'`, `1`, `None`) raises `ValueError("dark_mode must be True, False or 'auto'; got ...")`. `check_dark_mode` returns `True/False/'auto'`; `dark_mode_flag` returns `'true'/'false'/'auto'`. |
+| `notebook_iframe(html, config, block)` | Jupyter wrapper, see section 3. |
+| `normalize_steps`, `ref_in`, `pair_in`, `index_in` | Optional captioned walkthrough, see 4b. |
+
+The chart folder's `__init__.py` can be empty (confirm with `cat <existing chart>/__init__.py`). `_shared/d3js/` must ship in the wheel, as it already does for the existing diagram blocks.
+
+## 4b. Optional: captioned walkthrough (`steps=`)
+
+Only for charts with a natural step-through story. Shared pieces: `normalize_steps` (Python), `walkthrough.js` / `walkthrough.css` (browser).
+
+Python: add `config['steps'] = kwargs.get('steps', None)` in `set_config`, accept `steps` in the public method (list of `{'title', 'caption', 'highlight': {key: [ref, ...]}}`), and in `show()` validate against the data actually drawn:
+
+```python
+steps = normalize_steps(
+    config.get('steps'),
+    {'nodes': ref_in(node_names, 'node'),                     # highlight key -> checker
+     'edges': pair_in(edge_pairs, 'edge', undirected=False),  # (source, target) pairs
+     'rows': index_in(len(df), 'row')},                       # integer index in range
+    'blockname')
+data['steps'] = steps                                         # None when no steps were given
+```
+
+Unknown keys or references raise `ValueError` naming `steps[i]`. Only highlight keys listed in the refs dict are accepted, so list exactly what the JS can highlight.
+
+Template: `<style>{% include "walkthrough.css" %}</style>` and `<script>{% include "walkthrough.js" %}</script>` before the chart script. JS: see `template-css-js.md`.
 
 ## 5. Registration in `d3blocks.py` (four edits)
 
