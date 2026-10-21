@@ -1,10 +1,17 @@
 ---
 name: d3blocks
-description: Use this skill when users want to create interactive data visualizations using D3Blocks from a pandas DataFrame. Guides chart selection, parameters, runnable Python examples, and Streamlit embedding. Trigger when users mention a dataframe/data and want scatter, chord, flowgraph, networks, heatmaps, or other D3Blocks charts, or want to embed a chart in Streamlit.
+description: >
+  Use this skill when users want to create interactive data visualizations
+  using D3Blocks from a pandas DataFrame. Guides chart selection, parameters,
+  runnable Python examples, and Streamlit embedding. Trigger when users
+  mention data and want scatter plots, chord diagrams, flowgraphs, networks,
+  heatmaps, or other D3Blocks visualizations, or want to embed a chart in
+  Streamlit.
 metadata:
   author: Erdogan Taskesen
   version: "1.0.0"
 ---
+
 
 # D3Blocks Visualizer
 
