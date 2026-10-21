@@ -1,0 +1,35 @@
+{
+  "skill_name": "d3blocks",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Help me create a scatter plot from my DataFrame with columns tsneX, tsneY, and labx. Color points by labx.",
+      "expected_output": "Uses d3.scatter with x= and y= arrays (not d3.scatter(df)); color from labx; runnable code",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have source, target, and weight columns for energy flows between categories. What chart and code should I use?",
+      "expected_output": "Recommend chord; example with import_example('energy') or user's df; d3.chord(df)",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Draw a process flowchart: Start -> Valid? (decision) -> Done or Fix then back to Valid?. Prefer a layered diagram.",
+      "expected_output": "Recommend flowgraph; edge list with shapes or Mermaid; direction TB; runnable code",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Embed a D3Blocks chord chart in Streamlit with side panel toggles.",
+      "expected_output": "showfig=False, return_html=True, color_background='streamlit', st.iframe; sidebar checkboxes for show_side_panel/show_top_panel",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Create a heatmap visualization for my data that compares values across two categorical dimensions.",
+      "expected_output": "Recommend heatmap with parameter guidance and code sample",
+      "files": []
+    }
+  ]
+}
