@@ -426,7 +426,7 @@ METHOD_HINT = """
 
 Also: d3js/ now holds {name}.html.j2, {name}.css, d3.{name}.js (from assets/). The template also includes
 shared files (theme.js, d3.v7.min.js): confirm template_env finds them (see _shared/__init__.py).
-Check package_data/MANIFEST so d3js/* ships; keep CRLF line endings consistent with the repo.
+Check package_data/MANIFEST so d3js/* ships; keep line endings consistent with the repo (LF).
 """
 
 
