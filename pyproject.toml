@@ -51,8 +51,8 @@ dependencies = [
 
 
 [project.urls]
-Homepage = "https://erdogant.github.io/d3blocks"
-Download = "https://github.com/erdogant/d3blocks/archive/{version}.tar.gz"
+Homepage = "https://d3blocks.github.io/d3blocks"
+Download = "https://github.com/d3blocks/d3blocks/archive/{version}.tar.gz"
 
 [tool.setuptools]
 include-package-data = true
