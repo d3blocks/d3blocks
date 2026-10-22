@@ -213,4 +213,4 @@ Template: `<style>{% include "walkthrough.css" %}</style>` and `<script>{% inclu
 - `self.config['support']` is set in `__init__` (`utils.get_support`); the template's `SUPPORT` comes from `config.get('support') or ''`, so tests use `support=None`.
 - JSON into HTML: always `.replace('</', '<\\/')`, and `html_escape` anything that lands in markup (title). Tests assert both.
 - Edge-case input (empty frame, one row, NaN) should degrade gracefully or raise a clear `ValueError`, never produce a blank page.
-- CRLF line endings: edit in a way that preserves them.
+- Line endings: the repo uses LF; match the file you edit.

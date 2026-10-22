@@ -16,25 +16,6 @@ DataFrame with:
 
 Built-in sample: `d3.import_example('energy')`.
 
-## Main parameters
-
-| Parameter | Default | Notes |
-|-----------|---------|--------|
-| `color` | `'source'` | `'source'`, `'target'`, `'source-target'`, hex, or list of hex |
-| `opacity` | `'source'` | `'source'`, `'target'`, float, or list |
-| `ordering` | `'ascending'` | `'ascending'`, `'descending'`, `''`, or explicit label list |
-| `fontsize` | `10` | Label font size |
-| `arrowhead` | `10` | Arrow size |
-| `cmap` | `'tab20'` | Colormap for nodes/links |
-| `margin` | `150` | Space for labels (increase for long names) |
-| `text_offset` | `5` | Label distance from arc |
-| `figsize` | `[900, 900]` | Browser size |
-| `show_side_panel` / `show_top_panel` | `True` | UI chrome |
-| `dark_mode` | `True` | `True` / `False` / `'auto'` where supported |
-| `color_background` | `None` | e.g. `'streamlit'` or `[dark, light]` |
-| `return_html` | `False` | Return HTML string |
-| `filepath` | `'chord.html'` | `None` to skip file write when returning HTML |
-
 ## Examples
 
 ### Basic (energy flows)

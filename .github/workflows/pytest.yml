@@ -27,6 +27,7 @@ jobs:
       - name: Test with pytest
         run: |
           pytest d3blocks/tests/ -v --tb=short
+          pytest skills/ -v --tb=short
       - name: Test specific test files
         run: |
           pytest d3blocks/tests/test_all_examples.py -v

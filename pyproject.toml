@@ -57,9 +57,6 @@ Download = "https://github.com/erdogant/d3blocks/archive/{version}.tar.gz"
 [tool.setuptools]
 include-package-data = true
 
-[tool.setuptools.package-data]
-d3blocks = ["skills/**/*"]
-
 [tool.setuptools.packages.find]
 include = ["d3blocks*"]
 

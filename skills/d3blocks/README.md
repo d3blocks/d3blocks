@@ -1,49 +1,19 @@
 # D3Blocks Visualizer Skill
 
-Interactive D3Blocks charts from Python data, with advanced examples and Streamlit apps.
+Helps an AI coding agent create interactive D3Blocks charts from Python data: picking the
+chart, writing runnable code, and embedding it in Streamlit. Everything the agent reads is in
+[`SKILL.md`](SKILL.md), which links to `references/` and `examples/`.
 
-## When to use
-
-- User has (or wants) a DataFrame and an interactive HTML chart
-- Chart selection (scatter, chord, flowgraph, networks, …)
-- Streamlit embedding
-
-## References (parameters)
-
-| Chart | File |
-|-------|------|
-| Scatter | `references/scatter.md` |
-| Chord | `references/chord.md` |
-| Flowgraph | `references/flowgraph.md` |
-| Streamlit rules | `references/streamlit.md` |
-
-## Examples (runnable code — prefer these over inventing snippets)
-
-### Standalone Python
-
-| File | Focus |
-|------|--------|
-| `examples/scatter_advanced.py` | Multi-coord (tSNE/PCA), size/color/tooltip, scale |
-| `examples/chord_advanced.py` | Property edits, Nuclear highlight, large margins |
-| `examples/flowgraph_advanced.py` | Shapes, groups, variants, Mermaid+ELK, state diagram |
-
-### Streamlit apps
-
-| File | Focus |
-|------|--------|
-| `examples/streamlit_scatter.py` | Sidebar encodings + panel toggles + cache |
-| `examples/streamlit_chord.py` | Ordering, colour mode, margin, dark mode |
-| `examples/streamlit_flowgraph.py` | Edge list vs Mermaid, dagre/ELK, direction |
+## Install
 
 ```bash
-pip install d3blocks streamlit
-python examples/scatter_advanced.py
-streamlit run examples/streamlit_chord.py
+npx skills add erdogant/d3blocks --skill d3blocks
+pip install git+https://github.com/d3blocks/d3blocks  # d3blocks 2.3.0 or later; until it is on PyPI
 ```
 
-## API notes
+## Maintain
 
-- Scatter: `x=` / `y=` arrays — never `d3.scatter(df)` alone
-- Chord: `source`, `target`, `weight`
-- Flowgraph: edge list or Mermaid; `frame=False` for dict-style node edits
-- Streamlit: `showfig=False`, `return_html=True`, `st.iframe`, often `color_background='streamlit'`
+- Chart parameters come from the installed package (`python -m pydoc d3blocks.D3Blocks.<chart>`),
+  so they are not copied into this skill.
+- `pytest skills/d3blocks` checks the skill's structure and runs every standalone example in
+  `examples/` against the installed d3blocks; CI runs it too.

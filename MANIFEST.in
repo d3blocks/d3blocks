@@ -19,4 +19,3 @@ include d3blocks/sequence/d3js/*
 include d3blocks/erd/d3js/*
 include d3blocks/_shared/d3js/*
 include d3blocks/*
-recursive-include d3blocks/skills *

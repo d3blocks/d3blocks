@@ -10,12 +10,14 @@ metadata:
 
 Turn a user-supplied `.js` chart into a block that behaves exactly like the existing ones (flowgraph is the reference implementation; scatter is the reference for panel conventions). "Integrated" means all six deliverables below exist and pass their checks. A chart that renders but is missing the `d3blocks.py` method, the theme plumbing, tests, demo or docs is not done.
 
+> Work inside a d3blocks checkout and import `d3blocks` from it directly. Do not run `pip install` first; only if the import fails (or loads another copy of d3blocks): install the checkout in editable mode, `pip install -e .`.
+
 ## Ground rules
 
 - **Read before writing.** The repo is the source of truth; this skill describes patterns, but file contents drift. Before generating anything, open the real files named in each step (flowgraph's `.html.j2`, `_shared/`, `utils.py`, the docs page, the existing demo). Never invent a helper's signature.
 - **Copy flowgraph's structure, not scatter's, where they differ.** Flowgraph is the newer pattern: `template_env(__name__, __file__)` instead of `Environment(PackageLoader(...))`, `check_dark_mode` / `dark_mode_flag` (supports `'auto'`) instead of a bare bool, the shared `theme.js` instead of a theme toggle written inline in the template, data via `<script type="application/json">` tags instead of `var jsonData = {{ json_data }}`, and the chart JS in its own included file. `references/template-css-js.md` has the full comparison.
 - **Surgical changes.** `d3blocks.py` is ~4800 lines. Add to it; do not reformat or reorder it.
-- **Preserve line endings.** The existing `.py` / `.md` files use CRLF. Match the file you edit, and check with `file <path>` before and after.
+- **Preserve line endings.** The repo uses LF. Match the file you edit, and check with `file <path>` before and after.
 - **Flowgraph and scatter are references, not names.** The deliverable is a new folder `d3blocks/<name>/` inside the package (next to `flowgraph/`, `scatter/`, ...). Study the existing charts, but nothing you create or edit for the new block may mention flowgraph or another existing chart, or reuse its identifiers (`fg-*` ids/classes, `Flowgraph`, `d3.flowgraph.js`, "like flowgraph" comments, test or docs text). Rename anything you carry over. `scripts/scaffold_chart.py --check` finds leaks; run it in Phase 9.
 - **Name once, derive the rest.** Pick `blockname` (lowercase, single word, not an existing chart's name; the examples below use the made-up name `heatflow`). Everything derives from it - see "Naming".
 
@@ -173,3 +175,7 @@ Run `python scripts/scaffold_chart.py --check --name blockname --prefix xx --pkg
 - [ ] Streamlit demo runs and uses `st.iframe`
 - [ ] Docs page exists, is linked from the index, examples run
 - [ ] Packaging includes `d3js/*`; line endings match the repo
+
+## Dependencies
+
+The d3blocks checkout (editable install, `pip install -e .`; brings pandas, numpy and jinja2. Install only if the import fails) · `pytest` (pip, for the block's tests) · Node.js with `jsdom` (npm, only for `scripts/smoke_jsdom.js`; `npm i jsdom` in a scratch folder)

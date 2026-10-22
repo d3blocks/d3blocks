@@ -93,6 +93,11 @@ npx skills add erdogant/d3blocks --skill d3blocks
 npx skills add erdogant/d3blocks --skill d3blocks-chart-builder
 ```
 
+##### Install skill for docs diagrams (convert a repo's Mermaid diagrams):
+```bash
+npx skills add erdogant/d3blocks --skill d3blocks-docs-diagrams
+```
+
 
 #### Import d3blocks package
 ```python

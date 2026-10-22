@@ -25,28 +25,6 @@ Layered process / architecture diagrams. Nodes sit in ranks; optional groups (sw
 
 Pass a string, Markdown file path, or `.mmd` path. Supported: flowcharts and state diagrams (`stateDiagram-v2`). Unsupported syntax raises `ValueError` naming the line (nothing is dropped silently).
 
-## Main parameters
-
-| Parameter | Default | Notes |
-|-----------|---------|--------|
-| `direction` | from data / `'LR'` | `LR`, `RL`, `TB`, `BT` (aliases like `td` → `TB`) |
-| `layout` | `'dagre'` | `'dagre'` or `'elk'` (ELK bundled only when selected) |
-| `shape` | `'process'` | Default node shape |
-| `color` | `'group'` | Node colouring strategy |
-| `cmap` | `'Set2'` | Colormap |
-| `edge_color` | `'#8c8c8c'` | Default edge colour / `'source'` etc. |
-| `curve` | `'smooth'` | Edge routing style |
-| `animate` | `False` | Global animation (`pulse`, `dash`, `dots`, `comet` as string also accepted in practice via options) |
-| `draggable` | `True` | Drag nodes in the browser |
-| `show_edge_labels` | `True` | |
-| `show_groups` | `True` | |
-| `nodesep` / `ranksep` / `edgesep` | spacing | Layout spacing |
-| `show_side_panel` / `show_top_panel` | `True` | UI chrome |
-| `dark_mode` | `True` | `True` / `False` / `'auto'` |
-| `color_background` | `None` | |
-| `return_html` | `False` | |
-| `filepath` | `'flowgraph.html'` | |
-
 ### Node shapes
 
 `process`, `decision`, `terminal`, `io`, `subprocess`, `database`, `queue`, `document`, `external`, `circle`, …

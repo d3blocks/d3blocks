@@ -11,6 +11,8 @@ metadata:
 
 D3Blocks is a Python library for interactive D3.js charts from Python. Output is self-contained HTML.
 
+> `d3blocks` 2.3.0 or later is needed. Do not run `pip install` first; write the code and import it directly. Only if the import fails, or `d3blocks.__version__` is older than 2.3.0: install it (until 2.3.0 is on PyPI: `pip install git+https://github.com/d3blocks/d3blocks`).
+
 ## When to use
 
 - Interactive visualization from Python data
@@ -42,11 +44,14 @@ D3Blocks is a Python library for interactive D3.js charts from Python. Output is
 | Mermaid `erDiagram` / schema | `erd` |
 | Distributions across groups | `violin` |
 
+To convert *all* the Mermaid diagrams in a repository's docs at once, use the
+`d3blocks-docs-diagrams` skill instead.
+
 ## Guidance steps
 
 1. Understand the data (columns, types, what each means).
 2. Pick a chart from the table above.
-3. Open `references/<chart>.md` for parameters; open `examples/` for full runnable code.
+3. For a chart's parameters run `python -m pydoc d3blocks.D3Blocks.<chart>` (e.g. `d3blocks.D3Blocks.scatter`); it prints the signature and docstring of the installed version. Open `references/<chart>.md` for input shape and gotchas, and `examples/` for full runnable code.
 4. Give a **runnable** sample with the correct call signature (do not invent APIs).
 5. For Streamlit, use `examples/streamlit_*.py` and `references/streamlit.md` — do not invent a different embed pattern.
 
@@ -76,15 +81,12 @@ D3Blocks is a Python library for interactive D3.js charts from Python. Output is
 | Streamlit + scatter | `examples/streamlit_scatter.py` |
 | Streamlit + chord | `examples/streamlit_chord.py` |
 | Streamlit + flowgraph | `examples/streamlit_flowgraph.py` |
-| Parameter tables | `references/scatter.md`, `chord.md`, `flowgraph.md` |
+| Parameters (any chart) | `python -m pydoc d3blocks.D3Blocks.<chart>` |
+| Input shape and gotchas | `references/scatter.md`, `chord.md`, `flowgraph.md` |
 | Streamlit rules | `references/streamlit.md` |
 
 Repo demos (optional): `streamlit/scatter_streamlit_demo.py`, `streamlit/chord_streamlit_demo.py`.
 
-## Installation
+## Dependencies
 
-```bash
-pip install d3blocks
-# optional
-pip install streamlit
-```
+`d3blocks` 2.3.0 or later (pip; brings pandas, numpy and jinja2. Install only if the import fails or the version is older; until 2.3.0 is on PyPI, install from `git+https://github.com/d3blocks/d3blocks`) · `streamlit` (pip, only for the `examples/streamlit_*.py` apps; install only if the import fails)
