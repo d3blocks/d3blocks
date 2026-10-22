@@ -85,17 +85,17 @@ pip install git+https://github.com/d3blocks/d3blocks.git
 
 ##### Install skill for visualizations:
 ```bash
-npx skills add erdogant/d3blocks --skill d3blocks
+npx skills add d3blocks/d3blocks --skill d3blocks
 ```
 
 ##### Install skill for chart builder:
 ```bash
-npx skills add erdogant/d3blocks --skill d3blocks-builder
+npx skills add d3blocks/d3blocks --skill d3blocks-chart-builder
 ```
 
 ##### Install skill for docs diagrams (convert a repo's Mermaid diagrams):
 ```bash
-npx skills add erdogant/d3blocks --skill d3blocks-diagrams
+npx skills add d3blocks/d3blocks --skill d3blocks-docs-diagrams
 ```
 
 
