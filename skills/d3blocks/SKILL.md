@@ -49,7 +49,7 @@ For the full set of charts this skill documents, list `references/*.md` and `exa
 | Distributions across groups | `violin` |
 
 To convert *all* the Mermaid diagrams in a repository's docs at once, use the
-`d3blocks-diagrams` skill instead.
+`d3blocks-docs-diagrams` skill instead.
 
 ## Guidance steps (ask before you build)
 
