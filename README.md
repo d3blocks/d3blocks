@@ -78,6 +78,14 @@ pip install d3blocks     # Normal installation
 pip install -U d3blocks  # Force update
 ```
 
+#### Clone
+```bash
+# Clone only the latest branch to avoid downloading large history.
+git config --global clone.depth 1
+```
+
+
+
 #### Installation (from GitHub source)
 ```bash
 pip install git+https://github.com/d3blocks/d3blocks.git
