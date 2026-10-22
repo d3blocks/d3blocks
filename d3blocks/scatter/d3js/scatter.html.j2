@@ -191,7 +191,7 @@ License     : GPL3
       <div class="search-results" id="searchResults"></div>
     </div>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select points; Shift+drag to add to selection; click a point to toggle it">Select</button>
-    <button class="button-switch active" id="densityToggleBtn" type="button" title="Show or hide point-density heatmap">Hide Density</button>
+    <button class="button-switch active" id="densityToggleBtn" type="button" title="Cycle density: heatmap → contours → off">Density: Heatmap</button>
     <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
   </div>
 </div>
@@ -208,26 +208,38 @@ License     : GPL3
   </div>
 </div>
 
-<!-- Side panel: density heatmap tuning (directly below Export/Save; shown when density is enabled) -->
+<!-- Side panel: density layer tuning (heatmap or contours; shown when density is not off) -->
 <div class="stats-panel collapsed" id="densityPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Density Layer<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
+    <div class="physics-control">
+      <label for="densityModeSelect">Mode</label>
+      <select id="densityModeSelect" style="width:100%">
+        <option value="heatmap" selected>Heatmap</option>
+        <option value="contours">Contours</option>
+        <option value="off">Off</option>
+      </select>
+    </div>
     <!--
     <div class="physics-control">
       <label for="densityGridSizeSlider">Grid size <span class="val" id="densityGridSizeVal">40</span></label>
       <input type="range" id="densityGridSizeSlider" min="5" max="120" step="5" value="40">
     </div>
       -->
-    <div class="physics-control">
+    <div class="physics-control" id="densityBlurRow">
       <label for="densityBlurSlider">Blur <span class="val" id="densityBlurVal">15</span></label>
       <input type="range" id="densityBlurSlider" min="0" max="30" step="1" value="15">
     </div>
-    <div class="physics-control">
+    <div class="physics-control" id="densityOpacityRow">
       <label for="densityOpacitySlider">Opacity <span class="val" id="densityOpacityVal">0.6</span></label>
       <input type="range" id="densityOpacitySlider" min="0" max="1" step="0.05" value="0.6">
     </div>
+    <div class="physics-control" id="densityLevelsRow" style="display:none">
+      <label for="densityLevelsSlider">Contour levels <span class="val" id="densityLevelsVal">12</span></label>
+      <input type="range" id="densityLevelsSlider" min="4" max="30" step="1" value="12">
+    </div>
     <button class="button-switch" id="densityResetBtn" type="button" style="width:100%;margin-top:8px">Reset to Default</button>
-    <div style="font-size:11px;opacity:0.6;margin-top:6px">Heatmap of point density in the current view.</div>
+    <div style="font-size:11px;opacity:0.6;margin-top:6px" id="densityPanelHint">Heatmap of point density in the current view. Updates as points move.</div>
   </div>
 </div>
 
@@ -896,14 +908,30 @@ function resizeScatterToViewport() {
 }
 sizeScatterCanvases();
 
-// ---- Point-density heatmap (ported from d3graph.js density layer) ----
-var densityVisible = true;
+// ---- Point-density layer: heatmap | contours | off ----
+// densityMode cycles via the top-bar button and the side-panel select.
+// Both heatmap and contours are derived from live on-screen point positions
+// (computeDensityGrid), so they refresh whenever points move (physics tick,
+// coordinate transition, pan/zoom, filter changes).
+var densityMode = 'heatmap'; // 'heatmap' | 'contours' | 'off'
+var densityVisible = true;   // kept in sync: true when mode !== 'off'
 var densityGridSize = 40;
 var densityBlur = 15;
 var densityOpacity = 0.6;
+var densityContourLevels = 12;
+// Contours need a finer grid than the heatmap cells so isolines look curved.
+var densityContourGridSize = 90;
 var DEFAULT_DENSITY_GRID_SIZE = 40;
 var DEFAULT_DENSITY_BLUR = 15;
 var DEFAULT_DENSITY_OPACITY = 0.6;
+var DEFAULT_DENSITY_CONTOUR_LEVELS = 12;
+var DEFAULT_DENSITY_MODE = 'heatmap';
+// While points are moving (physics tick / coord transition), only rebuild the
+// density layer this often. Off mode skips all density work. On settle/end we
+// always draw once at full quality (densityForceFull).
+var densityMinIntervalMs = 100;
+var densityLastDrawMs = 0;
+var densityForceFull = true;
 
 function densityColor(t) {
   // Light theme: yellow → red heat. Dark theme: blue luminance ramp.
@@ -915,15 +943,23 @@ function densityColor(t) {
   var hue = 60 - t * 60;
   return 'hsl(' + hue + ', 100%, 50%)';
 }
-function computeDensityGrid() {
+function densityContourStroke() {
+  return document.body.classList.contains('light') ? 'steelblue' : '#6eb5ff';
+}
+function computeDensityGrid(gridSizeOverride) {
   if (typeof currentXVal === "undefined" || !currentXVal) return null;
-  // Bin points at their *live*, rendered on-screen positions. Uses the same
-  // pixel-space + margin culling as rebuildHitGrid (see comment there) so
-  // the heatmap doesn't develop its own empty ring at the edges while
-  // physics is still catching up after a fast zoom/pan step.
+  // Bin over the full plot area (not a tight data bbox). A data-extent grid
+  // leaves empty cells only outside the cloud, so after smoothing every
+  // threshold draws isolines along the top/bottom of that box — a false
+  // "border". Full-plot binning matches d3.contourDensity().size([w,h]) and
+  // keeps contours closed around clusters only.
+  var plotW = width;
+  var plotH = height + 1;
+  if (plotW <= 0 || plotH <= 0) return null;
+
   var pts = [];
-  var marginX = physicsNodeByIndex ? width * 0.5 : jitterAmount;
-  var marginY = physicsNodeByIndex ? (height + 1) * 0.5 : jitterAmount;
+  var cullX = physicsNodeByIndex ? plotW * 0.5 : jitterAmount;
+  var cullY = physicsNodeByIndex ? plotH * 0.5 : jitterAmount;
   for (var i = 0; i < jsonData.length; i++) {
     if (!jsonData[i]) continue;
     var xv = currentXVal[i], yv = currentYVal[i];
@@ -931,35 +967,28 @@ function computeDensityGrid() {
     if (isPointFiltered(i)) continue;
     var px = x(xv), py = y(yv);
     var jp = renderPosFor(i, px, py);
-    if (jp.px < -marginX || jp.px > width+marginX || jp.py < -marginY || jp.py > (height+1)+marginY) continue;
+    if (jp.px < -cullX || jp.px > plotW + cullX || jp.py < -cullY || jp.py > plotH + cullY) continue;
     pts.push(jp.px, jp.py);
   }
   if (!pts.length) return null;
-  var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (var j = 0; j < pts.length; j += 2) {
-    var pxj = pts[j], pyj = pts[j + 1];
-    if (pxj < minX) minX = pxj;
-    if (pxj > maxX) maxX = pxj;
-    if (pyj < minY) minY = pyj;
-    if (pyj > maxY) maxY = pyj;
-  }
-  var padX = (maxX - minX) * 0.05 || 20;
-  var padY = (maxY - minY) * 0.05 || 20;
-  minX -= padX; maxX += padX; minY -= padY; maxY += padY;
-  var w = (maxX - minX) || 1;
-  var h = (maxY - minY) || 1;
+
+  var minX = 0, minY = 0;
+  var w = plotW, h = plotH;
+  var baseSize = gridSizeOverride || densityGridSize;
   var cellsX, cellsY;
   if (w >= h) {
-    cellsX = densityGridSize;
-    cellsY = Math.max(1, Math.round(densityGridSize * h / w));
+    cellsX = baseSize;
+    cellsY = Math.max(1, Math.round(baseSize * h / w));
   } else {
-    cellsY = densityGridSize;
-    cellsX = Math.max(1, Math.round(densityGridSize * w / h));
+    cellsY = baseSize;
+    cellsX = Math.max(1, Math.round(baseSize * w / h));
   }
   var cellW = w / cellsX, cellH = h / cellsY;
   var grid = new Float32Array(cellsX * cellsY);
   var maxCount = 0;
   for (var k = 0; k < pts.length; k += 2) {
+    // Points slightly outside the plot still contribute to edge cells so
+    // contours do not clamp into a hard line on the canvas border.
     var cx = Math.min(cellsX - 1, Math.max(0, Math.floor((pts[k] - minX) / cellW)));
     var cy = Math.min(cellsY - 1, Math.max(0, Math.floor((pts[k + 1] - minY) / cellH)));
     var idx = cy * cellsX + cx;
@@ -968,17 +997,95 @@ function computeDensityGrid() {
   }
   return { grid: grid, cellsX: cellsX, cellsY: cellsY, cellW: cellW, cellH: cellH, minX: minX, minY: minY, maxCount: maxCount };
 }
-function drawDensityLayer() {
-  if (!densityCtx) return;
-  densityCtx.save();
-  densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  densityCtx.clearRect(0, 0, width, height + 1);
-  if (!densityVisible) { densityCtx.restore(); return; }
-
-  // rebuildHitGrid already runs in renderPoints before this is called.
-  var data = computeDensityGrid();
-  if (!data || data.maxCount <= 0) { densityCtx.restore(); return; }
-
+// 3×3 box blur on the density grid (several passes ≈ Gaussian). Makes isolines
+// follow smooth, near-circular blobs instead of cell boundaries.
+function smoothDensityGrid(data, passes) {
+  var cellsX = data.cellsX, cellsY = data.cellsY, n = cellsX * cellsY;
+  var src = data.grid;
+  var dst = new Float32Array(n);
+  var p, cy, cx, y0, y1, x0, x1, sum, c, maxCount;
+  for (p = 0; p < passes; p++) {
+    maxCount = 0;
+    for (cy = 0; cy < cellsY; cy++) {
+      y0 = cy > 0 ? cy - 1 : cy;
+      y1 = cy < cellsY - 1 ? cy + 1 : cy;
+      for (cx = 0; cx < cellsX; cx++) {
+        x0 = cx > 0 ? cx - 1 : cx;
+        x1 = cx < cellsX - 1 ? cx + 1 : cx;
+        sum = 0; c = 0;
+        for (var yy = y0; yy <= y1; yy++) {
+          for (var xx = x0; xx <= x1; xx++) {
+            sum += src[yy * cellsX + xx];
+            c++;
+          }
+        }
+        var v = sum / c;
+        dst[cy * cellsX + cx] = v;
+        if (v > maxCount) maxCount = v;
+      }
+    }
+    var tmp = src; src = dst; dst = tmp;
+  }
+  data.grid = src;
+  data.maxCount = maxCount || data.maxCount;
+  return data;
+}
+// Marching-squares isoline segments for one threshold on the density grid.
+// Returns an array of [x1,y1,x2,y2] line segments in pixel space.
+function densityContourSegments(data, threshold) {
+  var segs = [];
+  var grid = data.grid, cellsX = data.cellsX, cellsY = data.cellsY;
+  var cellW = data.cellW, cellH = data.cellH, minX = data.minX, minY = data.minY;
+  function val(cx, cy) {
+    // Clamp to the grid (do not treat outside as 0). Zero-padding outside
+    // invents a density cliff on the plot border and draws horizontal/vertical
+    // isolines along the top and bottom edges.
+    if (cx < 0) cx = 0;
+    else if (cx >= cellsX) cx = cellsX - 1;
+    if (cy < 0) cy = 0;
+    else if (cy >= cellsY) cy = cellsY - 1;
+    return grid[cy * cellsX + cx];
+  }
+  function lerp(a, b, t) {
+    if (a === b) return 0.5;
+    return (t - a) / (b - a);
+  }
+  for (var cy = 0; cy < cellsY - 1; cy++) {
+    for (var cx = 0; cx < cellsX - 1; cx++) {
+      var v00 = val(cx, cy), v10 = val(cx + 1, cy);
+      var v01 = val(cx, cy + 1), v11 = val(cx + 1, cy + 1);
+      var idx = (v00 >= threshold ? 8 : 0)
+              | (v10 >= threshold ? 4 : 0)
+              | (v11 >= threshold ? 2 : 0)
+              | (v01 >= threshold ? 1 : 0);
+      if (idx === 0 || idx === 15) continue;
+      var x0 = minX + cx * cellW, y0 = minY + cy * cellH;
+      var top = [x0 + cellW * lerp(v00, v10, threshold), y0];
+      var right = [x0 + cellW, y0 + cellH * lerp(v10, v11, threshold)];
+      var bottom = [x0 + cellW * lerp(v01, v11, threshold), y0 + cellH];
+      var left = [x0, y0 + cellH * lerp(v00, v01, threshold)];
+      // Cases from the classic marching-squares edge table (linear interp).
+      var lines;
+      switch (idx) {
+        case 1: case 14: lines = [left, bottom]; break;
+        case 2: case 13: lines = [bottom, right]; break;
+        case 3: case 12: lines = [left, right]; break;
+        case 4: case 11: lines = [top, right]; break;
+        case 5: lines = [left, top, bottom, right]; break; // saddle: two segments
+        case 6: case 9: lines = [top, bottom]; break;
+        case 7: case 8: lines = [left, top]; break;
+        case 10: lines = [top, right, left, bottom]; break;
+        default: lines = null;
+      }
+      if (!lines) continue;
+      for (var s = 0; s < lines.length; s += 2) {
+        segs.push(lines[s][0], lines[s][1], lines[s + 1][0], lines[s + 1][1]);
+      }
+    }
+  }
+  return segs;
+}
+function drawDensityHeatmap(data) {
   if (!densityOffscreen) densityOffscreen = document.createElement('canvas');
   densityOffscreen.width = densityCanvas.width;
   densityOffscreen.height = densityCanvas.height;
@@ -1000,6 +1107,70 @@ function drawDensityLayer() {
   densityCtx.setTransform(1, 0, 0, 1, 0, 0);
   densityCtx.drawImage(densityOffscreen, 0, 0);
   densityCtx.filter = 'none';
+}
+function drawDensityContours(data) {
+  // Fine grid + spatial blur → smooth, rounded isolines (not cell-edge stairs).
+  smoothDensityGrid(data, 4);
+  var levels = Math.max(2, densityContourLevels | 0);
+  var stroke = densityContourStroke();
+  densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  densityCtx.lineJoin = 'round';
+  densityCtx.lineCap = 'round';
+  densityCtx.globalAlpha = Math.max(0.2, densityOpacity);
+  for (var li = 1; li <= levels; li++) {
+    var threshold = (li / (levels + 1)) * data.maxCount;
+    if (threshold <= 0) continue;
+    var segs = densityContourSegments(data, threshold);
+    if (!segs.length) continue;
+    // Emphasize every 5th level (matches the Observable faithful example).
+    densityCtx.strokeStyle = stroke;
+    densityCtx.lineWidth = (li % 5 === 0) ? 1.6 : 0.7;
+    densityCtx.beginPath();
+    for (var s = 0; s < segs.length; s += 4) {
+      densityCtx.moveTo(segs[s], segs[s + 1]);
+      densityCtx.lineTo(segs[s + 2], segs[s + 3]);
+    }
+    densityCtx.stroke();
+  }
+  densityCtx.globalAlpha = 1;
+}
+function drawDensityLayer(force) {
+  if (!densityCtx) return;
+  // Off: clear once if needed, then skip all grid work so motion stays cheap.
+  if (densityMode === 'off' || !densityVisible) {
+    if (densityForceFull || force) {
+      densityCtx.save();
+      densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      densityCtx.clearRect(0, 0, width, height + 1);
+      densityCtx.restore();
+      densityForceFull = false;
+    }
+    return;
+  }
+
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  var moving = !!(physicsNodeByIndex || (typeof coordTransitionToken !== 'undefined' && coordTransitionToken));
+  // During continuous motion, throttle expensive grid + contour rebuilds.
+  // Always draw on force / first frame after mode change / when settled.
+  if (!force && !densityForceFull && moving && (now - densityLastDrawMs) < densityMinIntervalMs) {
+    return;
+  }
+  densityLastDrawMs = now;
+  densityForceFull = false;
+
+  densityCtx.save();
+  densityCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  densityCtx.clearRect(0, 0, width, height + 1);
+
+  var gridSize = densityMode === 'contours' ? densityContourGridSize : densityGridSize;
+  var data = computeDensityGrid(gridSize);
+  if (!data || data.maxCount <= 0) { densityCtx.restore(); return; }
+
+  if (densityMode === 'contours') {
+    drawDensityContours(data);
+  } else {
+    drawDensityHeatmap(data);
+  }
   densityCtx.restore();
 }
 
@@ -1586,8 +1757,13 @@ function onPhysicsEnd() {
     physicsNodes = null;
     physicsNodeByIndex = null;
     forceSim = null;
+    // One full-quality density pass at the final positions (throttled
+    // updates during ticks may have skipped the last frame).
+    densityForceFull = true;
     scheduleRender();
     updatePointLabels();
+  } else {
+    densityForceFull = true;
   }
 }
 
@@ -2364,41 +2540,80 @@ function toggleTheme() {
 const themeBtn = document.getElementById('themeBtn'); if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); var _isLight = document.body.classList.contains('light'); themeBtn.textContent = _isLight ? '☀' : '🌙'; themeBtn.title = _isLight ? 'Theme: Light' : 'Theme: Dark'; }
 window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 'T') && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) toggleTheme(); });
 
-// ---- Density toggle + left-panel sliders (mirrors d3graph density layer) ----
+// ---- Density mode (heatmap | contours | off) + left-panel controls ----
 (function setupDensityControls() {
   var toggleBtn = document.getElementById('densityToggleBtn');
   var panel = document.getElementById('densityPanel');
+  var modeSelect = document.getElementById('densityModeSelect');
   var gridSlider = document.getElementById('densityGridSizeSlider');
   var blurSlider = document.getElementById('densityBlurSlider');
   var opacitySlider = document.getElementById('densityOpacitySlider');
+  var levelsSlider = document.getElementById('densityLevelsSlider');
   var gridVal = document.getElementById('densityGridSizeVal');
   var blurVal = document.getElementById('densityBlurVal');
   var opacityVal = document.getElementById('densityOpacityVal');
+  var levelsVal = document.getElementById('densityLevelsVal');
+  var blurRow = document.getElementById('densityBlurRow');
+  var opacityRow = document.getElementById('densityOpacityRow');
+  var levelsRow = document.getElementById('densityLevelsRow');
+  var hint = document.getElementById('densityPanelHint');
   var resetBtn = document.getElementById('densityResetBtn');
+
+  var MODE_CYCLE = ['heatmap', 'contours', 'off'];
+  var MODE_LABEL = { heatmap: 'Density: Heatmap', contours: 'Density: Contours', off: 'Density: Off' };
+  var MODE_HINT = {
+    heatmap: 'Heatmap of point density in the current view. Updates as points move.',
+    contours: 'Isolines of point density (marching squares). Updates as points move.',
+    off: 'Density layer hidden.'
+  };
 
   function refreshDensity() {
     if (typeof scheduleRender === 'function') scheduleRender();
     else if (typeof drawDensityLayer === 'function') drawDensityLayer();
   }
 
-  function setDensityVisible(on) {
-    densityVisible = !!on;
+  function syncModeUi() {
+    densityVisible = densityMode !== 'off';
     if (toggleBtn) {
-      toggleBtn.textContent = densityVisible ? 'Hide Density' : 'Show Density';
-      toggleBtn.classList.toggle('active', densityVisible);
+      toggleBtn.textContent = MODE_LABEL[densityMode] || ('Density: ' + densityMode);
+      toggleBtn.classList.toggle('active', densityMode !== 'off');
+      toggleBtn.title = 'Cycle density: heatmap → contours → off';
     }
-    if (panel) {
-      // Show the tuning panel only while density is on; leave collapsed state alone
-      // so pressing Show Density does not auto-expand the panel.
-      panel.style.display = densityVisible ? '' : 'none';
-    }
+    if (modeSelect && modeSelect.value !== densityMode) modeSelect.value = densityMode;
+    // Keep the Density Layer side panel in the stack at all times (including
+    // mode "off"); only toggle mode-specific controls inside it.
+    if (panel) panel.style.display = '';
+    if (blurRow) blurRow.style.display = densityMode === 'heatmap' ? '' : 'none';
+    if (levelsRow) levelsRow.style.display = densityMode === 'contours' ? '' : 'none';
+    if (opacityRow) opacityRow.style.display = densityMode === 'off' ? 'none' : '';
+    if (hint) hint.textContent = MODE_HINT[densityMode] || '';
     if (typeof positionSidePanels === 'function') positionSidePanels();
+  }
+
+  function setDensityMode(mode) {
+    if (MODE_CYCLE.indexOf(mode) < 0) mode = DEFAULT_DENSITY_MODE;
+    densityMode = mode;
+    densityForceFull = true; // redraw immediately at full quality for the new mode
+    syncModeUi();
     refreshDensity();
   }
 
+  // Back-compat for any callers that still use the boolean helper.
+  function setDensityVisible(on) {
+    setDensityMode(on ? (densityMode === 'off' ? DEFAULT_DENSITY_MODE : densityMode) : 'off');
+  }
+  window.setDensityMode = setDensityMode;
+  window.setDensityVisible = setDensityVisible;
+
   if (toggleBtn) {
     toggleBtn.addEventListener('click', function() {
-      setDensityVisible(!densityVisible);
+      var i = MODE_CYCLE.indexOf(densityMode);
+      setDensityMode(MODE_CYCLE[(i + 1) % MODE_CYCLE.length]);
+    });
+  }
+  if (modeSelect) {
+    modeSelect.addEventListener('change', function() {
+      setDensityMode(modeSelect.value);
     });
   }
 
@@ -2414,30 +2629,30 @@ window.addEventListener('keydown', function(e){ if ((e.key === 't' || e.key === 
   wireSlider(gridSlider, gridVal, function(v){ densityGridSize = v; });
   wireSlider(blurSlider, blurVal, function(v){ densityBlur = v; });
   wireSlider(opacitySlider, opacityVal, function(v){ densityOpacity = v; });
+  wireSlider(levelsSlider, levelsVal, function(v){ densityContourLevels = v; });
 
   if (resetBtn) {
     resetBtn.addEventListener('click', function() {
       densityGridSize = DEFAULT_DENSITY_GRID_SIZE;
       densityBlur = DEFAULT_DENSITY_BLUR;
       densityOpacity = DEFAULT_DENSITY_OPACITY;
+      densityContourLevels = DEFAULT_DENSITY_CONTOUR_LEVELS;
       if (gridSlider) gridSlider.value = DEFAULT_DENSITY_GRID_SIZE;
       if (blurSlider) blurSlider.value = DEFAULT_DENSITY_BLUR;
       if (opacitySlider) opacitySlider.value = DEFAULT_DENSITY_OPACITY;
+      if (levelsSlider) levelsSlider.value = DEFAULT_DENSITY_CONTOUR_LEVELS;
       if (gridVal) gridVal.textContent = String(DEFAULT_DENSITY_GRID_SIZE);
       if (blurVal) blurVal.textContent = String(DEFAULT_DENSITY_BLUR);
       if (opacityVal) opacityVal.textContent = String(DEFAULT_DENSITY_OPACITY);
-      refreshDensity();
+      if (levelsVal) levelsVal.textContent = String(DEFAULT_DENSITY_CONTOUR_LEVELS);
+      setDensityMode(DEFAULT_DENSITY_MODE);
     });
   }
 
-  // Density is on by default (see `densityVisible` init + static markup
-  // above), but unlike the manual toggle-on path, the panel should stay
-  // collapsed on load rather than auto-expanding. Just sync rendering /
-  // layout for the already-correct initial DOM state.
-  if (densityVisible) {
-    if (typeof positionSidePanels === 'function') positionSidePanels();
-    refreshDensity();
-  }
+  // Default mode is heatmap; panel stays in the left stack (collapsed on load).
+  syncModeUi();
+  if (typeof positionSidePanels === 'function') positionSidePanels();
+  refreshDensity();
 })();
 
 // —— Selection mode: drag a rectangle to select points, or click a point to
@@ -2887,7 +3102,12 @@ buttons.on('change', function() {
     var t = rawT*rawT*(3-2*rawT);
     reheatPhysics(); // anchor is moving continuously during the transition; keep the sim responsive to it
     renderInterpolatedPoints(fromX,fromY,target[0],target[1],t);
-    if(rawT<1) requestAnimationFrame(frame); else { activeCoordIndices = target; updatePointLabels(); }
+    if(rawT<1) requestAnimationFrame(frame); else {
+      activeCoordIndices = target;
+      densityForceFull = true;
+      if (typeof drawDensityLayer === 'function') drawDensityLayer(true);
+      updatePointLabels();
+    }
   }
   requestAnimationFrame(frame);
 });
@@ -2920,8 +3140,8 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     if(selectedIndices.has(i)||i===focusedPointIndex){ctx.globalAlpha=1;ctx.lineWidth=2.5;ctx.strokeStyle='#1ABC9C';ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();}
     ctx.restore();
   }
-  // Density follows the interpolated positions (currentXVal/currentYVal) so
-  // the heatmap reshapes continuously as points move between coordinate modes.
+  // Density follows interpolated positions. Throttled while animating; a
+  // full pass runs when the transition finishes (rawT >= 1 in the rAF loop).
   drawDensityLayer();
 }
 
