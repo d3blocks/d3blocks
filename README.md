@@ -91,18 +91,15 @@ git config --global clone.depth 1
 pip install git+https://github.com/d3blocks/d3blocks.git
 ```
 
-##### Install skill for visualizations:
+##### Install skill:
 ```bash
+# for visualizations
 npx skills add d3blocks/d3blocks --skill d3blocks
-```
 
-##### Install skill for chart builder:
-```bash
+# for chart builder
 npx skills add d3blocks/d3blocks --skill d3blocks-chart-builder
-```
 
-##### Install skill for docs diagrams (convert a repo's Mermaid diagrams):
-```bash
+# for docs diagrams (convert a repo's Mermaid diagrams)
 npx skills add d3blocks/d3blocks --skill d3blocks-docs-diagrams
 ```
 
