@@ -10,7 +10,7 @@ Interactive **matrix / heatmap-style** view of a DataFrame. Index and column nam
 - **Columns** → column labels  
 - **Values** → cell intensities  
 
-Edge-list samples (`energy`) may be converted internally via adjacency helpers.
+Convert edge-list samples such as `energy` to an adjacency matrix with `d3.vec2adjmat` before calling `matrix`.
 
 ## Main parameters
 
@@ -41,6 +41,7 @@ from d3blocks import D3Blocks
 
 d3 = D3Blocks()
 df = d3.import_example('energy')
+df = d3.vec2adjmat(df['source'], df['target'], weight=df['weight'])
 d3.matrix(df, filepath='matrix.html')
 ```
 

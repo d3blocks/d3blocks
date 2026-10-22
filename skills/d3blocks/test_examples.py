@@ -1,7 +1,7 @@
 """Run the skill's standalone examples against the installed d3blocks.
 
-No browser is opened and no file is written outside pytest's tmp_path: d3blocks writes
-relative filepaths to tempfile.gettempdir()/d3blocks/, which is redirected here.
+No browser is opened and no file is written outside pytest's tmp_path: chart code may use
+different subdirectories under tempfile.gettempdir(), which is redirected here.
 """
 
 import runpy
@@ -32,7 +32,7 @@ def test_example_runs(path, tmp_path, monkeypatch):
         if not hasattr(D3Blocks(), method):
             pytest.skip(f"D3Blocks has no .{method}()")
     monkeypatch.setattr(webbrowser, "open", lambda *args, **kwargs: True)
-    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(tmp_path))
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
     monkeypatch.chdir(tmp_path)
     runpy.run_path(str(path), run_name="__main__")
-    assert list((tmp_path / "d3blocks").glob("*.html")), "the example wrote no HTML"
+    assert list(tmp_path.rglob("*.html")), "the example wrote no HTML"
