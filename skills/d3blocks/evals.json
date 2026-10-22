@@ -3,32 +3,140 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Help me create a scatter plot from my DataFrame with columns tsneX, tsneY, and labx. Color points by labx.",
-      "expected_output": "Uses d3.scatter with x= and y= arrays (not d3.scatter(df)); color from labx; runnable code",
+      "prompt": "I want a chart of my data but I'm not sure what kind.",
+      "expected_output": "Asks for data location (path/csv/df) and relevant columns before coding; may suggest 2-3 chart options and wait for user choice",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "I have source, target, and weight columns for energy flows between categories. What chart and code should I use?",
-      "expected_output": "Recommend chord; example with import_example('energy') or user's df; d3.chord(df)",
+      "prompt": "Help me create a scatter plot from my DataFrame with columns such as x,y coordinates from tsne or umap or PCA, and labx. Color points by labx.",
+      "expected_output": "Data and chart already specified \u2014 uses d3.scatter with x= and y= arrays (not d3.scatter(df)); color from labx; runnable code",
       "files": []
     },
     {
       "id": 3,
+      "prompt": "I have a CSV with columns A, B, and C that might be flows between things.",
+      "expected_output": "Asks which columns are source/target/weight (or confirms mapping); suggests chord and/or sankey; waits for user to choose before full implementation",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I have source, target, and weight columns for energy flows between categories. What chart and code should I use?",
+      "expected_output": "Suggests chord (and optionally sankey); user can confirm; example with import_example('energy') or user's df; d3.chord(df)",
+      "files": []
+    },
+    {
+      "id": 5,
       "prompt": "Draw a process flowchart: Start -> Valid? (decision) -> Done or Fix then back to Valid?. Prefer a layered diagram.",
       "expected_output": "Recommend flowgraph; edge list with shapes or Mermaid; direction TB; runnable code",
       "files": []
     },
     {
-      "id": 4,
+      "id": 6,
       "prompt": "Embed a D3Blocks chord chart in Streamlit with side panel toggles.",
       "expected_output": "showfig=False, return_html=True, color_background='streamlit', st.iframe; sidebar checkboxes for show_side_panel/show_top_panel",
       "files": []
     },
     {
-      "id": 5,
-      "prompt": "Create a heatmap visualization for my data that compares values across two categorical dimensions.",
-      "expected_output": "Recommend heatmap with parameter guidance and code sample",
+      "id": 7,
+      "prompt": "I have an energy flow network with source, target, weight. I want to explore connections around the Solar node.",
+      "expected_output": "Suggest radialgraph with center='Solar' (and optionally d3graph); after user confirms, runnable d3.radialgraph code",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I have energy flows with source, target, weight and want a left-to-right stage diagram, not a circle.",
+      "expected_output": "Suggest sankey (vs chord); after confirm, d3.sankey with node/link options; runnable code",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "I have logs with datetime, user_id, and activity labels and want to see how people move between activities over a day.",
+      "expected_output": "Suggest movingbubbles; map columns to datetime/sample_id/state; after confirm, d3.movingbubbles runnable code",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Compare age distributions across cancer types in my data (labx and age columns).",
+      "expected_output": "Suggest violin with x=labx y=age; never d3.violin(df); runnable code after confirm",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Show hierarchical energy categories as nested rectangles sized by weight.",
+      "expected_output": "Suggest treemap (vs tree); source/target/weight; value size/count; runnable code",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Draw a hierarchical tree of energy flows (source/target), not a treemap.",
+      "expected_output": "Suggest tree; hierarchy/link_length; runnable d3.tree code",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Cluster and color an adjacency matrix of character interactions.",
+      "expected_output": "Suggest heatmap; stormofswords or matrix df; cluster_params optional; runnable code",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "Plot lon/lat surf spots on a world map.",
+      "expected_output": "Suggest maps with import_example('surfspots') or lon/lat columns; runnable d3.maps",
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Plot climate variables over dates from a table with a date column.",
+      "expected_output": "Suggest timeseries with datetime= and dt_format; not movingbubbles; runnable code",
+      "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "Show a force network with Louvain clusters as hulls on energy flows.",
+      "expected_output": "Suggest elasticgraph; source/target/weight; runnable code",
+      "files": []
+    },
+    {
+      "id": 17,
+      "prompt": "Draw a free force-directed graph of energy source/target/weight edges.",
+      "expected_output": "Suggest d3graph (not radialgraph unless focus needed); runnable code",
+      "files": []
+    },
+    {
+      "id": 18,
+      "prompt": "Show hierarchy as nested circles sized by edge weight.",
+      "expected_output": "Suggest circlepacking (vs treemap); size sum/constant; runnable code",
+      "files": []
+    },
+    {
+      "id": 19,
+      "prompt": "Make the word D3Blocks out of interactive particles.",
+      "expected_output": "Suggest particles with text string; runnable d3.particles",
+      "files": []
+    },
+    {
+      "id": 20,
+      "prompt": "Compare two telescope images with a before/after slider.",
+      "expected_output": "Suggest imageslider; import_example southern_nebula; runnable code",
+      "files": []
+    },
+    {
+      "id": 21,
+      "prompt": "Draw a sequence diagram of Alice and Bob messages.",
+      "expected_output": "Suggest sequence; message columns or Mermaid; confirm API with pydoc",
+      "files": []
+    },
+    {
+      "id": 22,
+      "prompt": "Show Customer-Order-LineItem as an ER diagram.",
+      "expected_output": "Suggest erd; cardinalities or Mermaid erDiagram",
+      "files": []
+    },
+    {
+      "id": 23,
+      "prompt": "Colour a numeric table as a simple matrix (not full heatmap clustering).",
+      "expected_output": "Suggest matrix vs heatmap; runnable d3.matrix",
       "files": []
     }
   ]

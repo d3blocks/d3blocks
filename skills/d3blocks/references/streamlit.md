@@ -34,16 +34,15 @@ else:
 
 ## Full runnable apps (this skill)
 
-| Chart | File | What it demonstrates |
-|-------|------|----------------------|
-| Scatter | `examples/streamlit_scatter.py` | Size/color/tooltip controls, tSNE↔PCA, panel toggles, cached builder |
-| Chord | `examples/streamlit_chord.py` | Ordering, link colour mode, margin, dark mode, panels |
-| Flowgraph | `examples/streamlit_flowgraph.py` | Edge list vs Mermaid, direction, dagre/ELK, groups, panels |
+Discover apps under `examples/streamlit_*.py` (one file per chart that has a demo). Examples:
 
 ```bash
-streamlit run examples/streamlit_scatter.py
-streamlit run examples/streamlit_chord.py
-streamlit run examples/streamlit_flowgraph.py
+streamlit run examples/streamlit_violin.py
+streamlit run examples/streamlit_treemap.py
+streamlit run examples/streamlit_tree.py
+streamlit run examples/streamlit_heatmap.py
 ```
 
-Repo demos (if present): `streamlit/scatter_streamlit_demo.py`, `streamlit/chord_streamlit_demo.py`. Project docs: `source/Streamlit.rst`.
+Each app follows the same pattern: sidebar controls → `@st.cache_data` builder → `st.iframe`.
+
+Repo demos (if present): `streamlit/<chart>_streamlit_demo.py`. Project docs: `source/Streamlit.rst`.
