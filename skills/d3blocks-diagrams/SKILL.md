@@ -1,5 +1,5 @@
 ---
-name: d3blocks-docs-diagrams
+name: d3blocks-diagrams
 description: Convert the Mermaid diagrams in a repository's Markdown docs (and .mmd / .mermaid files) into standalone, interactive D3Blocks HTML pages, and report every diagram that fails with its file and line. Use when the user wants to render, convert, migrate or replace all the Mermaid diagrams in their docs (flowcharts, state, sequence or ER diagrams) with interactive pages. Not for making a single chart from data; use the d3blocks skill for that.
 metadata:
   Github: D3Blocks

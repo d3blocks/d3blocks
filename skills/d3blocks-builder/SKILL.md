@@ -1,5 +1,5 @@
 ---
-name: d3blocks-chart-builder
+name: d3blocks-builder
 description: Turn a JavaScript (.js) d3 chart into a fully integrated d3blocks block - chart folder with __init__.py, Blockname.py and d3js/ assets, a new method in d3blocks.py, themed top/side panels per the d3blocks UI conventions, a pytest file modelled on test_flowgraph.py, a Streamlit demo, and Sphinx docs modelled on Flowgraph.rst/Scatter.rst. Use this whenever the user provides a .js file (or d3 snippet) and asks to create, add, port, wrap or integrate a "block", "chart" or "d3blocks chart", or says things like "make this a d3blocks block", "add a new chart to d3blocks", or "align this chart with the scatter/flowgraph conventions" - even if they only mention one of the deliverables (tests, demo, docs, theme).
 metadata:
   Github: D3Blocks

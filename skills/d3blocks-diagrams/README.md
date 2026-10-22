@@ -8,13 +8,13 @@ Everything the agent reads is in [`SKILL.md`](SKILL.md); the work is done by
 ## Install
 
 ```bash
-npx skills add erdogant/d3blocks --skill d3blocks-docs-diagrams
+npx skills add erdogant/d3blocks --skill d3blocks-diagrams
 pip install git+https://github.com/d3blocks/d3blocks  # d3blocks 2.3.0 or later; until it is on PyPI
 ```
 
 ## Maintain
 
-- `pytest skills/d3blocks-docs-diagrams` runs the script on a small docs tree (every supported
+- `pytest skills/d3blocks-diagrams` runs the script on a small docs tree (every supported
   diagram type, a skipped kind and a failing diagram); CI runs it too.
 - The script finds blocks with the same pattern as `d3blocks.flowgraph.Flowgraph.read_mermaid`;
   a test keeps the two in step.

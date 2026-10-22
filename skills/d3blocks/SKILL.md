@@ -45,7 +45,7 @@ D3Blocks is a Python library for interactive D3.js charts from Python. Output is
 | Distributions across groups | `violin` |
 
 To convert *all* the Mermaid diagrams in a repository's docs at once, use the
-`d3blocks-docs-diagrams` skill instead.
+`d3blocks-diagrams` skill instead.
 
 ## Guidance steps
 

@@ -79,7 +79,7 @@ Use `filepath=<path>, showfig=False, return_html=False` (or write the returned H
 npm i jsdom
 export NODE_PATH="$(pwd)/node_modules"
 
-node path/to/skills/d3blocks-chart-builder/scripts/smoke_jsdom.js smoke_out/ --prefix xx
+node path/to/skills/d3blocks-builder/scripts/smoke_jsdom.js smoke_out/ --prefix xx
 ```
 
 `--prefix` is the chart’s id prefix (e.g. `hf` for heatflow). Required.
