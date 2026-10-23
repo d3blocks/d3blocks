@@ -297,10 +297,15 @@ var PROP_KEYS = {{ PROP_KEYS }};   // ordered list of all selectable variables
 var STATE_COL = {{ STATE_COL }};   // name of the state column (live-updated)
 var SAMPLE_ID_COL = {{ SAMPLE_ID_COL }};
 var color_method = "{{ COLOR_METHOD }}"; //Nodes can be colored based on "STATE" or "NODE"
+var color_provided = {{ COLOR_PROVIDED }};
+var COLOR_MODE_STATE = "__mode_state__";
+var COLOR_MODE_CUSTOM = "__mode_custom__";
+var customColorLabel = color_provided ? "custom" : "node";
 // Layout-panel overrides (null = use defaults / color_method)
 var layoutSizeKey = null;
 var layoutColorKey = null;
 var layoutColorScale = null; // function(value) -> color, when layoutColorKey is set
+var colorModeInitialized = false;
 var currentShapeMode = "circle"; // circle|square|triangle|diamond
 var categoricalShapeMap = null;
 var categoricalShapeKey = null;
@@ -839,9 +844,13 @@ function tick(e) {
 	//}
 
 	// Base color from state/node, unless Layout→Color overrides it.
-	// Special case: coloring by the state column uses the *live* activity.
-	if (layoutColorKey && layoutColorKey === STATE_COL) {
+	// Special cases:
+	// - COLOR_MODE_STATE: live activity colors
+	// - COLOR_MODE_CUSTOM: original node colors (custom/node)
+	if (layoutColorKey === COLOR_MODE_STATE || layoutColorKey === STATE_COL) {
 		o.color = color(curr_act);
+	} else if (layoutColorKey === COLOR_MODE_CUSTOM) {
+		o.color = node_color[i];
 	} else if (layoutColorKey && layoutColorScale && o.props) {
 		var pv = o.props[layoutColorKey];
 		o.color = (pv != null && pv !== '') ? layoutColorScale(pv) : (color_method === "STATE" ? color(curr_act) : node_color[i]);
@@ -1315,8 +1324,14 @@ function applyColorMode(key) {
 	layoutColorKey = key || null;
 	layoutColorScale = null;
 	if (!key) return;
-	// State column: live activity colors (handled in tick via color()).
-	if (key === STATE_COL) return;
+	// Built-in base color modes.
+	if (key === COLOR_MODE_STATE || key === COLOR_MODE_CUSTOM) return;
+	// Backward-compatibility: if state column value is selected, treat it as
+	// live state coloring mode.
+	if (key === STATE_COL) {
+		layoutColorKey = COLOR_MODE_STATE;
+		return;
+	}
 	if (isNumericProp(key)) {
 		var vals = numericValues(key);
 		var min = d3.min(vals), max = d3.max(vals);
@@ -1394,6 +1409,10 @@ function initLayoutPropertyControls() {
 
 	var prevSize = sizeSelect ? sizeSelect.value : '';
 	var prevColor = colorSelect ? colorSelect.value : '';
+	if (!colorModeInitialized) {
+		prevColor = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
+		colorModeInitialized = true;
+	}
 	var prevShape = shapeSelect ? shapeSelect.value : 'circle';
 	var prevLabel = labelSelect ? labelSelect.value : '';
 
@@ -1413,12 +1432,17 @@ function initLayoutPropertyControls() {
 		o.textContent = label;
 		select.appendChild(o);
 	}
+	// Built-in base color modes are always available in the Color dropdown.
+	addOpt(colorSelect, COLOR_MODE_STATE, "state");
+	addOpt(colorSelect, COLOR_MODE_CUSTOM, customColorLabel);
+
 	keys.forEach(function (k) {
 		if (!isVarEnabled(k)) return;
 		// State is always categorical for layout purposes.
 		var numeric = (k !== STATE_COL) && isNumericProp(k);
 		if (numeric) addOpt(sizeSelect, k, k);
-		addOpt(colorSelect, k, k);
+		// STATE_COL has a dedicated built-in mode label "state".
+		if (k !== STATE_COL) addOpt(colorSelect, k, k);
 		if (!numeric) addOpt(shapeSelect, "prop:" + k, k);
 		addOpt(labelSelect, k, k);
 	});
@@ -1435,7 +1459,8 @@ function initLayoutPropertyControls() {
 		applySizeMode(sizeSelect.value);
 	}
 	if (colorSelect) {
-		colorSelect.value = hasOption(colorSelect, prevColor) ? prevColor : '';
+		var colorFallback = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
+		colorSelect.value = hasOption(colorSelect, prevColor) ? prevColor : colorFallback;
 		applyColorMode(colorSelect.value);
 	}
 	if (shapeSelect) {
@@ -1549,11 +1574,11 @@ if (clearTrailsBtn) clearTrailsBtn.addEventListener("click", function () {
 var layoutResetBtn = document.getElementById("layoutResetBtn");
 if (layoutResetBtn) layoutResetBtn.addEventListener("click", function () {
 	if (layoutSizeSelect) layoutSizeSelect.value = "";
-	if (layoutColorSelect) layoutColorSelect.value = "";
+	if (layoutColorSelect) layoutColorSelect.value = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
 	if (layoutShapeSelect) layoutShapeSelect.value = "circle";
 	if (layoutLabelSelect) layoutLabelSelect.value = "";
 	applySizeMode("");
-	applyColorMode("");
+	applyColorMode(layoutColorSelect ? layoutColorSelect.value : "");
 	applyShapeMode("circle");
 	applyLabelMode("");
 });

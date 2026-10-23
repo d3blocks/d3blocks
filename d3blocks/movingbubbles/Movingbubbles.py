@@ -24,6 +24,25 @@ except:
     from utils import convert_dataframe_dict, set_path, pre_processing, update_config, write_html_file, include_save_to_svg_script, set_logo, resolve_color_background
 
 
+def _resolve_color_method(color_method, color_provided=False, logger=None):
+    """Resolve color_method to one of {'STATE','NODE'}.
+
+    AUTO resolves to NODE when user-supplied colors are provided, otherwise
+    to STATE so state/activity colors remain the default behavior.
+    """
+    cm = str('AUTO' if color_method is None else color_method).upper()
+    if cm == 'AUTO':
+        resolved = 'NODE' if color_provided else 'STATE'
+        if logger is not None:
+            logger.info('[Movingbubbles] color_method="auto" resolved to [%s].' % (resolved.lower()))
+        return resolved
+    if cm not in {'STATE', 'NODE'}:
+        if logger is not None:
+            logger.warning('[Movingbubbles] Unknown color_method [%s]. Falling back to [state].' % (cm))
+        return 'STATE'
+    return cm
+
+
 # %% Set configuration properties
 def set_config(config={}, **kwargs):
     """Set the default configuration settings."""
@@ -50,7 +69,12 @@ def set_config(config={}, **kwargs):
     config['dt_format'] = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     config['columns'] = kwargs.get('columns', {'datetime': config['datetime'], 'sample_id': config['sample_id'], 'state': config['state']})
     config['notebook'] = kwargs.get('notebook', False)
-    config['color_method'] = kwargs.get('color_method', "STATE")
+    config['color_provided'] = kwargs.get('color_provided', kwargs.get('color', None) is not None)
+    config['color_method'] = _resolve_color_method(
+        kwargs.get('color_method', 'AUTO'),
+        color_provided=config['color_provided'],
+        logger=logger,
+    )
     config['save_button'] = kwargs.get('save_button', True)
     config['show_side_panel'] = kwargs.get('show_side_panel', True)
     config['show_top_panel'] = kwargs.get('show_top_panel', True)
@@ -173,7 +197,8 @@ def set_edge_properties(df, **kwargs):
     color = kwargs.get('color', None)
     opacity = kwargs.get('opacity', 0.6)
     stroke = kwargs.get('stroke', '#000000')
-    cmap = kwargs.get('cmap', 'Set1')
+    config = kwargs.get('config', {})
+    cmap = kwargs.get('cmap', config.get('cmap', 'Set1'))
     dt_format = kwargs.get('dt_format', '%d-%m-%Y %H:%M:%S')
     logger = kwargs.get('logger', None)
     df = df.copy()
@@ -205,28 +230,46 @@ def _array_like_len_check(name, values, n):
         raise Exception('[Movingbubbles] Input parameter [%s] as an array/list/Series must have the same length as the input dataframe: expected %d, got %d.' % (name, n, len(values)))
 
 
+def _is_hex_color(value):
+    return isinstance(value, str) and bool(re.fullmatch(r'#[0-9a-fA-F]{6}', value))
+
+
+def _labels_to_hex(labels, cmap):
+    labels = pd.Series(labels, copy=False).astype(str).values
+    colors = colourmap.fromlist(labels, cmap=cmap, scheme='hex', method='matplotlib', verbose=0)[0]
+    return [str(c) for c in colors]
+
+
 def _set_nodecolor(df, sample_id, color, cmap, logger):
     if isinstance(color, dict):
-        # Per-node colors supplied as {sample_id: hex}
+        # Per-node colors supplied as {sample_id: color}. Values can be hex
+        # colors or categorical labels that are mapped via cmap.
         if logger is not None: logger.info('Processing the specified node colors as a dictionary..')
         df['color'] = '#808080'
-        for key in color.keys():
-            df.loc[df[sample_id]==key, 'color'] = str(color.get(key))
+        keys = list(color.keys())
+        vals = list(color.values())
+        if len(vals) > 0 and not np.all([_is_hex_color(v) for v in vals]):
+            vals = _labels_to_hex(vals, cmap)
+        for key, val in zip(keys, vals):
+            df.loc[df[sample_id] == key, 'color'] = str(val)
     elif isinstance(color, (list, tuple, np.ndarray, pd.Series)):
         # Array-like, aligned positionally with the dataframe rows.
         color_arr = np.asarray(color)
         _array_like_len_check('color', color_arr, len(df))
-        if logger is not None: logger.info('Processing the specified node colors as an array aligned with the dataframe..')
-        df['color'] = [str(c) for c in color_arr]
+        if np.all([_is_hex_color(v) for v in color_arr]):
+            if logger is not None: logger.info('Processing the specified node colors as hex colors aligned with the dataframe..')
+            df['color'] = [str(c) for c in color_arr]
+        else:
+            if logger is not None: logger.info('Processing the specified node colors as labels aligned with the dataframe and mapping via cmap..')
+            df['color'] = _labels_to_hex(color_arr, cmap)
     elif color is None:
         # Derive colors from cmap based on sample_id
-        colors = colourmap.fromlist(df[sample_id], cmap=cmap, scheme='hex')[0]
-        df['color'] = [str(c) for c in colors]
+        df['color'] = _labels_to_hex(df[sample_id], cmap)
     else:
         # Single hex color string applied to all nodes
         df['color'] = str(color)
         if logger is not None: logger.info('Set all nodes to color: %s' %(color))
-
+    
     return df
 
 
@@ -533,7 +576,11 @@ def write_html(X, config, logger=None):
     zero_to_min = "0" if config['start_minute']<10 else ""
 
     # Set the selectionbox correctly on the form
-    config['color_method'] = config['color_method'].upper()
+    config['color_method'] = _resolve_color_method(
+        config.get('color_method', 'AUTO'),
+        color_provided=config.get('color_provided', False),
+        logger=logger,
+    )
     SELECTED_STATE = {'STATE': '', 'NODE': ''}
     SELECTED_STATE[config['color_method']] = 'selected="selected"'
     bg_dark, bg_light = resolve_color_background(config.get('color_background'))
@@ -563,6 +610,7 @@ def write_html(X, config, logger=None):
         'NOTE': config['note'],
         'TIME_NOTES': config['time_notes'],
         'COLOR_METHOD': config['color_method'],
+        'COLOR_PROVIDED': 'true' if config.get('color_provided', False) else 'false',
         'START_HOUR_MIN': config['start_hour'] + (config['start_minute'] / 60),
         'START_TIME': zero_to_hour + str(config['start_hour']) + ":" + zero_to_min + str(config['start_minute']),
         'TIMEDELTA': config['timedelta'],

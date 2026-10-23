@@ -1386,7 +1386,7 @@ class D3Blocks():
                       opacity: float = 0.6,
                       stroke: str = '#000000',
                       cmap: str = 'Set1',
-                      color_method: str = 'state',
+                      color_method: str = 'auto',
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
                       damper: float = 1,
                       fontsize: int = 14,
@@ -1440,12 +1440,14 @@ class D3Blocks():
                 * [4, 10, 5, ...]: array-like of the same length as ``df``, aligned positionally with its rows (same convention as ``d3.scatter``'s ``size``).
                 * {'0': 4, '1': 10, '2': 5, ..}: dict keyed by sample_id value.
 
-        color : int, list/array/Series, or dictionary. (default: '#808080') or {sample_id i: hex-color}
+        color : str, list/array/Series, or dictionary. (default: None)
             Color the nodes.
                 * '#000FFF': set all nodes to this color.
-                * ['#808080', '#FFF000', ...]: array-like of the same length as ``df``, aligned positionally with its rows.
-                * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: dict keyed by sample_id value.
-                * None: Colors are based on sample_id using the cmap.
+                * ['#808080', '#FFF000', ...]: array-like hex colors of the same length as ``df``, aligned positionally with its rows.
+                * ['Netherlands', 'Germany', ...]: array-like category labels of the same length as ``df``; labels are mapped to colors using ``cmap``.
+                * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: dict keyed by sample_id value with hex colors.
+                * {'0': 'NL', '1': 'DE', ..}: dict keyed by sample_id value with category labels; labels are mapped to colors using ``cmap``.
+                * None: Colors are based on sample_id using ``cmap``.
         opacity : float, list/array/Series, or dictionary, (default: 0.6)
             Opacity of the bubbles [0-1].
                 * 0.6: set all nodes to this opacity.
@@ -1458,9 +1460,10 @@ class D3Blocks():
                 * {'0': '#000000', '1': '#ffffff', ..}: dict keyed by sample_id value.
 
         color_method : str
-            Coloring of the nodes.
-                * 'state': Use the colors defined per state as (d3.node_properties).
-                * 'node': Use the colors defined in the dataframe (d3.edge_properties).
+            Coloring mode of the nodes.
+                * 'auto' (default): if ``color`` is provided, use node colors ('node'); otherwise use state colors ('state').
+                * 'state': Use the colors defined per state (``d3.node_properties``), so bubble colors change with activity/state.
+                * 'node': Use the colors defined on nodes (from ``color`` / ``d3.edge_properties``), so each sample keeps its assigned color.
         dt_format : str
             Date time format.
                 * '%d-%m-%Y %H:%M:%S'.
@@ -1634,7 +1637,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, color=color, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
