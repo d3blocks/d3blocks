@@ -331,6 +331,10 @@ def show(df, **kwargs):
     sid_col = config['columns']['sample_id']
     sid = np.array(list(map(lambda x: labels.get(x)['id'], df[config['columns']['state']].values)))
     uiid = np.unique(df[sid_col])
+    # size/opacity schedules: one list per sample, aligned with that sample's
+    # activity steps so the frontend can update radius/opacity on state change.
+    node_size_sched = []
+    node_opacity_sched = []
     for i in uiid:
         # Combine the sample_id with its time in state
         Iloc=df[sid_col]==i
@@ -346,18 +350,24 @@ def show(df, **kwargs):
         # Make one big happy list
         X.append(tmplist)
 
-    # Node size in the same order as the uiid
-    nodedict = dict(zip(df[sid_col], df['size']))
-    config['node_size'] = [int(nodedict.get(x)) if isinstance(nodedict.get(x), (np.integer, int)) else nodedict.get(x) for x in uiid]
+        size_vals = df['size'].loc[Iloc].values
+        node_size_sched.append([
+            int(v) if isinstance(v, (np.integer, int)) else float(v)
+            for v in size_vals
+        ])
+        opacity_vals = df['opacity'].loc[Iloc].values
+        node_opacity_sched.append([float(v) for v in opacity_vals])
+
+    # Per-sample size/opacity schedules (list of lists, same order as uiid /
+    # schedule steps). Frontend uses index 0 at start and updates on each
+    # activity transition so size/opacity track the current state.
+    config['node_size'] = node_size_sched
+    config['node_opacity'] = node_opacity_sched
 
     # Node color in the same order as the uiid
     nodedict = dict(zip(df[sid_col], df['color']))
     # Convert NumPy strings to regular Python strings for proper JSON serialization
     config['node_color'] = [str(nodedict.get(x)) if nodedict.get(x) is not None else nodedict.get(x) for x in uiid]
-
-    # Node opacity in the same order as the uiid
-    nodedict = dict(zip(df[sid_col], df['opacity']))
-    config['node_opacity'] = [float(nodedict.get(x)) for x in uiid]
 
     # Node stroke color in the same order as the uiid
     nodedict = dict(zip(df[sid_col], df['stroke']))

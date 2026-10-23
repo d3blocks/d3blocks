@@ -260,9 +260,23 @@ var notes_index = 0;
 var colorByActivity = {{ COLORBYACTIVITY }} // array of the colors per state
 
 // NODE PROPERTIES
-var node_size = {{ NODE_SIZE }}; //array of radius values, one for each node
+var node_size = {{ NODE_SIZE }}; // per-node size schedule: list of lists (one value per activity step), or legacy flat array
 var node_color = {{ NODE_COLOR }}; //array of color values, one for each node
-var node_opacity = {{ NODE_OPACITY }}; //array of opacity values, one for each node
+var node_opacity = {{ NODE_OPACITY }}; // per-node opacity schedule: list of lists (one value per activity step), or legacy flat array
+
+// Resolve size/opacity for node i at schedule step idx.
+// Supports both schedule arrays (list-of-lists from Python) and legacy
+// flat arrays / scalars (one value per node).
+function sizeAt(i, idx) {
+	var s = node_size[i];
+	if (Array.isArray(s)) return +s[Math.min(idx, s.length - 1)];
+	return +s;
+}
+function opacityAt(i, idx) {
+	var o = node_opacity[i];
+	if (Array.isArray(o)) return +o[Math.min(idx, o.length - 1)];
+	return +o;
+}
 var node_stroke = {{ NODE_STROKE }}; //array of stroke colors, one for each node
 var nodeTextInside = {{ nodeTextInside }}; //true: labels centered inside the node; false: labels above it
 
@@ -420,13 +434,14 @@ var nodes = sched_objs.map(function(o, i) {
 		act: act,
 		x: init_x,
 		y: init_y,
-		radius: node_size[i], //use the i-th value from the node_size array to set the radius of the i-th node
+		radius: sizeAt(i, 0),
         color: (color_method === "STATE" ? color(act) : node_color[i]),
-		opacity: node_opacity[i],
+		opacity: opacityAt(i, 0),
 		stroke: node_stroke[i],
 		moves: 0,
 		next_move_time: o[0].duration,
 		sched: o,
+		nodeIndex: i,
 		props: (node_props && node_props[i]) ? node_props[i] : {},
 		shape: "circle",
 	}
@@ -730,11 +745,18 @@ function timer() {
 			curr_node.cx = foci[curr_node.act].x;
 			curr_node.cy = foci[curr_node.act].y;
 		
+			// Update size/opacity for the new state (schedule-aligned).
+			// baseNodeRadii drives recomputeRadii() so size multiplier /
+			// layout size-by-variable still apply on top.
+			baseNodeRadii[i] = sizeAt(i, curr_moves);
+			curr_node.opacity = opacityAt(i, curr_moves);
+		
 			nodes[i].next_move_time += nodes[i].sched[ curr_node.moves ].duration;
 		}
 
 	});
 
+	if (typeof recomputeRadii === 'function') recomputeRadii();
 	force.resume();
 	curr_minute += 1;
 
@@ -836,6 +858,7 @@ function tick(e) {
   circle
 	  .each(collide(.5))
 	  .style("fill", function(d) { return d.color; })
+	  .style("opacity", function(d) { return d.opacity; })
 	  .attr("d", function(d) { return shapePath(shapeForNode(d), d.radius); })
 	  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
@@ -945,15 +968,18 @@ function resetSimulation(keepSpeed) {
 	for (k in act_counts) {
 		if (Object.prototype.hasOwnProperty.call(act_counts, k)) act_counts[k] = 0;
 	}
-	nodes.forEach(function (n) {
+	nodes.forEach(function (n, i) {
 		var act = n.sched[0].act;
 		n.act = act;
 		n.moves = 0;
 		n.next_move_time = n.sched[0].duration;
 		n.x = foci[act].x + Math.random();
 		n.y = foci[act].y + Math.random();
+		baseNodeRadii[i] = sizeAt(i, 0);
+		n.opacity = opacityAt(i, 0);
 		act_counts[act] += 1;
 	});
+	if (typeof recomputeRadii === 'function') recomputeRadii();
 
 	// Clear selection (trails are intentionally left alone -- only the
 	// "Clear trails" button should remove them; Reset restarts positions
@@ -1595,15 +1621,18 @@ function scrubToMinute(targetMinute) {
 		if (Object.prototype.hasOwnProperty.call(act_counts, k)) act_counts[k] = 0;
 	}
 
-	nodes.forEach(function (n) {
+	nodes.forEach(function (n, i) {
 		var s = nodeStateAtMinute(n, targetMinute);
 		n.act  = s.act;
 		n.moves = s.moves;
 		n.next_move_time = s.next_move_time;
+		baseNodeRadii[i] = sizeAt(i, s.moves);
+		n.opacity = opacityAt(i, s.moves);
 		// Do NOT snap x/y — let the force layout pull each bubble
 		// smoothly toward its new focus so nothing teleports or explodes.
 		act_counts[n.act] += 1;
 	});
+	if (typeof recomputeRadii === 'function') recomputeRadii();
 
 	curr_minute = targetMinute;
 
