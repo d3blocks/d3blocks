@@ -42,7 +42,7 @@ dependencies = [
     'datazets>=0.1.7',
     'd3graph>=3.2.0',
     'ismember>=1.0.1',
-    'pandas',
+    'pandas<3',
     'tqdm',
     'requests',
     'jinja2',
