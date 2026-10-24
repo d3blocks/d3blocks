@@ -215,7 +215,31 @@ body.light .stats-panel {
 <div class="stats-panel collapsed" id="filterPanel">
   <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Filtering<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
-    <label style="display:block;margin-bottom:4px">Filter by date</label>
+    <!-- Categorical filter (same two-step picker as scatter): pick a variable,
+         then uncheck the values to exclude. Filters on different variables AND
+         together, and also AND with the date filter below. -->
+    <div class="slider-row">
+      <label for="filterVarSelect">Filter by variable</label>
+      <select id="filterVarSelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Select a variable…</option></select>
+    </div>
+    <div id="filterChecklistWrap" style="display:none;margin-top:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:11px;opacity:0.6">Values to include:</span>
+        <span>
+          <a href="#" id="filterSelectAll" style="font-size:11px">All</a>
+          <span style="opacity:0.4">·</span>
+          <a href="#" id="filterSelectNone" style="font-size:11px">None</a>
+        </span>
+      </div>
+      <div id="filterChecklist" style="max-height:180px;overflow-y:auto"></div>
+    </div>
+    <div id="filterChipsWrap" style="margin-top:12px;display:none">
+      <div style="font-size:11px;opacity:0.6;margin-bottom:4px">Active filters:</div>
+      <div id="filterChips"></div>
+      <button class="button-switch" id="filterClearAllBtn" type="button" style="width:100%;margin-top:8px;box-sizing:border-box">Clear variable filters</button>
+    </div>
+
+    <label style="display:block;margin:14px 0 4px;padding-top:10px;border-top:1px solid var(--panel-border)">Filter by date</label>
     <div id="date-filter">
         <input type="date" id="dateFilterStart" value="{{ DATE_MIN }}" min="{{ DATE_MIN }}" max="{{ DATE_MAX }}">
         <span>&ndash;</span>
@@ -225,6 +249,7 @@ body.light .stats-panel {
         <button id="resetDateFilter" class="togglebutton" style="width:auto; float:none; display:inline-block; padding:3px 8px;">Reset</button>
         <div id="dateFilterCount" style="margin-top:6px; font-size:12px;"></div>
     </div>
+    <div id="filterSummary" style="font-size:11px;opacity:0.6;margin-top:10px">No filters active.</div>
   </div>
 </div>
 
@@ -668,38 +693,81 @@ var nodeLabel = chartRoot.selectAll("text.nodelabel")
 	.style("display", "none")
 	.text("");
 
-// Track which nodes are currently visible based on the date filter.
-// Note: this only hides/shows bubbles — the underlying simulation and the
-// activity percentages keep accounting for every sample regardless of the
-// filter, so the "%" labels reflect the full dataset, not just what's shown.
+// Visibility = date filter AND categorical (variable) filters.
+// Hidden bubbles are also skipped by collide(), so they no longer push the
+// visible ones around. The activity percentages still count every sample
+// regardless of the filters (the "%" labels reflect the full dataset).
+//
+// activeFilters[varName] = Set of EXCLUDED value-strings (categorical only).
+// A node is filtered out if ANY active filter's excluded set contains its
+// value for that variable: different variables AND together, unchecked values
+// within one variable are OR'd (checked ones still pass).
+var activeFilters = {};
+// Sentinel for "missing / NaN" so a missing value can be filtered like any
+// other category.
+var FILTER_MISSING_KEY = '__FILTER_MISSING__';
+function isPointFiltered(i) {
+	var n = nodes[i];
+	if (!n) return true;
+	var props = n.props;
+	for (var varName in activeFilters) {
+		var excluded = activeFilters[varName];
+		if (!excluded || excluded.size === 0) continue;
+		var v = (props && Object.prototype.hasOwnProperty.call(props, varName)) ? props[varName] : undefined;
+		var key = (v === undefined || v === null || v === '') ? FILTER_MISSING_KEY : String(v);
+		if (excluded.has(key)) return true;
+	}
+	return false;
+}
+
+var node_date_ok = nodes.map(function() { return true; });
 var node_active = nodes.map(function() { return true; });
+
+// Recompute node_active from both filters and apply it to the chart.
+function refreshNodeVisibility() {
+	nodes.forEach(function(d, i) {
+		node_active[i] = node_date_ok[i] && !isPointFiltered(i);
+	});
+	circle.style("display", function(d, i) { return node_active[i] ? null : "none"; });
+	nodeLabel.style("display", function(d, i) {
+		if (!node_active[i] || !currentLabelKey) return "none";
+		return null;
+	});
+	// Hidden bubbles cannot stay selected (keep their trails)
+	if (selectedNodes.length) {
+		var kept = selectedNodes.filter(function(n) { return node_active[n.nodeIndex]; });
+		if (kept.length !== selectedNodes.length) {
+			selectedNodes.forEach(function(n) {
+				if (!node_active[n.nodeIndex]) finalizeTrailFor(n);
+			});
+			selectedNodes = kept;
+			styleSelection();
+		}
+	}
+	if (typeof updateFilterSummary === 'function') updateFilterSummary();
+	if (typeof force !== 'undefined') force.resume();
+}
 
 function applyDateFilter() {
 	var startEl = document.getElementById('dateFilterStart');
 	var endEl = document.getElementById('dateFilterEnd');
-	if (!startEl || !endEl) return;
+	if (!startEl || !endEl) { refreshNodeVisibility(); return; }
 	var startVal = startEl.value;
 	var endVal = endEl.value;
 	if (!startVal || !endVal) return;
 
 	var startDate = new Date(startVal);
 	var endDate = new Date(endVal);
-	var visibleCount = 0;
+	var dateCount = 0;
 
 	nodes.forEach(function(d, i) {
 		var nodeDate = new Date(node_start_date[i]);
-		var withinRange = (nodeDate >= startDate) && (nodeDate <= endDate);
-		node_active[i] = withinRange;
-		if (withinRange) visibleCount += 1;
+		node_date_ok[i] = (nodeDate >= startDate) && (nodeDate <= endDate);
+		if (node_date_ok[i]) dateCount += 1;
 	});
 
-	circle.style("display", function(d, i) { return node_active[i] ? null : "none"; });
-	nodeLabel.style("display", function(d, i) {
-		if (!node_active[i] || !currentLabelKey) return "none";
-		return null;
-	});
-
-	d3.select("#dateFilterCount").text(visibleCount + " / " + nodes.length + " samples shown");
+	refreshNodeVisibility();
+	d3.select("#dateFilterCount").text(dateCount + " / " + nodes.length + " samples in date range");
 }
 
 d3.select("#applyDateFilter").on("click", applyDateFilter);
@@ -1501,6 +1569,8 @@ function initLayoutPropertyControls() {
 		labelSelect.value = hasOption(labelSelect, prevLabel) ? prevLabel : '';
 		applyLabelMode(labelSelect.value);
 	}
+	// A Numeric <-> Category flip changes which variables can be filtered.
+	if (typeof populateFilterVarDropdown === 'function') populateFilterVarDropdown();
 }
 
 function escapeHtmlVar(v) {
@@ -1565,6 +1635,136 @@ function populateVarList() {
 }
 populateVarList();
 initLayoutPropertyControls();
+
+// —— Filtering panel: categorical (variable) filters, same logic as scatter ——
+var filterSelectedVar = '';
+
+// Categorical variables only (same dtype classification as the Variables
+// panel / Layout). The state column is skipped: its stored value is only the
+// sample's first state, whereas the bubble's state changes over time.
+function getFilterableCategoricalColumns() {
+	var out = {};
+	propKeys().forEach(function (k) {
+		if (k === STATE_COL) return;
+		var col = propColumnValues(k);
+		if (!col.some(function (v) { return v != null && v !== ''; })) return;
+		var st = varState[k];
+		var dtype = (st && st.dtypeOverride) || detectColumnDtype(col);
+		if (dtype === 'cat') out[k] = col;
+	});
+	return out;
+}
+function populateFilterVarDropdown() {
+	var select = document.getElementById('filterVarSelect');
+	if (!select) return;
+	var prev = filterSelectedVar || select.value;
+	var keys = Object.keys(getFilterableCategoricalColumns()).sort();
+	select.innerHTML = '<option value="">Select a variable…</option>' +
+		keys.map(function (k) { return '<option value="' + escapeHtmlVar(k) + '"' + (k === prev ? ' selected' : '') + '>' + escapeHtmlVar(k) + '</option>'; }).join('');
+	filterSelectedVar = keys.indexOf(prev) >= 0 ? prev : '';
+	select.value = filterSelectedVar;
+	renderFilterChecklist();
+}
+function renderFilterChecklist() {
+	var wrap = document.getElementById('filterChecklistWrap');
+	var list = document.getElementById('filterChecklist');
+	if (!wrap || !list) return;
+	if (!filterSelectedVar) { wrap.style.display = 'none'; return; }
+	var col = propColumnValues(filterSelectedVar);
+	wrap.style.display = '';
+	var counts = {}, missingCount = 0;
+	col.forEach(function (v) {
+		if (v == null || v === '') { missingCount++; return; }
+		var key = String(v);
+		counts[key] = (counts[key] || 0) + 1;
+	});
+	var excluded = activeFilters[filterSelectedVar] || new Set();
+	var values = Object.keys(counts).sort();
+	function rowHtml(val, count, displayLabel) {
+		var checked = !excluded.has(val);
+		return '<label class="enrich-var-check" style="justify-content:space-between;padding:3px 0">' +
+			'<span style="display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis"><input type="checkbox" class="filter-value-checkbox" data-value="' + escapeHtmlVar(val) + '"' + (checked ? ' checked' : '') + '>' + escapeHtmlVar(displayLabel) + '</span>' +
+			'<span style="opacity:0.5;font-size:11px;flex-shrink:0;margin-left:6px">(' + count + ')</span>' +
+			'</label>';
+	}
+	var html = values.map(function (val) { return rowHtml(val, counts[val], val); }).join('');
+	if (missingCount > 0) html += rowHtml(FILTER_MISSING_KEY, missingCount, 'Missing / NaN');
+	list.innerHTML = html;
+	list.querySelectorAll('.filter-value-checkbox').forEach(function (cb) {
+		cb.addEventListener('change', function () {
+			var set = activeFilters[filterSelectedVar] || (activeFilters[filterSelectedVar] = new Set());
+			if (cb.checked) set.delete(cb.dataset.value); else set.add(cb.dataset.value);
+			if (set.size === 0) delete activeFilters[filterSelectedVar];
+			applyFiltersChanged();
+		});
+	});
+}
+function renderFilterChips() {
+	var chipsWrap = document.getElementById('filterChipsWrap');
+	var chips = document.getElementById('filterChips');
+	if (!chipsWrap || !chips) return;
+	var varNames = Object.keys(activeFilters).filter(function (k) { return activeFilters[k] && activeFilters[k].size > 0; });
+	if (varNames.length === 0) { chipsWrap.style.display = 'none'; return; }
+	chipsWrap.style.display = '';
+	chips.innerHTML = varNames.map(function (k) {
+		var vals = Array.from(activeFilters[k]).map(function (v) { return v === FILTER_MISSING_KEY ? 'Missing/NaN' : v; });
+		var label = escapeHtmlVar(k) + ': excl. ' + vals.map(escapeHtmlVar).join(', ');
+		return '<span class="filter-chip">' + label + ' <span class="filter-chip-x" data-var="' + escapeHtmlVar(k) + '">✕</span></span>';
+	}).join('');
+	chips.querySelectorAll('.filter-chip-x').forEach(function (x) {
+		x.addEventListener('click', function () {
+			delete activeFilters[x.dataset.var];
+			applyFiltersChanged();
+		});
+	});
+	if (typeof positionSidePanels === 'function') setTimeout(positionSidePanels, 0);
+}
+function updateFilterSummary() {
+	var el = document.getElementById('filterSummary');
+	if (!el) return;
+	var total = nodes.length, shown = 0;
+	for (var i = 0; i < total; i++) if (node_active[i]) shown++;
+	el.textContent = (shown < total) ? (shown + ' of ' + total + ' samples shown') : 'No filters active.';
+}
+// Called whenever a filter checkbox/chip changes.
+function applyFiltersChanged() {
+	renderFilterChecklist();
+	renderFilterChips();
+	refreshNodeVisibility();
+}
+(function wireFilterControls() {
+	var select = document.getElementById('filterVarSelect');
+	if (select) select.addEventListener('change', function (e) {
+		filterSelectedVar = e.target.value;
+		renderFilterChecklist();
+		if (typeof positionSidePanels === 'function') setTimeout(positionSidePanels, 0);
+	});
+	var selectAll = document.getElementById('filterSelectAll');
+	if (selectAll) selectAll.addEventListener('click', function (e) {
+		e.preventDefault();
+		if (!filterSelectedVar) return;
+		delete activeFilters[filterSelectedVar];
+		applyFiltersChanged();
+	});
+	var selectNone = document.getElementById('filterSelectNone');
+	if (selectNone) selectNone.addEventListener('click', function (e) {
+		e.preventDefault();
+		if (!filterSelectedVar) return;
+		var all = new Set(), hasMissing = false;
+		propColumnValues(filterSelectedVar).forEach(function (v) {
+			if (v != null && v !== '') all.add(String(v)); else hasMissing = true;
+		});
+		if (hasMissing) all.add(FILTER_MISSING_KEY);
+		activeFilters[filterSelectedVar] = all;
+		applyFiltersChanged();
+	});
+	var clearAllBtn = document.getElementById('filterClearAllBtn');
+	if (clearAllBtn) clearAllBtn.addEventListener('click', function () {
+		activeFilters = {};
+		applyFiltersChanged();
+	});
+})();
+populateFilterVarDropdown();
 
 var layoutSizeSelect = document.getElementById("layoutSizeSelect");
 if (layoutSizeSelect) layoutSizeSelect.addEventListener("change", function (e) { applySizeMode(e.target.value); });
