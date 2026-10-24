@@ -158,6 +158,11 @@ body.light .stats-panel {
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Scales all bubble radii (0.25× – 4×)</div>
     </div>
     <div class="slider-row" style="margin-top:12px">
+      <label for="collisionSlider">Collision strength <span class="val" id="collisionVal">0.15</span></label>
+      <input type="range" id="collisionSlider" min="0" max="1" step="0.01" value="0.15">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Lower = bubbles may overlap and settle calmly. Higher = stronger push-apart (can cause pulsing in dense clusters). 0 = off.</div>
+    </div>
+    <div class="slider-row" style="margin-top:12px">
       <label for="trackerEnabled" style="display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="trackerEnabled" checked style="accent-color:var(--accent);cursor:pointer">
         Enable tracker
@@ -311,6 +316,7 @@ var categoricalShapeMap = null;
 var categoricalShapeKey = null;
 var currentLabelKey = null;
 var sizeMultiplier = 1;
+var collisionStrength = 0.15; // was a hardcoded 0.5; lower = less "tension" in dense clusters
 // act index -> state description (for live state color/label)
 var actIndexToDesc = {};
 act_codes.forEach(function(c) { actIndexToDesc[String(c.index)] = c.desc; });
@@ -865,7 +871,7 @@ function tick(e) {
   });
 
   circle
-	  .each(collide(.5))
+	  .each(collisionStrength > 0 ? collide(collisionStrength) : function () {})
 	  .style("fill", function(d) { return d.color; })
 	  .style("opacity", function(d) { return d.opacity; })
 	  .attr("d", function(d) { return shapePath(shapeForNode(d), d.radius); })
@@ -1553,6 +1559,15 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener("input", functio
 	if (sizeMultiplierVal) sizeMultiplierVal.textContent = mult.toFixed(2) + "×";
 	applySizeMultiplier(mult);
 });
+var collisionSlider = document.getElementById("collisionSlider");
+var collisionVal = document.getElementById("collisionVal");
+if (collisionSlider) {
+	collisionSlider.addEventListener("input", function (e) {
+		collisionStrength = parseFloat(e.target.value) || 0;
+		if (collisionVal) collisionVal.textContent = collisionStrength === 0 ? "Off" : collisionStrength.toFixed(2);
+		force.resume(); // wake the layout so the change is visible immediately
+	});
+}
 var trackerEnabledCb = document.getElementById("trackerEnabled");
 if (trackerEnabledCb) {
 	trackerEnabled = !!trackerEnabledCb.checked;
