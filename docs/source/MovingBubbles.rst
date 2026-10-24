@@ -42,4 +42,12 @@ Chart (MovingBubbles)
 
 
 
+Daily life of European
+*************************
+
+.. raw:: html
+
+    <iframe src="https://erdogant.github.io\docs\d3blocks\daily_life_of_european.html" height="900px" width="900px", frameBorder="0"></iframe>
+
+
 .. include:: add_bottom.add

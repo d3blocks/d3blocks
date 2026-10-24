@@ -591,8 +591,8 @@ def show(df, **kwargs):
     config['prop_keys'] = seen
 
     if config['note'] is None:
-        config['note'] = "This is a simulation of multiple states and samples. <a href='https://github.com/d3blocks/d3blocks'>d3blocks movingbubbles</a>."
-        config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
+        config['note'] = "D3Blocks Movingubbles"
+        # config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
 
     if config['time_notes'] is None:
         config['time_notes'] = [{"start_minute": 1, "stop_minute": 2, "note": ""}]
