@@ -19,6 +19,23 @@ Licensed    : GPL3
 body { font-size: {{ FONTSIZE }}; }
 .node { stroke-width: 1.5px; }
 
+/* Categorical filter chips (Filtering panel) */
+.filter-chip {
+  display: inline-block;
+  margin: 0 4px 4px 0;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+.filter-chip-x { cursor: pointer; opacity: 0.6; margin-left: 4px; }
+.filter-chip-x:hover { opacity: 1; color: var(--accent); }
+
 /* Center + top panel + side panels: per-theme backgrounds */
 body {
   background: {{ COLOR_BACKGROUND_DARK }};
@@ -161,6 +178,11 @@ body.light .stats-panel {
       <label for="collisionSlider">Collision strength <span class="val" id="collisionVal">0.15</span></label>
       <input type="range" id="collisionSlider" min="0" max="1" step="0.01" value="0.15">
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Lower = bubbles may overlap and settle calmly. Higher = stronger push-apart (can cause pulsing in dense clusters). 0 = off.</div>
+    </div>
+    <div class="slider-row" style="margin-top:12px">
+      <label for="damperSlider">Damper <span class="val" id="damperVal">1.00</span></label>
+      <input type="range" id="damperSlider" min="-1" max="1" step="0.01" value="0">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Strength of the pull towards each state (0.1 – 10, logarithmic). Lower = slower, looser, smoother movement.</div>
     </div>
     <div class="slider-row" style="margin-top:12px">
       <label for="trackerEnabled" style="display:flex;align-items:center;gap:8px;cursor:pointer">
@@ -316,6 +338,7 @@ var categoricalShapeMap = null;
 var categoricalShapeKey = null;
 var currentLabelKey = null;
 var sizeMultiplier = 1;
+var damperValue = {{ DAMPER }}; // pull strength towards each state focus (Python `damper`)
 var collisionStrength = 0.15; // was a hardcoded 0.5; lower = less "tension" in dense clusters
 // act index -> state description (for live state color/label)
 var actIndexToDesc = {};
@@ -841,7 +864,7 @@ function tick(e) {
 	var curr_act = o.act;
 	
 	// Make sleep more sluggish moving.
-	var damper = {{ DAMPER }};
+	var damper = damperValue;
 	
 	//if (curr_act == "0") {
 	//	var damper = 0.6;
@@ -893,13 +916,14 @@ function tick(e) {
 function collide(alpha) {
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
+	if (!node_active[d.nodeIndex]) return;
 	var r = d.radius + maxRadius + padding,
 		nx1 = d.x - r,
 		nx2 = d.x + r,
 		ny1 = d.y - r,
 		ny2 = d.y + r;
 	quadtree.visit(function(quad, x1, y1, x2, y2) {
-	  if (quad.point && (quad.point !== d)) {
+	  if (quad.point && (quad.point !== d) && node_active[quad.point.nodeIndex]) {
 		var x = d.x - quad.point.x,
 			y = d.y - quad.point.y,
 			l = Math.sqrt(x * x + y * y),
@@ -1559,6 +1583,19 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener("input", functio
 	if (sizeMultiplierVal) sizeMultiplierVal.textContent = mult.toFixed(2) + "×";
 	applySizeMultiplier(mult);
 });
+var damperSlider = document.getElementById("damperSlider");
+var damperValEl = document.getElementById("damperVal");
+if (damperSlider) {
+	// Logarithmic slider: t in [-1, 1] -> damper = 10^t (0.1 .. 10)
+	var d0 = Math.max(0.1, Math.min(10, +damperValue || 1));
+	damperSlider.value = Math.log(d0) / Math.LN10;
+	if (damperValEl) damperValEl.textContent = d0.toFixed(2);
+	damperSlider.addEventListener("input", function (e) {
+		damperValue = Math.pow(10, parseFloat(e.target.value) || 0);
+		if (damperValEl) damperValEl.textContent = damperValue.toFixed(2);
+		force.resume();
+	});
+}
 var collisionSlider = document.getElementById("collisionSlider");
 var collisionVal = document.getElementById("collisionVal");
 if (collisionSlider) {
