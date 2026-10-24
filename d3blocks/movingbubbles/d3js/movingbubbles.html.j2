@@ -33,6 +33,25 @@ body { font-size: {{ FONTSIZE }}; }
   box-sizing: border-box;
   word-break: break-word;
 }
+/* Hover tooltip (Layout -> Tooltip) */
+#nodeTooltip {
+  position: fixed;
+  display: none;
+  z-index: 3000;
+  pointer-events: none;
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-family: "Helvetica", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+  max-width: 320px;
+  word-break: break-word;
+  background: var(--panel-bg);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+}
+#nodeTooltip .tt-key { opacity: 0.6; margin-right: 4px; }
 .filter-chip-x { cursor: pointer; opacity: 0.6; margin-left: 4px; }
 .filter-chip-x:hover { opacity: 1; color: var(--accent); }
 
@@ -155,6 +174,13 @@ body.light .stats-panel {
       <select id="layoutLabelSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
         <option value="">None</option>
       </select>
+    </div>
+    <div class="slider-row">
+      <label for="layoutTooltipSelect">Tooltip</label>
+      <select id="layoutTooltipSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
+        <option value="">None</option>
+      </select>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Show this variable's value when hovering a bubble</div>
     </div>
     <button class="button-switch" id="layoutResetBtn" type="button" style="width:100%;margin-top:8px;box-sizing:border-box">Reset to Default</button>
   </div>
@@ -362,6 +388,8 @@ var currentShapeMode = "circle"; // circle|square|triangle|diamond
 var categoricalShapeMap = null;
 var categoricalShapeKey = null;
 var currentLabelKey = null;
+var currentTooltipKey = null;
+var hoveredNode = null;
 var sizeMultiplier = 1;
 var damperValue = {{ DAMPER }}; // pull strength towards each state focus (Python `damper`)
 var collisionStrength = 0.15; // was a hardcoded 0.5; lower = less "tension" in dense clusters
@@ -693,6 +721,55 @@ var nodeLabel = chartRoot.selectAll("text.nodelabel")
 	.style("display", "none")
 	.text("");
 
+// Hover tooltip: shows the value of the variable chosen in Layout -> Tooltip.
+// The state column shows the bubble's live state. Text is refreshed on every
+// tick so it follows the bubble while it moves or changes state.
+var tooltipEl = document.createElement('div');
+tooltipEl.id = 'nodeTooltip';
+document.body.appendChild(tooltipEl);
+
+function tooltipValueFor(d) {
+	if (!currentTooltipKey) return null;
+	if (currentTooltipKey === STATE_COL) return liveStateName(d);
+	var v = d.props ? d.props[currentTooltipKey] : null;
+	if (v == null || v === "") return null;
+	if (typeof v === "number" && isFinite(v)) return String(Math.round(v * 100) / 100);
+	return String(v);
+}
+function updateTooltip() {
+	if (!hoveredNode || !currentTooltipKey) { tooltipEl.style.display = 'none'; return; }
+	var val = tooltipValueFor(hoveredNode);
+	if (val == null) val = "n/a";
+	tooltipEl.innerHTML = '<span class="tt-key">' + escapeHtmlVar(currentTooltipKey) + ':</span>' + escapeHtmlVar(val);
+	tooltipEl.style.display = 'block';
+}
+function positionTooltip(ev) {
+	if (!ev) return;
+	var pad = 14, w = tooltipEl.offsetWidth, h = tooltipEl.offsetHeight;
+	var x = ev.clientX + pad, y = ev.clientY + pad;
+	if (x + w > window.innerWidth - 4) x = ev.clientX - w - pad;
+	if (y + h > window.innerHeight - 4) y = ev.clientY - h - pad;
+	tooltipEl.style.left = Math.max(4, x) + 'px';
+	tooltipEl.style.top = Math.max(4, y) + 'px';
+}
+function applyTooltipMode(key) {
+	currentTooltipKey = key || null;
+	updateTooltip();
+}
+circle.on("mouseover", function (d) {
+	hoveredNode = d;
+	updateTooltip();
+	positionTooltip(d3.event);
+});
+circle.on("mousemove", function (d) {
+	hoveredNode = d;
+	positionTooltip(d3.event);
+});
+circle.on("mouseout", function () {
+	hoveredNode = null;
+	tooltipEl.style.display = 'none';
+});
+
 // Visibility = date filter AND categorical (variable) filters.
 // Hidden bubbles are also skipped by collide(), so they no longer push the
 // visible ones around. The activity percentages still count every sample
@@ -977,6 +1054,12 @@ function tick(e) {
 
   // Append points to the active selection trail
   updateActiveTrail();
+
+  // Keep the hover tooltip in sync (live state, hidden bubbles)
+  if (hoveredNode) {
+    if (node_active[hoveredNode.nodeIndex]) updateTooltip();
+    else { hoveredNode = null; tooltipEl.style.display = 'none'; }
+  }
 }
 
 
@@ -1504,6 +1587,7 @@ function initLayoutPropertyControls() {
 	var colorSelect = document.getElementById("layoutColorSelect");
 	var shapeSelect = document.getElementById("layoutShapeSelect");
 	var labelSelect = document.getElementById("layoutLabelSelect");
+	var tooltipSelect = document.getElementById("layoutTooltipSelect");
 
 	var prevSize = sizeSelect ? sizeSelect.value : '';
 	var prevColor = colorSelect ? colorSelect.value : '';
@@ -1513,6 +1597,7 @@ function initLayoutPropertyControls() {
 	}
 	var prevShape = shapeSelect ? shapeSelect.value : 'circle';
 	var prevLabel = labelSelect ? labelSelect.value : '';
+	var prevTooltip = tooltipSelect ? tooltipSelect.value : '';
 
 	function clearDynamic(select, keepFirst) {
 		if (!select) return;
@@ -1522,6 +1607,7 @@ function initLayoutPropertyControls() {
 	clearDynamic(colorSelect, 1);
 	clearDynamic(shapeSelect, 1); // keep only "Default"
 	clearDynamic(labelSelect, 1);
+	clearDynamic(tooltipSelect, 1);
 
 	function addOpt(select, value, label) {
 		if (!select) return;
@@ -1543,6 +1629,7 @@ function initLayoutPropertyControls() {
 		if (k !== STATE_COL) addOpt(colorSelect, k, k);
 		if (!numeric) addOpt(shapeSelect, "prop:" + k, k);
 		addOpt(labelSelect, k, k);
+		addOpt(tooltipSelect, k, k);
 	});
 
 	function hasOption(select, value) {
@@ -1568,6 +1655,10 @@ function initLayoutPropertyControls() {
 	if (labelSelect) {
 		labelSelect.value = hasOption(labelSelect, prevLabel) ? prevLabel : '';
 		applyLabelMode(labelSelect.value);
+	}
+	if (tooltipSelect) {
+		tooltipSelect.value = hasOption(tooltipSelect, prevTooltip) ? prevTooltip : '';
+		applyTooltipMode(tooltipSelect.value);
 	}
 	// A Numeric <-> Category flip changes which variables can be filtered.
 	if (typeof populateFilterVarDropdown === 'function') populateFilterVarDropdown();
@@ -1775,6 +1866,9 @@ if (layoutShapeSelect) layoutShapeSelect.addEventListener("change", function (e)
 var layoutLabelSelect = document.getElementById("layoutLabelSelect");
 if (layoutLabelSelect) layoutLabelSelect.addEventListener("change", function (e) { applyLabelMode(e.target.value); });
 
+var layoutTooltipSelect = document.getElementById("layoutTooltipSelect");
+if (layoutTooltipSelect) layoutTooltipSelect.addEventListener("change", function (e) { applyTooltipMode(e.target.value); });
+
 var sizeMultiplierSlider = document.getElementById("sizeMultiplierSlider");
 var sizeMultiplierVal = document.getElementById("sizeMultiplierVal");
 if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener("input", function (e) {
@@ -1833,6 +1927,8 @@ if (layoutResetBtn) layoutResetBtn.addEventListener("click", function () {
 	applyColorMode(layoutColorSelect ? layoutColorSelect.value : "");
 	applyShapeMode("circle");
 	applyLabelMode("");
+	if (layoutTooltipSelect) layoutTooltipSelect.value = "";
+	applyTooltipMode("");
 });
 
 // —— Export/Save panel: export current bubble state as JSON ——
