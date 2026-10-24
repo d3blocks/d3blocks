@@ -439,7 +439,7 @@ html = d3.d3graph(df,
            color_background='streamlit',
            return_html=True,
            showfig=True,
-           )
+           )    
 
 # d3.elasticgraph(df)
 
@@ -1455,7 +1455,7 @@ d3.D3graph.show()
 from d3blocks import D3Blocks
 d3 = D3Blocks()
 df = d3.import_example('cancer')
-html = d3.scatter(df['tsneX'].values, df['tsneY'].values, c_gradient='opaque', color=df['labx'].values, stroke='#000000')
+html = d3.scatter(df['tsneX'].values, df['tsneY'].values, c_gradient='opaque', color=df['labx'].values, stroke='#000000', df=df)
 
 # %%
 import pandas as pd

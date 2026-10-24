@@ -1392,6 +1392,7 @@ class D3Blocks():
                       fontsize: int = 14,
                       timedelta: str = 'minutes',
                       standardize: str = 'samplewise',
+                      timelines: str = None,
                       speed: dict = {"slow": 750, "medium": 250, "fast": 25, "superfast": 5},
                       figsize = [1024, 768],
                       note: str = None,
@@ -1486,6 +1487,15 @@ class D3Blocks():
                 * 'samplewise': Standardize per sample_id by substracting the minimum time per sample_id.
                 * 'relative': Standardize across the entire dataframe after sorting on time. Each action is relative to the previous one in time without considering sample_id.
                 * 'minimum': Movements are relative to the minimum time in the dataset.
+        timelines : str, (default: None)
+            Optional column name (e.g. 'age', 'country') that defines separate
+            timelines. None (default) = one shared timeline over the full
+            dataframe. When set, the chosen ``standardize`` method is applied
+            independently inside each group of that column, so a joint
+            multi-group dataframe behaves like running the same method on each
+            group subset separately. The column must exist in ``df``; otherwise
+            an error is raised. Use this to avoid the "averaging out" effect of
+            a shared global timeline across groups.
 
         speed : dict, (default: {"slow": 1000, "medium": 200, "fast": 50, "superfast": 20})
             Reference delays (ms) for the playback speed continuum. Lower values move time faster.
@@ -1637,12 +1647,12 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, color=color, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, timelines=timelines, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, color=color, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
         # Set edge properties
-        self.set_edge_properties(df, timedelta=self.config['timedelta'], state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, color=color, opacity=self.config['opacity'], stroke=self.config['stroke'], standardize=self.config['standardize'], dt_format=self.config['dt_format'], logger=logger)
+        self.set_edge_properties(df, timedelta=self.config['timedelta'], state=self.config['state'], datetime=self.config['datetime'], sample_id=self.config['sample_id'], size=size, color=color, opacity=self.config['opacity'], stroke=self.config['stroke'], standardize=self.config['standardize'], timelines=self.config.get('timelines'), dt_format=self.config['dt_format'], logger=logger)
         # Create the plot
         html = self.show()
         if return_html:

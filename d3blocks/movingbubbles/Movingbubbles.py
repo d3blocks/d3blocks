@@ -61,6 +61,10 @@ def set_config(config={}, **kwargs):
     config['fontsize'] = kwargs.get('fontsize', 14)
     config['timedelta'] = kwargs.get('timedelta', 'minutes')
     config['standardize'] = kwargs.get('standardize', None)
+    # Optional column name: when set, state durations are computed
+    # independently within each group of that column (separate timelines).
+    # None (default) = one shared timeline over the full dataframe.
+    config['timelines'] = kwargs.get('timelines', None)
     config['speed'] = kwargs.get('speed', {"slow": 750, "medium": 250, "fast": 25, "superfast": 5})
     config['note'] = kwargs.get('note', None)
     config['time_notes'] = kwargs.get('time_notes', None)
@@ -179,6 +183,10 @@ def set_edge_properties(df, **kwargs):
         Method to standardize the data.
         None: standardize over the entire timeframe. Sample_ids are dependent to each other.
         'samplewise': Standardize per sample_id. Thus the sample_ids are independent of each other.
+    timelines : str, optional (default: None)
+        Column name (e.g. 'age', 'country'). When set, standardization runs
+        independently inside each group of that column (separate timelines).
+        None (default) = one shared timeline over the full dataframe.
     dt_format : str
         '%d-%m-%Y %H:%M:%S'.
 
@@ -192,6 +200,7 @@ def set_edge_properties(df, **kwargs):
     sample_id = kwargs.get('sample_id', 'sample_id')
     state = kwargs.get('state', 'state')
     method = kwargs.get('standardize', None)
+    timelines = kwargs.get('timelines', None)
     timedelta = kwargs.get('timedelta', None)
     size = kwargs.get('size', 4)
     color = kwargs.get('color', None)
@@ -206,6 +215,35 @@ def set_edge_properties(df, **kwargs):
     if not (isinstance(df, pd.DataFrame) and np.any(df.columns==state) and np.any(df.columns==datetime) and np.any(df.columns==sample_id)):
         raise Exception('Can not find the specified columns: "state", "datetime", or "sample_id" columns in the input dataframe: %s' %(df.columns.values))
 
+    if timelines is not None:
+        if not isinstance(timelines, str):
+            raise Exception('[Movingbubbles] timelines must be a column name (str) or None, got %s.' % (type(timelines).__name__))
+        if timelines not in df.columns:
+            raise Exception(
+                '[Movingbubbles] timelines column [%s] not found in the input dataframe. '
+                'Available columns: %s' % (timelines, list(df.columns))
+            )
+        # Make sample_id unique within each timeline group.
+        # When age (or country, …) cohort files are concatenated, the same uid
+        # often appears in multiple groups. show() builds one schedule per
+        # sample_id, so shared uids would merge states across groups and the
+        # joint plot would look "averaged". Prefixing with the timeline value
+        # gives each (timeline, sample) pair its own bubble — matching the
+        # behavior of running each group subset separately.
+        n_before = df[sample_id].nunique()
+        df[sample_id] = (
+            df[timelines].map(lambda x: 'NA' if pd.isna(x) else str(x))
+            + '||'
+            + df[sample_id].astype(str)
+        )
+        n_after = df[sample_id].nunique()
+        if logger is not None and n_after != n_before:
+            logger.info(
+                'timelines=[%s]: expanded sample_id from %d to %d unique values '
+                '(disambiguating ids that appear in multiple timeline groups).'
+                % (timelines, n_before, n_after)
+            )
+
     # Set size/color/opacity/stroke per node BEFORE standardize(): array-like
     # inputs are positionally aligned with the ORIGINAL row order (same
     # convention as scatter's set_edge_properties), and standardize() can
@@ -218,9 +256,24 @@ def set_edge_properties(df, **kwargs):
     df = _set_nodeopacity(df, sample_id, opacity, logger)
     df = _set_nodestroke(df, sample_id, stroke, logger)
 
-    # Compute delta
-    if logger is not None: logger.info('Standardizing input dataframe using method: [%s].' %(method))
-    df = standardize(df, method=method, sample_id=sample_id, datetime=datetime, dt_format=dt_format, minimum_time=timedelta if timedelta else 'minutes', logger=logger)
+    # Compute delta. When timelines is set, run standardization independently
+    # inside each group of that column so events from other groups never affect
+    # durations (fixes the "averaging out" effect on joint multi-group data).
+    if logger is not None:
+        if timelines is not None:
+            logger.info('Standardizing input dataframe using method: [%s] with separate timelines per [%s].' % (method, timelines))
+        else:
+            logger.info('Standardizing input dataframe using method: [%s] (single timeline).' % (method))
+    df = standardize(
+        df,
+        method=method,
+        sample_id=sample_id,
+        datetime=datetime,
+        dt_format=dt_format,
+        minimum_time=timedelta if timedelta else 'minutes',
+        timelines=timelines,
+        logger=logger,
+    )
 
     return df
 
@@ -379,11 +432,14 @@ def show(df, **kwargs):
     node_size_sched = []
     node_opacity_sched = []
     for i in uiid:
-        # Combine the sample_id with its time in state
-        Iloc=df[sid_col]==i
+        # Combine the sample_id with its time in state.
+        # Take rows in datetime order so the schedule follows the true sequence
+        # even if the frame was reordered.
+        Iloc = (df[sid_col] == i).values
+        order = np.argsort(df.loc[Iloc, config['columns']['datetime']].values, kind='mergesort')
         # Convert NumPy integers to regular Python integers to avoid np.int64 in string representation
-        sid_values = [int(x) for x in sid[Iloc]]
-        time_values = [int(x) for x in df['time_in_state'].loc[Iloc].values]
+        sid_values = [int(x) for x in np.asarray(sid)[Iloc][order]]
+        time_values = [int(x) for x in df.loc[Iloc, 'time_in_state'].values[order]]
         tmplist=str(list(zip(sid_values, time_values)))
         tmplist=tmplist.replace('(', '')
         tmplist=tmplist.replace(')', '')
@@ -393,12 +449,12 @@ def show(df, **kwargs):
         # Make one big happy list
         X.append(tmplist)
 
-        size_vals = df['size'].loc[Iloc].values
+        size_vals = df.loc[Iloc, 'size'].values[order]
         node_size_sched.append([
             int(v) if isinstance(v, (np.integer, int)) else float(v)
             for v in size_vals
         ])
-        opacity_vals = df['opacity'].loc[Iloc].values
+        opacity_vals = df.loc[Iloc, 'opacity'].values[order]
         node_opacity_sched.append([float(v) for v in opacity_vals])
 
     # Per-sample size/opacity schedules (list of lists, same order as uiid /
@@ -650,7 +706,7 @@ def write_html(X, config, logger=None):
     return html
 
 
-def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', minimum_time='minutes', logger=None):
+def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_format='%d-%m-%Y %H:%M:%S', minimum_time='minutes', timelines=None, logger=None):
     """Standardize time per sample_id.
 
     Parameters
@@ -667,6 +723,12 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
         Column name of the date time.
     dt_format : str, optional
         '%d-%m-%Y %H:%M:%S'.
+    timelines : str or None, optional (default: None)
+        When set to a column name (e.g. 'age', 'country'), the chosen
+        standardize method is applied independently inside each group of
+        that column (separate timelines). None = one shared timeline over
+        the full dataframe. Events from other groups never contribute to
+        a sample's state durations.
 
     Returns
     -------
@@ -677,13 +739,48 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
     """
     # Use copy of dataframe
     df = df.copy()
-    # Get unique
-    uis = df[sample_id].unique()
 
-    # Check datetime format
+    # Check datetime format once (before any grouping)
     if not isinstance(df[datetime].iloc[0], dt.date):
         if logger is not None: logger.info('Set datetime format to [%s]' %(dt_format))
         df[datetime] = pd.to_datetime(df[datetime], format=dt_format)
+
+    # When a timelines column is given, run the chosen standardize method
+    # independently inside each group. Events from other groups never enter
+    # the delta calculation, so a joint multi-group dataframe behaves like
+    # running the same method on each group subset separately.
+    if timelines is not None:
+        if timelines not in df.columns:
+            raise Exception(
+                '[Movingbubbles] timelines column [%s] not found in the input dataframe. '
+                'Available columns: %s' % (timelines, list(df.columns))
+            )
+        n_groups = int(df[timelines].nunique(dropna=False))
+        if logger is not None:
+            logger.info(
+                'Applying standardize method [%s] independently for %d timelines in column [%s].'
+                % (method, n_groups, timelines)
+            )
+        parts = []
+        for _tl_val, g in df.groupby(timelines, sort=False, dropna=False):
+            g_std = standardize(
+                g.copy(),
+                method=method,
+                sample_id=sample_id,
+                datetime=datetime,
+                dt_format=dt_format,
+                minimum_time=minimum_time,
+                timelines=None,
+                logger=None,
+            )
+            parts.append(g_std)
+        out = pd.concat(parts, axis=0, ignore_index=True)
+        out = out.sort_values(by=[datetime])
+        out.reset_index(drop=True, inplace=True)
+        return out
+
+    # Get unique sample ids
+    uis = df[sample_id].unique()
 
     # Initialize empty delta
     df['delta'] = df[datetime] - df[datetime]
@@ -697,53 +794,51 @@ def standardize(df, method=None, sample_id='sample_id', datetime='datetime', dt_
         if logger is not None: logger.info('Standardize method: [%s]' %(method))
         df = df.sort_values(by=[sample_id, datetime])
         df.reset_index(drop=True, inplace=True)
-        # Standardize per unique sample id.
+        # Standardize per unique sample id: duration of each state is the
+        # wall-clock gap until *this sample's* next event (never another sample).
         for s in tqdm(uis):
-            # Get data for specific sample-id
-            Iloc = df[sample_id]==s
-            dfs = df.loc[Iloc, :]
-            # Timedelta between consecutive rows for this sample
-            timedelta = dfs[datetime].iloc[1:].values - dfs[datetime].iloc[:-1]
-            df.loc[Iloc, 'delta'] = timedelta
-            # Last row of this sample has no successor — mark as NaT so it is
-            # caught by the NaT->zero block below and never triggers a move.
-            last_idx = dfs.index[-1]
-            df.loc[last_idx, 'delta'] = pd.NaT
+            idxs = df.index[df[sample_id] == s].tolist()
+            if not idxs:
+                continue
+            # Gaps between consecutive events of this sample
+            for a, b in zip(idxs[:-1], idxs[1:]):
+                df.at[a, 'delta'] = df.at[b, datetime] - df.at[a, datetime]
+            # Last event has no successor
+            df.at[idxs[-1], 'delta'] = pd.NaT
     elif method is None:
-        # Global mode: deltas are real wall-clock gaps between events across all
-        # sample_ids, sorted by datetime.  The last row of each sample gets NaT.
+        # Global mode: deltas are real wall-clock gaps between consecutive events
+        # across all sample_ids in this frame, sorted by datetime.
+        #
+        # delta[i] = time[i+1] - time[i] for i = 0..n-2  (positional numpy assign).
+        # Must write into rows 0..n-2, NOT 1..n-1 — the latter left row 0 stuck at
+        # the zero initializer so every simulation started with a 1-minute first
+        # state. A Series assign would also re-align on index and shift gaps.
         if logger is not None: logger.info('Standardize method: [global/None]')
         df = df.sort_values(by=[datetime])
         df.reset_index(drop=True, inplace=True)
-        tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        df.loc[1:, 'delta'] = tmpdelta
-        # NaT the last row per sample so it never triggers a move
+        if len(df) >= 2:
+            tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1].values
+            df.loc[df.index[:-1], 'delta'] = tmpdelta
+        # Last event of each sample has no successor in that sample's schedule
         for s in uis:
-            last_idx = df.loc[df[sample_id]==s].sort_values(by=[datetime]).index[-1]
-            df.loc[last_idx, 'delta'] = pd.NaT
-            # Standardize time per unique sample. Each sample will start at timenow.
-            # df.loc[Iloc, 'datetime_norm'] = timenow + (dfs[datetime].loc[Iloc] - dfs[datetime].loc[Iloc].min())
+            sample_rows = df.index[df[sample_id] == s]
+            if len(sample_rows):
+                df.at[sample_rows[-1], 'delta'] = pd.NaT
     elif method=='relative':
         df = df.sort_values(by=[datetime])
         df.reset_index(drop=True, inplace=True)
 
-        # Note: The first state per sample_id is depended on the prevous state.
-        # timedelta = df[datetime]-df[datetime]
-        tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1]
-        # tmpdelta has length N-1 (diffs between consecutive rows); must be
-        # assigned to rows 1: (row 0 keeps the zero-delta this function
-        # initializes at the top), or this raises a pandas length-mismatch
-        # ValueError -- the 'relative' method was completely broken/crashing
-        # before this fix.
-        df.loc[1:, 'delta'] = tmpdelta
+        # Gaps between consecutive rows in global time order.
+        # Write into rows 0..n-2 (same fix as global/None).
+        if len(df) >= 2:
+            tmpdelta = df[datetime].iloc[1:].values - df[datetime].iloc[:-1].values
+            df.loc[df.index[:-1], 'delta'] = tmpdelta
 
-        # Note: Last state per sample_id should always be ending and thus 0
-        uisample_id = df[sample_id].unique()
-        getidx = []
-        for sid in uisample_id:
-            getidx.append(df[[sample_id, datetime]].loc[df[sample_id]==sid].sort_values(by=[datetime]).index[-1])
-        df.loc[getidx, 'delta']=np.nan
-        # df['datetime_norm'] = timenow + (df[datetime] - df[datetime].min())
+        # Last state per sample_id should always be ending
+        for sid in df[sample_id].unique():
+            sample_rows = df.index[df[sample_id] == sid]
+            if len(sample_rows):
+                df.at[sample_rows[-1], 'delta'] = pd.NaT
     elif method=='minimum':
         df['delta'] = df[datetime] - df[datetime].min()
 
