@@ -568,9 +568,11 @@ class D3Blocks():
         color_background : list of str or None, (default: None)
             Background colors for the plot center, top bar, and side panels,
             one per theme: ``[dark_hex, light_hex]``.
+
                 * None: Defaults ``["#0E1117", "#FFFFFF"]`` (dark / light theme).
                 * 'streamlit': ``["#0E1117", "#FFFFFF"]`` (dark / light theme).
                 * ``['#1a1a2e', '#e8f0fe']``: Custom dark and light backgrounds.
+
             Switching theme (``dark_mode`` or the UI toggle) picks the matching
             color automatically. Text, axis, and chrome still follow the theme.
         dark_mode : bool, (default: True)
@@ -2718,8 +2720,10 @@ class D3Blocks():
         color_background : list of str or None, (default: None)
             Background colors for the plot center, top bar, and side panels,
             one per theme: ``[dark_hex, light_hex]``.
+
                 * None: Defaults ``["#222222", "#ffffff"]`` (dark / light theme).
                 * ``['#1a1a2e', '#e8f0fe']``: Custom dark and light backgrounds.
+
             Switching theme (``dark_mode`` or the UI toggle) picks the matching
             color automatically. Text and chrome still follow the theme.
         dark_mode : bool, (default: True)
@@ -3148,10 +3152,11 @@ class D3Blocks():
               nodes and no entry in `nodes`); the edge is then drawn to the group box.
             * str: a Mermaid flowchart, e.g. 'flowchart LR; A[Start] --> B{Valid?}',
               a Mermaid state diagram ('stateDiagram-v2'), or Markdown text
-              containing a ```mermaid block.
-            * Path to a Markdown file (.md, .markdown) with a ```mermaid block, so the
-              same diagram renders on GitHub, or to a .mmd / .mermaid file.
+              containing a fenced Mermaid code block.
+            * Path to a Markdown file (.md, .markdown) with a fenced Mermaid code block,
+              so the same diagram renders on GitHub, or to a .mmd / .mermaid file.
               From Markdown, the first flowchart or state diagram block is used.
+
             Node shapes, edge labels, dotted/thick links, (nested) subgraphs and
             linkStyle colours are converted; `nodes`, `groups` and `direction` override
             what it defines. State diagrams: transitions with labels, '[*]' start/end
@@ -4123,6 +4128,7 @@ class D3Blocks():
 
                 {'World': {'color': '#D3D3D3', 'opacity': 0.6, 'line': 'none', 'linewidth': 1},
                  'Netherlands': {'color': '#000FFF', 'opacity': 0.8}}
+
             Ignored when ``country_names`` is provided.
         country_names : list of str or None
             Countries to color (worldmap-style). Fuzzy-matched to GeoJSON names.
@@ -4135,9 +4141,11 @@ class D3Blocks():
             Numeric values → sequential colors/opacity.
         map_name : str, (default: 'world')
             Map geometry to load.
+
                 * ``'world'``: country-level world map
                 * Any country name or ISO code for admin-1 regions, e.g.
                   ``'netherlands'``, ``'NL'``, ``'germany'``, ``'US'``, ``'japan'``
+
             Full catalog: ``Maps.list_map_names()`` (~240 regional maps).
             Region names: ``Maps.list_country_names(map_name)``.
         include_overseas : bool, (default: False)
