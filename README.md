@@ -123,7 +123,7 @@ A few practical rules of thumb: prefer `st.iframe` over the older `components.ht
 
 ---
 
-### [MovingBubbles: Daily Life of a European](https://erdogant.github.io/docs/d3blocks/daily_life_of_european.html)
+### [MovingBubbles: Daily Life of a European](https://d3blocks.github.io/d3blocks/MovingBubbles.html#daily-life-of-european)
 
 <p align="center">
   <a href="https://d3blocks.github.io/d3blocks/MovingBubbles.html#daily-life-of-european">
