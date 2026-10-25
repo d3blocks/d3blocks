@@ -1482,12 +1482,14 @@ class D3Blocks():
             Movement of samples. A smaller number is slower/smoother movement.
                 * 0.1: min
                 * 10: max
+
             Sets the initial value of the "Damper" slider in the Physics panel.
         collision : float, (default: 0.15)
             Strength of the push-apart between overlapping bubbles [0-1].
                 * 0: no collision (bubbles may overlap freely; cheapest for large datasets).
                 * 0.15: default. Calm, settles quickly also with hundreds of bubbles.
                 * 0.5 and higher: bubbles are pushed apart strongly; dense clusters can start to pulse.
+
             Sets the initial value of the "Collision strength" slider in the Physics panel.
 
         fontsize : int, (default: 14)
@@ -1550,16 +1552,16 @@ class D3Blocks():
         shape : str, (default: None)
             Name of a categorical column in ``df`` that is mapped to bubble shapes (circle, square, triangle, diamond).
             Sets the initial value of Layout -> Shape in the left side panel.
-                * None: all bubbles are circles.
-                * 'country': one shape per unique value in the column 'country'.
+            Default (None): all bubbles are circles. Use e.g. ``'country'`` for one shape
+            per unique value in the ``country`` column.
         tooltip : str, (default: None)
             Name of a column in ``df`` (or the ``state`` column) of which the value is shown when hovering a bubble.
             Sets the initial value of Layout -> Tooltip in the left side panel.
-                * None: no tooltip.
+            Default (None): no tooltip.
         label : str, (default: None)
             Name of a column in ``df`` (or the ``state`` column) that is written on each bubble.
             Sets the initial value of Layout -> Label in the left side panel.
-                * None: no label.
+            Default (None): no label.
 
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
