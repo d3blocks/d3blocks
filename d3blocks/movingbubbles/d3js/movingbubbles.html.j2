@@ -33,6 +33,16 @@ body { font-size: {{ FONTSIZE }}; }
   box-sizing: border-box;
   word-break: break-word;
 }
+/* Select mode (top bar) */
+.button-switch.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.selection-count {
+  font-size: 12px; cursor: pointer; white-space: nowrap;
+  padding: 5px 10px; border-radius: 6px;
+  background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+}
+.selection-count:hover { border-color: var(--accent); }
+.marquee { fill: rgba(26,188,156,0.15); stroke: #1ABC9C; stroke-width: 1.5; stroke-dasharray: 5,4; pointer-events: none; }
+
 /* Hover tooltip (Layout -> Tooltip) */
 #nodeTooltip {
   position: fixed;
@@ -132,6 +142,8 @@ body.light .stats-panel {
     <button class="button-switch" id="playPauseBtn" type="button" title="Play / Pause">⏸</button>
   </div>
   <div class="top-panel-right">
+    <span id="selectionCount" class="selection-count" style="display:none"></span>
+    <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select bubbles; Shift+drag to add to the selection; click a bubble to toggle it; Esc clears">Select</button>
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
@@ -389,10 +401,15 @@ var categoricalShapeMap = null;
 var categoricalShapeKey = null;
 var currentLabelKey = null;
 var currentTooltipKey = null;
+// Initial Layout selections passed from Python (shape / tooltip / label): a column name or null.
+var INIT_SHAPE_KEY = {{ SHAPE_DEFAULT }};
+var INIT_TOOLTIP_KEY = {{ TOOLTIP_DEFAULT }};
+var INIT_LABEL_KEY = {{ LABEL_DEFAULT }};
+var layoutDefaultsApplied = false;
 var hoveredNode = null;
 var sizeMultiplier = 1;
 var damperValue = {{ DAMPER }}; // pull strength towards each state focus (Python `damper`)
-var collisionStrength = 0.15; // was a hardcoded 0.5; lower = less "tension" in dense clusters
+var collisionStrength = Math.max(0, +{{ COLLISION }} || 0); // initial value from Python `collision` (was a hardcoded 0.5)
 // act index -> state description (for live state color/label)
 var actIndexToDesc = {};
 act_codes.forEach(function(c) { actIndexToDesc[String(c.index)] = c.desc; });
@@ -484,12 +501,12 @@ svg.on("dblclick", function() {
 });
 svg.on("mousedown", function() {
 	zoomDragged = false;
-	svg.style("cursor", "grabbing");
+	svg.style("cursor", selectMode ? "crosshair" : "grabbing");
 });
-svg.on("mouseup", function() { svg.style("cursor", "grab"); });
+svg.on("mouseup", function() { svg.style("cursor", selectMode ? "crosshair" : "grab"); });
 // Click empty chart space clears all selected bubble highlights (keeps trails)
 svg.on("click", function() {
-	if (zoomDragged) return;
+	if (zoomDragged || didSelectDrag) return;
 	if (selectedNodes.length) {
 		selectedNodes = [];
 		finalizeAllActiveTrails();
@@ -694,9 +711,11 @@ function styleSelection() {
 			this.parentNode.appendChild(this);
 		});
 	}
+	if (typeof updateSelectionUI === 'function') updateSelectionUI();
 }
 circle.on("click", function (d) {
 	if (d3.event) d3.event.stopPropagation();
+	if (didSelectDrag) return; // a marquee drag already handled the selection
 	var idx = selectedNodes.indexOf(d);
 	if (idx >= 0) {
 		// Toggle off this node; keep its trail
@@ -772,8 +791,8 @@ circle.on("mouseout", function () {
 
 // Visibility = date filter AND categorical (variable) filters.
 // Hidden bubbles are also skipped by collide(), so they no longer push the
-// visible ones around. The activity percentages still count every sample
-// regardless of the filters (the "%" labels reflect the full dataset).
+// visible ones around. The activity counts and percentages only include the
+// visible (unfiltered) bubbles: 100% = number of bubbles currently shown.
 //
 // activeFilters[varName] = Set of EXCLUDED value-strings (categorical only).
 // A node is filtered out if ANY active filter's excluded set contains its
@@ -821,8 +840,27 @@ function refreshNodeVisibility() {
 			styleSelection();
 		}
 	}
+	recomputeActCounts();
+	updateActLabels();
 	if (typeof updateFilterSummary === 'function') updateFilterSummary();
 	if (typeof force !== 'undefined') force.resume();
+}
+
+// Counts per state over the visible bubbles only.
+function recomputeActCounts() {
+	for (var k in act_counts) {
+		if (Object.prototype.hasOwnProperty.call(act_counts, k)) act_counts[k] = 0;
+	}
+	nodes.forEach(function (n, i) { if (node_active[i]) act_counts[n.act] += 1; });
+}
+function activeNodeCount() {
+	var c = 0;
+	for (var i = 0; i < node_active.length; i++) if (node_active[i]) c++;
+	return c;
+}
+function updateActLabels() {
+	if (typeof label === 'undefined' || !label) return;
+	label.selectAll('tspan.actpct').text(function (d) { return readablePercent(act_counts[d.index]); });
 }
 
 function applyDateFilter() {
@@ -855,6 +893,114 @@ d3.select("#resetDateFilter").on("click", function() {
 	startEl.value = DATE_MIN;
 	endEl.value = DATE_MAX;
 	applyDateFilter();
+});
+
+// —— Select mode (same idea as scatter) ——
+// Click "Select", then drag a rectangle to select every visible bubble inside it.
+// Shift+drag adds to the selection, a click on a bubble toggles it, a click on
+// empty space / Esc / the "N selected ✕" badge clears it. Panning is paused while
+// Select is on (wheel zoom still works). Filtered-out bubbles are never selected.
+var selectMode = false;
+var isSelecting = false, didSelectDrag = false, selectDragStart = null, marqueeRect = null;
+var zoomMouseDownHandler = null;
+// Bulk selections above this size do not record trails (hundreds of live trails are heavy).
+var TRAIL_BULK_LIMIT = 50;
+
+function updateSelectionUI() {
+	var el = document.getElementById('selectionCount');
+	if (!el) return;
+	var n = selectedNodes.length;
+	if (n > 0) {
+		el.style.display = '';
+		el.textContent = n + ' selected ✕';
+		el.title = 'Click to clear selection';
+	} else {
+		el.style.display = 'none';
+	}
+}
+// Replace (or extend, when additive) the selection with newNodes.
+function setSelection(newNodes, additive) {
+	var next = additive ? selectedNodes.slice() : [];
+	var nextSet = new Set(next);
+	newNodes.forEach(function (n) { if (!nextSet.has(n)) { nextSet.add(n); next.push(n); } });
+	var prevSet = new Set(selectedNodes);
+	// Dropped bubbles stop recording but keep their trail
+	selectedNodes.forEach(function (n) { if (!nextSet.has(n)) finalizeTrailFor(n); });
+	if (next.length <= TRAIL_BULK_LIMIT) {
+		next.forEach(function (n) { if (!prevSet.has(n)) startTrail(n); });
+	}
+	selectedNodes = next;
+	styleSelection();
+}
+function endMarquee() {
+	if (marqueeRect) { marqueeRect.remove(); marqueeRect = null; }
+	isSelecting = false;
+	selectDragStart = null;
+	d3.select(window).on("mousemove.marquee", null).on("mouseup.marquee", null);
+}
+svg.on("mousedown.select", function () {
+	if (!selectMode || d3.event.button !== 0) return;
+	var p = d3.mouse(chartRoot.node());   // chart coordinates (zoom/pan aware)
+	isSelecting = true;
+	didSelectDrag = false;
+	selectDragStart = { x: p[0], y: p[1], add: !!d3.event.shiftKey };
+	marqueeRect = chartRoot.append("rect").attr("class", "marquee")
+		.attr("x", p[0]).attr("y", p[1]).attr("width", 0).attr("height", 0)
+		.style("vector-effect", "non-scaling-stroke");
+	d3.select(window)
+		.on("mousemove.marquee", function () {
+			var q = d3.mouse(chartRoot.node());
+			if (Math.abs(q[0] - selectDragStart.x) > 2 || Math.abs(q[1] - selectDragStart.y) > 2) didSelectDrag = true;
+			marqueeRect
+				.attr("x", Math.min(selectDragStart.x, q[0])).attr("y", Math.min(selectDragStart.y, q[1]))
+				.attr("width", Math.abs(q[0] - selectDragStart.x)).attr("height", Math.abs(q[1] - selectDragStart.y));
+		})
+		.on("mouseup.marquee", function () {
+			if (didSelectDrag) {
+				var q = d3.mouse(chartRoot.node());
+				var rx0 = Math.min(selectDragStart.x, q[0]), rx1 = Math.max(selectDragStart.x, q[0]);
+				var ry0 = Math.min(selectDragStart.y, q[1]), ry1 = Math.max(selectDragStart.y, q[1]);
+				var inside = nodes.filter(function (n) {
+					return node_active[n.nodeIndex] && n.x >= rx0 && n.x <= rx1 && n.y >= ry0 && n.y <= ry1;
+				});
+				setSelection(inside, selectDragStart.add);
+			}
+			endMarquee();
+			// Keep the flag until the click that follows the mouseup has been ignored
+			setTimeout(function () { didSelectDrag = false; }, 0);
+		});
+	d3.event.preventDefault();
+});
+function setSelectMode(on) {
+	selectMode = !!on;
+	var btn = document.getElementById('selectModeBtn');
+	if (btn) {
+		btn.classList.toggle('active', selectMode);
+		btn.textContent = selectMode ? 'Select: On' : 'Select';
+	}
+	if (selectMode) {
+		if (!zoomMouseDownHandler) zoomMouseDownHandler = svg.on("mousedown.zoom");
+		svg.on("mousedown.zoom", null);        // no panning while selecting
+		svg.style("cursor", "crosshair");
+	} else {
+		endMarquee();
+		if (zoomMouseDownHandler) svg.on("mousedown.zoom", zoomMouseDownHandler);
+		svg.style("cursor", "grab");
+	}
+}
+var selectModeBtn = document.getElementById('selectModeBtn');
+if (selectModeBtn) selectModeBtn.addEventListener('click', function (e) {
+	if (e) e.stopPropagation();
+	setSelectMode(!selectMode);
+});
+var selectionCountEl = document.getElementById('selectionCount');
+if (selectionCountEl) selectionCountEl.addEventListener('click', function () {
+	setSelection([], false);
+});
+window.addEventListener('keydown', function (e) {
+	if (e.key === 'Escape' && !(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) && selectedNodes.length) {
+		setSelection([], false);
+	}
 });
 
 // Activity labels (class-scoped selectAll so per-bubble nodelabel <text>
@@ -912,13 +1058,13 @@ function timer() {
 			curr_moves += 1;
 		
 			// Subtract from current activity count
-			act_counts[curr_node.act] -= 1;
+			if (node_active[i]) act_counts[curr_node.act] -= 1;
 		
 			// Move on to next activity
 			curr_node.act = curr_node.sched[ curr_moves ].act;
 		
 			// Add to new activity count
-			act_counts[curr_node.act] += 1;
+			if (node_active[i]) act_counts[curr_node.act] += 1;
 		
 			curr_node.moves = curr_moves;
 			curr_node.cx = foci[curr_node.act].x;
@@ -1167,8 +1313,8 @@ function resetSimulation(keepSpeed) {
 		n.y = foci[act].y + Math.random();
 		baseNodeRadii[i] = sizeAt(i, 0);
 		n.opacity = opacityAt(i, 0);
-		act_counts[act] += 1;
 	});
+	recomputeActCounts();
 	if (typeof recomputeRadii === 'function') recomputeRadii();
 
 	// Clear selection (trails are intentionally left alone -- only the
@@ -1242,7 +1388,9 @@ function color(activity) {
 // Output readable percent based on count.
 function readablePercent(n) {
 	
-	var pct = 100 * n / data.length;
+	// Percentage of the bubbles that are currently shown (after filtering).
+	var total = activeNodeCount();
+	var pct = total ? 100 * n / total : 0;
 	if (pct < 1 && pct > 0) {
 		pct = "<1%";
 	} else {
@@ -1598,6 +1746,13 @@ function initLayoutPropertyControls() {
 	var prevShape = shapeSelect ? shapeSelect.value : 'circle';
 	var prevLabel = labelSelect ? labelSelect.value : '';
 	var prevTooltip = tooltipSelect ? tooltipSelect.value : '';
+	if (!layoutDefaultsApplied) {
+		// First run: start from the arguments given in Python.
+		layoutDefaultsApplied = true;
+		prevShape = INIT_SHAPE_KEY ? "prop:" + INIT_SHAPE_KEY : 'circle';
+		prevLabel = INIT_LABEL_KEY || '';
+		prevTooltip = INIT_TOOLTIP_KEY || '';
+	}
 
 	function clearDynamic(select, keepFirst) {
 		if (!select) return;
@@ -1724,6 +1879,8 @@ function populateVarList() {
 	});
 	if (typeof positionSidePanels === 'function') setTimeout(positionSidePanels, 0);
 }
+// A shape variable given from Python must be categorical, whatever the auto-detection says.
+if (INIT_SHAPE_KEY && !varState[INIT_SHAPE_KEY]) varState[INIT_SHAPE_KEY] = { enabled: true, dtypeOverride: 'cat' };
 populateVarList();
 initLayoutPropertyControls();
 
@@ -1893,6 +2050,10 @@ if (damperSlider) {
 var collisionSlider = document.getElementById("collisionSlider");
 var collisionVal = document.getElementById("collisionVal");
 if (collisionSlider) {
+	// Start at the value given in Python (the slider range grows if it is above 1).
+	collisionSlider.max = Math.max(1, collisionStrength);
+	collisionSlider.value = collisionStrength;
+	if (collisionVal) collisionVal.textContent = collisionStrength === 0 ? "Off" : collisionStrength.toFixed(2);
 	collisionSlider.addEventListener("input", function (e) {
 		collisionStrength = parseFloat(e.target.value) || 0;
 		if (collisionVal) collisionVal.textContent = collisionStrength === 0 ? "Off" : collisionStrength.toFixed(2);
@@ -1917,18 +2078,23 @@ var clearTrailsBtn = document.getElementById("clearTrailsBtn");
 if (clearTrailsBtn) clearTrailsBtn.addEventListener("click", function () {
 	clearTrails();
 });
+// Value if it exists as an option of the select, else the fallback.
+function layoutInitial(select, value, fallback) {
+	if (value && select && Array.prototype.some.call(select.options, function (o) { return o.value === value; })) return value;
+	return fallback;
+}
 var layoutResetBtn = document.getElementById("layoutResetBtn");
 if (layoutResetBtn) layoutResetBtn.addEventListener("click", function () {
 	if (layoutSizeSelect) layoutSizeSelect.value = "";
 	if (layoutColorSelect) layoutColorSelect.value = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
-	if (layoutShapeSelect) layoutShapeSelect.value = "circle";
-	if (layoutLabelSelect) layoutLabelSelect.value = "";
+	if (layoutShapeSelect) layoutShapeSelect.value = layoutInitial(layoutShapeSelect, INIT_SHAPE_KEY ? "prop:" + INIT_SHAPE_KEY : "circle", "circle");
+	if (layoutLabelSelect) layoutLabelSelect.value = layoutInitial(layoutLabelSelect, INIT_LABEL_KEY, "");
 	applySizeMode("");
 	applyColorMode(layoutColorSelect ? layoutColorSelect.value : "");
-	applyShapeMode("circle");
-	applyLabelMode("");
-	if (layoutTooltipSelect) layoutTooltipSelect.value = "";
-	applyTooltipMode("");
+	applyShapeMode(layoutShapeSelect ? layoutShapeSelect.value : "circle");
+	applyLabelMode(layoutLabelSelect ? layoutLabelSelect.value : "");
+	if (layoutTooltipSelect) layoutTooltipSelect.value = layoutInitial(layoutTooltipSelect, INIT_TOOLTIP_KEY, "");
+	applyTooltipMode(layoutTooltipSelect ? layoutTooltipSelect.value : "");
 });
 
 // —— Export/Save panel: export current bubble state as JSON ——
@@ -2003,8 +2169,8 @@ function scrubToMinute(targetMinute) {
 		n.opacity = opacityAt(i, s.moves);
 		// Do NOT snap x/y — let the force layout pull each bubble
 		// smoothly toward its new focus so nothing teleports or explodes.
-		act_counts[n.act] += 1;
 	});
+	recomputeActCounts();
 	if (typeof recomputeRadii === 'function') recomputeRadii();
 
 	curr_minute = targetMinute;

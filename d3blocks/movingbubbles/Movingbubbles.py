@@ -58,6 +58,12 @@ def set_config(config={}, **kwargs):
     config['state'] = kwargs.get('state', 'state')
     config['center'] = kwargs.get('center', None)
     config['damper'] = kwargs.get('damper', 1)
+    # Collision strength [0-1] between overlapping bubbles (initial value of the Physics slider).
+    config['collision'] = kwargs.get('collision', 0.15)
+    # Initial Layout panel selections: name of a df column, or None.
+    config['shape'] = kwargs.get('shape', None)
+    config['tooltip'] = kwargs.get('tooltip', None)
+    config['label'] = kwargs.get('label', None)
     config['fontsize'] = kwargs.get('fontsize', 14)
     config['timedelta'] = kwargs.get('timedelta', 'minutes')
     config['standardize'] = kwargs.get('standardize', None)
@@ -590,6 +596,21 @@ def show(df, **kwargs):
                 seen.append(k)
     config['prop_keys'] = seen
 
+    # Validate the initial Layout selections (shape / tooltip / label) against the
+    # variables that are available in the left side panel.
+    for key in ('shape', 'tooltip', 'label'):
+        val = config.get(key)
+        if val is not None and str(val) not in seen:
+            if logger is not None: logger.warning('[Movingbubbles] %s=[%s] is not a column of the input dataframe and is ignored. Available: %s' % (key, val, seen))
+            config[key] = None
+        elif val is not None:
+            config[key] = str(val)
+    try:
+        config['collision'] = max(0.0, float(config.get('collision', 0.15)))
+    except (TypeError, ValueError):
+        if logger is not None: logger.warning('[Movingbubbles] collision=[%s] is not a number. Using 0.15.' % (config.get('collision')))
+        config['collision'] = 0.15
+
     if config['note'] is None:
         config['note'] = "D3Blocks Movingubbles"
         # config['note'] = config['note'] + "\nDate start: " + str(datestart) + "\n" + "Date stop:  " + str(datestop) + "\nRuntime: " + str(datestop - datestart) + "\nEstimated time to Finish: " + str(datestart + (datestop - datestart))
@@ -663,6 +684,10 @@ def write_html(X, config, logger=None):
         'ACT_COUNTS': config['act_counts'],
         'SPEED': config['speed'],
         'DAMPER': config['damper'],
+        'COLLISION': config['collision'],
+        'SHAPE_DEFAULT': json.dumps(config.get('shape')),
+        'TOOLTIP_DEFAULT': json.dumps(config.get('tooltip')),
+        'LABEL_DEFAULT': json.dumps(config.get('label')),
         'NOTE': config['note'],
         'TIME_NOTES': config['time_notes'],
         'COLOR_METHOD': config['color_method'],

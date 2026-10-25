@@ -1385,12 +1385,14 @@ class D3Blocks():
                       center: str = None,
                       size=5,
                       color=None,
+                      shape: str = None,
                       opacity: float = 0.6,
                       stroke: str = '#000000',
                       cmap: str = 'Set1',
                       color_method: str = 'auto',
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
                       damper: float = 1,
+                      collision: float = 0.15,
                       fontsize: int = 14,
                       timedelta: str = 'minutes',
                       standardize: str = 'samplewise',
@@ -1404,6 +1406,8 @@ class D3Blocks():
                       dark_mode: bool = True,
                       color_background=None,
                       node_text_inside: bool = True,
+                      tooltip: str = None,
+                      label: str = None,
                       title: str = 'Movingbubbles - D3Blocks',
                       filepath: str = 'movingbubbles.html',
                       showfig: bool = True,
@@ -1474,6 +1478,13 @@ class D3Blocks():
             Movement of samples. A smaller number is slower/smoother movement.
                 * 0.1: min
                 * 10: max
+            Sets the initial value of the "Damper" slider in the Physics panel.
+        collision : float, (default: 0.15)
+            Strength of the push-apart between overlapping bubbles [0-1].
+                * 0: no collision (bubbles may overlap freely; cheapest for large datasets).
+                * 0.15: default. Calm, settles quickly also with hundreds of bubbles.
+                * 0.5 and higher: bubbles are pushed apart strongly; dense clusters can start to pulse.
+            Sets the initial value of the "Collision strength" slider in the Physics panel.
 
         fontsize : int, (default: 14)
             Fontsize of the states.
@@ -1532,6 +1543,19 @@ class D3Blocks():
         node_text_inside : bool, (default: True)
             True: Per-bubble labels (Layout -> Label) are centered inside the node, with the text color automatically switched between black/white for contrast against the node's fill color.
             False: Labels are placed above the node, matching the theme's text color (this was the only behavior previously).
+        shape : str, (default: None)
+            Name of a categorical column in ``df`` that is mapped to bubble shapes (circle, square, triangle, diamond).
+            Sets the initial value of Layout -> Shape in the left side panel.
+                * None: all bubbles are circles.
+                * 'country': one shape per unique value in the column 'country'.
+        tooltip : str, (default: None)
+            Name of a column in ``df`` (or the ``state`` column) of which the value is shown when hovering a bubble.
+            Sets the initial value of Layout -> Tooltip in the left side panel.
+                * None: no tooltip.
+        label : str, (default: None)
+            Name of a column in ``df`` (or the ``state`` column) that is written on each bubble.
+            Sets the initial value of Layout -> Label in the left side panel.
+                * None: no label.
 
         cmap : String, (default: 'Set1')
             All colors can be reversed with '_r', e.g. 'binary' to 'binary_r'
@@ -1649,7 +1673,7 @@ class D3Blocks():
         # Store chart
         self.chart = set_chart_func('Movingbubbles', logger)
         # Store properties
-        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, timelines=timelines, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, color=color, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
+        self.config = self.chart.set_config(config=self.config, filepath=filepath, title=title, showfig=showfig, overwrite=overwrite, figsize=figsize, timedelta=timedelta, speed=speed, damper=damper, collision=collision, shape=shape, tooltip=tooltip, label=label, note=note, time_notes=time_notes, fontsize=fontsize, standardize=standardize, timelines=timelines, center=center, datetime=datetime, sample_id=sample_id, state=state, reset_properties=reset_properties, cmap=cmap, dt_format=dt_format, notebook=notebook, color_method=color_method, color=color, save_button=save_button, show_side_panel=show_side_panel, show_top_panel=show_top_panel, dark_mode=dark_mode, color_background=color_background, node_text_inside=node_text_inside, opacity=opacity, stroke=stroke, logger=logger)
         # Set node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
             self.set_node_properties(df[self.config['state']].values, center=self.config['center'], cmap=self.config['cmap'], logger=logger)
