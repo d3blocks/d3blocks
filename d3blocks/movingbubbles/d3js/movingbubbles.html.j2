@@ -144,6 +144,7 @@ body.light .stats-panel {
   <div class="top-panel-right">
     <span id="selectionCount" class="selection-count" style="display:none"></span>
     <button class="button-switch" id="selectModeBtn" type="button" title="Drag to select bubbles; Shift+drag to add to the selection; click a bubble to toggle it; Esc clears">Select</button>
+    <button class="button-switch" id="clearTrailsBtn" type="button" title="Remove all drawn trails">Clear trails</button>
     <button class="button-switch" id="themeBtn" type="button" title="{% if darkMode == 'false' %}Theme: Light{% else %}Theme: Dark{% endif %}">{% if darkMode == 'false' %}☀{% else %}🌙{% endif %}</button>
   </div>
 </div>
@@ -229,7 +230,6 @@ body.light .stats-panel {
       </label>
       <div style="font-size:11px;opacity:0.6;margin-top:4px">Draw a trail while a bubble is selected. Trails stay after deselect.</div>
     </div>
-    <button class="button-switch" id="clearTrailsBtn" type="button" style="width:100%;margin-top:8px;box-sizing:border-box">Clear trails</button>
     <div class="slider-row" style="margin-top:12px">
       <label for="loopEnabled" style="display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="loopEnabled" style="accent-color:var(--accent);cursor:pointer">
@@ -630,6 +630,7 @@ function startTrail(node) {
 	activeTrails.push({
 		node: node,
 		points: [[node.x, node.y]],
+		d: "M" + node.x + "," + node.y,
 		path: trailLayer.append("path")
 			.attr("class", "node-trail")
 			.attr("fill", "none")
@@ -663,9 +664,14 @@ function updateActiveTrail() {
 		var dx = n.x - last[0], dy = n.y - last[1];
 		if (dx * dx + dy * dy < TRAIL_MIN_DIST2) continue;
 		pts.push([n.x, n.y]);
-		if (pts.length > TRAIL_MAX_POINTS) pts.shift();
+		if (pts.length > TRAIL_MAX_POINTS) {
+			pts.shift();
+			trail.d = trailPathFromPoints(pts);
+		} else {
+			trail.d += "L" + n.x + "," + n.y;
+		}
 		trail.path
-			.attr("d", trailPathFromPoints(pts))
+			.attr("d", trail.d)
 			.attr("stroke", n.color || "#1ABC9C");
 	}
 }
@@ -903,8 +909,6 @@ d3.select("#resetDateFilter").on("click", function() {
 var selectMode = false;
 var isSelecting = false, didSelectDrag = false, selectDragStart = null, marqueeRect = null;
 var zoomMouseDownHandler = null;
-// Bulk selections above this size do not record trails (hundreds of live trails are heavy).
-var TRAIL_BULK_LIMIT = 50;
 
 function updateSelectionUI() {
 	var el = document.getElementById('selectionCount');
@@ -926,9 +930,9 @@ function setSelection(newNodes, additive) {
 	var prevSet = new Set(selectedNodes);
 	// Dropped bubbles stop recording but keep their trail
 	selectedNodes.forEach(function (n) { if (!nextSet.has(n)) finalizeTrailFor(n); });
-	if (next.length <= TRAIL_BULK_LIMIT) {
-		next.forEach(function (n) { if (!prevSet.has(n)) startTrail(n); });
-	}
+	// Every newly selected bubble is tracked while "Enable tracker" is on
+	// (startTrail does nothing when the tracker is off).
+	next.forEach(function (n) { if (!prevSet.has(n)) startTrail(n); });
 	selectedNodes = next;
 	styleSelection();
 }
