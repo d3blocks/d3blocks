@@ -123,14 +123,16 @@ A few practical rules of thumb: prefer `st.iframe` over the older `components.ht
 
 ---
 
-### MovingBubbles: Daily Life of a European
+### [MovingBubbles: Daily Life of a European](https://erdogant.github.io/docs/d3blocks/daily_life_of_european.html)
 
 <p align="center">
   <a href="https://d3blocks.github.io/d3blocks/MovingBubbles.html#daily-life-of-european">
     <img src="https://erdogant.github.io/docs/d3blocks/daily_life_of_european.gif" width="600" alt="MovingBubbles: Daily Life of a European" />
   </a>
 </p>
+
 ---
+
 
 ### Ethical Ads
 When HTMLs are generated, it automatically includes ethical ads as a small way to support development.
