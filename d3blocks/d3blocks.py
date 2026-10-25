@@ -1385,9 +1385,11 @@ class D3Blocks():
                       center: str = None,
                       size=5,
                       color=None,
+                      opacity = 0.6,
+                      stroke = '#000000',
                       shape: str = None,
-                      opacity: float = 0.6,
-                      stroke: str = '#000000',
+                      tooltip: str = None,
+                      label: str = None,
                       cmap: str = 'Set1',
                       color_method: str = 'auto',
                       dt_format: str = '%d-%m-%Y %H:%M:%S',
@@ -1406,8 +1408,6 @@ class D3Blocks():
                       dark_mode: bool = True,
                       color_background=None,
                       node_text_inside: bool = True,
-                      tooltip: str = None,
-                      label: str = None,
                       title: str = 'Movingbubbles - D3Blocks',
                       filepath: str = 'movingbubbles.html',
                       showfig: bool = True,
@@ -1444,12 +1444,14 @@ class D3Blocks():
         size : int, list/array/Series, or dictionary. (default: 5)
             Size the nodes.
                 * 5: set all nodes to this size.
+                * 'weight': name of a column in ``df`` with the (numeric) sizes. Same as passing ``df['weight']``.
                 * [4, 10, 5, ...]: array-like of the same length as ``df``, aligned positionally with its rows (same convention as ``d3.scatter``'s ``size``).
                 * {'0': 4, '1': 10, '2': 5, ..}: dict keyed by sample_id value.
 
         color : str, list/array/Series, or dictionary. (default: None)
             Color the nodes.
                 * '#000FFF': set all nodes to this color.
+                * 'age': name of a column in ``df``. Same as passing ``df['age']``: hex colors are used as is, other values are mapped to colors using ``cmap``.
                 * ['#808080', '#FFF000', ...]: array-like hex colors of the same length as ``df``, aligned positionally with its rows.
                 * ['Netherlands', 'Germany', ...]: array-like category labels of the same length as ``df``; labels are mapped to colors using ``cmap``.
                 * {'0': '#808080', '1': '#FFF000', '3': '#000000', ..}: dict keyed by sample_id value with hex colors.
@@ -1458,11 +1460,13 @@ class D3Blocks():
         opacity : float, list/array/Series, or dictionary, (default: 0.6)
             Opacity of the bubbles [0-1].
                 * 0.6: set all nodes to this opacity.
+                * 'opacity': name of a column in ``df`` with the (numeric) opacities. Same as passing ``df['opacity']``.
                 * [0.4, 0.9, ...]: array-like of the same length as ``df``, aligned positionally with its rows.
                 * {'0': 0.4, '1': 0.9, ..}: dict keyed by sample_id value.
         stroke : str, list/array/Series, or dictionary, (default: '#000000')
             Stroke color of the bubbles.
                 * '#000000': set all nodes to this stroke color.
+                * 'country': name of a column in ``df``. Hex colors are used as is, other values (labels) are mapped to colors using ``cmap``.
                 * ['#000000', '#ffffff', ...]: array-like of the same length as ``df``, aligned positionally with its rows.
                 * {'0': '#000000', '1': '#ffffff', ..}: dict keyed by sample_id value.
 

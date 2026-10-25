@@ -250,6 +250,24 @@ def set_edge_properties(df, **kwargs):
                 % (timelines, n_before, n_after)
             )
 
+    # size/color/opacity/stroke may also be the NAME of a column in df (str), the same
+    # way as shape/tooltip/label/timelines. The column values are aligned positionally
+    # with the rows of df, exactly like an array/Series passed directly.
+    size = _resolve_column_argument(size, df, 'size', numeric=True, default=4, logger=logger)
+    opacity = _resolve_column_argument(opacity, df, 'opacity', numeric=True, default=0.6, logger=logger)
+    color = _resolve_column_argument(color, df, 'color', logger=logger)
+    stroke_in = stroke
+    stroke = _resolve_column_argument(stroke, df, 'stroke', logger=logger)
+    if (stroke is not stroke_in) and not all(_is_hex_color(v) for v in stroke):
+        # A column with category labels: map the labels to colors using cmap (same as color).
+        stroke = _labels_to_hex(stroke, cmap)
+    # Pandas extension arrays / Index (e.g. string dtype of pandas >= 3) -> plain numpy array,
+    # so they are recognised as array-like by the _set_node* functions below.
+    size, color, opacity, stroke = [np.asarray(v) if isinstance(v, (pd.api.extensions.ExtensionArray, pd.Index)) else v for v in (size, color, opacity, stroke)]
+    for name, val in (('size', size), ('opacity', opacity)):
+        if isinstance(val, str):
+            raise Exception('[Movingbubbles] %s=[%s] is not a column of the input dataframe. Available columns: %s' % (name, val, list(df.columns)))
+
     # Set size/color/opacity/stroke per node BEFORE standardize(): array-like
     # inputs are positionally aligned with the ORIGINAL row order (same
     # convention as scatter's set_edge_properties), and standardize() can
@@ -282,6 +300,46 @@ def set_edge_properties(df, **kwargs):
     )
 
     return df
+
+
+def _resolve_column_argument(value, df, name, numeric=False, default=None, logger=None):
+    """Allow an argument to be the name of a column in df.
+
+    Parameters
+    ----------
+    value : any
+        The user input for size, color, opacity or stroke.
+    df : pd.DataFrame
+        Input data.
+    numeric : bool
+        True: the column must be numeric (size, opacity). Missing values are replaced by ``default``.
+
+    Returns
+    -------
+    numpy array with the column values (positionally aligned with df) when ``value`` is a
+    string that names a column of df. Otherwise ``value`` is returned unchanged, so hex
+    colors, CSS color names, numbers, dictionaries and arrays keep working as before.
+    """
+    if not isinstance(value, str) or _is_hex_color(value):
+        return value
+    if value in df.columns:
+        col = value
+    elif value.strip() in df.columns:
+        col = value.strip()
+    else:
+        return value
+
+    if logger is not None: logger.info('Using column [%s] of the dataframe for [%s].' % (col, name))
+    values = df[col]
+    if numeric:
+        num = pd.to_numeric(values, errors='coerce')
+        if num.isna().all() and not values.isna().all():
+            raise Exception('[Movingbubbles] Column [%s] used for [%s] must be numeric.' % (col, name))
+        if num.isna().any():
+            if logger is not None: logger.warning('[Movingbubbles] Column [%s] contains missing/non-numeric values; these are set to %s for [%s].' % (col, default, name))
+            num = num.fillna(default)
+        return num.values
+    return values.to_numpy()
 
 
 def _array_like_len_check(name, values, n):
