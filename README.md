@@ -125,11 +125,13 @@ A few practical rules of thumb: prefer `st.iframe` over the older `components.ht
 
 ### [MovingBubbles: Daily Life of a European](https://d3blocks.github.io/d3blocks/MovingBubbles.html#daily-life-of-european)
 
-<p align="center">
+
+<p align="left">
   <a href="https://d3blocks.github.io/d3blocks/MovingBubbles.html#daily-life-of-european">
-    <img src="https://erdogant.github.io/docs/d3blocks/daily_life_of_european.gif" width="600" alt="MovingBubbles: Daily Life of a European" />
+     <img src="https://erdogant.github.io/docs/d3blocks/daily_life_of_european.gif" width="1000"/>
   </a>
 </p>
+
 
 ---
 
