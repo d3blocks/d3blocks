@@ -763,7 +763,8 @@
       .attr('id', function (d) { return 'fg-path-' + d.idx; })
       .style('stroke', function (d) { return paint(d.color); })
       .attr('stroke-width', function (d) { return d.width; })
-      .attr('marker-end', function (d) { return markerFor(d.color); });
+      .attr('marker-end', function (d) { return markerFor(d.color); })
+      .attr('marker-start', function (d) { return d.bidirectional ? markerFor(d.color) : null; });
     eenter.append('path').attr('class', 'fg-edge-flow')
       .style('stroke', function (d) { return paint(d.color); })
       .attr('stroke-width', function (d) { return d.width + 1.5; });

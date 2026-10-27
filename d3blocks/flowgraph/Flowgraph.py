@@ -304,6 +304,12 @@ def set_edge_properties(df, edge_color='#8c8c8c', logger=None, **kwargs):
     _warn_unknown(anims.dropna(), ANIMATIONS, 'edge animation', 'chart default', logger)
     out['animation'] = anims.where(anims.isin(ANIMATIONS), None).values
 
+    # Mermaid <--> (and explicit DataFrame column) draws arrowheads on both ends.
+    if 'bidirectional' in df.columns:
+        out['bidirectional'] = df['bidirectional'].fillna(False).astype(bool).values
+    else:
+        out['bidirectional'] = False
+
     # Line width follows weight when weights differ, otherwise a constant width.
     w = out['weight'].values
     if len(w) and np.ptp(w) > 0:
@@ -741,6 +747,7 @@ def from_mermaid(text, logger=None):
                 node(name, label, shape).update(extra)
                 if label is not None or shape is not None or "class" in extra:
                     define(name, lineno)
+            # chain edge: (source, target, label, style, weight, bidirectional)
             edges.extend([list(e) + [None, lineno] for e in chain_edges])
     if stack:
         raise ValueError(
@@ -783,9 +790,11 @@ def from_mermaid(text, logger=None):
                          '"flowchart LR; A[Start] --> B{Valid?}", Markdown with a ```mermaid block, '
                          'or a path to a %s file.' % '/'.join(MERMAID_FILE_SUFFIXES))
     # Invisible links (~~~) only count for linkStyle numbering.
-    rows = [e[:6] for e in edges if e[3] != "invisible"]
+    # Edge row: source, target, label, style, weight, bidirectional, color [, lineno]
+    rows = [e[:7] for e in edges if e[3] != "invisible"]
     df = pd.DataFrame(
-        rows, columns=["source", "target", "label", "style", "weight", "color"]
+        rows,
+        columns=["source", "target", "label", "style", "weight", "bidirectional", "color"],
     )
     if df["color"].isna().all():
         df = df.drop(columns='color')
@@ -903,8 +912,9 @@ def _apply_link_styles(edges, link_styles):
                 )
         props = _mermaid_props(parts[2])
         for i in idx:
+            # Edge: [source, target, label, style, weight, bidirectional, color, lineno]
             if props.get("stroke"):
-                edges[i][5] = props["stroke"]
+                edges[i][6] = props["stroke"]
             if props.get("stroke-dasharray"):
                 edges[i][3] = "dashed"
 
@@ -1155,7 +1165,12 @@ def _mermaid_group(stmt, i, node):
 
 
 def _mermaid_chain(stmt, node, edges):
-    """Parse 'A --> B -->|x| C & D' and append edges."""
+    """Parse 'A --> B -->|x| C & D' and append edges.
+
+    Arrow forms: --> (forward), <-- (reverse), <--> (bidirectional), --- (undirected).
+    Bidirectional edges are one row with bidirectional=True so the renderer draws
+    arrowheads on both ends; reverse arrows swap source and target.
+    """
     left, i = _mermaid_group(stmt, 0, node)
     while True:
         while i < len(stmt) and stmt[i].isspace():
@@ -1176,9 +1191,15 @@ def _mermaid_chain(stmt, node, edges):
         right, i = _mermaid_group(stmt, i, node)
         style = "invisible" if "~" in arrow else "dotted" if "." in arrow else "solid"
         weight = 3 if "=" in arrow else 1
+        # <--> both ways; <-- reverse (swap ends); --> / --- forward.
+        starts_left = arrow.startswith('<')
+        ends_right = arrow.endswith('>') or arrow.endswith('o') or arrow.endswith('x')
+        bidirectional = starts_left and ends_right
+        reverse = starts_left and not ends_right
         for s in left:
             for t in right:
-                edges.append((s, t, _mermaid_label(label), style, weight))
+                src, tgt = (t, s) if reverse else (s, t)
+                edges.append((src, tgt, _mermaid_label(label), style, weight, bidirectional))
         left = right
 
 
