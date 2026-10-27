@@ -165,7 +165,12 @@ def test_flowgraph_mermaid_shapes_links_and_subgraphs():
     assert groups['qa']['parent'] == 'wh' and groups['wh']['label'] == 'Warehouse'
     assert nodes['done']['color'] == '#59a14f' and nodes['back']['color'] == '#e15759'
 
-    edges = {(s, t): (lab, st, w) for s, t, lab, st, w in df.itertuples(index=False)}
+    edges = {
+        (s, t): (lab, st, w)
+        for s, t, lab, st, w in df[['source', 'target', 'label', 'style', 'weight']].itertuples(
+            index=False, name=None
+        )
+    }
     assert edges[('check', 'pick')][0] == 'yes'
     assert edges[('check', 'back')][0] == 'no'
     assert edges[('back', 'check')] == ('restocked', 'dotted', 1)
