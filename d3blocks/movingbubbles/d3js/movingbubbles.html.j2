@@ -1741,15 +1741,20 @@ function initLayoutPropertyControls() {
 	var labelSelect = document.getElementById("layoutLabelSelect");
 	var tooltipSelect = document.getElementById("layoutTooltipSelect");
 
-	var prevSize = sizeSelect ? sizeSelect.value : '';
+	// When the side panel is hidden the selects are missing. Preserve the
+	// current mode from in-memory state so re-runs do not wipe shape/label/
+	// tooltip that were applied from the Python INIT_* arguments.
+	var prevSize = sizeSelect ? sizeSelect.value : (layoutSizeKey || '');
 	var prevColor = colorSelect ? colorSelect.value : '';
 	if (!colorModeInitialized) {
 		prevColor = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
 		colorModeInitialized = true;
+	} else if (!colorSelect && layoutColorKey) {
+		prevColor = layoutColorKey;
 	}
-	var prevShape = shapeSelect ? shapeSelect.value : 'circle';
-	var prevLabel = labelSelect ? labelSelect.value : '';
-	var prevTooltip = tooltipSelect ? tooltipSelect.value : '';
+	var prevShape = shapeSelect ? shapeSelect.value : (categoricalShapeKey ? ("prop:" + categoricalShapeKey) : 'circle');
+	var prevLabel = labelSelect ? labelSelect.value : (currentLabelKey || '');
+	var prevTooltip = tooltipSelect ? tooltipSelect.value : (currentTooltipKey || '');
 	if (!layoutDefaultsApplied) {
 		// First run: start from the arguments given in Python.
 		layoutDefaultsApplied = true;
@@ -1795,30 +1800,30 @@ function initLayoutPropertyControls() {
 		if (!select) return false;
 		return Array.prototype.some.call(select.options, function (o) { return o.value === value; });
 	}
-	// Restore prior selection when still valid; otherwise fall back. Always
-	// re-apply so Color continuous↔discrete and Size/Shape membership update
-	// the chart immediately after a Variables dtype change.
-	if (sizeSelect) {
-		sizeSelect.value = hasOption(sizeSelect, prevSize) ? prevSize : '';
-		applySizeMode(sizeSelect.value);
-	}
-	if (colorSelect) {
-		var colorFallback = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
-		colorSelect.value = hasOption(colorSelect, prevColor) ? prevColor : colorFallback;
-		applyColorMode(colorSelect.value);
-	}
-	if (shapeSelect) {
-		shapeSelect.value = hasOption(shapeSelect, prevShape) ? prevShape : 'circle';
-		applyShapeMode(shapeSelect.value);
-	}
-	if (labelSelect) {
-		labelSelect.value = hasOption(labelSelect, prevLabel) ? prevLabel : '';
-		applyLabelMode(labelSelect.value);
-	}
-	if (tooltipSelect) {
-		tooltipSelect.value = hasOption(tooltipSelect, prevTooltip) ? prevTooltip : '';
-		applyTooltipMode(tooltipSelect.value);
-	}
+	// Always re-apply modes so shape/label/tooltip/size/color still take effect
+	// when show_side_panel=False (no Layout selects in the DOM). When the
+	// selects exist, also restore their values.
+	var sizeVal = (sizeSelect && hasOption(sizeSelect, prevSize)) ? prevSize : (sizeSelect ? '' : prevSize);
+	if (sizeSelect) sizeSelect.value = sizeVal;
+	applySizeMode(sizeVal);
+
+	var colorFallback = (color_method === "STATE") ? COLOR_MODE_STATE : COLOR_MODE_CUSTOM;
+	var colorVal = (colorSelect && hasOption(colorSelect, prevColor)) ? prevColor : (colorSelect ? colorFallback : (prevColor || colorFallback));
+	if (colorSelect) colorSelect.value = colorVal;
+	applyColorMode(colorVal);
+
+	var shapeVal = (shapeSelect && hasOption(shapeSelect, prevShape)) ? prevShape : (shapeSelect ? 'circle' : prevShape);
+	if (shapeSelect) shapeSelect.value = shapeVal;
+	applyShapeMode(shapeVal);
+
+	var labelVal = (labelSelect && hasOption(labelSelect, prevLabel)) ? prevLabel : (labelSelect ? '' : prevLabel);
+	if (labelSelect) labelSelect.value = labelVal;
+	applyLabelMode(labelVal);
+
+	var tooltipVal = (tooltipSelect && hasOption(tooltipSelect, prevTooltip)) ? prevTooltip : (tooltipSelect ? '' : prevTooltip);
+	if (tooltipSelect) tooltipSelect.value = tooltipVal;
+	applyTooltipMode(tooltipVal);
+
 	// A Numeric <-> Category flip changes which variables can be filtered.
 	if (typeof populateFilterVarDropdown === 'function') populateFilterVarDropdown();
 }
