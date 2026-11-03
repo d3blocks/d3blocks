@@ -22,7 +22,8 @@
     showEdgeLabels: OPTS.showEdgeLabels,
     showGroups: OPTS.showGroups,
     fontsize: OPTS.fontsize,
-    pinned: null            // { type: 'node' | 'group' | 'edge', id }
+    pinned: null,           // { type: 'node' | 'group' | 'edge', id }
+    liveControl: false      // true once setStatus / setEdgeActive is used
   };
 
   var FONT_FAMILY = '"Helvetica", Arial, sans-serif';
@@ -804,13 +805,16 @@
       .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
     nenter.append('path').attr('class', 'fg-shape');
     nenter.append('text').attr('class', 'fg-label').attr('text-anchor', 'middle');
+    var badge = nenter.append('g').attr('class', 'fg-badge').style('display', 'none');
+    badge.append('circle').attr('class', 'fg-badge-bg').attr('r', 9);
+    badge.append('text').attr('class', 'fg-badge-text').attr('text-anchor', 'middle').attr('dominant-baseline', 'central');
     nenter
       .on('mouseenter', function (ev, d) { highlight({ type: 'node', id: d.name }); showNodeTooltip(ev, d); })
       .on('mousemove', moveTooltip)
       .on('mouseleave', function () { hideTooltip(); restoreHighlight(); })
       .on('click', function (ev, d) { ev.stopPropagation(); togglePin({ type: 'node', id: d.name }); });
     if (state.draggable) nenter.call(drag).classed('fg-draggable', true);
-    var nall = nenter.merge(nsel).style('--c', function (d) { return d.color; });
+    var nall = nenter.merge(nsel).style('--c', function (d) { return d._liveColor || d.color; });
     nall.select('path.fg-shape').attr('d', shapePath);
     nall.select('text.fg-label').each(function (d) {
       var text = d3.select(this).style('font-size', fs + 'px');
@@ -825,6 +829,7 @@
     maybe(nall, t).attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
 
     restoreHighlight();
+    applyLiveStyles();
   }
 
   // ---------------------------------------------------------------- animation
@@ -836,7 +841,13 @@
   var SVG_NS = 'http://www.w3.org/2000/svg';
 
   function effectiveAnimation(e) {
-    if (!state.animate || reduceMotion) return 'none';
+    if (reduceMotion) return 'none';
+    // Live status mode: only edges explicitly marked active animate.
+    if (state.liveControl) {
+      if (!e._liveActive) return 'none';
+      return e.animation || state.animation || 'pulse';
+    }
+    if (!state.animate) return 'none';
     return e.animation || state.animation;
   }
 
@@ -1076,6 +1087,8 @@
     var meta = [d.shape];
     if (d.group && groupById.has(d.group)) meta.push(escapeHtml(groupById.get(d.group).label));
     meta.push((inEdges.get(d.name) || []).length + ' in · ' + (outEdges.get(d.name) || []).length + ' out');
+    if (d._liveStatus) meta.push('status: ' + d._liveStatus);
+    if (d._liveCount != null && d._liveCount > 0) meta.push('count: ' + d._liveCount);
     parts.push('<div class="fg-tt-meta">' + meta.join(' · ') + '</div>');
     tooltip.html(parts.join('')).classed('open', true);
     moveTooltip(ev);
@@ -1084,6 +1097,12 @@
     var html = '<div class="fg-tt-title">' + escapeHtml(endLabel(d.source).replace(/\n/g, ' ')) + ' → ' +
       escapeHtml(endLabel(d.target).replace(/\n/g, ' ')) + '</div>';
     if (d.label) html += '<div>' + escapeHtml(d.label) + '</div>';
+    if (d._liveActive || (d._liveCount != null && d._liveCount > 0)) {
+      var bits = [];
+      if (d._liveActive) bits.push('active');
+      if (d._liveCount != null) bits.push('count: ' + d._liveCount);
+      html += '<div class="fg-tt-meta">' + bits.join(' · ') + '</div>';
+    }
     tooltip.html(html).classed('open', true);
     moveTooltip(ev);
   }
@@ -1580,5 +1599,121 @@
     throw err;
   });
 
-  window.__flowgraph = { state: state, nodes: nodes, edges: edges, groups: usedGroups, relayout: relayout, fit: fit, ready: ready, walkthrough: walkthrough };
+  // ---------------------------------------------------------------- live status
+  // External pipeline drives node/edge status via setStatus without relayout.
+  // Status values: idle | active | done | error (others are accepted as class suffixes).
+  function applyLiveStyles() {
+    gNodes.selectAll('g.fg-node').each(function (d) {
+      var el = d3.select(this);
+      var st = d._liveStatus || 'idle';
+      el.classed('fg-live', st === 'active');
+      el.classed('fg-error', st === 'error');
+      el.classed('fg-done', st === 'done');
+      el.style('--c', d._liveColor || d.color);
+      var count = d._liveCount;
+      var show = count != null && count > 0;
+      var badge = el.select('g.fg-badge');
+      if (badge.empty()) return;
+      badge.style('display', show ? null : 'none');
+      if (show) {
+        var label = count > 999 ? '999+' : String(count);
+        var r = label.length > 2 ? 11 : 9;
+        badge.select('circle').attr('r', r);
+        badge.select('text').text(label).style('font-size', label.length > 2 ? '9px' : '10px');
+        // Top-right of the node box (node is centered at 0,0).
+        badge.attr('transform', 'translate(' + (d.width / 2 - 2) + ',' + (-d.height / 2 + 2) + ')');
+      }
+    });
+    gEdges.selectAll('g.fg-edge-g').classed('fg-live-edge', function (d) { return !!d._liveActive; });
+    if (state.liveControl) refreshAnimations();
+  }
+
+  function setNodeStatus(name, opts) {
+    opts = opts || {};
+    var n = nodeById.get(name);
+    if (!n) return false;
+    if (opts.status !== undefined) n._liveStatus = opts.status || 'idle';
+    if (opts.count !== undefined) n._liveCount = opts.count;
+    if (opts.color !== undefined) n._liveColor = opts.color || null;
+    applyLiveStyles();
+    return true;
+  }
+
+  function setEdgeActive(source, target, active, count) {
+    state.liveControl = true;
+    var found = false;
+    edges.forEach(function (e) {
+      if (e.source === source && e.target === target) {
+        e._liveActive = !!active;
+        if (count !== undefined) e._liveCount = count;
+        found = true;
+      }
+    });
+    if (found) applyLiveStyles();
+    return found;
+  }
+
+  function setStatus(snapshot) {
+    snapshot = snapshot || {};
+    state.liveControl = true;
+    // Reset then apply so omitted nodes/edges go idle.
+    nodes.forEach(function (n) {
+      n._liveStatus = 'idle';
+      n._liveCount = 0;
+      n._liveColor = null;
+    });
+    edges.forEach(function (e) {
+      e._liveActive = false;
+      e._liveCount = 0;
+    });
+    var nodeMap = snapshot.nodes || {};
+    Object.keys(nodeMap).forEach(function (name) {
+      var n = nodeById.get(name), s = nodeMap[name] || {};
+      if (!n) return;
+      if (s.status !== undefined) n._liveStatus = s.status || 'idle';
+      if (s.count !== undefined) n._liveCount = s.count;
+      if (s.color !== undefined) n._liveColor = s.color || null;
+    });
+    (snapshot.edges || []).forEach(function (ed) {
+      if (!ed || ed.source == null || ed.target == null) return;
+      edges.forEach(function (e) {
+        if (e.source === ed.source && e.target === ed.target) {
+          e._liveActive = !!ed.active;
+          if (ed.count !== undefined) e._liveCount = ed.count;
+        }
+      });
+    });
+    applyLiveStyles();
+  }
+
+  function resetStatus() {
+    nodes.forEach(function (n) {
+      n._liveStatus = null;
+      n._liveCount = null;
+      n._liveColor = null;
+    });
+    edges.forEach(function (e) {
+      e._liveActive = false;
+      e._liveCount = null;
+    });
+    state.liveControl = false;
+    applyLiveStyles();
+    refreshAnimations();
+  }
+
+  window.__flowgraph = {
+    state: state,
+    nodes: nodes,
+    edges: edges,
+    groups: usedGroups,
+    relayout: relayout,
+    fit: fit,
+    ready: ready,
+    walkthrough: walkthrough,
+    setNodeStatus: setNodeStatus,
+    setEdgeActive: setEdgeActive,
+    setStatus: setStatus,
+    resetStatus: resetStatus,
+    applyLiveStyles: applyLiveStyles
+  };
 })();

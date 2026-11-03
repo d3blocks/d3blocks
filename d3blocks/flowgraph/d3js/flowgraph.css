@@ -261,6 +261,40 @@ body.light .fg-node .fg-shape { fill-opacity: 0.12; }
 .fg-node:hover .fg-shape { stroke-width: 2.6px; }
 .fg-node.fg-focus .fg-shape { stroke-width: 3px; fill-opacity: 0.32; }
 
+/* Live status (setStatus / setNodeStatus). */
+.fg-node.fg-live .fg-shape {
+  stroke-width: 3px;
+  fill-opacity: 0.38;
+  filter: brightness(1.15);
+}
+.fg-node.fg-error .fg-shape {
+  stroke: #e74c3c;
+  stroke-width: 3px;
+  fill: #e74c3c;
+  fill-opacity: 0.28;
+}
+.fg-node.fg-done .fg-shape {
+  fill-opacity: 0.22;
+  stroke-opacity: 0.85;
+}
+.fg-badge { pointer-events: none; }
+.fg-badge-bg {
+  fill: var(--accent, #4ea1ff);
+  stroke: var(--bg, #1a1a1a);
+  stroke-width: 1.5px;
+}
+.fg-node.fg-error .fg-badge-bg { fill: #e74c3c; }
+.fg-badge-text {
+  fill: #fff;
+  font-weight: 700;
+  font-size: 10px;
+  font-family: "Helvetica", Arial, sans-serif;
+}
+.fg-edge-g.fg-live-edge .fg-edge {
+  filter: brightness(1.45);
+  stroke-width: inherit;
+}
+
 /* Groups: dashed container with a header label. */
 .fg-group { cursor: pointer; transition: opacity 0.2s; }
 .fg-group-box {
