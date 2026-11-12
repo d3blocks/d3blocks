@@ -37,6 +37,9 @@
   var groups = DATA.groups.map(function (g) { return Object.assign({}, g); });
   var groupById = new Map(groups.map(function (g) { return [g.name, g]; }));
 
+  // User-defined edge legend (flowgraph(..., legend=...)). Shown in the Legend panel.
+  var LEGEND = (OPTS.legend || []).map(function (l) { return Object.assign({ style: 'solid' }, l); });
+
   groups.forEach(function (g) {
     var depth = 0, p = g.parent;
     while (p && groupById.has(p) && depth < 64) { depth++; p = groupById.get(p).parent; }
@@ -688,6 +691,12 @@
   function paint(color) {
     return String(color).toLowerCase() === DEFAULT_EDGE_COLOR ? 'var(--fg-edge-default)' : color;
   }
+  // An edge belongs to a legend entry when colour and line style match (and both ends when the entry is bidirectional).
+  function legendMatches(entry, e) {
+    var color = String(entry.color || DEFAULT_EDGE_COLOR).toLowerCase();
+    return String(e.color).toLowerCase() === color && (e.style || 'solid') === entry.style &&
+      (!entry.bidirectional || !!e.bidirectional);
+  }
 
   var colorIds = new Map();
   function markerFor(color) {
@@ -1039,6 +1048,10 @@
     } else if (target.type === 'variant') {
       edges.forEach(function (e) {
         if (e.variant === target.id) { es.add(e.idx); ns.add(e.source); ns.add(e.target); }
+      });
+    } else if (target.type === 'legend') {
+      edges.forEach(function (e) {
+        if (legendMatches(LEGEND[target.id], e)) { es.add(e.idx); ns.add(e.source); ns.add(e.target); }
       });
     } else if (target.type === 'edge') {
       var e = edges[target.id];
@@ -1480,7 +1493,7 @@
     var VARIANT_ORDER = ['emphasis', 'security', 'async', 'error', 'default'];
     variants.sort(function (a, b) { return VARIANT_ORDER.indexOf(a) - VARIANT_ORDER.indexOf(b); });
     var showVariants = variants.length > 1 || (variants.length === 1 && variants[0] !== 'default');
-    if (!usedGroups.length && !showVariants) { panel.style.display = 'none'; return; }
+    if (!usedGroups.length && !showVariants && !LEGEND.length) { panel.style.display = 'none'; return; }
 
     function section(title) {
       var h = document.createElement('div');
@@ -1506,15 +1519,27 @@
               { type: 'group', id: g.name }, g.depth * 12);
         });
     }
+    function lineSwatch(color, style, width) {
+      var dash = style === 'dashed' ? '5 3' : style === 'dotted' ? '1.5 3' : 'none';
+      return '<svg class="fg-line-swatch" viewBox="0 0 26 10"><line x1="1" y1="5" x2="25" y2="5" style="stroke:' +
+        escapeHtml(paint(color)) + '" stroke-width="' + Math.min(4, width) + '" stroke-dasharray="' + dash + '" stroke-linecap="round"/></svg>';
+    }
+    if (LEGEND.length) {
+      // The legend that was given by the user. The panel is opened, because it was asked for.
+      section('Edge types');
+      LEGEND.forEach(function (l, i) {
+        var n = edges.filter(function (x) { return legendMatches(l, x); }).length;
+        row(lineSwatch(l.color || DEFAULT_EDGE_COLOR, l.style, l.width || 1.5) + escapeHtml(l.label) +
+            ' <span class="fg-legend-count">' + n + '</span>', { type: 'legend', id: i });
+      });
+      panel.classList.remove('collapsed');
+    }
     if (showVariants) {
       section('Edges');
       variants.forEach(function (v) {
         var e = edges.find(function (x) { return x.variant === v; });
-        var dash = e.style === 'dashed' ? '5 3' : e.style === 'dotted' ? '1.5 3' : 'none';
-        var swatch = '<svg class="fg-line-swatch" viewBox="0 0 26 10"><line x1="1" y1="5" x2="25" y2="5" style="stroke:' +
-          escapeHtml(paint(e.color)) + '" stroke-width="' + Math.min(4, e.width) + '" stroke-dasharray="' + dash + '" stroke-linecap="round"/></svg>';
         var n = edges.filter(function (x) { return x.variant === v; }).length;
-        row(swatch + escapeHtml(v) + ' <span class="fg-legend-count">' + n + '</span>', { type: 'variant', id: v });
+        row(lineSwatch(e.color, e.style, e.width) + escapeHtml(v) + ' <span class="fg-legend-count">' + n + '</span>', { type: 'variant', id: v });
       });
     }
   })();

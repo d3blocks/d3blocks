@@ -1,3 +1,24 @@
+# Edge list with shapes and edge labels
+import pandas as pd
+from d3blocks import D3Blocks
+d3 = D3Blocks(frame=False)
+df = pd.DataFrame({'source': ['Start', 'Valid?', 'Valid?', 'Fix'],
+                   'target': ['Valid?', 'Done', 'Fix', 'Valid?'],
+                   'label': ['', 'yes', 'no', 'retry']})
+nodes = {'Start': {'shape': 'terminal'}, 'Valid?': {'shape': 'decision'},
+         'Done': {'shape': 'terminal'}}
+
+# Export the current graph as Mermaid (no HTML)
+mermaid = d3.flowgraph(df, nodes=nodes, direction='TB', return_mermaid=True, showfig=False)
+print(mermaid)
+
+# Mermaid with a legend of the edge styles
+legend = [{'label': 'Correct edge', 'color': '#000fff'},
+           {'label': 'Missing edge', 'color': '#000000', 'style': 'dashed'}]
+mermaid = d3.flowgraph(df, nodes=nodes, return_mermaid=True, legend=legend, showfig=False)
+print(mermaid)
+
+
 # %% Sequence
 
 # Mermaid sequence diagram: actors, calls (->>), replies (-->>) and rect regions
@@ -25,6 +46,9 @@ sequenceDiagram
     showfig=True,
 )
 
+# %%
+
+
 # DataFrame input with regions and a captioned walkthrough
 df = pd.DataFrame(
     {
@@ -47,6 +71,7 @@ steps = [
         "highlight": {"messages": [2, 3]},
     },
 ]
+
 d3.sequence(
     df,
     participants={"app": {"label": "Mobile app", "kind": "actor"}},
@@ -97,10 +122,10 @@ d3.show(showfig=True)
 from d3blocks import D3Blocks
 
 d3 = D3Blocks(frame=False)
-d3.flowgraph(
+out = d3.flowgraph(
     """
 stateDiagram-v2
-    [*] --> pending : created
+    [*] --> pending : created1
     pending --> running : worker picks up task
     running --> completed : success
     running --> failed : error
@@ -124,7 +149,10 @@ stateDiagram-v2
             "highlight": {"edges": [("running", "completed"), ("running", "failed")]},
         },
     ],
-    showfig=True,
+    showfig=False,
+    return_mermaid=True,
+    legend={'Missing edge': {'color': '#000000', 'style': 'dashed'}},
+
 )
 
 # %% Flowgraph
@@ -142,11 +170,15 @@ nodes = {'Start': {'shape': 'terminal'}, 'Valid?': {'shape': 'decision'},
          'Done': {'shape': 'terminal'}}
 
 # Set the flowgraph
-d3.flowgraph(df, nodes=nodes, direction='TB', showfig=True)
+d3.flowgraph(df, nodes=nodes, direction='TB',
+             showfig=False,
+             return_mermaid=False,
+             legend={'Missing edge': {'color': '#000000', 'style': 'dashed'}},
+             )
 
 # Change a node and redraw
 d3.node_properties['Fix']['color'] = '#e15759'
-d3.show(showfig=True)
+out = d3.show(showfig=False, return_mermaid=True)
 
 # %%
 

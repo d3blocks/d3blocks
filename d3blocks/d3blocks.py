@@ -3164,7 +3164,9 @@ class D3Blocks():
                   dark_mode=True,
                   color_background=None,
                   return_html: bool = False,
-                  reset_properties: bool = True):
+                  return_mermaid: bool = False,
+                  reset_properties: bool = True,
+                  legend=None):
         """Flowgraph block: process flows and architecture diagrams.
 
         Nodes are arranged in ranks along the flow direction with a layered
@@ -3278,8 +3280,21 @@ class D3Blocks():
             Named themes: ``'streamlit'``, ``'darkblue'``. None → ``['#222222', '#ffffff']``.
         return_html : bool, (default: False)
             Return the HTML string.
+        return_mermaid : bool, (default: False)
+            Return Mermaid flowchart source instead of generating HTML. When True,
+            the interactive chart is not written or opened; the return value is the
+            Mermaid text (shapes, edge labels, subgraphs and node colours).
         reset_properties : bool, (default: True)
             Recompute node and edge properties from the input.
+        legend : bool, list of dict or dict, (default: None)
+            True: automatic legend, one entry per distinct edge colour + line style (labelled with the edge label or
+            variant they share). It is skipped when all edges look the same. False/None: no legend.
+            Legend of the edge styles. It is shown in the Legend panel of the HTML chart (hover an entry to
+            highlight its edges) and, with return_mermaid=True, as a separate 'Legend' box in the Mermaid text.
+                * list of dict: ``[{'label': 'Missing edge', 'color': '#000000', 'style': 'dashed'}, ...]``.
+                  Keys: 'label' (required), 'color' (css colour), 'style' ('solid', 'dashed' or 'dotted'),
+                  'width' (3 or more is drawn thick) and 'bidirectional' (bool).
+                * dict: ``{'Extra edge': '#ff0000'}`` or ``{'Missing edge': {'color': '#000000', 'style': 'dashed'}}``.
 
         Returns
         -------
@@ -3291,6 +3306,9 @@ class D3Blocks():
              Configuration. d3.config['groups'] holds the group settings (merged with
              Mermaid subgraphs); edit and call d3.show(). Labels, nesting and colours
              are resolved from it on every draw.
+        str
+             When return_mermaid is True: Mermaid flowchart source.
+             When return_html is True: the HTML string.
 
         Examples
         --------
@@ -3320,6 +3338,15 @@ class D3Blocks():
         ...   svc --> db[(Postgres)]
         ...   svc -.->|events| q[[Worker]]
         ... ''', layout='elk')
+        >>>
+        >>> # Export the current graph as Mermaid (no HTML)
+        >>> mermaid = d3.flowgraph(df, nodes=nodes, direction='TB', return_mermaid=True)
+        >>> print(mermaid)
+        >>>
+        >>> # Mermaid with a legend of the edge styles
+        >>> legend = [{'label': 'Correct edge', 'color': '#000000'},
+        ...           {'label': 'Missing edge', 'color': '#000000', 'style': 'dashed'}]
+        >>> mermaid = d3.flowgraph(df, nodes=nodes, return_mermaid=True, legend=legend)
 
         References
         ----------
@@ -3328,6 +3355,11 @@ class D3Blocks():
         * https://d3blocks.github.io/d3blocks/pages/html/Flowgraph.html
 
         """
+        if return_html and return_mermaid:
+            logger.warning('Can not return both html and mermaid graph. return_html will be used.')
+            return_html = True
+            return_mermaid=False
+            
         # Mermaid input (text, Markdown or file): convert to edges, nodes, groups and direction.
         if Flowgraph.is_mermaid_source(df):
             df, m_nodes, m_groups, m_direction = Flowgraph.from_mermaid(df, logger=logger)
@@ -3348,7 +3380,7 @@ class D3Blocks():
             show_edge_labels=show_edge_labels, show_groups=show_groups, groups=groups, cmap=cmap, steps=steps,
             color_background=color_background, dark_mode=dark_mode, save_button=save_button,
             show_side_panel=show_side_panel, show_top_panel=show_top_panel,
-            reset_properties=reset_properties, logger=logger,
+            reset_properties=reset_properties, legend=legend, logger=logger,
         )
         # Set default node properties
         if self.config['reset_properties'] or (not hasattr(self, 'node_properties')):
@@ -3359,8 +3391,10 @@ class D3Blocks():
         # Create the plot
         html = self.show()
 
-        # Return
-        if return_html:
+        # Return mermaid
+        if return_mermaid:
+            return Flowgraph.to_mermaid(self.node_properties, self.edge_properties, config=self.config, logger=logger)
+        elif return_html:
             return html
 
     def sequence(

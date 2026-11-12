@@ -87,6 +87,8 @@ def set_config(config={}, font={}, **kwargs):
     config['notebook'] = kwargs.get('notebook', False)
     config['reset_properties'] = kwargs.get('reset_properties', True)
     config['font'] = {**{'size': 13}, **font}
+    # Legend of the edge styles: one normalized list that the Mermaid output and the HTML legend panel both use.
+    config['legend'] = _normalize_legend(kwargs.get('legend'))
     # Layout
     # 'TD' is accepted as in Mermaid (same as 'TB').
     direction = str(kwargs.get('direction', 'LR')).upper()
@@ -326,6 +328,36 @@ def set_edge_properties(df, edge_color='#8c8c8c', logger=None, **kwargs):
 
 
 # %% Show
+def prepare_graph(df, node_properties, config, logger=None):
+    """Resolve nodes and groups exactly as the HTML chart does.
+
+    Returns
+    -------
+    tuple
+        (node_properties dict, edges DataFrame, groups dict) — the same model
+        serialized into the HTML JSON.
+    """
+    node_properties = _node_properties_to_dict(node_properties)
+    df = df if df is not None else pd.DataFrame(columns=['source', 'target'])
+
+    # Edges may reference nodes that were added after set_node_properties(); group ends stay groups.
+    group_ends = _group_endpoints(df, node_properties, config.get('groups'))
+    for name in pd.unique(df[['source', 'target']].astype(str).values.ravel()):
+        if name not in node_properties and name not in group_ends:
+            node_properties[name] = {
+                'name': name, 'label': name, 'shape': 'process', 'group': None,
+                'color': DEFAULT_NODE_COLOR, 'tooltip': None,
+            }
+
+    # Groups are resolved here only, from the user's settings in config['groups'], so
+    # colours follow the current node colours and the chart's cmap on every redraw.
+    groups = set_group_properties(
+        node_properties, config.get('groups'), cmap=config.get('cmap', 'Set2'), logger=logger,
+    )
+    _check_group_links(df, node_properties, config.get('groups'))
+    return node_properties, df, groups
+
+
 def show(df, **kwargs):
     """Build and show the graph.
 
@@ -345,20 +377,9 @@ def show(df, **kwargs):
 
     """
     logger = kwargs.get('logger', None)
-    node_properties = _node_properties_to_dict(kwargs.get('node_properties'))
     config = update_config(kwargs, logger).copy()
-
-    # Edges may reference nodes that were added after set_node_properties(); group ends stay groups.
-    group_ends = _group_endpoints(df, node_properties, config.get('groups'))
-    for name in pd.unique(df[['source', 'target']].values.ravel()):
-        if name not in node_properties and name not in group_ends:
-            node_properties[name] = {'name': name, 'label': name, 'shape': 'process', 'group': None,
-                                     'color': DEFAULT_NODE_COLOR, 'tooltip': None}
-
-    # Groups are resolved here only, from the user's settings in config['groups'], so
-    # colours follow the current node colours and the chart's cmap on every redraw.
-    groups = set_group_properties(node_properties, config.get('groups'), cmap=config.get('cmap', 'Set2'), logger=logger)
-    _check_group_links(df, node_properties, config.get('groups'))
+    node_properties, df, groups = prepare_graph(df, kwargs.get('node_properties'), config, logger=logger)
+    config['legend'] = _resolve_legend(config.get('legend'), df)
 
     # Per-edge animations play even when the chart-wide animation is off.
     if 'animation' in df.columns and df['animation'].notna().any() and not config.get('animate'):
@@ -420,6 +441,7 @@ def write_html(X, config, logger=None):
         'width': config['figsize'][0],
         'height': config['figsize'][1],
         'title': config['title'],
+        'legend': config['legend'] if isinstance(config.get('legend'), list) else [],
     }
 
     content = {
@@ -615,6 +637,335 @@ def _mermaid_error(kind, lineno, stmt, supported):
     )
 
 
+# Shape -> Mermaid delimiter pair (open, close). Closest available syntax.
+_SHAPE_TO_MERMAID = {
+    'process': ('[', ']'),
+    'decision': ('{', '}'),
+    'terminal': ('([', '])'),
+    'io': ('[/', '/]'),
+    'subprocess': ('[[', ']]'),
+    'database': ('[(', ')]'),
+    'circle': ('((', '))'),
+    'document': ('>', ']'),
+    'queue': ('[[', ']]'),
+    'external': ('[', ']'),
+}
+
+
+# Words that break a Mermaid flowchart when used as a node id.
+_MERMAID_RESERVED = {'end', 'graph', 'flowchart', 'subgraph', 'style', 'linkstyle', 'classdef', 'class', 'click', 'default', 'direction'}
+
+
+def _mermaid_valid_id(name):
+    """True when name can be used as a Mermaid id as it is."""
+    s = str(name)
+    return bool(_MERMAID_ID.fullmatch(s)) and s.lower() not in _MERMAID_RESERVED
+
+
+def _mermaid_safe_id(name):
+    """Mermaid node/subgraph id: keep valid ids; sanitize the rest."""
+    s = str(name)
+    if _mermaid_valid_id(s):
+        return s
+    s = re.sub(r'[^A-Za-z0-9_]', '_', s)
+    if not s or s[0].isdigit() or s.lower() in _MERMAID_RESERVED:
+        s = 'n_' + s
+    return s
+
+
+def _mermaid_escape_label(label):
+    """Escape characters that break Mermaid node/edge labels."""
+    text = str(label).replace('\n', '<br>')
+    text = text.replace('"', '#quot;')
+    return text
+
+
+def _mermaid_quote(label):
+    """Escaped label between double quotes: valid for any text, also with ()[]{}| characters."""
+    return '"%s"' % _mermaid_escape_label(label)
+
+
+def _mermaid_link(style, bidirectional=False, width=None):
+    """Mermaid link syntax of an edge: dashed/dotted, thick (width >= 3) or normal, with one or two arrowheads."""
+    try:
+        thick = width is not None and float(width) >= 3.0
+    except (TypeError, ValueError):
+        thick = False
+    if style in ('dashed', 'dotted'):
+        return '<-.->' if bidirectional else '-.->'
+    if thick:
+        return '<==>' if bidirectional else '==>'
+    return '<-->' if bidirectional else '-->'
+
+
+def _mermaid_stroke(color, style):
+    """linkStyle properties of an edge, or None when the default colour is used."""
+    if color and str(color) not in ('', DEFAULT_EDGE_COLOR, 'None', 'nan'):
+        stroke = 'stroke:%s' % color
+        if style in ('dashed', 'dotted'):
+            stroke += ',stroke-dasharray: 3 3'
+        return stroke
+    return None
+
+
+LEGEND_AUTO = 'auto'
+
+
+def _normalize_legend(legend):
+    """Legend entries as a list of dicts: {'label', 'color', 'style', 'width', 'bidirectional'}.
+
+    Accepts:
+        * None / False / empty: no legend.
+        * True or 'auto': an automatic legend. It is returned as the marker 'auto' and resolved by
+          _resolve_legend() as soon as the edges are known.
+        * a list of dicts, or a dict ``{label: color}`` / ``{label: {'color', 'style', 'width', 'bidirectional'}}``.
+    """
+    if legend is None or legend is False:
+        return []
+    if legend is True or (isinstance(legend, str) and legend.lower() == LEGEND_AUTO):
+        return LEGEND_AUTO
+    if isinstance(legend, str) or not hasattr(legend, '__len__'):
+        raise ValueError("legend should be True, False, None, a list of dicts or a dict, got %r." % (legend,))
+    if not legend:
+        return []
+    if isinstance(legend, dict):
+        legend = [dict(v if isinstance(v, dict) else {'color': v}, label=k) for k, v in legend.items()]
+    entries = []
+    for entry in legend:
+        if not isinstance(entry, dict) or not str(entry.get('label', '')).strip():
+            raise ValueError("Every legend entry needs a 'label': %r" % (entry,))
+        style = str(entry.get('style') or 'solid').lower()
+        if style not in ('solid', 'dashed', 'dotted'):
+            raise ValueError("Legend style should be 'solid', 'dashed' or 'dotted', got %r." % (style,))
+        entries.append({'label': str(entry['label']), 'color': entry.get('color'), 'style': style,
+                        'width': entry.get('width'), 'bidirectional': bool(entry.get('bidirectional', False))})
+    return entries
+
+
+def _auto_legend(edges):
+    """Legend from the edges that are drawn: one entry per distinct colour + line style.
+
+    The label is the edge label that the edges share, else their edge variant, else 'style colour'.
+    Nothing is returned when all edges look the same, because there is nothing to explain.
+    """
+    if edges is None or len(edges) == 0:
+        return []
+    groups = {}
+    for row in edges.to_dict(orient='records'):
+        groups.setdefault((str(row.get('color')).lower(), row.get('style') or 'solid'), []).append(row)
+    if len(groups) < 2:
+        return []
+    entries = []
+    for (color, style), rows in groups.items():
+        labels = {str(r.get('label')).strip() for r in rows if r.get('label') not in (None, '') and str(r.get('label')) != 'nan'} - {''}
+        variants = {r.get('variant') for r in rows} - {None, 'default'}
+        label = labels.pop() if len(labels) == 1 else variants.pop() if len(variants) == 1 else '%s %s' % (style, color)
+        widths = [float(r['width']) for r in rows if r.get('width') is not None]
+        entries.append({'label': label, 'color': color, 'style': style,
+                        'width': round(sum(widths) / len(widths), 2) if widths else None,
+                        'bidirectional': False})
+    return entries
+
+
+def _resolve_legend(legend, edges):
+    """Normalized legend list. The automatic legend ('auto') is derived from the edges."""
+    legend = _normalize_legend(legend)
+    return _auto_legend(edges) if legend == LEGEND_AUTO else legend
+
+
+def to_mermaid(node_properties, edges, groups=None, direction='LR', config=None, logger=None, legend=None):
+    """Convert Flowgraph properties to Mermaid flowchart text.
+
+    Uses prepare_graph() — the same resolution as show() — so nodes, edges and
+    groups match the HTML chart model.
+
+    Parameters
+    ----------
+    node_properties : dict or DataFrame
+        Output of set_node_properties.
+    edges : pd.DataFrame
+        Output of set_edge_properties.
+    groups : dict, optional
+        Raw group settings (used when config is not given).
+    direction : str, (default: 'LR')
+        Flow direction when config is not given.
+    config : dict, optional
+        Chart config (preferred). When provided, direction, groups, cmap,
+        show_groups and show_edge_labels are taken from it — same as show().
+    logger : optional
+        Logger for prepare_graph.
+    legend : bool, list of dict or dict, optional
+        True: automatic legend (see flowgraph). Legend of the edge styles, drawn as a separate 'Legend' box with one short edge per entry.
+        Entries are ``{'label': str, 'color': css colour, 'style': 'solid' | 'dashed' | 'dotted',
+        'width': number, 'bidirectional': bool}`` (only 'label' is required), or a dict
+        ``{label: color}`` / ``{label: {...}}``. Edges and legend entries are drawn with the same rules.
+        Default: config['legend'], the legend that was given to flowgraph().
+
+    Returns
+    -------
+    str
+        Mermaid flowchart source (without surrounding ```mermaid fence).
+    """
+    if config is None:
+        config = {
+            'groups': groups or {},
+            'direction': direction or 'LR',
+            'cmap': 'Set2',
+            'show_groups': True,
+            'show_edge_labels': True,
+        }
+    else:
+        config = dict(config)
+
+    nodes, edges, groups = prepare_graph(edges, node_properties, config, logger=logger)
+    if legend is None:
+        legend = config.get('legend')
+
+    direction = str(config.get('direction') or direction or 'LR').upper()
+    if direction == 'TD':
+        direction = 'TB'
+    if direction not in DIRECTIONS:
+        direction = 'LR'
+
+    show_groups = bool(config.get('show_groups', True))
+    show_edge_labels = bool(config.get('show_edge_labels', True))
+
+    # Ids for nodes, groups and group-end endpoints (edges may target a group box).
+    # Every name gets its own id: 'a b' and 'a_b' must not end up as the same Mermaid node.
+    names = [str(n) for n in nodes] + [str(g) for g in groups]
+    if edges is not None and len(edges):
+        names += [str(n) for n in pd.unique(edges[['source', 'target']].astype(str).values.ravel())]
+    id_map, used = {}, set()
+    # Names that are valid ids keep their name; the others are sanitized and made unique.
+    for name in [n for n in dict.fromkeys(names) if _mermaid_valid_id(n)] + [n for n in dict.fromkeys(names) if not _mermaid_valid_id(n)]:
+        base = mid = _mermaid_safe_id(name)
+        k = 2
+        while mid in used:
+            mid = '%s_%d' % (base, k)
+            k += 1
+        used.add(mid)
+        id_map[name] = mid
+
+    def node_decl(name, props):
+        mid = id_map[name]
+        label = props.get('label', name)
+        # State-diagram [*] nodes are stored as __start__/__end__ with an empty
+        # label (drawn as a small circle in HTML). Mermaid needs a visible label.
+        if (not label or not str(label).strip()) and name in ('__start__', '__end__'):
+            label = name.strip('_')  # 'start' / 'end'
+        elif label is None or label == '':
+            label = name
+        label = _mermaid_quote(label)
+        open_, close = _SHAPE_TO_MERMAID.get(props.get('shape', 'process'), ('[', ']'))
+        return '%s%s%s%s' % (mid, open_, label, close)
+
+    lines = ['flowchart %s' % direction]
+
+    children = {str(g): [] for g in groups}
+    roots = []
+    for g, cfg in groups.items():
+        g = str(g)
+        parent = cfg.get('parent')
+        if parent is not None and str(parent) in groups:
+            children[str(parent)].append(g)
+        else:
+            roots.append(g)
+
+    # Preserve node order from the HTML model (dict insertion order).
+    by_group = {}
+    ungrouped = []
+    for name, props in nodes.items():
+        g = props.get('group')
+        if show_groups and g is not None and str(g) in groups:
+            by_group.setdefault(str(g), []).append(name)
+        else:
+            ungrouped.append(name)
+
+    def emit_group(g, indent):
+        cfg = groups[g]
+        label = _mermaid_quote(cfg.get('label', g))
+        gid = id_map[g]
+        pad = '  ' * indent
+        lines.append('%ssubgraph %s [%s]' % (pad, gid, label))
+        for name in by_group.get(g, []):
+            lines.append('%s  %s' % (pad, node_decl(name, nodes[name])))
+        for child in children.get(g, []):
+            emit_group(child, indent + 1)
+        lines.append('%send' % pad)
+
+    if show_groups:
+        for g in roots:
+            emit_group(g, 1)
+    for name in ungrouped:
+        lines.append('  %s' % node_decl(name, nodes[name]))
+
+    # Edges in the same order as the HTML JSON.
+    link_styles = []
+    if edges is not None and len(edges):
+        for i, row in enumerate(edges.to_dict(orient='records')):
+            src = id_map[str(row['source'])]
+            tgt = id_map[str(row['target'])]
+            style = str(row.get('style', 'solid') or 'solid').lower()
+            label = str(row.get('label', '') or '').strip() if show_edge_labels else ''
+            bi = bool(row.get('bidirectional', False))
+            link = _mermaid_link(style, bi, row.get('width', None))
+            if label:
+                lines.append('  %s %s|%s| %s' % (src, link, _mermaid_quote(label), tgt))
+            else:
+                lines.append('  %s %s %s' % (src, link, tgt))
+            stroke = _mermaid_stroke(row.get('color'), style)
+            if stroke:
+                link_styles.append((i, stroke))
+
+    # Legend: one short edge per entry between two invisible nodes, in a separate box.
+    # The linkStyle index of an edge is its order of appearance, so the legend edges continue after the edges.
+    legend_entries = _resolve_legend(legend, edges)
+    if legend_entries:
+        used = set(id_map.values())
+
+        def free_id(base):
+            mid, k = base, 2
+            while mid in used:
+                mid, k = '%s_%d' % (base, k), k + 1
+            used.add(mid)
+            return mid
+
+        n_edges = 0 if edges is None else len(edges)
+        legend_id = free_id('legend')
+        lines.append('  subgraph %s [%s]' % (legend_id, _mermaid_quote('Legend')))
+        lines.append('    direction LR')
+        legend_nodes = []
+        for k, entry in enumerate(legend_entries):
+            a, b = free_id('legend_%d_from' % k), free_id('legend_%d_to' % k)
+            legend_nodes += [a, b]
+            link = _mermaid_link(entry['style'], entry['bidirectional'], entry['width'])
+            lines.append('    %s[" "] %s|%s| %s[" "]' % (a, link, _mermaid_quote(entry['label']), b))
+            stroke = _mermaid_stroke(entry['color'], entry['style'])
+            if stroke:
+                link_styles.append((n_edges + k, stroke))
+        lines.append('  end')
+        lines.append('  classDef legendnode fill:none,stroke:none')
+        lines.append('  class %s legendnode' % ','.join(legend_nodes))
+        lines.append('  style %s fill:none,stroke:#cccccc' % legend_id)
+
+    # Node colours from the same resolved model as HTML.
+    for name, props in nodes.items():
+        color = props.get('color')
+        if color:
+            lines.append('  style %s fill:%s' % (id_map[name], color))
+
+    if show_groups:
+        for g, cfg in groups.items():
+            color = cfg.get('color')
+            if color:
+                lines.append('  style %s fill:%s,color:#000' % (id_map[str(g)], color))
+
+    for i, stroke in link_styles:
+        lines.append('  linkStyle %d %s' % (i, stroke))
+
+    return '\n'.join(lines) + '\n'
+
+
 def from_mermaid(text, logger=None):
     """Convert a Mermaid flowchart or state diagram into Flowgraph inputs.
 
@@ -703,6 +1054,11 @@ def from_mermaid(text, logger=None):
                 if len(parts) < 3:
                     raise unsupported(lineno, stmt)
                 color = _mermaid_color(parts[2])
+                if parts[1] in groups:
+                    # 'style <subgraph> fill:...' colours the group box. It is not a node.
+                    if color:
+                        groups[parts[1]]["color"] = color
+                    continue
                 define(parts[1], lineno)
                 if color:
                     node(parts[1])["color"] = color
