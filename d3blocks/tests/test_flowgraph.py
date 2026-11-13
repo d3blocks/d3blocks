@@ -736,12 +736,20 @@ def test_flowgraph_link_to_empty_subgraph_is_a_node_with_its_title():
     assert nodes["E"]["label"] == "Empty box"
 
 
-def test_flowgraph_style_on_unlinked_subgraph_unchanged():
-    # As before: a style on a subgraph that no link names gives it a stray node entry.
+def test_flowgraph_style_on_unlinked_subgraph_colours_group_not_node():
+    # A style targeting a subgraph colours the group box and does not create a node.
     _, nodes, groups, _ = Flowgraph.from_mermaid(
         "flowchart LR\n  subgraph G\n    A --> B\n  end\n  style G fill:#f00\n"
     )
-    assert nodes["G"]["color"] == "#f00" and "G" in groups
+    assert "G" not in nodes and groups["G"]["color"] == "#f00"
+
+
+def test_flowgraph_style_on_linked_subgraph_is_allowed_and_colours_group():
+    df, nodes, groups, _ = Flowgraph.from_mermaid(
+        "flowchart LR\n  subgraph G\n    A\n  end\n  G --> B\n  style G fill:#f00\n"
+    )
+    assert list(zip(df["source"], df["target"])) == [("G", "B")]
+    assert "G" not in nodes and groups["G"]["color"] == "#f00"
 
 
 @pytest.mark.parametrize(
@@ -756,10 +764,6 @@ def test_flowgraph_style_on_unlinked_subgraph_unchanged():
         (
             "subgraph G\n    A\n  end\n  G[Label] --> B",
             r"line 5: .*'G' is a subgraph and also a node",
-        ),
-        (
-            "subgraph G\n    A\n  end\n  G --> B\n  style G fill:#f00",
-            r"line 6: .*'G' is a subgraph and also a node",
         ),
         (
             "subgraph G\n    A\n  end\n  G --> B\n  class G warm",
