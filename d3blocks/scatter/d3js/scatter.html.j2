@@ -262,6 +262,11 @@ License     : GPL3
       </select>
     </div>
     <div class="physics-control">
+      <label for="layoutOpacitySelect">Opacity</label>
+      <select id="layoutOpacitySelect" style="width:100%;box-sizing:border-box;margin-top:4px"><option value="">Default</option></select>
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Map a numeric variable to point transparency</div>
+    </div>
+    <div class="physics-control">
       <label for="layoutLabelSelect">Label</label>
       <select id="layoutLabelSelect" style="width:100%;box-sizing:border-box;margin-top:4px">
         <option value="">None</option>
@@ -318,6 +323,11 @@ License     : GPL3
     <div class="physics-control">
       <label for="sizeMultiplierSlider">Size multiplier <span class="val" id="sizeMultiplierVal">1.0×</span></label>
       <input type="range" id="sizeMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+    </div>
+    <div class="physics-control">
+      <label for="opacityMultiplierSlider">Opacity multiplier <span class="val" id="opacityMultiplierVal">1.00×</span></label>
+      <input type="range" id="opacityMultiplierSlider" min="-1" max="1" step="0.01" value="0">
+      <div style="font-size:11px;opacity:0.6;margin-top:4px">Center = 1×. Drag left toward 0× or right toward 2× (fully opaque).</div>
     </div>
     <div class="physics-control">
       <label>Size range <span class="val" id="sizeRangeVal">1.5px – 30.0px</span></label>
@@ -1303,7 +1313,7 @@ function renderPoints() {
     var r=baseRadius(d)*(i===hoveredPointIndex?1.4:1);
     var shape=currentShapeMode;
     if(categoricalShapeMap && d[13] && categoricalShapeMap[d[13][categoricalShapeKey]]) shape=categoricalShapeMap[d[13][categoricalShapeKey]];
-    ctx.save(); ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1; ctx.translate(px,py); ctx.beginPath(); drawSymbol(ctx,shape,r);
+    ctx.save(); ctx.globalAlpha=effectivePointOpacity(d); ctx.translate(px,py); ctx.beginPath(); drawSymbol(ctx,shape,r);
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent'; ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
     if(i===hoveredPointIndex || i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
@@ -1599,12 +1609,28 @@ PANEL_ORDER.forEach(function(panelId) {
 var SHAPE_MAP={circle:d3.symbolCircle,square:d3.symbolSquare,triangle:d3.symbolTriangle,diamond:d3.symbolDiamond,cross:d3.symbolCross};
 var currentShapeMode='circle';
 var initialRadii=jsonData.map(function(d){return d&&Number.isFinite(+d[3])?+d[3]:1;});
+var initialOpacities=jsonData.map(function(d){return d&&Number.isFinite(+d[4])?+d[4]:1;});
 // Global size multiplier (from the "Size multiplier" slider): scales every
 // rendered point up/down without touching the underlying d[3] radius data,
 // so it composes with whatever size-by property is active. Lets users
 // shrink points when there are many of them (dense scatter) or enlarge them
 // when there are few, so the plot always reads well on screen.
 var sizeMultiplier = 1;
+// Global opacity multiplier (from the "Opacity multiplier" slider). Same
+// centered-slider pattern as size: the control stores t in [-1, 1] with the
+// thumb at 0 for a neutral 1x. Mapping is linear: t=-1 → 0x, t=0 → 1x,
+// t=1 → 2x. At 2x every point is drawn fully opaque (no transparency);
+// below that, the multiplier scales each point's d[4] opacity (from data or
+// the Layout Opacity mapping).
+var opacityMultiplier = 1;
+function opacityMultiplierFromSlider(t) {
+  return 1 + t; // t in [-1, 1] → multiplier in [0, 2]
+}
+function effectivePointOpacity(d) {
+  if (opacityMultiplier >= 2) return 1;
+  var base = Number.isFinite(+d[4]) ? +d[4] : 1;
+  return Math.max(0, Math.min(1, base * opacityMultiplier));
+}
 // The slider itself carries the EXPONENT (t in [-1, 1]), not the multiplier
 // directly. multiplier = SIZE_MULT_BASE^t is an exponential (not linear)
 // mapping: equal drag distance near either end of the slider produces a
@@ -1926,6 +1952,45 @@ function applyColorMode(key){
   else {var uniq=Array.from(new Set(vals.filter(function(v){return v!=null;}))),palette=d3.schemeCategory10.concat(d3.schemeSet3||[]),scale=d3.scaleOrdinal().domain(uniq).range(palette);currentColorScale=scale;currentColorAccessor=function(d){var v=d&&d[13]?d[13][key]:null;return v!=null?scale(v):d[2];};}
   scheduleRender();
 }
+// Map a property into d[4] opacity. Numeric columns use a linear scale from
+// data min→0.15 / max→1 (so the lowest values stay faintly visible).
+// Categorical columns get evenly spaced opacities in [0.25, 1] by category
+// order -- same branching style as applyColorMode (numeric vs categorical).
+function applyOpacityMode(key){
+  if(!key){
+    for(var i=0;i<jsonData.length;i++)if(jsonData[i])jsonData[i][4]=initialOpacities[i];
+    scheduleRender();
+    return;
+  }
+  var vals=[],numeric=true,min=Infinity,max=-Infinity,has=false;
+  for(var i=0;i<jsonData.length;i++){
+    var v=jsonData[i]&&jsonData[i][13]?jsonData[i][13][key]:null;
+    vals.push(v);
+    if(v!=null){
+      if(typeof v==='number'&&Number.isFinite(v)){has=true;if(v<min)min=v;if(v>max)max=v;}
+      else numeric=false;
+    }
+  }
+  if(numeric&&has){
+    var span=max-min;
+    var scale=span===0
+      ? function(){ return 1; }
+      : function(v){ return 0.15 + ((v-min)/span)*(1-0.15); };
+    for(var j=0;j<jsonData.length;j++){
+      var d=jsonData[j], vv=d&&d[13]?d[13][key]:NaN;
+      d[4]=(typeof vv==='number'&&Number.isFinite(vv))?scale(vv):initialOpacities[j];
+    }
+  } else {
+    var uniq=Array.from(new Set(vals.filter(function(v){return v!=null;})));
+    var n=Math.max(1, uniq.length-1);
+    var catScale=d3.scaleOrdinal().domain(uniq).range(uniq.map(function(_,i){ return 0.25 + (i/n)*0.75; }));
+    for(var k=0;k<jsonData.length;k++){
+      var dd=jsonData[k], cv=dd&&dd[13]?dd[13][key]:null;
+      dd[4]=cv!=null?catScale(cv):initialOpacities[k];
+    }
+  }
+  scheduleRender();
+}
 function applyShapeMode(val){
   categoricalShapeMap=null;categoricalShapeKey=null;
   if(!val||SHAPE_MAP[val]){currentShapeMode=val||'circle';scheduleRender();return;}
@@ -2043,6 +2108,7 @@ function applyLabelMode(key) {
 var layoutSizeSelect = document.getElementById('layoutSizeSelect'); if (layoutSizeSelect) layoutSizeSelect.addEventListener('change', function(e){ applySizeMode(e.target.value); });
 var layoutColorSelect = document.getElementById('layoutColorSelect'); if (layoutColorSelect) layoutColorSelect.addEventListener('change', function(e){ applyColorMode(e.target.value); });
 var layoutShapeSelect = document.getElementById('layoutShapeSelect'); if (layoutShapeSelect) layoutShapeSelect.addEventListener('change', function(e){ applyShapeMode(e.target.value); });
+var layoutOpacitySelect = document.getElementById('layoutOpacitySelect'); if (layoutOpacitySelect) layoutOpacitySelect.addEventListener('change', function(e){ applyOpacityMode(e.target.value); });
 var layoutLabelSelect = document.getElementById('layoutLabelSelect'); if (layoutLabelSelect) layoutLabelSelect.addEventListener('change', function(e){ applyLabelMode(e.target.value); });
 var sizeMultiplierSlider = document.getElementById('sizeMultiplierSlider');
 var sizeMultiplierVal = document.getElementById('sizeMultiplierVal');
@@ -2051,6 +2117,14 @@ if (sizeMultiplierSlider) sizeMultiplierSlider.addEventListener('input', functio
   sizeMultiplier = sizeMultiplierFromSlider(t);
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = sizeMultiplier.toFixed(2) + '×';
   refreshPhysicsCollisionRadii();
+  scheduleRender();
+});
+var opacityMultiplierSlider = document.getElementById('opacityMultiplierSlider');
+var opacityMultiplierVal = document.getElementById('opacityMultiplierVal');
+if (opacityMultiplierSlider) opacityMultiplierSlider.addEventListener('input', function(e){
+  var t = parseFloat(e.target.value) || 0;
+  opacityMultiplier = opacityMultiplierFromSlider(t);
+  if (opacityMultiplierVal) opacityMultiplierVal.textContent = opacityMultiplier.toFixed(2) + '×';
   scheduleRender();
 });
 
@@ -2112,10 +2186,14 @@ if (layoutResetBtn) layoutResetBtn.addEventListener('click', function() {
   if (layoutSizeSelect) layoutSizeSelect.value = '';
   if (layoutColorSelect) layoutColorSelect.value = '';
   if (layoutShapeSelect) layoutShapeSelect.value = 'circle';
+  if (layoutOpacitySelect) layoutOpacitySelect.value = '';
   if (layoutLabelSelect) layoutLabelSelect.value = '';
   if (sizeMultiplierSlider) sizeMultiplierSlider.value = 0;
   sizeMultiplier = 1;
   if (sizeMultiplierVal) sizeMultiplierVal.textContent = '1.00×';
+  if (opacityMultiplierSlider) opacityMultiplierSlider.value = 0;
+  opacityMultiplier = 1;
+  if (opacityMultiplierVal) opacityMultiplierVal.textContent = '1.00×';
   if (sizeRangeMinSlider) sizeRangeMinSlider.value = 1.5;
   if (sizeRangeMaxSlider) sizeRangeMaxSlider.value = 30;
   updateSizeRangeUI();
@@ -2125,6 +2203,7 @@ if (layoutResetBtn) layoutResetBtn.addEventListener('click', function() {
   applySizeMode('');
   applyColorMode('');
   applyShapeMode('circle');
+  applyOpacityMode('');
   applyLabelMode('');
   hoveredPointIndex = -1;
   hidePointTooltip();
@@ -2161,6 +2240,7 @@ function initLayoutPropertyControls() {
   var sizeSelect = document.getElementById('layoutSizeSelect');
   var colorSelect = document.getElementById('layoutColorSelect');
   var shapeSelect = document.getElementById('layoutShapeSelect');
+  var opacitySelect = document.getElementById('layoutOpacitySelect');
   var labelSelect = document.getElementById('layoutLabelSelect');
 
   // This function is re-run whenever a variable's dtype is flipped in the
@@ -2171,6 +2251,7 @@ function initLayoutPropertyControls() {
   var prevSize = sizeSelect ? sizeSelect.value : '';
   var prevColor = colorSelect ? colorSelect.value : '';
   var prevShape = shapeSelect ? shapeSelect.value : '';
+  var prevOpacity = opacitySelect ? opacitySelect.value : '';
   var prevLabel = labelSelect ? labelSelect.value : '';
 
   function clearDynamicOptions(select) {
@@ -2180,6 +2261,7 @@ function initLayoutPropertyControls() {
   clearDynamicOptions(sizeSelect);
   clearDynamicOptions(colorSelect);
   clearDynamicOptions(shapeSelect);
+  clearDynamicOptions(opacitySelect);
   clearDynamicOptions(labelSelect);
 
   function addOption(select, value, label) {
@@ -2193,10 +2275,12 @@ function initLayoutPropertyControls() {
   Object.keys(numericKeys).sort().forEach(function(key) {
     addOption(sizeSelect, key, key);
     addOption(colorSelect, key, key);
+    addOption(opacitySelect, key, key);
   });
 
   Object.keys(categoricalKeys).sort().forEach(function(key) {
     addOption(colorSelect, key, key);
+    addOption(opacitySelect, key, key);
     addOption(shapeSelect, 'prop:' + key, key);
   });
 
@@ -2222,6 +2306,7 @@ function initLayoutPropertyControls() {
   restoreSelection(sizeSelect, prevSize, '', applySizeMode);
   restoreSelection(colorSelect, prevColor, '', applyColorMode);
   restoreSelection(shapeSelect, prevShape, 'circle', applyShapeMode);
+  restoreSelection(opacitySelect, prevOpacity, '', applyOpacityMode);
   restoreSelection(labelSelect, prevLabel, '', applyLabelMode);
 }
 
@@ -3133,7 +3218,7 @@ function renderInterpolatedPoints(fromX,fromY,xi1,yi1,t) {
     addHit(i,px,py);
     var shape=currentShapeMode;
     if(categoricalShapeMap&&d[13]&&categoricalShapeMap[d[13][categoricalShapeKey]])shape=categoricalShapeMap[d[13][categoricalShapeKey]];
-    ctx.save();ctx.globalAlpha=Number.isFinite(+d[4])?+d[4]:1;ctx.translate(px,py);ctx.beginPath();drawSymbol(ctx,shape,r);
+    ctx.save();ctx.globalAlpha=effectivePointOpacity(d);ctx.translate(px,py);ctx.beginPath();drawSymbol(ctx,shape,r);
     ctx.fillStyle=(currentColorAccessor?currentColorAccessor(d):d[2])||'transparent';ctx.fill();
     if(d[5]){ctx.strokeStyle=d[5];ctx.lineWidth=1;ctx.stroke();}
     if(i===hoveredPointIndex||i===searchHighlightIndex){ctx.strokeStyle=i===searchHighlightIndex?'#ff9900':'#000';ctx.lineWidth=i===searchHighlightIndex?3:2;ctx.stroke();}
