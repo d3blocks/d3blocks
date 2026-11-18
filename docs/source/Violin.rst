@@ -8,7 +8,7 @@ Violin
 Input Data
 ***********
 
-The input dataset are the x-coordinates and y-coordinates that needs to be specified seperately.
+The input dataset are the x-coordinates and y-coordinates that needs to be specified separately.
 
 .. code:: python
 
